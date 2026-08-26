@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f7dbe5" />
+  <title>Duck Habit Hub</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main id="app" class="app-shell">
+    <section id="stage" class="stage" aria-label="Home room">
+      <img id="roomImage" class="stage-layer room-layer" alt="Selected room" />
+
+      <div id="peepLayers" class="peep-layers" aria-label="Peep"></div>
+
+      <img class="stage-layer room-object" src="assets/ui/mirror.png" alt="" aria-hidden="true" />
+      <img class="stage-layer room-object" src="assets/ui/book-room.png" alt="" aria-hidden="true" />
+
+      <button id="mirrorHotspot" class="hotspot mirror-hotspot" aria-label="Open closet">
+        <span>Closet</span>
+      </button>
+      <button id="bookHotspot" class="hotspot book-hotspot" aria-label="Open book menu">
+        <span>Book</span>
+      </button>
+
+      <div class="top-hud">
+        <div class="room-picker-wrap">
+          <button id="roomPickerButton" class="hud-pill" aria-expanded="false">
+            <span id="roomPickerLabel">Cream Room</span>
+            <span aria-hidden="true">▾</span>
+          </button>
+          <div id="roomPicker" class="room-picker hidden" role="menu"></div>
+        </div>
+
+        <div class="coin-pill" aria-label="Pink coin balance">
+          <img src="assets/ui/pink-coin.png" alt="" />
+          <strong id="coinCount">0</strong>
+        </div>
+      </div>
+
+      <div id="toast" class="toast hidden" role="status"></div>
+
+      <section id="closetPanel" class="panel closet-panel hidden" aria-label="Closet">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">MIRROR</p>
+            <h1>Peep's Closet</h1>
+          </div>
+          <button id="closeCloset" class="close-button" aria-label="Return to room">×</button>
+        </div>
+        <div id="closetTabs" class="closet-tabs"></div>
+        <div id="closetOptions" class="closet-options"></div>
+        <p class="save-note">Your outfit saves automatically on this device.</p>
+      </section>
+
+      <section id="bookPanel" class="panel book-panel hidden" aria-label="Book menu">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">YOUR BOOK</p>
+            <h1>Menu</h1>
+          </div>
+          <button id="closeBook" class="close-button" aria-label="Close book">×</button>
+        </div>
+        <div class="book-grid">
+          <button data-book-page="tasks">✓ <span>Tasks</span></button>
+          <button data-book-page="inventory">🎒 <span>Inventory</span></button>
+          <button data-book-page="shop">♡ <span>Shop</span></button>
+          <button data-book-page="crafter">🦆 <span>Duck Crafter</span></button>
+          <button data-book-page="duckipedia">📖 <span>Duckipedia</span></button>
+          <button data-book-page="characters">👤 <span>Character Change</span></button>
+          <button data-book-page="games">🎮 <span>Games</span></button>
+          <button data-book-page="status">★ <span>Status</span></button>
+        </div>
+        <p class="save-note">The Book pages are placeholders for our next steps.</p>
+      </section>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
