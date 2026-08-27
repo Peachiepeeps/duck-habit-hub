@@ -3908,7 +3908,7 @@ button { color: inherit; }
   left: -32%;
   top: -90%;
   z-index: var(--z, 1);
-  width: 160%;
+  width: 155%;
   height: auto;
   object-fit: contain;
   pointer-events: none;
