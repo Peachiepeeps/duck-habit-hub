@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f7dbe5" />
+  <title>Duck Habit Hub</title>
+  <link rel="stylesheet" href="style.css?v=10-bakery" />
+</head>
+<body>
+  <main id="app" class="app-shell">
+    <section id="stage" class="stage" aria-label="Home room">
+      <img id="roomImage" class="stage-layer room-layer" alt="Selected room" />
+
+      <!-- Room objects intentionally sit BEHIND Peep. Their invisible hotspots stay clickable. -->
+      <img class="stage-layer room-object" src="assets/ui/mirror.png" alt="" aria-hidden="true" />
+      <img class="stage-layer room-object" src="assets/ui/book-room.png" alt="" aria-hidden="true" />
+
+      <div id="peepWrap" class="peep-wrap">
+        <div id="peepLayers" class="peep-layers" aria-label="Peep"></div>
+        <button id="peepHotspot" class="peep-hotspot" type="button" aria-label="Poke Peep">
+          <span>Poke Peep</span>
+        </button>
+      </div>
+
+      <button id="mirrorHotspot" class="hotspot mirror-hotspot" type="button" aria-label="Open closet">
+        <span>Closet</span>
+      </button>
+      <button id="bookHotspot" class="hotspot book-hotspot" type="button" aria-label="Open book menu">
+        <span>Book</span>
+      </button>
+<div class="top-hud">
+        <div class="room-picker-wrap">
+          <button id="roomPickerButton" class="room-swatch-button" type="button" aria-expanded="false" aria-label="Change room color">
+            <span id="roomPickerSwatch" class="room-swatch current-room-swatch" aria-hidden="true"></span>
+            <span class="room-picker-arrow" aria-hidden="true">▾</span>
+          </button>
+          <div id="roomPicker" class="room-picker hidden" role="menu" aria-label="Room colors"></div>
+        </div>
+
+        <div class="coin-pill" aria-label="Pink coin balance">
+          <img src="assets/ui/pink-coin.png" alt="" />
+          <strong id="coinCount">0</strong>
+        </div>
+      </div>
+
+      <div id="toast" class="toast hidden" role="status"></div>
+
+      <section id="closetPanel" class="closet-panel hidden" aria-label="Peep's closet">
+        <div class="closet-panel-top">
+          <div class="closet-category-wrap">
+            <button id="closetCategoryButton" class="closet-category-button" type="button" aria-expanded="false">
+              <span id="closetCategoryLabel">Hair</span>
+              <span aria-hidden="true">▾</span>
+            </button>
+            <div id="closetCategoryMenu" class="closet-category-menu hidden"></div>
+          </div>
+          <button id="closeCloset" class="close-button closet-close" type="button" aria-label="Return to room">×</button>
+        </div>
+
+        <div id="closetOptions" class="closet-options"></div>
+        <p class="save-note">Outfit changes save automatically.</p>
+      </section>
+
+
+
+
+      <section id="inventoryPanel" class="panel inventory-panel hidden" aria-label="Inventory">
+        <div class="panel-header inventory-header">
+          <button id="inventoryBack" class="round-icon-button" type="button" aria-label="Back to book menu">‹</button>
+          <div class="inventory-heading">
+            <p class="eyebrow">WHAT YOU'VE COLLECTED</p>
+            <h1>Inventory</h1>
+          </div>
+          <button id="closeInventory" class="close-button" type="button" aria-label="Close inventory">×</button>
+        </div>
+
+        <div class="inventory-tabs" role="tablist" aria-label="Inventory categories">
+          <button class="inventory-tab active" type="button" data-inventory-tab="crafting" role="tab" aria-selected="true">Supplies</button>
+          <button class="inventory-tab" type="button" data-inventory-tab="paint" role="tab" aria-selected="false">Paint</button>
+          <button class="inventory-tab" type="button" data-inventory-tab="food" role="tab" aria-selected="false">Food</button>
+          <button class="inventory-tab" type="button" data-inventory-tab="furniture" role="tab" aria-selected="false">Furniture</button>
+        </div>
+
+        <div class="inventory-content">
+          <div class="inventory-category-heading">
+            <div>
+              <strong id="inventoryCategoryTitle">Crafting Supplies</strong>
+              <span id="inventoryCategorySubtitle">Items used in Duck Crafter recipes.</span>
+            </div>
+            <span id="inventoryCategoryCount" class="inventory-count-pill">0 items</span>
+          </div>
+
+          <div id="inventoryGrid" class="inventory-grid"></div>
+        </div>
+
+        <div id="inventoryItemSheet" class="inventory-item-sheet hidden" aria-hidden="true">
+          <button id="inventorySheetBackdrop" class="inventory-sheet-backdrop" type="button" aria-label="Close item details"></button>
+          <section class="inventory-sheet-card" aria-label="Item details">
+            <button id="closeInventoryItem" class="inventory-sheet-close" type="button" aria-label="Close item details">×</button>
+            <div id="inventorySheetIcon" class="inventory-sheet-icon" aria-hidden="true">✦</div>
+            <p id="inventorySheetCategory" class="inventory-sheet-category">Crafting Supplies</p>
+            <h2 id="inventorySheetName">Item</h2>
+            <p id="inventorySheetQuantity" class="inventory-sheet-quantity">You have ×1</p>
+            <div id="inventoryGiftPreference" class="inventory-gift-preference hidden"></div>
+            <div id="inventorySheetActions" class="inventory-sheet-actions"></div>
+          </section>
+        </div>
+      </section>
+
+
+
+
+
+      <section id="gamesPanel" class="panel games-panel hidden" aria-label="Games">
+        <div class="panel-header games-header">
+          <button id="gamesBack" class="round-icon-button" type="button" aria-label="Back to book menu">‹</button>
+          <div class="games-heading">
+            <p class="eyebrow">TAKE A LITTLE BREAK</p>
+            <h1>Games</h1>
+          </div>
+          <button id="closeGames" class="close-button" type="button" aria-label="Close Games">×</button>
+        </div>
+
+        <div class="games-list">
+          <button id="openBakeryGame" class="game-card bakery-game-card" type="button">
+            <span class="game-card-preview">
+              <img src="assets/bakery/backgrounds/Bakery-background.PNG" class="game-card-bg" alt="" />
+              <img src="assets/food/Wedding-cake.PNG" class="game-card-feature" alt="" />
+            </span>
+            <span class="game-card-copy">
+              <span class="game-card-kicker">MERGE GAME</span>
+              <strong>Love &amp; Sweets</strong>
+              <span>Run the bakery, merge treats, earn Pink Coins, and bring home food rewards.</span>
+            </span>
+            <span class="game-card-play">Play ›</span>
+          </button>
+
+          <div class="games-coming-soon">
+            <span>♡</span>
+            <div>
+              <strong>More games can live here later!</strong>
+              <p>The next minigame can be added without changing the Bakery.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="crafterPanel" class="panel crafter-panel hidden" aria-label="Duck Crafter">
+        <div class="panel-header crafter-header">
+          <button id="crafterBack" class="round-icon-button" type="button" aria-label="Back to book menu">‹</button>
+          <div class="crafter-heading">
+            <p class="eyebrow">MAKE SOMETHING CUTE</p>
+            <h1>Duck Crafter</h1>
+          </div>
+          <button id="closeCrafter" class="close-button" type="button" aria-label="Close Duck Crafter">×</button>
+        </div>
+
+        <div class="crafter-tabs" role="tablist" aria-label="Duck Crafter sections">
+          <button class="crafter-tab active" type="button" data-crafter-tab="ducks" role="tab" aria-selected="true">🦆 Ducks</button>
+          <button class="crafter-tab" type="button" data-crafter-tab="paint" role="tab" aria-selected="false">🎨 Paint</button>
+          <button class="crafter-tab" type="button" data-crafter-tab="recipes" role="tab" aria-selected="false">📖 Recipes</button>
+        </div>
+
+        <div id="crafterContent" class="crafter-content"></div>
+
+        <div id="craftSheet" class="craft-sheet hidden" aria-hidden="true">
+          <button id="craftSheetBackdrop" class="craft-sheet-backdrop" type="button" aria-label="Close crafting recipe"></button>
+          <section class="craft-sheet-card" aria-label="Crafting recipe">
+            <button id="closeCraftSheet" class="craft-sheet-close" type="button" aria-label="Close crafting recipe">×</button>
+
+            <div id="craftSheetArt" class="craft-sheet-art"></div>
+            <p id="craftSheetEyebrow" class="craft-sheet-eyebrow">DUCK RECIPE</p>
+            <h2 id="craftSheetName">Duck</h2>
+            <p id="craftSheetNote" class="craft-sheet-note"></p>
+
+            <div class="craft-requirements-heading">
+              <strong>What you need</strong>
+              <span id="craftReadyBadge" class="craft-ready-badge">Checking…</span>
+            </div>
+            <div id="craftRequirements" class="craft-requirements"></div>
+
+            <button id="craftActionButton" class="craft-action-button" type="button">Craft</button>
+          </section>
+        </div>
+      </section>
+
+      <section id="duckipediaPanel" class="panel duckipedia-panel hidden" aria-label="Duckipedia">
+        <div class="panel-header duckipedia-header">
+          <button id="duckipediaBack" class="round-icon-button" type="button" aria-label="Back to book menu">‹</button>
+          <div class="duckipedia-heading">
+            <p class="eyebrow">YOUR DUCK COLLECTION</p>
+            <h1>Duckipedia</h1>
+          </div>
+          <button id="closeDuckipedia" class="close-button" type="button" aria-label="Close Duckipedia">×</button>
+        </div>
+
+        <section class="duckipedia-progress-card" aria-label="Duck collection progress">
+          <div class="duckipedia-progress-top">
+            <div>
+              <strong id="duckipediaProgressText">0 / 60</strong>
+              <span>Ducks discovered</span>
+            </div>
+            <span id="duckipediaPercent" class="duckipedia-percent">0%</span>
+          </div>
+          <div class="duckipedia-progress-track">
+            <div id="duckipediaProgressFill" class="duckipedia-progress-fill"></div>
+          </div>
+        </section>
+
+        <div class="duckipedia-tabs" role="tablist" aria-label="Duckipedia filters">
+          <button class="duckipedia-tab active" type="button" data-duck-filter="all" role="tab" aria-selected="true">All</button>
+          <button class="duckipedia-tab" type="button" data-duck-filter="unlocked" role="tab" aria-selected="false">Unlocked</button>
+          <button class="duckipedia-tab" type="button" data-duck-filter="missing" role="tab" aria-selected="false">Missing</button>
+        </div>
+
+        <div id="duckipediaGrid" class="duckipedia-grid" aria-live="polite"></div>
+
+        <div class="duckipedia-bottom-counter">
+          <span>Collection</span>
+          <strong id="duckipediaBottomCount">0 / 60</strong>
+        </div>
+
+        <div id="duckDetailSheet" class="duck-detail-sheet hidden" aria-hidden="true">
+          <button id="duckDetailBackdrop" class="duck-detail-backdrop" type="button" aria-label="Close duck details"></button>
+          <section class="duck-detail-card" aria-label="Duck details">
+            <button id="closeDuckDetail" class="duck-detail-close" type="button" aria-label="Close duck details">×</button>
+            <div id="duckDetailArt" class="duck-detail-art"></div>
+            <p id="duckDetailState" class="duck-detail-state">Not discovered</p>
+            <h2 id="duckDetailName">Duck</h2>
+            <p id="duckDetailHint" class="duck-detail-hint"></p>
+          </section>
+        </div>
+      </section>
+
+      <section id="shopPanel" class="panel shop-panel hidden" aria-label="Shop">
+        <div class="panel-header shop-header">
+          <button id="shopBack" class="round-icon-button" type="button" aria-label="Back to book menu">‹</button>
+          <div class="shop-heading">
+            <p class="eyebrow">A LITTLE TREAT</p>
+            <h1>Shop</h1>
+          </div>
+          <div class="shop-header-actions">
+            <div class="shop-coin-pill" aria-label="Pink coin balance">
+              <img src="assets/ui/pink-coin.png" alt="" />
+              <strong id="shopCoinCount">0</strong>
+            </div>
+            <button id="closeShop" class="close-button" type="button" aria-label="Close shop">×</button>
+          </div>
+        </div>
+
+        <div class="shop-tabs" role="tablist" aria-label="Shop categories">
+          <button class="shop-tab active" type="button" data-shop-tab="supplies" role="tab" aria-selected="true">Duck Supplies</button>
+          <button class="shop-tab" type="button" data-shop-tab="paint" role="tab" aria-selected="false">Paint</button>
+        </div>
+
+        <div class="shop-content">
+          <section class="shop-intro">
+            <div>
+              <strong id="shopCategoryTitle">Duck Supplies</strong>
+              <p id="shopCategorySubtitle">Useful supplies for crafting your duck collection.</p>
+            </div>
+            <span id="shopStockCount" class="shop-stock-count">0 items</span>
+          </section>
+
+          <div id="shopGrid" class="shop-grid"></div>
+        </div>
+
+        <div id="shopItemSheet" class="shop-item-sheet hidden" aria-hidden="true">
+          <button id="shopSheetBackdrop" class="shop-sheet-backdrop" type="button" aria-label="Close purchase window"></button>
+          <section class="shop-sheet-card" aria-label="Purchase item">
+            <button id="closeShopItem" class="shop-sheet-close" type="button" aria-label="Close purchase window">×</button>
+
+            <div id="shopSheetIcon" class="shop-sheet-icon" aria-hidden="true">✦</div>
+            <p id="shopSheetCategory" class="shop-sheet-category">Duck Supplies</p>
+            <h2 id="shopSheetName">Item</h2>
+
+            <div class="shop-sheet-info-row">
+              <span>Price each</span>
+              <strong id="shopSheetUnitPrice">20 coins</strong>
+            </div>
+            <div class="shop-sheet-info-row">
+              <span>You own</span>
+              <strong id="shopSheetOwned">×0</strong>
+            </div>
+
+            <div class="shop-quantity-block">
+              <span class="shop-quantity-label">How many?</span>
+              <div class="shop-quantity-stepper">
+                <button id="shopQtyMinus" type="button" aria-label="Decrease quantity">−</button>
+                <strong id="shopQtyValue">1</strong>
+                <button id="shopQtyPlus" type="button" aria-label="Increase quantity">+</button>
+              </div>
+              <small>Buy up to 10 at a time.</small>
+            </div>
+
+            <div class="shop-total-row">
+              <span>Total</span>
+              <strong id="shopSheetTotal">20 coins</strong>
+            </div>
+            <p id="shopAffordMessage" class="shop-afford-message"></p>
+
+            <button id="shopBuyButton" class="shop-buy-button" type="button">
+              Buy
+            </button>
+          </section>
+        </div>
+      </section>
+
+      <section id="dailiesPanel" class="panel dailies-panel hidden" aria-label="Dailies">
+        <div class="panel-header dailies-header">
+          <button id="dailiesBack" class="round-icon-button" type="button" aria-label="Back to book menu">‹</button>
+          <div class="dailies-heading">
+            <p class="eyebrow">LITTLE DAILY ADVENTURES</p>
+            <h1>Dailies</h1>
+          </div>
+          <button id="closeDailies" class="close-button" type="button" aria-label="Close dailies">×</button>
+        </div>
+
+        <div class="dailies-content">
+          <section class="daily-intro-card">
+            <div class="daily-sun">☀</div>
+            <div>
+              <strong>Daily rewards, no pressure.</strong>
+              <p>These are just little bonuses you can collect when you feel like it. Missing them never hurts your progress.</p>
+            </div>
+          </section>
+
+          <section class="daily-card shopping-daily">
+            <div class="daily-card-top">
+              <div class="daily-icon-bubble">🛍</div>
+              <div class="daily-card-title">
+                <span>FORAGE</span>
+                <h2>Shopping Trip</h2>
+              </div>
+              <div id="shoppingUsesBadge" class="daily-uses-badge">0 / 3</div>
+            </div>
+
+            <p class="daily-description">
+              Send your current OC shopping for one hour. When they come back, they’ll bring home one random Duck Crafter ingredient.
+            </p>
+
+            <div id="shoppingState" class="shopping-state"></div>
+
+            <button id="shoppingActionButton" class="daily-main-button" type="button">
+              Start 1 Hour Trip
+            </button>
+
+            <p class="daily-small-note">Up to 3 shopping trips can be started each day. Only one trip can be active at a time.</p>
+          </section>
+
+          <section class="daily-loot-preview">
+            <div>
+              <span>Crafting Inventory</span>
+              <strong id="dailyInventoryCount">0 items</strong>
+            </div>
+            <button id="dailyInventoryHint" class="daily-mini-button" type="button">Open Inventory</button>
+          </section>
+        </div>
+      </section>
+
+      <section id="statusPanel" class="panel status-panel hidden" aria-label="Status">
+        <div class="panel-header status-header">
+          <button id="statusBack" class="round-icon-button" type="button" aria-label="Back to book menu">‹</button>
+          <div class="status-heading">
+            <p class="eyebrow">PEEP &amp; YOU</p>
+            <h1>Status</h1>
+          </div>
+          <button id="closeStatus" class="close-button" type="button" aria-label="Close status">×</button>
+        </div>
+
+        <div class="status-content">
+          <section class="status-profile-card">
+            <div id="statusPeepPreview" class="status-peep-preview" aria-label="Peep preview"></div>
+            <div class="status-profile-copy">
+              <p id="statusCharacterName" class="status-name">Peep</p>
+              <div class="status-level-line">
+                <span id="statusLevelBadge" class="status-level-badge">Level 1</span>
+                <span id="statusHappinessLabel" class="status-happiness-label">Happiness 0 ♡</span>
+              </div>
+
+              <div class="status-progress-copy">
+                <span>XP</span>
+                <span id="statusXpText">0 / 100</span>
+              </div>
+              <div class="status-xp-track" aria-label="XP progress">
+                <div id="statusXpFill" class="status-xp-fill"></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="status-stat-grid" aria-label="Progress stats">
+            <article class="status-stat-card">
+              <img src="assets/ui/pink-coin.png" alt="" />
+              <span>Pink Coins</span>
+              <strong id="statusCoins">0</strong>
+            </article>
+
+            <article class="status-stat-card">
+              <div class="status-stat-symbol">✓</div>
+              <span>Tasks Completed</span>
+              <strong id="statusTasksCompleted">0</strong>
+            </article>
+
+            <article class="status-stat-card">
+              <div class="status-stat-symbol duck-symbol">🦆</div>
+              <span>Ducks Created</span>
+              <strong id="statusDucks">0 / 60</strong>
+            </article>
+
+            <article class="status-stat-card">
+              <div class="status-stat-symbol heart-symbol">♡</div>
+              <span>Happiness</span>
+              <strong id="statusHappiness">0</strong>
+            </article>
+          </section>
+
+          <section class="status-extra-card">
+            <div>
+              <span>Coins earned from Tasks</span>
+              <strong id="statusTaskCoins">0</strong>
+            </div>
+            <div>
+              <span>Total XP</span>
+              <strong id="statusTotalXp">0</strong>
+            </div>
+          </section>
+
+          <p class="status-note">Progress only goes up. Missing a task never lowers Happiness, XP, or your level. ♡</p>
+        </div>
+      </section>
+
+      <section id="tasksPanel" class="panel tasks-panel hidden" aria-label="Tasks">
+        <div class="panel-header tasks-header">
+          <button id="tasksBack" class="round-icon-button" type="button" aria-label="Back to book menu">‹</button>
+          <div class="tasks-heading">
+            <p class="eyebrow">YOUR TASKS</p>
+            <h1>Tasks</h1>
+          </div>
+          <button id="closeTasks" class="close-button" type="button" aria-label="Close tasks">×</button>
+        </div>
+
+        <div class="tasks-toolbar">
+          <div class="task-tabs" role="tablist" aria-label="Task views">
+            <button id="todayTab" class="task-tab active" type="button" role="tab" aria-selected="true">Today</button>
+            <button id="savedTab" class="task-tab" type="button" role="tab" aria-selected="false">Saved</button>
+            <button id="completedTab" class="task-tab" type="button" role="tab" aria-selected="false">Completed</button>
+          </div>
+          <button id="addTaskButton" class="add-task-button" type="button">＋ Add Task</button>
+        </div>
+
+        <div id="tasksContent" class="tasks-content"></div>
+        <p class="task-kind-note">No streak loss, no penalties — tasks only give rewards when you complete them. ♡</p>
+      </section>
+
+      <section id="taskFormPanel" class="task-form-panel hidden" aria-label="Create a task">
+        <div class="task-form-card">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">NEW TASK</p>
+              <h1>Add Task</h1>
+            </div>
+            <button id="closeTaskForm" class="close-button" type="button" aria-label="Close task form">×</button>
+          </div>
+
+          <form id="taskForm" autocomplete="off">
+            <label class="form-field">
+              <span>Task name</span>
+              <input id="taskName" type="text" maxlength="80" placeholder="What do you want to do?" required />
+            </label>
+
+            <fieldset class="reward-fieldset">
+              <legend>Pink Coin reward</legend>
+              <div class="reward-grid">
+                <label><input type="radio" name="taskReward" value="5" checked /><span>Easy<br><b>5</b></span></label>
+                <label><input type="radio" name="taskReward" value="10" /><span>Medium<br><b>10</b></span></label>
+                <label><input type="radio" name="taskReward" value="20" /><span>Big<br><b>20</b></span></label>
+                <label><input type="radio" name="taskReward" value="30" /><span>Extra<br><b>30</b></span></label>
+                <label><input id="customRewardRadio" type="radio" name="taskReward" value="custom" /><span>Custom</span></label>
+              </div>
+              <input id="customReward" class="custom-reward hidden" type="number" inputmode="numeric" min="1" max="999" placeholder="1–999" />
+            </fieldset>
+
+            <label class="form-field">
+              <span>Repeat</span>
+              <select id="taskRepeat">
+                <option value="once">One-time</option>
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="weekdays">Specific weekdays</option>
+                <option value="interval">Every X days</option>
+              </select>
+            </label>
+
+            <div id="weekdayOptions" class="repeat-extra hidden">
+              <span class="repeat-label">Which days?</span>
+              <div class="weekday-grid">
+                <label><input type="checkbox" value="0"><span>S</span></label>
+                <label><input type="checkbox" value="1"><span>M</span></label>
+                <label><input type="checkbox" value="2"><span>T</span></label>
+                <label><input type="checkbox" value="3"><span>W</span></label>
+                <label><input type="checkbox" value="4"><span>T</span></label>
+                <label><input type="checkbox" value="5"><span>F</span></label>
+                <label><input type="checkbox" value="6"><span>S</span></label>
+              </div>
+            </div>
+
+            <label id="intervalOptions" class="form-field repeat-extra hidden">
+              <span>Repeat every how many days?</span>
+              <input id="intervalDays" type="number" inputmode="numeric" min="2" max="365" value="10" />
+            </label>
+
+            <label class="save-template-toggle">
+              <input id="saveAsTemplate" type="checkbox" />
+              <span>
+                <b>Save this task for later</b>
+                <small>Keeps a reusable copy on your Saved tab.</small>
+              </span>
+            </label>
+
+            <div class="task-form-actions">
+              <button id="cancelTaskForm" class="secondary-button" type="button">Cancel</button>
+              <button class="primary-button" type="submit">Add Task</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section id="bookPanel" class="panel book-panel hidden" aria-label="Book menu">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">YOUR BOOK</p>
+            <h1>Menu</h1>
+          </div>
+          <button id="closeBook" class="close-button" type="button" aria-label="Close book">×</button>
+        </div>
+        <div class="book-grid">
+          <button data-book-page="tasks">✓ <span>Tasks</span></button>
+          <button class="book-menu-button" type="button" data-book-page="dailies">
+            <b>☀</b>
+            <span>Dailies</span>
+          </button>
+          <button data-book-page="inventory">🎒 <span>Inventory</span></button>
+          <button data-book-page="shop">♡ <span>Shop</span></button>
+          <button data-book-page="crafter">🦆 <span>Duck Crafter</span></button>
+          <button data-book-page="duckipedia">📖 <span>Duckipedia</span></button>
+          <button data-book-page="characters">👤 <span>Change OC</span></button>
+          <button data-book-page="games">🎮 <span>Games</span></button>
+          <button data-book-page="status">★ <span>Status</span></button>
+        </div>
+        <p class="save-note">Tasks, Dailies, Status, Inventory, Shop, Games, Duck Crafter, and Duckipedia are ready!</p>
+      </section>
+    </section>
+  </main>
+  <script src="script.js?v=10-bakery"></script>
+</body>
+</html>
