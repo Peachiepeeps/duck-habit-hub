@@ -12,25 +12,31 @@
     <section id="stage" class="stage" aria-label="Home room">
       <img id="roomImage" class="stage-layer room-layer" alt="Selected room" />
 
-      <div id="peepLayers" class="peep-layers" aria-label="Peep"></div>
-
+      <!-- Room objects intentionally sit BEHIND Peep. Their invisible hotspots stay clickable. -->
       <img class="stage-layer room-object" src="assets/ui/mirror.png" alt="" aria-hidden="true" />
       <img class="stage-layer room-object" src="assets/ui/book-room.png" alt="" aria-hidden="true" />
 
-      <button id="mirrorHotspot" class="hotspot mirror-hotspot" aria-label="Open closet">
+      <div id="peepWrap" class="peep-wrap">
+        <div id="peepLayers" class="peep-layers" aria-label="Peep"></div>
+        <button id="peepHotspot" class="peep-hotspot" type="button" aria-label="Poke Peep">
+          <span>Poke Peep</span>
+        </button>
+      </div>
+
+      <button id="mirrorHotspot" class="hotspot mirror-hotspot" type="button" aria-label="Open closet">
         <span>Closet</span>
       </button>
-      <button id="bookHotspot" class="hotspot book-hotspot" aria-label="Open book menu">
+      <button id="bookHotspot" class="hotspot book-hotspot" type="button" aria-label="Open book menu">
         <span>Book</span>
       </button>
 
       <div class="top-hud">
         <div class="room-picker-wrap">
-          <button id="roomPickerButton" class="hud-pill" aria-expanded="false">
-            <span id="roomPickerLabel">CreamRoom</span>
-            <span aria-hidden="true">▾</span>
+          <button id="roomPickerButton" class="room-swatch-button" type="button" aria-expanded="false" aria-label="Change room color">
+            <span id="roomPickerSwatch" class="room-swatch current-room-swatch" aria-hidden="true"></span>
+            <span class="room-picker-arrow" aria-hidden="true">▾</span>
           </button>
-          <div id="roomPicker" class="room-picker hidden" role="menu"></div>
+          <div id="roomPicker" class="room-picker hidden" role="menu" aria-label="Room colors"></div>
         </div>
 
         <div class="coin-pill" aria-label="Pink coin balance">
@@ -41,17 +47,20 @@
 
       <div id="toast" class="toast hidden" role="status"></div>
 
-      <section id="closetPanel" class="panel closet-panel hidden" aria-label="Closet">
-        <div class="panel-header">
-          <div>
-            <p class="eyebrow">MIRROR</p>
-            <h1>Peep's Closet</h1>
+      <section id="closetPanel" class="closet-panel hidden" aria-label="Peep's closet">
+        <div class="closet-panel-top">
+          <div class="closet-category-wrap">
+            <button id="closetCategoryButton" class="closet-category-button" type="button" aria-expanded="false">
+              <span id="closetCategoryLabel">Hair</span>
+              <span aria-hidden="true">▾</span>
+            </button>
+            <div id="closetCategoryMenu" class="closet-category-menu hidden"></div>
           </div>
-          <button id="closeCloset" class="close-button" aria-label="Return to room">×</button>
+          <button id="closeCloset" class="close-button closet-close" type="button" aria-label="Return to room">×</button>
         </div>
-        <div id="closetTabs" class="closet-tabs"></div>
+
         <div id="closetOptions" class="closet-options"></div>
-        <p class="save-note">Your outfit saves automatically on this device.</p>
+        <p class="save-note">Outfit changes save automatically.</p>
       </section>
 
       <section id="bookPanel" class="panel book-panel hidden" aria-label="Book menu">
@@ -60,7 +69,7 @@
             <p class="eyebrow">YOUR BOOK</p>
             <h1>Menu</h1>
           </div>
-          <button id="closeBook" class="close-button" aria-label="Close book">×</button>
+          <button id="closeBook" class="close-button" type="button" aria-label="Close book">×</button>
         </div>
         <div class="book-grid">
           <button data-book-page="tasks">✓ <span>Tasks</span></button>
