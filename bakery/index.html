@@ -1,0 +1,2507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>♡ Love & Sweets ♡</title>
+
+<style>
+:root{
+  --bg:#fff7fb;
+  --panel:#fffdf8;
+  --ink:#8a4f68;
+  --pink:#C9E3FF;
+  --cream:#fff2d9;
+  --line:#e8c8d6;
+  --tile:#fffaf5;
+}
+
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  min-height:100%;
+
+  background-image:url("../assets/bakery/backgrounds/Bakery-background.PNG");
+  background-repeat:repeat;
+  background-size:180px auto;
+  background-position:top left;
+
+  font-family:"Trebuchet MS",Arial,sans-serif;
+  color:var(--ink);
+}
+
+body{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  padding:14px;
+}
+
+.game{
+  width:min(100%,520px);
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.title{
+  text-align:center;
+  font-size:36px;
+  font-weight:900;
+  color:#ff4f9a;
+  letter-spacing:.4px;
+  text-shadow:
+    0 2px 0 rgba(255,255,255,.95),
+    0 4px 10px rgba(255,79,154,.24);
+}
+
+.subtitle{
+  text-align:center;
+  font-size:13px;
+  color:#b47b94;
+  margin-top:-8px;
+}
+
+.topbar{
+  display:flex;
+  gap:8px;
+}
+
+.stat{
+  flex:1;
+  background:var(--panel);
+  border:3px solid white;
+  border-radius:18px;
+  box-shadow:0 5px 16px rgba(120,70,100,.12);
+  padding:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:54px;
+  font-weight:800;
+  text-align:center;
+}
+
+.coin-icon{
+  width:28px;
+  height:28px;
+  object-fit:contain;
+  margin-right:5px;
+}
+
+.goal-cake-icon{
+  width:34px;
+  height:34px;
+  object-fit:contain;
+  margin-right:5px;
+}
+
+.energy-stat{
+  flex-direction:column;
+  gap:2px;
+}
+
+.energy-label{
+  font-size:10px;
+  line-height:1;
+  color:#b47b94;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+
+.energy-heart{
+  position:relative;
+  width:40px;
+  height:36px;
+  line-height:36px;
+  text-align:center;
+  font-size:38px;
+  font-family:Arial,sans-serif;
+}
+
+.energy-heart-outline,
+.energy-heart-fill{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.energy-heart-outline{
+  color:#e9a9c2;
+}
+
+.energy-heart-fill-wrap{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+  height:100%;
+  bottom:0;
+  top:auto;
+  transition:height .25s ease;
+}
+
+.energy-heart-fill{
+  color:#ef78a8;
+  bottom:0;
+  top:auto;
+  height:36px;
+}
+
+.free-bakes{
+  min-height:12px;
+  font-size:10px;
+  line-height:1.1;
+  color:#ff4f9a;
+  font-weight:900;
+}
+
+.refill-item{
+  animation:refillPulse 1.2s ease-in-out infinite alternate;
+  filter:drop-shadow(0 0 5px rgba(239,120,168,.45));
+}
+
+@keyframes refillPulse{
+  from{transform:scale(.92)}
+  to{transform:scale(1.06)}
+}
+
+.board-wrap{
+  position:relative;
+  background:linear-gradient(#fffdf8,#fff7ef);
+  border:4px solid white;
+  border-radius:24px;
+  box-shadow:0 10px 28px rgba(120,70,100,.16);
+  padding:9px;
+}
+
+.board{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:4px;
+  touch-action:none;
+}
+
+.cell{
+  aspect-ratio:1;
+  background:var(--tile);
+  border:2px solid var(--line);
+  border-radius:11px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  touch-action:none;
+  -webkit-tap-highlight-color:transparent;
+  position:relative;
+}
+
+.cell.selected{
+  outline:3px solid #f4a9c8;
+  outline-offset:-3px;
+}
+
+.cell.celebrating{
+  overflow:visible;
+  z-index:20;
+}
+
+.item{
+  width:90%;
+  height:90%;
+  object-fit:contain;
+  pointer-events:none;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+
+.cell.celebrating .item{
+  animation:weddingCakePop 950ms cubic-bezier(.2,.8,.25,1) both;
+  filter:drop-shadow(0 0 7px rgba(255,192,215,.9));
+}
+
+.sparkle{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#fff7b8;
+  box-shadow:0 0 8px rgba(255,216,100,.95);
+  pointer-events:none;
+  animation:sparkleBurst 850ms ease-out forwards;
+  z-index:30;
+}
+
+@keyframes weddingCakePop{
+  0%{transform:scale(.55);opacity:.1}
+  20%{transform:scale(1.25);opacity:1}
+  42%{transform:scale(1);opacity:1}
+  70%{transform:scale(1.08);opacity:1}
+  100%{transform:scale(.72);opacity:0}
+}
+
+@keyframes sparkleBurst{
+  0%{
+    transform:translate(-50%,-50%) scale(.2);
+    opacity:0;
+  }
+  15%{opacity:1}
+  100%{
+    transform:translate(var(--dx),var(--dy)) scale(1.3);
+    opacity:0;
+  }
+}
+
+/* End-of-round bonus sweep */
+.endgame-sweep-banner{
+  position:absolute;
+  left:50%;
+  top:8px;
+  z-index:90;
+  transform:translate(-50%,-8px) scale(.92);
+  opacity:0;
+  pointer-events:none;
+  white-space:nowrap;
+  padding:7px 13px;
+  border:3px solid white;
+  border-radius:999px;
+  background:rgba(255,248,252,.96);
+  color:#a65c7f;
+  font-size:13px;
+  font-weight:1000;
+  box-shadow:0 5px 16px rgba(120,70,100,.16);
+  transition:opacity .22s ease, transform .22s ease;
+}
+.endgame-sweep-banner.show{
+  opacity:1;
+  transform:translate(-50%,0) scale(1);
+}
+.cell.endgame-merge .item{
+  animation:endgameMergePop 520ms cubic-bezier(.2,.8,.25,1) both;
+  filter:drop-shadow(0 0 7px rgba(255,192,215,.9));
+}
+.cell.endgame-redeem .item{
+  animation:endgameRedeem 520ms ease-out both;
+  filter:drop-shadow(0 0 8px rgba(255,216,100,.95));
+}
+@keyframes endgameMergePop{
+  0%{transform:scale(.72)}
+  45%{transform:scale(1.18)}
+  100%{transform:scale(1)}
+}
+@keyframes endgameRedeem{
+  0%{transform:scale(1);opacity:1}
+  45%{transform:scale(1.22);opacity:1}
+  100%{transform:scale(.72);opacity:0}
+}
+@media(max-width:420px){
+  .endgame-sweep-banner{
+    top:6px;
+    padding:5px 10px;
+    font-size:11px;
+    border-width:2px;
+  }
+}
+
+.controls{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+}
+
+/* Small emergency Energy purchase under the main controls. */
+.energy-buy-row{
+  display:flex;
+  justify-content:center;
+  margin-top:-3px;
+}
+#buyEnergyBtn{
+  width:min(100%,260px);
+  min-height:42px;
+  padding:9px 13px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  border:3px solid white;
+  border-radius:16px;
+  background:#fff2d9;
+  color:#8a4f68;
+  box-shadow:0 4px 12px rgba(120,70,100,.11);
+}
+#buyEnergyBtn .energy-buy-label{
+  font-weight:1000;
+}
+#buyEnergyBtn .energy-buy-cost{
+  display:inline-flex;
+  align-items:center;
+  gap:3px;
+  padding-left:8px;
+  border-left:2px solid rgba(138,79,104,.15);
+  font-size:13px;
+}
+#buyEnergyBtn .energy-buy-cost img{
+  width:20px;
+  height:20px;
+  object-fit:contain;
+}
+#buyEnergyBtn:disabled{
+  opacity:.48;
+  cursor:not-allowed;
+  box-shadow:none;
+}
+#buyEnergyBtn:not(:disabled):active{
+  transform:scale(.98);
+}
+
+/* Tiny sparkle/pulse when purchased Energy is added. */
+.energy-heart.energy-purchased{
+  animation:energyPurchasePulse 620ms cubic-bezier(.2,.8,.25,1);
+}
+.energy-heart.energy-purchased::before,
+.energy-heart.energy-purchased::after{
+  position:absolute;
+  z-index:8;
+  color:#ffd36a;
+  text-shadow:0 0 6px rgba(255,211,106,.8);
+  pointer-events:none;
+  animation:energyPurchaseSparkle 620ms ease-out both;
+}
+.energy-heart.energy-purchased::before{
+  content:"✦";
+  left:-9px;
+  top:-8px;
+  font-size:17px;
+}
+.energy-heart.energy-purchased::after{
+  content:"✧";
+  right:-10px;
+  top:2px;
+  font-size:16px;
+  animation-delay:70ms;
+}
+@keyframes energyPurchasePulse{
+  0%{transform:scale(1)}
+  38%{transform:scale(1.18)}
+  100%{transform:scale(1)}
+}
+@keyframes energyPurchaseSparkle{
+  0%{opacity:0;transform:scale(.35) translateY(5px)}
+  25%{opacity:1}
+  100%{opacity:0;transform:scale(1.25) translateY(-9px)}
+}
+@media(max-width:420px){
+  #buyEnergyBtn{
+    width:min(100%,220px);
+    min-height:38px;
+    padding:7px 10px;
+    font-size:12px;
+  }
+  #buyEnergyBtn .energy-buy-cost img{
+    width:18px;
+    height:18px;
+  }
+}
+
+button{
+  border:0;
+  border-radius:18px;
+  padding:14px 10px;
+  font:inherit;
+  font-weight:900;
+  color:#7e4d63;
+  background:var(--pink);
+  box-shadow:0 5px 14px rgba(120,70,100,.13);
+  touch-action:manipulation;
+  -webkit-user-select:none;
+  user-select:none;
+}
+
+button.secondary{background:var(--cream)}
+button:disabled{opacity:.45}
+
+button.sort-button{
+  background:#f7e9ff;
+}
+
+.coin-drop-item{
+  animation:coinDropPulse 1.15s ease-in-out infinite alternate;
+  filter:drop-shadow(0 0 5px rgba(244,184,74,.45));
+}
+
+@keyframes coinDropPulse{
+  from{transform:scale(.92) rotate(-4deg)}
+  to{transform:scale(1.06) rotate(4deg)}
+}
+
+.progress,
+.message,
+.legend{
+  background:var(--panel);
+  border:3px solid white;
+  border-radius:18px;
+  box-shadow:0 5px 16px rgba(120,70,100,.10);
+  padding:10px 12px;
+}
+
+.progress-row{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  font-size:14px;
+}
+
+.cakes{
+  display:flex;
+  gap:8px;
+  justify-content:center;
+  margin-top:8px;
+}
+
+.cake-dot{
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  background:#f4dfe8;
+  border:2px solid #e9b8cc;
+}
+
+.cake-dot.done{background:#f08eb6}
+
+.message{
+  display:none;
+}
+
+.legend{
+  font-size:12px;
+  line-height:1.45;
+}
+
+.game-info{
+  background:var(--panel);
+  border:3px solid white;
+  border-radius:20px;
+  box-shadow:0 5px 16px rgba(120,70,100,.10);
+  padding:14px 14px 16px;
+  text-align:center;
+}
+
+.game-info .goal-line{
+  font-size:15px;
+  font-weight:900;
+  color:#7d405d;
+  margin-bottom:8px;
+}
+
+.game-info .cakes{
+  margin-top:0;
+  margin-bottom:12px;
+}
+
+.merge-title{
+  font-size:14px;
+  font-weight:900;
+  color:#9f5878;
+  margin-bottom:8px;
+}
+
+.merge-chain{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  margin-bottom:10px;
+}
+
+.chain-row{margin-bottom:10px}
+.chain-label{
+  font-size:12px;
+  font-weight:900;
+  color:#9f5878;
+  margin-bottom:4px;
+  text-decoration:underline;
+  text-underline-offset:3px;
+  text-decoration-thickness:2px;
+}
+
+.merge-step{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  font-size:12px;
+  font-weight:800;
+  color:#8a4f68;
+  white-space:nowrap;
+}
+
+.merge-step img{
+  width:28px;
+  height:28px;
+  object-fit:contain;
+}
+
+.merge-arrow{
+  font-size:16px;
+  color:#b47b94;
+  font-weight:900;
+}
+
+.game-info-text{
+  font-size:12px;
+  line-height:1.5;
+  color:#8a4f68;
+}
+
+@media(max-width:420px){
+  .merge-step{
+    font-size:11px;
+  }
+
+  .merge-step img{
+    width:25px;
+    height:25px;
+  }
+
+  .merge-arrow{
+    font-size:14px;
+  }
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(70,40,60,.25);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:999;
+}
+
+.modal.show{display:flex}
+
+.modal-card{
+  width:min(92vw,360px);
+  background:#fffdf8;
+  border:4px solid white;
+  border-radius:26px;
+  box-shadow:0 18px 45px rgba(80,45,65,.25);
+  padding:22px;
+  text-align:center;
+}
+
+.modal-card h2{
+  margin:0 0 8px;
+  color:#a65c7f;
+}
+
+@media(max-width:420px){
+  body{padding:9px}
+  .title{font-size:30px}
+  .stat{font-size:13px;min-height:48px}
+  .board{gap:3px}
+  .cell{border-radius:9px}
+}
+
+.hub-return-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  border:0;
+  border-radius:16px;
+  padding:10px 14px;
+  font:inherit;
+  font-weight:900;
+  cursor:pointer;
+  text-decoration:none;
+  background:#f3e9ff;
+  color:#57476f;
+  box-shadow:0 3px 8px rgba(52,38,75,.12);
+  -webkit-tap-highlight-color:transparent;
+}
+.hub-return-btn:active{
+  transform:scale(.98);
+}
+.hub-return-floating{
+  position:fixed;
+  top:12px;
+  left:12px;
+  z-index:150;
+}
+@media(max-width:700px){
+  .hub-return-floating{
+    top:8px;
+    left:8px;
+    padding:8px 11px;
+    font-size:12px;
+  }
+}
+
+
+.goal-stat{
+  flex-direction:column;
+  gap:2px;
+}
+.goal-total{
+  font-size:16px;
+  font-weight:900;
+}
+.goal-slots{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:8px;
+  margin:0 0 12px;
+}
+.goal-slot{
+  position:relative;
+  width:78px;
+  min-height:76px;
+  padding:6px 5px 5px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  border:2px solid #f0d6e1;
+  border-radius:14px;
+  background:#fffafc;
+  font-size:9px;
+  line-height:1.05;
+  font-weight:900;
+  color:#8a4f68;
+  text-align:center;
+}
+.goal-slot img{
+  width:42px;
+  height:42px;
+  object-fit:contain;
+}
+.goal-slot.done{
+  opacity:.48;
+  filter:saturate(.65);
+}
+.goal-slot.done::after{
+  content:"✓";
+  position:absolute;
+  right:4px;
+  top:3px;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#ef78a8;
+  color:white;
+  font-size:14px;
+  font-weight:900;
+}
+.golden-heart-item{
+  animation:goldenHeartPulse 1s ease-in-out infinite alternate;
+  filter:drop-shadow(0 0 7px rgba(255,185,70,.65));
+}
+@keyframes goldenHeartPulse{
+  from{transform:scale(.92)}
+  to{transform:scale(1.08)}
+}
+.rose-gold-coin-item{
+  animation:roseCoinPulse 1s ease-in-out infinite alternate;
+  filter:drop-shadow(0 0 6px rgba(238,135,120,.55));
+}
+@keyframes roseCoinPulse{
+  from{transform:scale(.92) rotate(-4deg)}
+  to{transform:scale(1.07) rotate(4deg)}
+}
+@media(max-width:420px){
+  .goal-slot{width:66px;min-height:66px}
+  .goal-slot img{width:35px;height:35px}
+}
+
+
+.goal-slot-count{
+  font-size:11px;
+  font-weight:900;
+  color:#a65c7f;
+  line-height:1;
+}
+
+.goal-slot-progress{
+  font-size:9px;
+  font-weight:800;
+  color:#b47b94;
+  line-height:1;
+}
+
+
+/* Compact play HUD */
+.coin-window{
+  position:fixed;
+  top:12px;
+  right:12px;
+  z-index:160;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  min-width:58px;
+  height:34px;
+  padding:4px 8px;
+  background:rgba(255,253,248,.96);
+  border:3px solid white;
+  border-radius:14px;
+  box-shadow:0 4px 12px rgba(120,70,100,.14);
+  color:#8a4f68;
+  font-size:13px;
+  font-weight:900;
+}
+.coin-window .coin-icon{
+  width:21px;
+  height:21px;
+  margin:0;
+}
+.topbar{justify-content:center}
+.topbar .stat{
+  flex:0 1 auto;
+  min-height:44px;
+  padding:5px 10px;
+}
+.topbar .goal-stat{
+  min-width:96px;
+  flex-direction:row;
+  gap:7px;
+}
+.topbar .goal-stat .energy-label{margin:0}
+.topbar .goal-total{font-size:14px}
+.topbar .energy-stat{
+  min-width:96px;
+  flex-direction:row;
+  gap:6px;
+}
+.topbar .energy-label{font-size:9px}
+.topbar .energy-heart{
+  width:31px;
+  height:29px;
+  line-height:29px;
+  font-size:30px;
+}
+.topbar .energy-heart-fill{height:29px}
+.topbar .free-bakes{
+  max-width:44px;
+  font-size:9px;
+}
+.play-goals{
+  background:var(--panel);
+  border:3px solid white;
+  border-radius:18px;
+  box-shadow:0 5px 16px rgba(120,70,100,.10);
+  padding:7px 8px 8px;
+}
+.play-goals-label{
+  text-align:center;
+  font-size:10px;
+  line-height:1;
+  color:#b47b94;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  font-weight:900;
+  margin-bottom:6px;
+}
+.play-goals .goal-slots{
+  margin:0;
+  gap:6px;
+}
+.play-goals .goal-slot{
+  width:72px;
+  min-height:68px;
+  padding:4px;
+}
+.play-goals .goal-slot img{
+  width:37px;
+  height:37px;
+}
+@media(max-width:700px){
+  .coin-window{
+    top:8px;
+    right:8px;
+    min-width:52px;
+    height:30px;
+    padding:3px 7px;
+    border-width:2px;
+    font-size:12px;
+  }
+  .coin-window .coin-icon{
+    width:19px;
+    height:19px;
+  }
+}
+@media(max-width:420px){
+  .topbar{gap:5px}
+  .topbar .stat{
+    min-height:39px;
+    padding:4px 7px;
+  }
+  .topbar .goal-stat,
+  .topbar .energy-stat{
+    min-width:84px;
+  }
+  .play-goals{padding:6px}
+  .play-goals .goal-slots{gap:4px}
+  .play-goals .goal-slot{
+    width:61px;
+    min-height:60px;
+    font-size:8px;
+  }
+  .play-goals .goal-slot img{
+    width:31px;
+    height:31px;
+  }
+  .play-goals .goal-slot-count{font-size:10px}
+  .play-goals .goal-slot-progress{font-size:8px}
+}
+
+</style>
+</head>
+
+<body>
+<a class="hub-return-btn hub-return-floating bakery-home-link" href="../#games" aria-label="Back to Home Hub">← Back to Games</a>
+
+<div class="coin-window" aria-label="Pink Coins">
+  <img src="../assets/ui/pink-coin.png" class="coin-icon" alt="Pink Coin">
+  <span id="coins">0</span>
+</div>
+
+<div class="game">
+
+  <div class="title">♡ Love & Sweets ♡</div>
+
+  <div class="topbar">
+
+    <div class="stat goal-stat">
+      <div class="energy-label">Goals</div>
+      <div class="goal-total" id="goalText">0 / 5</div>
+    </div>
+
+    <div class="stat energy-stat" aria-label="Bake energy">
+      <div class="energy-label">Energy</div>
+      <div class="energy-heart" title="Bake energy">
+        <div class="energy-heart-outline">♡</div>
+        <div class="energy-heart-fill-wrap" id="energyFill">
+          <div class="energy-heart-fill">♥</div>
+        </div>
+      </div>
+      <div class="free-bakes" id="freeBakesText"></div>
+    </div>
+
+  </div>
+
+  <div class="play-goals">
+    <div class="play-goals-label">Current Goals</div>
+    <div class="goal-slots" id="goalSlots"></div>
+  </div>
+
+  <div class="board-wrap">
+    <div class="endgame-sweep-banner" id="endgameSweepBanner">✨ Bonus Sweep! ✨</div>
+    <div class="board" id="board"></div>
+  </div>
+
+  <div class="controls">
+    <button id="bakeBtn">Bake!</button>
+    <button class="sort-button" id="sortBtn">⇅ Sort</button>
+    <button class="secondary" id="newBtn">↻ New Board</button>
+  </div>
+
+  <div class="energy-buy-row">
+    <button id="buyEnergyBtn" type="button" aria-label="Buy 5 Energy for 5 Pink Coins">
+      <span class="energy-buy-label">♡ +5 Energy</span>
+      <span class="energy-buy-cost"><img src="../assets/ui/pink-coin.png" alt="">5</span>
+    </button>
+  </div>
+
+  <div class="game-info">
+
+    <div class="merge-title">
+      Merge Chains:
+    </div>
+
+    <div class="chain-row">
+      <div class="chain-label">Sweets</div>
+      <div class="merge-chain">
+        <span class="merge-step">Cookie <img src="../assets/food/Cookie.PNG" alt="Cookie"></span>
+        <span class="merge-arrow">→</span>
+        <span class="merge-step">Cake Slice <img src="../assets/food/Cake-slice.PNG" alt="Cake Slice"></span>
+        <span class="merge-arrow">→</span>
+        <span class="merge-step">Cupcake <img src="../assets/food/Cupcake.PNG" alt="Cupcake"></span>
+        <span class="merge-arrow">→</span>
+        <span class="merge-step">Cake <img src="../assets/food/Cake.PNG" alt="Cake"></span>
+        <span class="merge-arrow">→</span>
+        <span class="merge-step">Wedding Cake <img src="../assets/food/Wedding-cake.PNG" alt="Wedding Cake"></span>
+      </div>
+    </div>
+
+    <div class="chain-row">
+      <div class="chain-label">Drinks</div>
+      <div class="merge-chain">
+        <span class="merge-step">Water <img src="../assets/food/Water.PNG" alt="Water"></span>
+        <span class="merge-arrow">→</span>
+        <span class="merge-step">Milk <img src="../assets/food/Milk.PNG" alt="Milk"></span>
+        <span class="merge-arrow">→</span>
+        <span class="merge-step">Milk Tea <img src="../assets/food/Milk-tea.PNG" alt="Milk Tea"></span>
+        <span class="merge-arrow">→</span>
+        <span class="merge-step">Fancy Milk Tea <img src="../assets/food/Fancy-milk-tea.PNG" alt="Fancy Milk Tea"></span>
+        <span class="merge-arrow">→</span>
+        <span class="merge-step">Champagne <img src="../assets/food/Champagne.PNG" alt="Champagne"></span>
+      </div>
+    </div>
+
+    <div class="chain-row">
+      <div class="chain-label">Fruit</div>
+      <div class="merge-chain">
+        <span class="merge-step">Strawberry <img src="../assets/food/Strawberry.PNG" alt="Strawberry"></span>
+        <span class="merge-arrow">→</span>
+        <span class="merge-step">Fruit Cup <img src="../assets/food/Fruit-cup.PNG" alt="Fruit Cup"></span>
+        <span class="merge-arrow">→</span>
+        <span class="merge-step">Fruit Tart <img src="../assets/food/Fruit-tart.PNG" alt="Fruit Tart"></span>
+        <span class="merge-arrow">→</span>
+        <span class="merge-step">Shortcake <img src="../assets/food/Strawberry-shortcake.PNG" alt="Strawberry Shortcake"></span>
+        <span class="merge-arrow">→</span>
+        <span class="merge-step">Parfait <img src="../assets/food/Parfait.PNG" alt="Parfait"></span>
+      </div>
+    </div>
+
+    <div class="chain-row">
+      <div class="chain-label">Bread</div>
+      <div class="merge-chain">
+        <span class="merge-step">Flour <img src="../assets/food/Flour.PNG" alt="Flour"></span>
+        <span class="merge-arrow">→</span>
+        <span class="merge-step">Bread Loaf <img src="../assets/food/Bread-loaf.PNG" alt="Bread Loaf"></span>
+        <span class="merge-arrow">→</span>
+        <span class="merge-step">Croissant <img src="../assets/food/Croissant.PNG" alt="Croissant"></span>
+        <span class="merge-arrow">→</span>
+        <span class="merge-step">Concha <img src="../assets/food/Concha.PNG" alt="Concha"></span>
+        <span class="merge-arrow">→</span>
+        <span class="merge-step">Chocolate Brioche <img src="../assets/food/Chocolate-brioche.PNG" alt="Chocolate Brioche"></span>
+      </div>
+    </div>
+
+    <div class="chain-row">
+      <div class="chain-label">Date Gifts</div>
+      <div class="merge-chain">
+        <span class="merge-step">Love Letter <img src="../assets/gifts/Love-letter.PNG" alt="Love Letter"></span>
+        <span class="merge-arrow">→</span>
+        <span class="merge-step">Teddy Bear <img src="../assets/gifts/Teddy-bear.PNG" alt="Teddy Bear"></span>
+        <span class="merge-arrow">→</span>
+        <span class="merge-step">Bouquet <img src="../assets/gifts/Bouquet.PNG" alt="Bouquet"></span>
+        <span class="merge-arrow">→</span>
+        <span class="merge-step">Heart Locket <img src="../assets/gifts/Heart-locket.PNG" alt="Heart Locket"></span>
+        <span class="merge-arrow">→</span>
+        <span class="merge-step">Ring <img src="../assets/gifts/Rings.PNG" alt="Ring"></span>
+      </div>
+    </div>
+
+    <div class="game-info-text">
+      Match two identical items from the same chain to upgrade them.
+      Each round randomly chooses 5 final-item goals from Wedding Cake,
+      Champagne, Ring, Parfait, and Chocolate Brioche. Duplicates are possible.
+      Every final goal item sparkles, disappears, and grants +10 Pink Coins.
+      Champagne also restores half of a full Energy heart, and Rings also grant
+      5 free Bakes. Rare Pink Heart Refills and Gold Coins can appear when you press “BAKE”.
+      Tap a Pink Heart Refill for about 20% Energy, or merge two into a Gold Heart
+      that stays on the board until you double-tap it for half of a full Energy heart.
+      Tap a Gold Coin for +5 Pink Coins, or merge two Gold Coins into a Rose-gold Coin
+      that stays on the board until you double-tap it for +10 Pink Coins.
+      When the last goal is completed, a Bonus Sweep automatically merges all remaining
+      matching chain items and cashes out leftover coins before the round reward appears.
+    </div>
+
+    <div class="message" id="message" aria-live="polite"></div>
+
+  </div>
+
+</div>
+
+<div class="modal" id="winModal">
+  <div class="modal-card">
+    <h2>Bakery Complete! ♡</h2>
+    <p id="winGoalSummary">You completed all 5 goals!</p>
+    <p><strong>+50 Pink Coins</strong></p>
+    <div id="bakeryRewardBox" style="margin:12px auto 14px;padding:10px;border-radius:16px;background:#fff7fb;display:none;">
+      <div style="font-weight:900;margin-bottom:5px;">You also won:</div>
+      <img id="bakeryRewardImage" src="" alt="" style="width:72px;height:72px;object-fit:contain;display:block;margin:0 auto 4px;">
+      <div id="bakeryRewardName" style="font-weight:900;"></div>
+      <div id="bakeryRewardRarity" style="font-size:12px;font-weight:800;opacity:.72;margin-top:2px;"></div>
+    </div>
+    <button id="nextRoundBtn">Start New Bakery</button>
+    <a class="hub-return-btn bakery-home-link" href="../#games" style="margin-top:10px;">← Back to Games</a>
+  </div>
+</div>
+
+<script>
+const ROWS=8;
+const COLS=7;
+const SIZE=ROWS*COLS;
+
+/* =========================================================
+   ♡ LOVE & SWEETS — GAME DIFFICULTY SETTINGS ♡
+
+   You can safely change the numbers in THIS section
+   whenever you want to make the game easier or harder.
+
+   Percent chances are written as decimals:
+   0.10 = 10%
+   0.05 = 5%
+   0.025 = 2.5%
+   ========================================================= */
+
+/* ENERGY / HEART */
+const STARTING_BAKES = 72;
+const HEART_REFILL_CHANCE = 0.05;
+const HEART_REFILL_AMOUNT = Math.round(STARTING_BAKES*0.20);
+
+/* Emergency refill button: spend 5 Pink Coins for exactly +5 Energy. */
+const ENERGY_BUY_COST = 5;
+const ENERGY_BUY_AMOUNT = 5;
+
+const COIN_DROP_CHANCE = 0.0125;
+/* Chance for a Gold Coin to appear after pressing Bake.
+   0.01 = 1% chance. Tap it to collect +5 Pink Coins. */
+
+const RING_FREE_BAKES = 5;
+/* Number of free Bake presses earned by completing a Ring. */
+
+/* WHICH MERGE CHAIN APPEARS
+   These five numbers should add up to 1.00.
+   All five goal chains are evenly weighted. */
+const SWEETS_CHAIN_CHANCE = 0.20;
+const DRINKS_CHAIN_CHANCE = 0.20;
+const FRUIT_CHAIN_CHANCE = 0.20;
+const BREAD_CHAIN_CHANCE = 0.20;
+const GIFTS_CHAIN_CHANCE = 0.20;
+
+/* HOW ADVANCED A LUCKY DROP CAN BE
+   These three numbers should also add up to 1.00. */
+const BASE_ITEM_CHANCE = 0.88;
+const SECOND_ITEM_CHANCE = 0.10;
+const THIRD_ITEM_CHANCE = 0.02;
+
+/* REWARDS */
+const FINAL_ITEM_COIN_REWARD = 10;
+const ROUND_BONUS = 50;
+const ROUND_GOAL_COUNT = 5;
+const CHAMPAGNE_REFILL_AMOUNT = Math.floor(STARTING_BAKES/2);
+const GOLDEN_HEART_REFILL_AMOUNT = Math.floor(STARTING_BAKES/2);
+const GOLD_COIN_REWARD = 5;
+const ROSE_GOLD_COIN_REWARD = 10;
+
+/* =========================================================
+   ♡ END OF DIFFICULTY SETTINGS ♡
+   You should not need to change anything below this line.
+   ========================================================= */
+
+const CHAINS = {
+  sweets: [
+    {name:"Cookie", img:"../assets/food/Cookie.PNG"},
+    {name:"Cake Slice", img:"../assets/food/Cake-slice.PNG"},
+    {name:"Cupcake", img:"../assets/food/Cupcake.PNG"},
+    {name:"Cake", img:"../assets/food/Cake.PNG"},
+    {name:"Wedding Cake", img:"../assets/food/Wedding-cake.PNG"}
+  ],
+  drinks: [
+    {name:"Water", img:"../assets/food/Water.PNG"},
+    {name:"Milk", img:"../assets/food/Milk.PNG"},
+    {name:"Milk Tea", img:"../assets/food/Milk-tea.PNG"},
+    {name:"Fancy Milk Tea", img:"../assets/food/Fancy-milk-tea.PNG"},
+    {name:"Champagne", img:"../assets/food/Champagne.PNG"}
+  ],
+  fruit: [
+    {name:"Strawberry", img:"../assets/food/Strawberry.PNG"},
+    {name:"Fruit Cup", img:"../assets/food/Fruit-cup.PNG"},
+    {name:"Fruit Tart", img:"../assets/food/Fruit-tart.PNG"},
+    {name:"Strawberry Shortcake", img:"../assets/food/Strawberry-shortcake.PNG"},
+    {name:"Parfait", img:"../assets/food/Parfait.PNG"}
+  ],
+  bread: [
+    {name:"Flour", img:"../assets/food/Flour.PNG"},
+    {name:"Bread Loaf", img:"../assets/food/Bread-loaf.PNG"},
+    {name:"Croissant", img:"../assets/food/Croissant.PNG"},
+    {name:"Concha", img:"../assets/food/Concha.PNG"},
+    {name:"Chocolate Brioche", img:"../assets/food/Chocolate-brioche.PNG"}
+  ],
+  gifts: [
+    {name:"Love Letter", img:"../assets/gifts/Love-letter.PNG"},
+    {name:"Teddy Bear", img:"../assets/gifts/Teddy-bear.PNG"},
+    {name:"Bouquet", img:"../assets/gifts/Bouquet.PNG"},
+    {name:"Heart Locket", img:"../assets/gifts/Heart-locket.PNG"},
+    {name:"Ring", img:"../assets/gifts/Rings.PNG"}
+  ]
+};
+
+function makeItem(chain,level){
+  return {type:"item",chain,level};
+}
+
+function isMergeItem(value){
+  return value &&
+    typeof value==="object" &&
+    value.type==="item" &&
+    CHAINS[value.chain] &&
+    Number.isInteger(value.level);
+}
+
+function itemInfo(value){
+  return isMergeItem(value) ? CHAINS[value.chain][value.level] : null;
+}
+
+
+const GOAL_CHAINS=["sweets","drinks","gifts","fruit","bread"];
+
+function createGoalSet(){
+  return Array.from({length:ROUND_GOAL_COUNT},()=>
+    GOAL_CHAINS[Math.floor(Math.random()*GOAL_CHAINS.length)]
+  );
+}
+
+function finalItemInfo(chain){
+  const list=CHAINS[chain];
+  return list ? list[list.length-1] : null;
+}
+
+function completedGoalCount(){
+  return Array.isArray(state.goalDone)
+    ? state.goalDone.filter(Boolean).length
+    : 0;
+}
+
+function isRoundComplete(){
+  return completedGoalCount()>=ROUND_GOAL_COUNT;
+}
+
+function markGoalComplete(chain){
+  if(!Array.isArray(state.goals) || !Array.isArray(state.goalDone)) return false;
+  const i=state.goals.findIndex((goalChain,index)=>
+    goalChain===chain && !state.goalDone[index]
+  );
+  if(i<0) return false;
+  state.goalDone[i]=true;
+  return true;
+}
+
+let state={
+  board:Array(SIZE).fill(null),
+  coins:0,
+  cakesThisRound:0,
+  goals:createGoalSet(),
+  goalDone:Array(ROUND_GOAL_COUNT).fill(false),
+  lifetimeCakes:0,
+  bakeryWins:0,
+  bakesLeft:STARTING_BAKES,
+  freeBakes:0,
+  endSweepStarted:false,
+  roundSettled:false
+};
+
+let dragFrom=null;
+let dragGhost=null;
+let dragMoved=false;
+let tapSelected=null;
+let dragStartX=0;
+let dragStartY=0;
+let celebrating=false;
+let endGameSweeping=false;
+const bonusDoubleTapTimes={};
+const BONUS_DOUBLE_TAP_MS=420;
+
+const CHAIN_TOTAL=SWEETS_CHAIN_CHANCE+DRINKS_CHAIN_CHANCE+FRUIT_CHAIN_CHANCE+BREAD_CHAIN_CHANCE+GIFTS_CHAIN_CHANCE;
+const TIER_TOTAL=BASE_ITEM_CHANCE+SECOND_ITEM_CHANCE+THIRD_ITEM_CHANCE;
+
+if(Math.abs(CHAIN_TOTAL-1)>0.0001){
+  console.warn("Chain chances should add up to 1.00.");
+}
+if(Math.abs(TIER_TOTAL-1)>0.0001){
+  console.warn("Lucky-drop chances should add up to 1.00.");
+}
+
+const boardEl=document.getElementById("board");
+const coinsEl=document.getElementById("coins");
+const goalText=document.getElementById("goalText");
+const energyFill=document.getElementById("energyFill");
+const freeBakesText=document.getElementById("freeBakesText");
+const messageEl=document.getElementById("message");
+const bakeBtn=document.getElementById("bakeBtn");
+const buyEnergyBtn=document.getElementById("buyEnergyBtn");
+const energyHeartEl=document.querySelector(".energy-heart");
+const sortBtn=document.getElementById("sortBtn");
+const newBtn=document.getElementById("newBtn");
+const winModal=document.getElementById("winModal");
+const nextRoundBtn=document.getElementById("nextRoundBtn");
+const goalSlots=document.getElementById("goalSlots");
+const bakeryRewardBox=document.getElementById("bakeryRewardBox");
+const bakeryRewardImage=document.getElementById("bakeryRewardImage");
+const bakeryRewardName=document.getElementById("bakeryRewardName");
+const bakeryRewardRarity=document.getElementById("bakeryRewardRarity");
+const winGoalSummary=document.getElementById("winGoalSummary");
+const endgameSweepBanner=document.getElementById("endgameSweepBanner");
+
+
+const HUB_SAVE_KEY="duckHabitHubSave_v1";
+const BAKERY_SAVE_KEY="duckHabitHubBakery_v1";
+
+const BAKERY_REWARD_ITEMS=[
+  {id:"cookie",name:"Cookie",image:"../assets/food/Cookie.PNG",rarity:"Common"},
+  {id:"water",name:"Water",image:"../assets/food/Water.PNG",rarity:"Common"},
+  {id:"milk",name:"Milk",image:"../assets/food/Milk.PNG",rarity:"Common"},
+  {id:"cake-slice",name:"Cake Slice",image:"../assets/food/Cake-slice.PNG",rarity:"Common"},
+  {id:"cupcake",name:"Cupcake",image:"../assets/food/Cupcake.PNG",rarity:"Uncommon"},
+  {id:"milk-tea",name:"Milk Tea",image:"../assets/food/Milk-tea.PNG",rarity:"Uncommon"},
+  {id:"cake",name:"Cake",image:"../assets/food/Cake.PNG",rarity:"Rare"},
+  {id:"fancy-milk-tea",name:"Fancy Milk Tea",image:"../assets/food/Fancy-milk-tea.PNG",rarity:"Rare"}
+];
+
+function loadHubSave(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(HUB_SAVE_KEY));
+    return saved && typeof saved==="object" ? saved : {};
+  }catch(e){
+    return {};
+  }
+}
+
+function updateHubSave(mutator){
+  const hub=loadHubSave();
+  if(typeof hub.coins!=="number") hub.coins=0;
+  if(!hub.inventory || typeof hub.inventory!=="object") hub.inventory={};
+  if(!hub.stats || typeof hub.stats!=="object") hub.stats={};
+  mutator(hub);
+  localStorage.setItem(HUB_SAVE_KEY,JSON.stringify(hub));
+  return hub;
+}
+
+function hubCoinBalance(){
+  return Number(loadHubSave().coins||0);
+}
+
+function chooseBakeryReward(){
+  /* Common 70%, Uncommon 25%, Rare 5%. */
+  const roll=Math.random();
+  const rarity=roll<0.70 ? "Common" : roll<0.95 ? "Uncommon" : "Rare";
+  const pool=BAKERY_REWARD_ITEMS.filter(item=>item.rarity===rarity);
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+function awardBakeryItem(){
+  const reward=chooseBakeryReward();
+
+  updateHubSave(hub=>{
+    hub.inventory[reward.id]=Number(hub.inventory[reward.id]||0)+1;
+  });
+
+  bakeryRewardImage.src=reward.image;
+  bakeryRewardImage.alt=reward.name;
+  bakeryRewardName.textContent=reward.name;
+  bakeryRewardRarity.textContent=reward.rarity;
+  bakeryRewardBox.style.display="block";
+
+  return reward;
+}
+
+function recordBakeryWin(){
+  updateHubSave(hub=>{
+    hub.stats.bakeryWins=Number(hub.stats.bakeryWins||0)+1;
+  });
+}
+
+function save(){
+  localStorage.setItem(BAKERY_SAVE_KEY,JSON.stringify(state));
+
+  // Pink Coins are the Hub's currency. Bakery state keeps a local mirror only
+  // while this page is open; the Hub save is authoritative across the game.
+  updateHubSave(hub=>{
+    hub.coins=Number(state.coins||0);
+  });
+}
+
+function load(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(BAKERY_SAVE_KEY));
+
+    if(saved && Array.isArray(saved.board) && saved.board.length===SIZE){
+      state=saved;
+
+      state.board=state.board.map(value=>{
+        if(
+          value===null ||
+          value==="refill" ||
+          value==="golden-heart" ||
+          value==="coin" ||
+          value==="rose-gold-coin"
+        ) return value;
+
+        /* Migrate desserts saved by the older one-chain version. */
+        if(typeof value==="number"){
+          if(value===4) return null;
+          if(value>=0 && value<=3) return makeItem("sweets",value);
+          return null;
+        }
+
+        if(isMergeItem(value)){
+          /* Final items normally disappear after celebrating.
+             Remove any saved mid-celebration final item. */
+          const chain=CHAINS[value.chain];
+          if(chain && value.level===chain.length-1) return null;
+          return value;
+        }
+
+        return null;
+      });
+
+      if(typeof state.coins!=="number") state.coins=0;
+      if(typeof state.cakesThisRound!=="number") state.cakesThisRound=0;
+      if(typeof state.lifetimeCakes!=="number") state.lifetimeCakes=0;
+      if(typeof state.bakeryWins!=="number") state.bakeryWins=0;
+      if(typeof state.bakesLeft!=="number") state.bakesLeft=STARTING_BAKES;
+      if(typeof state.freeBakes!=="number") state.freeBakes=0;
+      if(typeof state.endSweepStarted!=="boolean") state.endSweepStarted=false;
+      if(typeof state.roundSettled!=="boolean") state.roundSettled=false;
+
+      const goalsOkay=
+        Array.isArray(state.goals) &&
+        state.goals.length===ROUND_GOAL_COUNT &&
+        state.goals.every(x=>GOAL_CHAINS.includes(x));
+
+      if(!goalsOkay){
+        state.goals=createGoalSet();
+        state.goalDone=Array(ROUND_GOAL_COUNT).fill(false);
+      }
+
+      if(
+        !Array.isArray(state.goalDone) ||
+        state.goalDone.length!==ROUND_GOAL_COUNT
+      ){
+        state.goalDone=Array(ROUND_GOAL_COUNT).fill(false);
+      }
+    }
+  }catch(e){}
+
+  // Always enter the Bakery with the latest shared Hub balance.
+  state.coins=hubCoinBalance();
+}
+function render(){
+  boardEl.innerHTML="";
+
+  state.board.forEach((item,i)=>{
+    const cell=document.createElement("div");
+    cell.className="cell";
+    cell.dataset.index=i;
+
+    if(item!==null){
+      const img=document.createElement("img");
+
+      if(item==="refill"){
+        img.src="../assets/bakery/drops/Pink-heart-refill.PNG";
+        img.className="item refill-item";
+        img.alt="Pink Heart Refill";
+      }else if(item==="golden-heart"){
+        img.src="../assets/bakery/drops/Gold-heart-refill.PNG";
+        img.className="item golden-heart-item";
+        img.alt="Gold Heart";
+      }else if(item==="coin"){
+        img.src="../assets/bakery/drops/Gold-coin.PNG";
+        img.className="item coin-drop-item";
+        img.alt="Gold Coin";
+      }else if(item==="rose-gold-coin"){
+        img.src="../assets/bakery/drops/Rose-gold-coin.PNG";
+        img.className="item rose-gold-coin-item";
+        img.alt="Rose-gold Coin";
+      }else{
+        const info=itemInfo(item);
+        if(info){
+          img.src=info.img;
+          img.className="item";
+          img.alt=info.name;
+        }
+      }
+
+      if(img.src) cell.appendChild(img);
+    }
+
+    cell.addEventListener("pointerdown",e=>beginDrag(e,i));
+    cell.addEventListener("click",e=>handleTap(e,i));
+
+    boardEl.appendChild(cell);
+  });
+
+  coinsEl.textContent=state.coins;
+
+  const completed=completedGoalCount();
+  goalText.textContent=`${completed} / ${ROUND_GOAL_COUNT}`;
+
+  goalSlots.innerHTML="";
+
+  const groupedGoals={};
+
+  state.goals.forEach((chain,i)=>{
+    if(!groupedGoals[chain]){
+      groupedGoals[chain]={
+        total:0,
+        done:0
+      };
+    }
+
+    groupedGoals[chain].total++;
+
+    if(state.goalDone[i]){
+      groupedGoals[chain].done++;
+    }
+  });
+
+  GOAL_CHAINS.forEach(chain=>{
+    const group=groupedGoals[chain];
+    if(!group) return;
+
+    const info=finalItemInfo(chain);
+    if(!info) return;
+
+    const slot=document.createElement("div");
+    slot.className="goal-slot"+(
+      group.done>=group.total ? " done" : ""
+    );
+
+    const img=document.createElement("img");
+    img.src=info.img;
+    img.alt=info.name;
+
+    const label=document.createElement("div");
+    label.textContent=info.name;
+
+    slot.appendChild(img);
+    slot.appendChild(label);
+
+    if(group.total>1){
+      const count=document.createElement("div");
+      count.className="goal-slot-count";
+      count.textContent=`×${group.total}`;
+      slot.appendChild(count);
+
+      if(group.done>0 && group.done<group.total){
+        const progress=document.createElement("div");
+        progress.className="goal-slot-progress";
+        progress.textContent=`${group.done}/${group.total} done`;
+        slot.appendChild(progress);
+      }
+    }
+
+    goalSlots.appendChild(slot);
+  });
+
+  const energyPercent=Math.max(0,Math.min(100,(state.bakesLeft/STARTING_BAKES)*100));
+  energyFill.style.height=energyPercent+"%";
+  energyFill.parentElement.setAttribute("title",`${state.bakesLeft} / ${STARTING_BAKES} energy`);
+
+  freeBakesText.textContent=
+    state.freeBakes>0 ? `FREE ×${state.freeBakes}` : "";
+
+  bakeBtn.disabled=
+    (state.bakesLeft<=0 && state.freeBakes<=0) ||
+    isRoundComplete() ||
+    celebrating;
+
+  if(buyEnergyBtn){
+    const hasRoomForFullPurchase=state.bakesLeft<=STARTING_BAKES-ENERGY_BUY_AMOUNT;
+    buyEnergyBtn.disabled=
+      state.coins<ENERGY_BUY_COST ||
+      !hasRoomForFullPurchase ||
+      isRoundComplete() ||
+      celebrating;
+
+    if(isRoundComplete()){
+      buyEnergyBtn.title="This Bakery round is complete.";
+    }else if(state.coins<ENERGY_BUY_COST){
+      buyEnergyBtn.title=`You need ${ENERGY_BUY_COST} Pink Coins.`;
+    }else if(!hasRoomForFullPurchase){
+      buyEnergyBtn.title=`You need room for the full +${ENERGY_BUY_AMOUNT} Energy refill.`;
+    }else{
+      buyEnergyBtn.title=`Spend ${ENERGY_BUY_COST} Pink Coins for +${ENERGY_BUY_AMOUNT} Energy.`;
+    }
+  }
+}
+
+function clearSelections(){
+  document.querySelectorAll(".cell.selected")
+    .forEach(c=>c.classList.remove("selected"));
+}
+
+function beginDrag(e,index){
+  if(celebrating) return;
+  if(state.board[index]===null) return;
+
+  if(state.board[index]==="refill"){
+    messageEl.textContent="💗 Tap for a small refill, or drag two Hearts together!";
+  }else if(state.board[index]==="coin"){
+    messageEl.textContent=`🪙 Tap for +${GOLD_COIN_REWARD} Pink Coins, or drag two Gold Coins together!`;
+  }else if(state.board[index]==="golden-heart"){
+    messageEl.textContent="✨ Double-tap the Gold Heart for half an Energy heart!";
+  }else if(state.board[index]==="rose-gold-coin"){
+    messageEl.textContent=`✨ Tap the Rose-gold Coin for +${ROSE_GOLD_COIN_REWARD}!`;
+  }
+
+  e.preventDefault();
+
+  dragFrom=index;
+  dragMoved=false;
+  dragStartX=e.clientX;
+  dragStartY=e.clientY;
+
+  clearSelections();
+  e.currentTarget.classList.add("selected");
+
+  const sourceImg=e.currentTarget.querySelector(".item");
+
+  if(sourceImg){
+    dragGhost=sourceImg.cloneNode(true);
+
+    dragGhost.style.position="fixed";
+    dragGhost.style.width=Math.min(72,window.innerWidth/7.5)+"px";
+    dragGhost.style.height=dragGhost.style.width;
+    dragGhost.style.left=e.clientX+"px";
+    dragGhost.style.top=e.clientY+"px";
+    dragGhost.style.transform="translate(-50%, -50%) scale(1.08)";
+    dragGhost.style.pointerEvents="none";
+    dragGhost.style.zIndex="2000";
+    dragGhost.style.filter="drop-shadow(0 5px 5px rgba(90,50,70,.25))";
+
+    document.body.appendChild(dragGhost);
+  }
+
+  document.addEventListener("pointermove",dragMove,{passive:false});
+  document.addEventListener("pointerup",dragEnd,{passive:false});
+  document.addEventListener("pointercancel",dragCancel,{passive:false});
+}
+
+function dragMove(e){
+  if(dragFrom===null) return;
+
+  e.preventDefault();
+
+  if(
+    Math.abs(e.clientX-dragStartX)>7 ||
+    Math.abs(e.clientY-dragStartY)>7
+  ){
+    dragMoved=true;
+  }
+
+  if(dragGhost){
+    dragGhost.style.left=e.clientX+"px";
+    dragGhost.style.top=e.clientY+"px";
+  }
+}
+
+function getCellUnderPoint(x,y){
+  const element=document.elementFromPoint(x,y);
+  const cell=element?.closest?.(".cell");
+
+  if(!cell || !boardEl.contains(cell)) return null;
+
+  return Number(cell.dataset.index);
+}
+
+function cleanDrag(){
+  document.removeEventListener("pointermove",dragMove);
+  document.removeEventListener("pointerup",dragEnd);
+  document.removeEventListener("pointercancel",dragCancel);
+
+  if(dragGhost){
+    dragGhost.remove();
+    dragGhost=null;
+  }
+
+  clearSelections();
+}
+
+function dragEnd(e){
+  if(dragFrom===null) return;
+
+  e.preventDefault();
+
+  const from=dragFrom;
+  const to=getCellUnderPoint(e.clientX,e.clientY);
+
+  cleanDrag();
+  dragFrom=null;
+
+  if(dragMoved && to!==null && to!==from){
+    tapSelected=null;
+    moveOrMerge(from,to);
+  }
+}
+
+function dragCancel(){
+  cleanDrag();
+  dragFrom=null;
+}
+
+function handleTap(e,index){
+  if(celebrating) return;
+
+  if(dragMoved){
+    dragMoved=false;
+    return;
+  }
+
+  const current=state.board[index];
+
+  if(current==="golden-heart" || current==="rose-gold-coin"){
+    const now=Date.now();
+    const last=Number(bonusDoubleTapTimes[index]||0);
+
+    if(now-last<=BONUS_DOUBLE_TAP_MS){
+      bonusDoubleTapTimes[index]=0;
+      activateSavedBonus(index,current);
+    }else{
+      bonusDoubleTapTimes[index]=now;
+      messageEl.textContent=current==="golden-heart"
+        ? "💛 Double-tap the Gold Heart when you want half an Energy heart!"
+        : `🌹 Double-tap the Rose-gold Coin when you want +${ROSE_GOLD_COIN_REWARD} Pink Coins!`;
+    }
+    return;
+  }
+
+  if(current==="coin"){
+    state.board[index]=null;
+    state.coins+=GOLD_COIN_REWARD;
+    messageEl.textContent=`🪙 Gold Coin collected! +${GOLD_COIN_REWARD} Pink Coins`;
+    save();
+    render();
+    return;
+  }
+
+  if(current==="refill"){
+    state.board[index]=null;
+    const before=state.bakesLeft;
+    state.bakesLeft=Math.min(STARTING_BAKES,state.bakesLeft+HEART_REFILL_AMOUNT);
+    const gained=state.bakesLeft-before;
+
+    messageEl.textContent=gained>0
+      ? `💗 Pink Heart Refill! +${gained} energy`
+      : "💗 Your heart is already full!";
+
+    save();
+    render();
+    return;
+  }
+
+  if(tapSelected===null){
+    if(state.board[index]===null) return;
+
+    tapSelected=index;
+    clearSelections();
+    boardEl.children[index]?.classList.add("selected");
+
+    messageEl.textContent=
+      "Tap or swipe an empty square to move it, or a matching item to merge.";
+
+    return;
+  }
+
+  const from=tapSelected;
+
+  if(from===index){
+    tapSelected=null;
+    clearSelections();
+    return;
+  }
+
+  tapSelected=null;
+  clearSelections();
+
+  moveOrMerge(from,index);
+}
+
+function prettyName(item){
+  const info=itemInfo(item);
+  return info ? info.name : "Item";
+}
+
+function sparkleFinalItem(cellIndex){
+  const cell=boardEl.children[cellIndex];
+
+  if(!cell) return;
+
+  cell.classList.add("celebrating");
+
+  const bursts=[
+    [-36,-38],
+    [0,-48],
+    [36,-36],
+    [-46,0],
+    [46,3],
+    [-34,36],
+    [2,48],
+    [36,34]
+  ];
+
+  bursts.forEach(([x,y],i)=>{
+    const sparkle=document.createElement("span");
+
+    sparkle.className="sparkle";
+    sparkle.style.setProperty("--dx",x+"px");
+    sparkle.style.setProperty("--dy",y+"px");
+    sparkle.style.animationDelay=(i*35)+"ms";
+
+    cell.appendChild(sparkle);
+  });
+}
+
+
+function waitMs(ms){
+  return new Promise(resolve=>setTimeout(resolve,ms));
+}
+
+function sparkleEndgameCell(index,mode="merge"){
+  const cell=boardEl.children[index];
+  if(!cell) return;
+
+  cell.classList.add(mode==="redeem" ? "endgame-redeem" : "endgame-merge");
+
+  const bursts=[
+    [-27,-28],[0,-35],[28,-25],[-34,0],[34,2],[-25,27],[2,34],[27,25]
+  ];
+
+  bursts.forEach(([x,y],i)=>{
+    const sparkle=document.createElement("span");
+    sparkle.className="sparkle";
+    sparkle.style.setProperty("--dx",x+"px");
+    sparkle.style.setProperty("--dy",y+"px");
+    sparkle.style.animationDelay=(i*28)+"ms";
+    cell.appendChild(sparkle);
+  });
+}
+
+function findEndgameMergePair(){
+  for(const chainName of GOAL_CHAINS){
+    const chain=CHAINS[chainName];
+
+    for(let level=chain.length-2;level>=0;level--){
+      const matches=[];
+
+      state.board.forEach((value,index)=>{
+        if(
+          isMergeItem(value) &&
+          value.chain===chainName &&
+          value.level===level
+        ){
+          matches.push(index);
+        }
+      });
+
+      if(matches.length>=2){
+        return {from:matches[0],to:matches[1],chainName,level};
+      }
+    }
+  }
+
+  return null;
+}
+
+async function runEndgameItemMerges(){
+  while(true){
+    const pair=findEndgameMergePair();
+    if(!pair) break;
+
+    const chain=CHAINS[pair.chainName];
+    const nextItem=makeItem(pair.chainName,pair.level+1);
+
+    state.board[pair.from]=null;
+    state.board[pair.to]=nextItem;
+
+    render();
+
+    if(nextItem.level===chain.length-1){
+      sparkleFinalItem(pair.to);
+      await waitMs(950);
+
+      if(
+        isMergeItem(state.board[pair.to]) &&
+        state.board[pair.to].chain===pair.chainName &&
+        state.board[pair.to].level===nextItem.level
+      ){
+        state.board[pair.to]=null;
+        state.coins+=FINAL_ITEM_COIN_REWARD;
+
+        if(pair.chainName==="sweets"){
+          state.lifetimeCakes++;
+        }
+      }
+
+      save();
+      render();
+      await waitMs(180);
+    }else{
+      sparkleEndgameCell(pair.to,"merge");
+      save();
+      await waitMs(470);
+      render();
+    }
+  }
+}
+
+async function runEndgameCoinSweep(){
+  /* Two normal Pink Coins are worth more merged into a Rose-gold Coin,
+     so pair them first, then automatically cash out every coin prize. */
+  while(true){
+    const normalCoinIndexes=[];
+    state.board.forEach((value,index)=>{
+      if(value==="coin") normalCoinIndexes.push(index);
+    });
+
+    if(normalCoinIndexes.length<2) break;
+
+    const from=normalCoinIndexes[0];
+    const to=normalCoinIndexes[1];
+    state.board[from]=null;
+    state.board[to]="rose-gold-coin";
+    render();
+    sparkleEndgameCell(to,"merge");
+    save();
+    await waitMs(470);
+    render();
+  }
+
+  while(true){
+    const roseIndex=state.board.findIndex(value=>value==="rose-gold-coin");
+    if(roseIndex<0) break;
+
+    sparkleEndgameCell(roseIndex,"redeem");
+    await waitMs(430);
+    state.board[roseIndex]=null;
+    state.coins+=ROSE_GOLD_COIN_REWARD;
+    save();
+    render();
+    await waitMs(120);
+  }
+
+  while(true){
+    const coinIndex=state.board.findIndex(value=>value==="coin");
+    if(coinIndex<0) break;
+
+    sparkleEndgameCell(coinIndex,"redeem");
+    await waitMs(380);
+    state.board[coinIndex]=null;
+    state.coins+=GOLD_COIN_REWARD;
+    save();
+    render();
+    await waitMs(100);
+  }
+}
+
+async function beginEndGameSweep(){
+  if(endGameSweeping || state.roundSettled) return;
+  if(!isRoundComplete()) return;
+
+  endGameSweeping=true;
+  celebrating=true;
+  state.endSweepStarted=true;
+  state.roundSettled=false;
+  stopBakeHold();
+
+  const coinsBeforeSweep=state.coins;
+
+  save();
+  render();
+
+  if(endgameSweepBanner){
+    endgameSweepBanner.classList.add("show");
+  }
+
+  await waitMs(400);
+  await runEndgameItemMerges();
+  await runEndgameCoinSweep();
+  await waitMs(280);
+
+  const sweepCoins=Math.max(0,state.coins-coinsBeforeSweep);
+
+  /* The normal +50 clear reward is paid only after the sweep is finished. */
+  state.coins+=ROUND_BONUS;
+  state.bakeryWins++;
+  recordBakeryWin();
+  const reward=awardBakeryItem();
+  state.roundSettled=true;
+
+  winGoalSummary.textContent=sweepCoins>0
+    ? `You completed all ${ROUND_GOAL_COUNT} goals! Bonus Sweep: +${sweepCoins} extra Pink Coins!`
+    : `You completed all ${ROUND_GOAL_COUNT} goals!`;
+
+  messageEl.textContent=sweepCoins>0
+    ? `Bonus Sweep complete! +${sweepCoins} extra Pink Coins, +${ROUND_BONUS} clear bonus, and ${reward.name}!`
+    : `Bakery complete! +${ROUND_BONUS} Pink Coins and ${reward.name}!`;
+
+  save();
+  render();
+
+  if(endgameSweepBanner){
+    endgameSweepBanner.classList.remove("show");
+  }
+
+  await waitMs(260);
+
+  celebrating=false;
+  endGameSweeping=false;
+  winModal.classList.add("show");
+}
+
+function activateSavedBonus(index,type){
+  const cell=boardEl.children[index];
+  if(!cell) return;
+
+  celebrating=true;
+  cell.classList.add("celebrating");
+  sparkleFinalItem(index);
+
+  if(type==="golden-heart"){
+    messageEl.textContent="✨ Gold Heart activated! ✨";
+  }else{
+    messageEl.textContent="✨ Rose-gold Coin activated! ✨";
+  }
+
+  setTimeout(()=>{
+    if(state.board[index]!==type){
+      celebrating=false;
+      render();
+      return;
+    }
+
+    state.board[index]=null;
+
+    if(type==="golden-heart"){
+      const before=state.bakesLeft;
+      state.bakesLeft=Math.min(
+        STARTING_BAKES,
+        state.bakesLeft+GOLDEN_HEART_REFILL_AMOUNT
+      );
+      const gained=state.bakesLeft-before;
+
+      messageEl.textContent=gained>0
+        ? `💛 Gold Heart! +${gained} Energy!`
+        : "💛 Your Energy is already full!";
+    }else{
+      state.coins+=ROSE_GOLD_COIN_REWARD;
+      messageEl.textContent=`🌹 Rose-gold Coin! +${ROSE_GOLD_COIN_REWARD} Pink Coins`;
+    }
+
+    celebrating=false;
+    save();
+    render();
+    checkRoundEnd();
+  },950);
+}
+
+function isBonusItem(value){
+  return value==="refill" ||
+    value==="golden-heart" ||
+    value==="coin" ||
+    value==="rose-gold-coin";
+}
+
+function moveOrMerge(from,to){
+  if(celebrating) return;
+
+  const a=state.board[from];
+  const b=state.board[to];
+
+  if(a===null) return;
+
+  if(isBonusItem(a)){
+    if(b===null){
+      state.board[to]=a;
+      state.board[from]=null;
+      messageEl.textContent="Moved!";
+      save();
+      render();
+      return;
+    }
+
+    if(a==="refill" && b==="refill"){
+      state.board[from]=null;
+      state.board[to]="golden-heart";
+      messageEl.textContent="✨ Gold Heart! Save it and double-tap it for half an Energy heart!";
+      save();
+      render();
+      return;
+    }
+
+    if(a==="coin" && b==="coin"){
+      state.board[from]=null;
+      state.board[to]="rose-gold-coin";
+      messageEl.textContent=`✨ Rose-gold Coin! Save it and double-tap it for +${ROSE_GOLD_COIN_REWARD} Pink Coins!`;
+      save();
+      render();
+      return;
+    }
+
+    messageEl.textContent="Those bonus items don't match!";
+    return;
+  }
+
+  if(!isMergeItem(a)) return;
+
+  if(b===null){
+    state.board[to]=a;
+    state.board[from]=null;
+    messageEl.textContent="Moved!";
+    save();
+    render();
+    return;
+  }
+
+  if(!isMergeItem(b)){
+    messageEl.textContent="Those don't match!";
+    return;
+  }
+
+  if(a.chain!==b.chain || a.level!==b.level){
+    messageEl.textContent="Those don't match!";
+    return;
+  }
+
+  const chain=CHAINS[a.chain];
+
+  if(a.level>=chain.length-1){
+    messageEl.textContent=`${prettyName(a)} is already the final item in this chain!`;
+    return;
+  }
+
+  const nextItem=makeItem(a.chain,a.level+1);
+  state.board[from]=null;
+
+  if(nextItem.level===chain.length-1){
+    state.board[to]=nextItem;
+    celebrating=true;
+    messageEl.textContent=`✨ ${prettyName(nextItem)}! ✨`;
+
+    render();
+    sparkleFinalItem(to);
+
+    setTimeout(()=>{
+      state.board[to]=null;
+      celebrating=false;
+
+      const goalHit=GOAL_CHAINS.includes(a.chain)
+        ? markGoalComplete(a.chain)
+        : false;
+
+      /* Every final item pays out 10 coins, even if that specific
+         final wasn't needed by the current goal list. */
+      state.coins+=FINAL_ITEM_COIN_REWARD;
+
+      const notes=[];
+
+      if(goalHit){
+        notes.push("Goal complete!");
+      }else if(GOAL_CHAINS.includes(a.chain)){
+        notes.push(`${prettyName(nextItem)} wasn't needed for this goal set`);
+      }
+
+      notes.push(`+${FINAL_ITEM_COIN_REWARD} Pink Coins`);
+
+      if(a.chain==="sweets"){
+        state.lifetimeCakes++;
+      }
+
+      if(a.chain==="drinks"){
+        const before=state.bakesLeft;
+        state.bakesLeft=Math.min(
+          STARTING_BAKES,
+          state.bakesLeft+CHAMPAGNE_REFILL_AMOUNT
+        );
+        const gained=state.bakesLeft-before;
+        notes.push(
+          gained>0
+            ? `Champagne restored +${gained} Energy`
+            : "Your Energy was already full"
+        );
+      }
+
+      if(a.chain==="gifts"){
+        state.freeBakes+=RING_FREE_BAKES;
+        notes.push(`Love Rush! Next ${RING_FREE_BAKES} Bakes are free`);
+      }
+
+      messageEl.textContent=notes.join(" ");
+
+      if(isRoundComplete()){
+        save();
+        render();
+        beginEndGameSweep();
+        return;
+      }
+
+      save();
+      render();
+      checkRoundEnd();
+    },950);
+
+    save();
+    return;
+  }
+
+  state.board[to]=nextItem;
+  messageEl.textContent=`Merged into ${prettyName(nextItem)}!`;
+
+  save();
+  render();
+  checkRoundEnd();
+}
+
+function randomChain(){
+  const r=Math.random();
+
+  if(r<SWEETS_CHAIN_CHANCE) return "sweets";
+  if(r<SWEETS_CHAIN_CHANCE+DRINKS_CHAIN_CHANCE) return "drinks";
+  if(r<SWEETS_CHAIN_CHANCE+DRINKS_CHAIN_CHANCE+FRUIT_CHAIN_CHANCE) return "fruit";
+  if(
+    r<
+    SWEETS_CHAIN_CHANCE+
+    DRINKS_CHAIN_CHANCE+
+    FRUIT_CHAIN_CHANCE+
+    BREAD_CHAIN_CHANCE
+  ) return "bread";
+
+  return "gifts";
+}
+
+function randomDropLevel(){
+  const r=Math.random();
+
+  if(r<BASE_ITEM_CHANCE) return 0;
+  if(r<BASE_ITEM_CHANCE+SECOND_ITEM_CHANCE) return 1;
+
+  return 2;
+}
+
+function randomDrop(){
+  return makeItem(randomChain(),randomDropLevel());
+}
+
+function maybeSpawnHeartRefill(){
+  if(Math.random()>=HEART_REFILL_CHANCE) return false;
+
+  const empties=[];
+  for(let i=0;i<SIZE;i++){
+    if(state.board[i]===null) empties.push(i);
+  }
+
+  if(!empties.length) return false;
+
+  // Always place the refill in the first available square,
+  // starting from the top-left and reading left-to-right.
+  const spot=empties[0];
+  state.board[spot]="refill";
+  return true;
+}
+
+function maybeSpawnCoin(){
+  if(Math.random()>=COIN_DROP_CHANCE) return false;
+
+  const empties=[];
+  for(let i=0;i<SIZE;i++){
+    if(state.board[i]===null) empties.push(i);
+  }
+
+  if(!empties.length) return false;
+
+  const spot=empties[0];
+  state.board[spot]="coin";
+  return true;
+}
+
+function bake(){
+  if(celebrating) return;
+  if(state.bakesLeft<=0 && state.freeBakes<=0) return;
+
+  const empties=[];
+
+  for(let i=0;i<SIZE;i++){
+    if(state.board[i]===null){
+      empties.push(i);
+    }
+  }
+
+  if(!empties.length){
+    messageEl.textContent="The bakery is full!";
+    checkRoundEnd(true);
+    return;
+  }
+
+  if(state.freeBakes>0){
+    state.freeBakes--;
+  }else{
+    state.bakesLeft--;
+  }
+
+  // Always place the baked item in the first available square,
+  // starting from the top-left and reading left-to-right.
+  const spot=empties[0];
+
+  const item=randomDrop();
+
+  state.board[spot]=item;
+
+  const refillAppeared=maybeSpawnHeartRefill();
+  const coinAppeared=maybeSpawnCoin();
+
+  if(refillAppeared && coinAppeared){
+    messageEl.textContent="Lucky! a Pink Heart Refill and Gold Coin appeared!";
+  }else if(refillAppeared){
+    messageEl.textContent="Lucky! a Pink Heart Refill appeared!";
+  }else if(coinAppeared){
+    messageEl.textContent="Lucky! a Gold Coin appeared!";
+  }else{
+    messageEl.textContent=
+      item.level===0
+        ? `${prettyName(item)} appeared!`
+        : `✨ Lucky Bake! ${prettyName(item)} appeared!`;
+  }
+
+  save();
+  render();
+  checkRoundEnd();
+}
+
+function canAnyMerge(){
+  const counts={};
+  let hearts=0;
+  let coins=0;
+
+  for(const value of state.board){
+    if(value==="refill"){
+      hearts++;
+      if(hearts>=2) return true;
+      continue;
+    }
+
+    if(value==="coin"){
+      coins++;
+      if(coins>=2) return true;
+      continue;
+    }
+
+    if(!isMergeItem(value)) continue;
+
+    const chain=CHAINS[value.chain];
+    if(value.level>=chain.length-1) continue;
+
+    const key=`${value.chain}:${value.level}`;
+    counts[key]=(counts[key]||0)+1;
+
+    if(counts[key]>=2) return true;
+  }
+
+  return false;
+}
+
+function sortBoard(){
+  if(celebrating) return;
+
+  const chainOrder={sweets:0,drinks:1,fruit:2,bread:3,gifts:4};
+  const items=state.board.filter(value=>isMergeItem(value));
+
+  items.sort((a,b)=>{
+    const chainDiff=chainOrder[a.chain]-chainOrder[b.chain];
+    if(chainDiff!==0) return chainDiff;
+    return a.level-b.level;
+  });
+
+  const refills=state.board.filter(value=>value==="refill");
+  const goldenHearts=state.board.filter(value=>value==="golden-heart");
+  const coins=state.board.filter(value=>value==="coin");
+  const roseCoins=state.board.filter(value=>value==="rose-gold-coin");
+
+  state.board=[
+    ...items,
+    ...refills,
+    ...goldenHearts,
+    ...coins,
+    ...roseCoins,
+    ...Array(
+      SIZE-items.length-refills.length-goldenHearts.length-coins.length-roseCoins.length
+    ).fill(null)
+  ];
+
+  tapSelected=null;
+  clearSelections();
+  messageEl.textContent="Board sorted!";
+  save();
+  render();
+}
+
+function buyEnergy(){
+  if(celebrating || isRoundComplete()) return;
+  if(state.coins<ENERGY_BUY_COST) return;
+
+  /* Only charge the player when the full +5 can be delivered. */
+  if(state.bakesLeft>STARTING_BAKES-ENERGY_BUY_AMOUNT) return;
+
+  state.coins-=ENERGY_BUY_COST;
+  state.bakesLeft+=ENERGY_BUY_AMOUNT;
+
+  messageEl.textContent=
+    `♡ Energy refill! +${ENERGY_BUY_AMOUNT} Energy for ${ENERGY_BUY_COST} Pink Coins.`;
+
+  save();
+  render();
+
+  if(energyHeartEl){
+    energyHeartEl.classList.remove("energy-purchased");
+    void energyHeartEl.offsetWidth;
+    energyHeartEl.classList.add("energy-purchased");
+    setTimeout(()=>energyHeartEl.classList.remove("energy-purchased"),700);
+  }
+}
+
+function checkRoundEnd(force=false){
+
+  if(isRoundComplete()) return;
+
+  const hasEmpty=state.board.some(x=>x===null);
+  const hasEnergyRescue=
+    state.board.includes("refill") ||
+    state.board.includes("golden-heart");
+
+  if(
+    (
+      state.bakesLeft<=0 &&
+      state.freeBakes<=0 &&
+      !hasEnergyRescue &&
+      !canAnyMerge()
+    ) ||
+    (force && !hasEmpty && !canAnyMerge())
+  ){
+    messageEl.textContent=
+      `Out of moves! You completed ${completedGoalCount()}/${ROUND_GOAL_COUNT} goals.`;
+
+    bakeBtn.disabled=true;
+  }
+}
+
+function resetRound(){
+  bakeryRewardBox.style.display="none";
+  bakeryRewardImage.src="";
+  bakeryRewardName.textContent="";
+  bakeryRewardRarity.textContent="";
+
+  if(celebrating) return;
+
+  state.board=Array(SIZE).fill(null);
+  state.cakesThisRound=0;
+  state.goals=createGoalSet();
+  state.goalDone=Array(ROUND_GOAL_COUNT).fill(false);
+  state.bakesLeft=STARTING_BAKES;
+  state.freeBakes=0;
+  state.endSweepStarted=false;
+  state.roundSettled=false;
+  endGameSweeping=false;
+
+  if(endgameSweepBanner){
+    endgameSweepBanner.classList.remove("show");
+  }
+
+  messageEl.textContent=
+    "Tap Bake! to start.";
+
+  winModal.classList.remove("show");
+
+  save();
+  render();
+}
+
+let bakeHoldDelay=null;
+let bakeHoldInterval=null;
+let suppressBakeClick=false;
+
+function stopBakeHold(){
+  clearTimeout(bakeHoldDelay);
+  clearInterval(bakeHoldInterval);
+  bakeHoldDelay=null;
+  bakeHoldInterval=null;
+}
+
+function startBakeHold(e){
+  if(e.pointerType==="mouse" && e.button!==0) return;
+  if(bakeBtn.disabled) return;
+
+  e.preventDefault();
+  suppressBakeClick=true;
+  bake();
+
+  bakeHoldDelay=setTimeout(()=>{
+    bakeHoldInterval=setInterval(()=>{
+      if(bakeBtn.disabled || celebrating){
+        stopBakeHold();
+        return;
+      }
+      bake();
+    },140);
+  },300);
+}
+
+bakeBtn.addEventListener("pointerdown",startBakeHold);
+bakeBtn.addEventListener("pointerup",stopBakeHold);
+bakeBtn.addEventListener("pointercancel",stopBakeHold);
+bakeBtn.addEventListener("pointerleave",e=>{
+  if(e.pointerType==="mouse") stopBakeHold();
+});
+
+bakeBtn.addEventListener("click",e=>{
+  if(suppressBakeClick){
+    suppressBakeClick=false;
+    e.preventDefault();
+    return;
+  }
+  bake();
+});
+
+if(buyEnergyBtn){
+  buyEnergyBtn.addEventListener("click",buyEnergy);
+}
+
+sortBtn.addEventListener("click",sortBoard);
+
+newBtn.addEventListener("click",()=>{
+
+  if(celebrating) return;
+
+  if(
+    confirm(
+      "Would you like to start a new board? Your Pink Coins and lifetime stats will stay the same."
+    )
+  ){
+    resetRound();
+  }
+});
+
+document.querySelectorAll(".bakery-home-link").forEach(link=>{
+  link.addEventListener("click",()=>{
+    if(isRoundComplete()){
+      resetRound();
+    }
+  });
+});
+
+nextRoundBtn.addEventListener("click",resetRound);
+
+load();
+render();
+
+if(isRoundComplete() && state.endSweepStarted && !state.roundSettled){
+  setTimeout(()=>beginEndGameSweep(),250);
+}
+</script>
+
+</body>
+</html>
