@@ -8,7 +8,7 @@ const CHARACTERS = {
     type: "layered",
     assetFolder: "assets/peep/",
     duckHeadPlacement: {
-      left: 50,
+      left: 53,
       top: 36.8,
       width: 18
     },
