@@ -4723,7 +4723,7 @@ button { color: inherit; }
   object-position: center bottom;
   
   /* Increase this % to move displayed ducks farther DOWN. */
-  transform: translateY(13%);filter: drop-shadow(0 3px 2px rgba(54, 38, 33, .15));
+  transform: translateY(12%);filter: drop-shadow(0 3px 2px rgba(54, 38, 33, .15));
 }
 
 .wing-duck-slot > span {
