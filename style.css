@@ -4713,7 +4713,7 @@ button { color: inherit; }
   margin: 0;
   display: grid;
   place-items: end center;
-  padding: 0 0 7%;
+  padding: 0 0 4%;
 }
 
 .wing-duck-slot img {
