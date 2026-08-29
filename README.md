@@ -20,3 +20,8 @@ V24.13 — Miko New Outfit Shop Items
 - Pinned Bangs are in Shop → Hair. Big Shirt, Boxers, and Socks are in Shop → Clothing.
 - Miko must be invited before his paid items are available, using the existing OC shop gate.
 - One-time migration removes the brief V24.12 free unlocks and safely returns equipped pieces to free alternatives until purchased.
+
+
+V24.13.1
+- Added thumbnail crop bounds for Miko Pinned Bangs, Big Shirt, Boxers, and Socks so their Shop/Closet previews display much larger.
+- Gameplay outfit layer sizes/positions are unchanged.

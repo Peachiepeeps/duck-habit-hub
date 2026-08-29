@@ -1834,7 +1834,11 @@ const MIKO_THUMB_BOUNDS = {
   "Miko-smug.PNG": [332,945,740,1146],
   "Miko-sweater-closet.PNG": [378,1195,762,1488],
   "Miko-sweater-sleeve.PNG": [378,1195,495,1371],
-  "Miko-sweater.PNG": [415,1230,762,1488]
+  "Miko-sweater.PNG": [415,1230,762,1488],
+  "Miko-bangs-pinned.PNG": [245,750,835,1225],
+  "Miko-Boxers.PNG": [360,1330,720,1585],
+  "Miko-big-shirt.PNG": [335,1145,805,1605],
+  "Miko-socks.PNG": [350,1490,735,1835]
 };
 
 const MIKO_ASSETS = {
