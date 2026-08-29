@@ -36,3 +36,9 @@ V24.13.2
 V24.13.3 preview tuning:
 - Reduced the four new Miko item shop preview zoom levels to stop over-cropping.
 - Tightened the Socks thumbnail crop so the socks preview centers correctly instead of only showing the bottoms.
+
+
+V24.13.4 preview tuning:
+- Big Shirt and Boxers previews left exactly as-is.
+- Pinned Bangs reduced from 1.55× to 1.25×.
+- Socks reduced from 1.60× to 1.10×.

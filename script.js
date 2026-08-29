@@ -3686,7 +3686,7 @@ const WARDROBE_SHOP_META = {
     label: "Miko · Pinned Bangs",
     assetIds: ["bangs-pinned"],
     unlockIds: ["bangs-pinned"],
-    shopPreviewScale: 1.55
+    shopPreviewScale: 1.25
   },
   "miko-top-big-shirt": {
     characterId: "miko",
@@ -3707,7 +3707,7 @@ const WARDROBE_SHOP_META = {
     label: "Miko · Socks",
     assetIds: ["socks"],
     unlockIds: ["socks"],
-    shopPreviewScale: 1.6
+    shopPreviewScale: 1.1
   }
 };
 
