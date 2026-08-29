@@ -88,23 +88,10 @@ Update v24.5:
 - Belt layering remains above shirt/pants and below Hoodie/Sweater.
 
 
-V24.7
-- Corrected Miko's headband stacking: it now renders in front of his back/main hair while remaining behind the front bangs.
-- Updated PWA app icon files using the shadowed crowned-duck artwork.
-- Bumped PWA/service-worker cache identifiers so installed copies can pick up the new game code.
-
-
-## V24.8 — Peep Level 100 Duck
-- Keeps the V24.7 Miko headband layering fix and updated PWA icons.
-- Adds `Peep Duck` to Duckipedia as Peep's Happiness Level 100 reward.
-- The reward unlocks automatically when Peep reaches Level 100 and retroactively on load if she is already Level 100.
-- Uses the top-level art filename `peep-duck.png` so it can be uploaded without creating folders.
-- PWA cache bumped to v24.8 so installed apps can pick up the new code.
-
-
-V24.9
-- Added Miko Duck as Miko's permanent Happiness Level 100 reward using root file `miko-duck.png`.
-- Peep Duck remains Peep's permanent Happiness Level 100 reward using root file `peep-duck.png`.
-- Happiness Level 100 duck reward logic is now character-based so future OCs can use the same system.
-- Preserves the V24.8 Miko headband layering fix and updated PWA icons.
-- PWA cache version bumped so installed apps can pick up the new code automatically.
+## V24.10 - Miko startup repair + Level 100 ducks + icon refresh
+- Rebased on the last known-good PWA startup code.
+- Miko/Peep Level 100 duck checks now run after initial character rendering so they cannot interrupt startup.
+- Miko Headband now renders above his main/back hair and base, but below bangs.
+- Peep Duck (`peep-duck.png`) and Miko Duck (`miko-duck.png`) are Level 100 Happiness rewards.
+- PWA cache and script query bumped for reliable update pickup.
+- App icons refreshed with the user's darker star background and larger crop.

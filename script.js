@@ -1849,7 +1849,7 @@ const MIKO_ASSETS = {
   "bottom-jeans": { label: "Jeans", file: "Miko-jeans.PNG", z: 31 },
   "belt": { label: "Belt", file: "Miko-belt.PNG", z: 33 },
   "shoes-loafer": { label: "Loafers", file: "Miko-loafers.PNG", z: 39 },
-  "headband": { label: "Headband", file: "Miko-headband.PNG", z: 17 },
+  "headband": { label: "Headband", file: "Miko-headband.PNG", z: 47 },
   "expression-neutral": { label: "Neutral", file: "Miko-neutral.PNG", z: 44 },
   "expression-happy": { label: "Happy", file: "Miko-happy.PNG", z: 44 },
   "expression-sad": { label: "Sad", file: "Miko-sad.PNG", z: 44 },
@@ -2338,11 +2338,8 @@ function evaluateCharacterHappinessDuckReward(characterId = save.selectedCharact
 
   if (unlocked && options.notify !== false) {
     const characterName = CHARACTERS[characterId]?.name || characterId;
-    setTimeout(() => {
-      showToast(`${characterName} reached Happiness Level 100! ${duck.name} unlocked! 🦆✨`);
-    }, 650);
+    setTimeout(() => showToast(`${characterName} reached Happiness Level 100! ${duck.name} unlocked! 🦆✨`), 650);
   }
-
   return unlocked;
 }
 
@@ -2354,9 +2351,9 @@ function addCharacterHappiness(amount, characterId = save.selectedCharacter) {
 
   const gained = progress.happinessTotal - before;
   if (gained > 0) {
+    // This runs during normal gameplay, after the UI has fully initialized.
     evaluateCharacterHappinessDuckReward(characterId, { persistNow: false, notify: true });
   }
-
   return gained;
 }
 
@@ -8495,9 +8492,6 @@ ensureStarterWardrobeUnlocked();
 const ocShopGateRepair = repairLockedOcPurchasesOnce();
 normalizeRoomExpansion();
 migrateLegacyMainRoomDecor();
-const happinessDuckUnlocksOnLoad = ["peep", "miko"]
-  .filter(characterId => isCharacterUnlocked(characterId))
-  .filter(characterId => evaluateCharacterHappinessDuckReward(characterId, { notify: false, persistNow: false }));
 persist();
 
 const roomToGrowUnlockedOnLoad = evaluateRoomToGrow({ notify: false });
@@ -8510,16 +8504,32 @@ renderRoomPicker();
 renderClosetCategoryMenu();
 renderRoomWingToggle();
 
+// Level-100 character duck rewards are checked only AFTER the initial room and
+// character have rendered. This keeps an unlock/migration from ever blocking
+// Miko or Peep from appearing during app startup.
+setTimeout(() => {
+  try {
+    const unlockedOnLoad = ["peep", "miko"]
+      .filter(characterId => isCharacterUnlocked(characterId))
+      .filter(characterId => evaluateCharacterHappinessDuckReward(characterId, { notify: false, persistNow: false }));
+
+    if (unlockedOnLoad.length) {
+      persist();
+      const characterId = unlockedOnLoad[0];
+      const rewardEntry = getCharacterHappinessDuckReward(characterId);
+      const characterName = CHARACTERS[characterId]?.name || characterId;
+      const duckName = rewardEntry?.[1]?.name || "Special Duck";
+      showToast(`${characterName} reached Happiness Level 100! ${duckName} unlocked! 🦆✨`);
+    }
+  } catch (error) {
+    console.error("Level 100 duck reward check failed safely:", error);
+  }
+}, 300);
+
 if (ocShopGateRepair.refunded > 0) {
   setTimeout(() => {
     showToast(`Fixed locked-OC Shop items and refunded ${ocShopGateRepair.refunded} Pink Coins. ♡`);
   }, 250);
-} else if (happinessDuckUnlocksOnLoad.length) {
-  const characterId = happinessDuckUnlocksOnLoad[0];
-  const rewardEntry = getCharacterHappinessDuckReward(characterId);
-  const characterName = CHARACTERS[characterId]?.name || characterId;
-  const duckName = rewardEntry?.[1]?.name || "Special Duck";
-  setTimeout(() => showToast(`${characterName} reached Happiness Level 100! ${duckName} unlocked! 🦆✨`), 250);
 } else if (achievementsUnlockedOnLoad.length) {
   setTimeout(() => {
     const count = achievementsUnlockedOnLoad.length;

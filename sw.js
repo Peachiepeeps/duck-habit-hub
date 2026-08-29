@@ -1,4 +1,4 @@
-const CACHE_NAME = "duck-habit-hub-pwa-v24-9";
+const CACHE_NAME = "duck-habit-hub-pwa-v24-10-miko-render-repair";
 const PRECACHE_URLS = [
   './',
   './assets/achievements/trophies/trophy-bronze.png',
@@ -10,8 +10,6 @@ const PRECACHE_URLS = [
   './icon-192.png',
   './icon-512.png',
   './icon-maskable-512.png',
-  './peep-duck.png',
-  './miko-duck.png',
   './assets/bakery/backgrounds/Bakery-background.PNG',
   './assets/bakery/drops/Gold-coin.PNG',
   './assets/bakery/drops/Gold-heart-refill.PNG',
