@@ -1,0 +1,31 @@
+{
+  "id": "./",
+  "name": "Duck Habit Hub",
+  "short_name": "Duck Habit Hub",
+  "description": "A cozy duck habit hub with OCs, tasks, collecting, decorating, and minigames.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#e7b7dc",
+  "theme_color": "#ef9fbd",
+  "icons": [
+    {
+      "src": "assets/app-icon/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/app-icon/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/app-icon/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

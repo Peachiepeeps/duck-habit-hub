@@ -6,6 +6,15 @@
   <meta name="theme-color" content="#f7dbe5" />
   <title>Duck Habit Hub</title>
   <link rel="stylesheet" href="style.css?v=23-1-economy-silhouette" />
+
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="assets/app-icon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/app-icon/favicon-32.png">
+  <meta name="theme-color" content="#ef9fbd">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Duck Habit Hub">
+
 </head>
 <body>
   <main id="app" class="app-shell">
@@ -831,6 +840,17 @@
       </section>
     </section>
   </main>
-  <script src="script.js?v=24-5-miko-optional-shirt"></script>
+  <script src="script.js?v=24-6-pwa"></script>
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js", { updateViaCache: "none" }).catch(error => {
+          console.warn("Duck Habit Hub offline setup could not start:", error);
+        });
+      });
+    }
+  </script>
+
 </body>
 </html>
