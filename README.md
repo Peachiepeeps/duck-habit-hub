@@ -87,10 +87,24 @@ Update v24.5:
 - Button Sleeve only renders when Button Shirt is equipped.
 - Belt layering remains above shirt/pants and below Hoodie/Sweater.
 
-## V24.6 — Installable PWA
-- Duck Habit Hub can now be installed to an Android or iPad/iPhone Home Screen from the GitHub Pages site.
-- The installed web app uses the user's duck icon and sparkly background.
-- A service worker caches the game for offline use.
-- When online, HTML/CSS/JS are fetched network-first so GitHub Pages updates can appear without reinstalling the app.
-- Images/media use stale-while-revalidate so cached art opens quickly and refreshes in the background.
-- The original 1024x1024 foreground/background icon sources are preserved under assets/app-icon/ for future native Android/iOS work.
+
+V24.7
+- Corrected Miko's headband stacking: it now renders in front of his back/main hair while remaining behind the front bangs.
+- Updated PWA app icon files using the shadowed crowned-duck artwork.
+- Bumped PWA/service-worker cache identifiers so installed copies can pick up the new game code.
+
+
+## V24.8 — Peep Level 100 Duck
+- Keeps the V24.7 Miko headband layering fix and updated PWA icons.
+- Adds `Peep Duck` to Duckipedia as Peep's Happiness Level 100 reward.
+- The reward unlocks automatically when Peep reaches Level 100 and retroactively on load if she is already Level 100.
+- Uses the top-level art filename `peep-duck.png` so it can be uploaded without creating folders.
+- PWA cache bumped to v24.8 so installed apps can pick up the new code.
+
+
+V24.9
+- Added Miko Duck as Miko's permanent Happiness Level 100 reward using root file `miko-duck.png`.
+- Peep Duck remains Peep's permanent Happiness Level 100 reward using root file `peep-duck.png`.
+- Happiness Level 100 duck reward logic is now character-based so future OCs can use the same system.
+- Preserves the V24.8 Miko headband layering fix and updated PWA icons.
+- PWA cache version bumped so installed apps can pick up the new code automatically.

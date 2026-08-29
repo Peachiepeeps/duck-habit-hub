@@ -1452,6 +1452,12 @@ const DUCKS = {
       "mushroom": 1
     }
   },
+  "miko-duck": {
+    "name": "Miko Duck",
+    "file": "miko-duck.png",
+    "acquisition": "character-happiness-100",
+    "characterId": "miko"
+  },
   "orange-duck": {
     "name": "Orange Duck",
     "file": "assets/ducks/Orange-duck.PNG",
@@ -1475,6 +1481,12 @@ const DUCKS = {
       "standard-duck": 1,
       "peach-paint": 1
     }
+  },
+  "peep-duck": {
+    "name": "Peep Duck",
+    "file": "peep-duck.png",
+    "acquisition": "character-happiness-100",
+    "characterId": "peep"
   },
   "periwinkle-duck": {
     "name": "Periwinkle Duck",
@@ -1837,7 +1849,7 @@ const MIKO_ASSETS = {
   "bottom-jeans": { label: "Jeans", file: "Miko-jeans.PNG", z: 31 },
   "belt": { label: "Belt", file: "Miko-belt.PNG", z: 33 },
   "shoes-loafer": { label: "Loafers", file: "Miko-loafers.PNG", z: 39 },
-  "headband": { label: "Headband", file: "Miko-headband.PNG", z: 14 },
+  "headband": { label: "Headband", file: "Miko-headband.PNG", z: 17 },
   "expression-neutral": { label: "Neutral", file: "Miko-neutral.PNG", z: 44 },
   "expression-happy": { label: "Happy", file: "Miko-happy.PNG", z: 44 },
   "expression-sad": { label: "Sad", file: "Miko-sad.PNG", z: 44 },
@@ -2304,12 +2316,48 @@ function getCharacterProgress(characterId = save.selectedCharacter) {
   return save.characterProgress[characterId];
 }
 
+function getCharacterHappinessDuckReward(characterId) {
+  return Object.entries(DUCKS).find(([, duck]) =>
+    duck.acquisition === "character-happiness-100" && duck.characterId === characterId
+  ) || null;
+}
+
+function evaluateCharacterHappinessDuckReward(characterId = save.selectedCharacter, options = {}) {
+  const rewardEntry = getCharacterHappinessDuckReward(characterId);
+  if (!rewardEntry) return false;
+
+  const [duckId, duck] = rewardEntry;
+  const happiness = getCharacterHappinessInfo(characterId);
+  if (!happiness.atMax || happiness.level < MAX_CHARACTER_LEVEL) return false;
+  if (isDuckUnlocked(duckId)) return false;
+
+  const unlocked = unlockDuck(duckId, {
+    notify: false,
+    persistNow: options.persistNow !== false
+  });
+
+  if (unlocked && options.notify !== false) {
+    const characterName = CHARACTERS[characterId]?.name || characterId;
+    setTimeout(() => {
+      showToast(`${characterName} reached Happiness Level 100! ${duck.name} unlocked! 🦆✨`);
+    }, 650);
+  }
+
+  return unlocked;
+}
+
 function addCharacterHappiness(amount, characterId = save.selectedCharacter) {
   const progress = getCharacterProgress(characterId);
   const before = progress.happinessTotal;
   progress.happinessTotal = clampCharacterHappinessTotal(before + Number(amount || 0));
   if (characterId === "peep") save.stats.happiness = progress.happinessTotal;
-  return progress.happinessTotal - before;
+
+  const gained = progress.happinessTotal - before;
+  if (gained > 0) {
+    evaluateCharacterHappinessDuckReward(characterId, { persistNow: false, notify: true });
+  }
+
+  return gained;
 }
 
 function mainRoomStorageId(roomId = save.room) {
@@ -5589,6 +5637,10 @@ function duckDiscoveryHint(duck) {
       return "Spot Tiny Ducks four times to complete this special trophy.";
     case "drop-or-shop":
       return "Find or buy a Standard Duck to discover this entry.";
+    case "character-happiness-100": {
+      const characterName = CHARACTERS[duck.characterId]?.name || "this character";
+      return `Reach Happiness Level 100 with ${characterName} to unlock their special duck.`;
+    }
     default:
       return "Keep exploring to discover this duck.";
   }
@@ -8443,6 +8495,9 @@ ensureStarterWardrobeUnlocked();
 const ocShopGateRepair = repairLockedOcPurchasesOnce();
 normalizeRoomExpansion();
 migrateLegacyMainRoomDecor();
+const happinessDuckUnlocksOnLoad = ["peep", "miko"]
+  .filter(characterId => isCharacterUnlocked(characterId))
+  .filter(characterId => evaluateCharacterHappinessDuckReward(characterId, { notify: false, persistNow: false }));
 persist();
 
 const roomToGrowUnlockedOnLoad = evaluateRoomToGrow({ notify: false });
@@ -8459,6 +8514,12 @@ if (ocShopGateRepair.refunded > 0) {
   setTimeout(() => {
     showToast(`Fixed locked-OC Shop items and refunded ${ocShopGateRepair.refunded} Pink Coins. ♡`);
   }, 250);
+} else if (happinessDuckUnlocksOnLoad.length) {
+  const characterId = happinessDuckUnlocksOnLoad[0];
+  const rewardEntry = getCharacterHappinessDuckReward(characterId);
+  const characterName = CHARACTERS[characterId]?.name || characterId;
+  const duckName = rewardEntry?.[1]?.name || "Special Duck";
+  setTimeout(() => showToast(`${characterName} reached Happiness Level 100! ${duckName} unlocked! 🦆✨`), 250);
 } else if (achievementsUnlockedOnLoad.length) {
   setTimeout(() => {
     const count = achievementsUnlockedOnLoad.length;
