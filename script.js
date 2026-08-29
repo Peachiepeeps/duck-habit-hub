@@ -1075,7 +1075,8 @@ const SHOP_STOCK = {
     { wardrobeId: "hair-low-pigtails", price: 150 },
     { wardrobeId: "hair-ponytail", price: 150 },
     { wardrobeId: "hair-long-pigtails", price: 150 },
-    { wardrobeId: "hair-jellyfish", price: 150 }
+    { wardrobeId: "hair-jellyfish", price: 150 },
+    { wardrobeId: "miko-bangs-pinned", price: 150 }
   ],
   clothing: [
     { wardrobeId: "top-shirt", price: 150 },
@@ -1083,7 +1084,10 @@ const SHOP_STOCK = {
     { wardrobeId: "socks-blue", price: 150 },
     { wardrobeId: "jacket", price: 150 },
     { wardrobeId: "miko-top-sweater", price: 150 },
-    { wardrobeId: "miko-bottom-jeans", price: 150 }
+    { wardrobeId: "miko-bottom-jeans", price: 150 },
+    { wardrobeId: "miko-top-big-shirt", price: 150 },
+    { wardrobeId: "miko-bottom-boxers", price: 150 },
+    { wardrobeId: "miko-socks", price: 150 }
   ],
   shoes: [
     { wardrobeId: "shoes-sneaker", price: 150 }
@@ -1837,6 +1841,7 @@ const MIKO_ASSETS = {
   "base": { label: "Body Base", file: "Miko-base.PNG", z: 20 },
   "hair-main": { label: "Hair", file: "Miko-hair.PNG", z: 15 },
   "bangs": { label: "Bangs", file: "Miko-bangs.PNG", z: 48 },
+  "bangs-pinned": { label: "Pinned Bangs", file: "Miko-bangs-pinned.PNG", z: 48 },
   "arm-base": { label: "Arm Base", file: "Miko-base-arm.PNG", z: 35 },
   "top-button": { label: "Button Shirt", file: "Miko-button-shirt.PNG", previewFile: "Miko-button-shirt-closet.PNG", z: 32 },
   "top-button-sleeve": { label: "Button Sleeve", file: "Miko-button-sleeve.PNG", z: 36 },
@@ -1845,9 +1850,12 @@ const MIKO_ASSETS = {
   "hoodie-back": { label: "Hoodie Back", file: "Miko-hoodie-back.PNG", z: 18 },
   "top-sweater": { label: "Sweater", file: "Miko-sweater.PNG", previewFile: "Miko-sweater-closet.PNG", z: 34 },
   "top-sweater-sleeve": { label: "Sweater Sleeve", file: "Miko-sweater-sleeve.PNG", z: 37 },
+  "top-big-shirt": { label: "Big Shirt", file: "Miko-big-shirt.PNG", z: 36.5 },
   "bottom-capris": { label: "Capris", file: "Miko-capri-pants.PNG", z: 31 },
   "bottom-jeans": { label: "Jeans", file: "Miko-jeans.PNG", z: 31 },
+  "bottom-boxers": { label: "Boxers", file: "Miko-Boxers.PNG", z: 31 },
   "belt": { label: "Belt", file: "Miko-belt.PNG", z: 33 },
+  "socks": { label: "Socks", file: "Miko-socks.PNG", z: 38 },
   "shoes-loafer": { label: "Loafers", file: "Miko-loafers.PNG", z: 39 },
   "headband": { label: "Headband", file: "Miko-headband.PNG", z: 47 },
   "expression-neutral": { label: "Neutral", file: "Miko-neutral.PNG", z: 44 },
@@ -1865,10 +1873,12 @@ const MIKO_CLOSET = [
     type: "hair",
     options: ["hair-main"]
   },
+  { id: "bangsStyle", label: "Bangs", type: "single", options: ["bangs", "bangs-pinned"] },
   { id: "shirt", label: "Shirt", type: "single", allowNone: true, options: ["top-button"] },
-  { id: "outer", label: "Layers", type: "single", allowNone: true, options: ["top-hoodie", "top-sweater"] },
-  { id: "bottom", label: "Bottoms", type: "single", options: ["bottom-capris", "bottom-jeans"] },
-  { id: "shoes", label: "Shoes", type: "single", options: ["shoes-loafer"] },
+  { id: "outer", label: "Layers", type: "single", allowNone: true, options: ["top-hoodie", "top-sweater", "top-big-shirt"] },
+  { id: "bottom", label: "Bottoms", type: "single", options: ["bottom-capris", "bottom-jeans", "bottom-boxers"] },
+  { id: "socks", label: "Socks", type: "single", allowNone: true, options: ["socks"] },
+  { id: "shoes", label: "Shoes", type: "single", allowNone: true, options: ["shoes-loafer"] },
   {
     id: "extras",
     label: "Accessories",
@@ -1912,9 +1922,11 @@ const DEFAULT_OUTFIT = {
 
 const DEFAULT_MIKO_OUTFIT = {
   hair: "hair-main",
+  bangsStyle: "bangs",
   shirt: "top-button",
   outer: "top-hoodie",
   bottom: "bottom-capris",
+  socks: null,
   shoes: "shoes-loafer",
   extras: []
 };
@@ -1937,13 +1949,24 @@ function normalizeMikoOutfit(rawOutfit = {}) {
 
   if (!hadShirtField) shirt = "top-button";
   if (![null, "top-button"].includes(shirt)) shirt = "top-button";
-  if (![null, "top-hoodie", "top-sweater"].includes(outer)) outer = "top-hoodie";
+  if (![null, "top-hoodie", "top-sweater", "top-big-shirt"].includes(outer)) outer = "top-hoodie";
+
+  const bangsStyle = ["bangs", "bangs-pinned"].includes(incoming.bangsStyle)
+    ? incoming.bangsStyle
+    : "bangs";
+  const bottom = ["bottom-capris", "bottom-jeans", "bottom-boxers"].includes(incoming.bottom)
+    ? incoming.bottom
+    : "bottom-capris";
+  const socks = incoming.socks === "socks" ? "socks" : null;
 
   const normalized = {
     ...structuredClone(DEFAULT_MIKO_OUTFIT),
     ...incoming,
+    bangsStyle,
     shirt,
-    outer
+    outer,
+    bottom,
+    socks
   };
   delete normalized.top;
   return normalized;
@@ -2040,6 +2063,7 @@ const DEFAULT_SAVE = {
   },
   wardrobeResetV1261: true,
   wardrobeResetV1262: false,
+  mikoNewOutfitShopMigrationV2413: false,
   progressRecoveryV1431: true,
   ocShopGateRepairV242: false,
   peepPokes: 0,
@@ -2215,7 +2239,11 @@ function getCharacterThumbBounds(characterId = save.selectedCharacter) {
 
 function getCharacterStarterWardrobe(characterId = save.selectedCharacter) {
   if (characterId === "miko") {
-    return ["hair-main", "top-hoodie", "top-button", "bottom-capris", "shoes-loafer"];
+    return [
+      "hair-main", "bangs",
+      "top-hoodie", "top-button",
+      "bottom-capris", "shoes-loafer"
+    ];
   }
 
   return [
@@ -2856,7 +2884,13 @@ function renderWingDuckPicker() {
   wingDuckPickerGrid.innerHTML = "";
 
   const unlocked = sortedDuckEntries()
-    .filter(([id]) => isDuckUnlocked(id));
+    .filter(([id]) => isDuckUnlocked(id))
+    .sort(([idA, duckA], [idB, duckB]) => {
+      const aPlaced = save.roomExpansion.duckSlots.includes(idA);
+      const bPlaced = save.roomExpansion.duckSlots.includes(idB);
+      if (aPlaced !== bPlaced) return aPlaced ? 1 : -1;
+      return duckA.name.localeCompare(duckB.name);
+    });
 
   if (!unlocked.length) {
     const empty = document.createElement("p");
@@ -3220,9 +3254,12 @@ function getMikoEquippedAssetIds() {
   if (outfit.outer === "top-hoodie") ids.push("top-hoodie-sleeve");
   else if (outfit.outer === "top-sweater") ids.push("top-sweater-sleeve");
 
+  // Socks sit below any equipped shoes. Big Shirt is an outer layer and its
+  // z-order keeps it over Boxers while still respecting the rest of Miko's stack.
+  if (outfit.socks) ids.push(outfit.socks);
   if (outfit.shoes) ids.push(outfit.shoes);
   ids.push(...(Array.isArray(outfit.extras) ? outfit.extras : []));
-  ids.push(currentExpression, "bangs");
+  ids.push(currentExpression, outfit.bangsStyle || "bangs");
 
   return ids.filter(Boolean);
 }
@@ -3569,6 +3606,16 @@ function chooseSingle(group, id) {
 }
 
 function renderHairOptions(group) {
+  if (save.selectedCharacter === "miko") {
+    closetOptions.append(makeOptionCard({
+      assetId: "hair-main",
+      label: "Hair",
+      selected: true,
+      required: true
+    }));
+    return;
+  }
+
   closetOptions.append(makeOptionCard({
     assetId: "bangs",
     label: "Bangs",
@@ -3629,6 +3676,30 @@ const WARDROBE_SHOP_META = {
     label: "Miko · Headband",
     assetIds: ["headband"],
     unlockIds: ["headband"]
+  },
+  "miko-bangs-pinned": {
+    characterId: "miko",
+    label: "Miko · Pinned Bangs",
+    assetIds: ["bangs-pinned"],
+    unlockIds: ["bangs-pinned"]
+  },
+  "miko-top-big-shirt": {
+    characterId: "miko",
+    label: "Miko · Big Shirt",
+    assetIds: ["top-big-shirt"],
+    unlockIds: ["top-big-shirt"]
+  },
+  "miko-bottom-boxers": {
+    characterId: "miko",
+    label: "Miko · Boxers",
+    assetIds: ["bottom-boxers"],
+    unlockIds: ["bottom-boxers"]
+  },
+  "miko-socks": {
+    characterId: "miko",
+    label: "Miko · Socks",
+    assetIds: ["socks"],
+    unlockIds: ["socks"]
   }
 };
 
@@ -3682,6 +3753,28 @@ const PEEP_STARTER_WARDROBE = Object.freeze([
   "cheek-bandage",
   "tail-bunny"
 ]);
+
+function migrateMikoNewOutfitToShopOnce() {
+  if (save.mikoNewOutfitShopMigrationV2413) return false;
+
+  // V24.12 briefly treated these new Miko pieces as free starter items.
+  // Remove that accidental ownership so they correctly become Shop unlocks.
+  const paidIds = new Set(["bangs-pinned", "top-big-shirt", "bottom-boxers", "socks"]);
+  const currentUnlocks = Array.isArray(save.characterUnlockedItems?.miko)
+    ? save.characterUnlockedItems.miko
+    : [];
+  save.characterUnlockedItems.miko = currentUnlocks.filter(id => !paidIds.has(id));
+
+  const outfit = normalizeMikoOutfit(save.characterOutfits?.miko || {});
+  if (outfit.bangsStyle === "bangs-pinned") outfit.bangsStyle = "bangs";
+  if (outfit.outer === "top-big-shirt") outfit.outer = "top-hoodie";
+  if (outfit.bottom === "bottom-boxers") outfit.bottom = "bottom-capris";
+  if (outfit.socks === "socks") outfit.socks = null;
+  save.characterOutfits.miko = outfit;
+
+  save.mikoNewOutfitShopMigrationV2413 = true;
+  return true;
+}
 
 function ensureStarterWardrobeUnlocked() {
   normalizeCharacterState();
@@ -4997,9 +5090,10 @@ function collectTinyDuckSighting() {
     showToast("Tiny Duck sighting #4! Tiny Duck Stack unlocked! 🦆🦆🦆🦆");
   } else if (tinyWasNew) {
     showToast("You found Tiny Duck! Added to Duckipedia! 🦆✨");
+  } else if (sightings > TINY_DUCK_STACK_SIGHTINGS) {
+    showToast(`Tiny Duck spotted again! ${sightings} Sightings! ♡`);
   } else {
-    const capped = Math.min(sightings, TINY_DUCK_STACK_SIGHTINGS);
-    showToast(`Tiny Duck spotted again! ${capped}/${TINY_DUCK_STACK_SIGHTINGS} sightings ♡`);
+    showToast(`Tiny Duck spotted again! ${sightings}/${TINY_DUCK_STACK_SIGHTINGS} sightings ♡`);
   }
 
   if (!duckipediaPanel.classList.contains("hidden")) {
@@ -8545,6 +8639,7 @@ preloadPeepAssets();
 save.tasks = save.tasks.map(normalizeTask);
 normalizeCharacterState();
 resetAccidentalWardrobeUnlocksOnce();
+migrateMikoNewOutfitToShopOnce();
 ensureStarterWardrobeUnlocked();
 const ocShopGateRepair = repairLockedOcPurchasesOnce();
 normalizeRoomExpansion();

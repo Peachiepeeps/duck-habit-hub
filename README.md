@@ -1,7 +1,22 @@
-Duck Habit Hub V24.11 — Multi-Gift Quantity
+# Duck Habit Hub V24.12
 
-- Food gifts can now be given in quantities from 1 to 10 at a time.
-- The quantity picker never exceeds the number currently in inventory.
-- Happiness is multiplied by the amount gifted (for example, a +5 favorite gifted ×10 gives +50 Happiness).
-- Existing save data is unchanged; no migration is required.
-- PWA cache version bumped so installed apps can pick up the gameplay update.
+Changes:
+- Added Miko's new free outfit pieces: Pinned Bangs, Big Shirt, Boxers, and Socks.
+- Big Shirt layers over Boxers; Socks layer below equipped shoes.
+- Room to Grow Duck Display picker now sorts already-placed ducks to the bottom.
+- Tiny Duck sightings continue counting past 4 (for example: “7 Sightings!”).
+- PWA cache bumped so installed apps can receive the update.
+
+New Miko art files expected in `assets/miko/`:
+- Miko-bangs-pinned.PNG
+- Miko-Boxers.PNG
+- Miko-big-shirt.PNG
+- Miko-socks.PNG
+
+
+V24.13 — Miko New Outfit Shop Items
+- Pinned Bangs, Big Shirt, Boxers, and Socks are now paid Shop unlocks instead of free starter pieces.
+- Each costs 150 Pink Coins, matching other wardrobe pieces.
+- Pinned Bangs are in Shop → Hair. Big Shirt, Boxers, and Socks are in Shop → Clothing.
+- Miko must be invited before his paid items are available, using the existing OC shop gate.
+- One-time migration removes the brief V24.12 free unlocks and safely returns equipped pieces to free alternatives until purchased.

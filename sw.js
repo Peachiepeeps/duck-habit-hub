@@ -1,4 +1,4 @@
-const CACHE_NAME = "duck-habit-hub-pwa-v24-11-gift-quantity";
+const CACHE_NAME = "duck-habit-hub-pwa-v24-13-miko-new-outfit-shop";
 const PRECACHE_URLS = [
   './',
   './assets/achievements/trophies/trophy-bronze.png',
@@ -153,6 +153,10 @@ const PRECACHE_URLS = [
   './assets/ingredients/Yarn.PNG',
   './assets/miko/Miko-angry.PNG',
   './assets/miko/Miko-bangs.PNG',
+  './assets/miko/Miko-bangs-pinned.PNG',
+  './assets/miko/Miko-Boxers.PNG',
+  './assets/miko/Miko-big-shirt.PNG',
+  './assets/miko/Miko-socks.PNG',
   './assets/miko/Miko-base-arm.PNG',
   './assets/miko/Miko-base.PNG',
   './assets/miko/Miko-belt.PNG',
