@@ -25,3 +25,9 @@ V24.13 — Miko New Outfit Shop Items
 V24.13.1
 - Added thumbnail crop bounds for Miko Pinned Bangs, Big Shirt, Boxers, and Socks so their Shop/Closet previews display much larger.
 - Gameplay outfit layer sizes/positions are unchanged.
+
+
+V24.13.2
+- Stronger Shop-only preview zoom for Miko's Pinned Bangs, Big Shirt, Boxers, and Socks.
+- Equipped artwork is unchanged.
+- PWA cache/version bumped.

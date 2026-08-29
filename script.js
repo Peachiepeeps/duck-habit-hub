@@ -3685,25 +3685,29 @@ const WARDROBE_SHOP_META = {
     characterId: "miko",
     label: "Miko · Pinned Bangs",
     assetIds: ["bangs-pinned"],
-    unlockIds: ["bangs-pinned"]
+    unlockIds: ["bangs-pinned"],
+    shopPreviewScale: 2.55
   },
   "miko-top-big-shirt": {
     characterId: "miko",
     label: "Miko · Big Shirt",
     assetIds: ["top-big-shirt"],
-    unlockIds: ["top-big-shirt"]
+    unlockIds: ["top-big-shirt"],
+    shopPreviewScale: 2.75
   },
   "miko-bottom-boxers": {
     characterId: "miko",
     label: "Miko · Boxers",
     assetIds: ["bottom-boxers"],
-    unlockIds: ["bottom-boxers"]
+    unlockIds: ["bottom-boxers"],
+    shopPreviewScale: 3.25
   },
   "miko-socks": {
     characterId: "miko",
     label: "Miko · Socks",
     assetIds: ["socks"],
-    unlockIds: ["socks"]
+    unlockIds: ["socks"],
+    shopPreviewScale: 3.6
   }
 };
 
@@ -6017,8 +6021,9 @@ function renderWardrobeShopArtwork(container, wardrobeId, large = false) {
 
   const boxW = large ? 150 : 120;
   const boxH = large ? 126 : 88;
-  const targetW = large ? 112 : 82;
-  const targetH = large ? 102 : 68;
+  const previewScale = Number(meta.shopPreviewScale) > 0 ? Number(meta.shopPreviewScale) : 1;
+  const targetW = (large ? 112 : 82) * previewScale;
+  const targetH = (large ? 102 : 68) * previewScale;
 
   const thumb = meta.assetIds.length > 1
     ? makeCombinedThumb(meta.assetIds, { boxW, boxH, targetW, targetH, characterId: meta.characterId || "peep" })
