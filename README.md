@@ -31,3 +31,8 @@ V24.13.2
 - Stronger Shop-only preview zoom for Miko's Pinned Bangs, Big Shirt, Boxers, and Socks.
 - Equipped artwork is unchanged.
 - PWA cache/version bumped.
+
+
+V24.13.3 preview tuning:
+- Reduced the four new Miko item shop preview zoom levels to stop over-cropping.
+- Tightened the Socks thumbnail crop so the socks preview centers correctly instead of only showing the bottoms.

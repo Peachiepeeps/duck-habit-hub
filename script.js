@@ -1838,7 +1838,7 @@ const MIKO_THUMB_BOUNDS = {
   "Miko-bangs-pinned.PNG": [245,750,835,1225],
   "Miko-Boxers.PNG": [360,1330,720,1585],
   "Miko-big-shirt.PNG": [335,1145,805,1605],
-  "Miko-socks.PNG": [350,1490,735,1835]
+  "Miko-socks.PNG": [425,1680,660,1828]
 };
 
 const MIKO_ASSETS = {
@@ -3686,28 +3686,28 @@ const WARDROBE_SHOP_META = {
     label: "Miko · Pinned Bangs",
     assetIds: ["bangs-pinned"],
     unlockIds: ["bangs-pinned"],
-    shopPreviewScale: 2.55
+    shopPreviewScale: 1.55
   },
   "miko-top-big-shirt": {
     characterId: "miko",
     label: "Miko · Big Shirt",
     assetIds: ["top-big-shirt"],
     unlockIds: ["top-big-shirt"],
-    shopPreviewScale: 2.75
+    shopPreviewScale: 1.35
   },
   "miko-bottom-boxers": {
     characterId: "miko",
     label: "Miko · Boxers",
     assetIds: ["bottom-boxers"],
     unlockIds: ["bottom-boxers"],
-    shopPreviewScale: 3.25
+    shopPreviewScale: 1.4
   },
   "miko-socks": {
     characterId: "miko",
     label: "Miko · Socks",
     assetIds: ["socks"],
     unlockIds: ["socks"],
-    shopPreviewScale: 3.6
+    shopPreviewScale: 1.6
   }
 };
 
