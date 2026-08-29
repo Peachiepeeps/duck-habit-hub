@@ -2426,6 +2426,7 @@ let openSockStyleId = null;
 let currentTaskTab = "today";
 let currentInventoryTab = "crafting";
 let selectedInventoryItemId = null;
+let selectedGiftQuantity = 1;
 let currentShopTab = "supplies";
 let selectedShopItemId = null;
 let selectedShopQuantity = 1;
@@ -4117,15 +4118,63 @@ function renderInventoryItemSheet() {
     const character = getCurrentCharacter();
     const preferenceId = getGiftPreference(itemId, character);
     const reaction = GIFT_REACTIONS[preferenceId] || GIFT_REACTIONS.okay;
+    const maxGiftQuantity = Math.max(1, Math.min(10, quantity));
+    selectedGiftQuantity = Math.max(1, Math.min(selectedGiftQuantity, maxGiftQuantity));
+
     inventoryGiftPreference.classList.remove("hidden");
-    inventoryGiftPreference.textContent = `${character.name}: ${reaction.label} · +${reaction.happiness} Happiness`;
+    inventoryGiftPreference.textContent = `${character.name}: ${reaction.label} · +${reaction.happiness} Happiness each`;
+
+    const quantityBlock = document.createElement("div");
+    quantityBlock.className = "shop-quantity-block";
+
+    const quantityLabel = document.createElement("span");
+    quantityLabel.className = "shop-quantity-label";
+    quantityLabel.textContent = "How many to gift?";
+
+    const quantityStepper = document.createElement("div");
+    quantityStepper.className = "shop-quantity-stepper";
+
+    const minusButton = document.createElement("button");
+    minusButton.type = "button";
+    minusButton.textContent = "−";
+    minusButton.setAttribute("aria-label", "Gift one fewer");
+
+    const quantityValue = document.createElement("strong");
+
+    const plusButton = document.createElement("button");
+    plusButton.type = "button";
+    plusButton.textContent = "+";
+    plusButton.setAttribute("aria-label", "Gift one more");
+
+    const quantityNote = document.createElement("small");
+    quantityNote.textContent = `Up to 10 at a time · You have ×${quantity}`;
 
     const giftButton = document.createElement("button");
     giftButton.type = "button";
     giftButton.className = "inventory-action primary";
-    giftButton.textContent = `Gift to ${character.name}`;
-    giftButton.addEventListener("click", () => giftInventoryItem(itemId));
-    inventorySheetActions.append(giftButton);
+
+    const refreshGiftQuantity = () => {
+      selectedGiftQuantity = Math.max(1, Math.min(selectedGiftQuantity, maxGiftQuantity));
+      quantityValue.textContent = `×${selectedGiftQuantity}`;
+      minusButton.disabled = selectedGiftQuantity <= 1;
+      plusButton.disabled = selectedGiftQuantity >= maxGiftQuantity;
+      giftButton.textContent = `Gift ×${selectedGiftQuantity} to ${character.name}`;
+    };
+
+    minusButton.addEventListener("click", () => {
+      selectedGiftQuantity -= 1;
+      refreshGiftQuantity();
+    });
+    plusButton.addEventListener("click", () => {
+      selectedGiftQuantity += 1;
+      refreshGiftQuantity();
+    });
+    giftButton.addEventListener("click", () => giftInventoryItem(itemId, selectedGiftQuantity));
+
+    quantityStepper.append(minusButton, quantityValue, plusButton);
+    quantityBlock.append(quantityLabel, quantityStepper, quantityNote);
+    inventorySheetActions.append(quantityBlock, giftButton);
+    refreshGiftQuantity();
   }
 
   if (item.category === "furniture") {
@@ -4158,6 +4207,7 @@ function renderInventoryItemSheet() {
 function openInventoryItem(itemId) {
   if (!ITEMS[itemId] || inventoryQuantity(itemId) <= 0) return;
   selectedInventoryItemId = itemId;
+  selectedGiftQuantity = 1;
   inventoryItemSheet.classList.remove("hidden");
   inventoryItemSheet.setAttribute("aria-hidden", "false");
   renderInventoryItemSheet();
@@ -4165,6 +4215,7 @@ function openInventoryItem(itemId) {
 
 function closeInventoryItem() {
   selectedInventoryItemId = null;
+  selectedGiftQuantity = 1;
   inventoryItemSheet.classList.add("hidden");
   inventoryItemSheet.setAttribute("aria-hidden", "true");
 }
@@ -4188,14 +4239,19 @@ function sellInventoryItem(itemId) {
   showToast(`Sold ${item.name} for ${item.sellValue} Pink Coins. ♡`);
 }
 
-function giftInventoryItem(itemId) {
+function giftInventoryItem(itemId, quantity = 1) {
   const item = ITEMS[itemId];
-  if (!item || !item.giftable || !removeInventoryItem(itemId, 1)) return;
+  if (!item || !item.giftable) return;
+
+  const available = inventoryQuantity(itemId);
+  const amount = Math.max(1, Math.min(10, available, Math.floor(Number(quantity) || 1)));
+  if (!available || !removeInventoryItem(itemId, amount)) return;
 
   const character = getCurrentCharacter();
   const preferenceId = getGiftPreference(itemId, character);
   const reaction = GIFT_REACTIONS[preferenceId] || GIFT_REACTIONS.okay;
-  addCharacterHappiness(reaction.happiness);
+  const totalHappiness = reaction.happiness * amount;
+  addCharacterHappiness(totalHappiness);
   persist();
 
   closeInventoryItem();
@@ -4203,9 +4259,10 @@ function giftInventoryItem(itemId) {
   setExpression(reaction.expression, reaction.duration);
   showGiftBurst(reaction.burst);
 
-  const gained = Math.max(0, reaction.happiness);
+  const gained = Math.max(0, totalHappiness);
   const happinessText = gained > 0 ? ` +${gained} Happiness!` : " No Happiness lost.";
-  showToast(`${character.name} ${preferenceId === "favorite" ? "loved" : preferenceId === "like" ? "liked" : preferenceId === "okay" ? "enjoyed" : "wasn’t too excited about"} ${item.name}.${happinessText}`);
+  const itemText = amount > 1 ? `${item.name} ×${amount}` : item.name;
+  showToast(`${character.name} ${preferenceId === "favorite" ? "loved" : preferenceId === "like" ? "liked" : preferenceId === "okay" ? "enjoyed" : "wasn’t too excited about"} ${itemText}.${happinessText}`);
 }
 
 function openInventory() {

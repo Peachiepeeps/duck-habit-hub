@@ -1,16 +1,7 @@
-Duck Habit Hub V24.10.2 — Icon Padding Fix
+Duck Habit Hub V24.11 — Multi-Gift Quantity
 
-This update adds a little more breathing room around the app icon so Android crops it less aggressively.
-
-Upload these files to the root of your GitHub Pages repo:
-- index.html
-- manifest.webmanifest
-- apple-touch-icon-v3.png
-- favicon-32-v3.png
-- icon-192-v3.png
-- icon-512-v3.png
-- icon-maskable-512-v3.png
-
-Optional: the plain filenames were also updated in the full project folder.
-
-After GitHub finishes updating, uninstall the installed Duck Habit Hub app once, then install it again from Chrome so Android refreshes the launcher icon.
+- Food gifts can now be given in quantities from 1 to 10 at a time.
+- The quantity picker never exceeds the number currently in inventory.
+- Happiness is multiplied by the amount gifted (for example, a +5 favorite gifted ×10 gives +50 Happiness).
+- Existing save data is unchanged; no migration is required.
+- PWA cache version bumped so installed apps can pick up the gameplay update.

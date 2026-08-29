@@ -1,15 +1,15 @@
-const CACHE_NAME = "duck-habit-hub-pwa-v24-10-miko-render-repair";
+const CACHE_NAME = "duck-habit-hub-pwa-v24-11-gift-quantity";
 const PRECACHE_URLS = [
   './',
   './assets/achievements/trophies/trophy-bronze.png',
   './assets/achievements/trophies/trophy-gold.png',
   './assets/achievements/trophies/trophy-rose-gold.png',
   './assets/achievements/trophies/trophy-silver.png',
-  './apple-touch-icon.png',
-  './favicon-32.png',
-  './icon-192.png',
-  './icon-512.png',
-  './icon-maskable-512.png',
+  './apple-touch-icon-v2.png',
+  './favicon-32-v2.png',
+  './icon-192-v2.png',
+  './icon-512-v2.png',
+  './icon-maskable-512-v2.png',
   './assets/bakery/backgrounds/Bakery-background.PNG',
   './assets/bakery/drops/Gold-coin.PNG',
   './assets/bakery/drops/Gold-heart-refill.PNG',
