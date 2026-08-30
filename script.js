@@ -7925,12 +7925,12 @@ function renderTaskCard(task, { showTomorrowButton = false } = {}) {
   titleWrap.append(title, createCoinInline(task.reward));
 
   if (task.pinned) {
-    const pinIndicator = document.createElement("span");
-    pinIndicator.className = "task-pin-indicator";
-    pinIndicator.textContent = "📌";
-    pinIndicator.title = "Pinned to Today";
-    pinIndicator.setAttribute("aria-label", "Pinned to Today");
-    titleWrap.append(pinIndicator);
+    const pin = document.createElement("span");
+    pin.className = "task-pin-indicator";
+    pin.textContent = "📌";
+    pin.title = "Pinned to Today";
+    pin.setAttribute("aria-label", "Pinned to Today");
+    titleWrap.append(pin);
   }
 
   const remove = document.createElement("button");

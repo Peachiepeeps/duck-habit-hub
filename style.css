@@ -5052,7 +5052,7 @@ button { color: inherit; }
 }
 .task-pin-indicator {
   flex: 0 0 auto;
-  padding: 1px 2px;
+  padding: 1px 0;
   font-size: .82rem;
   line-height: 1;
 }
@@ -5077,11 +5077,6 @@ button { color: inherit; }
   gap: 7px;
   margin-top: 8px;
 }
-.task-card-actions .task-pin-button {
-  min-width: 78px;
-  padding-left: 10px;
-  padding-right: 10px;
-}
 .task-card-actions .complete-task-button {
   min-width: 0;
 }
@@ -5090,16 +5085,6 @@ button { color: inherit; }
   padding-left: 11px;
   padding-right: 11px;
 }
-
-@media (max-width: 390px) {
-  .task-card-actions {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-  .task-card-actions .task-pin-button {
-    grid-column: 2;
-  }
-}
-
 .saved-task-picker {
   display: flex;
   flex-direction: column;
@@ -5174,9 +5159,19 @@ button { color: inherit; }
   }
   .task-card-actions {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) auto auto;
   }
   .task-tomorrow-button {
     min-width: 86px;
   }
+}
+
+/* V24.16.1 — Pin button stays with task actions; title pin is status only. */
+.task-card-actions .task-pin-button {
+  min-width: 70px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+@media (max-width: 420px) {
+  .task-card-actions .task-pin-button { min-width: 68px; padding-left: 8px; padding-right: 8px; }
 }

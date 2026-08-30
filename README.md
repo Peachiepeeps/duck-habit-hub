@@ -19,5 +19,6 @@ Changes:
 
 
 V24.16.1
-- Restored a Pin/Pinned action button beside Complete/Tomorrow on task cards.
-- Pinned tasks also show a small non-clickable pin indicator beside the coin reward.
+- Restored the Pin/Pinned action button beside Complete/Tomorrow on task cards.
+- When a task is pinned, a small pin icon also appears beside its coin reward as a status indicator.
+- The small title pin is no longer the control; use the action-row Pin/Pinned button to toggle pinning.
