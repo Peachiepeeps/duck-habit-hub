@@ -1,4 +1,4 @@
-const CACHE_NAME = "duck-habit-hub-pwa-v24-15-task-tabs-tiny-count";
+const CACHE_NAME = "duck-habit-hub-pwa-v24-16-task-ui-cleanup";
 const PRECACHE_URLS = [
   './',
   './assets/achievements/trophies/trophy-bronze.png',

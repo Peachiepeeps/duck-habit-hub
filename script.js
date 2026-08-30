@@ -2805,9 +2805,14 @@ const tasksContent = document.querySelector("#tasksContent");
 const todayTab = document.querySelector("#todayTab");
 const tomorrowTab = document.querySelector("#tomorrowTab");
 const futureTab = document.querySelector("#futureTab");
-const savedTab = document.querySelector("#savedTab");
 const completedTab = document.querySelector("#completedTab");
 const taskForm = document.querySelector("#taskForm");
+const taskSource = document.querySelector("#taskSource");
+const savedTaskPicker = document.querySelector("#savedTaskPicker");
+const savedTaskSelect = document.querySelector("#savedTaskSelect");
+const deleteSavedTaskButton = document.querySelector("#deleteSavedTaskButton");
+const savedTaskEmptyNote = document.querySelector("#savedTaskEmptyNote");
+const newTaskNameField = document.querySelector("#newTaskNameField");
 const taskName = document.querySelector("#taskName");
 const taskRepeat = document.querySelector("#taskRepeat");
 let specificDateOptions = document.querySelector("#specificDateOptions");
@@ -2820,6 +2825,13 @@ const intervalDays = document.querySelector("#intervalDays");
 const customReward = document.querySelector("#customReward");
 const customRewardRadio = document.querySelector("#customRewardRadio");
 const saveAsTemplate = document.querySelector("#saveAsTemplate");
+const saveTemplateToggle = document.querySelector("#saveTemplateToggle");
+const pinTaskToToday = document.querySelector("#pinTaskToToday");
+const taskConfirmPanel = document.querySelector("#taskConfirmPanel");
+const taskConfirmText = document.querySelector("#taskConfirmText");
+const taskConfirmNo = document.querySelector("#taskConfirmNo");
+const taskConfirmYes = document.querySelector("#taskConfirmYes");
+let pendingTaskRemoval = null;
 const closetCategoryButton = document.querySelector("#closetCategoryButton");
 const closetCategoryLabel = document.querySelector("#closetCategoryLabel");
 const closetCategoryMenu = document.querySelector("#closetCategoryMenu");
@@ -7732,11 +7744,9 @@ function isTaskReady(task) {
 
 function taskDueText(task) {
   if (isTaskReady(task)) {
-    if (task.pinned) return "📌 Pinned · Ready today";
     if (task.nextDue && task.nextDue < localDateKey()) return "Ready whenever you are";
     return "Ready today";
   }
-  if (task.pinned) return `📌 Pinned · ${formatFriendlyDate(task.nextDue)}`;
   return `Next ${formatFriendlyDate(task.nextDue)}`;
 }
 
@@ -7792,13 +7802,44 @@ function createEmptyTasksMessage(title, detail) {
   return empty;
 }
 
+function openTaskRemovalConfirm({ type, id, name }) {
+  pendingTaskRemoval = { type, id };
+  if (taskConfirmText) {
+    taskConfirmText.textContent = type === "template"
+      ? `Would you like to remove “${name}” from your saved tasks?`
+      : `Would you like to remove “${name}”?`;
+  }
+  taskConfirmPanel?.classList.remove("hidden");
+}
+
+function closeTaskRemovalConfirm() {
+  pendingTaskRemoval = null;
+  taskConfirmPanel?.classList.add("hidden");
+}
+
+function confirmTaskRemoval() {
+  if (!pendingTaskRemoval) return closeTaskRemovalConfirm();
+  const { type, id } = pendingTaskRemoval;
+
+  if (type === "template") {
+    save.savedTaskTemplates = save.savedTaskTemplates.filter(item => item.id !== id);
+    persist();
+    closeTaskRemovalConfirm();
+    refreshSavedTaskPicker();
+    showToast("Saved task removed. ♡");
+    return;
+  }
+
+  save.tasks = save.tasks.filter(item => item.id !== id);
+  persist();
+  closeTaskRemovalConfirm();
+  renderTasks();
+}
+
 function deleteActiveTask(id) {
   const task = save.tasks.find(item => item.id === id);
   if (!task) return;
-  if (!confirm(`Remove "${task.name}" from your active tasks?`)) return;
-  save.tasks = save.tasks.filter(item => item.id !== id);
-  persist();
-  renderTasks();
+  openTaskRemovalConfirm({ type: "task", id: task.id, name: task.name });
 }
 
 function recordTaskCompletion(task, reward) {
@@ -7873,25 +7914,42 @@ function renderTaskCard(task, { showTomorrowButton = false } = {}) {
   const card = document.createElement("article");
   card.className = `task-card${isTaskReady(task) ? " ready" : " upcoming"}`;
 
-  const main = document.createElement("div");
-  main.className = "task-card-main";
+  const top = document.createElement("div");
+  top.className = "task-card-top";
 
-  const text = document.createElement("div");
-  text.className = "task-card-text";
+  const titleWrap = document.createElement("div");
+  titleWrap.className = "task-card-title-row";
   const title = document.createElement("strong");
+  title.className = "task-card-title";
   title.textContent = task.name;
+  titleWrap.append(title, createCoinInline(task.reward));
+
+  if (task.pinned) {
+    const pin = document.createElement("button");
+    pin.type = "button";
+    pin.className = "task-pin-indicator";
+    pin.textContent = "📌";
+    pin.title = "Pinned to Today — tap to unpin";
+    pin.setAttribute("aria-label", `Unpin ${task.name} from Today`);
+    pin.addEventListener("click", () => toggleTaskPinned(task.id));
+    titleWrap.append(pin);
+  }
+
+  const remove = document.createElement("button");
+  remove.type = "button";
+  remove.className = "task-x-button";
+  remove.textContent = "×";
+  remove.setAttribute("aria-label", `Remove ${task.name}`);
+  remove.addEventListener("click", () => deleteActiveTask(task.id));
+  top.append(titleWrap, remove);
+
   const meta = document.createElement("div");
   meta.className = "task-card-meta";
-
   const repeat = document.createElement("span");
   repeat.textContent = repeatLabel(task);
   const due = document.createElement("span");
   due.textContent = taskDueText(task);
   meta.append(repeat, due);
-  text.append(title, meta);
-
-  const reward = createCoinInline(task.reward);
-  main.append(text, reward);
 
   const actions = document.createElement("div");
   actions.className = "task-card-actions";
@@ -7902,30 +7960,18 @@ function renderTaskCard(task, { showTomorrowButton = false } = {}) {
   complete.textContent = isTaskReady(task) ? "✓ Complete" : taskDueText(task);
   complete.disabled = !isTaskReady(task);
   complete.addEventListener("click", () => completeTask(task.id));
-
-  const pin = document.createElement("button");
-  pin.type = "button";
-  pin.className = `task-pin-button${task.pinned ? " active" : ""}`;
-  pin.textContent = task.pinned ? "📌 Pinned" : "📌 Pin";
-  pin.setAttribute("aria-pressed", String(Boolean(task.pinned)));
-  pin.addEventListener("click", () => toggleTaskPinned(task.id));
-
-  const tomorrow = document.createElement("button");
-  tomorrow.type = "button";
-  tomorrow.className = "task-tomorrow-button";
-  tomorrow.textContent = "→ Tomorrow";
-  tomorrow.addEventListener("click", () => sendTaskToTomorrow(task.id));
-
-  const remove = document.createElement("button");
-  remove.type = "button";
-  remove.className = "task-delete-button";
-  remove.textContent = "Remove";
-  remove.addEventListener("click", () => deleteActiveTask(task.id));
-
   actions.append(complete);
-  if (showTomorrowButton) actions.append(tomorrow);
-  actions.append(pin, remove);
-  card.append(main, actions);
+
+  if (showTomorrowButton) {
+    const tomorrow = document.createElement("button");
+    tomorrow.type = "button";
+    tomorrow.className = "task-tomorrow-button";
+    tomorrow.textContent = "→ Tomorrow";
+    tomorrow.addEventListener("click", () => sendTaskToTomorrow(task.id));
+    actions.append(tomorrow);
+  }
+
+  card.append(top, meta, actions);
   return card;
 }
 
@@ -7946,10 +7992,7 @@ function addTaskFromTemplate(template) {
 function deleteTemplate(id) {
   const template = save.savedTaskTemplates.find(item => item.id === id);
   if (!template) return;
-  if (!confirm(`Delete "${template.name}" from Saved Tasks?`)) return;
-  save.savedTaskTemplates = save.savedTaskTemplates.filter(item => item.id !== id);
-  persist();
-  renderTasks();
+  openTaskRemovalConfirm({ type: "template", id: template.id, name: template.name });
 }
 
 function renderSavedTemplate(template) {
@@ -8014,30 +8057,13 @@ function renderTaskBucket(bucket) {
     return;
   }
 
-  if (bucket === "today") {
-    const pinned = tasks.filter(task => task.pinned);
-    const regular = tasks.filter(task => !task.pinned);
+  const heading = document.createElement("h2");
+  heading.className = "task-list-heading task-date-heading";
+  heading.textContent = bucket === "today" ? "Today" : bucket === "tomorrow" ? "Tomorrow" : "Future";
+  list.append(heading);
 
-    if (pinned.length) {
-      const heading = document.createElement("h2");
-      heading.className = "task-list-heading";
-      heading.textContent = "Pinned";
-      list.append(heading);
-      pinned.forEach(task => list.append(renderTaskCard(task, { showTomorrowButton: true })));
-    }
-
-    if (regular.length) {
-      if (pinned.length) {
-        const heading = document.createElement("h2");
-        heading.className = "task-list-heading";
-        heading.textContent = "Today";
-        list.append(heading);
-      }
-      regular.forEach(task => list.append(renderTaskCard(task, { showTomorrowButton: true })));
-    }
-  } else {
-    tasks.forEach(task => list.append(renderTaskCard(task)));
-  }
+  if (bucket === "today") tasks.forEach(task => list.append(renderTaskCard(task, { showTomorrowButton: true })));
+  else tasks.forEach(task => list.append(renderTaskCard(task)));
 
   tasksContent.append(list);
 }
@@ -8140,7 +8166,6 @@ function renderTasks() {
     [todayTab, "today"],
     [tomorrowTab, "tomorrow"],
     [futureTab, "future"],
-    [savedTab, "saved"],
     [completedTab, "completed"]
   ];
 
@@ -8153,7 +8178,6 @@ function renderTasks() {
   tasksContent.innerHTML = "";
   if (currentTaskTab === "tomorrow") renderTomorrowTasks();
   else if (currentTaskTab === "future") renderFutureTasks();
-  else if (currentTaskTab === "saved") renderSavedTasks();
   else if (currentTaskTab === "completed") renderCompletedTasks();
   else renderTodayTasks();
 }
@@ -8177,12 +8201,14 @@ function openTasks() {
 }
 
 function closeTasksToBook() {
+  closeTaskRemovalConfirm();
   taskFormPanel.classList.add("hidden");
   tasksPanel.classList.add("hidden");
   bookPanel.classList.remove("hidden");
 }
 
 function closeTasksAll() {
+  closeTaskRemovalConfirm();
   taskFormPanel.classList.add("hidden");
   tasksPanel.classList.add("hidden");
   bookPanel.classList.add("hidden");
@@ -8211,12 +8237,90 @@ function ensureSpecificDateControls() {
   return Boolean(taskSpecificDate);
 }
 
+function setTaskRewardInForm(amount) {
+  const value = Math.max(1, Number(amount) || 5);
+  const preset = [5, 10, 20, 30].includes(value) ? String(value) : "custom";
+  const radio = document.querySelector(`input[name="taskReward"][value="${preset}"]`);
+  if (radio) radio.checked = true;
+  const isCustom = preset === "custom";
+  customReward.classList.toggle("hidden", !isCustom);
+  customReward.value = isCustom ? String(value) : "";
+}
+
+function applyRepeatToTaskForm(repeat = { type: "once" }) {
+  const type = repeat?.type || "once";
+  const option = [...taskRepeat.options].some(item => item.value === type) ? type : "once";
+  taskRepeat.value = option;
+
+  if (option === "weekdays") {
+    const selected = new Set((repeat.weekdays || []).map(Number));
+    weekdayOptions.querySelectorAll('input[type="checkbox"]').forEach(input => {
+      input.checked = selected.has(Number(input.value));
+    });
+  }
+  if (option === "monthly-day") monthlyDay.value = String(Math.max(1, Math.min(31, Number(repeat.monthDay) || 1)));
+  if (option === "interval") intervalDays.value = String(Math.max(2, Math.min(365, Number(repeat.intervalDays) || 10)));
+  updateRepeatExtras();
+}
+
+function refreshSavedTaskPicker(selectedId = "") {
+  if (!savedTaskSelect) return;
+  savedTaskSelect.innerHTML = "";
+  const templates = Array.isArray(save.savedTaskTemplates) ? save.savedTaskTemplates : [];
+  const hasTemplates = templates.length > 0;
+
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = hasTemplates ? "Choose a saved task…" : "No saved tasks yet";
+  savedTaskSelect.append(placeholder);
+
+  templates.forEach(template => {
+    const option = document.createElement("option");
+    option.value = template.id;
+    option.textContent = template.name;
+    savedTaskSelect.append(option);
+  });
+
+  savedTaskSelect.disabled = !hasTemplates;
+  if (selectedId && templates.some(template => template.id === selectedId)) savedTaskSelect.value = selectedId;
+  else savedTaskSelect.value = "";
+  savedTaskEmptyNote?.classList.toggle("hidden", hasTemplates);
+  deleteSavedTaskButton?.classList.toggle("hidden", !savedTaskSelect.value);
+}
+
+function selectedSavedTaskTemplate() {
+  return save.savedTaskTemplates.find(template => template.id === savedTaskSelect?.value) || null;
+}
+
+function applySavedTaskTemplate(template) {
+  if (!template) return;
+  taskName.value = template.name || "";
+  setTaskRewardInForm(template.reward);
+  applyRepeatToTaskForm(structuredClone(template.repeat || { type: "once" }));
+  if (taskRepeat.value === "once" && taskSpecificDate) taskSpecificDate.value = localDateKey();
+}
+
+function updateTaskSourceMode() {
+  const usingSaved = taskSource?.value === "saved";
+  savedTaskPicker?.classList.toggle("hidden", !usingSaved);
+  newTaskNameField?.classList.toggle("hidden", usingSaved);
+  saveTemplateToggle?.classList.toggle("hidden", usingSaved);
+  taskName.required = !usingSaved;
+  taskName.disabled = usingSaved;
+
+  if (usingSaved) {
+    refreshSavedTaskPicker(savedTaskSelect?.value || "");
+    const template = selectedSavedTaskTemplate();
+    if (template) applySavedTaskTemplate(template);
+    else taskName.value = "";
+  }
+}
+
 function resetTaskForm() {
   taskForm.reset();
   ensureSpecificDateControls();
-  document.querySelector('input[name="taskReward"][value="5"]').checked = true;
-  customReward.classList.add("hidden");
-  customReward.value = "";
+  if (taskSource) taskSource.value = "new";
+  setTaskRewardInForm(5);
   if (specificDateOptions && taskSpecificDate) {
     specificDateOptions.classList.remove("hidden");
     taskSpecificDate.min = localDateKey();
@@ -8227,6 +8331,9 @@ function resetTaskForm() {
   monthlyDay.value = "1";
   intervalOptions.classList.add("hidden");
   intervalDays.value = "10";
+  if (pinTaskToToday) pinTaskToToday.checked = false;
+  refreshSavedTaskPicker();
+  updateTaskSourceMode();
 }
 
 function openTaskForm() {
@@ -8278,7 +8385,15 @@ function getRepeatDefinition() {
 function submitTaskForm(event) {
   event.preventDefault();
 
-  const name = taskName.value.trim();
+  const usingSaved = taskSource?.value === "saved";
+  const template = usingSaved ? selectedSavedTaskTemplate() : null;
+  if (usingSaved && !template) {
+    showToast("Choose a saved task first. ♡");
+    savedTaskSelect?.focus();
+    return;
+  }
+
+  const name = (usingSaved ? template?.name : taskName.value).trim();
   if (!name) {
     taskName.focus();
     return;
@@ -8323,12 +8438,13 @@ function submitTaskForm(event) {
     repeat,
     nextDue,
     createdAt: Date.now(),
-    completions: 0
+    completions: 0,
+    pinned: Boolean(pinTaskToToday?.checked)
   });
 
   save.tasks.push(task);
 
-  if (saveAsTemplate.checked) {
+  if (!usingSaved && saveAsTemplate.checked) {
     save.savedTaskTemplates.push({
       id: makeId("template"),
       name: task.name,
@@ -8865,13 +8981,31 @@ futureTab.addEventListener("click", () => {
   currentTaskTab = "future";
   renderTasks();
 });
-savedTab.addEventListener("click", () => {
-  currentTaskTab = "saved";
-  renderTasks();
-});
 completedTab.addEventListener("click", () => {
   currentTaskTab = "completed";
   renderTasks();
+});
+
+taskSource?.addEventListener("change", () => {
+  updateTaskSourceMode();
+  if (taskSource.value === "new") requestAnimationFrame(() => taskName.focus());
+});
+
+savedTaskSelect?.addEventListener("change", () => {
+  const template = selectedSavedTaskTemplate();
+  deleteSavedTaskButton?.classList.toggle("hidden", !template);
+  if (template) applySavedTaskTemplate(template);
+});
+
+deleteSavedTaskButton?.addEventListener("click", () => {
+  const template = selectedSavedTaskTemplate();
+  if (template) deleteTemplate(template.id);
+});
+
+taskConfirmNo?.addEventListener("click", closeTaskRemovalConfirm);
+taskConfirmYes?.addEventListener("click", confirmTaskRemoval);
+taskConfirmPanel?.addEventListener("click", event => {
+  if (event.target === taskConfirmPanel) closeTaskRemovalConfirm();
 });
 
 taskRepeat.addEventListener("change", updateRepeatExtras);
