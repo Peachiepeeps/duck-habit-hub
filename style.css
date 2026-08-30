@@ -1460,17 +1460,21 @@ button { color: inherit; }
   text-align: center;
 }
 
-/* Three Task tabs still fit comfortably on mobile. */
+/* Five Task views: date tabs on the first row, Saved / Completed beneath. */
 .task-tabs {
   flex: 1;
   min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-radius: 16px;
 }
 .task-tab {
-  flex: 1;
   min-width: 0;
   padding-left: 8px;
   padding-right: 8px;
 }
+.task-tab:nth-child(4) { grid-column: 1 / 2; }
+.task-tab:nth-child(5) { grid-column: 2 / 3; }
 @media (max-width: 420px) {
   .tasks-toolbar {
     gap: 6px;
@@ -3797,6 +3801,23 @@ button { color: inherit; }
   background: #eee2f7;
   color: #735483;
   box-shadow: inset 0 0 0 2px rgba(125, 86, 145, .12);
+}
+
+.task-tomorrow-button {
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 11px;
+  padding: 8px 9px;
+  background: #e8f0fb;
+  color: #5f718f;
+  font-size: .64rem;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+@media (max-width: 420px) {
+  .task-card-actions { flex-wrap: wrap; }
+  .complete-task-button { min-width: 42%; }
 }
 
 .repeat-extra small {

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f7dbe5" />
   <title>Duck Habit Hub</title>
-  <link rel="stylesheet" href="style.css?v=23-1-economy-silhouette" />
+  <link rel="stylesheet" href="style.css?v=24-15-task-tabs" />
 
   <link rel="manifest" href="manifest.webmanifest?v=24-10-2-icon-padding">
   <link rel="apple-touch-icon" href="apple-touch-icon-v3.png">
@@ -550,6 +550,8 @@
         <div class="tasks-toolbar">
           <div class="task-tabs" role="tablist" aria-label="Task views">
             <button id="todayTab" class="task-tab active" type="button" role="tab" aria-selected="true">Today</button>
+            <button id="tomorrowTab" class="task-tab" type="button" role="tab" aria-selected="false">Tomorrow</button>
+            <button id="futureTab" class="task-tab" type="button" role="tab" aria-selected="false">Future</button>
             <button id="savedTab" class="task-tab" type="button" role="tab" aria-selected="false">Saved</button>
             <button id="completedTab" class="task-tab" type="button" role="tab" aria-selected="false">Completed</button>
           </div>
@@ -557,7 +559,7 @@
         </div>
 
         <div id="tasksContent" class="tasks-content"></div>
-        <p class="task-kind-note">Unpinned one-time tasks clear after their due day. Pin anything you want to keep. No penalties. ♡</p>
+        <p class="task-kind-note">Pinned tasks always stay on Today. Use “Tomorrow” to move anything you want to tackle later. No penalties. ♡</p>
       </section>
 
       <section id="taskFormPanel" class="task-form-panel hidden" aria-label="Create a task">
@@ -840,7 +842,7 @@
       </section>
     </section>
   </main>
-  <script src="script.js?v=24-14-new-ducks"></script>
+  <script src="script.js?v=24-15-task-tabs-tiny-count"></script>
 
   <script>
     if ("serviceWorker" in navigator) {

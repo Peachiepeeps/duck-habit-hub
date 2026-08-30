@@ -2803,6 +2803,8 @@ const craftActionButton = document.querySelector("#craftActionButton");
 
 const tasksContent = document.querySelector("#tasksContent");
 const todayTab = document.querySelector("#todayTab");
+const tomorrowTab = document.querySelector("#tomorrowTab");
+const futureTab = document.querySelector("#futureTab");
 const savedTab = document.querySelector("#savedTab");
 const completedTab = document.querySelector("#completedTab");
 const taskForm = document.querySelector("#taskForm");
@@ -7734,7 +7736,34 @@ function taskDueText(task) {
     if (task.nextDue && task.nextDue < localDateKey()) return "Ready whenever you are";
     return "Ready today";
   }
+  if (task.pinned) return `📌 Pinned · ${formatFriendlyDate(task.nextDue)}`;
   return `Next ${formatFriendlyDate(task.nextDue)}`;
+}
+
+function taskBucket(task) {
+  // Pinned tasks are intentionally kept on Today, regardless of their due date.
+  if (task.pinned) return "today";
+
+  const today = localDateKey();
+  const tomorrow = addDaysKey(today, 1);
+  const due = task.nextDue || today;
+
+  if (due <= today) return "today";
+  if (due === tomorrow) return "tomorrow";
+  return "future";
+}
+
+function sendTaskToTomorrow(id) {
+  const task = save.tasks.find(item => item.id === id);
+  if (!task) return;
+
+  task.nextDue = addDaysKey(localDateKey(), 1);
+  // Since pinned tasks belong on Today, moving one to Tomorrow also unpins it.
+  task.pinned = false;
+  persist();
+  currentTaskTab = "tomorrow";
+  renderTasks();
+  showToast(`Moved "${task.name}" to Tomorrow. ♡`);
 }
 
 function createCoinInline(amount) {
@@ -7840,7 +7869,7 @@ function toggleTaskPinned(id) {
     : `"${task.name}" will clear after its due day if unfinished.`);
 }
 
-function renderTaskCard(task) {
+function renderTaskCard(task, { showTomorrowButton = false } = {}) {
   const card = document.createElement("article");
   card.className = `task-card${isTaskReady(task) ? " ready" : " upcoming"}`;
 
@@ -7881,13 +7910,21 @@ function renderTaskCard(task) {
   pin.setAttribute("aria-pressed", String(Boolean(task.pinned)));
   pin.addEventListener("click", () => toggleTaskPinned(task.id));
 
+  const tomorrow = document.createElement("button");
+  tomorrow.type = "button";
+  tomorrow.className = "task-tomorrow-button";
+  tomorrow.textContent = "→ Tomorrow";
+  tomorrow.addEventListener("click", () => sendTaskToTomorrow(task.id));
+
   const remove = document.createElement("button");
   remove.type = "button";
   remove.className = "task-delete-button";
   remove.textContent = "Remove";
   remove.addEventListener("click", () => deleteActiveTask(task.id));
 
-  actions.append(complete, pin, remove);
+  actions.append(complete);
+  if (showTomorrowButton) actions.append(tomorrow);
+  actions.append(pin, remove);
   card.append(main, actions);
   return card;
 }
@@ -7901,7 +7938,7 @@ function addTaskFromTemplate(template) {
     completions: 0
   }));
   persist();
-  currentTaskTab = "today";
+  currentTaskTab = taskBucket(save.tasks[save.tasks.length - 1]);
   renderTasks();
   showToast(`Added "${template.name}" to your tasks.`);
 }
@@ -7949,46 +7986,72 @@ function renderSavedTemplate(template) {
   return card;
 }
 
-function renderTodayTasks() {
+function renderTaskBucket(bucket) {
   refreshTasksForToday();
   const list = document.createElement("div");
   list.className = "task-list";
 
-  if (!save.tasks.length) {
-    list.append(createEmptyTasksMessage(
-      "No tasks yet!",
-      "Tap + Add Task and make your first reward-only task."
-    ));
+  const tasks = save.tasks
+    .filter(task => taskBucket(task) === bucket)
+    .sort((a, b) => {
+      // Pinned cards stay at the top of Today. Then sort by due date / creation order.
+      const pinDifference = Number(Boolean(b.pinned)) - Number(Boolean(a.pinned));
+      if (pinDifference) return pinDifference;
+      const dueDifference = String(a.nextDue || "").localeCompare(String(b.nextDue || ""));
+      if (dueDifference) return dueDifference;
+      return Number(a.createdAt || 0) - Number(b.createdAt || 0);
+    });
+
+  if (!tasks.length) {
+    const messages = {
+      today: ["Nothing for today!", "Enjoy the breathing room, or tap + Add Task. ♡"],
+      tomorrow: ["Nothing for tomorrow", "Tasks dated for tomorrow will wait here for you."],
+      future: ["No future tasks", "Tasks scheduled after tomorrow will live here instead of cluttering Today."]
+    };
+    const [title, detail] = messages[bucket] || messages.today;
+    list.append(createEmptyTasksMessage(title, detail));
     tasksContent.append(list);
     return;
   }
 
-  const sorted = [...save.tasks].sort((a, b) => {
-    const readyDifference = Number(isTaskReady(b)) - Number(isTaskReady(a));
-    if (readyDifference) return readyDifference;
-    return String(a.nextDue || "").localeCompare(String(b.nextDue || ""));
-  });
+  if (bucket === "today") {
+    const pinned = tasks.filter(task => task.pinned);
+    const regular = tasks.filter(task => !task.pinned);
 
-  const ready = sorted.filter(isTaskReady);
-  const upcoming = sorted.filter(task => !isTaskReady(task));
+    if (pinned.length) {
+      const heading = document.createElement("h2");
+      heading.className = "task-list-heading";
+      heading.textContent = "Pinned";
+      list.append(heading);
+      pinned.forEach(task => list.append(renderTaskCard(task, { showTomorrowButton: true })));
+    }
 
-  if (ready.length) {
-    const heading = document.createElement("h2");
-    heading.className = "task-list-heading";
-    heading.textContent = "Ready";
-    list.append(heading);
-    ready.forEach(task => list.append(renderTaskCard(task)));
-  }
-
-  if (upcoming.length) {
-    const heading = document.createElement("h2");
-    heading.className = "task-list-heading upcoming-heading";
-    heading.textContent = "Upcoming";
-    list.append(heading);
-    upcoming.forEach(task => list.append(renderTaskCard(task)));
+    if (regular.length) {
+      if (pinned.length) {
+        const heading = document.createElement("h2");
+        heading.className = "task-list-heading";
+        heading.textContent = "Today";
+        list.append(heading);
+      }
+      regular.forEach(task => list.append(renderTaskCard(task, { showTomorrowButton: true })));
+    }
+  } else {
+    tasks.forEach(task => list.append(renderTaskCard(task)));
   }
 
   tasksContent.append(list);
+}
+
+function renderTodayTasks() {
+  renderTaskBucket("today");
+}
+
+function renderTomorrowTasks() {
+  renderTaskBucket("tomorrow");
+}
+
+function renderFutureTasks() {
+  renderTaskBucket("future");
 }
 
 function renderSavedTasks() {
@@ -8073,15 +8136,24 @@ function renderCompletedTasks() {
 }
 
 function renderTasks() {
-  todayTab.classList.toggle("active", currentTaskTab === "today");
-  todayTab.setAttribute("aria-selected", String(currentTaskTab === "today"));
-  savedTab.classList.toggle("active", currentTaskTab === "saved");
-  savedTab.setAttribute("aria-selected", String(currentTaskTab === "saved"));
-  completedTab.classList.toggle("active", currentTaskTab === "completed");
-  completedTab.setAttribute("aria-selected", String(currentTaskTab === "completed"));
+  const tabs = [
+    [todayTab, "today"],
+    [tomorrowTab, "tomorrow"],
+    [futureTab, "future"],
+    [savedTab, "saved"],
+    [completedTab, "completed"]
+  ];
+
+  tabs.forEach(([tab, id]) => {
+    if (!tab) return;
+    tab.classList.toggle("active", currentTaskTab === id);
+    tab.setAttribute("aria-selected", String(currentTaskTab === id));
+  });
 
   tasksContent.innerHTML = "";
-  if (currentTaskTab === "saved") renderSavedTasks();
+  if (currentTaskTab === "tomorrow") renderTomorrowTasks();
+  else if (currentTaskTab === "future") renderFutureTasks();
+  else if (currentTaskTab === "saved") renderSavedTasks();
   else if (currentTaskTab === "completed") renderCompletedTasks();
   else renderTodayTasks();
 }
@@ -8267,7 +8339,7 @@ function submitTaskForm(event) {
 
   persist();
   closeTaskForm();
-  currentTaskTab = "today";
+  currentTaskTab = taskBucket(task);
   renderTasks();
   showToast(`Added "${task.name}"!`);
 }
@@ -8783,6 +8855,14 @@ document.querySelector("#cancelTaskForm").addEventListener("click", closeTaskFor
 
 todayTab.addEventListener("click", () => {
   currentTaskTab = "today";
+  renderTasks();
+});
+tomorrowTab.addEventListener("click", () => {
+  currentTaskTab = "tomorrow";
+  renderTasks();
+});
+futureTab.addEventListener("click", () => {
+  currentTaskTab = "future";
   renderTasks();
 });
 savedTab.addEventListener("click", () => {
