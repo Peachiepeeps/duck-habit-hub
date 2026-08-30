@@ -5175,3 +5175,25 @@ button { color: inherit; }
 @media (max-width: 420px) {
   .task-card-actions .task-pin-button { min-width: 68px; padding-left: 8px; padding-right: 8px; }
 }
+
+/* V24.16.2 — Pin belongs on each task card, never in Add Task. */
+.task-card-actions {
+  grid-template-columns: minmax(0, 1fr) max-content max-content;
+  align-items: stretch;
+}
+.task-card-actions .task-pin-button {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  visibility: visible !important;
+  opacity: 1 !important;
+  white-space: nowrap;
+}
+@media (max-width: 420px) {
+  .task-card-actions {
+    grid-template-columns: minmax(0, 1fr) max-content max-content;
+    gap: 6px;
+  }
+  .task-card-actions .task-pin-button { min-width: 62px; padding: 8px 7px; }
+  .task-card-actions .task-tomorrow-button { min-width: 82px; padding-left: 8px; padding-right: 8px; }
+}

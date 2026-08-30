@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f7dbe5" />
   <title>Duck Habit Hub</title>
-  <link rel="stylesheet" href="style.css?v=24-16-1-task-pin-layout" />
+  <link rel="stylesheet" href="style.css?v=24-16-2-task-pin-fix" />
 
   <link rel="manifest" href="manifest.webmanifest?v=24-10-2-icon-padding">
   <link rel="apple-touch-icon" href="apple-touch-icon-v3.png">
@@ -650,14 +650,6 @@
               <input id="intervalDays" type="number" inputmode="numeric" min="2" max="365" value="10" />
             </label>
 
-            <label id="pinTaskToggle" class="save-template-toggle">
-              <input id="pinTaskToToday" type="checkbox" />
-              <span>
-                <b>Pin to Today 📌</b>
-                <small>Pinned tasks stay on Today until you complete, remove, or send them to tomorrow.</small>
-              </span>
-            </label>
-
             <label id="saveTemplateToggle" class="save-template-toggle">
               <input id="saveAsTemplate" type="checkbox" />
               <span>
@@ -878,7 +870,7 @@
       </section>
     </section>
   </main>
-  <script src="script.js?v=24-16-1-task-pin-layout"></script>
+  <script src="script.js?v=24-16-2-task-pin-fix"></script>
 
   <script>
     if ("serviceWorker" in navigator) {

@@ -2826,7 +2826,6 @@ const customReward = document.querySelector("#customReward");
 const customRewardRadio = document.querySelector("#customRewardRadio");
 const saveAsTemplate = document.querySelector("#saveAsTemplate");
 const saveTemplateToggle = document.querySelector("#saveTemplateToggle");
-const pinTaskToToday = document.querySelector("#pinTaskToToday");
 const taskConfirmPanel = document.querySelector("#taskConfirmPanel");
 const taskConfirmText = document.querySelector("#taskConfirmText");
 const taskConfirmNo = document.querySelector("#taskConfirmNo");
@@ -8337,7 +8336,6 @@ function resetTaskForm() {
   monthlyDay.value = "1";
   intervalOptions.classList.add("hidden");
   intervalDays.value = "10";
-  if (pinTaskToToday) pinTaskToToday.checked = false;
   refreshSavedTaskPicker();
   updateTaskSourceMode();
 }
@@ -8445,7 +8443,7 @@ function submitTaskForm(event) {
     nextDue,
     createdAt: Date.now(),
     completions: 0,
-    pinned: Boolean(pinTaskToToday?.checked)
+    pinned: false
   });
 
   save.tasks.push(task);

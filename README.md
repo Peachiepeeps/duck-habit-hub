@@ -22,3 +22,11 @@ V24.16.1
 - Restored the Pin/Pinned action button beside Complete/Tomorrow on task cards.
 - When a task is pinned, a small pin icon also appears beside its coin reward as a status indicator.
 - The small title pin is no longer the control; use the action-row Pin/Pinned button to toggle pinning.
+
+
+V24.16.2 — Task Pin placement fix
+- Removed the Pin to Today checkbox from the Add Task form.
+- Every existing task card now has a Pin/Pinned button in its bottom action row.
+- Pinned tasks also show a small pin icon beside the coin reward as a status indicator only.
+- New tasks start unpinned and can be pinned directly from their card.
+- PWA cache/version bumped so installed apps fetch the fix.
