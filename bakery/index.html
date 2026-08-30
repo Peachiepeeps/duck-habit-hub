@@ -2555,6 +2555,7 @@ document.querySelectorAll(".bakery-home-link").forEach(link=>{
 
 // -------------------- TINY DUCK SECRET SIGHTINGS --------------------
 const TINY_DUCK_STACK_SIGHTINGS=4;
+const TINY_DUCK_PILE_SIGHTINGS=100;
 const TINY_DUCK_BAKERY_MIN_MS=32000;
 const TINY_DUCK_BAKERY_MAX_MS=85000;
 const TINY_DUCK_BAKERY_CHANCE=0.24;
@@ -2650,6 +2651,7 @@ function collectBakeryTinyDuck(){
 
   let tinyWasNew=false;
   let stackWasNew=false;
+  let pileWasNew=false;
   let sightings=0;
 
   updateHubSave(hub=>{
@@ -2671,11 +2673,23 @@ function collectBakeryTinyDuck(){
       hub.unlockedDucks.push("tiny-duck-stack");
       stackWasNew=true;
     }
+
+    if(
+      sightings>=TINY_DUCK_PILE_SIGHTINGS &&
+      !hub.unlockedDucks.includes("pile-of-tiny-ducks")
+    ){
+      hub.unlockedDucks.push("pile-of-tiny-ducks");
+      pileWasNew=true;
+    }
   });
 
   hideBakeryTinyDuck();
 
-  if(stackWasNew){
+  if(pileWasNew){
+    showBakeryTinyToast(
+      `Tiny Duck sighting #${sightings}! Pile of Tiny Ducks unlocked! 🦆✨`
+    );
+  }else if(stackWasNew){
     showBakeryTinyToast(
       "Tiny Duck sighting #4! Tiny Duck Stack unlocked! 🦆🦆🦆🦆"
     );
@@ -2683,10 +2697,13 @@ function collectBakeryTinyDuck(){
     showBakeryTinyToast(
       "You found Tiny Duck! Added to Duckipedia! 🦆✨"
     );
-  }else{
-    const capped=Math.min(sightings,TINY_DUCK_STACK_SIGHTINGS);
+  }else if(sightings>TINY_DUCK_STACK_SIGHTINGS){
     showBakeryTinyToast(
-      `Tiny Duck spotted again! ${capped}/${TINY_DUCK_STACK_SIGHTINGS} sightings ♡`
+      `Tiny Duck spotted again! ${sightings} Sightings! ♡`
+    );
+  }else{
+    showBakeryTinyToast(
+      `Tiny Duck spotted again! ${sightings}/${TINY_DUCK_STACK_SIGHTINGS} sightings ♡`
     );
   }
 }
