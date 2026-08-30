@@ -30,3 +30,16 @@ V24.16.2 — Task Pin placement fix
 - Pinned tasks also show a small pin icon beside the coin reward as a status indicator only.
 - New tasks start unpinned and can be pinned directly from their card.
 - PWA cache/version bumped so installed apps fetch the fix.
+
+
+## V24.17 — Peep + Miko Shop Outfits
+- Added Peep shop pieces: White Dress, White Lace Stockings, White Cardigan, White Mary Janes, and White Bow.
+- Added Miko shop pieces: Blouse, Shorts, White Garter Socks, Fancy Loafers, Black Blazer, and Black Hairpins.
+- All new wardrobe purchases cost 150 Pink Coins each.
+- Miko items stay hidden until Miko is invited.
+- Peep's White Dress replaces her normal top + skirt while equipped; White Lace Stockings replace regular socks.
+- Miko's Black Blazer automatically uses its separate raised-arm layer; socks stay below shoes.
+- Dedicated White Cardigan and Black Blazer shop/closet preview art is used.
+
+### Miko asset filename correction
+The earlier flat Miko asset ZIP accidentally swapped the artwork stored under `fancy-loafers.png` and `shorts.png`. V24.17 uses the corrected semantic filenames. Replace those two files in `assets/miko/` with the V24.17 correction ZIP.

@@ -1,4 +1,4 @@
-const CACHE_NAME = "duck-habit-hub-pwa-v24-16-2-task-pin-fix";
+const CACHE_NAME = "duck-habit-hub-pwa-v24-17-peep-miko-shop-outfits";
 const PRECACHE_URLS = [
   './',
   './assets/achievements/trophies/trophy-bronze.png',
@@ -198,6 +198,14 @@ const PRECACHE_URLS = [
   './assets/miko/Miko-sweater-closet.PNG',
   './assets/miko/Miko-sweater-sleeve.PNG',
   './assets/miko/Miko-sweater.PNG',
+  './assets/miko/black-blazer.png',
+  './assets/miko/black-blazer-shop.png',
+  './assets/miko/black-blazer-arm-piece.png',
+  './assets/miko/black-hairpins.png',
+  './assets/miko/blouse.png',
+  './assets/miko/fancy-loafers.png',
+  './assets/miko/shorts.png',
+  './assets/miko/white-garter-socks.png',
   './assets/oc-invitations/Miko-invitation.PNG',
   './assets/paint/Aqua-paint.PNG',
   './assets/paint/Black-paint.PNG',
@@ -257,6 +265,12 @@ const PRECACHE_URLS = [
   './assets/peep/sock-left-rainbow.png',
   './assets/peep/sock-right-blue.png',
   './assets/peep/sock-right-rainbow.png',
+  './assets/peep/white-cardigan-sides.png',
+  './assets/peep/white-cardigan-shop.png',
+  './assets/peep/white-dress.png',
+  './assets/peep/white-lace-stockings.png',
+  './assets/peep/white-mary-janes.png',
+  './assets/peep/white-bow.png',
   './assets/room-expansion/shelves/shelf-brown.png',
   './assets/room-expansion/shelves/shelf-cream.png',
   './assets/room-expansion/shelves/shelf-dark-brown.png',

@@ -1167,10 +1167,19 @@ const SHOP_STOCK = {
     { wardrobeId: "miko-bottom-jeans", price: 150 },
     { wardrobeId: "miko-top-big-shirt", price: 150 },
     { wardrobeId: "miko-bottom-boxers", price: 150 },
-    { wardrobeId: "miko-socks", price: 150 }
+    { wardrobeId: "miko-socks", price: 150 },
+    { wardrobeId: "peep-dress-white", price: 150 },
+    { wardrobeId: "peep-legwear-white-lace", price: 150 },
+    { wardrobeId: "peep-cardigan-white", price: 150 },
+    { wardrobeId: "miko-shirt-blouse", price: 150 },
+    { wardrobeId: "miko-bottom-shorts", price: 150 },
+    { wardrobeId: "miko-socks-garter", price: 150 },
+    { wardrobeId: "miko-outer-black-blazer", price: 150 }
   ],
   shoes: [
-    { wardrobeId: "shoes-sneaker", price: 150 }
+    { wardrobeId: "shoes-sneaker", price: 150 },
+    { wardrobeId: "peep-shoes-white-mary-jane", price: 150 },
+    { wardrobeId: "miko-shoes-fancy-loafers", price: 150 }
   ],
   accessories: [
     { wardrobeId: "cow-ears", price: 150 },
@@ -1181,7 +1190,9 @@ const SHOP_STOCK = {
     { wardrobeId: "hair-side-ribbon", price: 150 },
     { wardrobeId: "large-back-bow", price: 150 },
     { wardrobeId: "beret", price: 150 },
-    { wardrobeId: "miko-headband", price: 150 }
+    { wardrobeId: "peep-bow-white", price: 150 },
+    { wardrobeId: "miko-headband", price: 150 },
+    { wardrobeId: "miko-hairpins-black", price: 150 }
   ]
 };
 
@@ -1915,6 +1926,13 @@ const ASSETS = {
   "shoes-loafer": { label: "Loafers", file: "loafer-shoes.png", z: 35 },
   "shoes-sneaker": { label: "Colorful Sneakers", file: "colorful-sneakers.png", z: 35 },
 
+  // Peep shop outfit layers
+  "legwear-white-lace": { label: "White Lace Stockings", file: "white-lace-stockings.png", z: 29.5 },
+  "dress-white": { label: "White Dress", file: "white-dress.png", z: 32.5 },
+  "cardigan-white": { label: "White Cardigan", file: "white-cardigan-sides.png", previewFile: "white-cardigan-shop.png", z: 34.2 },
+  "shoes-white-mary-jane": { label: "White Mary Janes", file: "white-mary-janes.png", z: 35 },
+  "bow-white": { label: "White Bow", file: "white-bow.png", z: 13 },
+
   // Expressions are automatic reactions, not closet choices.
   "expression-neutral": { label: "Neutral", file: "expression-neutral.png", z: 42 },
   "expression-happy": { label: "Happy", file: "expression-happy.png", z: 42 },
@@ -1967,7 +1985,13 @@ const THUMB_BOUNDS = {
   "sock-left-blue.png": [447,1529,579,1794],
   "sock-left-rainbow.png": [445,1523,589,1795],
   "sock-right-blue.png": [611,1529,743,1794],
-  "sock-right-rainbow.png": [601,1523,745,1795]
+  "sock-right-rainbow.png": [601,1523,745,1795],
+  "white-cardigan-shop.png": [308,1212,891,1467],
+  "white-cardigan-sides.png": [308,1212,891,1467],
+  "white-dress.png": [358,1222,834,1530],
+  "white-lace-stockings.png": [446,1399,749,1797],
+  "white-mary-janes.png": [443,1749,749,1803],
+  "white-bow.png": [201,695,1010,1068]
 };
 
 const MIKO_THUMB_BOUNDS = {
@@ -1999,7 +2023,15 @@ const MIKO_THUMB_BOUNDS = {
   "Miko-bangs-pinned.PNG": [245,750,835,1225],
   "Miko-Boxers.PNG": [360,1330,720,1585],
   "Miko-big-shirt.PNG": [335,1145,805,1605],
-  "Miko-socks.PNG": [425,1680,660,1828]
+  "Miko-socks.PNG": [425,1680,660,1828],
+  "black-blazer-shop.png": [390,1204,741,1472],
+  "black-blazer.png": [416,1222,741,1472],
+  "black-blazer-arm-piece.png": [390,1204,491,1361],
+  "black-hairpins.png": [684,970,747,1038],
+  "blouse.png": [431,1219,655,1423],
+  "shorts.png": [402,1402,668,1503],
+  "white-garter-socks.png": [384,1614,686,1795],
+  "fancy-loafers.png": [380,1745,688,1816]
 };
 
 const MIKO_ASSETS = {
@@ -2016,13 +2048,20 @@ const MIKO_ASSETS = {
   "top-sweater": { label: "Sweater", file: "Miko-sweater.PNG", previewFile: "Miko-sweater-closet.PNG", z: 34 },
   "top-sweater-sleeve": { label: "Sweater Sleeve", file: "Miko-sweater-sleeve.PNG", z: 37 },
   "top-big-shirt": { label: "Big Shirt", file: "Miko-big-shirt.PNG", z: 36.5 },
+  "shirt-blouse": { label: "Blouse", file: "blouse.png", z: 32 },
+  "outer-black-blazer": { label: "Black Blazer", file: "black-blazer.png", previewFile: "black-blazer-shop.png", z: 34 },
+  "outer-black-blazer-arm": { label: "Black Blazer Arm", file: "black-blazer-arm-piece.png", z: 37 },
   "bottom-capris": { label: "Capris", file: "Miko-capri-pants.PNG", z: 31 },
   "bottom-jeans": { label: "Jeans", file: "Miko-jeans.PNG", z: 31 },
   "bottom-boxers": { label: "Boxers", file: "Miko-Boxers.PNG", z: 31 },
+  "bottom-shorts": { label: "Shorts", file: "shorts.png", z: 31 },
   "belt": { label: "Belt", file: "Miko-belt.PNG", z: 33 },
   "socks": { label: "Socks", file: "Miko-socks.PNG", z: 38 },
+  "socks-garter": { label: "White Garter Socks", file: "white-garter-socks.png", z: 38 },
   "shoes-loafer": { label: "Loafers", file: "Miko-loafers.PNG", z: 39 },
+  "shoes-fancy-loafers": { label: "Fancy Loafers", file: "fancy-loafers.png", z: 39 },
   "headband": { label: "Headband", file: "Miko-headband.PNG", z: 47 },
+  "hairpins-black": { label: "Black Hairpins", file: "black-hairpins.png", z: 49 },
   "expression-neutral": { label: "Neutral", file: "Miko-neutral.PNG", z: 44 },
   "expression-happy": { label: "Happy", file: "Miko-happy.PNG", z: 44 },
   "expression-sad": { label: "Sad", file: "Miko-sad.PNG", z: 44 },
@@ -2039,16 +2078,16 @@ const MIKO_CLOSET = [
     options: ["hair-main"]
   },
   { id: "bangsStyle", label: "Bangs", type: "single", options: ["bangs", "bangs-pinned"] },
-  { id: "shirt", label: "Shirt", type: "single", allowNone: true, options: ["top-button"] },
-  { id: "outer", label: "Layers", type: "single", allowNone: true, options: ["top-hoodie", "top-sweater", "top-big-shirt"] },
-  { id: "bottom", label: "Bottoms", type: "single", options: ["bottom-capris", "bottom-jeans", "bottom-boxers"] },
-  { id: "socks", label: "Socks", type: "single", allowNone: true, options: ["socks"] },
-  { id: "shoes", label: "Shoes", type: "single", allowNone: true, options: ["shoes-loafer"] },
+  { id: "shirt", label: "Shirt", type: "single", allowNone: true, options: ["top-button", "shirt-blouse"] },
+  { id: "outer", label: "Layers", type: "single", allowNone: true, options: ["top-hoodie", "top-sweater", "top-big-shirt", "outer-black-blazer"] },
+  { id: "bottom", label: "Bottoms", type: "single", options: ["bottom-capris", "bottom-jeans", "bottom-boxers", "bottom-shorts"] },
+  { id: "socks", label: "Socks", type: "single", allowNone: true, options: ["socks", "socks-garter"] },
+  { id: "shoes", label: "Shoes", type: "single", allowNone: true, options: ["shoes-loafer", "shoes-fancy-loafers"] },
   {
     id: "extras",
     label: "Accessories",
     type: "multi",
-    options: ["headband"]
+    options: ["headband", "hairpins-black"]
   }
 ];
 
@@ -2061,15 +2100,17 @@ const CLOSET = [
   },
   { id: "top", label: "Tops", type: "single", options: ["top-shirt", "top-sweater"] },
   { id: "bottom", label: "Skirts", type: "single", options: ["bottom-fluffy", "bottom-pleated"] },
+  { id: "dress", label: "Dresses", type: "single", allowNone: true, options: ["dress-white"] },
+  { id: "legwear", label: "Legwear", type: "single", allowNone: true, options: ["legwear-white-lace"] },
   { id: "socks", label: "Socks", type: "socks" },
-  { id: "shoes", label: "Shoes", type: "single", allowNone: true, options: ["shoes-loafer", "shoes-sneaker"] },
+  { id: "shoes", label: "Shoes", type: "single", allowNone: true, options: ["shoes-loafer", "shoes-sneaker", "shoes-white-mary-jane"] },
   { id: "ears", label: "Ears", type: "single", allowNone: true, options: ["cow-ears", "cat-ears"] },
   { id: "tail", label: "Tails", type: "single", allowNone: true, options: ["tail-cow", "tail-bunny"] },
   {
     id: "extras",
     label: "Extras",
     type: "multi",
-    options: ["jacket", "collar", "leg-bandage", "horns", "cheek-bandage", "left-bow", "right-bow", "hair-side-ribbon", "large-back-bow", "beret"]
+    options: ["jacket", "cardigan-white", "collar", "leg-bandage", "horns", "cheek-bandage", "left-bow", "right-bow", "bow-white", "hair-side-ribbon", "large-back-bow", "beret"]
   }
 ];
 
@@ -2077,6 +2118,8 @@ const DEFAULT_OUTFIT = {
   hair: "hair-short",
   top: "top-sweater",
   bottom: "bottom-pleated",
+  dress: null,
+  legwear: null,
   leftSock: "sock-left-rainbow",
   rightSock: "sock-right-rainbow",
   shoes: "shoes-loafer",
@@ -2113,16 +2156,19 @@ function normalizeMikoOutfit(rawOutfit = {}) {
   }
 
   if (!hadShirtField) shirt = "top-button";
-  if (![null, "top-button"].includes(shirt)) shirt = "top-button";
-  if (![null, "top-hoodie", "top-sweater", "top-big-shirt"].includes(outer)) outer = "top-hoodie";
+  if (![null, "top-button", "shirt-blouse"].includes(shirt)) shirt = "top-button";
+  if (![null, "top-hoodie", "top-sweater", "top-big-shirt", "outer-black-blazer"].includes(outer)) outer = "top-hoodie";
 
   const bangsStyle = ["bangs", "bangs-pinned"].includes(incoming.bangsStyle)
     ? incoming.bangsStyle
     : "bangs";
-  const bottom = ["bottom-capris", "bottom-jeans", "bottom-boxers"].includes(incoming.bottom)
+  const bottom = ["bottom-capris", "bottom-jeans", "bottom-boxers", "bottom-shorts"].includes(incoming.bottom)
     ? incoming.bottom
     : "bottom-capris";
-  const socks = incoming.socks === "socks" ? "socks" : null;
+  const socks = ["socks", "socks-garter"].includes(incoming.socks) ? incoming.socks : null;
+  const shoes = [null, "shoes-loafer", "shoes-fancy-loafers"].includes(incoming.shoes)
+    ? incoming.shoes
+    : "shoes-loafer";
 
   const normalized = {
     ...structuredClone(DEFAULT_MIKO_OUTFIT),
@@ -2131,7 +2177,8 @@ function normalizeMikoOutfit(rawOutfit = {}) {
     shirt,
     outer,
     bottom,
-    socks
+    socks,
+    shoes
   };
   delete normalized.top;
   return normalized;
@@ -3397,9 +3444,18 @@ function getEquippedAssetIds() {
   const ids = ["base"];
 
   ids.push(outfit.hair, "bangs");
-  ids.push(outfit.top, outfit.bottom);
-  if (outfit.leftSock) ids.push(outfit.leftSock);
-  if (outfit.rightSock) ids.push(outfit.rightSock);
+
+  // A one-piece dress replaces the regular top + skirt while equipped.
+  // The saved top/skirt remain remembered and return when the dress is removed.
+  if (outfit.dress) ids.push(outfit.dress);
+  else ids.push(outfit.top, outfit.bottom);
+
+  // Full-leg stockings replace Peep's separate left/right socks while equipped.
+  if (outfit.legwear) ids.push(outfit.legwear);
+  else {
+    if (outfit.leftSock) ids.push(outfit.leftSock);
+    if (outfit.rightSock) ids.push(outfit.rightSock);
+  }
   if (outfit.shoes) ids.push(outfit.shoes);
   if (outfit.ears) ids.push(outfit.ears);
   if (outfit.tail) ids.push(outfit.tail);
@@ -3418,6 +3474,7 @@ function getMikoEquippedAssetIds() {
   if (outfit.outer === "top-hoodie") ids.push("hoodie-back");
   if (outfit.bottom) ids.push(outfit.bottom);
   if (outfit.shirt === "top-button") ids.push("top-button");
+  else if (outfit.shirt === "shirt-blouse") ids.push("shirt-blouse");
 
   // Jeans use the belt automatically. Its z-order keeps it above pants and
   // the optional Button Shirt, but below Hoodie/Sweater outer layers.
@@ -3431,6 +3488,7 @@ function getMikoEquippedAssetIds() {
   if (outfit.shirt === "top-button") ids.push("top-button-sleeve");
   if (outfit.outer === "top-hoodie") ids.push("top-hoodie-sleeve");
   else if (outfit.outer === "top-sweater") ids.push("top-sweater-sleeve");
+  else if (outfit.outer === "outer-black-blazer") ids.push("outer-black-blazer-arm");
 
   // Socks sit below any equipped shoes. Big Shirt is an outer layer and its
   // z-order keeps it over Boxers while still respecting the rest of Miko's stack.
@@ -3778,6 +3836,20 @@ function makeOptionCard({ assetId = null, label, selected = false, locked = fals
 function chooseSingle(group, id) {
   const outfit = getCurrentOutfit();
   outfit[group.id] = id;
+
+  if (save.selectedCharacter === "peep") {
+    // Dresses replace Peep's regular top + skirt visually. Picking a regular
+    // top or skirt switches back out of the one-piece dress automatically.
+    if ((group.id === "top" || group.id === "bottom") && id) outfit.dress = null;
+
+    // Full-leg stockings and the older separate sock system are mutually
+    // exclusive so two different leg layers never accidentally overlap.
+    if (group.id === "legwear" && id) {
+      outfit.leftSock = null;
+      outfit.rightSock = null;
+    }
+  }
+
   persist();
   renderPeep();
   renderClosetOptions();
@@ -3882,6 +3954,72 @@ const WARDROBE_SHOP_META = {
     assetIds: ["socks"],
     unlockIds: ["socks"],
     shopPreviewScale: 1.1
+  },
+  "peep-dress-white": {
+    characterId: "peep",
+    label: "Peep · White Dress",
+    assetIds: ["dress-white"],
+    unlockIds: ["dress-white"]
+  },
+  "peep-legwear-white-lace": {
+    characterId: "peep",
+    label: "Peep · White Lace Stockings",
+    assetIds: ["legwear-white-lace"],
+    unlockIds: ["legwear-white-lace"]
+  },
+  "peep-cardigan-white": {
+    characterId: "peep",
+    label: "Peep · White Cardigan",
+    assetIds: ["cardigan-white"],
+    unlockIds: ["cardigan-white"]
+  },
+  "peep-shoes-white-mary-jane": {
+    characterId: "peep",
+    label: "Peep · White Mary Janes",
+    assetIds: ["shoes-white-mary-jane"],
+    unlockIds: ["shoes-white-mary-jane"]
+  },
+  "peep-bow-white": {
+    characterId: "peep",
+    label: "Peep · White Bow",
+    assetIds: ["bow-white"],
+    unlockIds: ["bow-white"]
+  },
+  "miko-shirt-blouse": {
+    characterId: "miko",
+    label: "Miko · Blouse",
+    assetIds: ["shirt-blouse"],
+    unlockIds: ["shirt-blouse"]
+  },
+  "miko-bottom-shorts": {
+    characterId: "miko",
+    label: "Miko · Shorts",
+    assetIds: ["bottom-shorts"],
+    unlockIds: ["bottom-shorts"]
+  },
+  "miko-socks-garter": {
+    characterId: "miko",
+    label: "Miko · White Garter Socks",
+    assetIds: ["socks-garter"],
+    unlockIds: ["socks-garter"]
+  },
+  "miko-outer-black-blazer": {
+    characterId: "miko",
+    label: "Miko · Black Blazer",
+    assetIds: ["outer-black-blazer"],
+    unlockIds: ["outer-black-blazer", "outer-black-blazer-arm"]
+  },
+  "miko-shoes-fancy-loafers": {
+    characterId: "miko",
+    label: "Miko · Fancy Loafers",
+    assetIds: ["shoes-fancy-loafers"],
+    unlockIds: ["shoes-fancy-loafers"]
+  },
+  "miko-hairpins-black": {
+    characterId: "miko",
+    label: "Miko · Black Hairpins",
+    assetIds: ["hairpins-black"],
+    unlockIds: ["hairpins-black"]
   }
 };
 
@@ -4004,6 +4142,10 @@ function removeSockPopover() {
 }
 
 function applySockPlacement(style, placement) {
+  if (placement !== "clear" && save.selectedCharacter === "peep") {
+    getCurrentOutfit().legwear = null;
+  }
+
   if (placement === "clear") {
     const outfit = getCurrentOutfit();
     if (outfit.leftSock === style.left) outfit.leftSock = null;
