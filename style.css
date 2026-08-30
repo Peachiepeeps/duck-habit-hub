@@ -5052,12 +5052,9 @@ button { color: inherit; }
 }
 .task-pin-indicator {
   flex: 0 0 auto;
-  border: 0;
   padding: 1px 2px;
-  background: transparent;
-  font-size: .9rem;
+  font-size: .82rem;
   line-height: 1;
-  cursor: pointer;
 }
 .task-x-button {
   flex: 0 0 auto;
@@ -5076,9 +5073,14 @@ button { color: inherit; }
 }
 .task-card-actions {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   gap: 7px;
   margin-top: 8px;
+}
+.task-card-actions .task-pin-button {
+  min-width: 78px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 .task-card-actions .complete-task-button {
   min-width: 0;
@@ -5088,6 +5090,16 @@ button { color: inherit; }
   padding-left: 11px;
   padding-right: 11px;
 }
+
+@media (max-width: 390px) {
+  .task-card-actions {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .task-card-actions .task-pin-button {
+    grid-column: 2;
+  }
+}
+
 .saved-task-picker {
   display: flex;
   flex-direction: column;

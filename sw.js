@@ -1,4 +1,4 @@
-const CACHE_NAME = "duck-habit-hub-pwa-v24-16-task-ui-cleanup";
+const CACHE_NAME = "duck-habit-hub-pwa-v24-16-1-pin-button-indicator";
 const PRECACHE_URLS = [
   './',
   './assets/achievements/trophies/trophy-bronze.png',

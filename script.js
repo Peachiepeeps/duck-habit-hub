@@ -7925,14 +7925,12 @@ function renderTaskCard(task, { showTomorrowButton = false } = {}) {
   titleWrap.append(title, createCoinInline(task.reward));
 
   if (task.pinned) {
-    const pin = document.createElement("button");
-    pin.type = "button";
-    pin.className = "task-pin-indicator";
-    pin.textContent = "📌";
-    pin.title = "Pinned to Today — tap to unpin";
-    pin.setAttribute("aria-label", `Unpin ${task.name} from Today`);
-    pin.addEventListener("click", () => toggleTaskPinned(task.id));
-    titleWrap.append(pin);
+    const pinIndicator = document.createElement("span");
+    pinIndicator.className = "task-pin-indicator";
+    pinIndicator.textContent = "📌";
+    pinIndicator.title = "Pinned to Today";
+    pinIndicator.setAttribute("aria-label", "Pinned to Today");
+    titleWrap.append(pinIndicator);
   }
 
   const remove = document.createElement("button");
@@ -7970,6 +7968,14 @@ function renderTaskCard(task, { showTomorrowButton = false } = {}) {
     tomorrow.addEventListener("click", () => sendTaskToTomorrow(task.id));
     actions.append(tomorrow);
   }
+
+  const pinButton = document.createElement("button");
+  pinButton.type = "button";
+  pinButton.className = `task-pin-button${task.pinned ? " active" : ""}`;
+  pinButton.textContent = task.pinned ? "📌 Pinned" : "📌 Pin";
+  pinButton.setAttribute("aria-pressed", task.pinned ? "true" : "false");
+  pinButton.addEventListener("click", () => toggleTaskPinned(task.id));
+  actions.append(pinButton);
 
   card.append(top, meta, actions);
   return card;

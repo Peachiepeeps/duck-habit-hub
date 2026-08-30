@@ -16,3 +16,8 @@ Changes:
 - Pinned tasks stay in the Today list and sort first without a separate Pinned section.
 - Existing saved tasks and existing task data are preserved.
 - V24.15 Tiny Duck sighting fixes remain included.
+
+
+V24.16.1
+- Restored a Pin/Pinned action button beside Complete/Tomorrow on task cards.
+- Pinned tasks also show a small non-clickable pin indicator beside the coin reward.
