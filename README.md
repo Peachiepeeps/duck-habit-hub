@@ -42,3 +42,13 @@ V24.13.4 preview tuning:
 - Big Shirt and Boxers previews left exactly as-is.
 - Pinned Bangs reduced from 1.55× to 1.25×.
 - Socks reduced from 1.60× to 1.10×.
+
+
+V24.14 — New Ducks + Tiny 100 Reward
+- Added 9 new craftable ducks: Magenta Duck, Googly Eye Duck, Scarf Duck, Duck on a Skateboard, Long Hair Duck, Angry Duck, Vampire Duck, Apple Duck, and Bathtime Duck.
+- Added Magenta Paint as a repeatable mixed paint: Pink Paint + Red Paint.
+- Added new crafting supplies: Googly Eyes, Scarf, Skateboard, Wig, Eyebrows, Vampire Teeth, and Bathtub.
+- Added Apple as a Food item and Apple Duck ingredient.
+- Pile of Tiny Ducks now unlocks at 100 Tiny Duck sightings, including retroactively for older saves.
+- Tiny Obsession's achievement reward is now Pile of Tiny Ducks.
+- Added new assets to the PWA offline cache.

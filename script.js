@@ -291,6 +291,55 @@ const ITEMS = {
     "icon": "🎀",
     "sellValue": 7
   },
+  "googly-eyes": {
+    "name": "Googly Eyes",
+    "category": "crafting",
+    "image": "assets/ingredients/googly-eyes.png",
+    "icon": "👀",
+    "sellValue": 6
+  },
+  "scarf": {
+    "name": "Scarf",
+    "category": "crafting",
+    "image": "assets/ingredients/scarf.png",
+    "icon": "🧣",
+    "sellValue": 7
+  },
+  "skateboard": {
+    "name": "Skateboard",
+    "category": "crafting",
+    "image": "assets/ingredients/skateboard.png",
+    "icon": "🛹",
+    "sellValue": 10
+  },
+  "wig": {
+    "name": "Wig",
+    "category": "crafting",
+    "image": "assets/ingredients/wig.png",
+    "icon": "💇",
+    "sellValue": 8
+  },
+  "eyebrows": {
+    "name": "Eyebrows",
+    "category": "crafting",
+    "image": "assets/ingredients/eyebrows.png",
+    "icon": "😠",
+    "sellValue": 6
+  },
+  "vampire-teeth": {
+    "name": "Vampire Teeth",
+    "category": "crafting",
+    "image": "assets/ingredients/vampire-teeth.png",
+    "icon": "🧛",
+    "sellValue": 8
+  },
+  "bathtub": {
+    "name": "Bathtub",
+    "category": "crafting",
+    "image": "assets/ingredients/bathtub.png",
+    "icon": "🛁",
+    "sellValue": 10
+  },
   "flour": {
     "name": "Flour",
     "category": "crafting",
@@ -311,6 +360,13 @@ const ITEMS = {
     "image": "assets/paint/Dark-red-paint.PNG",
     "icon": "🎨",
     "sellValue": 8
+  },
+  "magenta-paint": {
+    "name": "Magenta Paint",
+    "category": "paint",
+    "image": "assets/paint/magenta-paint.png",
+    "icon": "🎨",
+    "sellValue": 9
   },
   "orange-paint": {
     "name": "Orange Paint",
@@ -444,6 +500,14 @@ const ITEMS = {
     "image": "assets/food/Bread-loaf.PNG",
     "icon": "🍽️",
     "sellValue": 4,
+    "giftable": true
+  },
+  "apple": {
+    "name": "Apple",
+    "category": "food",
+    "image": "assets/food/apple.png",
+    "icon": "🍎",
+    "sellValue": 5,
     "giftable": true
   },
   "burger": {
@@ -900,6 +964,7 @@ const SHOPPING_LOOT_POOL = [
   "standard-duck",
   "red-paint",
   "dark-red-paint",
+  "magenta-paint",
   "orange-paint",
   "peach-paint",
   "gold-paint",
@@ -953,7 +1018,15 @@ const SHOPPING_LOOT_POOL = [
   "lollipop",
   "mustache",
   "top-hat",
-  "bow"
+  "bow",
+  "googly-eyes",
+  "scarf",
+  "skateboard",
+  "wig",
+  "eyebrows",
+  "vampire-teeth",
+  "bathtub",
+  "apple"
 ];
 
 
@@ -1026,7 +1099,14 @@ const SHOP_STOCK = {
     { itemId: "moon", price: 60 },
     { itemId: "mustache", price: 50 },
     { itemId: "top-hat", price: 60 },
-    { itemId: "bow", price: 50 }
+    { itemId: "bow", price: 50 },
+    { itemId: "googly-eyes", price: 50 },
+    { itemId: "scarf", price: 60 },
+    { itemId: "skateboard", price: 75 },
+    { itemId: "wig", price: 60 },
+    { itemId: "eyebrows", price: 50 },
+    { itemId: "vampire-teeth", price: 60 },
+    { itemId: "bathtub", price: 75 }
   ],
   paint: [
     { itemId: "red-paint", price: 60 },
@@ -1112,6 +1192,10 @@ const PAINT_RECIPES = {
     "red-paint": 1,
     "black-paint": 1
   },
+  "magenta-paint": {
+    "pink-paint": 1,
+    "red-paint": 1
+  },
   "peach-paint": {
     "orange-paint": 1,
     "white-paint": 1
@@ -1155,6 +1239,83 @@ const PAINT_RECIPES = {
 };
 
 const DUCKS = {
+  "angry-duck": {
+    "name": "Angry Duck",
+    "file": "assets/ducks/angry-duck.png",
+    "recipe": {
+      "standard-duck": 1,
+      "eyebrows": 1
+    }
+  },
+  "apple-duck": {
+    "name": "Apple Duck",
+    "file": "assets/ducks/apple-duck.png",
+    "recipe": {
+      "standard-duck": 1,
+      "apple": 1
+    }
+  },
+  "bathtime-duck": {
+    "name": "Bathtime Duck",
+    "file": "assets/ducks/bathtime-duck.png",
+    "recipe": {
+      "standard-duck": 1,
+      "bathtub": 1
+    }
+  },
+  "duck-on-skateboard": {
+    "name": "Duck on a Skateboard",
+    "file": "assets/ducks/duck-on-skateboard.png",
+    "recipe": {
+      "standard-duck": 1,
+      "skateboard": 1
+    }
+  },
+  "googly-eye-duck": {
+    "name": "Googly Eye Duck",
+    "file": "assets/ducks/googly-eye-duck.png",
+    "recipe": {
+      "standard-duck": 1,
+      "googly-eyes": 1
+    }
+  },
+  "long-hair-duck": {
+    "name": "Long Hair Duck",
+    "file": "assets/ducks/long-hair-duck.png",
+    "recipe": {
+      "standard-duck": 1,
+      "wig": 1
+    }
+  },
+  "magenta-duck": {
+    "name": "Magenta Duck",
+    "file": "assets/ducks/magenta-duck.png",
+    "recipe": {
+      "standard-duck": 1,
+      "magenta-paint": 1
+    }
+  },
+  "pile-of-tiny-ducks": {
+    "name": "Pile of Tiny Ducks",
+    "file": "assets/ducks/pile-of-tiny-ducks.png",
+    "acquisition": "hundred-tiny-sightings"
+  },
+  "scarf-duck": {
+    "name": "Scarf Duck",
+    "file": "assets/ducks/scarf-duck.png",
+    "recipe": {
+      "standard-duck": 1,
+      "scarf": 1
+    }
+  },
+  "vampire-duck": {
+    "name": "Vampire Duck",
+    "file": "assets/ducks/vampire-duck.png",
+    "recipe": {
+      "standard-duck": 1,
+      "vampire-teeth": 1
+    }
+  },
   "alien-duck": {
     "name": "Alien Duck",
     "file": "assets/ducks/Alien-duck.PNG",
@@ -3022,7 +3183,7 @@ const ACHIEVEMENTS = Object.freeze([
 
   { id:"tiny-1", title:"Tiny Discovery", category:"special", tier:"bronze", description:"Find Tiny Duck for the first time.", metric:"tiny", target:1, reward:{type:"duck",duckId:"tiny-duck",label:"Tiny Duck"} },
   { id:"tiny-4", title:"Tiny Tower", category:"special", tier:"silver", description:"Find Tiny Duck 4 times.", metric:"tiny", target:4, reward:{type:"duck",duckId:"tiny-duck-stack",label:"Tiny Duck Stack"} },
-  { id:"tiny-100", title:"Tiny Obsession", category:"special", tier:"gold", description:"Find Tiny Duck 100 times.", metric:"tiny", target:100, reward:{type:"coins",amount:100,label:"100 Pink Coins"} },
+  { id:"tiny-100", title:"Tiny Obsession", category:"special", tier:"gold", description:"Find Tiny Duck 100 times.", metric:"tiny", target:100, reward:{type:"duck",duckId:"pile-of-tiny-ducks",label:"Pile of Tiny Ducks"} },
   { id:"tiny-500", title:"Tiny Apocalypse", category:"special", tier:"rose-gold", description:"Find Tiny Duck 500 times. There may be no going back.", metric:"tiny", target:500, reward:{type:"coins",amount:500,label:"500 Pink Coins"} },
 
   { id:"bakery-25", title:"Freshly Baked", category:"bakery", tier:"bronze", description:"Win 25 Bakery rounds.", metric:"bakery", target:25, reward:{type:"coins",amount:25,label:"25 Pink Coins"} },
@@ -4991,6 +5152,7 @@ const TINY_DUCK_SPAWN_MAX_MS = 90000;
 const TINY_DUCK_SPAWN_CHANCE = 0.22;
 const TINY_DUCK_VISIBLE_MS = 9000;
 const TINY_DUCK_STACK_SIGHTINGS = 4;
+const TINY_DUCK_PILE_SIGHTINGS = 100;
 
 let tinyDuckSpawnTimer = null;
 let tinyDuckHideTimer = null;
@@ -5090,11 +5252,21 @@ function collectTinyDuckSighting() {
     });
   }
 
+  let pileWasNew = false;
+  if (sightings >= TINY_DUCK_PILE_SIGHTINGS) {
+    pileWasNew = unlockDuck("pile-of-tiny-ducks", {
+      notify: false,
+      persistNow: false
+    });
+  }
+
   persist();
   evaluateAchievements();
   hideTinyDuckSecret();
 
-  if (stackWasNew) {
+  if (pileWasNew) {
+    showToast(`Tiny Duck sighting #${sightings}! Pile of Tiny Ducks unlocked! 🦆✨`);
+  } else if (stackWasNew) {
     showToast("Tiny Duck sighting #4! Tiny Duck Stack unlocked! 🦆🦆🦆🦆");
   } else if (tinyWasNew) {
     showToast("You found Tiny Duck! Added to Duckipedia! 🦆✨");
@@ -5791,6 +5963,8 @@ function duckDiscoveryHint(duck) {
       return "A tiny secret visitor may rarely appear around the game.";
     case "four-tiny-sightings":
       return "Spot Tiny Ducks four times to complete this special trophy.";
+    case "hundred-tiny-sightings":
+      return "Spot Tiny Duck 100 times to unlock this very crowded special reward.";
     case "drop-or-shop":
       return "Find or buy a Standard Duck to discover this entry.";
     case "character-happiness-100": {
@@ -8661,6 +8835,15 @@ const achievementsUnlockedOnLoad = evaluateAchievements({ notify: false });
 
 renderRoom();
 renderPeep();
+
+// V24.14: legacy saves may already have 100 Tiny Duck sightings from before
+// Pile of Tiny Ducks existed. Grant it quietly without taking away any old reward.
+if (Math.max(0, Number(save.tinyDuckSightings) || 0) >= TINY_DUCK_PILE_SIGHTINGS) {
+  if (unlockDuck("pile-of-tiny-ducks", { notify: false, persistNow: false, skipMilestoneCheck: true, skipAchievementCheck: true })) {
+    persist();
+  }
+}
+
 renderRoomPicker();
 renderClosetCategoryMenu();
 renderRoomWingToggle();
