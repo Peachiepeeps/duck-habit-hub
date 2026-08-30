@@ -1,9 +1,20 @@
-# Duck Habit Hub V24.17.3 — Force-Fresh Peep Fix
+# Duck Habit Hub V24.18 — Paintable Furniture: Pet Bed Test
 
-This update intentionally uses brand-new physical filenames for JavaScript, CSS, and the service worker so an installed PWA cannot keep reusing the older V24.17 files.
+This update adds the first paintable furniture family: Pet Bed.
 
-Fixes included:
-- Peep render stack explicitly orders Body Base -> White Lace Stockings -> White Dress -> White Cardigan -> White Mary Janes.
-- Peep's paired-sock Closet renderer includes the previous thumbnail bug fix plus a failsafe so Rainbow and White + Blue sock cards cannot disappear if a thumbnail fails.
+- Shop sells Pet Bed in White for 200 Pink Coins.
+- Up to 21 Pet Beds can be owned total.
+- Duck Crafter now has a Furniture tab.
+- A White Pet Bed + one Paint creates that colored Pet Bed.
+- Each non-white Pet Bed color can be crafted once while owned.
+- Furniture Inventory groups every Pet Bed color under one Pet Bed entry.
+- Opening Pet Bed shows the colors currently owned and lets you choose a color before placing it in the room.
+- Existing legacy Gray/Cream/Red/Pink/Blue Pet Beds are migrated to the new system without intentionally removing placements.
 
-Upload all files from the update ZIP to the GitHub repository root. The old script.js/style.css/sw.js files may remain; index.html now points at the new V24.17.3 filenames.
+Expected files are case-sensitive and use `.PNG`, for example:
+`assets/furniture/pet-beds/Bed-white.PNG`
+`assets/furniture/pet-beds/Bed-red.PNG`
+`assets/furniture/pet-beds/Bed-dark-red.PNG`
+...through all 21 colors.
+
+The new Pet Bed images are expected to already be uploaded under `assets/furniture/pet-beds/`.
