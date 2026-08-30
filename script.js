@@ -3514,21 +3514,58 @@ function getCurrentCharacterAssetIds() {
   return getCharacterAssetIds(save.selectedCharacter);
 }
 
-function renderCharacterInto(container, characterId = save.selectedCharacter) {
-  container.innerHTML = "";
-
+function getRenderOrderedAssets(characterId = save.selectedCharacter) {
   const character = CHARACTERS[characterId] || CHARACTERS.peep;
   const assetMap = getCharacterAssetMap(character.id);
   const equipped = getCharacterAssetIds(character.id)
     .map(id => ({ id, ...(assetMap[id] || {}) }))
-    .filter(asset => asset.file)
-    .sort((a, b) => a.z - b.z);
+    .filter(asset => asset.file);
 
-  for (const asset of equipped) {
+  if (character.id === "peep") {
+    const peepOrder = [
+      "tail-cow", "tail-bunny",
+      "large-back-bow", "bow-white",
+      "hair-short", "hair-low-pigtails", "hair-ponytail", "hair-long-pigtails", "hair-jellyfish",
+      "base",
+      "sock-left-blue", "sock-right-blue", "sock-left-rainbow", "sock-right-rainbow", "legwear-white-lace",
+      "leg-bandage",
+      "bottom-fluffy", "bottom-pleated", "dress-white",
+      "top-shirt", "top-sweater",
+      "jacket", "cardigan-white",
+      "shoes-loafer", "shoes-sneaker", "shoes-white-mary-jane",
+      "collar",
+      "expression-neutral", "expression-happy", "expression-sad", "expression-shocked", "expression-mad",
+      "cow-ears", "cat-ears", "horns",
+      "bangs",
+      "cheek-bandage",
+      "left-bow", "right-bow", "hair-side-ribbon",
+      "beret"
+    ];
+    const orderMap = new Map(peepOrder.map((id, index) => [id, index]));
+
+    return equipped.sort((a, b) => {
+      const aOrder = orderMap.has(a.id) ? orderMap.get(a.id) : 1000 + (Number(a.z) || 0);
+      const bOrder = orderMap.has(b.id) ? orderMap.get(b.id) : 1000 + (Number(b.z) || 0);
+      if (aOrder !== bOrder) return aOrder - bOrder;
+      return (Number(a.z) || 0) - (Number(b.z) || 0);
+    });
+  }
+
+  return equipped.sort((a, b) => (Number(a.z) || 0) - (Number(b.z) || 0));
+}
+
+function renderCharacterInto(container, characterId = save.selectedCharacter) {
+  container.innerHTML = "";
+
+  const character = CHARACTERS[characterId] || CHARACTERS.peep;
+  const equipped = getRenderOrderedAssets(character.id);
+
+  for (const [index, asset] of equipped.entries()) {
     const img = document.createElement("img");
     img.src = `${character.assetFolder}${asset.file}`;
     img.alt = "";
     img.style.setProperty("--z", asset.z);
+    img.style.zIndex = String(index + 1);
     img.dataset.asset = asset.id;
     if (asset.id.startsWith("expression-")) img.dataset.expressionLayer = "true";
     container.append(img);
@@ -3771,7 +3808,7 @@ function makeCombinedThumb(assetIds, { boxW = 104, boxH = 88, targetW = 76, targ
   const cx = (x0 + x1) / 2;
   const cy = (y0 + y1) / 2;
 
-  for (const { asset } of entries) {
+  for (const { asset, thumbFile } of entries) {
     const img = document.createElement("img");
     img.src = `${CHARACTERS[characterId].assetFolder}${thumbFile}`;
     img.alt = "";

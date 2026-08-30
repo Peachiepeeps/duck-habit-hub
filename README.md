@@ -43,3 +43,9 @@ V24.16.2 — Task Pin placement fix
 
 ### Miko asset filename correction
 The earlier flat Miko asset ZIP accidentally swapped the artwork stored under `fancy-loafers.png` and `shorts.png`. V24.17 uses the corrected semantic filenames. Replace those two files in `assets/miko/` with the V24.17 correction ZIP.
+
+
+## V24.17.2 — Peep layering + Socks fix
+- Forces Peep's white outfit to render back-to-front as: body base → lace stockings → white dress → white cardigan, with Mary Janes above the stockings.
+- Fixes the paired-sock Closet thumbnail renderer so Peep's Rainbow and White + Blue sock choices appear again.
+- Bumps the PWA/browser script cache version so the corrected layering code is actually fetched.

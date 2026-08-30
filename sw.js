@@ -1,4 +1,4 @@
-const CACHE_NAME = "duck-habit-hub-pwa-v24-17-peep-miko-shop-outfits";
+const CACHE_NAME = "duck-habit-hub-pwa-v24-17-2-peep-layer-socks-fix";
 const PRECACHE_URLS = [
   './',
   './assets/achievements/trophies/trophy-bronze.png',
