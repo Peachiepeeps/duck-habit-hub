@@ -1,0 +1,370 @@
+*{box-sizing:border-box}
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  min-height:100%;
+  overflow:hidden;
+  background:#28243a;
+  color:#4e4055;
+  font-family:ui-rounded,"Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;
+  touch-action:none;
+  user-select:none;
+  -webkit-user-select:none;
+}
+body{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100vw;
+  height:100dvh;
+}
+
+#rotateNotice{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  padding:28px;
+  background:linear-gradient(180deg,#edf6ff,#f7eaff);
+  color:#625477;
+  text-align:center;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:10px;
+}
+#rotateNotice img{
+  width:min(34vw,150px);
+  aspect-ratio:1;
+  object-fit:contain;
+}
+#rotateNotice strong{font-size:22px}
+#rotateNotice span{font-size:13px;opacity:.72}
+
+#stage{
+  position:relative;
+  width:min(100vw,calc(100dvh * 1.777778));
+  height:min(100dvh,calc(100vw / 1.777778));
+  aspect-ratio:16/9;
+  overflow:hidden;
+  background:#76649a;
+  isolation:isolate;
+}
+
+.full-layer{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:fill;
+  pointer-events:none;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+
+/* User-approved machine layer order */
+#machineBackground{z-index:1}
+#waterLayer{z-index:3}
+#prizeDropChute{z-index:5}
+#prizeLayer{position:absolute;inset:0;z-index:17;pointer-events:none}
+#clawLayer{position:absolute;inset:0;z-index:10;pointer-events:none}
+#prizeDropChuteGlass{z-index:12}
+#machineGlass{z-index:14}
+#machineBase{z-index:16}
+#machineTopFrame{z-index:18}
+#joystickLayer{position:absolute;inset:0;z-index:30;pointer-events:none}
+
+/* Duck prizes */
+.prize{
+  position:absolute;
+  width:8.6%;
+  aspect-ratio:1/1;
+  object-fit:contain;
+  transform:translate(-50%,-50%);
+  transform-origin:center;
+  filter:drop-shadow(0 5px 4px rgba(34,44,80,.20));
+  transition:left .48s ease,top .48s ease,transform .34s ease,opacity .28s ease;
+}
+.prize.held{
+  will-change:left,top,transform;
+  transform:translate(-50%,-50%) scale(.92) !important;
+}
+.prize.slipping{
+  transition:left .48s ease-in,top .58s cubic-bezier(.3,.05,.72,1.15),transform .58s ease;
+}
+.prize.won{
+  opacity:0;
+  transform:translate(-50%,-50%) scale(.45) rotate(-12deg) !important;
+}
+
+/* CSS wire: it sits BEHIND the claw and deliberately extends beneath its cap. */
+#wire{
+  position:absolute;
+  top:0;
+  z-index:1;
+  width:max(4px,.34%);
+  height:15%;
+  border-radius:999px;
+  background:linear-gradient(90deg,#202027,#55545c 48%,#1f1f25);
+  transform:translateX(-50%);
+  transform-origin:top center;
+  box-shadow:0 0 2px rgba(255,255,255,.25);
+  transition:left .06s linear,height .58s ease-in-out;
+}
+
+#clawBox{
+  position:absolute;
+  z-index:2;
+  width:8.9%;
+  height:24%;
+  transform:translate(-50%,0);
+  transform-origin:top center;
+  transition:left .06s linear,top .58s ease-in-out;
+  overflow:visible;
+  display:grid;
+  place-items:start center;
+}
+#claw{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:top center;
+  display:block;
+  pointer-events:none;
+  filter:drop-shadow(0 4px 3px rgba(33,29,48,.18));
+}
+
+/* Joystick */
+#joystick{
+  position:absolute;
+  left:83.5%;
+  top:80.7%;
+  width:8.8%;
+  height:auto;
+  transform:translate(-50%,-50%);
+  transform-origin:50% 82%;
+  object-fit:contain;
+  cursor:grab;
+  touch-action:none;
+  pointer-events:auto;
+  filter:drop-shadow(0 4px 3px rgba(35,29,54,.20));
+}
+#joystick.dragging{cursor:grabbing}
+
+/* Invisible machine buttons */
+.machine-button{
+  position:absolute;
+  z-index:40;
+  border:0;
+  padding:0;
+  background:transparent;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.machine-button:disabled{cursor:default}
+#dropButton{
+  left:10.4%;
+  top:80.6%;
+  width:14.2%;
+  height:18.4%;
+}
+#resetButton{
+  left:30.8%;
+  top:80.6%;
+  width:14.8%;
+  height:18.4%;
+}
+
+.button-label{
+  position:absolute;
+  z-index:41;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+  text-align:center;
+  font-weight:1000;
+  line-height:1.02;
+  text-shadow:0 1px 0 rgba(255,255,255,.88),0 0 5px rgba(255,255,255,.72);
+}
+#dropLabel{
+  left:17.4%;
+  top:91.6%;
+  color:#2e5f8c;
+  font-size:clamp(10px,1.55vw,24px);
+}
+#resetLabel{
+  left:38.1%;
+  top:91.3%;
+  color:#67576c;
+  font-size:clamp(9px,1.18vw,19px);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
+}
+.reset-cost{
+  display:flex;
+  align-items:center;
+  gap:3px;
+  white-space:nowrap;
+}
+.reset-cost img{
+  width:1.25em;
+  height:1.25em;
+  object-fit:contain;
+}
+
+/* Top HUD */
+#homeLink,#coinBox{
+  position:absolute;
+  z-index:45;
+  top:2.1%;
+  border:3px solid rgba(255,255,255,.95);
+  border-radius:18px;
+  background:rgba(255,251,253,.93);
+  box-shadow:0 4px 12px rgba(43,30,58,.14);
+  font-weight:950;
+}
+#homeLink{
+  left:1.5%;
+  padding:8px 13px;
+  color:#665572;
+  text-decoration:none;
+  font-size:clamp(9px,1.12vw,17px);
+}
+#coinBox{
+  right:1.5%;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 12px;
+  color:#67475b;
+  font-size:clamp(11px,1.24vw,19px);
+}
+#coinBox img{
+  width:clamp(21px,2.25vw,35px);
+  height:clamp(21px,2.25vw,35px);
+  object-fit:contain;
+}
+
+/* Win toast */
+#winToast{
+  position:absolute;
+  z-index:100;
+  left:50%;
+  top:47%;
+  transform:translate(-50%,-50%) scale(.92);
+  width:min(38%,380px);
+  padding:16px;
+  border:3px solid white;
+  border-radius:24px;
+  background:rgba(255,250,253,.98);
+  box-shadow:0 14px 34px rgba(30,24,48,.25);
+  text-align:center;
+  color:#5c4d65;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .2s ease,transform .2s ease;
+}
+#winToast.show{
+  opacity:1;
+  transform:translate(-50%,-50%) scale(1);
+  pointer-events:auto;
+}
+#winToast > img{
+  width:min(42%,125px);
+  aspect-ratio:1;
+  object-fit:contain;
+  display:block;
+  margin:0 auto 2px;
+}
+#winToast strong{
+  display:block;
+  color:#b75f8d;
+  font-size:clamp(14px,1.65vw,25px);
+}
+#winReward{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  margin-top:5px;
+  color:#c45b86;
+  font-size:clamp(10px,1.05vw,16px);
+  font-weight:1000;
+}
+#winReward img{
+  width:1.45em;
+  height:1.45em;
+  object-fit:contain;
+}
+#winToast p{
+  margin:5px 0 12px;
+  font-size:clamp(9px,.92vw,14px);
+  font-weight:850;
+  line-height:1.35;
+}
+.toast-button{
+  border:0;
+  border-radius:14px;
+  padding:9px 14px;
+  background:#e8efff;
+  color:#5c5775;
+  font:inherit;
+  font-weight:950;
+  cursor:pointer;
+  box-shadow:0 3px 8px rgba(50,40,75,.12);
+}
+.toast-button:active{transform:scale(.97)}
+
+/* No-ducks fallback */
+.empty-state{
+  position:absolute;
+  z-index:110;
+  left:50%;
+  top:48%;
+  transform:translate(-50%,-50%);
+  width:min(48%,430px);
+  padding:18px;
+  border:3px solid white;
+  border-radius:24px;
+  background:rgba(255,250,253,.98);
+  text-align:center;
+  box-shadow:0 14px 34px rgba(30,24,48,.25);
+  display:grid;
+  justify-items:center;
+  gap:7px;
+}
+.empty-state.hidden{display:none}
+.empty-state img{width:min(32%,110px);aspect-ratio:1;object-fit:contain}
+.empty-state strong{font-size:clamp(13px,1.4vw,22px);color:#a85d84}
+.empty-state span{font-size:clamp(9px,.9vw,14px);line-height:1.35}
+.empty-state a{
+  margin-top:4px;
+  padding:8px 12px;
+  border-radius:13px;
+  background:#e9efff;
+  color:#5b5770;
+  text-decoration:none;
+  font-weight:950;
+  font-size:clamp(9px,.9vw,14px);
+}
+
+#message{display:none!important}
+
+@media (orientation:portrait){
+  #rotateNotice{display:flex}
+  #stage{display:none}
+}
+
+@media (orientation:landscape) and (max-height:600px){
+  #stage{
+    width:min(calc(100vw - 2px),calc((100dvh - 2px) * 1.777778));
+    height:min(calc(56.25vw - 1px),calc(100dvh - 2px));
+  }
+  #homeLink,#coinBox{top:2.8%;border-width:2px}
+  #homeLink{padding:5px 9px}
+  #coinBox{padding:5px 8px}
+  #winToast{width:min(42%,330px);padding:12px}
+}
