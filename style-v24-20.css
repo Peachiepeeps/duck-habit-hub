@@ -5276,8 +5276,8 @@ button { color: inherit; }
 .duck-sort-game-card .game-card-feature {
   width: 58%;
   height: 58%;
-  left: 50%;
-  top: 51%;
-  transform: translate(-50%, -50%) rotate(-5deg);
+  left: 50.4%;
+  top: 47%;
+  transform: translate(-50%, -50%);
   object-fit: contain;
 }
