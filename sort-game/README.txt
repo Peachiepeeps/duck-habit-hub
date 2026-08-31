@@ -1,11 +1,10 @@
-Duck Sort V24.24 — forced refresh build
+Duck Sort V24.25 — Balanced Basket Throws
 
-Upload all 4 files directly into /sort-game/.
-This version uses new filenames so the installed PWA cannot accidentally keep using the older Duck Sort CSS/JS.
+Changes:
+- Color / Food / Special labels moved slightly lower than V24.24.
+- Food still gets a small straight-down assist, but its bonus catch area is much narrower.
+- Left and right flicks have more room again.
+- Uses fresh style-v24-25.css and script-v24-25.js filenames to avoid stale browser/PWA code.
 
-Changes included:
-- Color / Food / Special labels raised above the basket symbols/rim area.
-- Food/middle basket is more forgiving for mostly-straight-down throws.
-- Pink Coin artwork is used in the top coin display and round-complete reward.
-- Start screen offers 30 seconds, 60 seconds, and 2 minutes.
-- Best scores are saved separately for each duration.
+Upload all 4 files directly into the existing sort-game folder.
+Your basket/background art does not need to be uploaded again.
