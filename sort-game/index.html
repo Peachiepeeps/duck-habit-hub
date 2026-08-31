@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f8e8ef" />
+  <title>Duck Sort · Duck Habit Hub</title>
+  <link rel="stylesheet" href="style.css?v=24-20-1" />
+</head>
+<body>
+  <main class="sort-shell">
+    <header class="sort-topbar">
+      <button id="backButton" class="pill-button back-button" type="button" aria-label="Back to Games">‹ Games</button>
+      <div class="mini-title">
+        <small>QUICK LITTLE BREAK</small>
+        <strong>Duck Sort</strong>
+      </div>
+      <div class="coin-pill" aria-label="Pink Coins"><span>♡</span><b id="coinCount">0</b></div>
+    </header>
+
+    <section id="gameBoard" class="game-board" aria-label="Duck Sort play area">
+      <div class="fallback-bg" aria-hidden="true"></div>
+      <img class="canvas-layer art-layer bg-art" src="sort-background.png.png" alt="" data-hide-on-error />
+
+      <div class="hud-row">
+        <div class="hud-pill"><small>SCORE</small><b id="scoreValue">0</b></div>
+        <div class="hud-pill combo-pill"><small>COMBO</small><b id="comboValue">×0</b></div>
+        <div class="hud-pill timer-pill"><small>TIME</small><b id="timeValue">60</b></div>
+      </div>
+
+      <div class="fallback-baskets" aria-hidden="true">
+        <div class="fallback-basket color"></div>
+        <div class="fallback-basket food"></div>
+        <div class="fallback-basket special"></div>
+      </div>
+
+      <img class="canvas-layer basket-back" src="color-basket-back.png.png" alt="" data-hide-on-error />
+      <img class="canvas-layer basket-back" src="food-basket-back.png.png" alt="" data-hide-on-error />
+      <img class="canvas-layer basket-back" src="special-basket-back.png.png" alt="" data-hide-on-error />
+
+      <div id="duckLayer" class="duck-layer"></div>
+
+      <img class="canvas-layer basket-front" src="color-basket.png.png" alt="" data-hide-on-error />
+      <img class="canvas-layer basket-front" src="food-basket.png.png" alt="" data-hide-on-error />
+      <img class="canvas-layer basket-front" src="special-basket.png.png" alt="" data-hide-on-error />
+
+      <div class="basket-label label-color"><b>Color</b></div>
+      <div class="basket-label label-food"><b>Food</b></div>
+      <div class="basket-label label-special"><b>Special</b></div>
+
+      <div id="feedback" class="feedback" aria-live="polite"></div>
+
+      <div id="startOverlay" class="game-overlay">
+        <section class="overlay-card">
+          <div class="overlay-duck">🦆</div>
+          <p class="eyebrow">READY TO SORT?</p>
+          <h1>Fling the ducks!</h1>
+          <p>Swipe each duck toward the matching <b>Color</b>, <b>Food</b>, or <b>Special</b> basket.</p>
+          <p class="tip">Slow dragging works too, so you don't have to fling hard. ♡</p>
+          <button id="startButton" class="primary-button" type="button">Start 60-Second Round</button>
+        </section>
+      </div>
+
+      <div id="resultOverlay" class="game-overlay hidden">
+        <section class="overlay-card result-card">
+          <p class="eyebrow">ROUND COMPLETE!</p>
+          <h1 id="resultTitle">Nice sorting! ♡</h1>
+          <div class="result-grid">
+            <div><small>Score</small><b id="resultScore">0</b></div>
+            <div><small>Correct</small><b id="resultCorrect">0</b></div>
+            <div><small>Best Combo</small><b id="resultCombo">×0</b></div>
+          </div>
+          <div class="reward-line"><span>♡</span><b id="resultCoins">+0 Pink Coins</b></div>
+          <p id="bestMessage" class="tip"></p>
+          <div class="result-actions">
+            <button id="playAgainButton" class="primary-button" type="button">Play Again</button>
+            <button id="resultBackButton" class="secondary-button" type="button">Back to Games</button>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+  <script src="script.js?v=24-20-1"></script>
+</body>
+</html>
