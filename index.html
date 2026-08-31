@@ -1,12 +1,12 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="duck-habit-build" content="24.17.3" />
+  <meta name="duck-habit-build" content="24.21" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f7dbe5" />
   <title>Duck Habit Hub</title>
-  <link rel="stylesheet" href="style-v24-20.css" />
+  <link rel="stylesheet" href="style-v24-21.css" />
 
   <link rel="manifest" href="manifest.webmanifest?v=24-10-2-icon-padding">
   <link rel="apple-touch-icon" href="apple-touch-icon-v3.png">
@@ -199,9 +199,9 @@
           </button>
 
           <button id="openDuckSortGame" class="game-card duck-sort-game-card" type="button">
-            <span class="game-card-preview">
+            <span class="game-card-preview duck-sort-card-preview">
               <span class="duck-sort-card-bg" aria-hidden="true"></span>
-              <img src="assets/ducks/Rainbow-duck.PNG" class="game-card-feature" alt="" />
+              <img src="assets/ducks/Rainbow-duck.PNG" class="game-card-feature duck-sort-card-duck" alt="" />
             </span>
             <span class="game-card-copy">
               <span class="game-card-kicker">SWIPE GAME</span>
@@ -886,12 +886,12 @@
       </section>
     </section>
   </main>
-  <script src="script-v24-20.js"></script>
+  <script src="script-v24-21.js"></script>
 
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw-v24-20.js", { updateViaCache: "none" }).catch(error => {
+        navigator.serviceWorker.register("./sw-v24-21.js", { updateViaCache: "none" }).catch(error => {
           console.warn("Duck Habit Hub offline setup could not start:", error);
         });
       });
