@@ -1,9 +1,12 @@
-Duck Crane V24.38
+Duck Crane V24.39 — final joystick micro-adjustment
 
 Upload ALL files directly into your existing `crane-game` folder.
 
-Changes:
-- Joystick lowered to top: 76.0%.
-- Duck prizes remain UNDER Prize-drop-chute-glass.
-- Claw remains ABOVE prizes and chute glass.
-- Fresh physical page: play-v24-38.html
+Change:
+- Joystick moved only a tiny bit lower: top 76.0% -> 77.0%.
+
+Everything else is unchanged from V24.38, including:
+- prize size
+- prize/chute/glass layering
+- claw layering
+- rewards and gameplay
