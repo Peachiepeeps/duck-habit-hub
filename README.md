@@ -1,7 +1,5 @@
-# Duck Habit Hub V24.32
+# Duck Habit Hub V24.33
 
-Adds Duck Crane to the Games panel and refreshes the PWA cache.
+Crane visual tuning + cache refresh.
 
-Upload these 5 files directly to the repository root.
-
-Then create/upload the separate `crane-game` folder using the Duck Crane V24.32 ZIP.
+Upload these 5 files directly into the repository root.
