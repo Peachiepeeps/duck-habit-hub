@@ -1,1 +1,127 @@
+name: One-Time Duck Hub Cleanup
 
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Safety check current files
+        shell: bash
+        run: |
+          set -e
+          test -f "script-v24-39.js"
+          test -f "style-v24-39.css"
+          test -f "sw-v24-39.js"
+          test -f "sort-game/script-v24-31.js"
+          test -f "sort-game/style-v24-31.css"
+          test -f "crane-game/play-v24-39.html"
+          test -f "crane-game/script-v24-39.js"
+          test -f "crane-game/style-v24-39.css"
+          echo "Safety check passed."
+
+      - name: Delete obsolete version files
+        shell: bash
+        run: |
+          rm -f -- \
+            "apple-touch-icon-v3.png" \
+            "crane-game/play-v24-36.html" \
+            "crane-game/play-v24-38.html" \
+            "crane-game/script-v24-32.js" \
+            "crane-game/script-v24-33.js" \
+            "crane-game/script-v24-35.js" \
+            "crane-game/script-v24-36.js" \
+            "crane-game/script-v24-38.js" \
+            "crane-game/style-v24-32.css" \
+            "crane-game/style-v24-33.css" \
+            "crane-game/style-v24-35.css" \
+            "crane-game/style-v24-36.css" \
+            "crane-game/style-v24-38.css" \
+            "favicon-32-v3.png" \
+            "icon-192-v3.png" \
+            "icon-512-v3.png" \
+            "icon-maskable-512-v3.png" \
+            "script-v24-19.js" \
+            "script-v24-20.js" \
+            "script-v24-21.js" \
+            "script-v24-24.js" \
+            "script-v24-27.js" \
+            "script-v24-28.js" \
+            "script-v24-29.js" \
+            "script-v24-30.js" \
+            "script-v24-31.js" \
+            "script-v24-32.js" \
+            "script-v24-33.js" \
+            "script-v24-35.js" \
+            "script-v24-36.js" \
+            "script-v24-38.js" \
+            "script.js" \
+            "sort-game/script-v24-24.js" \
+            "sort-game/script-v24-25.js" \
+            "sort-game/script-v24-26.js" \
+            "sort-game/script-v24-27.js" \
+            "sort-game/script-v24-28.js" \
+            "sort-game/script-v24-29.js" \
+            "sort-game/script-v24-30.js" \
+            "sort-game/script.js" \
+            "sort-game/style-v24-24.css" \
+            "sort-game/style-v24-25.css" \
+            "sort-game/style-v24-26.css" \
+            "sort-game/style-v24-27.css" \
+            "sort-game/style-v24-28.css" \
+            "sort-game/style-v24-29.css" \
+            "sort-game/style-v24-30.css" \
+            "sort-game/style.css" \
+            "style-v24-19.css" \
+            "style-v24-20.css" \
+            "style-v24-21.css" \
+            "style-v24-24.css" \
+            "style-v24-27.css" \
+            "style-v24-28.css" \
+            "style-v24-29.css" \
+            "style-v24-30.css" \
+            "style-v24-31.css" \
+            "style-v24-32.css" \
+            "style-v24-33.css" \
+            "style-v24-35.css" \
+            "style-v24-36.css" \
+            "style-v24-38.css" \
+            "style.css" \
+            "sw-v24-19.js" \
+            "sw-v24-20.js" \
+            "sw-v24-21.js" \
+            "sw-v24-24.js" \
+            "sw-v24-27.js" \
+            "sw-v24-28.js" \
+            "sw-v24-29.js" \
+            "sw-v24-30.js" \
+            "sw-v24-31.js" \
+            "sw-v24-32.js" \
+            "sw-v24-33.js" \
+            "sw-v24-35.js" \
+            "sw-v24-36.js" \
+            "sw-v24-38.js" \
+            "sw.js"
+
+      - name: Commit cleanup
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "Nothing to clean up."
+            exit 0
+          fi
+
+          git commit -m "Clean up old version files"
+          git push
