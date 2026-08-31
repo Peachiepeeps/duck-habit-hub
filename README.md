@@ -1,6 +1,4 @@
-Duck Habit Hub V24.24 — Duck Sort cache-bust update
+# Duck Habit Hub V24.27
 
-This root update forces the installed app to load the newest Duck Sort build.
-Upload all 5 files directly to the repository root.
-
-Then upload the separate Duck Sort V24.24 files directly inside /sort-game/.
+Hard-refresh root update for Duck Sort V24.27.
+Upload these 5 files directly to the repository root.
