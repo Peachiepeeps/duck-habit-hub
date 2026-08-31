@@ -28,6 +28,8 @@ const endFlavor = document.querySelector('#endFlavor');
 const restartButton = document.querySelector('#restartButton');
 const playAgainButton = document.querySelector('#playAgainButton');
 const changeSizeButton = document.querySelector('#changeSizeButton');
+const gamesButton = document.querySelector('#gamesButton');
+const homeButton = document.querySelector('#homeButton');
 const backButton = document.querySelector('#backButton');
 
 document.querySelectorAll('.mode-button').forEach(button => {
@@ -50,6 +52,11 @@ document.querySelectorAll('.start-choice').forEach(button => {
 restartButton.addEventListener('click', startRound);
 playAgainButton.addEventListener('click', () => { endOverlay.classList.add('hidden'); startRound(); });
 changeSizeButton.addEventListener('click', () => { endOverlay.classList.add('hidden'); startOverlay.classList.remove('hidden'); });
+gamesButton.addEventListener('click', () => {
+  if (history.length > 1) history.back();
+  else window.location.href = '../#games';
+});
+homeButton.addEventListener('click', () => { window.location.href = '../'; });
 backButton.addEventListener('click', () => { if (history.length > 1) history.back(); else window.location.href = '../'; });
 
 renderCoins();

@@ -1,8 +1,10 @@
-Duck Habit Hub - Memory Match
+Memory Match V24.41
 
-Upload this whole 'memory-game' folder into your repo root so the path is:
-memory-game/index.html
+Changes:
+- Smaller left-aligned < Games button
+- QUICK LITTLE BREAK + Memory Match sit on the same header row
+- Thinner Moves / Matches / Time boxes
+- Tighter spacing to reduce scrolling
+- Win screen now includes Back to Games and Home buttons
 
-This game uses your existing Duck Habit Hub save.
-Unlocked ducks appear as the face cards.
-Winning a round awards Pink Coins only, so your crafting supplies are never consumed.
+Upload all files directly inside your existing memory-game folder.
