@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f8e8ef" />
   <title>Duck Sort · Duck Habit Hub</title>
-  <link rel="stylesheet" href="style.css?v=24-22" />
+  <link rel="stylesheet" href="style.css?v=24-23" />
 </head>
 <body>
   <main class="sort-shell">
@@ -50,6 +50,11 @@
           <h1>Fling the ducks!</h1>
           <p>Swipe each duck toward the matching <b>Color</b>, <b>Food</b>, or <b>Special</b> basket.</p>
           <p class="tip">Slow dragging works too. ♡</p>
+          <div class="duration-picker" role="group" aria-label="Choose round length">
+            <button class="duration-choice" type="button" data-seconds="30">30 sec</button>
+            <button class="duration-choice selected" type="button" data-seconds="60">60 sec</button>
+            <button class="duration-choice" type="button" data-seconds="120">2 min</button>
+          </div>
           <button id="startButton" class="primary-button" type="button">Start 60-Second Round</button>
         </section>
       </div>
@@ -63,7 +68,7 @@
             <div><small>Correct</small><b id="resultCorrect">0</b></div>
             <div><small>Best Combo</small><b id="resultCombo">×0</b></div>
           </div>
-          <div class="reward-line"><span>♡</span><b id="resultCoins">+0 Pink Coins</b></div>
+          <div class="reward-line"><img class="reward-coin-icon" src="../assets/ui/pink-coin.png" alt=""><b id="resultCoins">+0 Pink Coins</b></div>
           <p id="bestMessage" class="tip"></p>
           <div class="result-actions">
             <button id="playAgainButton" class="primary-button" type="button">Play Again</button>
@@ -73,6 +78,6 @@
       </div>
     </section>
   </main>
-  <script src="script.js?v=24-22"></script>
+  <script src="script.js?v=24-23"></script>
 </body>
 </html>
