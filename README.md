@@ -1,10 +1,6 @@
-Duck Habit Hub V24.21 — Duck Sort layout fix
+Duck Habit Hub V24.24 — Duck Sort cache-bust update
 
-Upload all 5 files in this ZIP directly to the GitHub repository ROOT.
+This root update forces the installed app to load the newest Duck Sort build.
+Upload all 5 files directly to the repository root.
 
-Changes:
-- Duck Sort remains in the Games menu.
-- Rainbow Duck on the Duck Sort card is optically centered like the Wedding Cake card.
-- Root files use fresh V24.21 filenames/cache so the installed app updates reliably.
-
-After this, upload the separate Duck Sort V24.21 ZIP into the existing sort-game folder.
+Then upload the separate Duck Sort V24.24 files directly inside /sort-game/.
