@@ -1,22 +1,11 @@
-Duck Sort V24.21 — layout fix
+Duck Sort V24.24 — forced refresh build
 
-Upload these 4 files directly into the existing sort-game folder:
-- index.html
-- style.css
-- script.js
-- README.txt
+Upload all 4 files directly into /sort-game/.
+This version uses new filenames so the installed PWA cannot accidentally keep using the older Duck Sort CSS/JS.
 
-DO NOT re-upload or rename your artwork. This version expects your current exact filenames:
-- sort-background.png.png
-- color-basket-back.png.png
-- color-basket.png.png
-- food-basket-back.png.png
-- food-basket.png.png
-- special-basket-back.png.png
-- special-basket.png.png
-
-Changes:
-- Basket layers use your full 1080×1920 canvases exactly.
-- No extra drawn basket/pill is added.
-- HTML words Color / Food / Special are tiny text positioned directly under the existing symbols.
-- Duck still flies between the basket-back and basket-front layers.
+Changes included:
+- Color / Food / Special labels raised above the basket symbols/rim area.
+- Food/middle basket is more forgiving for mostly-straight-down throws.
+- Pink Coin artwork is used in the top coin display and round-complete reward.
+- Start screen offers 30 seconds, 60 seconds, and 2 minutes.
+- Best scores are saved separately for each duration.
