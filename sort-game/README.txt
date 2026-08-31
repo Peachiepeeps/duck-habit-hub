@@ -1,9 +1,8 @@
-Duck Sort V24.28 — More Ducks!
+Duck Sort V24.29 — Label Position Fix
 
 Upload all 4 files directly into your existing sort-game folder.
 
-Changes:
-- Color / Food / Special HTML labels lowered to 14.0%.
-- Expanded the game from 18 ducks to 70 ducks.
-- Category selection is balanced: Color / Food / Special each have an equal chance.
-- Keeps the V24.27 throw tuning.
+Change:
+- Basket labels are now anchored with top: 89% instead of bottom percentages.
+- This places Color / Food / Special noticeably lower than V24.28.
+- All 70 ducks and V24.28 gameplay settings remain unchanged.
