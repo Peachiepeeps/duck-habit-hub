@@ -1,5 +1,5 @@
-# Duck Habit Hub V24.33
+# Duck Habit Hub V24.35
 
-Crane visual tuning + cache refresh.
+Cache-refresh companion for Duck Crane V24.35.
 
 Upload these 5 files directly into the repository root.
