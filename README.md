@@ -1,20 +1,25 @@
-# Duck Habit Hub V24.18 — Paintable Furniture: Pet Bed Test
+Duck Habit Hub V24.19 — Paintable Wall Lights
 
-This update adds the first paintable furniture family: Pet Bed.
+Adds Lights as the second paintable furniture family.
 
-- Shop sells Pet Bed in White for 200 Pink Coins.
-- Up to 21 Pet Beds can be owned total.
-- Duck Crafter now has a Furniture tab.
-- A White Pet Bed + one Paint creates that colored Pet Bed.
-- Each non-white Pet Bed color can be crafted once while owned.
-- Furniture Inventory groups every Pet Bed color under one Pet Bed entry.
-- Opening Pet Bed shows the colors currently owned and lets you choose a color before placing it in the room.
-- Existing legacy Gray/Cream/Red/Pink/Blue Pet Beds are migrated to the new system without intentionally removing placements.
+Expected GitHub asset folder:
+assets/furniture/lights/
 
-Expected files are case-sensitive and use `.PNG`, for example:
-`assets/furniture/pet-beds/Bed-white.PNG`
-`assets/furniture/pet-beds/Bed-red.PNG`
-`assets/furniture/pet-beds/Bed-dark-red.PNG`
-...through all 21 colors.
+Expected filenames use lowercase .png, for example:
+Lights-white.png
+Lights-red.png
+Lights-dark-red.png
+Lights-magenta.png
+...through all 21 existing furniture colors.
 
-The new Pet Bed images are expected to already be uploaded under `assets/furniture/pet-beds/`.
+Behavior:
+- Shop → Furniture sells White Lights for 200 Pink Coins each.
+- Up to 21 Lights can be owned total.
+- Furniture Crafting now groups recipes by Pet Bed and Lights.
+- Lights + Paint creates that Lights color.
+- Inventory groups all owned Lights colors into one Lights entry with a color picker.
+- Place in Room uses a dedicated Wall Lights slot, so it does not replace the Pet Bed, rug, shelf, or dresser.
+- Lights render as a full-room overlay near the top of the wall, matching the supplied placement reference.
+- Paintable Pet Bed behavior remains unchanged.
+
+Upload all 5 files from this update ZIP directly to the repository root.
