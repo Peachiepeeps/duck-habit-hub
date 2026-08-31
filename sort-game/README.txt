@@ -1,9 +1,9 @@
-Duck Sort V24.27 — TRUE hard refresh
+Duck Sort V24.28 — More Ducks!
 
 Upload all 4 files directly into your existing sort-game folder.
 
-Confirmed changes:
-- Basket labels: bottom 17.8% -> 16.0% (lower)
-- Left cutoff: 32.5% -> 33.5% (tiny bit more forgiving)
-- Right cutoff: 67.5% -> 66.5% (tiny bit more forgiving)
-- Center straight-down assist narrowed slightly: 36–64% -> 36.5–63.5%
+Changes:
+- Color / Food / Special HTML labels lowered to 14.0%.
+- Expanded the game from 18 ducks to 70 ducks.
+- Category selection is balanced: Color / Food / Special each have an equal chance.
+- Keeps the V24.27 throw tuning.
