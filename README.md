@@ -1,11 +1,12 @@
-# Duck Habit Hub V24.36
+# Duck Habit Hub V24.38
 
-Hard-page refresh for Duck Crane.
+Fresh V24.38 root update.
 
-Upload these 5 files directly into the repository root.
+Upload every file in this ZIP directly to the repository root.
 
-The Duck Crane Games button now opens:
-`crane-game/play-v24-36.html`
-
-This deliberately avoids the previously cached crane-game/index.html page.
-The Crane card preview also uses overscan/cover styling to remove side seams.
+Includes:
+- Root cache refresh
+- Duck Crane launcher -> crane-game/play-v24-38.html
+- Crane Games-card seam fix
+- New V4 app icons with the dark outer edge cropped away
+- Updated manifest.webmanifest using V4 icons
