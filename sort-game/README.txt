@@ -1,20 +1,16 @@
-Duck Sort · V24.20.1
+Duck Sort V24.20.2
 
-Upload these four files directly into the existing sort-game folder:
+Upload these four files directly into the existing sort-game folder and replace the old copies:
 - index.html
 - style.css
 - script.js
 - README.txt
 
-This version is configured for the artwork already uploaded to GitHub:
-- sort-background.png.png
-- color-basket-back.png.png
-- color-basket.png.png
-- food-basket-back.png.png
-- food-basket.png.png
-- special-basket-back.png.png
-- special-basket.png.png
-
-The files named *-back.png.png render behind the duck.
-The files without -back render in front of the duck so it appears to land inside the basket.
-HTML labels remain Color / Food / Special.
+Changes:
+- Standard Duck image replaces the emoji on the start popup.
+- Pink Coin artwork is used in the top balance and results reward.
+- Swipe targeting now uses the whole gesture and is much more forgiving of small sideways curls.
+- Slow/direct dragging near the baskets chooses the basket by physical position.
+- Basket fronts are raised while basket backs stay in place.
+- HTML Color / Food / Special labels are raised with the basket fronts.
+- Landing target is lowered into the basket opening for a better behind-the-front effect.

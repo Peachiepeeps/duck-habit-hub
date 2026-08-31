@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f8e8ef" />
   <title>Duck Sort · Duck Habit Hub</title>
-  <link rel="stylesheet" href="style.css?v=24-20-1" />
+  <link rel="stylesheet" href="style.css?v=24-20-2" />
 </head>
 <body>
   <main class="sort-shell">
@@ -15,7 +15,7 @@
         <small>QUICK LITTLE BREAK</small>
         <strong>Duck Sort</strong>
       </div>
-      <div class="coin-pill" aria-label="Pink Coins"><span>♡</span><b id="coinCount">0</b></div>
+      <div class="coin-pill" aria-label="Pink Coins"><img src="../assets/ui/pink-coin.png" alt="" /><b id="coinCount">0</b></div>
     </header>
 
     <section id="gameBoard" class="game-board" aria-label="Duck Sort play area">
@@ -52,7 +52,7 @@
 
       <div id="startOverlay" class="game-overlay">
         <section class="overlay-card">
-          <div class="overlay-duck">🦆</div>
+          <div class="overlay-duck"><img src="../assets/ducks/Standard-duck.PNG" alt="Standard Duck" /></div>
           <p class="eyebrow">READY TO SORT?</p>
           <h1>Fling the ducks!</h1>
           <p>Swipe each duck toward the matching <b>Color</b>, <b>Food</b>, or <b>Special</b> basket.</p>
@@ -70,7 +70,7 @@
             <div><small>Correct</small><b id="resultCorrect">0</b></div>
             <div><small>Best Combo</small><b id="resultCombo">×0</b></div>
           </div>
-          <div class="reward-line"><span>♡</span><b id="resultCoins">+0 Pink Coins</b></div>
+          <div class="reward-line"><img src="../assets/ui/pink-coin.png" alt="" /><b id="resultCoins">+0 Pink Coins</b></div>
           <p id="bestMessage" class="tip"></p>
           <div class="result-actions">
             <button id="playAgainButton" class="primary-button" type="button">Play Again</button>
@@ -80,6 +80,6 @@
       </div>
     </section>
   </main>
-  <script src="script.js?v=24-20-1"></script>
+  <script src="script.js?v=24-20-2"></script>
 </body>
 </html>

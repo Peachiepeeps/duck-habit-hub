@@ -159,8 +159,27 @@
     const h = duck.offsetHeight;
     return {
       x: rect.width * ratios[type] - w / 2,
-      y: rect.height * .84 - h / 2
+      // Aim into the basket opening so the raised front layer visibly covers
+      // the lower part of the duck as it lands.
+      y: rect.height * .90 - h / 2
     };
+  }
+
+  function basketFromGesture(centerX, centerY, rect, gesture) {
+    // Dragging the duck near the baskets is intentionally forgiving: whichever
+    // third of the screen it is physically in wins, regardless of release curl.
+    if (centerY > rect.height * .60) return basketFromX(centerX, rect.width);
+
+    const dy = Math.max(1, gesture.dy || 0);
+    const downwardEnough = dy > 32 || gesture.vy > .12;
+    if (!downwardEnough) return null;
+
+    // Use the WHOLE gesture rather than the final few milliseconds. This avoids
+    // a small sideways hook at release turning a straight-down fling into a side basket.
+    const ratio = (gesture.dx || 0) / Math.max(90, dy);
+    if (ratio < -.24) return "color";
+    if (ratio > .24) return "special";
+    return "food";
   }
 
   function animateFling(duck, data, release, velocity) {
@@ -174,20 +193,18 @@
     const centerY = startY + h / 2;
 
     const speed = Math.hypot(velocity.vx, velocity.vy);
-    const draggedLowEnough = centerY > rect.height * .61;
-    const downwardIntent = velocity.vy > .12 || draggedLowEnough;
+    const targetType = basketFromGesture(centerX, centerY, rect, velocity);
 
-    if (!downwardIntent || speed < .08) {
+    if (!targetType || speed < .06) {
       returnDuck(duck);
       return;
     }
 
-    const projection = Math.max(190, Math.min(520, speed * 260));
-    const projectedX = Math.max(w / 2, Math.min(rect.width - w / 2, centerX + velocity.vx * projection));
-    const targetType = basketFromX(projectedX, rect.width);
     const target = basketCenter(targetType, rect, duck);
     const duration = Math.max(230, Math.min(430, 380 - speed * 70));
-    const curveX = Math.max(-rect.width * .18, Math.min(rect.width * .18, velocity.vx * 90));
+    // Keep a little playful arc, but do not let last-second sideways velocity
+    // pull the visual path far away from the basket the gesture selected.
+    const curveX = Math.max(-rect.width * .06, Math.min(rect.width * .06, velocity.vx * 30));
     const start = performance.now();
 
     function frame(now) {
@@ -294,7 +311,12 @@
       const last = samples.at(-1) || { x: e.clientX, y: e.clientY, t: performance.now() };
       const first = samples[0] || last;
       const dt = Math.max(16, last.t - first.t);
-      const velocity = { vx: (last.x - first.x) / dt, vy: (last.y - first.y) / dt };
+      const velocity = {
+        vx: (last.x - first.x) / dt,
+        vy: (last.y - first.y) / dt,
+        dx: last.x - first.x,
+        dy: last.y - first.y
+      };
       animateFling(duck, data, last, velocity);
     }
 
