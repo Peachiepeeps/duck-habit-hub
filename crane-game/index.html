@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#8e79b2">
+  <title>Duck Habit Hub — Duck Crane</title>
+  <link rel="stylesheet" href="style-v24-32.css?v=24-32">
+</head>
+<body>
+  <div id="rotateNotice">
+    <img src="../assets/ducks/Standard-duck.PNG" alt="">
+    <strong>Rotate your device sideways ♡</strong>
+    <span>The Duck Crane plays in landscape mode.</span>
+  </div>
+
+  <main id="stage" aria-label="Duck Crane game">
+    <!-- Full-canvas machine artwork.
+         Confirmed order:
+         Background → Water → chute back → prizes → claw → chute glass
+         → machine glass → BASE → top frame → controls. -->
+    <img id="machineBackground" class="full-layer" src="Crane-background.png" alt="">
+    <img id="waterLayer" class="full-layer" src="Crane-water.png" alt="">
+    <img id="prizeDropChute" class="full-layer" src="Prize-drop-chute.png" alt="">
+
+    <div id="prizeLayer" aria-label="Duck prizes"></div>
+
+    <div id="clawLayer" aria-hidden="true">
+      <div id="wire"></div>
+      <div id="clawBox">
+        <img id="claw" src="Crane-opened.png" alt="">
+      </div>
+    </div>
+
+    <img id="prizeDropChuteGlass" class="full-layer" src="Prize-drop-chute-glass.png" alt="">
+    <img id="machineGlass" class="full-layer" src="Crane-glass.png" alt="">
+    <img id="machineBase" class="full-layer" src="Crane-base.png" alt="">
+    <img id="machineTopFrame" class="full-layer" src="Crane-top-frame.png" alt="">
+
+    <div id="joystickLayer">
+      <img id="joystick" src="Crane-joystick.png" alt="Joystick">
+    </div>
+
+    <button id="dropButton" class="machine-button" type="button" aria-label="Drop claw"></button>
+    <button id="resetButton" class="machine-button" type="button" aria-label="Restock duck prizes"></button>
+
+    <div id="dropLabel" class="button-label">DROP!</div>
+    <div id="resetLabel" class="button-label">
+      <span>RESTOCK</span>
+      <span class="reset-cost">
+        <img src="../assets/ui/pink-coin.png" alt="">
+        <span id="resetCostText">10</span>
+      </span>
+    </div>
+
+    <a id="homeLink" href="../#games">‹ Games</a>
+
+    <div id="coinBox" aria-label="Pink Coins">
+      <img src="../assets/ui/pink-coin.png" alt="">
+      <span id="coinCount">0</span>
+    </div>
+
+    <div id="unlockPill"><span id="unlockCount">0</span> ducks available</div>
+
+    <div id="winToast" role="dialog" aria-modal="true" aria-hidden="true">
+      <img id="winImage" src="" alt="">
+      <strong id="winName"></strong>
+      <div id="winReward">
+        <img src="../assets/ui/pink-coin.png" alt="">
+        <span id="winRewardText">+3 Pink Coins!</span>
+      </div>
+      <p id="winText">Successful catch! ♡</p>
+      <button id="keepPlayingBtn" class="toast-button" type="button">Keep Playing</button>
+    </div>
+
+    <div id="emptyState" class="empty-state hidden">
+      <img src="../assets/ducks/Standard-duck.PNG" alt="">
+      <strong>Your crane needs some ducks!</strong>
+      <span>Unlock a duck in Duckipedia, then come back to stock the machine. ♡</span>
+      <a href="../">Back to Duck Habit Hub</a>
+    </div>
+
+    <div id="message" aria-live="polite"></div>
+  </main>
+
+  <script src="script-v24-32.js?v=24-32"></script>
+</body>
+</html>
