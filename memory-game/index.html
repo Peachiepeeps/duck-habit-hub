@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8' />
+  <meta name='viewport' content='width=device-width, initial-scale=1, viewport-fit=cover' />
+  <meta name='theme-color' content='#f7dbe5' />
+  <title>Duck Memory Match</title>
+  <link rel='stylesheet' href='style-v24-40.css' />
+</head>
+<body>
+  <main class='memory-app'>
+    <header class='top-bar'>
+      <button id='backButton' class='pill-button back-button' type='button'>‹ Games</button>
+      <div class='title-wrap'>
+        <p>QUICK LITTLE BREAK</p>
+        <h1>Memory Match</h1>
+      </div>
+      <div class='coin-pill' aria-label='Pink coin balance'>
+        <img src='../assets/ui/pink-coin.png' alt='' />
+        <strong id='coinCount'>0</strong>
+      </div>
+    </header>
+
+    <section class='stats-row' aria-label='Game stats'>
+      <div class='stat-pill'><span>Moves</span><strong id='movesValue'>0</strong></div>
+      <div class='stat-pill'><span>Matches</span><strong id='matchesValue'>0 / 0</strong></div>
+      <div class='stat-pill'><span>Time</span><strong id='timeValue'>0s</strong></div>
+    </section>
+
+    <section class='play-surface'>
+      <div class='table-panel'>
+        <div class='table-panel-top'>
+          <div class='mode-picker' role='group' aria-label='Choose board size'>
+            <button type='button' class='mode-button active' data-pairs='6'>6 Pairs</button>
+            <button type='button' class='mode-button' data-pairs='8'>8 Pairs</button>
+            <button type='button' class='mode-button' data-pairs='10'>10 Pairs</button>
+          </div>
+          <button id='restartButton' class='secondary-button' type='button'>Shuffle Round</button>
+        </div>
+
+        <div class='table-note'>
+          <strong>Unlocked ducks become cards here.</strong>
+          <span>Winning gives Pink Coins only, so your craft items stay safe.</span>
+        </div>
+
+        <div id='boardMessage' class='board-message' aria-live='polite'></div>
+        <section id='board' class='memory-board board-6' aria-label='Memory card board'></section>
+      </div>
+    </section>
+
+    <div id='startOverlay' class='overlay'>
+      <section class='overlay-card'>
+        <p class='overlay-kicker'>MEMORY MATCH</p>
+        <h2>Pick a board size</h2>
+        <p class='overlay-text'>Match pairs of ducks you have already unlocked. The bigger the board, the bigger the Pink Coin reward.</p>
+        <div class='overlay-actions column'>
+          <button type='button' class='start-choice' data-pairs='6'>Sweet Start · 6 Pairs</button>
+          <button type='button' class='start-choice' data-pairs='8'>Lovely Mix · 8 Pairs</button>
+          <button type='button' class='start-choice' data-pairs='10'>Big Table · 10 Pairs</button>
+        </div>
+      </section>
+    </div>
+
+    <div id='endOverlay' class='overlay hidden' aria-hidden='true'>
+      <section class='overlay-card end-card'>
+        <p class='overlay-kicker'>ROUND COMPLETE</p>
+        <h2>You matched them all!</h2>
+        <div class='reward-line'>
+          <img src='../assets/ui/pink-coin.png' alt='' />
+          <strong id='rewardValue'>0 Pink Coins</strong>
+        </div>
+        <div class='result-grid'>
+          <div><span>Moves</span><strong id='resultMoves'>0</strong></div>
+          <div><span>Time</span><strong id='resultTime'>0s</strong></div>
+          <div><span>Board</span><strong id='resultBoard'>6 pairs</strong></div>
+        </div>
+        <p id='endFlavor' class='overlay-text'>Very cute. Very impressive.</p>
+        <div class='overlay-actions'>
+          <button id='playAgainButton' type='button' class='primary-button'>Play Again</button>
+          <button id='changeSizeButton' type='button' class='secondary-button'>Change Size</button>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script src='script-v24-40.js'></script>
+</body>
+</html>
