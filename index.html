@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f7dbe5" />
   <title>Duck Habit Hub</title>
-  <link rel="stylesheet" href="style-v24-19.css" />
+  <link rel="stylesheet" href="style-v24-20.css" />
 
   <link rel="manifest" href="manifest.webmanifest?v=24-10-2-icon-padding">
   <link rel="apple-touch-icon" href="apple-touch-icon-v3.png">
@@ -194,6 +194,19 @@
               <span class="game-card-kicker">MERGE GAME</span>
               <strong>Love &amp; Sweets</strong>
               <span>Run the bakery, merge treats, earn Pink Coins, and bring home food rewards.</span>
+            </span>
+            <span class="game-card-play">Play ›</span>
+          </button>
+
+          <button id="openDuckSortGame" class="game-card duck-sort-game-card" type="button">
+            <span class="game-card-preview">
+              <span class="duck-sort-card-bg" aria-hidden="true"></span>
+              <img src="assets/ducks/Rainbow-duck.PNG" class="game-card-feature" alt="" />
+            </span>
+            <span class="game-card-copy">
+              <span class="game-card-kicker">SWIPE GAME</span>
+              <strong>Duck Sort</strong>
+              <span>Fling ducks into Color, Food, or Special baskets before time runs out.</span>
             </span>
             <span class="game-card-play">Play ›</span>
           </button>
@@ -873,12 +886,12 @@
       </section>
     </section>
   </main>
-  <script src="script-v24-19.js"></script>
+  <script src="script-v24-20.js"></script>
 
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw-v24-19.js", { updateViaCache: "none" }).catch(error => {
+        navigator.serviceWorker.register("./sw-v24-20.js", { updateViaCache: "none" }).catch(error => {
           console.warn("Duck Habit Hub offline setup could not start:", error);
         });
       });
