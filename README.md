@@ -1,12 +1,6 @@
-# Duck Habit Hub V24.38
+# Duck Habit Hub V24.39
 
-Fresh V24.38 root update.
+Cache-refresh companion for the final Duck Crane joystick adjustment.
 
-Upload every file in this ZIP directly to the repository root.
-
-Includes:
-- Root cache refresh
-- Duck Crane launcher -> crane-game/play-v24-38.html
-- Crane Games-card seam fix
-- New V4 app icons with the dark outer edge cropped away
-- Updated manifest.webmanifest using V4 icons
+Upload all files directly into the repository root.
+The V4 app icon setup is unchanged from V24.38.
