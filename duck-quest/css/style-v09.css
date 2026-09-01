@@ -363,3 +363,21 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
 /* V09 — Gold Mushroom Cat */
 .enemy-fighter.gold-boss-fighter{width:96%;transform-origin:center bottom}
 @media(max-width:600px){.enemy-fighter.gold-boss-fighter{width:100%}}
+
+
+/* v09b — raise Mushroom Cat boss higher on the battlefield */
+.enemy-fighter.boss-fighter{
+  bottom: 10%;
+}
+.enemy-fighter.gold-boss-fighter{
+  bottom: 12%;
+}
+
+@media (max-width: 600px){
+  .enemy-fighter.boss-fighter{
+    bottom: 12%;
+  }
+  .enemy-fighter.gold-boss-fighter{
+    bottom: 14%;
+  }
+}
