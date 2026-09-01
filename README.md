@@ -1,6 +1,13 @@
-# Duck Habit Hub V24.39
+# Duck Habit Hub
 
-Cache-refresh companion for the final Duck Crane joystick adjustment.
+Current active app files:
 
-Upload all files directly into the repository root.
-The V4 app icon setup is unchanged from V24.38.
+- Hub: v24.51
+- Duck Quest: v11
+- Memory Match: style v24.42 / script v24.43
+- Duck Crane: v24.39
+- Duck Sort: v24.31
+- Love & Sweets: bakery/index.html
+
+The repository was cleaned of obsolete versioned code files.
+Game artwork, recolors, inventory assets, and save-data behavior were not removed.
