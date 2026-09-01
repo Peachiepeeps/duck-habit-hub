@@ -1,9 +1,15 @@
-DUCK QUEST v0.1 — iPad-friendly flat folder
+Duck Habit Hub V24.15 — ROOT UPDATE
 
-Create ONE folder in GitHub named:
-duck-quest
+Upload these files to the ROOT of the GitHub repository:
+- index.html
+- script.js
+- style.css
+- sw.js
 
-Upload every file in this ZIP directly into that one folder.
-No additional subfolders are needed.
+Changes:
+- Tasks now have Today, Tomorrow, Future, Saved, and Completed views.
+- Pinned tasks stay on Today.
+- Today cards have a Send to Tomorrow button; using it unpins the task so it can move.
+- PWA cache version bumped.
 
-Includes the complete current RPG prototype and all 24 current art assets.
+There is also a separate Bakery update ZIP. Open the bakery folder in GitHub and replace its index.html with the file from that ZIP.
