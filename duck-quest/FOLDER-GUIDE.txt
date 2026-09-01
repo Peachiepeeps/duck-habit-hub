@@ -1,12 +1,12 @@
-DUCK QUEST v0.7 — ORGANIZED STRUCTURE
+DUCK QUEST v0.8 — ORGANIZED STRUCTURE
 
 duck-quest/
 ├─ index.html
-├─ battle-v07.html
+├─ battle-v08.html
 ├─ css/
-│  └─ style-v07.css
+│  └─ style-v08.css
 ├─ js/
-│  └─ game-v07.js
+│  └─ game-v08.js
 └─ assets/
    ├─ backgrounds/
    │  └─ meadow/
@@ -78,3 +78,8 @@ V07
 - Peep name/HP panel slightly higher.
 - Run confirmation added.
 - Attack screen no longer leaks the no-items message.
+
+V08
+- Start Run / Run Again start immediately again.
+- Escape now asks "Are you sure?" before ending the run.
+- Added explicit boss-win tracking for Achievements.
