@@ -1,0 +1,216 @@
+name: Clean Up Old Game Files
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out current repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Verify current game versions
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          echo "Verifying the current files before cleanup..."
+
+          required=(
+            "index.html"
+            "script-v24-51.js"
+            "style-v24-51.css"
+            "sw-v24-51.js"
+            "duck-quest/index.html"
+            "duck-quest/battle-v11.html"
+            "duck-quest/css/style-v11.css"
+            "duck-quest/js/game-v11.js"
+            "memory-game/index.html"
+            "memory-game/style-v24-42.css"
+            "memory-game/script-v24-43.js"
+            "crane-game/index.html"
+            "sort-game/index.html"
+            "bakery/index.html"
+          )
+
+          for file in "${required[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "STOPPED: expected current file is missing: $file"
+              exit 1
+            fi
+          done
+
+          grep -q 'style-v24-51.css' index.html
+          grep -q 'script-v24-51.js' index.html
+          grep -q 'sw-v24-51.js' index.html
+          grep -q 'duck-quest/battle-v11.html' script-v24-51.js
+
+          grep -q 'css/style-v11.css' duck-quest/index.html
+          grep -q 'js/game-v11.js' duck-quest/index.html
+
+          grep -q 'style-v24-42.css' memory-game/index.html
+          grep -q 'script-v24-43.js' memory-game/index.html
+
+          echo "Current versions verified. Cleanup is safe to continue."
+
+      - name: Remove obsolete files
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          echo "Repo size before cleanup:"
+          du -sh . || true
+
+          # --------------------------------------------------
+          # OLD ROOT APP VERSIONS
+          # Current root version is v24.51.
+          # --------------------------------------------------
+          rm -f \
+            script-v24-39.js \
+            script-v24-40.js \
+            script-v24-42.js \
+            script-v24-43.js \
+            script-v24-44.js \
+            script-v24-46.js \
+            script-v24-47.js \
+            script-v24-48.js \
+            script-v24-49.js \
+            script-v24-50.js \
+            style-v24-39.css \
+            style-v24-40.css \
+            style-v24-42.css \
+            style-v24-43.css \
+            style-v24-44.css \
+            style-v24-46.css \
+            style-v24-47.css \
+            style-v24-48.css \
+            style-v24-49.css \
+            style-v24-50.css \
+            sw-v24-39.js \
+            sw-v24-40.js \
+            sw-v24-42.js \
+            sw-v24-43.js \
+            sw-v24-44.js \
+            sw-v24-46.js \
+            sw-v24-47.js \
+            sw-v24-48.js \
+            sw-v24-49.js \
+            sw-v24-50.js
+
+          # --------------------------------------------------
+          # OLD ROOT NOTES
+          # README.md will be replaced with a current summary.
+          # --------------------------------------------------
+          rm -f \
+            README.txt \
+            README-duck-quest-v01.txt \
+            README-memory-match-v24-40.txt \
+            README-v24-43.txt \
+            README-v24-44.txt \
+            README-v24-46.txt \
+            README-v24-47.txt \
+            README-v24-48.txt \
+            README-v24-49.txt \
+            README-v24-50.txt \
+            README-v24-51.txt
+
+          # --------------------------------------------------
+          # OLD DUCK QUEST CODE VERSIONS
+          # Current Duck Quest version is v11.
+          # Artwork/assets are intentionally untouched.
+          # --------------------------------------------------
+          rm -f \
+            duck-quest/battle-v06.html \
+            duck-quest/battle-v07.html \
+            duck-quest/battle-v08.html \
+            duck-quest/battle-v09.html \
+            duck-quest/battle-v10.html \
+            duck-quest/css/style-v06.css \
+            duck-quest/css/style-v07.css \
+            duck-quest/css/style-v08.css \
+            duck-quest/css/style-v09.css \
+            duck-quest/css/style-v10.css \
+            duck-quest/js/game-v06.js \
+            duck-quest/js/game-v07.js \
+            duck-quest/js/game-v08.js \
+            duck-quest/js/game-v09.js \
+            duck-quest/js/game-v10.js \
+            duck-quest/README-v09b.txt \
+            duck-quest/README-v10.txt
+
+          # --------------------------------------------------
+          # OLD MEMORY MATCH CODE
+          # Current: style-v24-42.css + script-v24-43.js.
+          # --------------------------------------------------
+          rm -f \
+            memory-game/script-v24-40.js \
+            memory-game/style-v24-40.css \
+            memory-game/style-v24-41.css
+
+          # --------------------------------------------------
+          # OLD ONE-TIME WORKFLOW + EMPTY PLACEHOLDERS
+          # --------------------------------------------------
+          rm -f .github/workflows/organize-duck-quest-v06.yml
+
+          rm -f \
+            assets/achievements/Hold \
+            memory-game/Hold \
+            crane-game/Hold \
+            sort-game/Hold \
+            bakery/Hold
+
+          # Keep duck-hub-cache-reset.html on purpose.
+          # It is tiny and useful if a PWA cache ever gets stuck again.
+
+          cat > README.md <<'EOF'
+          # Duck Habit Hub
+
+          Current active app files:
+
+          - Hub: v24.51
+          - Duck Quest: v11
+          - Memory Match: style v24.42 / script v24.43
+          - Duck Crane: v24.39
+          - Duck Sort: v24.31
+          - Love & Sweets: bakery/index.html
+
+          The repository was cleaned of obsolete versioned code files.
+          Game artwork, recolors, inventory assets, and save-data behavior were not removed.
+          EOF
+
+          # Remove this one-time workflow after it finishes.
+          rm -f .github/workflows/cleanup-duck-habit-hub.yml
+
+          echo
+          echo "Repo size after cleanup:"
+          du -sh . || true
+
+      - name: Commit cleanup
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "Nothing needed cleaning."
+            exit 0
+          fi
+
+          echo "Files to be committed:"
+          git status --short
+
+          git commit -m "Clean obsolete game files"
+          git push
+
+          echo "Cleanup complete."
