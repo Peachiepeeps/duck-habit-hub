@@ -1,12 +1,12 @@
-DUCK QUEST v0.6 — ORGANIZED STRUCTURE
+DUCK QUEST v0.7 — ORGANIZED STRUCTURE
 
 duck-quest/
 ├─ index.html
-├─ battle-v06.html
+├─ battle-v07.html
 ├─ css/
-│  └─ style-v06.css
+│  └─ style-v07.css
 ├─ js/
-│  └─ game-v06.js
+│  └─ game-v07.js
 └─ assets/
    ├─ backgrounds/
    │  └─ meadow/
@@ -72,3 +72,9 @@ V06 POLISH
 - Mushroom Cat enlarged again so the boss is unmistakably larger than Peep.
 - Peep nudged slightly higher.
 - Peep's name + HP UI lowered independently so the status window remains visible.
+
+V07
+- Peep slightly lower.
+- Peep name/HP panel slightly higher.
+- Run confirmation added.
+- Attack screen no longer leaks the no-items message.
