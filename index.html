@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="duck-habit-build" content="24.46" />
+  <meta name="duck-habit-build" content="24.47" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f7dbe5" />
   <title>Duck Habit Hub</title>
   <!-- v24.41 performance update -->
-  <link rel="stylesheet" href="style-v24-46.css" />
+  <link rel="stylesheet" href="style-v24-47.css" />
 
   <link rel="manifest" href="manifest.webmanifest?v=24-38-icon-v4">
   <link rel="apple-touch-icon" href="apple-touch-icon-v4.png">
@@ -423,7 +423,6 @@
 
         <div class="shop-tabs" role="tablist" aria-label="Shop categories">
           <button class="shop-tab active" type="button" data-shop-tab="supplies" role="tab" aria-selected="true">Supplies</button>
-          <button class="shop-tab" type="button" data-shop-tab="paint" role="tab" aria-selected="false">Paint</button>
           <button class="shop-tab" type="button" data-shop-tab="battle" role="tab" aria-selected="false">Battle</button>
           <button class="shop-tab" type="button" data-shop-tab="hair" role="tab" aria-selected="false">Hair</button>
           <button class="shop-tab" type="button" data-shop-tab="clothing" role="tab" aria-selected="false">Clothing</button>
@@ -493,7 +492,7 @@
             <div class="daily-sun">☀</div>
             <div>
               <strong>Daily rewards, no pressure.</strong>
-              <p>These are just little bonuses you can collect when you feel like it. Missing them never hurts your progress.</p>
+              <p>A few cozy bonuses you can do when you feel like it. Missing them never hurts your progress.</p>
             </div>
           </section>
 
@@ -520,12 +519,39 @@
             <p class="daily-small-note">Up to 3 shopping trips can be started each day. Only one trip can be active at a time.</p>
           </section>
 
-          <section class="daily-loot-preview">
-            <div>
-              <span>Crafting Inventory</span>
-              <strong id="dailyInventoryCount">0 items</strong>
+          <section class="daily-card paint-mixing-daily">
+            <div class="daily-card-top">
+              <div class="daily-icon-bubble daily-image-bubble"><img src="assets/paint/Pink-paint.PNG" alt="" /></div>
+              <div class="daily-card-title"><span>CREATE</span><h2>Paint Mixing</h2></div>
+              <div id="paintMixUsesBadge" class="daily-uses-badge">0 / 2</div>
             </div>
-            <button id="dailyInventoryHint" class="daily-mini-button" type="button">Open Inventory</button>
+            <p class="daily-description">Mix up a surprise color and receive exactly one Paint. You can mix twice each day.</p>
+            <div id="paintMixState" class="shopping-state"></div>
+            <button id="paintMixActionButton" class="daily-main-button" type="button">Mix Paint</button>
+            <p class="daily-small-note">Basic colors are common, special mixes are less common, and Rainbow Paint is rare.</p>
+          </section>
+
+          <section class="daily-card friendship-date-daily">
+            <div class="daily-card-top">
+              <div class="daily-icon-bubble daily-image-bubble"><img src="assets/gifts/Heart-locket.PNG" alt="" /></div>
+              <div class="daily-card-title"><span>BOND</span><h2>Friendship Date</h2></div>
+              <div id="friendshipUsesBadge" class="daily-uses-badge">0 / 1</div>
+            </div>
+            <p class="daily-description">Spend a little quality time with any OC you’ve unlocked. You choose who receives the Happiness.</p>
+            <div id="friendshipState" class="shopping-state"></div>
+            <button id="friendshipActionButton" class="daily-main-button" type="button">Choose OC</button>
+            <p class="daily-small-note">Once per day · +3 Happiness to the OC you choose.</p>
+          </section>
+
+          <section id="friendshipChooser" class="daily-choice-sheet hidden" aria-hidden="true">
+            <button id="friendshipChooserBackdrop" class="daily-choice-backdrop" type="button" aria-label="Close character chooser"></button>
+            <div class="daily-choice-card" role="dialog" aria-modal="true" aria-labelledby="friendshipChooserTitle">
+              <p class="eyebrow">FRIENDSHIP DATE</p>
+              <h2 id="friendshipChooserTitle">Who should go?</h2>
+              <p>Choose any OC you’ve unlocked. They’ll receive +3 Happiness.</p>
+              <div id="friendshipCharacterList" class="daily-character-list"></div>
+              <button id="closeFriendshipChooser" class="daily-main-button daily-choice-cancel" type="button">Cancel</button>
+            </div>
           </section>
         </div>
       </section>
@@ -932,12 +958,12 @@
       </section>
     </section>
   </main>
-  <script src="script-v24-46.js"></script>
+  <script src="script-v24-47.js"></script>
 
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw-v24-46.js", { updateViaCache: "none" }).catch(error => {
+        navigator.serviceWorker.register("./sw-v24-47.js", { updateViaCache: "none" }).catch(error => {
           console.warn("Duck Habit Hub offline setup could not start:", error);
         });
       });
