@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="duck-habit-build" content="24.47" />
+  <meta name="duck-habit-build" content="24.48" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f7dbe5" />
   <title>Duck Habit Hub</title>
   <!-- v24.41 performance update -->
-  <link rel="stylesheet" href="style-v24-47.css" />
+  <link rel="stylesheet" href="style-v24-48.css" />
 
   <link rel="manifest" href="manifest.webmanifest?v=24-38-icon-v4">
   <link rel="apple-touch-icon" href="apple-touch-icon-v4.png">
@@ -488,13 +488,6 @@
         </div>
 
         <div class="dailies-content">
-          <section class="daily-intro-card">
-            <div class="daily-sun">☀</div>
-            <div>
-              <strong>Daily rewards, no pressure.</strong>
-              <p>A few cozy bonuses you can do when you feel like it. Missing them never hurts your progress.</p>
-            </div>
-          </section>
 
           <section class="daily-card shopping-daily">
             <div class="daily-card-top">
@@ -525,9 +518,9 @@
               <div class="daily-card-title"><span>CREATE</span><h2>Paint Mixing</h2></div>
               <div id="paintMixUsesBadge" class="daily-uses-badge">0 / 2</div>
             </div>
-            <p class="daily-description">Mix up a surprise color and receive exactly one Paint. You can mix twice each day.</p>
+            <p class="daily-description">Spend one hour mixing a surprise color. When it’s ready, you’ll receive exactly one Paint. You can mix twice each day.</p>
             <div id="paintMixState" class="shopping-state"></div>
-            <button id="paintMixActionButton" class="daily-main-button" type="button">Mix Paint</button>
+            <button id="paintMixActionButton" class="daily-main-button" type="button">Start 1 Hour Mix</button>
             <p class="daily-small-note">Basic colors are common, special mixes are less common, and Rainbow Paint is rare.</p>
           </section>
 
@@ -537,10 +530,10 @@
               <div class="daily-card-title"><span>BOND</span><h2>Friendship Date</h2></div>
               <div id="friendshipUsesBadge" class="daily-uses-badge">0 / 1</div>
             </div>
-            <p class="daily-description">Spend a little quality time with any OC you’ve unlocked. You choose who receives the Happiness.</p>
+            <p class="daily-description">Choose any OC you’ve unlocked for a one-hour Friendship Date. When they return, that OC earns Happiness.</p>
             <div id="friendshipState" class="shopping-state"></div>
             <button id="friendshipActionButton" class="daily-main-button" type="button">Choose OC</button>
-            <p class="daily-small-note">Once per day · +3 Happiness to the OC you choose.</p>
+            <p class="daily-small-note">One 1-hour date per day · +3 Happiness to the OC you choose.</p>
           </section>
 
           <section id="friendshipChooser" class="daily-choice-sheet hidden" aria-hidden="true">
@@ -844,6 +837,7 @@
           <button class="achievement-tab" type="button" data-achievement-tab="tasks">Tasks</button>
           <button class="achievement-tab" type="button" data-achievement-tab="ducks">Ducks</button>
           <button class="achievement-tab" type="button" data-achievement-tab="bakery">Bakery</button>
+          <button class="achievement-tab" type="button" data-achievement-tab="games">Games</button>
           <button class="achievement-tab" type="button" data-achievement-tab="collection">Collection</button>
           <button class="achievement-tab" type="button" data-achievement-tab="special">Special</button>
         </div>
@@ -958,12 +952,12 @@
       </section>
     </section>
   </main>
-  <script src="script-v24-47.js"></script>
+  <script src="script-v24-48.js"></script>
 
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw-v24-47.js", { updateViaCache: "none" }).catch(error => {
+        navigator.serviceWorker.register("./sw-v24-48.js", { updateViaCache: "none" }).catch(error => {
           console.warn("Duck Habit Hub offline setup could not start:", error);
         });
       });
