@@ -51,12 +51,12 @@ const ENEMIES = {
     coinMin: 5,
     coinMax: 9,
     idle: [
-      "cat-slime-idle-1-neutral.png",
-      "cat-slime-idle-2-squish.png",
-      "cat-slime-idle-3-bounce.png",
-      "cat-slime-idle-2-squish.png"
+      "assets/enemies/cat-slime/base/idle-1-neutral.png",
+      "assets/enemies/cat-slime/base/idle-2-squish.png",
+      "assets/enemies/cat-slime/base/idle-3-bounce.png",
+      "assets/enemies/cat-slime/base/idle-2-squish.png"
     ],
-    hurt: "cat-slime-idle-1-neutral.png",
+    hurt: "assets/enemies/cat-slime/base/idle-1-neutral.png",
     speed: 310
   },
   "bee": {
@@ -67,10 +67,10 @@ const ENEMIES = {
     coinMin: 5,
     coinMax: 10,
     idle: [
-      "bee-idle-1-high.png",
-      "bee-idle-2-low.png"
+      "assets/enemies/bee/base/idle-1-high.png",
+      "assets/enemies/bee/base/idle-2-low.png"
     ],
-    hurt: "bee-hurt.png",
+    hurt: "assets/enemies/bee/base/hurt.png",
     speed: 360
   },
   "flower": {
@@ -81,10 +81,10 @@ const ENEMIES = {
     coinMin: 6,
     coinMax: 11,
     idle: [
-      "flower-idle-1.png",
-      "flower-idle-2.png"
+      "assets/enemies/flower/base/idle-1.png",
+      "assets/enemies/flower/base/idle-2.png"
     ],
-    hurt: "flower-hurt.png",
+    hurt: "assets/enemies/flower/base/hurt.png",
     speed: 390
   },
   "mimic": {
@@ -95,10 +95,10 @@ const ENEMIES = {
     coinMin: 18,
     coinMax: 28,
     idle: [
-      "mimic-open-1.png",
-      "mimic-open-2.png"
+      "assets/enemies/mimic/base/open-1.png",
+      "assets/enemies/mimic/base/open-2.png"
     ],
-    hurt: "chest-closed.png",
+    hurt: "assets/items/chests/treasure/closed.png",
     speed: 300
   },
   "mushroom-cat": {
@@ -109,10 +109,10 @@ const ENEMIES = {
     coinMin: 16,
     coinMax: 24,
     idle: [
-      "mushroom-cat-idle-1.png",
-      "mushroom-cat-idle-2.png"
+      "assets/bosses/mushroom-cat/base/idle-1.png",
+      "assets/bosses/mushroom-cat/base/idle-2.png"
     ],
-    hurt: "mushroom-cat-hurt.png",
+    hurt: "assets/bosses/mushroom-cat/base/hurt.png",
     speed: 430,
     boss: true
   }
@@ -136,15 +136,15 @@ const REWARD_ITEMS = [
 ];
 
 const BG = [
-  "meadow-stage-1-tree.png",
-  "meadow-stage-2-bushes.png",
-  "meadow-stage-3-flowers.png",
-  "meadow-stage-4-boss.png"
+  "assets/backgrounds/meadow/stage-1-tree.png",
+  "assets/backgrounds/meadow/stage-2-bushes.png",
+  "assets/backgrounds/meadow/stage-3-flowers.png",
+  "assets/backgrounds/meadow/stage-4-boss.png"
 ];
 
 const PEepIdle = [
-  "peep-idle-1.png",
-  "peep-idle-2.png"
+  "assets/characters/peep/base/idle-1.png",
+  "assets/characters/peep/base/idle-2.png"
 ];
 
 const ui = {
@@ -181,12 +181,16 @@ const ui = {
   chestSprite: document.querySelector("#chestSprite"),
   openChest: document.querySelector("#openChest"),
   battleMessage: document.querySelector("#battleMessage"),
+  commandGrid: document.querySelector("#commandGrid"),
+  attackMenuButton: document.querySelector("#attackMenuButton"),
+  itemMenuButton: document.querySelector("#itemMenuButton"),
+  escapeButton: document.querySelector("#escapeButton"),
+  commandWindow: document.querySelector("#commandWindow"),
+  commandWindowTitle: document.querySelector("#commandWindowTitle"),
+  closeCommandWindow: document.querySelector("#closeCommandWindow"),
   skillButtons: document.querySelector("#skillButtons"),
-  battleItemsPanel: document.querySelector("#battleItemsPanel"),
-  usePinkHeart: document.querySelector("#usePinkHeart"),
-  useGoldHeart: document.querySelector("#useGoldHeart"),
-  pinkHeartCount: document.querySelector("#pinkHeartCount"),
-  goldHeartCount: document.querySelector("#goldHeartCount"),
+  itemButtons: document.querySelector("#itemButtons"),
+  noBattleItems: document.querySelector("#noBattleItems"),
   guardButton: document.querySelector("#guardButton"),
   continueButton: document.querySelector("#continueButton"),
   resultKicker: document.querySelector("#resultKicker"),
@@ -435,8 +439,8 @@ function startEncounter() {
   skillState={ magicalWishCooldown:0, duckThrowCooldown:0, apocalypseUsed:false };
   ui.chestLayer.classList.add("hidden");
   ui.continueButton.classList.add("hidden");
-  ui.guardButton.classList.remove("hidden");
-  ui.skillButtons.classList.remove("hidden");
+  ui.commandGrid.classList.remove("hidden");
+  closeCommandWindow();
   ui.enemyCombatant.classList.remove("hidden");
 
   const encounter=currentRun.plan[currentRun.index];
@@ -450,9 +454,8 @@ function startEncounter() {
   if(encounter.type==="rare-chest") {
     currentEnemy=null;
     ui.enemyCombatant.classList.add("hidden");
-    ui.skillButtons.classList.add("hidden");
-    ui.battleItemsPanel.classList.add("hidden");
-    ui.guardButton.classList.add("hidden");
+    ui.commandGrid.classList.add("hidden");
+    closeCommandWindow();
     showChest({kind:"rare", revealMimic:false});
     setMessage("A rare treasure chest appeared instead of an enemy!");
     return;
@@ -461,9 +464,8 @@ function startEncounter() {
   if(encounter.type==="mimic") {
     currentEnemy=null;
     ui.enemyCombatant.classList.add("hidden");
-    ui.skillButtons.classList.add("hidden");
-    ui.battleItemsPanel.classList.add("hidden");
-    ui.guardButton.classList.add("hidden");
+    ui.commandGrid.classList.add("hidden");
+    closeCommandWindow();
     showChest({kind:"mimic", revealMimic:true});
     setMessage("A suspicious treasure chest is sitting in the path...");
     return;
@@ -477,16 +479,18 @@ function startEnemy(enemyId) {
   currentEnemy=enemyScaled(template,currentRun.rank);
   currentEnemy.id=enemyId;
   ui.enemyCombatant.classList.remove("hidden");
+  ui.enemySprite.classList.remove("boss-fighter");
   ui.enemyName.textContent=currentEnemy.name;
   ui.enemyRank.textContent=currentEnemy.boss?`BOSS · Rank ${currentRun.rank}`:`Rank ${currentRun.rank}`;
+  ui.enemySprite.classList.toggle("boss-fighter", Boolean(currentEnemy.boss));
   renderEnemyHp();
   startEnemyIdle();
   renderSkills();
   renderBattleItems();
-  ui.skillButtons.classList.remove("hidden");
-  ui.battleItemsPanel.classList.remove("hidden");
-  ui.guardButton.classList.remove("hidden");
+  ui.commandGrid.classList.remove("hidden");
+  closeCommandWindow();
   renderBattleItems();
+  renderCommandButtons();
   setMessage(currentEnemy.boss ? "The Big Mushroom Cat blocks the end of the path!" : `${currentEnemy.name} appeared!`);
 }
 
@@ -534,48 +538,131 @@ function clearAnimations() {
 
 function renderSkills() {
   ui.skillButtons.innerHTML="";
-  SKILLS.forEach(skill=>{
-    const button=document.createElement("button");
-    button.type="button";
-    const unlocked=questSave.peep.level>=skill.unlock;
-    let unavailable=false;
-    let detail=skill.description;
 
-    if(!unlocked) { unavailable=true; detail=`Unlocks at Lv. ${skill.unlock}`; }
-    else if(skill.id==="magical-wish" && skillState.magicalWishCooldown>0) {
-      unavailable=true; detail=`Cooldown: ${skillState.magicalWishCooldown} turn${skillState.magicalWishCooldown===1?"":"s"}`;
-    } else if(skill.id==="duck-throw" && skillState.duckThrowCooldown>0) {
-      unavailable=true; detail=`Cooldown: ${skillState.duckThrowCooldown} turn${skillState.duckThrowCooldown===1?"":"s"}`;
-    } else if(skill.id==="peep-apocalypse" && skillState.apocalypseUsed) {
-      unavailable=true; detail="Already used this battle.";
-    }
+  SKILLS
+    .filter(skill => questSave.peep.level >= skill.unlock)
+    .forEach(skill=>{
+      const button=document.createElement("button");
+      button.type="button";
+      let unavailable=false;
+      let detail=skill.description;
 
-    button.className=`pixel-button skill-button ${skill.type==="heal"?"heal":skill.id==="duck-throw"?"duck":skill.id==="peep-apocalypse"?"ultimate":""}${unlocked?"":" locked"}`;
-    button.disabled=unavailable || actionLocked;
-    button.innerHTML=`<strong>${skill.name}</strong><span${detail.startsWith("Cooldown")?' class="cooldown"':""}>${detail}</span>`;
-    if(unlocked && !unavailable) button.addEventListener("click",()=>useSkill(skill));
-    ui.skillButtons.appendChild(button);
-  });
+      if(skill.id==="magical-wish" && skillState.magicalWishCooldown>0) {
+        unavailable=true;
+        detail=`Cooldown: ${skillState.magicalWishCooldown} turn${skillState.magicalWishCooldown===1?"":"s"}`;
+      } else if(skill.id==="duck-throw" && skillState.duckThrowCooldown>0) {
+        unavailable=true;
+        detail=`Cooldown: ${skillState.duckThrowCooldown} turn${skillState.duckThrowCooldown===1?"":"s"}`;
+      } else if(skill.id==="peep-apocalypse" && skillState.apocalypseUsed) {
+        unavailable=true;
+        detail="Already used this battle.";
+      }
+
+      button.className=`pixel-button skill-button ${skill.type==="heal"?"heal":skill.id==="duck-throw"?"duck":skill.id==="peep-apocalypse"?"ultimate":""}`;
+      button.disabled=unavailable || actionLocked;
+      button.innerHTML=`<strong>${skill.name}</strong><span${detail.startsWith("Cooldown")?' class="cooldown"':""}>${detail}</span>`;
+
+      if(!unavailable) {
+        button.addEventListener("click",()=>{
+          closeCommandWindow();
+          useSkill(skill);
+        });
+      }
+
+      ui.skillButtons.appendChild(button);
+    });
+
   renderBattleItems();
+  renderCommandButtons();
+}
+
+function renderCommandButtons() {
+  const disabled = actionLocked || !currentEnemy;
+  if (ui.attackMenuButton) ui.attackMenuButton.disabled = disabled;
+  if (ui.itemMenuButton) ui.itemMenuButton.disabled = disabled;
+  if (ui.guardButton) ui.guardButton.disabled = disabled;
+  if (ui.escapeButton) ui.escapeButton.disabled = actionLocked || !currentRun;
+}
+
+function openCommandWindow(kind) {
+  if (actionLocked || !currentEnemy) return;
+
+  ui.commandWindow.classList.remove("hidden");
+  ui.skillButtons.classList.add("hidden");
+  ui.itemButtons.classList.add("hidden");
+  ui.noBattleItems.classList.add("hidden");
+
+  if (kind === "attack") {
+    ui.commandWindowTitle.textContent = "Attack";
+    renderSkills();
+    ui.skillButtons.classList.remove("hidden");
+  } else {
+    ui.commandWindowTitle.textContent = "Item";
+    renderBattleItems();
+    ui.itemButtons.classList.remove("hidden");
+    const hasItems = ui.itemButtons.children.length > 0;
+    ui.noBattleItems.classList.toggle("hidden", hasItems);
+  }
+}
+
+function closeCommandWindow() {
+  ui.commandWindow.classList.add("hidden");
+  ui.skillButtons.classList.add("hidden");
+  ui.itemButtons.classList.add("hidden");
+  ui.noBattleItems.classList.add("hidden");
 }
 
 function renderBattleItems() {
-  const pink = hubInventoryQty("pink-heart-refill");
-  const gold = hubInventoryQty("gold-heart-refill");
+  if (!ui.itemButtons || !ui.noBattleItems) return;
 
-  ui.pinkHeartCount.textContent = pink;
-  ui.goldHeartCount.textContent = gold;
+  const battleItems = [
+    {
+      id: "pink-heart-refill",
+      name: "Pink Heart Refill",
+      image: "../assets/bakery/drops/Pink-heart-refill.PNG",
+      detail: "Heal 50% HP"
+    },
+    {
+      id: "gold-heart-refill",
+      name: "Gold Heart Refill",
+      image: "../assets/bakery/drops/Gold-heart-refill.PNG",
+      detail: "Restore full HP"
+    }
+  ];
 
-  const fullHp = !currentRun || currentRun.hp >= currentRun.maxHp;
-  const unavailable = actionLocked || !currentEnemy || fullHp;
+  ui.itemButtons.innerHTML = "";
+  let shown = 0;
 
-  ui.usePinkHeart.disabled = unavailable || pink <= 0;
-  ui.useGoldHeart.disabled = unavailable || gold <= 0;
+  battleItems.forEach(item => {
+    const qty = hubInventoryQty(item.id);
+    if (qty <= 0) return;
 
-  ui.usePinkHeart.title = fullHp ? "Peep is already at full health." : "";
-  ui.useGoldHeart.title = fullHp ? "Peep is already at full health." : "";
+    shown++;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `pixel-button battle-item-button${item.id === "gold-heart-refill" ? " gold" : ""}`;
+
+    const fullHp = !currentRun || currentRun.hp >= currentRun.maxHp;
+    button.disabled = actionLocked || !currentEnemy || fullHp;
+
+    button.innerHTML = `
+      <img src="${item.image}" alt="">
+      <span>
+        <strong>${item.name}</strong>
+        <small>${item.detail} · ×${qty}</small>
+      </span>
+    `;
+
+    button.addEventListener("click", () => {
+      closeCommandWindow();
+      useBattleHeart(item.id);
+    });
+
+    ui.itemButtons.appendChild(button);
+  });
+
+  ui.noBattleItems.classList.toggle("hidden", shown > 0);
 }
-
 async function useBattleHeart(itemId) {
   if (actionLocked || !currentEnemy || !currentRun) return;
   if (currentRun.hp >= currentRun.maxHp) {
@@ -596,7 +683,7 @@ async function useBattleHeart(itemId) {
   actionLocked = true;
   renderSkills();
   renderBattleItems();
-  ui.guardButton.disabled = true;
+  renderCommandButtons();
 
   const before = currentRun.hp;
   if (isGold) {
@@ -620,7 +707,7 @@ async function useBattleHeart(itemId) {
   await enemyTurn();
 
   actionLocked = false;
-  ui.guardButton.disabled = false;
+  renderCommandButtons();
   renderSkills();
   renderBattleItems();
 }
@@ -629,10 +716,10 @@ async function useSkill(skill) {
   if(actionLocked || !currentEnemy) return;
   actionLocked=true;
   renderSkills();
-  ui.guardButton.disabled=true;
+  renderCommandButtons();
 
   if(skill.type==="heal") {
-    ui.peepSprite.src="peep-attack.png";
+    ui.peepSprite.src="assets/characters/peep/base/attack.png";
     const amount=Math.max(1,Math.round(currentRun.maxHp*skill.healPercent));
     const healed=Math.min(amount,currentRun.maxHp-currentRun.hp);
     currentRun.hp+=healed;
@@ -642,7 +729,7 @@ async function useSkill(skill) {
     renderPeepHp();
     await sleep(650);
   } else {
-    ui.peepSprite.src="peep-attack.png";
+    ui.peepSprite.src="assets/characters/peep/base/attack.png";
     ui.peepSprite.classList.add("attack-pop");
 
     let multiplier=skill.multiplier||1;
@@ -675,7 +762,7 @@ async function useSkill(skill) {
   await sleep(300);
   await enemyTurn();
   actionLocked=false;
-  ui.guardButton.disabled=false;
+  renderCommandButtons();
   renderSkills();
 }
 
@@ -712,7 +799,7 @@ async function enemyTurn() {
   }
 
   currentRun.hp=Math.max(0,currentRun.hp-dmg);
-  ui.peepSprite.src="peep-hurt.png";
+  ui.peepSprite.src="assets/characters/peep/base/hurt.png";
   ui.peepSprite.classList.add("hurt-pop");
   showFloat(`-${dmg}`,"damage","peep");
   renderPeepHp();
@@ -732,12 +819,12 @@ async function guardTurn() {
   if(actionLocked || !currentEnemy) return;
   actionLocked=true;
   guardActive=true;
-  setMessage("Peep braces herself. Incoming damage will be halved!");
+  setMessage("Peep guards! Incoming damage is reduced by 50%.");
   await sleep(350);
   decrementCooldowns("guard");
   await enemyTurn();
   actionLocked=false;
-  ui.guardButton.disabled=false;
+  renderCommandButtons();
   renderSkills();
 }
 
@@ -745,9 +832,8 @@ async function enemyDefeated() {
   clearInterval(idleTimer);
   const defeated={...currentEnemy};
   currentEnemy=null;
-  ui.skillButtons.classList.add("hidden");
-  ui.battleItemsPanel.classList.add("hidden");
-  ui.guardButton.classList.add("hidden");
+  ui.commandGrid.classList.add("hidden");
+  closeCommandWindow();
   setMessage(`${defeated.name} was defeated!`);
 
   await sleep(350);
@@ -769,7 +855,7 @@ async function enemyDefeated() {
 
 function showChest(data) {
   pendingChest=data;
-  ui.chestSprite.src="chest-closed.png";
+  ui.chestSprite.src="assets/items/chests/treasure/closed.png";
   ui.chestSprite.classList.remove("opening");
   ui.openChest.classList.remove("hidden");
   ui.openChest.disabled=false;
@@ -797,7 +883,7 @@ async function openPendingChest() {
     return;
   }
 
-  ui.chestSprite.src="chest-open.png";
+  ui.chestSprite.src="assets/items/chests/treasure/open.png";
   const rewards=generateRewards(pendingChest);
   applyRewards(rewards);
 
@@ -1039,10 +1125,14 @@ document.querySelector("#resultBackGames").addEventListener("click",()=>window.l
 document.querySelector("#rankDown").addEventListener("click",()=>{selectedRank=Math.max(1,selectedRank-1);renderMeta();});
 document.querySelector("#rankUp").addEventListener("click",()=>{selectedRank=Math.min(questSave.unlockedRank,selectedRank+1);renderMeta();});
 document.querySelector("#startRun").addEventListener("click",beginRun);
-document.querySelector("#abandonRun").addEventListener("click",()=>endRun(false));
 document.querySelector("#guardButton").addEventListener("click",guardTurn);
-ui.usePinkHeart.addEventListener("click",()=>useBattleHeart("pink-heart-refill"));
-ui.useGoldHeart.addEventListener("click",()=>useBattleHeart("gold-heart-refill"));
+ui.attackMenuButton.addEventListener("click",()=>openCommandWindow("attack"));
+ui.itemMenuButton.addEventListener("click",()=>openCommandWindow("item"));
+ui.closeCommandWindow.addEventListener("click",closeCommandWindow);
+ui.escapeButton.addEventListener("click",()=>{
+  closeCommandWindow();
+  endRun(false);
+});
 document.querySelector("#openChest").addEventListener("click",openPendingChest);
 document.querySelector("#continueButton").addEventListener("click",nextEncounter);
 document.querySelector("#runAgain").addEventListener("click",()=>{selectedRank=currentRun?.rank||selectedRank;beginRun();});

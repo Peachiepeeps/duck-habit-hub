@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f6c6d6" />
   <title>Duck Quest</title>
-  <link rel="stylesheet" href="style-v04.css" />
+  <link rel="stylesheet" href="css/style-v06.css" />
 </head>
 <body>
   <main class="quest-shell">
@@ -13,7 +13,6 @@
       <button id="backGames" class="pixel-button small" type="button">‹ Games</button>
 
       <div class="quest-title">
-        <span>DUCK HABIT RPG · V04</span>
         <h1>Duck Quest</h1>
       </div>
 
@@ -26,7 +25,7 @@
     <section id="homeScreen" class="screen">
       <div class="hero-card">
         <div class="hero-sprite-wrap">
-          <img id="menuPeep" src="peep-idle-1.png" class="pixel-sprite menu-peep" alt="Peep" />
+          <img id="menuPeep" src="assets/characters/peep/base/idle-1.png" class="pixel-sprite menu-peep" alt="Peep" />
         </div>
 
         <div class="hero-info">
@@ -96,21 +95,22 @@
           <span id="encounterLabel" class="mini-label">ENCOUNTER 1 / 4</span>
           <strong id="rankBattleLabel">Rank 1</strong>
         </div>
-        <button id="abandonRun" class="pixel-button small danger" type="button">End Run</button>
       </div>
 
       <div id="battlefield" class="battlefield">
         <img id="battleBg" class="battle-bg pixel-background" src="" alt="" />
 
         <div class="combatant peep-combatant">
-          <div class="nameplate">
-            <strong>Peep</strong>
-            <span id="peepLevelCombat">Lv. 1</span>
+          <div class="peep-status-stack">
+            <div class="nameplate">
+              <strong>Peep</strong>
+              <span id="peepLevelCombat">Lv. 1</span>
+            </div>
+            <div class="hp-bar"><span id="peepHpFill"></span></div>
+            <div id="peepDamageText" class="damage-pop-line hidden" aria-hidden="true"></div>
+            <small id="peepHpText">42 / 42 HP</small>
           </div>
-          <div class="hp-bar"><span id="peepHpFill"></span></div>
-          <div id="peepDamageText" class="damage-pop-line hidden" aria-hidden="true"></div>
-          <small id="peepHpText">42 / 42 HP</small>
-          <img id="peepSprite" class="pixel-sprite fighter peep-fighter" src="peep-idle-1.png" alt="Peep" />
+          <img id="peepSprite" class="pixel-sprite fighter peep-fighter" src="assets/characters/peep/base/idle-1.png" alt="Peep" />
         </div>
 
         <div id="enemyCombatant" class="combatant enemy-combatant">
@@ -127,7 +127,7 @@
 
         <section id="chestLayer" class="chest-layer hidden">
           <p id="chestCaption">A treasure chest appeared!</p>
-          <img id="chestSprite" class="pixel-sprite chest-sprite" src="chest-closed.png" alt="Treasure chest" />
+          <img id="chestSprite" class="pixel-sprite chest-sprite" src="assets/items/chests/treasure/closed.png" alt="Treasure chest" />
           <button id="openChest" class="pixel-button primary" type="button">Open Chest</button>
         </section>
       </div>
@@ -135,35 +135,31 @@
       <div class="battle-ui">
         <div id="battleMessage" class="battle-message" aria-live="polite">Peep is ready!</div>
 
-        <div id="skillButtons" class="skill-grid"></div>
+        <div id="commandGrid" class="command-grid">
+          <button id="attackMenuButton" class="pixel-button command-button attack-command" type="button">
+            <strong>Attack</strong>
+          </button>
+          <button id="itemMenuButton" class="pixel-button command-button item-command" type="button">
+            <strong>Item</strong>
+          </button>
+          <button id="guardButton" class="pixel-button command-button guard-command" type="button">
+            <strong>Guard</strong>
+            <span>50% Less Damage</span>
+          </button>
+          <button id="escapeButton" class="pixel-button command-button escape-command" type="button">
+            <strong>Escape</strong>
+          </button>
+        </div>
 
-        <section id="battleItemsPanel" class="battle-items-panel">
-          <div class="battle-items-heading">
-            <span class="mini-label">BATTLE ITEMS</span>
-            <small>Using an item takes Peep's turn.</small>
+        <section id="commandWindow" class="command-window hidden" aria-live="polite">
+          <div class="command-window-header">
+            <strong id="commandWindowTitle">Attack</strong>
+            <button id="closeCommandWindow" class="pixel-button small" type="button">‹ Back</button>
           </div>
-          <div class="battle-item-grid">
-            <button id="usePinkHeart" class="pixel-button battle-item-button" type="button">
-              <img src="../assets/bakery/drops/Pink-heart-refill.PNG" alt="" />
-              <span>
-                <strong>Pink Heart</strong>
-                <small>Heal 50% HP · ×<b id="pinkHeartCount">0</b></small>
-              </span>
-            </button>
-            <button id="useGoldHeart" class="pixel-button battle-item-button gold" type="button">
-              <img src="../assets/bakery/drops/Gold-heart-refill.PNG" alt="" />
-              <span>
-                <strong>Gold Heart</strong>
-                <small>Full heal · ×<b id="goldHeartCount">0</b></small>
-              </span>
-            </button>
-          </div>
+          <div id="skillButtons" class="skill-grid hidden"></div>
+          <div id="itemButtons" class="battle-item-grid hidden"></div>
+          <p id="noBattleItems" class="no-battle-items hidden">You don't have any battle items right now.</p>
         </section>
-
-        <button id="guardButton" class="pixel-button guard" type="button">
-          <strong>Guard</strong>
-          <span>Take 50% less damage this turn.</span>
-        </button>
 
         <button id="continueButton" class="pixel-button primary large hidden" type="button">Continue</button>
       </div>
@@ -173,7 +169,7 @@
       <div class="result-card">
         <span id="resultKicker" class="mini-label">RUN COMPLETE!</span>
         <h2 id="resultTitle">The Meadow is Clear!</h2>
-        <img id="resultPeep" class="pixel-sprite result-peep" src="peep-idle-1.png" alt="Peep" />
+        <img id="resultPeep" class="pixel-sprite result-peep" src="assets/characters/peep/base/idle-1.png" alt="Peep" />
 
         <div class="result-stats">
           <div><span>Rank</span><strong id="resultRank">1</strong></div>
@@ -193,6 +189,6 @@
     </section>
   </main>
 
-  <script src="game-v04.js"></script>
+  <script src="js/game-v06.js"></script>
 </body>
 </html>

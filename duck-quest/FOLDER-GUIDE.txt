@@ -1,0 +1,74 @@
+DUCK QUEST v0.6 — ORGANIZED STRUCTURE
+
+duck-quest/
+├─ index.html
+├─ battle-v06.html
+├─ css/
+│  └─ style-v06.css
+├─ js/
+│  └─ game-v06.js
+└─ assets/
+   ├─ backgrounds/
+   │  └─ meadow/
+   ├─ characters/
+   │  └─ peep/
+   │     └─ base/
+   ├─ enemies/
+   │  ├─ cat-slime/
+   │  │  └─ base/
+   │  ├─ bee/
+   │  │  └─ base/
+   │  ├─ flower/
+   │  │  └─ base/
+   │  └─ mimic/
+   │     └─ base/
+   ├─ bosses/
+   │  └─ mushroom-cat/
+   │     └─ base/
+   └─ items/
+      └─ chests/
+         └─ treasure/
+
+RECOLORS
+Put each recolor in a sibling folder beside "base".
+
+Example:
+assets/enemies/cat-slime/
+  base/
+  blue/
+  purple/
+  gold/
+
+Each variant can reuse the SAME short frame names:
+  idle-1-neutral.png
+  idle-2-squish.png
+  idle-3-bounce.png
+
+That way adding recolors later is just adding a new variant folder
+and one small entry in the enemy data.
+
+SHARED ITEMS
+Pink/Gold Heart Refills remain in the Hub's shared assets:
+../assets/bakery/drops/
+They are used by Love & Sweets, the Hub Shop, and Duck Quest,
+so duplicating them inside duck-quest would make maintenance messier.
+
+V05 BATTLE CHANGES
+- Mushroom Cat is much larger than Peep.
+- Battle commands are now:
+    Attack | Item
+    Guard  | Escape
+- Attack opens a move window.
+- Item only shows battle items you actually own.
+- Guard subtitle is simply "50% Less Damage".
+- Escape ends the current run.
+- Old End Run button removed.
+- Peep's name/HP panel moved lower so it stays visible.
+- Peep sprite nudged slightly higher.
+- "Duck Habit RPG V04" text removed.
+
+
+V06 POLISH
+- Mushroom Cat enlarged again so the boss is unmistakably larger than Peep.
+- Peep nudged slightly higher.
+- Peep's name + HP UI lowered independently so the status window remains visible.
