@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Duck Habit Hub Cache Reset</title>
+  <style>
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      padding:20px;
+      font-family:Arial,sans-serif;
+      background:#f7d5e2;
+      color:#654b55;
+    }
+    .card{
+      width:min(520px,100%);
+      background:#fffaf6;
+      border:3px solid #b97e94;
+      border-radius:18px;
+      padding:22px;
+      box-shadow:0 7px 0 rgba(101,75,85,.18);
+      text-align:center;
+    }
+    h1{margin:0 0 10px;font-size:24px}
+    p{line-height:1.45}
+    .safe{
+      background:#edf8ea;
+      border:2px solid #a8c89f;
+      border-radius:12px;
+      padding:10px;
+      font-weight:700;
+      font-size:14px;
+    }
+    button{
+      width:100%;
+      min-height:48px;
+      margin-top:12px;
+      border:0;
+      border-radius:12px;
+      background:#e98eb0;
+      color:white;
+      font:inherit;
+      font-weight:800;
+      cursor:pointer;
+    }
+    button:disabled{opacity:.55;cursor:default}
+    #status{
+      margin-top:14px;
+      min-height:42px;
+      font-size:14px;
+      font-weight:700;
+    }
+    code{font-size:12px}
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Duck Habit Hub Cache Reset ♡</h1>
+    <p>This refreshes the app files so the newest Hub and Duck Quest can load.</p>
+    <div class="safe">
+      Your game save is safe. This page does NOT clear localStorage, IndexedDB, or your Duck Habit Hub save.
+    </div>
+    <button id="resetBtn" type="button">Clear Old App Cache & Reload</button>
+    <div id="status">Ready!</div>
+  </main>
+
+<script>
+const btn = document.getElementById("resetBtn");
+const statusEl = document.getElementById("status");
+
+function currentAppBasePath(){
+  const parts = location.pathname.split("/").filter(Boolean);
+  // GitHub Pages project site: /duck-habit-hub/<file>
+  return parts.length ? `/${parts[0]}/` : "/";
+}
+
+btn.addEventListener("click", async () => {
+  btn.disabled = true;
+
+  try{
+    statusEl.textContent = "Removing old Duck Habit Hub caches…";
+
+    if ("caches" in window){
+      const keys = await caches.keys();
+      await Promise.all(
+        keys
+          .filter(key => key.startsWith("duck-habit-hub-"))
+          .map(key => caches.delete(key))
+      );
+    }
+
+    statusEl.textContent = "Unregistering this app's old service worker…";
+
+    if ("serviceWorker" in navigator){
+      const appBase = currentAppBasePath();
+      const regs = await navigator.serviceWorker.getRegistrations();
+
+      await Promise.all(
+        regs
+          .filter(reg => {
+            try{
+              return new URL(reg.scope).pathname.startsWith(appBase);
+            }catch{
+              return false;
+            }
+          })
+          .map(reg => reg.unregister())
+      );
+    }
+
+    statusEl.textContent = "Done! Reloading the newest Hub…";
+
+    // Important: we intentionally do NOT touch localStorage.
+    setTimeout(() => {
+      const appBase = currentAppBasePath();
+      location.replace(`${appBase}?fresh=${Date.now()}`);
+    }, 650);
+
+  }catch(err){
+    console.error(err);
+    statusEl.textContent =
+      "The automatic reset hit an error. Your save was not touched. Try refreshing this page once and pressing the button again.";
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
