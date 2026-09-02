@@ -13,11 +13,11 @@ const CHARACTERS = {
       width: 18
     },
     profile: {
-      height: "Coming soon",
-      favoriteItem: "Strawberry",
-      likes: "Coming soon",
-      dislikes: "Coming soon",
-      description: "More profile information will be added in a future update. ♡"
+      height: "5'4''",
+      favoriteItem: "Strawberry, Cupcake, Gummy Bear, Milk Tea, and Wedding cake!",
+      likes: "Sweets, fruit, duckies, naps, cats, her husband, and anything cute!",
+      dislikes: "Veggies, too much social interaction, heat, physical touch unless you're special to her.",
+      description: "A cheerful lady who collects ducks! She's very indulgent in what she loves, and doesn't quite care how others feel about it. She's cuddly and doting to those she deems special."
     },
     giftPreferences: {
       "strawberry": "favorite",
@@ -36,7 +36,7 @@ const CHARACTERS = {
       "burger": "okay",
       "milk": "okay",
       "lemon": "okay",
-      "lime": "okay",
+      "lime": "not-her-thing",
       "water": "not-her-thing"
     }
   },
@@ -52,22 +52,29 @@ const CHARACTERS = {
     },
     invitationImage: "assets/oc-invitations/Miko-invitation.PNG",
     profile: {
-      height: "Coming soon",
-      favoriteItem: "Milk Tea",
-      likes: "Quiet afternoons, sweet treats, tidy outfits",
-      dislikes: "Being rushed, bitter drinks",
-      description: "A soft, slightly shy boy who looks especially cute with a duck perched nearby. ♡"
+      height: "5'5''",
+      favoriteItem: "Lollipop",
+      likes: "His lovers, being pampered, being complimented, sweets.",
+      dislikes: "Michi, talking about his dad/seeing his dad, sour foods.",
+      description: "A cute but smug young man who originally was a bit of a playboy. He has issues with commitment, so when he learned he can just have multiple lovers, he became poly and is now happy with his little group."
     },
     giftPreferences: {
-      "milk-tea": "favorite",
-      "cookie": "favorite",
+      "lollipop": "favorite",
       "cupcake": "favorite",
+      "apple": "favorite",
+      "milk-tea": "favorite",
+      "wedding-cake": "favorite",
+      "pudding": "like",
+      "milk": "like",
+      "watermelon": "okay",
+      "cookie": "like",
       "cake-slice": "like",
       "cake": "like",
-      "wedding-cake": "like",
-      "burger": "okay",
+      "water": "like",
+      "fancy-milk-tea": "like",
       "pizza": "okay",
-      "water": "okay",
+      "burger": "okay",
+      "strawberry": "okay",
       "lemon": "not-his-thing",
       "lime": "not-his-thing"
     }
@@ -136,7 +143,7 @@ const INVENTORY_CATEGORIES = {
   "paint": {
     "label": "Paint",
     "subtitle": "Base and mixed paints used for ducks and paintable furniture.",
-    "empty": "No paint yet. You may find some while shopping!"
+    "empty": "No paint yet. You may find some while shopping or mix some yourself!"
   },
   "food": {
     "label": "Food",
@@ -151,7 +158,7 @@ const INVENTORY_CATEGORIES = {
   "furniture": {
     "label": "Furniture",
     "subtitle": "Choose your furniture color, then place it in the room.",
-    "empty": "No furniture yet. Visit the Shop to pick out something cozy!"
+    "empty": "No furniture yet. Visit the Shop to get some!"
   },
   "gift": {
     "label": "Gifts",
@@ -1130,11 +1137,11 @@ const SHOP_CATEGORIES = {
   },
   food: {
     label: "Food",
-    subtitle: "Stock up on treats and meals to gift your OCs. Rarer foods cost a little more."
+    subtitle: "Stock up on treats to gift your OCs. Rarer foods cost a little more."
   },
   battle: {
     label: "Battle Items",
-    subtitle: "Stock up for Duck Quest. Pink heals half HP; rare Gold restores Peep to full health."
+    subtitle: "Stock up for Duck Quest. Pink heals half HP; rare Gold restores your oc to full health."
   },
   profiles: {
     label: "Invitations",
@@ -1142,7 +1149,7 @@ const SHOP_CATEGORIES = {
   },
   rooms: {
     label: "Room Styles",
-    subtitle: "Unlock a new room color permanently for 350 Pink Coins."
+    subtitle: "Unlock a new room color permanently here."
   },
   furniture: {
     label: "Furniture",
@@ -1229,12 +1236,12 @@ const SHOP_STOCK = {
     { itemId: "croissant", price: 75 },
     { itemId: "cupcake", price: 75 },
     { itemId: "fruit-tart", price: 75 },
-
+    
+    { itemId: "strawberry-shortcake", price: 90 },
     { itemId: "fancy-milk-tea", price: 90 },
     { itemId: "concha", price: 90 },
 
     { itemId: "cake", price: 100 },
-    { itemId: "strawberry-shortcake", price: 100 },
 
     { itemId: "champagne", price: 125 },
     { itemId: "chocolate-brioche", price: 125 },
@@ -1996,9 +2003,9 @@ const BAKERY_ASSETS = {
 
 const GIFT_REACTIONS = {
   favorite: { label: "Favorite 💖", happiness: 5, expression: "expression-happy", duration: 2800, burst: "💖" },
-  like: { label: "Likes it 😊", happiness: 3, expression: "expression-happy", duration: 2200, burst: "♡" },
-  okay: { label: "Okay 🙂", happiness: 1, expression: "expression-happy", duration: 1500, burst: "♡" },
-  "not-her-thing": { label: "Not her thing 😐", happiness: 0, expression: "expression-shocked", duration: 1400, burst: "…" }
+  like: { label: "Likes it!", happiness: 3, expression: "expression-happy", duration: 2200, burst: "♡" },
+  okay: { label: "Okay.", happiness: 1, expression: "expression-neutral", duration: 1500, burst: "♡" },
+  "not-her-thing": { label: "Not her thing 😐", happiness: 0, expression: "expression-sad", duration: 1400, burst: "…" }
 };
 
 function normalizeItemId(value) {
@@ -2030,7 +2037,7 @@ const SHOPPING_DAILY_LIMIT = 3;
 const PAINT_MIXING_DURATION_MS = 60 * 60 * 1000;
 const PAINT_MIXING_DAILY_LIMIT = 2;
 const FRIENDSHIP_DATE_DURATION_MS = 60 * 60 * 1000;
-const FRIENDSHIP_DATE_DAILY_LIMIT = 1;
+const FRIENDSHIP_DATE_DAILY_LIMIT = 2;
 const FRIENDSHIP_DATE_HAPPINESS = 3;
 
 const FRIENDSHIP_DATE_ICONS = Object.freeze({
@@ -3296,7 +3303,7 @@ function evaluateHonkOfApproval(options = {}) {
   persist();
 
   if (options.notify !== false) {
-    showToast("🪿 Honk of Approval! Goose unlocked!");
+    showToast("Honk of Approval! Goose unlocked!");
   }
 
   return true;
@@ -3355,7 +3362,7 @@ function evaluateRoomToGrow(options = {}) {
   renderRoomWingToggle();
 
   if (options.notify !== false) {
-    showToast("🏠 Room to Grow! A new part of Peep's room unlocked!");
+    showToast("Room to Grow! A new part of the room unlocked!");
   }
 
   return true;
@@ -3380,7 +3387,7 @@ function renderRoomWingToggle() {
   roomWingArrow.textContent = inWing ? "›" : "‹";
   roomWingButton.setAttribute(
     "aria-label",
-    inWing ? "Return to Peep's main room" : "Visit Shelf of Ducks area"
+    inWing ? "Return to the main room" : "Visit Shelf of Ducks area"
   );
   roomPickerText.textContent = "Wallpaper";
 
@@ -3460,7 +3467,7 @@ function renderWingDuckPicker() {
   if (!unlocked.length) {
     const empty = document.createElement("p");
     empty.className = "wing-duck-empty";
-    empty.textContent = "Discover a duck first, then come back to decorate this shelf! ♡";
+    empty.textContent = "Only unlocked ducks can be used here.";
     wingDuckPickerGrid.append(empty);
     return;
   }
@@ -4912,7 +4919,7 @@ function renderSockStyle(style) {
 
   card.addEventListener("click", () => {
     if (!unlocked) {
-      showToast(`${style.label} socks are locked — unlock them from Shop → Clothing. ♡`);
+      showToast(`${style.label} Socks are locked! — Unlock them from the shop.`);
       return;
     }
     openSockStyleId = openSockStyleId === style.id ? null : style.id;
@@ -4957,7 +4964,7 @@ function renderSockOptions() {
 
       card.addEventListener("click", () => {
         if (!unlocked) {
-          showToast(`${style.label} socks are locked — unlock them from Shop → Clothing. ♡`);
+          showToast(`${style.label} Socks are locked! — Unlock them from the shop.`);
           return;
         }
         openSockStyleId = style.id;
@@ -5010,7 +5017,7 @@ function renderClosetOptions() {
         locked: !unlocked,
         onClick: () => {
           if (!unlocked) {
-            showToast(`${asset.label} is locked — unlock it from the Shop. ♡`);
+            showToast(`${asset.label} is locked — unlock it from the Shop!`);
             return;
           }
           const outfit = getCurrentOutfit();
@@ -5030,7 +5037,7 @@ function renderClosetOptions() {
         locked: !unlocked,
         onClick: () => {
           if (!unlocked) {
-            showToast(`${asset.label} is locked — unlock it from the Shop. ♡`);
+            showToast(`${asset.label} is locked — unlock it from the Shop!`);
             return;
           }
           chooseSingle(group, id);
@@ -5850,7 +5857,7 @@ function assignSelectedDuckToCurrentOc() {
     persist();
     renderDuckPlacements();
     renderDuckDetailPlacementControls();
-    showToast(`${DUCKS[duckId].name} hopped off ${character.name}'s head. ♡`);
+    showToast(`${DUCKS[duckId].name} hopped off ${character.name}'s head.`);
     return;
   }
 
@@ -5858,7 +5865,7 @@ function assignSelectedDuckToCurrentOc() {
   persist();
   renderDuckPlacements();
   renderDuckDetailPlacementControls();
-  showToast(`${DUCKS[duckId].name} is now ${character.name}'s duck! 🦆♡`);
+  showToast(`${DUCKS[duckId].name} is now ${character.name}'s duck!`);
 }
 
 function assignSelectedDuckToCurrentRoomFloor() {
@@ -5875,7 +5882,7 @@ function assignSelectedDuckToCurrentRoomFloor() {
     persist();
     renderDuckPlacements();
     renderDuckDetailPlacementControls();
-    showToast(`${DUCKS[duckId].name} was removed from the ${room.name} floor. ♡`);
+    showToast(`${DUCKS[duckId].name} was removed from the ${room.name} floor.`);
     return;
   }
 
@@ -5883,7 +5890,7 @@ function assignSelectedDuckToCurrentRoomFloor() {
   persist();
   renderDuckPlacements();
   renderDuckDetailPlacementControls();
-  showToast(`${DUCKS[duckId].name} is now hanging out in the ${room.name} room! 🦆`);
+  showToast(`${DUCKS[duckId].name} is now hanging out in the ${room.name} room!`);
 }
 
 
@@ -5939,7 +5946,7 @@ function assignSelectedDuckToFurniturePerch(type) {
   persist();
   renderDuckPlacements();
   renderDuckDetailPlacementControls();
-  showToast(`${DUCKS[duckId].name} is now on the ${label}! 🦆♡`);
+  showToast(`${DUCKS[duckId].name} is now on the ${label}!`);
 }
 
 function renderShelfDuckPicker(selectedDuckId) {
@@ -6197,15 +6204,15 @@ function collectTinyDuckSighting() {
   hideTinyDuckSecret();
 
   if (pileWasNew) {
-    showToast(`Tiny Duck sighting #${sightings}! Pile of Tiny Ducks unlocked! 🦆✨`);
+    showToast(`Tiny Duck sighting #${sightings}! Pile of Tiny Ducks unlocked!`);
   } else if (stackWasNew) {
-    showToast("Tiny Duck sighting #4! Tiny Duck Stack unlocked! 🦆🦆🦆🦆");
+    showToast("Tiny Duck sighting #4! Tiny Duck Stack unlocked!");
   } else if (tinyWasNew) {
-    showToast("You found Tiny Duck! Added to Duckipedia! 🦆✨");
+    showToast("You found Tiny Duck! Added to Duckipedia!");
   } else if (sightings > TINY_DUCK_STACK_SIGHTINGS) {
-    showToast(`Tiny Duck spotted again! ${sightings} Sightings! ♡`);
+    showToast(`Tiny Duck spotted again! ${sightings} Sightings!`);
   } else {
-    showToast(`Tiny Duck spotted again! ${sightings}/${TINY_DUCK_STACK_SIGHTINGS} sightings ♡`);
+    showToast(`Tiny Duck spotted again! ${sightings}/${TINY_DUCK_STACK_SIGHTINGS} sightings`);
   }
 
   if (!duckipediaPanel.classList.contains("hidden")) {
@@ -6511,7 +6518,7 @@ function renderFurnitureCraftTab() {
   intro.innerHTML = `
     <div>
       <strong>Paint Furniture</strong>
-      <p>Use a White furniture base + one Paint to create that color. Each color can be owned once per furniture type.</p>
+      <p>Use a White furniture base + one paint to create that color. Each color can be owned once per furniture type.</p>
     </div>
     <span>${totalWhiteBases} white base${totalWhiteBases === 1 ? "" : "s"}</span>
   `;
@@ -6682,7 +6689,7 @@ function renderRecipeGuideTab() {
   intro.innerHTML = `
     <div>
       <strong>Recipe Book</strong>
-      <p>Use this page whenever you want to check a duck, mixed paint, or furniture color recipe.</p>
+      <p>Use this page to check what you need for any recipe.</p>
     </div>
     <span>📖</span>
   `;
@@ -6872,9 +6879,9 @@ function renderCraftSheet() {
   const ready = recipeHasMaterials(target.recipe);
 
   if (target.type === "duck" && target.alreadyCrafted) {
-    craftSheetNote.textContent = "You already crafted this one-time trophy. It is safely stored in Duckipedia!";
+    craftSheetNote.textContent = "You already crafted this! It is safely stored in Duckipedia!";
   } else if (target.type === "duck") {
-    craftSheetNote.textContent = "Crafting consumes the ingredients below and permanently unlocks this duck in Duckipedia.";
+    craftSheetNote.textContent = "Crafting consumes the ingredients below, and permanently unlocks this duck in Duckipedia.";
   } else if (target.type === "furniture" && target.alreadyCrafted) {
     craftSheetNote.textContent = "You already own this color. Each paintable furniture color can be created once.";
   } else if (target.type === "furniture") {
@@ -6892,7 +6899,7 @@ function renderCraftSheet() {
   if (target.type === "duck" && target.alreadyCrafted) {
     craftReadyBadge.textContent = "Already collected";
     craftReadyBadge.className = "craft-ready-badge collected";
-    craftActionButton.textContent = "Already in Duckipedia ✓";
+    craftActionButton.textContent = "Already in Duckipedia!";
     craftActionButton.disabled = true;
     craftActionButton.classList.remove("ready");
     return;
@@ -6901,7 +6908,7 @@ function renderCraftSheet() {
   if (target.type === "furniture" && target.alreadyCrafted) {
     craftReadyBadge.textContent = "Color owned";
     craftReadyBadge.className = "craft-ready-badge collected";
-    craftActionButton.textContent = "Already Owned ✓";
+    craftActionButton.textContent = "Already Owned!";
     craftActionButton.disabled = true;
     craftActionButton.classList.remove("ready");
     return;
@@ -6935,13 +6942,13 @@ function craftSelectedTarget() {
   if (!target) return;
 
   if (target.type === "duck" && target.alreadyCrafted) {
-    showToast("That duck is already in your Duckipedia! ♡");
+    showToast("That duck is already in your Duckipedia!");
     renderCraftSheet();
     return;
   }
 
   if (target.type === "furniture" && target.alreadyCrafted) {
-    showToast("You already own that furniture color! ♡");
+    showToast("You already own that furniture color!");
     renderCraftSheet();
     return;
   }
@@ -6953,7 +6960,7 @@ function craftSelectedTarget() {
   }
 
   if (!consumeRecipe(target.recipe)) {
-    showToast("Something changed in your Inventory — check the recipe again.");
+    showToast("Something changed in your Inventory— check the recipe again.");
     renderCraftSheet();
     return;
   }
@@ -6977,7 +6984,7 @@ function craftSelectedTarget() {
     renderRoom();
     renderCrafter();
     renderCraftSheet();
-    showToast(`${target.name} crafted! Added to Duckipedia! 🦆✨`);
+    showToast(`${target.name} crafted! Added to Duckipedia!`);
     return;
   }
 
@@ -7010,9 +7017,9 @@ function craftSelectedTarget() {
   if (target.type === "furniture") {
     evaluateHonkOfApproval({ notify: false });
     evaluateAchievements();
-    showToast(`${target.name} painted! Added to your Furniture Inventory. 🎨`);
+    showToast(`${target.name} painted! Added to your Furniture Inventory.`);
   } else {
-    showToast(`${target.name} mixed! 🎨`);
+    showToast(`${target.name} mixed!`);
   }
 }
 
@@ -7108,7 +7115,7 @@ function duckDiscoveryHint(duck) {
     case "hundred-tiny-sightings":
       return "Spot Tiny Duck 100 times to unlock this very crowded special reward.";
     case "drop-or-shop":
-      return "Find or buy a Standard Duck to discover this entry.";
+      return "Find or buy a Standard Duck to unlock!";
     case "character-happiness-100": {
       const characterName = CHARACTERS[duck.characterId]?.name || "this character";
       return `Reach Happiness Level 100 with ${characterName} to unlock their special duck.`;
@@ -7205,7 +7212,7 @@ function renderDuckipedia() {
     empty.className = "duckipedia-empty";
     empty.innerHTML = currentDuckipediaFilter === "unlocked"
       ? "<strong>No ducks discovered yet!</strong><span>Your first trophy will appear here once it is unlocked. ♡</span>"
-      : "<strong>Nothing missing!</strong><span>You completed the whole Duckipedia! 🦆✨</span>";
+      : "<strong>Nothing missing!</strong><span>You completed the whole Duckipedia!</span>";
     duckipediaGrid.append(empty);
     return;
   }
@@ -7461,7 +7468,7 @@ function assertShopListingCharacterUnlocked(listing, { notify = false } = {}) {
   if (notify) {
     const characterId = shopListingCharacterId(listing);
     const characterName = CHARACTERS[characterId]?.name || "that OC";
-    showToast(`Invite ${characterName} first to unlock their Shop items! ♡`);
+    showToast(`Invite ${characterName} first to unlock their Shop items!`);
   }
   return false;
 }
@@ -7563,7 +7570,7 @@ function renderShop() {
 
     const message = document.createElement("strong");
     message.textContent = hasCharacterLockedListingsForTab(currentShopTab)
-      ? "More styles will appear here after you invite their OC! ♡"
+      ? "More styles will appear here after you invite their OC!"
       : "You've unlocked all of this category for now! Congrats!";
 
     empty.append(sparkle, message);
@@ -7759,7 +7766,7 @@ function renderShopItemSheet() {
     shopSheetTotal.textContent = `${total} Pink Coins`;
 
     if (unlocked) {
-      shopAffordMessage.textContent = `${CHARACTERS[listing.characterId].name} is already available in Profiles. ♡`;
+      shopAffordMessage.textContent = `${CHARACTERS[listing.characterId].name} is already available in Profiles.`;
       shopBuyButton.disabled = true;
       shopBuyButton.textContent = "Already Unlocked ✓";
     } else if (shortfall > 0) {
@@ -7831,7 +7838,7 @@ function renderShopItemSheet() {
     shopQtyPlus.disabled = selectedShopQuantity >= maxQuantity || remaining <= 0;
 
     if (remaining <= 0) {
-      shopAffordMessage.textContent = `You already own the maximum ${family?.maxOwned || 21} ${family?.name || "Furniture"} pieces — one for every color. ♡`;
+      shopAffordMessage.textContent = `You already own the maximum ${family?.maxOwned || 21} ${family?.name || "Furniture"} pieces — one for every color.`;
       shopBuyButton.disabled = true;
       shopBuyButton.textContent = "Maximum 21 Owned ✓";
     } else if (shortfall > 0) {
@@ -7965,13 +7972,13 @@ function buyShopItem() {
     if (!room) return;
 
     if (isRoomUnlocked(room.id)) {
-      showToast(`${room.name} is already unlocked! ♡`);
+      showToast(`${room.name} is already unlocked!`);
       renderShopItemSheet();
       return;
     }
 
     if (save.coins < listing.price) {
-      showToast("Not quite enough Pink Coins yet! ♡");
+      showToast("Not quite enough Pink Coins yet!");
       renderShopItemSheet();
       return;
     }
@@ -7994,7 +8001,7 @@ function buyShopItem() {
     if (roomToGrowWasNew) {
       showToast("🏠 Room to Grow! Shelf of Ducks + Wallpaper unlocked!");
     } else {
-      showToast(`${room.name} unlocked! You can select it from the room picker. ♡`);
+      showToast(`${room.name} unlocked! You can select it from the room picker.`);
     }
     return;
   }
@@ -8005,13 +8012,13 @@ function buyShopItem() {
     if (!character || !info) return;
 
     if (save.unlockedCharacters.includes(listing.characterId)) {
-      showToast(`${character.name} is already unlocked! ♡`);
+      showToast(`${character.name} is already unlocked!`);
       renderShopItemSheet();
       return;
     }
 
     if (save.coins < listing.price) {
-      showToast("Not quite enough Pink Coins yet! ♡");
+      showToast("Not quite enough Pink Coins yet!");
       renderShopItemSheet();
       return;
     }
@@ -8024,7 +8031,7 @@ function buyShopItem() {
     renderShop();
     renderProfiles();
     closeShopItem();
-    showToast(`${character.name} joined your hub! ♡`);
+    showToast(`${character.name} joined your home!`);
     return;
   }
 
@@ -8033,13 +8040,13 @@ function buyShopItem() {
     if (!wardrobe) return;
 
     if (isWardrobeShopUnlocked(listing.wardrobeId)) {
-      showToast(`${wardrobe.label} is already unlocked! ♡`);
+      showToast(`${wardrobe.label} is already unlocked!`);
       renderShopItemSheet();
       return;
     }
 
     if (save.coins < listing.price) {
-      showToast("Not quite enough Pink Coins yet! ♡");
+      showToast("Not quite enough Pink Coins yet!");
       renderShopItemSheet();
       return;
     }
@@ -8053,7 +8060,7 @@ function buyShopItem() {
     closeShopItem();
     renderCloset();
 
-    showToast(`${wardrobe.label} unlocked for the Closet! ♡`);
+    showToast(`${wardrobe.label} unlocked for the Closet!`);
     return;
   }
 
@@ -8072,7 +8079,7 @@ function buyShopItem() {
     const amount = Math.max(1, Math.min(remaining, Math.floor(Number(selectedShopQuantity) || 1)));
     const total = listing.price * amount;
     if (save.coins < total) {
-      showToast("Not quite enough Pink Coins yet! ♡");
+      showToast("Not quite enough Pink Coins yet!");
       renderShopItemSheet();
       return;
     }
@@ -8088,19 +8095,19 @@ function buyShopItem() {
     renderShop();
     renderInventory();
     closeShopItem();
-    showToast(`${family?.name || item.name} ×${amount} added in White! Paint them in Furniture Crafting. ♡`);
+    showToast(`${family?.name || item.name} ×${amount} added in White! Paint them in Furniture Crafting.`);
     return;
   }
 
   if (item.category === "furniture") {
     if (isFurnitureOwned(listing.itemId)) {
-      showToast(`${item.name} is already in your Furniture Inventory! ♡`);
+      showToast(`${item.name} is already in your Furniture Inventory!`);
       renderShopItemSheet();
       return;
     }
 
     if (save.coins < listing.price) {
-      showToast("Not quite enough Pink Coins yet! ♡");
+      showToast("Not quite enough Pink Coins yet!");
       renderShopItemSheet();
       return;
     }
@@ -8115,7 +8122,7 @@ function buyShopItem() {
     renderRoom();
     renderShop();
     closeShopItem();
-    showToast(`${item.name} added to your Furniture Inventory! ♡`);
+    showToast(`${item.name} added to your Furniture Inventory!`);
     return;
   }
 
@@ -8123,12 +8130,12 @@ function buyShopItem() {
     if (shopListingIsOwned(listing)) {
       renderShop();
       closeShopItem();
-      showToast(`${item.name} is already taken care of for its recipe! ♡`);
+      showToast(`${item.name} is already taken care of for its recipe!`);
       return;
     }
 
     if (save.coins < listing.price) {
-      showToast("Not quite enough Pink Coins yet! ♡");
+      showToast("Not quite enough Pink Coins yet!");
       renderShopItemSheet();
       return;
     }
@@ -8149,7 +8156,7 @@ function buyShopItem() {
   const total = listing.price * quantity;
 
   if (save.coins < total) {
-    showToast("Not quite enough Pink Coins yet! ♡");
+    showToast("Not quite enough Pink Coins yet!");
     renderShopItemSheet();
     return;
   }
@@ -8308,7 +8315,7 @@ function renderPaintMixingDaily() {
       "Two fresh mixes will be ready tomorrow."
     );
     paintMixActionButton.disabled = true;
-    paintMixActionButton.textContent = "Come back tomorrow ♡";
+    paintMixActionButton.textContent = "Come back tomorrow!";
     paintMixActionButton.dataset.action = "done";
   }
 }
@@ -8325,7 +8332,7 @@ function startPaintMixing() {
 
   persist();
   renderDailies();
-  showToast("Paint Mixing started! Your Paint will be ready in 1 hour. 🎨");
+  showToast("Paint Mixing started! Your Paint will be ready in 1 hour.");
 }
 
 function claimPaintMixingReward() {
@@ -8349,7 +8356,7 @@ function claimPaintMixingReward() {
 
   persist();
   renderDailies();
-  showToast(`${reward.name} added to Inventory! 🎨`);
+  showToast(`${reward.name} added to Inventory!`);
 }
 
 function handlePaintMixingAction() {
@@ -8399,7 +8406,7 @@ function renderFriendshipDateDaily() {
       friendshipState,
       "♡",
       "Choose who gets the Happiness",
-      "It does not have to be the OC currently standing in the room."
+      "It does not have to be the OC currently in the room."
     );
     friendshipActionButton.disabled = false;
     friendshipActionButton.textContent = "Choose OC";
@@ -8416,9 +8423,9 @@ function renderFriendshipDateDaily() {
     friendshipActionButton.textContent = "Date complete ♡";
     friendshipActionButton.dataset.action = "done";
   } else {
-    renderSimpleDailyState(friendshipState, "♡", "Date complete", "A new Friendship Date will be available tomorrow.");
+    renderSimpleDailyState(friendshipState, "♡", "Date complete!", "A new Friendship Date will be available tomorrow!");
     friendshipActionButton.disabled = true;
-    friendshipActionButton.textContent = "Come back tomorrow ♡";
+    friendshipActionButton.textContent = "Come back tomorrow!";
     friendshipActionButton.dataset.action = "done";
   }
 }
@@ -8484,7 +8491,7 @@ function startFriendshipDate(characterId) {
   persist();
   closeFriendshipChooser();
   renderDailies();
-  showToast(`${CHARACTERS[characterId].name} went on a Friendship Date! Back in 1 hour. ♡`);
+  showToast(`${CHARACTERS[characterId].name} went on a Friendship Date! Back in 1 hour.`);
 }
 
 function claimFriendshipDate() {
@@ -8504,7 +8511,7 @@ function claimFriendshipDate() {
   renderRoom();
 
   if (characterId === save.selectedCharacter) setExpression("expression-happy", 2200);
-  showToast(`${CHARACTERS[characterId].name} gained +${gained} Happiness! ♡`);
+  showToast(`${CHARACTERS[characterId].name} gained +${gained} Happiness!`);
 }
 
 function handleFriendshipAction() {
@@ -8692,7 +8699,7 @@ function renderShoppingDaily() {
     strong.textContent = "All shopping trips used today";
     p.textContent = "The three daily trips will refresh automatically tomorrow.";
     shoppingActionButton.disabled = true;
-    shoppingActionButton.textContent = "Come back tomorrow ♡";
+    shoppingActionButton.textContent = "Come back tomorrow!";
     shoppingActionButton.dataset.action = "done";
   }
 
@@ -8784,7 +8791,7 @@ function claimShoppingReward() {
 
   persist();
   renderDailies();
-  showToast(`Found: ${reward.name}! Added to Inventory. ✨`);
+  showToast(`Found: ${reward.name}! Added to Inventory!`);
 }
 
 function handleShoppingAction() {
@@ -8893,7 +8900,7 @@ function renderProfileIconPicker(characterId = selectedProfileCharacterId) {
 
     button.addEventListener("click", () => {
       if (!isUnlocked) {
-        showToast("That Icon Background is still locked. Find it in Duck Quest! ♡");
+        showToast("That Icon Background is still locked. Find it in Duck Quest!");
         return;
       }
       progress.iconBackground = background.id;
@@ -8972,7 +8979,7 @@ function openProfileDetail(characterId) {
   profileInfoLikes.textContent = profile.likes || "Coming soon";
   profileInfoDislikes.textContent = profile.dislikes || "Coming soon";
   profileInfoDescription.textContent =
-    profile.description || "More profile information will be added in a future update. ♡";
+    profile.description || "More profile information will be added in a future update.";
 
   profileDetailAvatar.dataset.characterId = character.id;
   renderCharacterInto(profileDetailAvatar, character.id);
@@ -9459,7 +9466,7 @@ function sendTaskToTomorrow(id) {
   persist();
   currentTaskTab = "tomorrow";
   renderTasks();
-  showToast(`Moved "${task.name}" to Tomorrow. ♡`);
+  showToast(`Moved "${task.name}" to Tomorrow!`);
 }
 
 function sendTaskToToday(id) {
@@ -9470,7 +9477,7 @@ function sendTaskToToday(id) {
   persist();
   currentTaskTab = "today";
   renderTasks();
-  showToast(`Moved "${task.name}" back to Today. ♡`);
+  showToast(`Moved "${task.name}" back to Today!`);
 }
 
 function createCoinInline(amount) {
@@ -9523,7 +9530,7 @@ function confirmTaskRemoval() {
     persist();
     closeTaskRemovalConfirm();
     refreshSavedTaskPicker();
-    showToast("Saved task removed. ♡");
+    showToast("Saved task removed.");
     return;
   }
 
@@ -9760,9 +9767,9 @@ function renderTaskBucket(bucket) {
 
   if (!tasks.length) {
     const messages = {
-      today: ["Nothing for today!", "Enjoy the breathing room, or tap + Add Task. ♡"],
-      tomorrow: ["Nothing for tomorrow", "Tasks dated for tomorrow will wait here for you."],
-      future: ["No future tasks", "Tasks scheduled after tomorrow will live here instead of cluttering Today."]
+      today: ["Nothing for today!", "Enjoy time off, or tap the Add Task button!"],
+      tomorrow: ["Nothing for tomorrow", "Tasks dated for tomorrow will show here."],
+      future: ["No future tasks", "Tasks scheduled after tomorrow will live here!."]
     };
     const [title, detail] = messages[bucket] || messages.today;
     list.append(createEmptyTasksMessage(title, detail));
@@ -9941,7 +9948,7 @@ function ensureSpecificDateControls() {
   label.innerHTML = `
     <span>Specific date</span>
     <input id="taskSpecificDate" type="date" />
-    <small>Choose exactly when this one-time task should become ready.</small>
+    <small>Choose exactly when this one-time task should appear.</small>
   `;
 
   repeatField.insertAdjacentElement("afterend", label);
@@ -10268,7 +10275,7 @@ function downloadSaveBackup(label = "save", options = {}) {
   );
 
   if (options.notify !== false) {
-    showToast("💾 Backup downloaded! Keep it somewhere safe. ♡");
+    showToast("💾 Backup downloaded! Keep it somewhere safe!");
   }
 
   return payload;
@@ -10280,7 +10287,7 @@ function validateImportedBackup(payload) {
   }
 
   if (payload.game !== SAVE_BACKUP_GAME_ID) {
-    return "That does not look like a Duck Habit Hub backup.";
+    return "That does not look like a valid backup.";
   }
 
   if (payload.backupVersion !== SAVE_BACKUP_VERSION) {
@@ -10804,7 +10811,7 @@ setTimeout(() => {
       const rewardEntry = getCharacterHappinessDuckReward(characterId);
       const characterName = CHARACTERS[characterId]?.name || characterId;
       const duckName = rewardEntry?.[1]?.name || "Special Duck";
-      showToast(`${characterName} reached Happiness Level 100! ${duckName} unlocked! 🦆✨`);
+      showToast(`${characterName} reached Happiness Level 100! ${duckName} unlocked!`);
     }
   } catch (error) {
     console.error("Level 100 duck reward check failed safely:", error);
@@ -10813,17 +10820,17 @@ setTimeout(() => {
 
 if (ocShopGateRepair.refunded > 0) {
   setTimeout(() => {
-    showToast(`Fixed locked-OC Shop items and refunded ${ocShopGateRepair.refunded} Pink Coins. ♡`);
+    showToast(`Fixed locked-OC Shop items and refunded ${ocShopGateRepair.refunded} Pink Coins.`);
   }, 250);
 } else if (achievementsUnlockedOnLoad.length) {
   setTimeout(() => {
     const count = achievementsUnlockedOnLoad.length;
-    showToast(`${count} retroactive achievement${count === 1 ? "" : "s"} unlocked! Check your Trophy Case. 🏆`);
+    showToast(`${count} retroactive achievement${count === 1 ? "" : "s"} unlocked! Check your Trophy Case.`);
   }, 250);
 } else if (honkUnlockedOnLoad) {
-  setTimeout(() => showToast("🪿 Honk of Approval! Goose unlocked!"), 250);
+  setTimeout(() => showToast("Honk of Approval! Goose unlocked!"), 250);
 } else if (roomToGrowUnlockedOnLoad) {
-  setTimeout(() => showToast("🏠 Room to Grow! Shelf of Ducks + Wallpaper unlocked!"), 250);
+  setTimeout(() => showToast("Room to Grow! Shelf of Ducks + Wallpaper unlocked!"), 250);
 }
 
 
