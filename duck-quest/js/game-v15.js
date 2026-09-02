@@ -773,6 +773,7 @@ const ui = {
   rankDescription: document.querySelector("#rankDescription"),
   bestRunText: document.querySelector("#bestRunText"),
   menuSkills: document.querySelector("#menuSkills"),
+  battlefield: document.querySelector("#battlefield"),
   battleBg: document.querySelector("#battleBg"),
   encounterLabel: document.querySelector("#encounterLabel"),
   rankBattleLabel: document.querySelector("#rankBattleLabel"),
@@ -988,13 +989,22 @@ function renderMeta() {
   const progress=areaProgress(selectedArea);
   selectedRank=Math.min(Math.max(1,selectedRank),progress.unlockedRank);
   ui.rankValue.textContent=selectedRank;
-  ui.areaRunLabel.textContent=cfg.label;
+  ui.areaRunLabel.textContent=`${cfg.name} Route`;
   ui.bestRunText.textContent=`Highest unlocked ${cfg.name} rank: ${progress.unlockedRank} / ${cfg.maxRank}`;
-  ui.rankDescription.textContent=rankDescription(selectedRank,selectedArea);
+  ui.rankDescription.textContent=`Start Rank ${rankWord(selectedRank)}?`;
   document.querySelector("#rankDown").disabled=selectedRank<=1;
   document.querySelector("#rankUp").disabled=selectedRank>=progress.unlockedRank;
   ui.areaButtons.forEach(btn=>btn.classList.toggle("selected",btn.dataset.area===selectedArea));
   renderMenuSkills();
+}
+
+function rankWord(rank) {
+  const ones=["Zero","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"];
+  const tens=["","","Twenty","Thirty","Forty","Fifty"];
+  const n=Math.max(1,Math.min(50,Math.round(Number(rank)||1)));
+  if(n<20) return ones[n];
+  const ten=Math.floor(n/10),one=n%10;
+  return one ? `${tens[ten]}-${ones[one]}` : tens[ten];
 }
 
 function rankDescription(rank,areaId=selectedArea) {
@@ -1099,6 +1109,7 @@ function startEncounter() {
   const encounter=currentRun.plan[currentRun.index];
   const cfg=currentAreaConfig();
   ui.battleBg.src=cfg.backgrounds[currentRun.index];
+  ui.battlefield.classList.toggle("ocean-peep-raised", currentRun.area==="ocean" && (currentRun.index===1 || currentRun.index===2));
   ui.encounterLabel.textContent=currentRun.area==="ocean"
     ? `${cfg.stageNames[currentRun.index].toUpperCase()} · ${currentRun.index+1} / 4`
     : `ENCOUNTER ${currentRun.index+1} / 4`;

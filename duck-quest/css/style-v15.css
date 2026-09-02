@@ -421,4 +421,90 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
     top: 42px;
   }
 }
-\n\n/* V14 — Area selection + Ocean route */\n.area-select-card{background:var(--panel);border:3px solid var(--border);border-radius:12px;box-shadow:var(--shadow);padding:14px}\n.area-select-card h2{margin:2px 0 0;font-size:1.05rem}\n.area-picker{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:10px}\n.area-option{min-height:82px;display:grid;gap:3px;text-align:left;padding:10px;border:3px solid #bd8e9c;border-radius:9px;background:#fffaf0;color:var(--brown);font:inherit;cursor:pointer}\n.area-option strong{font-size:.92rem}.area-option span{font-size:.7rem;font-weight:900;color:#a85f7b}.area-option small{font-size:.58rem;font-weight:700;color:#8f7470}\n.area-option.selected{background:#f8dce7;border-color:#a45f79;box-shadow:inset 0 0 0 2px rgba(255,255,255,.75)}\n.enemy-combatant .fighter.ocean-elite-fighter{width:62%;top:46px}\n.enemy-combatant .fighter.ocean-boss-fighter{width:86%;top:4px}\n.enemy-combatant .fighter.ocean-boss-fighter.ocean-elite-fighter{width:98%;top:-4px}\n@media(max-width:600px){\n  .area-select-card{padding:10px}.area-picker{gap:6px}.area-option{min-height:70px;padding:8px}.area-option strong{font-size:.78rem}.area-option span{font-size:.6rem}.area-option small{font-size:.5rem}\n  .enemy-combatant .fighter.ocean-elite-fighter{width:67%;top:40px}\n  .enemy-combatant .fighter.ocean-boss-fighter{width:92%;top:0}\n  .enemy-combatant .fighter.ocean-boss-fighter.ocean-elite-fighter{width:100%;top:-6px}\n}\n
+
+
+/* V14 — Area selection + Ocean route */
+.area-select-card{background:var(--panel);border:3px solid var(--border);border-radius:12px;box-shadow:var(--shadow);padding:14px}
+.area-select-card h2{margin:2px 0 0;font-size:1.05rem}
+.area-picker{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:10px}
+.area-option{min-height:82px;display:grid;gap:3px;text-align:left;padding:10px;border:3px solid #bd8e9c;border-radius:9px;background:#fffaf0;color:var(--brown);font:inherit;cursor:pointer}
+.area-option strong{font-size:.92rem}.area-option span{font-size:.7rem;font-weight:900;color:#a85f7b}.area-option small{font-size:.58rem;font-weight:700;color:#8f7470}
+.area-option.selected{background:#f8dce7;border-color:#a45f79;box-shadow:inset 0 0 0 2px rgba(255,255,255,.75)}
+.enemy-combatant .fighter.ocean-elite-fighter{width:62%;top:46px}
+.enemy-combatant .fighter.ocean-boss-fighter{width:86%;top:4px}
+.enemy-combatant .fighter.ocean-boss-fighter.ocean-elite-fighter{width:98%;top:-4px}
+@media(max-width:600px){
+  .area-select-card{padding:10px}.area-picker{gap:6px}.area-option{min-height:70px;padding:8px}.area-option strong{font-size:.78rem}.area-option span{font-size:.6rem}.area-option small{font-size:.5rem}
+  .enemy-combatant .fighter.ocean-elite-fighter{width:67%;top:40px}
+  .enemy-combatant .fighter.ocean-boss-fighter{width:92%;top:0}
+  .enemy-combatant .fighter.ocean-boss-fighter.ocean-elite-fighter{width:100%;top:-6px}
+}
+
+
+/* V15 — scenic route picker + compact route window */
+.area-select-title{align-items:flex-end}
+.area-picker{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin-top:10px;
+}
+.area-option{
+  min-height:88px;
+  display:grid;
+  grid-template-columns:96px minmax(0,1fr);
+  align-items:center;
+  gap:10px;
+  padding:7px;
+  text-align:left;
+  overflow:hidden;
+}
+.area-option-image{
+  display:block;
+  width:96px;
+  height:68px;
+  object-fit:cover;
+  object-position:center;
+  border:2px solid #bd8e9c;
+  border-radius:6px;
+  background:#f1d9df;
+}
+.area-option-copy{
+  min-width:0;
+  display:grid;
+  gap:4px;
+}
+.area-option-copy strong{font-size:1rem}
+.area-option-copy small{font-size:.64rem;font-weight:900;color:#a85f7b}
+.area-option.selected .area-option-image{border-color:#9f586f;box-shadow:0 0 0 2px rgba(255,255,255,.8)}
+.route-window{padding:14px}
+.route-window-top{align-items:center}
+.route-window #areaRunLabel{margin:2px 0 0;font-size:1.08rem}
+.start-rank-prompt{
+  margin:13px 0 12px;
+  text-align:center;
+  color:#80635f;
+  font-size:.92rem;
+  font-weight:900;
+}
+.route-window .tiny-note{margin-top:10px}
+
+/* Ocean Surface + Ocean Deep: raise only Peep's sprite, leaving its HP panel in place. */
+.battlefield.ocean-peep-raised .peep-fighter{top:30px}
+
+@media(max-width:600px){
+  .area-picker{gap:6px}
+  .area-option{
+    min-height:68px;
+    grid-template-columns:65px minmax(0,1fr);
+    gap:6px;
+    padding:5px;
+  }
+  .area-option-image{width:65px;height:52px}
+  .area-option-copy strong{font-size:.78rem}
+  .area-option-copy small{font-size:.52rem}
+  .route-window{padding:10px}
+  .route-window #areaRunLabel{font-size:.95rem}
+  .start-rank-prompt{margin:10px 0;font-size:.78rem}
+  .battlefield.ocean-peep-raised .peep-fighter{top:34px}
+}

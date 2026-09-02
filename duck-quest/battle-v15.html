@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f6c6d6" />
   <title>Duck Quest</title>
-  <link rel="stylesheet" href="css/style-v14.css" />
+  <link rel="stylesheet" href="css/style-v15.css" />
 </head>
 <body>
   <main class="quest-shell">
@@ -57,48 +57,46 @@
 
 
       <section class="area-select-card">
-        <div class="section-title">
+        <div class="section-title area-select-title">
           <div>
             <span class="mini-label">CHOOSE AREA</span>
-            <h2>Where should Peep explore?</h2>
+            <h2>Where should Peep Explore?</h2>
           </div>
         </div>
         <div class="area-picker" role="group" aria-label="Duck Quest area">
           <button class="area-option selected" data-area="meadow" type="button">
-            <strong>Meadow</strong>
-            <span>Ranks 1–20</span>
-            <small>Flowers, bees & Mushroom Cat</small>
+            <img class="area-option-image pixel-background" src="assets/backgrounds/meadow/stage-1-tree.png" alt="Meadow preview" />
+            <span class="area-option-copy">
+              <strong>Meadow</strong>
+              <small>Ranks 1–20</small>
+            </span>
           </button>
           <button class="area-option" data-area="ocean" type="button">
-            <strong>Ocean</strong>
-            <span>Ranks 1–50</span>
-            <small>Shore to the Ocean Floor</small>
+            <img class="area-option-image pixel-background" src="assets/backgrounds/ocean/shore.png" alt="Ocean preview" />
+            <span class="area-option-copy">
+              <strong>Ocean</strong>
+              <small>Ranks 1–50</small>
+            </span>
           </button>
         </div>
       </section>
-      <section class="run-card">
-        <div class="run-card-top">
+
+      <section class="run-card route-window">
+        <div class="run-card-top route-window-top">
           <div>
-            <span id="areaRunLabel" class="mini-label">MEADOW PATH</span>
-            <h2>Choose Run Rank</h2>
+            <span class="mini-label">SELECTED ROUTE</span>
+            <h2 id="areaRunLabel">Meadow Route</h2>
           </div>
-          <div class="rank-picker">
-            <button id="rankDown" type="button" class="pixel-button icon">−</button>
+          <div class="rank-picker" aria-label="Run rank">
+            <button id="rankDown" type="button" class="pixel-button icon" aria-label="Lower rank">−</button>
             <strong id="rankValue">1</strong>
-            <button id="rankUp" type="button" class="pixel-button icon">+</button>
+            <button id="rankUp" type="button" class="pixel-button icon" aria-label="Raise rank">+</button>
           </div>
         </div>
 
-        <p id="rankDescription" class="run-description">Rank 1 · A gentle place to begin.</p>
-
-        <div class="run-rules">
-          <span>3 randomized encounters</span>
-          <span>1 boss</span>
-          <span>Treasure + Mimics</span>
-        </div>
-
+        <p id="rankDescription" class="start-rank-prompt">Start Rank One?</p>
         <button id="startRun" class="pixel-button primary large" type="button">Start Run</button>
-        <p id="bestRunText" class="tiny-note">Highest unlocked rank: 1</p>
+        <p id="bestRunText" class="tiny-note">Highest unlocked Meadow rank: 1 / 20</p>
       </section>
 
       <section class="skills-card">
@@ -222,6 +220,6 @@
     </section>
   </main>
 
-  <script src="js/game-v14.js"></script>
+  <script src="js/game-v15.js"></script>
 </body>
 </html>
