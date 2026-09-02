@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f6c6d6" />
   <title>Duck Quest</title>
-  <link rel="stylesheet" href="css/style-v13.css" />
+  <link rel="stylesheet" href="css/style-v14.css" />
 </head>
 <body>
   <main class="quest-shell">
@@ -55,10 +55,31 @@
         </div>
       </div>
 
+
+      <section class="area-select-card">
+        <div class="section-title">
+          <div>
+            <span class="mini-label">CHOOSE AREA</span>
+            <h2>Where should Peep explore?</h2>
+          </div>
+        </div>
+        <div class="area-picker" role="group" aria-label="Duck Quest area">
+          <button class="area-option selected" data-area="meadow" type="button">
+            <strong>Meadow</strong>
+            <span>Ranks 1–20</span>
+            <small>Flowers, bees & Mushroom Cat</small>
+          </button>
+          <button class="area-option" data-area="ocean" type="button">
+            <strong>Ocean</strong>
+            <span>Ranks 1–50</span>
+            <small>Shore to the Ocean Floor</small>
+          </button>
+        </div>
+      </section>
       <section class="run-card">
         <div class="run-card-top">
           <div>
-            <span class="mini-label">MEADOW PATH</span>
+            <span id="areaRunLabel" class="mini-label">MEADOW PATH</span>
             <h2>Choose Run Rank</h2>
           </div>
           <div class="rank-picker">
@@ -201,6 +222,6 @@
     </section>
   </main>
 
-  <script src="js/game-v13.js"></script>
+  <script src="js/game-v14.js"></script>
 </body>
 </html>

@@ -1,6 +1,40 @@
 const HUB_SAVE_KEY = "duckHabitHubSave_v1";
 const MAX_LEVEL = 100;
-const MAX_RUN_RANK = 20;
+const AREA_CONFIG = Object.freeze({
+  meadow: {
+    id:"meadow",
+    name:"Meadow",
+    label:"MEADOW PATH",
+    maxRank:20,
+    backgrounds:[
+      "assets/backgrounds/meadow/stage-1-tree.png",
+      "assets/backgrounds/meadow/stage-2-bushes.png",
+      "assets/backgrounds/meadow/stage-3-flowers.png",
+      "assets/backgrounds/meadow/stage-4-boss.png"
+    ],
+    stageNames:["Meadow Path","Bush Trail","Flower Field","Boss Clearing"],
+    resultTitle:"The Meadow is Clear!"
+  },
+  ocean: {
+    id:"ocean",
+    name:"Ocean",
+    label:"OCEAN ROUTE",
+    maxRank:50,
+    backgrounds:[
+      "assets/backgrounds/ocean/shore.png",
+      "assets/backgrounds/ocean/surface.png",
+      "assets/backgrounds/ocean/deep.png",
+      "assets/backgrounds/ocean/floor.png"
+    ],
+    stageNames:["Shore","Ocean Surface","Ocean Deep","Ocean Floor"],
+    resultTitle:"The Ocean Route is Clear!"
+  }
+});
+
+function getAreaConfig(areaId){
+  return AREA_CONFIG[areaId] || AREA_CONFIG.meadow;
+}
+
 
 const DUCK_LIBRARY = [{"id": "standard-duck", "file": "Standard-duck.PNG", "name": "Standard Duck"}, {"id": "pink-duck", "file": "Pink-duck.PNG", "name": "Pink Duck"}, {"id": "rainbow-duck", "file": "Rainbow-duck.PNG", "name": "Rainbow Duck"}];
 
@@ -87,6 +121,26 @@ const ENEMIES = {
     hurt: "assets/enemies/flower/base/hurt.png",
     speed: 390
   },
+  "cool-seagull": {
+    name: "Cool Seagull", hp: 26, attack: 5, exp: 28, coinMin: 8, coinMax: 13,
+    idle: ["assets/enemies/cool-seagull/base/idle-1.png","assets/enemies/cool-seagull/base/idle-2.png"],
+    hurt: "assets/enemies/cool-seagull/base/hurt.png", speed: 370
+  },
+  "sea-turtle": {
+    name: "Sea Turtle", hp: 34, attack: 5, exp: 31, coinMin: 9, coinMax: 14,
+    idle: ["assets/enemies/sea-turtle/base/idle-1.png","assets/enemies/sea-turtle/base/idle-2.png"],
+    hurt: "assets/enemies/sea-turtle/base/hurt.png", speed: 430
+  },
+  "catfish": {
+    name: "Cat-Fish", hp: 29, attack: 7, exp: 34, coinMin: 10, coinMax: 16,
+    idle: ["assets/enemies/catfish/base/idle-1.png","assets/enemies/catfish/base/idle-2.png"],
+    hurt: "assets/enemies/catfish/base/hurt.png", speed: 360
+  },
+  "vampire-squid": {
+    name: "Vampire Squid", hp: 66, attack: 8, exp: 70, coinMin: 24, coinMax: 36,
+    idle: ["assets/bosses/vampire-squid/base/idle-1.png","assets/bosses/vampire-squid/base/idle-2.png"],
+    hurt: "assets/bosses/vampire-squid/base/hurt.png", speed: 410, boss: true
+  },
   "mimic": {
     name: "Mimic",
     hp: 31,
@@ -121,6 +175,77 @@ const ENEMIES = {
 
 
 
+
+
+function weightedOceanVariant(rank, ids) {
+  const r=Math.max(1,Number(rank)||1);
+  let weights;
+  if(r<=8) weights=[100,0,0,0,0];
+  else if(r<=15) weights=[60,40,0,0,0];
+  else if(r<=24) weights=[20,50,30,0,0];
+  else if(r<=35) weights=[0,25,35,40,0];
+  else if(r<=44) weights=[0,0,25,50,25];
+  else weights=[0,0,0,40,60];
+  const total=weights.reduce((a,b)=>a+b,0);
+  let roll=Math.random()*total;
+  for(let i=0;i<ids.length;i++){ roll-=weights[i]; if(roll<=0) return ids[i]; }
+  return ids[0];
+}
+
+const SEAGULL_VARIANTS=Object.freeze({
+  grey:{id:"grey",name:"Cool Seagull",hp:1,atk:1,exp:1,coin:1,idle:["assets/enemies/cool-seagull/base/idle-1.png","assets/enemies/cool-seagull/base/idle-2.png"],hurt:"assets/enemies/cool-seagull/base/hurt.png"},
+  pink:{id:"pink",name:"Pink Cool Seagull",hp:1.2,atk:1.1,exp:1.15,coin:1.15,idle:["assets/enemies/cool-seagull/base/Pink-idle-1.png","assets/enemies/cool-seagull/base/Pink-idle-2.png"],hurt:"assets/enemies/cool-seagull/base/Pink-hurt.png"},
+  blue:{id:"blue",name:"Blue Cool Seagull",hp:1.2,atk:1.1,exp:1.2,coin:1.2,healPercent:.10,maxHeals:2,healChance:.32,healMoveName:"Fish Snack!",idle:["assets/enemies/cool-seagull/base/Blue-idle-1.png","assets/enemies/cool-seagull/base/Blue-idle-2.png"],hurt:"assets/enemies/cool-seagull/base/Blue-hurt.png"},
+  yellow:{id:"yellow",name:"Yellow Cool Seagull",hp:1.4,atk:1.2,exp:1.35,coin:1.35,idle:["assets/enemies/cool-seagull/base/Yellow-idle-1.png","assets/enemies/cool-seagull/base/Yellow-idle-2.png"],hurt:"assets/enemies/cool-seagull/base/Yellow-hurt.png"},
+  black:{id:"black",name:"Black Cool Seagull",hp:1.7,atk:1.3,exp:1.5,coin:1.6,elite:true,idle:["assets/enemies/cool-seagull/base/Black-idle-1.png","assets/enemies/cool-seagull/base/Black-idle-2.png"],hurt:"assets/enemies/cool-seagull/base/Black-hurt.png"}
+});
+const TURTLE_VARIANTS=Object.freeze({
+  green:{id:"green",name:"Sea Turtle",hp:1,atk:1,exp:1,coin:1,idle:["assets/enemies/sea-turtle/base/idle-1.png","assets/enemies/sea-turtle/base/idle-2.png"],hurt:"assets/enemies/sea-turtle/base/hurt.png"},
+  blue:{id:"blue",name:"Blue Sea Turtle",hp:1.2,atk:1.1,exp:1.15,coin:1.15,idle:["assets/enemies/sea-turtle/base/Blue-idle-1.png","assets/enemies/sea-turtle/base/Blue-idle-2.png"],hurt:"assets/enemies/sea-turtle/base/Blue-hurt.png"},
+  pink:{id:"pink",name:"Pink Sea Turtle",hp:1.2,atk:1.1,exp:1.2,coin:1.2,specialType:"harden-shell",specialChance:.30,maxSpecialUses:2,idle:["assets/enemies/sea-turtle/base/Pink-idle-1.png","assets/enemies/sea-turtle/base/Pink-idle-2.png"],hurt:"assets/enemies/sea-turtle/base/Pink-hurt.png"},
+  purple:{id:"purple",name:"Purple Sea Turtle",hp:1.4,atk:1.2,exp:1.35,coin:1.35,idle:["assets/enemies/sea-turtle/base/Purple-idle-1.png","assets/enemies/sea-turtle/base/Purple-idle-2.png"],hurt:"assets/enemies/sea-turtle/base/Purple-hurt.png"},
+  gold:{id:"gold",name:"Gold Sea Turtle",hp:1.7,atk:1.3,exp:1.5,coin:1.6,elite:true,idle:["assets/enemies/sea-turtle/base/Gold-idle-1.png","assets/enemies/sea-turtle/base/Gold-idle-2.png"],hurt:"assets/enemies/sea-turtle/base/Gold-hurt.png"}
+});
+const CATFISH_VARIANTS=Object.freeze({
+  grey:{id:"grey",name:"Cat-Fish",hp:1,atk:1,exp:1,coin:1,idle:["assets/enemies/catfish/base/idle-1.png","assets/enemies/catfish/base/idle-2.png"],hurt:"assets/enemies/catfish/base/hurt.png"},
+  brown:{id:"brown",name:"Brown Cat-Fish",hp:1.2,atk:1.1,exp:1.15,coin:1.15,idle:["assets/enemies/catfish/base/Brown-idle-1.png","assets/enemies/catfish/base/Brown-idle-2.png"],hurt:"assets/enemies/catfish/base/Brown-hurt.png"},
+  orange:{id:"orange",name:"Orange Cat-Fish",hp:1.2,atk:1.1,exp:1.2,coin:1.2,specialType:"zoomies",specialChance:.30,maxSpecialUses:2,idle:["assets/enemies/catfish/base/Orange-idle-1.png","assets/enemies/catfish/base/Orange-idle-2.png"],hurt:"assets/enemies/catfish/base/Orange-hurt.png"},
+  navy:{id:"navy",name:"Navy Cat-Fish",hp:1.4,atk:1.2,exp:1.35,coin:1.35,idle:["assets/enemies/catfish/base/Navy-idle-1.png","assets/enemies/catfish/base/Navy-idle-2.png"],hurt:"assets/enemies/catfish/base/Navy-hurt.png"},
+  black:{id:"black",name:"Black Cat-Fish",hp:1.7,atk:1.3,exp:1.5,coin:1.6,elite:true,idle:["assets/enemies/catfish/base/Black-idle-1.png","assets/enemies/catfish/base/Black-idle-2.png"],hurt:"assets/enemies/catfish/base/Black-hurt.png"}
+});
+const SQUID_VARIANTS=Object.freeze({
+  green:{id:"green",name:"Vampire Squid",hp:1,atk:1,exp:1,coin:1,idle:["assets/bosses/vampire-squid/base/idle-1.png","assets/bosses/vampire-squid/base/idle-2.png"],hurt:"assets/bosses/vampire-squid/base/hurt.png"},
+  purple:{id:"purple",name:"Purple Vampire Squid",hp:1.2,atk:1.1,exp:1.15,coin:1.15,idle:["assets/bosses/vampire-squid/base/Purple-idle-1.png","assets/bosses/vampire-squid/base/Purple-idle-2.png"],hurt:"assets/bosses/vampire-squid/base/Purple-hurt.png"},
+  coral:{id:"coral",name:"Coral Vampire Squid",hp:1.3,atk:1.15,exp:1.25,coin:1.25,idle:["assets/bosses/vampire-squid/base/Coral-idle-1.png","assets/bosses/vampire-squid/base/Coral-idle-2.png"],hurt:"assets/bosses/vampire-squid/base/Coral-hurt.png"},
+  blue:{id:"blue",name:"Blue Vampire Squid",hp:1.4,atk:1.2,exp:1.4,coin:1.4,idle:["assets/bosses/vampire-squid/base/Blue-idle-1.png","assets/bosses/vampire-squid/base/Blue-idle-2.png"],hurt:"assets/bosses/vampire-squid/base/Blue-hurt.png"},
+  pink:{id:"pink",name:"Pink Vampire Squid",hp:1.7,atk:1.3,exp:1.75,coin:1.8,elite:true,idle:["assets/bosses/vampire-squid/base/Pink-idle-1.png","assets/bosses/vampire-squid/base/Pink-idle-2.png"],hurt:"assets/bosses/vampire-squid/base/Pink-hurt.png"}
+});
+
+function applyOceanVariant(template, table, ids, rank, extra={}){
+  const id=weightedOceanVariant(rank,ids);
+  const v=table[id]||table[ids[0]];
+  return {
+    ...template,
+    ...extra,
+    name:v.name,idle:v.idle,hurt:v.hurt,
+    hp:Math.max(1,Math.round(template.hp*v.hp)),
+    attack:Math.max(1,Math.round(template.attack*v.atk)),
+    exp:Math.max(1,Math.round(template.exp*v.exp)),
+    coinMin:Math.max(1,Math.round(template.coinMin*v.coin)),
+    coinMax:Math.max(1,Math.round(template.coinMax*v.coin)),
+    oceanVariant:v.id,eliteVariant:Boolean(v.elite),
+    healPercent:Number(v.healPercent)||0,maxHeals:Number(v.maxHeals)||0,healChance:Number(v.healChance)||0,healMoveName:v.healMoveName||"",
+    specialType:v.specialType||"",specialChance:Number(v.specialChance)||0,maxSpecialUses:Number(v.maxSpecialUses)||0
+  };
+}
+function applySeagullVariant(t,r){return applyOceanVariant(t,SEAGULL_VARIANTS,["grey","pink","blue","yellow","black"],r);}
+function applyTurtleVariant(t,r){return applyOceanVariant(t,TURTLE_VARIANTS,["green","blue","pink","purple","gold"],r);}
+function applyCatfishVariant(t,r){return applyOceanVariant(t,CATFISH_VARIANTS,["grey","brown","orange","navy","black"],r);}
+function applySquidVariant(t,r){
+  return applyOceanVariant(t,SQUID_VARIANTS,["green","purple","coral","blue","pink"],r,{
+    lifeDrain:true,lifeDrainChance:.30,maxLifeDrains:2,lifeDrainDamage:.75,lifeDrainHeal:.50
+  });
+}
 
 const MIMIC_PROFILES = Object.freeze({
   easy: {
@@ -624,12 +749,8 @@ const REWARD_ITEMS = [
   { id:"gold-heart-refill", name:"Gold Heart Refill", image:"../assets/bakery/drops/Gold-heart-refill.PNG", weight:1 }
 ];
 
-const BG = [
-  "assets/backgrounds/meadow/stage-1-tree.png",
-  "assets/backgrounds/meadow/stage-2-bushes.png",
-  "assets/backgrounds/meadow/stage-3-flowers.png",
-  "assets/backgrounds/meadow/stage-4-boss.png"
-];
+function currentAreaConfig(){ return getAreaConfig(currentRun?.area || selectedArea); }
+function areaProgress(areaId=selectedArea){ return questSave.areas[areaId] || questSave.areas.meadow; }
 
 const PEepIdle = [
   "assets/characters/peep/base/idle-1.png",
@@ -646,6 +767,8 @@ const ui = {
   xpFill: document.querySelector("#xpFill"),
   happinessHearts: document.querySelector("#happinessHearts"),
   happinessLevel: document.querySelector("#happinessLevel"),
+  areaButtons: Array.from(document.querySelectorAll("[data-area]")),
+  areaRunLabel: document.querySelector("#areaRunLabel"),
   rankValue: document.querySelector("#rankValue"),
   rankDescription: document.querySelector("#rankDescription"),
   bestRunText: document.querySelector("#bestRunText"),
@@ -698,7 +821,8 @@ const ui = {
 
 let hubSave = loadHubSave();
 let questSave = normalizeQuestSave(hubSave.duckQuest);
-let selectedRank = Math.min(questSave.unlockedRank, Math.max(1, questSave.lastRank || 1));
+let selectedArea = AREA_CONFIG[questSave.lastArea] ? questSave.lastArea : "meadow";
+let selectedRank = Math.min(areaProgress(selectedArea).unlockedRank, Math.max(1, areaProgress(selectedArea).lastRank || 1));
 let currentRun = null;
 let currentEnemy = null;
 let idleTimer = null;
@@ -712,30 +836,35 @@ let skillState = {};
 
 function defaultQuestSave() {
   return {
-    peep: { level:1, exp:0 },
-    unlockedRank:1,
-    lastRank:1,
-    completedRuns:0,
-    bossWins:0,
-    totalBattlesWon:0,
-    totalCoinsEarned:0,
-    totalExpEarned:0
+    peep:{level:1,exp:0},
+    lastArea:"meadow",
+    areas:{
+      meadow:{unlockedRank:1,lastRank:1},
+      ocean:{unlockedRank:1,lastRank:1}
+    },
+    // Legacy Meadow mirrors retained for older Hub code.
+    unlockedRank:1,lastRank:1,
+    completedRuns:0,bossWins:0,totalBattlesWon:0,totalCoinsEarned:0,totalExpEarned:0
   };
 }
 
 function normalizeQuestSave(raw) {
-  const d = defaultQuestSave();
-  const q = raw && typeof raw === "object" ? raw : {};
+  const d=defaultQuestSave();
+  const q=raw&&typeof raw==="object"?raw:{};
+  const oldMeadowUnlocked=clampInt(q.areas?.meadow?.unlockedRank ?? q.unlockedRank,1,20,1);
+  const oldMeadowLast=clampInt(q.areas?.meadow?.lastRank ?? q.lastRank,1,20,1);
+  const oceanUnlocked=clampInt(q.areas?.ocean?.unlockedRank,1,50,1);
+  const oceanLast=clampInt(q.areas?.ocean?.lastRank,1,50,1);
   return {
-    ...d,
-    ...q,
-    peep: {
-      level: clampInt(q.peep?.level, 1, MAX_LEVEL, 1),
-      exp: Math.max(0, Number(q.peep?.exp) || 0)
+    ...d,...q,
+    peep:{level:clampInt(q.peep?.level,1,MAX_LEVEL,1),exp:Math.max(0,Number(q.peep?.exp)||0)},
+    lastArea:AREA_CONFIG[q.lastArea]?q.lastArea:"meadow",
+    areas:{
+      meadow:{unlockedRank:oldMeadowUnlocked,lastRank:Math.min(oldMeadowLast,oldMeadowUnlocked)},
+      ocean:{unlockedRank:oceanUnlocked,lastRank:Math.min(oceanLast,oceanUnlocked)}
     },
-    unlockedRank: clampInt(q.unlockedRank, 1, MAX_RUN_RANK, 1),
-    lastRank: clampInt(q.lastRank, 1, MAX_RUN_RANK, 1),
-    bossWins: Math.max(0, Number(q.bossWins ?? q.completedRuns) || 0)
+    unlockedRank:oldMeadowUnlocked,lastRank:oldMeadowLast,
+    bossWins:Math.max(0,Number(q.bossWins ?? q.completedRuns)||0)
   };
 }
 
@@ -756,6 +885,8 @@ function loadHubSave() {
 }
 
 function persistAll() {
+  questSave.unlockedRank=questSave.areas.meadow.unlockedRank;
+  questSave.lastRank=questSave.areas.meadow.lastRank;
   hubSave.duckQuest = questSave;
   localStorage.setItem(HUB_SAVE_KEY, JSON.stringify(hubSave));
 }
@@ -803,19 +934,22 @@ function peepStats(level = questSave.peep.level) {
   };
 }
 
-function enemyScaled(template, rank) {
-  const hpScale = 1 + (rank - 1) * 0.18;
-  const atkScale = 1 + (rank - 1) * 0.12;
-  const expScale = 1 + (rank - 1) * 0.14;
-  const rewardScale = 1 + (rank - 1) * 0.10;
+function enemyScaled(template, rank, areaId="meadow") {
+  const ocean=areaId==="ocean";
+  const hpStep=ocean ? .070 : .18;
+  const atkStep=ocean ? .045 : .12;
+  const expStep=ocean ? .055 : .14;
+  const rewardStep=ocean ? .040 : .10;
+  const hpScale=1+(rank-1)*hpStep;
+  const atkScale=1+(rank-1)*atkStep;
+  const expScale=1+(rank-1)*expStep;
+  const rewardScale=1+(rank-1)*rewardStep;
   return {
     ...template,
-    maxHp: Math.round(template.hp * hpScale),
-    hpNow: Math.round(template.hp * hpScale),
-    attackNow: Math.max(1, Math.round(template.attack * atkScale)),
-    expNow: Math.round(template.exp * expScale),
-    coinMinNow: Math.round(template.coinMin * rewardScale),
-    coinMaxNow: Math.round(template.coinMax * rewardScale)
+    maxHp:Math.round(template.hp*hpScale),hpNow:Math.round(template.hp*hpScale),
+    attackNow:Math.max(1,Math.round(template.attack*atkScale)),
+    expNow:Math.round(template.exp*expScale),
+    coinMinNow:Math.round(template.coinMin*rewardScale),coinMaxNow:Math.round(template.coinMax*rewardScale)
   };
 }
 
@@ -840,36 +974,38 @@ function happinessLevelFromTotal(total) {
 }
 
 function renderMeta() {
-  ui.coinCount.textContent = hubSave.coins.toLocaleString();
-  ui.levelBadge.textContent = `Lv. ${questSave.peep.level}`;
+  ui.coinCount.textContent=hubSave.coins.toLocaleString();
+  ui.levelBadge.textContent=`Lv. ${questSave.peep.level}`;
+  const need=expNeeded(questSave.peep.level);
+  ui.xpText.textContent=questSave.peep.level>=MAX_LEVEL?"MAX LEVEL":`${Math.floor(questSave.peep.exp)} / ${need} EXP`;
+  ui.xpFill.style.width=questSave.peep.level>=MAX_LEVEL?"100%":`${Math.min(100,(questSave.peep.exp/need)*100)}%`;
+  const hLevel=happinessLevelFromTotal(hubSave.characterProgress?.peep?.happinessTotal);
+  ui.happinessLevel.textContent=`Lv. ${hLevel}`; ui.happinessHearts.innerHTML="";
+  const filled=Math.max(1,Math.ceil(hLevel/20));
+  for(let i=1;i<=5;i++){const heart=document.createElement("span");heart.textContent="♥";heart.className=i<=filled?"heart-full":"heart-empty";ui.happinessHearts.appendChild(heart);}
 
-  const need = expNeeded(questSave.peep.level);
-  ui.xpText.textContent = questSave.peep.level >= MAX_LEVEL
-    ? "MAX LEVEL"
-    : `${Math.floor(questSave.peep.exp)} / ${need} EXP`;
-  ui.xpFill.style.width = questSave.peep.level >= MAX_LEVEL ? "100%" : `${Math.min(100,(questSave.peep.exp/need)*100)}%`;
-
-  const hLevel = happinessLevelFromTotal(hubSave.characterProgress?.peep?.happinessTotal);
-  ui.happinessLevel.textContent = `Lv. ${hLevel}`;
-  ui.happinessHearts.innerHTML = "";
-  const filled = Math.max(1, Math.ceil(hLevel / 20));
-  for(let i=1;i<=5;i++) {
-    const heart=document.createElement("span");
-    heart.textContent="♥";
-    heart.className=i<=filled?"heart-full":"heart-empty";
-    ui.happinessHearts.appendChild(heart);
-  }
-
-  selectedRank = Math.min(selectedRank, questSave.unlockedRank);
-  ui.rankValue.textContent = selectedRank;
-  ui.bestRunText.textContent = `Highest unlocked rank: ${questSave.unlockedRank}`;
-  ui.rankDescription.textContent = rankDescription(selectedRank);
-  document.querySelector("#rankDown").disabled = selectedRank <= 1;
-  document.querySelector("#rankUp").disabled = selectedRank >= questSave.unlockedRank;
+  const cfg=getAreaConfig(selectedArea);
+  const progress=areaProgress(selectedArea);
+  selectedRank=Math.min(Math.max(1,selectedRank),progress.unlockedRank);
+  ui.rankValue.textContent=selectedRank;
+  ui.areaRunLabel.textContent=cfg.label;
+  ui.bestRunText.textContent=`Highest unlocked ${cfg.name} rank: ${progress.unlockedRank} / ${cfg.maxRank}`;
+  ui.rankDescription.textContent=rankDescription(selectedRank,selectedArea);
+  document.querySelector("#rankDown").disabled=selectedRank<=1;
+  document.querySelector("#rankUp").disabled=selectedRank>=progress.unlockedRank;
+  ui.areaButtons.forEach(btn=>btn.classList.toggle("selected",btn.dataset.area===selectedArea));
   renderMenuSkills();
 }
 
-function rankDescription(rank) {
+function rankDescription(rank,areaId=selectedArea) {
+  if(areaId==="ocean"){
+    if(rank<=1) return "Ocean Rank 1 · The shore is calm... for now.";
+    if(rank<=10) return `Ocean Rank ${rank} · New colors are beginning to appear.`;
+    if(rank<=24) return `Ocean Rank ${rank} · Special enemy moves are joining the tide.`;
+    if(rank<=35) return `Ocean Rank ${rank} · Deep-water enemies are much tougher.`;
+    if(rank<=44) return `Ocean Rank ${rank} · Elite colors are beginning to surface.`;
+    return `Ocean Rank ${rank} · The deepest water is extremely dangerous.`;
+  }
   if(rank<=1) return "Rank 1 · A gentle place to begin.";
   if(rank<=3) return `Rank ${rank} · Enemies are starting to toughen up.`;
   if(rank<=6) return `Rank ${rank} · A proper challenge. Better loot too!`;
@@ -888,14 +1024,25 @@ function renderMenuSkills() {
   });
 }
 
-function makeEncounterPlan(rank) {
-  const regular = shuffle(["cat-slime","bee","flower"]);
+function makeEncounterPlan(rank,areaId=selectedArea) {
   const encounters=[];
-  for(let i=0;i<3;i++) {
+  if(areaId==="ocean"){
+    const staged=["cool-seagull","sea-turtle","catfish"];
+    staged.forEach(enemyId=>{
+      const roll=Math.random();
+      if(roll<.12) encounters.push({type:"rare-chest"});
+      else if(roll<.20) encounters.push({type:"mimic"});
+      else encounters.push({type:"enemy",enemyId});
+    });
+    encounters.push({type:"boss",enemyId:"vampire-squid"});
+    return encounters;
+  }
+  const regular=shuffle(["cat-slime","bee","flower"]);
+  for(let i=0;i<3;i++){
     const roll=Math.random();
-    if(roll<0.12) encounters.push({type:"rare-chest"});
-    else if(roll<0.20) encounters.push({type:"mimic"});
-    else encounters.push({type:"enemy", enemyId:regular.shift() || ["cat-slime","bee","flower"][randInt(0,2)]});
+    if(roll<.12) encounters.push({type:"rare-chest"});
+    else if(roll<.20) encounters.push({type:"mimic"});
+    else encounters.push({type:"enemy",enemyId:regular.shift()||["cat-slime","bee","flower"][randInt(0,2)]});
   }
   encounters.push({type:"boss",enemyId:"mushroom-cat"});
   return encounters;
@@ -920,22 +1067,15 @@ function confirmEscapeRun() {
 
 function beginRun() {
   const stats=peepStats();
+  const cfg=getAreaConfig(selectedArea);
+  const progress=areaProgress(selectedArea);
+  selectedRank=Math.min(Math.max(1,selectedRank),progress.unlockedRank);
   currentRun={
-    rank:selectedRank,
-    index:0,
-    plan:makeEncounterPlan(selectedRank),
-    hp:stats.maxHp,
-    maxHp:stats.maxHp,
-    coinsEarned:0,
-    expEarned:0,
-    itemsEarned:[],
-    levelsGained:[],
-    bossWon:false
+    area:selectedArea,rank:selectedRank,index:0,plan:makeEncounterPlan(selectedRank,selectedArea),
+    hp:stats.maxHp,maxHp:stats.maxHp,coinsEarned:0,expEarned:0,itemsEarned:[],levelsGained:[],bossWon:false
   };
-  questSave.lastRank=selectedRank;
-  persistAll();
-  showScreen("battle");
-  startEncounter();
+  progress.lastRank=selectedRank; questSave.lastArea=selectedArea; persistAll();
+  showScreen("battle"); startEncounter();
 }
 
 function showScreen(which) {
@@ -957,9 +1097,12 @@ function startEncounter() {
   ui.enemyCombatant.classList.remove("hidden");
 
   const encounter=currentRun.plan[currentRun.index];
-  ui.battleBg.src=BG[currentRun.index];
-  ui.encounterLabel.textContent=`ENCOUNTER ${currentRun.index+1} / 4`;
-  ui.rankBattleLabel.textContent=`Rank ${currentRun.rank}`;
+  const cfg=currentAreaConfig();
+  ui.battleBg.src=cfg.backgrounds[currentRun.index];
+  ui.encounterLabel.textContent=currentRun.area==="ocean"
+    ? `${cfg.stageNames[currentRun.index].toUpperCase()} · ${currentRun.index+1} / 4`
+    : `ENCOUNTER ${currentRun.index+1} / 4`;
+  ui.rankBattleLabel.textContent=`${cfg.name} · Rank ${currentRun.rank}`;
   ui.peepLevelCombat.textContent=`Lv. ${questSave.peep.level}`;
   renderPeepHp();
   startPeepIdle();
@@ -989,41 +1132,37 @@ function startEncounter() {
 
 function startEnemy(enemyId) {
   const baseTemplate=ENEMIES[enemyId];
-
   const template =
-    enemyId==="mushroom-cat"
-      ? applyMushroomVariant(baseTemplate,currentRun.rank)
-      : enemyId==="bee"
-        ? applyBeeVariant(baseTemplate,currentRun.rank)
-        : enemyId==="cat-slime"
-          ? applyCatSlimeVariant(baseTemplate,currentRun.rank)
-          : enemyId==="flower"
-            ? applyFlowerVariant(baseTemplate,currentRun.rank)
-            : enemyId==="mimic"
-              ? applyMimicProfile(baseTemplate,currentRun.rank)
-              : baseTemplate;
+    enemyId==="mushroom-cat" ? applyMushroomVariant(baseTemplate,currentRun.rank) :
+    enemyId==="bee" ? applyBeeVariant(baseTemplate,currentRun.rank) :
+    enemyId==="cat-slime" ? applyCatSlimeVariant(baseTemplate,currentRun.rank) :
+    enemyId==="flower" ? applyFlowerVariant(baseTemplate,currentRun.rank) :
+    enemyId==="cool-seagull" ? applySeagullVariant(baseTemplate,currentRun.rank) :
+    enemyId==="sea-turtle" ? applyTurtleVariant(baseTemplate,currentRun.rank) :
+    enemyId==="catfish" ? applyCatfishVariant(baseTemplate,currentRun.rank) :
+    enemyId==="vampire-squid" ? applySquidVariant(baseTemplate,currentRun.rank) :
+    enemyId==="mimic" ? applyMimicProfile(baseTemplate,currentRun.rank) : baseTemplate;
 
-  currentEnemy=enemyScaled(template,currentRun.rank);
+  currentEnemy=enemyScaled(template,currentRun.rank,currentRun.area);
   currentEnemy.id=enemyId;
-  currentEnemy.healsUsed=0;
+  currentEnemy.healsUsed=0; currentEnemy.specialUses=0; currentEnemy.shellHitsRemaining=0;
+  currentEnemy.zoomiesBoost=false; currentEnemy.lifeDrainsUsed=0;
   ui.enemyCombatant.classList.remove("hidden");
-  ui.enemySprite.classList.remove("boss-fighter","gold-boss-fighter","queen-bee-fighter","strawberry-slime-fighter","rainbow-flower-fighter");
+  ui.enemySprite.classList.remove("boss-fighter","gold-boss-fighter","queen-bee-fighter","strawberry-slime-fighter","rainbow-flower-fighter","ocean-elite-fighter","ocean-boss-fighter");
   ui.enemyName.textContent=currentEnemy.name;
   ui.enemyRank.textContent=currentEnemy.boss?`BOSS · Rank ${currentRun.rank}`:`Rank ${currentRun.rank}`;
-  ui.enemySprite.classList.toggle("boss-fighter", Boolean(currentEnemy.boss));
-  ui.enemySprite.classList.toggle("gold-boss-fighter", currentEnemy.mushroomVariant==="gold");
-  ui.enemySprite.classList.toggle("queen-bee-fighter", currentEnemy.beeVariant==="queen");
-  ui.enemySprite.classList.toggle("strawberry-slime-fighter", currentEnemy.catSlimeVariant==="strawberry");
-  ui.enemySprite.classList.toggle("rainbow-flower-fighter", currentEnemy.flowerVariant==="rainbow");
-  renderEnemyHp();
-  startEnemyIdle();
-  renderSkills();
-  renderBattleItems();
-  ui.commandGrid.classList.remove("hidden");
-  closeCommandWindow();
-  renderBattleItems();
-  renderCommandButtons();
-  setMessage(currentEnemy.boss ? "The Big Mushroom Cat blocks the end of the path!" : `${currentEnemy.name} appeared!`);
+  ui.enemySprite.classList.toggle("boss-fighter",Boolean(currentEnemy.boss));
+  ui.enemySprite.classList.toggle("gold-boss-fighter",currentEnemy.mushroomVariant==="gold");
+  ui.enemySprite.classList.toggle("queen-bee-fighter",currentEnemy.beeVariant==="queen");
+  ui.enemySprite.classList.toggle("strawberry-slime-fighter",currentEnemy.catSlimeVariant==="strawberry");
+  ui.enemySprite.classList.toggle("rainbow-flower-fighter",currentEnemy.flowerVariant==="rainbow");
+  ui.enemySprite.classList.toggle("ocean-elite-fighter",Boolean(currentEnemy.eliteVariant));
+  ui.enemySprite.classList.toggle("ocean-boss-fighter",enemyId==="vampire-squid");
+  renderEnemyHp(); startEnemyIdle(); renderSkills(); renderBattleItems();
+  ui.commandGrid.classList.remove("hidden"); closeCommandWindow(); renderBattleItems(); renderCommandButtons();
+  if(enemyId==="vampire-squid") setMessage(`${currentEnemy.name} rises from the Ocean Floor!`);
+  else if(currentEnemy.boss) setMessage("The Big Mushroom Cat blocks the end of the path!");
+  else setMessage(`${currentEnemy.name} appeared!`);
 }
 
 function renderPeepHp() {
@@ -1304,71 +1443,87 @@ function decrementCooldowns(usedSkillId) {
 
 async function hurtEnemy(dmg) {
   if(!currentEnemy) return;
-  currentEnemy.hpNow=Math.max(0,currentEnemy.hpNow-dmg);
-  ui.enemySprite.src=currentEnemy.hurt;
-  ui.enemySprite.classList.add("hurt-pop");
-  showFloat(`-${dmg}`,"damage","enemy");
-  renderEnemyHp();
-  await sleep(360);
+  let finalDmg=Math.max(1,Math.round(dmg));
+  if(Number(currentEnemy.shellHitsRemaining||0)>0){
+    finalDmg=Math.max(1,Math.ceil(finalDmg*.75));
+    currentEnemy.shellHitsRemaining--;
+    setMessage(`${currentEnemy.name}'s Harden Shell reduced the damage!`);
+  }
+  currentEnemy.hpNow=Math.max(0,currentEnemy.hpNow-finalDmg);
+  ui.enemySprite.src=currentEnemy.hurt; ui.enemySprite.classList.add("hurt-pop");
+  showFloat(`-${finalDmg}`,"damage","enemy"); renderEnemyHp(); await sleep(360);
   ui.enemySprite.classList.remove("hurt-pop");
   if(currentEnemy.hpNow>0) ui.enemySprite.src=currentEnemy.idle[enemyIdleIndex%currentEnemy.idle.length];
 }
 
+async function performEnemyAttack(multiplier=1,label="",lifeDrainHeal=0){
+  if(!currentEnemy) return 0;
+  setMessage(label||`${currentEnemy.name} attacks!`);
+  ui.enemySprite.classList.add("attack-pop"); await sleep(300);
+  const stats=peepStats(); const crit=Math.random()<.05;
+  let dmg=Math.max(1,Math.round((currentEnemy.attackNow-(stats.defense*.55))*(.85+Math.random()*.25)*multiplier));
+  if(crit) dmg=Math.round(dmg*1.5);
+  if(guardActive){dmg=Math.max(1,Math.ceil(dmg*.5));guardActive=false;}
+  currentRun.hp=Math.max(0,currentRun.hp-dmg);
+  ui.peepSprite.src="assets/characters/peep/base/hurt.png";ui.peepSprite.classList.add("hurt-pop");
+  showFloat(`-${dmg}`,"damage","peep");renderPeepHp();
+  if(lifeDrainHeal>0 && currentEnemy.hpNow>0){
+    const before=currentEnemy.hpNow;
+    currentEnemy.hpNow=Math.min(currentEnemy.maxHp,currentEnemy.hpNow+Math.max(1,Math.round(dmg*lifeDrainHeal)));
+    const healed=currentEnemy.hpNow-before;
+    if(healed>0){showFloat(`+${healed}`,"heal","enemy");renderEnemyHp();}
+  }
+  await sleep(420);ui.peepSprite.classList.remove("hurt-pop");ui.enemySprite.classList.remove("attack-pop");
+  ui.peepSprite.src=PEepIdle[peepIdleIndex%PEepIdle.length];
+  if(currentRun.hp<=0) endRun(false);
+  else if(!label) setMessage(crit?`${currentEnemy.name} landed a critical hit!`:"Peep is ready!");
+  return dmg;
+}
+
 async function enemyTurn() {
   if(!currentEnemy || currentEnemy.hpNow<=0) return;
-  const canSelfHeal =
-    currentEnemy.healPercent>0
-    && currentEnemy.hpNow<currentEnemy.maxHp
-    && Number(currentEnemy.healsUsed||0)<Number(currentEnemy.maxHeals||0)
-    && currentEnemy.hpNow<=currentEnemy.maxHp*.72
-    && Math.random()<Number(currentEnemy.healChance||0);
 
+  // Generic healer variants: Blue Seagull, Green Slime, Orange Flower, etc.
+  const canSelfHeal=currentEnemy.healPercent>0 && currentEnemy.hpNow<currentEnemy.maxHp &&
+    Number(currentEnemy.healsUsed||0)<Number(currentEnemy.maxHeals||0) &&
+    currentEnemy.hpNow<=currentEnemy.maxHp*.72 && Math.random()<Number(currentEnemy.healChance||0);
   if(canSelfHeal){
     const amount=Math.max(1,Math.round(currentEnemy.maxHp*currentEnemy.healPercent));
-    const before=currentEnemy.hpNow;
-    currentEnemy.hpNow=Math.min(currentEnemy.maxHp,currentEnemy.hpNow+amount);
-    currentEnemy.healsUsed=Number(currentEnemy.healsUsed||0)+1;
+    const before=currentEnemy.hpNow; currentEnemy.hpNow=Math.min(currentEnemy.maxHp,currentEnemy.hpNow+amount); currentEnemy.healsUsed++;
+    const gained=currentEnemy.hpNow-before; setMessage(`${currentEnemy.name} used ${currentEnemy.healMoveName||"Recovery!"}`);
+    ui.enemySprite.classList.add("attack-pop");showFloat(`+${gained}`,"heal","enemy");renderEnemyHp();await sleep(650);
+    ui.enemySprite.classList.remove("attack-pop");setMessage("Peep is ready!");return;
+  }
 
-    const gained=currentEnemy.hpNow-before;
-    const moveName=currentEnemy.healMoveName || "Recovery!";
+  // Pink Sea Turtle: protects itself from the next two player attacks.
+  if(currentEnemy.specialType==="harden-shell" && !currentEnemy.shellHitsRemaining &&
+     currentEnemy.specialUses<currentEnemy.maxSpecialUses && Math.random()<currentEnemy.specialChance){
+    currentEnemy.specialUses++;currentEnemy.shellHitsRemaining=2;
+    setMessage(`${currentEnemy.name} used Harden Shell! The next 2 hits deal 25% less damage.`);
+    ui.enemySprite.classList.add("attack-pop");await sleep(650);ui.enemySprite.classList.remove("attack-pop");return;
+  }
 
-    setMessage(`${currentEnemy.name} used ${moveName}`);
-    ui.enemySprite.classList.add("attack-pop");
-    showFloat(`+${gained}`,"heal","enemy");
-    renderEnemyHp();
-    await sleep(650);
-    ui.enemySprite.classList.remove("attack-pop");
-    setMessage("Peep is ready!");
+  // Orange Cat-Fish: spends a turn powering up its next attack.
+  if(currentEnemy.specialType==="zoomies" && !currentEnemy.zoomiesBoost &&
+     currentEnemy.specialUses<currentEnemy.maxSpecialUses && Math.random()<currentEnemy.specialChance){
+    currentEnemy.specialUses++;currentEnemy.zoomiesBoost=true;
+    setMessage(`${currentEnemy.name} used Zoomies! Its next attack is powered up by 25%.`);
+    ui.enemySprite.classList.add("attack-pop");await sleep(650);ui.enemySprite.classList.remove("attack-pop");return;
+  }
+
+  // Every Vampire Squid can use Life Drain twice per battle.
+  if(currentEnemy.lifeDrain && currentEnemy.hpNow<currentEnemy.maxHp &&
+     currentEnemy.lifeDrainsUsed<currentEnemy.maxLifeDrains && Math.random()<currentEnemy.lifeDrainChance){
+    currentEnemy.lifeDrainsUsed++;
+    await performEnemyAttack(currentEnemy.lifeDrainDamage,`${currentEnemy.name} used Life Drain!`,currentEnemy.lifeDrainHeal);
+    if(currentRun.hp>0) setMessage("Life Drain stole some of Peep's HP!");
     return;
   }
-  setMessage(`${currentEnemy.name} attacks!`);
-  ui.enemySprite.classList.add("attack-pop");
-  await sleep(300);
 
-  const stats=peepStats();
-  const crit=Math.random()<0.05;
-  let dmg=Math.max(1,Math.round((currentEnemy.attackNow-(stats.defense*0.55))*(0.85+Math.random()*0.25)));
-  if(crit) dmg=Math.round(dmg*1.5);
-  if(guardActive) {
-    dmg=Math.max(1,Math.ceil(dmg*0.5));
-    guardActive=false;
-  }
-
-  currentRun.hp=Math.max(0,currentRun.hp-dmg);
-  ui.peepSprite.src="assets/characters/peep/base/hurt.png";
-  ui.peepSprite.classList.add("hurt-pop");
-  showFloat(`-${dmg}`,"damage","peep");
-  renderPeepHp();
-  await sleep(420);
-  ui.peepSprite.classList.remove("hurt-pop");
-  ui.enemySprite.classList.remove("attack-pop");
-  ui.peepSprite.src=PEepIdle[peepIdleIndex%PEepIdle.length];
-
-  if(currentRun.hp<=0) {
-    endRun(false);
-  } else {
-    setMessage(crit?`${currentEnemy.name} landed a critical hit!`:"Peep is ready!");
-  }
+  const boosted=Boolean(currentEnemy.zoomiesBoost);
+  if(boosted) currentEnemy.zoomiesBoost=false;
+  await performEnemyAttack(boosted?1.25:1,boosted?`${currentEnemy.name}'s Zoomies-powered attack!`:"");
+  if(currentRun.hp>0) setMessage("Peep is ready!");
 }
 
 async function guardTurn() {
@@ -1576,67 +1731,32 @@ function nextEncounter() {
 
 function endRun(won) {
   clearAnimations();
-
-  if(won) {
-    currentRun.bossWon=true;
-    questSave.completedRuns=(Number(questSave.completedRuns)||0)+1;
-    questSave.bossWins=(Number(questSave.bossWins)||0)+1;
-
-    // Run completion gives a tiny bit of OC happiness too.
+  if(won){
+    currentRun.bossWon=true; questSave.completedRuns=(Number(questSave.completedRuns)||0)+1; questSave.bossWins=(Number(questSave.bossWins)||0)+1;
     if(!hubSave.characterProgress.peep) hubSave.characterProgress.peep={happinessTotal:0};
     hubSave.characterProgress.peep.happinessTotal=Math.max(0,Number(hubSave.characterProgress.peep.happinessTotal)||0)+2;
-
-    if(currentRun.rank===questSave.unlockedRank && questSave.unlockedRank<MAX_RUN_RANK) {
-      questSave.unlockedRank++;
-    }
+    const progress=areaProgress(currentRun.area); const maxRank=getAreaConfig(currentRun.area).maxRank;
+    if(currentRun.rank===progress.unlockedRank && progress.unlockedRank<maxRank) progress.unlockedRank++;
   }
-
-  persistAll();
-  renderMeta();
-  renderResult(won);
-  showScreen("result");
+  persistAll(); renderMeta(); renderResult(won); showScreen("result");
 }
 
 function renderResult(won) {
+  const areaId=currentRun?.area||selectedArea; const cfg=getAreaConfig(areaId); const progress=areaProgress(areaId);
   ui.resultKicker.textContent=won?"RUN COMPLETE!":"RUN ENDED";
-  ui.resultTitle.textContent=won?"The Meadow is Clear!":"Peep needs a little rest.";
-
+  ui.resultTitle.textContent=won?cfg.resultTitle:"Peep needs a little rest.";
   const finishedRank=Math.max(1,Number(currentRun?.rank||selectedRank)||1);
-  const nextRank=Math.min(MAX_RUN_RANK,finishedRank+1);
-  const canRunNext=Boolean(won) && nextRank>finishedRank && nextRank<=questSave.unlockedRank;
-
-  ui.runNextRank.classList.toggle("hidden", !won);
-  ui.runNextRank.disabled = Boolean(won) && !canRunNext;
-  ui.runNextRank.textContent = canRunNext ? `Run Rank ${nextRank}` : "Max Rank Reached";
-  ui.runNextRank.dataset.rank = canRunNext ? String(nextRank) : "";
-
-  ui.resultRank.textContent=currentRun?.rank||selectedRank;
-  ui.resultCoins.textContent=currentRun?.coinsEarned||0;
-  ui.resultExp.textContent=currentRun?.expEarned||0;
-  ui.resultItems.innerHTML="";
-
-  (currentRun?.itemsEarned||[]).forEach(item=>{
-    const el=document.createElement("div");
-    el.className="result-item";
-    el.innerHTML=`<img src="${item.image}" alt=""><span>${item.name} ×${item.qty}</span>`;
-    ui.resultItems.appendChild(el);
-  });
-
-  if(!(currentRun?.itemsEarned||[]).length) {
-    const el=document.createElement("div");
-    el.className="result-item";
-    el.textContent="No item drops this time — try another run!";
-    ui.resultItems.appendChild(el);
-  }
-
+  const nextRank=Math.min(cfg.maxRank,finishedRank+1);
+  const canRunNext=Boolean(won)&&nextRank>finishedRank&&nextRank<=progress.unlockedRank;
+  ui.runNextRank.classList.toggle("hidden",!won);ui.runNextRank.disabled=Boolean(won)&&!canRunNext;
+  ui.runNextRank.textContent=canRunNext?`Run ${cfg.name} Rank ${nextRank}`:"Max Rank Reached";
+  ui.runNextRank.dataset.rank=canRunNext?String(nextRank):"";ui.runNextRank.dataset.area=areaId;
+  ui.resultRank.textContent=`${cfg.name} ${finishedRank}`;ui.resultCoins.textContent=currentRun?.coinsEarned||0;ui.resultExp.textContent=currentRun?.expEarned||0;ui.resultItems.innerHTML="";
+  (currentRun?.itemsEarned||[]).forEach(item=>{const el=document.createElement("div");el.className="result-item";el.innerHTML=`<img src="${item.image}" alt=""><span>${item.name} ×${item.qty}</span>`;ui.resultItems.appendChild(el);});
+  if(!(currentRun?.itemsEarned||[]).length){const el=document.createElement("div");el.className="result-item";el.textContent="No item drops this time — try another run!";ui.resultItems.appendChild(el);}
   const levels=[...new Set(currentRun?.levelsGained||[])];
-  if(levels.length) {
-    ui.levelUpNotice.classList.remove("hidden");
-    const unlocked=SKILLS.filter(s=>levels.includes(s.unlock)).map(s=>s.name);
-    ui.levelUpNotice.textContent=`Level up! Peep reached Lv. ${questSave.peep.level}.${unlocked.length?` New skill unlocked: ${unlocked.join(", ")}`: ""}`;
-  } else {
-    ui.levelUpNotice.classList.add("hidden");
-  }
+  if(levels.length){ui.levelUpNotice.classList.remove("hidden");const unlocked=SKILLS.filter(s=>levels.includes(s.unlock)).map(s=>s.name);ui.levelUpNotice.textContent=`Level up! Peep reached Lv. ${questSave.peep.level}.${unlocked.length?` New skill unlocked: ${unlocked.join(", ")}`:""}`;}
+  else ui.levelUpNotice.classList.add("hidden");
 }
 
 function pickThrowDuck() {
@@ -1682,21 +1802,26 @@ function showFloat(text,type="damage",target="enemy") {
 function setMessage(text) { ui.battleMessage.textContent=text; }
 
 function returnHome() {
-  clearAnimations();
-  currentRun=null;
-  showScreen("home");
-  renderMeta();
+  clearAnimations(); currentRun=null;
+  selectedArea=AREA_CONFIG[questSave.lastArea]?questSave.lastArea:"meadow";
+  selectedRank=areaProgress(selectedArea).lastRank||1;
+  showScreen("home"); renderMeta();
 }
 
 document.querySelector("#backGames").addEventListener("click",()=>window.location.href="../#games");
 ui.runNextRank.addEventListener("click",()=>{
+  const areaId=AREA_CONFIG[ui.runNextRank.dataset.area]?ui.runNextRank.dataset.area:selectedArea;
   const nextRank=Math.max(1,Number(ui.runNextRank.dataset.rank)||0);
-  if(!nextRank || nextRank>questSave.unlockedRank || nextRank>MAX_RUN_RANK) return;
-  selectedRank=nextRank;
-  beginRun();
+  const progress=areaProgress(areaId),maxRank=getAreaConfig(areaId).maxRank;
+  if(!nextRank||nextRank>progress.unlockedRank||nextRank>maxRank)return;
+  selectedArea=areaId;selectedRank=nextRank;beginRun();
 });
 document.querySelector("#rankDown").addEventListener("click",()=>{selectedRank=Math.max(1,selectedRank-1);renderMeta();});
-document.querySelector("#rankUp").addEventListener("click",()=>{selectedRank=Math.min(questSave.unlockedRank,selectedRank+1);renderMeta();});
+document.querySelector("#rankUp").addEventListener("click",()=>{selectedRank=Math.min(areaProgress(selectedArea).unlockedRank,selectedRank+1);renderMeta();});
+ui.areaButtons.forEach(btn=>btn.addEventListener("click",()=>{
+  const areaId=btn.dataset.area;if(!AREA_CONFIG[areaId])return;
+  selectedArea=areaId;questSave.lastArea=areaId;selectedRank=areaProgress(areaId).lastRank||1;persistAll();renderMeta();
+}));
 document.querySelector("#startRun").addEventListener("click",beginRun);
 document.querySelector("#guardButton").addEventListener("click",guardTurn);
 ui.attackMenuButton.addEventListener("click",()=>openCommandWindow("attack"));
@@ -1708,7 +1833,7 @@ ui.escapeButton.addEventListener("click",()=>{
 });
 document.querySelector("#openChest").addEventListener("click",openPendingChest);
 document.querySelector("#continueButton").addEventListener("click",nextEncounter);
-document.querySelector("#runAgain").addEventListener("click",()=>{selectedRank=currentRun?.rank||selectedRank;beginRun();});
+document.querySelector("#runAgain").addEventListener("click",()=>{selectedArea=currentRun?.area||selectedArea;selectedRank=currentRun?.rank||selectedRank;beginRun();});
 document.querySelector("#backToQuest").addEventListener("click",returnHome);
 ui.cancelEscapeConfirm.addEventListener("click",closeEscapeConfirm);
 ui.confirmEscapeButton.addEventListener("click",confirmEscapeRun);
