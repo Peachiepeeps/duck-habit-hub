@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f6c6d6" />
   <title>Duck Quest</title>
-  <link rel="stylesheet" href="css/style-v16.css" />
+  <link rel="stylesheet" href="css/style-v18.css" />
 </head>
 <body>
   <main class="quest-shell">
@@ -27,18 +27,26 @@
         <div class="hero-sprite-column">
           <div id="heroSpriteWrap" class="hero-sprite-wrap">
             <img id="menuPeep" src="assets/characters/peep/base/idle-1.png" class="pixel-sprite menu-peep" alt="Peep" />
+            <div id="menuHeroComposite" class="menu-hero-composite hidden" aria-hidden="true"></div>
           </div>
-          <label class="icon-background-control" for="iconBackgroundSelect">
+          <div class="icon-background-control">
             <span>Icon Background</span>
-            <select id="iconBackgroundSelect" aria-label="Choose Peep icon background"></select>
-          </label>
+            <div class="icon-background-picker-wrap">
+              <button id="iconBackgroundButton" class="icon-background-button" type="button" aria-expanded="false">
+                <span id="iconBackgroundCurrent" class="icon-background-current" aria-hidden="true"></span>
+                <span id="iconBackgroundLabel">White</span>
+                <span class="icon-background-arrow" aria-hidden="true">▾</span>
+              </button>
+              <div id="iconBackgroundPicker" class="icon-background-picker hidden" role="menu" aria-label="Icon background colors"></div>
+            </div>
+          </div>
         </div>
 
         <div class="hero-info">
           <div class="hero-name-row">
             <div>
               <span class="mini-label">YOUR HERO</span>
-              <h2>Peep</h2>
+              <h2 id="heroNameHome">Peep</h2>
             </div>
             <strong id="levelBadge" class="level-badge">Lv. 1</strong>
           </div>
@@ -66,7 +74,7 @@
         <div class="section-title area-select-title">
           <div>
             <span class="mini-label">CHOOSE AREA</span>
-            <h2>Where should Peep Explore?</h2>
+            <h2 id="exploreHeading">Where should Peep Explore?</h2>
           </div>
         </div>
         <div class="area-picker" role="group" aria-label="Duck Quest area">
@@ -107,7 +115,7 @@
 
       <section class="skills-card">
         <div class="section-title">
-          <span class="mini-label">PEEP'S SKILLS</span>
+          <span id="skillsKicker" class="mini-label">PEEP'S SKILLS</span>
           <h2>Special Attacks</h2>
         </div>
         <div id="menuSkills" class="menu-skills"></div>
@@ -128,7 +136,7 @@
         <div class="combatant peep-combatant">
           <div class="peep-status-stack">
             <div class="nameplate">
-              <strong>Peep</strong>
+              <strong id="heroNameCombat">Peep</strong>
               <span id="peepLevelCombat">Lv. 1</span>
             </div>
             <div class="hp-bar"><span id="peepHpFill"></span></div>
@@ -136,6 +144,7 @@
             <small id="peepHpText">42 / 42 HP</small>
           </div>
           <img id="peepSprite" class="pixel-sprite fighter peep-fighter" src="assets/characters/peep/base/idle-1.png" alt="Peep" />
+          <div id="battleHeroComposite" class="battle-hero-composite fighter hidden" aria-hidden="true"></div>
         </div>
 
         <div id="enemyCombatant" class="combatant enemy-combatant">
@@ -194,7 +203,10 @@
       <div class="result-card">
         <span id="resultKicker" class="mini-label">RUN COMPLETE!</span>
         <h2 id="resultTitle">The Meadow is Clear!</h2>
-        <img id="resultPeep" class="pixel-sprite result-peep" src="assets/characters/peep/base/idle-1.png" alt="Peep" />
+        <div class="result-hero-wrap">
+          <img id="resultPeep" class="pixel-sprite result-peep" src="assets/characters/peep/base/idle-1.png" alt="Peep" />
+          <div id="resultHeroComposite" class="result-hero-composite hidden" aria-hidden="true"></div>
+        </div>
 
         <div class="result-stats">
           <div><span>Rank</span><strong id="resultRank">1</strong></div>
@@ -226,6 +238,6 @@
     </section>
   </main>
 
-  <script src="js/game-v16.js"></script>
+  <script src="js/game-v18.js"></script>
 </body>
 </html>

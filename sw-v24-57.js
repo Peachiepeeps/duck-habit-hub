@@ -1,14 +1,14 @@
-const APP_CACHE = 'duck-habit-hub-app-v24-55';
-const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-55';
-const IMAGE_CACHE = 'duck-habit-hub-images-v24-55';
+const APP_CACHE = 'duck-habit-hub-app-v24-57';
+const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-57';
+const IMAGE_CACHE = 'duck-habit-hub-images-v24-57';
 
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.webmanifest',
-  './style-v24-55.css',
-  './script-v24-55.js',
-  './sw-v24-55.js',
+  './style-v24-57.css',
+  './script-v24-57.js',
+  './sw-v24-57.js',
   './apple-touch-icon-v4.png',
   './favicon-32-v4.png',
   './icon-192-v4.png',

@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#f7dbe5" />
   <title>Duck Habit Hub</title>
   <!-- v24.41 performance update -->
-  <link rel="stylesheet" href="style-v24-55.css" />
+  <link rel="stylesheet" href="style-v24-57.css" />
 
   <link rel="manifest" href="manifest.webmanifest?v=24-38-icon-v4">
   <link rel="apple-touch-icon" href="apple-touch-icon-v4.png">
@@ -246,7 +246,7 @@
           <button id="openDuckQuestGame" class="game-card duck-quest-game-card" type="button">
             <span class="game-card-preview duck-quest-card-preview">
               <img src="duck-quest/assets/backgrounds/meadow/stage-1-tree.png" class="game-card-bg" alt="" />
-              <img src="duck-quest/assets/characters/peep/base/idle-1.png" class="duck-quest-card-peep" alt="" />
+              <img src="duck-quest/assets/enemies/cat-slime/base/Strawberry-idle-1-neutral.png" class="duck-quest-card-peep duck-quest-card-strawberry" alt="Strawberry Cat Slime" />
             </span>
             <span class="game-card-copy">
               <span class="game-card-kicker">PIXEL RPG</span>
@@ -764,12 +764,12 @@
 
             <div class="profile-info-list">
               <div class="profile-info-row">
-                <span>Name</span>
-                <strong id="profileInfoName">—</strong>
-              </div>
-              <div class="profile-info-row">
                 <span>Height</span>
                 <strong id="profileInfoHeight">Coming soon</strong>
+              </div>
+              <div class="profile-info-row">
+                <span>Favorite item</span>
+                <strong id="profileInfoFavorite">Coming soon</strong>
               </div>
               <div class="profile-info-row">
                 <span>Likes</span>
@@ -784,6 +784,18 @@
             <div class="profile-description-card">
               <span>About</span>
               <p id="profileInfoDescription">More profile information will be added soon. ♡</p>
+            </div>
+
+            <div class="profile-icon-color-card">
+              <span class="profile-icon-color-label">Icon Color</span>
+              <div class="profile-icon-picker-wrap">
+                <button id="profileIconPickerButton" class="profile-icon-picker-button" type="button" aria-expanded="false">
+                  <span id="profileIconPickerSwatch" class="profile-icon-current-swatch" aria-hidden="true"></span>
+                  <span id="profileIconPickerText">White</span>
+                  <span class="profile-icon-picker-arrow" aria-hidden="true">▾</span>
+                </button>
+                <div id="profileIconPicker" class="profile-icon-picker hidden" role="menu" aria-label="Icon background colors"></div>
+              </div>
             </div>
 
             <button id="switchProfileCharacter" class="profile-switch-button" type="button">
@@ -932,12 +944,12 @@
       </section>
     </section>
   </main>
-  <script src="script-v24-55.js"></script>
+  <script src="script-v24-57.js"></script>
 
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw-v24-55.js", { updateViaCache: "none" }).catch(error => {
+        navigator.serviceWorker.register("./sw-v24-57.js", { updateViaCache: "none" }).catch(error => {
           console.warn("Duck Habit Hub offline setup could not start:", error);
         });
       });

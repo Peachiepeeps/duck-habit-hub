@@ -1,5 +1,5 @@
 const STORAGE_KEY = "duckHabitHubSave_v1";
-const SAVE_VERSION = 28;
+const SAVE_VERSION = 29;
 
 const CHARACTERS = {
   peep: {
@@ -14,6 +14,7 @@ const CHARACTERS = {
     },
     profile: {
       height: "Coming soon",
+      favoriteItem: "Strawberry",
       likes: "Coming soon",
       dislikes: "Coming soon",
       description: "More profile information will be added in a future update. ♡"
@@ -52,6 +53,7 @@ const CHARACTERS = {
     invitationImage: "assets/oc-invitations/Miko-invitation.PNG",
     profile: {
       height: "Coming soon",
+      favoriteItem: "Milk Tea",
       likes: "Quiet afternoons, sweet treats, tidy outfits",
       dislikes: "Being rushed, bitter drinks",
       description: "A soft, slightly shy boy who looks especially cute with a duck perched nearby. ♡"
@@ -71,6 +73,51 @@ const CHARACTERS = {
     }
   }
 };
+
+const PROFILE_ICON_BACKGROUNDS = Object.freeze([
+  // Starter
+  {id:"white",label:"White",value:"#fffaf3",rarity:"starter",source:"starter"},
+
+  // Guaranteed level-up colors
+  {id:"pink",label:"Pink",value:"#f2b4ca",rarity:"level",source:"level"},
+  {id:"sky-blue",label:"Sky Blue",value:"#b7dbf3",rarity:"level",source:"level"},
+  {id:"mint",label:"Mint",value:"#b9e2cb",rarity:"level",source:"level"},
+  {id:"lavender",label:"Lavender",value:"#d7c4ef",rarity:"level",source:"level"},
+  {id:"periwinkle",label:"Periwinkle",value:"#b9c2ef",rarity:"level",source:"level"},
+  {id:"peach",label:"Peach",value:"#f5c1a8",rarity:"level",source:"level"},
+  {id:"lilac",label:"Lilac",value:"#e3c7ee",rarity:"level",source:"level"},
+  {id:"aqua",label:"Aqua",value:"#a9dfe3",rarity:"level",source:"level"},
+
+  // Chest colors
+  {id:"buttercream",label:"Buttercream",value:"#f8e9ae",rarity:"common",source:"chest",weight:10},
+  {id:"blush",label:"Blush",value:"#f5ccd7",rarity:"common",source:"chest",weight:10},
+  {id:"rose",label:"Rose Pink",value:"#eaa6bb",rarity:"common",source:"chest",weight:9},
+  {id:"baby-blue",label:"Baby Blue",value:"#c7e1f5",rarity:"common",source:"chest",weight:9},
+  {id:"seafoam",label:"Seafoam",value:"#c2e5d8",rarity:"common",source:"chest",weight:9},
+  {id:"soft-coral",label:"Soft Coral",value:"#f2b1a4",rarity:"common",source:"chest",weight:8},
+  {id:"sage",label:"Sage",value:"#c8d8b5",rarity:"common",source:"chest",weight:8},
+
+  // Patterned chest backgrounds — pure CSS, no image files needed.
+  {id:"pink-gingham",label:"Pink Gingham",rarity:"uncommon",source:"chest",weight:5,value:"linear-gradient(90deg,rgba(255,255,255,.45) 50%,transparent 50%),linear-gradient(rgba(255,255,255,.45) 50%,transparent 50%),#efb8ca",size:"24px 24px"},
+  {id:"lavender-gingham",label:"Lavender Gingham",rarity:"uncommon",source:"chest",weight:5,value:"linear-gradient(90deg,rgba(255,255,255,.42) 50%,transparent 50%),linear-gradient(rgba(255,255,255,.42) 50%,transparent 50%),#cdb8eb",size:"24px 24px"},
+  {id:"mint-gingham",label:"Mint Gingham",rarity:"uncommon",source:"chest",weight:5,value:"linear-gradient(90deg,rgba(255,255,255,.42) 50%,transparent 50%),linear-gradient(rgba(255,255,255,.42) 50%,transparent 50%),#afd9c2",size:"24px 24px"},
+  {id:"periwinkle-gingham",label:"Periwinkle Gingham",rarity:"uncommon",source:"chest",weight:5,value:"linear-gradient(90deg,rgba(255,255,255,.4) 50%,transparent 50%),linear-gradient(rgba(255,255,255,.4) 50%,transparent 50%),#adb8ea",size:"24px 24px"},
+  {id:"pink-polka",label:"Pink Polka Dots",rarity:"uncommon",source:"chest",weight:4,value:"radial-gradient(circle at 7px 7px,#fff7fb 0 3px,transparent 3.5px),#ecabc3",size:"22px 22px"},
+  {id:"tiny-hearts",label:"Tiny Hearts",rarity:"rare",source:"chest",weight:2,value:"radial-gradient(circle at 25% 35%,#fff 0 3px,transparent 3.5px),radial-gradient(circle at 75% 65%,#fff 0 3px,transparent 3.5px),linear-gradient(135deg,#f4b7cb,#e6c1ef)",size:"28px 28px"},
+  {id:"pink-glitter",label:"Pink Glitter",rarity:"rare",source:"chest",weight:1.8,value:"radial-gradient(circle at 15% 20%,#fff 0 1.5px,transparent 2px),radial-gradient(circle at 72% 28%,#ffe9a8 0 1.3px,transparent 1.8px),radial-gradient(circle at 38% 75%,#fff 0 1px,transparent 1.7px),linear-gradient(135deg,#eda9c4,#d995c1)",size:"22px 22px,28px 28px,18px 18px,auto"},
+  {id:"lavender-glitter",label:"Lavender Glitter",rarity:"rare",source:"chest",weight:1.8,value:"radial-gradient(circle at 20% 22%,#fff 0 1.5px,transparent 2px),radial-gradient(circle at 68% 40%,#fff0b8 0 1.2px,transparent 1.8px),radial-gradient(circle at 42% 78%,#fff 0 1px,transparent 1.7px),linear-gradient(135deg,#c6b1ea,#aa95d9)",size:"22px 22px,30px 30px,18px 18px,auto"},
+  {id:"starry-periwinkle",label:"Starry Periwinkle",rarity:"rare",source:"chest",weight:1.5,value:"radial-gradient(circle at 18% 22%,#fff9cf 0 2px,transparent 2.5px),radial-gradient(circle at 72% 34%,#fff 0 1.5px,transparent 2px),radial-gradient(circle at 48% 78%,#fff9cf 0 1.5px,transparent 2px),linear-gradient(160deg,#9da9df,#c1b1e5)",size:"30px 30px,26px 26px,34px 34px,auto"},
+  {id:"gold-glitter",label:"Gold Glitter",rarity:"rare",source:"chest",weight:1.2,value:"radial-gradient(circle at 18% 20%,#fff8d7 0 1.5px,transparent 2px),radial-gradient(circle at 70% 28%,#fff 0 1px,transparent 1.7px),radial-gradient(circle at 45% 78%,#f7c75e 0 1.5px,transparent 2px),linear-gradient(135deg,#edd38a,#cda654)",size:"20px 20px,26px 26px,30px 30px,auto"},
+
+  // Ultra-rare chest prizes
+  {id:"rainbow",label:"Rainbow",rarity:"ultra",source:"chest",weight:.45,value:"linear-gradient(135deg,#ed9baa,#f1c781,#b7daa0,#9dcfe2,#b7a6e4,#e2abd8)"},
+  {id:"rainbow-gingham",label:"Rainbow Gingham",rarity:"ultra",source:"chest",weight:.28,value:"linear-gradient(90deg,rgba(255,255,255,.38) 50%,transparent 50%),linear-gradient(rgba(255,255,255,.38) 50%,transparent 50%),linear-gradient(135deg,#ef9cac,#f4d18d,#b6dda2,#9fd4e6,#b8a9e6,#e7add8)",size:"24px 24px,24px 24px,auto"},
+  {id:"rainbow-glitter",label:"Rainbow Glitter",rarity:"ultra",source:"chest",weight:.16,value:"radial-gradient(circle at 14% 20%,#fff 0 1.7px,transparent 2.2px),radial-gradient(circle at 72% 30%,#fff9bd 0 1.5px,transparent 2px),radial-gradient(circle at 42% 76%,#fff 0 1.3px,transparent 2px),linear-gradient(135deg,#ee9dac,#f0c982,#b5dca0,#9fd2e4,#b6a6e2,#e3acd7)",size:"20px 20px,27px 27px,31px 31px,auto"}
+]);
+
+function profileIconBackgroundById(id) {
+  return PROFILE_ICON_BACKGROUNDS.find(background => background.id === id) || PROFILE_ICON_BACKGROUNDS[0];
+}
 
 const CHARACTER_UNLOCKS = {
   miko: {
@@ -2133,8 +2180,8 @@ const MIKO_ASSETS = {
   "bottom-boxers": { label: "Boxers", file: "Miko-Boxers.PNG", z: 31 },
   "bottom-shorts": { label: "Shorts", file: "shorts.png", z: 31 },
   "belt": { label: "Belt", file: "Miko-belt.PNG", z: 33 },
-  "socks": { label: "Socks", file: "Miko-socks.PNG", z: 38 },
-  "socks-garter": { label: "White Garter Socks", file: "white-garter-socks.png", z: 38 },
+  "socks": { label: "Socks", file: "Miko-socks.PNG", z: 29 },
+  "socks-garter": { label: "White Garter Socks", file: "white-garter-socks.png", z: 29 },
   "shoes-loafer": { label: "Loafers", file: "Miko-loafers.PNG", z: 39 },
   "shoes-fancy-loafers": { label: "Fancy Loafers", file: "fancy-loafers.png", z: 39 },
   "headband": { label: "Headband", file: "Miko-headband.PNG", z: 47 },
@@ -2162,7 +2209,7 @@ const MIKO_CLOSET = [
   { id: "shoes", label: "Shoes", type: "single", allowNone: true, options: ["shoes-loafer", "shoes-fancy-loafers"] },
   {
     id: "extras",
-    label: "Accessories",
+    label: "Extras",
     type: "multi",
     options: ["headband", "hairpins-black"]
   }
@@ -2888,11 +2935,15 @@ const profilesCount = document.querySelector("#profilesCount");
 const profileDetailSheet = document.querySelector("#profileDetailSheet");
 const profileDetailAvatar = document.querySelector("#profileDetailAvatar");
 const profileDetailName = document.querySelector("#profileDetailName");
-const profileInfoName = document.querySelector("#profileInfoName");
 const profileInfoHeight = document.querySelector("#profileInfoHeight");
+const profileInfoFavorite = document.querySelector("#profileInfoFavorite");
 const profileInfoLikes = document.querySelector("#profileInfoLikes");
 const profileInfoDislikes = document.querySelector("#profileInfoDislikes");
 const profileInfoDescription = document.querySelector("#profileInfoDescription");
+const profileIconPickerButton = document.querySelector("#profileIconPickerButton");
+const profileIconPickerSwatch = document.querySelector("#profileIconPickerSwatch");
+const profileIconPickerText = document.querySelector("#profileIconPickerText");
+const profileIconPicker = document.querySelector("#profileIconPicker");
 const switchProfileCharacter = document.querySelector("#switchProfileCharacter");
 const tasksPanel = document.querySelector("#tasksPanel");
 const taskFormPanel = document.querySelector("#taskFormPanel");
@@ -3594,15 +3645,84 @@ function maxCurrentlyCraftableFurnitureVariants(){
   ).length;
 }
 
+function normalizeDuckQuestCharacterProgress(characterId = save.selectedCharacter) {
+  const id = CHARACTERS[characterId] ? characterId : "peep";
+  if (!save.duckQuest || typeof save.duckQuest !== "object") save.duckQuest = {};
+  const quest = save.duckQuest;
+
+  const existing = quest[id] && typeof quest[id] === "object" ? quest[id] : {};
+  const legacyAreas = id === "peep" && quest.areas && typeof quest.areas === "object" ? quest.areas : {};
+  const legacyMeadowUnlocked = id === "peep"
+    ? Math.max(1, Math.min(20, Number(legacyAreas.meadow?.unlockedRank ?? quest.unlockedRank) || 1))
+    : 1;
+  const legacyMeadowLast = id === "peep"
+    ? Math.max(1, Math.min(legacyMeadowUnlocked, Number(legacyAreas.meadow?.lastRank ?? quest.lastRank) || 1))
+    : 1;
+  const legacyOceanUnlocked = id === "peep"
+    ? Math.max(1, Math.min(50, Number(legacyAreas.ocean?.unlockedRank) || 1))
+    : 1;
+  const legacyOceanLast = id === "peep"
+    ? Math.max(1, Math.min(legacyOceanUnlocked, Number(legacyAreas.ocean?.lastRank) || 1))
+    : 1;
+
+  const meadowUnlocked = Math.max(1, Math.min(20, Number(existing.areas?.meadow?.unlockedRank) || legacyMeadowUnlocked));
+  const oceanUnlocked = Math.max(1, Math.min(50, Number(existing.areas?.ocean?.unlockedRank) || legacyOceanUnlocked));
+
+  const inheritedIcon = id === "peep" ? quest.iconBackground : null;
+  const iconId = PROFILE_ICON_BACKGROUNDS.some(background => background.id === existing.iconBackground)
+    ? existing.iconBackground
+    : PROFILE_ICON_BACKGROUNDS.some(background => background.id === inheritedIcon)
+      ? inheritedIcon
+      : "white";
+
+  quest[id] = {
+    ...existing,
+    level: Math.max(1, Math.min(100, Number(existing.level) || 1)),
+    exp: Math.max(0, Number(existing.exp) || 0),
+    iconBackground: iconId,
+    lastArea: ["meadow", "ocean"].includes(existing.lastArea)
+      ? existing.lastArea
+      : id === "peep" && ["meadow", "ocean"].includes(quest.lastArea)
+        ? quest.lastArea
+        : "meadow",
+    areas: {
+      meadow: {
+        unlockedRank: meadowUnlocked,
+        lastRank: Math.max(1, Math.min(meadowUnlocked, Number(existing.areas?.meadow?.lastRank) || legacyMeadowLast))
+      },
+      ocean: {
+        unlockedRank: oceanUnlocked,
+        lastRank: Math.max(1, Math.min(oceanUnlocked, Number(existing.areas?.ocean?.lastRank) || legacyOceanLast))
+      }
+    }
+  };
+
+  if (!Array.isArray(quest.iconBackgroundsUnlocked)) quest.iconBackgroundsUnlocked = ["white"];
+  quest.iconBackgroundsUnlocked = [...new Set(["white", ...quest.iconBackgroundsUnlocked])]
+    .filter(bgId => PROFILE_ICON_BACKGROUNDS.some(background => background.id === bgId));
+
+  // Keep the older Peep mirrors intact for old backups/older code.
+  if (id === "peep") {
+    quest.areas = structuredClone(quest.peep.areas);
+    quest.lastArea = quest.peep.lastArea;
+    quest.unlockedRank = quest.peep.areas.meadow.unlockedRank;
+    quest.lastRank = quest.peep.areas.meadow.lastRank;
+    quest.iconBackground = quest.peep.iconBackground;
+  }
+
+  return quest[id];
+}
+
 function rpgLevelForCharacter(characterId){
-  return Math.max(0, Number(save.duckQuest?.[characterId]?.level) || 0);
+  if (!save.unlockedCharacters?.includes(characterId) && characterId !== "peep") return 0;
+  return normalizeDuckQuestCharacterProgress(characterId).level;
 }
 
 function allRpgCharactersHaveLevelData(){
-  return Object.keys(CHARACTERS).every(characterId =>
-    save.duckQuest?.[characterId]
-    && Number.isFinite(Number(save.duckQuest[characterId].level))
+  const ids = Object.keys(CHARACTERS).filter(characterId =>
+    characterId === "peep" || save.unlockedCharacters?.includes(characterId)
   );
+  return ids.every(characterId => Number.isFinite(Number(normalizeDuckQuestCharacterProgress(characterId).level)));
 }
 
 function isAchievementCurrentlyPossible(a){
@@ -6112,7 +6232,7 @@ function launchMemoryGame() {
 }
 
 function launchDuckQuestGame() {
-  window.location.href = "duck-quest/?v=16";
+  window.location.href = "duck-quest/?v=18";
 }
 
 
@@ -8378,26 +8498,11 @@ function totalInventoryItems(category = null) {
   }, 0);
 }
 
-function unlockQuestIconBackgroundFromPaint(itemId) {
-  const id = normalizeItemId(itemId);
-  if (!id || ITEMS[id]?.category !== "paint") return;
-  const colorId = id.replace(/-paint$/, "");
-  if (!colorId) return;
-  if (!save.duckQuest || typeof save.duckQuest !== "object") save.duckQuest = {};
-  const unlocked = Array.isArray(save.duckQuest.iconBackgroundsUnlocked)
-    ? save.duckQuest.iconBackgroundsUnlocked
-    : ["white"];
-  if (!unlocked.includes("white")) unlocked.unshift("white");
-  if (!unlocked.includes(colorId)) unlocked.push(colorId);
-  save.duckQuest.iconBackgroundsUnlocked = [...new Set(unlocked)];
-}
-
 function addInventoryItem(itemId, quantity = 1) {
   const id = normalizeItemId(itemId);
   if (!id || !ITEMS[id]) return false;
   if (!save.inventory) save.inventory = {};
   save.inventory[id] = inventoryQuantity(id) + Math.max(1, Number(quantity) || 1);
-  unlockQuestIconBackgroundFromPaint(id);
 
   // Standard Duck is both a consumable crafting base and a Duckipedia trophy.
   // The first one found or purchased permanently discovers its entry.
@@ -8676,6 +8781,89 @@ function closeDailiesAll() {
 
 // -------------------- PROFILES --------------------
 
+function unlockedProfileIconBackgroundIds() {
+  if (!save.duckQuest || typeof save.duckQuest !== "object") save.duckQuest = {};
+  const unlocked = Array.isArray(save.duckQuest.iconBackgroundsUnlocked)
+    ? save.duckQuest.iconBackgroundsUnlocked
+    : ["white"];
+  save.duckQuest.iconBackgroundsUnlocked = [...new Set(["white", ...unlocked])]
+    .filter(id => PROFILE_ICON_BACKGROUNDS.some(background => background.id === id));
+  return save.duckQuest.iconBackgroundsUnlocked;
+}
+
+function profileIconBackgroundForCharacter(characterId) {
+  const progress = normalizeDuckQuestCharacterProgress(characterId);
+  const unlocked = unlockedProfileIconBackgroundIds();
+  if (!unlocked.includes(progress.iconBackground)) progress.iconBackground = "white";
+  return profileIconBackgroundById(progress.iconBackground);
+}
+
+function applyProfileIconBackground(element, characterId) {
+  if (!element) return;
+  const background = profileIconBackgroundForCharacter(characterId);
+  element.style.background = background.value;
+  element.style.backgroundSize = background.size || "auto";
+  element.style.backgroundPosition = "0 0";
+}
+
+function closeProfileIconPicker() {
+  profileIconPicker?.classList.add("hidden");
+  profileIconPickerButton?.setAttribute("aria-expanded", "false");
+}
+
+function renderProfileIconPicker(characterId = selectedProfileCharacterId) {
+  if (!characterId || !profileIconPicker || !profileIconPickerButton) return;
+  const progress = normalizeDuckQuestCharacterProgress(characterId);
+  const unlocked = new Set(unlockedProfileIconBackgroundIds());
+  const current = profileIconBackgroundById(progress.iconBackground);
+
+  if (profileIconPickerSwatch) {
+    profileIconPickerSwatch.style.background = current.value;
+    profileIconPickerSwatch.style.backgroundSize = current.size || "auto";
+  }
+  if (profileIconPickerText) profileIconPickerText.textContent = current.label;
+
+  profileIconPicker.innerHTML = "";
+  for (const background of PROFILE_ICON_BACKGROUNDS) {
+    const isUnlocked = unlocked.has(background.id);
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `profile-icon-choice${isUnlocked ? "" : " locked"}`;
+    button.setAttribute("aria-current", String(progress.iconBackground === background.id));
+    button.setAttribute("aria-label", `${background.label}${isUnlocked ? "" : ", locked"}`);
+    button.title = background.label;
+
+    const swatch = document.createElement("span");
+    swatch.className = "profile-icon-dot";
+    swatch.style.background = background.value;
+    swatch.style.backgroundSize = background.size || "auto";
+    button.append(swatch);
+
+    if (!isUnlocked) {
+      const lock = document.createElement("span");
+      lock.className = "profile-icon-lock";
+      lock.textContent = "🔒";
+      button.append(lock);
+    }
+
+    button.addEventListener("click", () => {
+      if (!isUnlocked) {
+        showToast("That Icon Background is still locked. Find it in Duck Quest! ♡");
+        return;
+      }
+      progress.iconBackground = background.id;
+      if (characterId === "peep") save.duckQuest.iconBackground = background.id;
+      persist();
+      applyProfileIconBackground(profileDetailAvatar, characterId);
+      renderProfileIconPicker(characterId);
+      renderProfiles();
+      closeProfileIconPicker();
+    });
+
+    profileIconPicker.append(button);
+  }
+}
+
 function renderProfileHeadDuck(container, characterId) {
   const character = CHARACTERS[characterId];
   if (!character) return;
@@ -8709,6 +8897,10 @@ function renderProfileHeadDuck(container, characterId) {
 function switchToProfileCharacter(characterId) {
   if (!CHARACTERS[characterId]) return;
   if (!save.unlockedCharacters.includes(characterId)) return;
+  if (save.selectedCharacter === characterId) {
+    showToast(`${CHARACTERS[characterId].name} is already out!`);
+    return;
+  }
 
   save.selectedCharacter = characterId;
   currentExpression = "expression-neutral";
@@ -8730,15 +8922,19 @@ function openProfileDetail(characterId) {
   const profile = character.profile || {};
 
   profileDetailName.textContent = character.name;
-  profileInfoName.textContent = character.name;
   profileInfoHeight.textContent = profile.height || "Coming soon";
+  if (profileInfoFavorite) profileInfoFavorite.textContent = profile.favoriteItem || "Coming soon";
   profileInfoLikes.textContent = profile.likes || "Coming soon";
   profileInfoDislikes.textContent = profile.dislikes || "Coming soon";
   profileInfoDescription.textContent =
     profile.description || "More profile information will be added in a future update. ♡";
 
+  profileDetailAvatar.dataset.characterId = character.id;
   renderCharacterInto(profileDetailAvatar, character.id);
   renderProfileHeadDuck(profileDetailAvatar, character.id);
+  applyProfileIconBackground(profileDetailAvatar, character.id);
+  renderProfileIconPicker(character.id);
+  closeProfileIconPicker();
 
   switchProfileCharacter.textContent = `Switch to ${character.name}`;
   switchProfileCharacter.disabled = false;
@@ -8748,8 +8944,10 @@ function openProfileDetail(characterId) {
 }
 
 function closeProfileDetail() {
+  closeProfileIconPicker();
   selectedProfileCharacterId = null;
   profileDetailAvatar.innerHTML = "";
+  delete profileDetailAvatar.dataset.characterId;
   profileDetailSheet.classList.add("hidden");
   profileDetailSheet.setAttribute("aria-hidden", "true");
 }
@@ -8770,6 +8968,7 @@ function renderProfiles() {
 
     const button = document.createElement("button");
     button.type = "button";
+    button.dataset.characterId = character.id;
     button.className = `profile-card${unlocked ? "" : " locked"}${current ? " current" : ""}`;
     button.disabled = !unlocked;
     button.setAttribute("aria-label", unlocked
@@ -8778,6 +8977,8 @@ function renderProfiles() {
 
     const avatar = document.createElement("div");
     avatar.className = "profile-avatar";
+    avatar.dataset.characterId = character.id;
+    applyProfileIconBackground(avatar, character.id);
 
     if (character.type === "layered") {
       renderCharacterInto(avatar, character.id);
@@ -8906,12 +9107,12 @@ function duckQuestExpNeeded(level) {
 function renderStatus() {
   const stats = save.stats || DEFAULT_SAVE.stats;
   const happiness = getCharacterHappinessInfo(save.selectedCharacter);
-  const quest = save.duckQuest && typeof save.duckQuest === "object" ? save.duckQuest : {};
-  const questLevel = Math.max(1, Math.min(100, Number(quest.peep?.level) || 1));
-  const questExp = Math.max(0, Number(quest.peep?.exp) || 0);
+  const questProgress = normalizeDuckQuestCharacterProgress(save.selectedCharacter);
+  const questLevel = Math.max(1, Math.min(100, Number(questProgress.level) || 1));
+  const questExp = Math.max(0, Number(questProgress.exp) || 0);
   const questNeed = duckQuestExpNeeded(questLevel);
-  const meadowRank = Math.max(1, Math.min(20, Number(quest.areas?.meadow?.unlockedRank ?? quest.unlockedRank) || 1));
-  const oceanRank = Math.max(1, Math.min(50, Number(quest.areas?.ocean?.unlockedRank) || 1));
+  const meadowRank = Math.max(1, Math.min(20, Number(questProgress.areas?.meadow?.unlockedRank) || 1));
+  const oceanRank = Math.max(1, Math.min(50, Number(questProgress.areas?.ocean?.unlockedRank) || 1));
 
   if (statusProgressLabel) {
     statusProgressLabel.textContent = happiness.atMax ? "Happiness Maxed" : `To Level ${happiness.nextLevel}`;
@@ -10351,6 +10552,12 @@ document.querySelectorAll("[data-achievement-tab]").forEach(button => {
 document.querySelector("#closeProfiles").addEventListener("click", closeProfilesToBook);
 document.querySelector("#closeProfileDetail").addEventListener("click", closeProfileDetail);
 document.querySelector("#profileDetailBackdrop").addEventListener("click", closeProfileDetail);
+profileIconPickerButton?.addEventListener("click", () => {
+  if (!selectedProfileCharacterId) return;
+  const opening = profileIconPicker.classList.contains("hidden");
+  profileIconPicker.classList.toggle("hidden", !opening);
+  profileIconPickerButton.setAttribute("aria-expanded", String(opening));
+});
 switchProfileCharacter.addEventListener("click", () => {
   if (selectedProfileCharacterId) switchToProfileCharacter(selectedProfileCharacterId);
 });

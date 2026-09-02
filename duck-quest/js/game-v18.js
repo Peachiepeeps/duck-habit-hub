@@ -36,30 +36,59 @@ function getAreaConfig(areaId){
 }
 
 const ICON_BACKGROUND_COLORS = Object.freeze([
-  {id:"white",label:"White",value:"#fffaf3",paint:"white-paint"},
-  {id:"red",label:"Red",value:"#d95a62",paint:"red-paint"},
-  {id:"dark-red",label:"Dark Red",value:"#8f3d46",paint:"dark-red-paint"},
-  {id:"magenta",label:"Magenta",value:"#d62d79",paint:"magenta-paint"},
-  {id:"orange",label:"Orange",value:"#e99655",paint:"orange-paint"},
-  {id:"peach",label:"Peach",value:"#f2b394",paint:"peach-paint"},
-  {id:"gold",label:"Gold",value:"#c8a24a",paint:"gold-paint"},
-  {id:"silver",label:"Silver",value:"#b9bec8",paint:"silver-paint"},
-  {id:"bronze",label:"Bronze",value:"#a77650",paint:"bronze-paint"},
-  {id:"green",label:"Green",value:"#75a56e",paint:"green-paint"},
-  {id:"mint",label:"Mint",value:"#a7d8bd",paint:"mint-paint"},
-  {id:"aqua",label:"Aqua",value:"#84c9cf",paint:"aqua-paint"},
-  {id:"sky-blue",label:"Sky Blue",value:"#9bc9e9",paint:"sky-blue-paint"},
-  {id:"blue",label:"Blue",value:"#648fc7",paint:"blue-paint"},
-  {id:"periwinkle",label:"Periwinkle",value:"#9fa8dc",paint:"periwinkle-paint"},
-  {id:"purple",label:"Purple",value:"#9874b7",paint:"purple-paint"},
-  {id:"violet",label:"Violet",value:"#c08ecf",paint:"violet-paint"},
-  {id:"pink",label:"Pink",value:"#e9a0bb",paint:"pink-paint"},
-  {id:"grey",label:"Grey",value:"#9b9ca2",paint:"grey-paint"},
-  {id:"black",label:"Black",value:"#333137",paint:"black-paint"},
-  {id:"rainbow",label:"Rainbow",value:"linear-gradient(135deg,#e87083,#e9b469,#9dc985,#80b8db,#a98bd1)",paint:"rainbow-paint"}
+  // Starter
+  {id:"white",label:"White",value:"#fffaf3",rarity:"starter",source:"starter"},
+
+  // Guaranteed level-up colors
+  {id:"pink",label:"Pink",value:"#f2b4ca",rarity:"level",source:"level"},
+  {id:"sky-blue",label:"Sky Blue",value:"#b7dbf3",rarity:"level",source:"level"},
+  {id:"mint",label:"Mint",value:"#b9e2cb",rarity:"level",source:"level"},
+  {id:"lavender",label:"Lavender",value:"#d7c4ef",rarity:"level",source:"level"},
+  {id:"periwinkle",label:"Periwinkle",value:"#b9c2ef",rarity:"level",source:"level"},
+  {id:"peach",label:"Peach",value:"#f5c1a8",rarity:"level",source:"level"},
+  {id:"lilac",label:"Lilac",value:"#e3c7ee",rarity:"level",source:"level"},
+  {id:"aqua",label:"Aqua",value:"#a9dfe3",rarity:"level",source:"level"},
+
+  // Chest colors
+  {id:"buttercream",label:"Buttercream",value:"#f8e9ae",rarity:"common",source:"chest",weight:10},
+  {id:"blush",label:"Blush",value:"#f5ccd7",rarity:"common",source:"chest",weight:10},
+  {id:"rose",label:"Rose Pink",value:"#eaa6bb",rarity:"common",source:"chest",weight:9},
+  {id:"baby-blue",label:"Baby Blue",value:"#c7e1f5",rarity:"common",source:"chest",weight:9},
+  {id:"seafoam",label:"Seafoam",value:"#c2e5d8",rarity:"common",source:"chest",weight:9},
+  {id:"soft-coral",label:"Soft Coral",value:"#f2b1a4",rarity:"common",source:"chest",weight:8},
+  {id:"sage",label:"Sage",value:"#c8d8b5",rarity:"common",source:"chest",weight:8},
+
+  // Patterned chest backgrounds — pure CSS, no image files needed.
+  {id:"pink-gingham",label:"Pink Gingham",rarity:"uncommon",source:"chest",weight:5,value:"linear-gradient(90deg,rgba(255,255,255,.45) 50%,transparent 50%),linear-gradient(rgba(255,255,255,.45) 50%,transparent 50%),#efb8ca",size:"24px 24px"},
+  {id:"lavender-gingham",label:"Lavender Gingham",rarity:"uncommon",source:"chest",weight:5,value:"linear-gradient(90deg,rgba(255,255,255,.42) 50%,transparent 50%),linear-gradient(rgba(255,255,255,.42) 50%,transparent 50%),#cdb8eb",size:"24px 24px"},
+  {id:"mint-gingham",label:"Mint Gingham",rarity:"uncommon",source:"chest",weight:5,value:"linear-gradient(90deg,rgba(255,255,255,.42) 50%,transparent 50%),linear-gradient(rgba(255,255,255,.42) 50%,transparent 50%),#afd9c2",size:"24px 24px"},
+  {id:"periwinkle-gingham",label:"Periwinkle Gingham",rarity:"uncommon",source:"chest",weight:5,value:"linear-gradient(90deg,rgba(255,255,255,.4) 50%,transparent 50%),linear-gradient(rgba(255,255,255,.4) 50%,transparent 50%),#adb8ea",size:"24px 24px"},
+  {id:"pink-polka",label:"Pink Polka Dots",rarity:"uncommon",source:"chest",weight:4,value:"radial-gradient(circle at 7px 7px,#fff7fb 0 3px,transparent 3.5px),#ecabc3",size:"22px 22px"},
+  {id:"tiny-hearts",label:"Tiny Hearts",rarity:"rare",source:"chest",weight:2,value:"radial-gradient(circle at 25% 35%,#fff 0 3px,transparent 3.5px),radial-gradient(circle at 75% 65%,#fff 0 3px,transparent 3.5px),linear-gradient(135deg,#f4b7cb,#e6c1ef)",size:"28px 28px"},
+  {id:"pink-glitter",label:"Pink Glitter",rarity:"rare",source:"chest",weight:1.8,value:"radial-gradient(circle at 15% 20%,#fff 0 1.5px,transparent 2px),radial-gradient(circle at 72% 28%,#ffe9a8 0 1.3px,transparent 1.8px),radial-gradient(circle at 38% 75%,#fff 0 1px,transparent 1.7px),linear-gradient(135deg,#eda9c4,#d995c1)",size:"22px 22px,28px 28px,18px 18px,auto"},
+  {id:"lavender-glitter",label:"Lavender Glitter",rarity:"rare",source:"chest",weight:1.8,value:"radial-gradient(circle at 20% 22%,#fff 0 1.5px,transparent 2px),radial-gradient(circle at 68% 40%,#fff0b8 0 1.2px,transparent 1.8px),radial-gradient(circle at 42% 78%,#fff 0 1px,transparent 1.7px),linear-gradient(135deg,#c6b1ea,#aa95d9)",size:"22px 22px,30px 30px,18px 18px,auto"},
+  {id:"starry-periwinkle",label:"Starry Periwinkle",rarity:"rare",source:"chest",weight:1.5,value:"radial-gradient(circle at 18% 22%,#fff9cf 0 2px,transparent 2.5px),radial-gradient(circle at 72% 34%,#fff 0 1.5px,transparent 2px),radial-gradient(circle at 48% 78%,#fff9cf 0 1.5px,transparent 2px),linear-gradient(160deg,#9da9df,#c1b1e5)",size:"30px 30px,26px 26px,34px 34px,auto"},
+  {id:"gold-glitter",label:"Gold Glitter",rarity:"rare",source:"chest",weight:1.2,value:"radial-gradient(circle at 18% 20%,#fff8d7 0 1.5px,transparent 2px),radial-gradient(circle at 70% 28%,#fff 0 1px,transparent 1.7px),radial-gradient(circle at 45% 78%,#f7c75e 0 1.5px,transparent 2px),linear-gradient(135deg,#edd38a,#cda654)",size:"20px 20px,26px 26px,30px 30px,auto"},
+
+  // Ultra-rare chest prizes
+  {id:"rainbow",label:"Rainbow",rarity:"ultra",source:"chest",weight:.45,value:"linear-gradient(135deg,#ed9baa,#f1c781,#b7daa0,#9dcfe2,#b7a6e4,#e2abd8)"},
+  {id:"rainbow-gingham",label:"Rainbow Gingham",rarity:"ultra",source:"chest",weight:.28,value:"linear-gradient(90deg,rgba(255,255,255,.38) 50%,transparent 50%),linear-gradient(rgba(255,255,255,.38) 50%,transparent 50%),linear-gradient(135deg,#ef9cac,#f4d18d,#b6dda2,#9fd4e6,#b8a9e6,#e7add8)",size:"24px 24px,24px 24px,auto"},
+  {id:"rainbow-glitter",label:"Rainbow Glitter",rarity:"ultra",source:"chest",weight:.16,value:"radial-gradient(circle at 14% 20%,#fff 0 1.7px,transparent 2.2px),radial-gradient(circle at 72% 30%,#fff9bd 0 1.5px,transparent 2px),radial-gradient(circle at 42% 76%,#fff 0 1.3px,transparent 2px),linear-gradient(135deg,#ee9dac,#f0c982,#b5dca0,#9fd2e4,#b6a6e2,#e3acd7)",size:"20px 20px,27px 27px,31px 31px,auto"}
 ]);
 
+const LEVEL_ICON_BACKGROUND_REWARDS = Object.freeze({
+  3:"pink",
+  5:"sky-blue",
+  10:"mint",
+  15:"lavender",
+  20:"periwinkle",
+  30:"peach",
+  40:"lilac",
+  60:"aqua"
+});
+
 function iconBackgroundById(id){ return ICON_BACKGROUND_COLORS.find(color=>color.id===id) || ICON_BACKGROUND_COLORS[0]; }
+
 
 
 const DUCK_LIBRARY = [{"id": "standard-duck", "file": "Standard-duck.PNG", "name": "Standard Duck"}, {"id": "pink-duck", "file": "Pink-duck.PNG", "name": "Pink Duck"}, {"id": "rainbow-duck", "file": "Rainbow-duck.PNG", "name": "Rainbow Duck"}];
@@ -776,7 +805,7 @@ const REWARD_ITEMS = [
 ];
 
 function currentAreaConfig(){ return getAreaConfig(currentRun?.area || selectedArea); }
-function areaProgress(areaId=selectedArea){ return questSave.areas[areaId] || questSave.areas.meadow; }
+function areaProgress(areaId=selectedArea){ const progress=activeHeroProgress(); return progress.areas[areaId] || progress.areas.meadow; }
 
 const PEepIdle = [
   "assets/characters/peep/base/idle-1.png",
@@ -845,12 +874,108 @@ const ui = {
   resultItems: document.querySelector("#resultItems"),
   levelUpNotice: document.querySelector("#levelUpNotice"),
   heroSpriteWrap: document.querySelector("#heroSpriteWrap"),
-  iconBackgroundSelect: document.querySelector("#iconBackgroundSelect")
+  menuPeep: document.querySelector("#menuPeep"),
+  menuHeroComposite: document.querySelector("#menuHeroComposite"),
+  battleHeroComposite: document.querySelector("#battleHeroComposite"),
+  resultPeep: document.querySelector("#resultPeep"),
+  resultHeroComposite: document.querySelector("#resultHeroComposite"),
+  heroNameHome: document.querySelector("#heroNameHome"),
+  heroNameCombat: document.querySelector("#heroNameCombat"),
+  exploreHeading: document.querySelector("#exploreHeading"),
+  skillsKicker: document.querySelector("#skillsKicker"),
+  iconBackgroundButton: document.querySelector("#iconBackgroundButton"),
+  iconBackgroundCurrent: document.querySelector("#iconBackgroundCurrent"),
+  iconBackgroundLabel: document.querySelector("#iconBackgroundLabel"),
+  iconBackgroundPicker: document.querySelector("#iconBackgroundPicker")
 };
 
 let hubSave = loadHubSave();
 let questSave = normalizeQuestSave(hubSave.duckQuest);
-let selectedArea = AREA_CONFIG[questSave.lastArea] ? questSave.lastArea : "meadow";
+
+function activeCharacterIdFromHub(){
+  const requested=String(hubSave.selectedCharacter||"peep");
+  const unlocked=Array.isArray(hubSave.unlockedCharacters)?hubSave.unlockedCharacters:["peep"];
+  return requested==="miko" && unlocked.includes("miko") ? "miko" : "peep";
+}
+
+let activeCharacterId = activeCharacterIdFromHub();
+
+function heroDisplayName(){ return activeCharacterId==="miko" ? "Miko" : "Peep"; }
+
+function defaultCharacterQuestProgress(){
+  return {
+    level:1,
+    exp:0,
+    iconBackground:"white",
+    lastArea:"meadow",
+    areas:{
+      meadow:{unlockedRank:1,lastRank:1},
+      ocean:{unlockedRank:1,lastRank:1}
+    }
+  };
+}
+
+function normalizeCharacterQuestProgress(raw, legacy={}){
+  const d=defaultCharacterQuestProgress();
+  const q=raw&&typeof raw==="object"?raw:{};
+  const legacyAreas=legacy.areas&&typeof legacy.areas==="object"?legacy.areas:{};
+  const meadowUnlocked=clampInt(q.areas?.meadow?.unlockedRank ?? legacyAreas.meadow?.unlockedRank ?? legacy.unlockedRank,1,20,1);
+  const meadowLast=clampInt(q.areas?.meadow?.lastRank ?? legacyAreas.meadow?.lastRank ?? legacy.lastRank,1,meadowUnlocked,1);
+  const oceanUnlocked=clampInt(q.areas?.ocean?.unlockedRank ?? legacyAreas.ocean?.unlockedRank,1,50,1);
+  const oceanLast=clampInt(q.areas?.ocean?.lastRank ?? legacyAreas.ocean?.lastRank,1,oceanUnlocked,1);
+  const incomingIcon=q.iconBackground ?? legacy.iconBackground;
+  return {
+    ...d,...q,
+    level:clampInt(q.level,1,MAX_LEVEL,1),
+    exp:Math.max(0,Number(q.exp)||0),
+    iconBackground:ICON_BACKGROUND_COLORS.some(color=>color.id===incomingIcon)?incomingIcon:"white",
+    lastArea:AREA_CONFIG[q.lastArea ?? legacy.lastArea] ? (q.lastArea ?? legacy.lastArea) : "meadow",
+    areas:{
+      meadow:{unlockedRank:meadowUnlocked,lastRank:Math.min(meadowLast,meadowUnlocked)},
+      ocean:{unlockedRank:oceanUnlocked,lastRank:Math.min(oceanLast,oceanUnlocked)}
+    }
+  };
+}
+
+function defaultQuestSave() {
+  return {
+    peep:defaultCharacterQuestProgress(),
+    iconBackgroundsUnlocked:["white"],
+    completedRuns:0,bossWins:0,totalBattlesWon:0,totalCoinsEarned:0,totalExpEarned:0
+  };
+}
+
+function normalizeQuestSave(raw) {
+  const d=defaultQuestSave();
+  const q=raw&&typeof raw==="object"?raw:{};
+  const normalized={
+    ...d,...q,
+    peep:normalizeCharacterQuestProgress(q.peep,{
+      areas:q.areas,
+      unlockedRank:q.unlockedRank,
+      lastRank:q.lastRank,
+      lastArea:q.lastArea,
+      iconBackground:q.iconBackground
+    }),
+    iconBackgroundsUnlocked:[...new Set(["white",...(Array.isArray(q.iconBackgroundsUnlocked)?q.iconBackgroundsUnlocked:[])])]
+      .filter(id=>ICON_BACKGROUND_COLORS.some(color=>color.id===id)),
+    bossWins:Math.max(0,Number(q.bossWins ?? q.completedRuns)||0)
+  };
+  if(q.miko&&typeof q.miko==="object") normalized.miko=normalizeCharacterQuestProgress(q.miko);
+  return normalized;
+}
+
+function activeHeroProgress(){
+  if(!questSave[activeCharacterId]||typeof questSave[activeCharacterId]!=="object"){
+    questSave[activeCharacterId]=defaultCharacterQuestProgress();
+  }else{
+    questSave[activeCharacterId]=normalizeCharacterQuestProgress(questSave[activeCharacterId]);
+  }
+  return questSave[activeCharacterId];
+}
+
+let heroProgress = activeHeroProgress();
+let selectedArea = AREA_CONFIG[heroProgress.lastArea] ? heroProgress.lastArea : "meadow";
 let selectedRank = Math.min(areaProgress(selectedArea).unlockedRank, Math.max(1, areaProgress(selectedArea).lastRank || 1));
 let currentRun = null;
 let currentEnemy = null;
@@ -863,45 +988,6 @@ let pendingChest = null;
 let guardActive = false;
 let skillState = {};
 
-function defaultQuestSave() {
-  return {
-    peep:{level:1,exp:0},
-    iconBackground:"white",
-    iconBackgroundsUnlocked:["white"],
-    lastArea:"meadow",
-    areas:{
-      meadow:{unlockedRank:1,lastRank:1},
-      ocean:{unlockedRank:1,lastRank:1}
-    },
-    // Legacy Meadow mirrors retained for older Hub code.
-    unlockedRank:1,lastRank:1,
-    completedRuns:0,bossWins:0,totalBattlesWon:0,totalCoinsEarned:0,totalExpEarned:0
-  };
-}
-
-function normalizeQuestSave(raw) {
-  const d=defaultQuestSave();
-  const q=raw&&typeof raw==="object"?raw:{};
-  const oldMeadowUnlocked=clampInt(q.areas?.meadow?.unlockedRank ?? q.unlockedRank,1,20,1);
-  const oldMeadowLast=clampInt(q.areas?.meadow?.lastRank ?? q.lastRank,1,20,1);
-  const oceanUnlocked=clampInt(q.areas?.ocean?.unlockedRank,1,50,1);
-  const oceanLast=clampInt(q.areas?.ocean?.lastRank,1,50,1);
-  return {
-    ...d,...q,
-    peep:{level:clampInt(q.peep?.level,1,MAX_LEVEL,1),exp:Math.max(0,Number(q.peep?.exp)||0)},
-    iconBackground:ICON_BACKGROUND_COLORS.some(color=>color.id===q.iconBackground)?q.iconBackground:"white",
-    iconBackgroundsUnlocked:[...new Set(["white",...(Array.isArray(q.iconBackgroundsUnlocked)?q.iconBackgroundsUnlocked:[])])]
-      .filter(id=>ICON_BACKGROUND_COLORS.some(color=>color.id===id)),
-    lastArea:AREA_CONFIG[q.lastArea]?q.lastArea:"meadow",
-    areas:{
-      meadow:{unlockedRank:oldMeadowUnlocked,lastRank:Math.min(oldMeadowLast,oldMeadowUnlocked)},
-      ocean:{unlockedRank:oceanUnlocked,lastRank:Math.min(oceanLast,oceanUnlocked)}
-    },
-    unlockedRank:oldMeadowUnlocked,lastRank:oldMeadowLast,
-    bossWins:Math.max(0,Number(q.bossWins ?? q.completedRuns)||0)
-  };
-}
-
 function loadHubSave() {
   try {
     const raw = localStorage.getItem(HUB_SAVE_KEY);
@@ -911,16 +997,26 @@ function loadHubSave() {
     if (!parsed.characterProgress.peep || typeof parsed.characterProgress.peep !== "object") {
       parsed.characterProgress.peep = { happinessTotal:0 };
     }
+    if (!parsed.characterProgress.miko || typeof parsed.characterProgress.miko !== "object") {
+      parsed.characterProgress.miko = { happinessTotal:0 };
+    }
+    if (!Array.isArray(parsed.unlockedCharacters)) parsed.unlockedCharacters=["peep"];
+    if (!parsed.unlockedCharacters.includes("peep")) parsed.unlockedCharacters.unshift("peep");
+    parsed.selectedCharacter = parsed.unlockedCharacters.includes(parsed.selectedCharacter) ? parsed.selectedCharacter : "peep";
     parsed.coins = Math.max(0, Number(parsed.coins) || 0);
     return parsed;
   } catch {
-    return { coins:0, inventory:{}, unlockedDucks:[], characterProgress:{peep:{happinessTotal:0}} };
+    return { coins:0, inventory:{}, unlockedDucks:[], unlockedCharacters:["peep"], selectedCharacter:"peep", characterProgress:{peep:{happinessTotal:0},miko:{happinessTotal:0}} };
   }
 }
 
 function persistAll() {
-  questSave.unlockedRank=questSave.areas.meadow.unlockedRank;
-  questSave.lastRank=questSave.areas.meadow.lastRank;
+  const peep=questSave.peep||defaultCharacterQuestProgress();
+  questSave.areas=JSON.parse(JSON.stringify(peep.areas));
+  questSave.lastArea=peep.lastArea;
+  questSave.unlockedRank=peep.areas.meadow.unlockedRank;
+  questSave.lastRank=peep.areas.meadow.lastRank;
+  questSave.iconBackground=peep.iconBackground;
   hubSave.duckQuest = questSave;
   localStorage.setItem(HUB_SAVE_KEY, JSON.stringify(hubSave));
 }
@@ -960,7 +1056,7 @@ function expNeeded(level) {
   return 80 + (level - 1) * 25;
 }
 
-function peepStats(level = questSave.peep.level) {
+function peepStats(level = activeHeroProgress().level) {
   return {
     maxHp: Math.round(42 + (level - 1) * 4.2),
     attack: Math.round(8 + (level - 1) * 1.15),
@@ -1007,48 +1103,254 @@ function happinessLevelFromTotal(total) {
   return level;
 }
 
-function syncIconBackgroundUnlocksFromPaints(){
+function normalizeIconBackgroundUnlocks(){
+  const validIds=new Set(ICON_BACKGROUND_COLORS.map(bg=>bg.id));
   const unlocked=new Set(Array.isArray(questSave.iconBackgroundsUnlocked)?questSave.iconBackgroundsUnlocked:["white"]);
   unlocked.add("white");
-  for(const color of ICON_BACKGROUND_COLORS){
-    if(color.paint && Number(hubSave.inventory?.[color.paint]||0)>0) unlocked.add(color.id);
+  questSave.iconBackgroundsUnlocked=[...unlocked].filter(id=>validIds.has(id));
+  const hero=activeHeroProgress(); if(!questSave.iconBackgroundsUnlocked.includes(hero.iconBackground)) hero.iconBackground="white";
+}
+
+function unlockIconBackground(id){
+  const bg=ICON_BACKGROUND_COLORS.find(x=>x.id===id);
+  if(!bg) return null;
+  normalizeIconBackgroundUnlocks();
+  if(questSave.iconBackgroundsUnlocked.includes(id)) return null;
+  questSave.iconBackgroundsUnlocked.push(id);
+  return bg;
+}
+
+function unlockLevelIconBackgrounds(levels){
+  const unlocked=[];
+  for(const level of levels){
+    const id=LEVEL_ICON_BACKGROUND_REWARDS[level];
+    if(!id) continue;
+    const bg=unlockIconBackground(id);
+    if(bg) unlocked.push(bg);
   }
-  questSave.iconBackgroundsUnlocked=[...unlocked].filter(id=>ICON_BACKGROUND_COLORS.some(color=>color.id===id));
-  if(!questSave.iconBackgroundsUnlocked.includes(questSave.iconBackground)) questSave.iconBackground="white";
+  return unlocked;
+}
+
+function syncPastLevelIconBackgrounds(){
+  normalizeIconBackgroundUnlocks();
+  const unlocked=new Set(questSave.iconBackgroundsUnlocked);
+  for(const [levelText,id] of Object.entries(LEVEL_ICON_BACKGROUND_REWARDS)){
+    if(activeHeroProgress().level>=Number(levelText)) unlocked.add(id);
+  }
+  questSave.iconBackgroundsUnlocked=[...unlocked];
+}
+
+function pickChestIconBackground(chest){
+  normalizeIconBackgroundUnlocks();
+  const locked=ICON_BACKGROUND_COLORS.filter(bg=>bg.source==="chest" && !questSave.iconBackgroundsUnlocked.includes(bg.id));
+  if(!locked.length) return null;
+
+  const isMimic=chest?.enemy?.id==="mimic";
+  const chance=isMimic ? .50 : chest?.kind==="rare" ? .55 : chest?.kind==="boss" ? .30 : .10;
+  if(Math.random()>chance) return null;
+
+  const rarityBoost=chest?.kind==="rare" || isMimic
+    ? {common:1,uncommon:1.45,rare:2.5,ultra:4}
+    : chest?.kind==="boss"
+      ? {common:1,uncommon:1.25,rare:2,ultra:3}
+      : {common:1,uncommon:.75,rare:.35,ultra:.12};
+
+  const weighted=locked.map(bg=>({bg,weight:(Number(bg.weight)||1)*(rarityBoost[bg.rarity]||1)}));
+  let roll=Math.random()*weighted.reduce((sum,x)=>sum+x.weight,0);
+  for(const entry of weighted){
+    roll-=entry.weight;
+    if(roll<=0) return entry.bg;
+  }
+  return weighted[0]?.bg||null;
+}
+
+function applyIconBackgroundStyle(element,bg){
+  if(!element || !bg) return;
+  element.style.background=bg.value;
+  element.style.backgroundSize=bg.size||"auto";
+  element.style.backgroundPosition="0 0";
+}
+
+function closeIconBackgroundPicker(){
+  ui.iconBackgroundPicker?.classList.add("hidden");
+  ui.iconBackgroundButton?.setAttribute("aria-expanded","false");
 }
 
 function renderIconBackgroundPicker(){
-  syncIconBackgroundUnlocksFromPaints();
-  if(!ui.iconBackgroundSelect || !ui.heroSpriteWrap) return;
-  ui.iconBackgroundSelect.innerHTML="";
-  for(const color of ICON_BACKGROUND_COLORS){
-    const unlocked=questSave.iconBackgroundsUnlocked.includes(color.id);
-    const option=document.createElement("option");
-    option.value=color.id;
-    option.textContent=unlocked?color.label:`🔒 ${color.label}`;
-    option.disabled=!unlocked;
-    if(color.id===questSave.iconBackground) option.selected=true;
-    ui.iconBackgroundSelect.appendChild(option);
+  normalizeIconBackgroundUnlocks();
+  if(!ui.iconBackgroundPicker || !ui.heroSpriteWrap) return;
+  const hero=activeHeroProgress();
+  const unlocked=new Set(questSave.iconBackgroundsUnlocked);
+  const selected=iconBackgroundById(hero.iconBackground);
+
+  applyIconBackgroundStyle(ui.heroSpriteWrap,selected);
+  if(ui.iconBackgroundCurrent) applyIconBackgroundStyle(ui.iconBackgroundCurrent,selected);
+  if(ui.iconBackgroundLabel) ui.iconBackgroundLabel.textContent=selected.label;
+
+  ui.iconBackgroundPicker.innerHTML="";
+  for(const background of ICON_BACKGROUND_COLORS){
+    const isUnlocked=unlocked.has(background.id);
+    const button=document.createElement("button");
+    button.type="button";
+    button.className=`icon-background-choice${isUnlocked?"":" locked"}`;
+    button.setAttribute("aria-current",String(hero.iconBackground===background.id));
+    button.setAttribute("aria-label",`${background.label}${isUnlocked?"":", locked"}`);
+    button.title=background.label;
+
+    const swatch=document.createElement("span");
+    swatch.className="icon-background-dot";
+    applyIconBackgroundStyle(swatch,background);
+    button.appendChild(swatch);
+
+    if(!isUnlocked){
+      const lock=document.createElement("span");
+      lock.className="icon-background-lock";
+      lock.textContent="🔒";
+      button.appendChild(lock);
+    }
+
+    button.addEventListener("click",()=>{
+      if(!isUnlocked) return;
+      setIconBackground(background.id);
+      closeIconBackgroundPicker();
+    });
+    ui.iconBackgroundPicker.appendChild(button);
   }
-  const selected=iconBackgroundById(questSave.iconBackground);
-  ui.heroSpriteWrap.style.background=selected.value;
 }
 
 function setIconBackground(colorId){
   if(!questSave.iconBackgroundsUnlocked.includes(colorId)) return;
-  questSave.iconBackground=colorId;
+  activeHeroProgress().iconBackground=colorId;
   persistAll();
   renderIconBackgroundPicker();
+  renderHeroVisuals();
+}
+
+
+const MIKO_LAYER_MAP=Object.freeze({
+  "hair-main":{file:"Miko-hair.PNG",z:15},
+  "hoodie-back":{file:"Miko-hoodie-back.PNG",z:18},
+  "base":{file:"Miko-base.PNG",z:20},
+  "socks":{file:"Miko-socks.PNG",z:29},
+  "socks-garter":{file:"white-garter-socks.png",z:29},
+  "bottom-capris":{file:"Miko-capri-pants.PNG",z:31},
+  "bottom-jeans":{file:"Miko-jeans.PNG",z:31},
+  "bottom-boxers":{file:"Miko-Boxers.PNG",z:31},
+  "bottom-shorts":{file:"shorts.png",z:31},
+  "top-button":{file:"Miko-button-shirt.PNG",z:32},
+  "shirt-blouse":{file:"blouse.png",z:32},
+  "belt":{file:"Miko-belt.PNG",z:33},
+  "top-hoodie":{file:"Miko-hoodie.PNG",z:34},
+  "top-sweater":{file:"Miko-sweater.PNG",z:34},
+  "outer-black-blazer":{file:"black-blazer.png",z:34},
+  "arm-base":{file:"Miko-base-arm.PNG",z:35},
+  "top-big-shirt":{file:"Miko-big-shirt.PNG",z:36.5},
+  "top-button-sleeve":{file:"Miko-button-sleeve.PNG",z:36},
+  "top-hoodie-sleeve":{file:"Miko-hoodie-sleeve.PNG",z:37},
+  "top-sweater-sleeve":{file:"Miko-sweater-sleeve.PNG",z:37},
+  "outer-black-blazer-arm":{file:"black-blazer-arm-piece.png",z:37},
+  "shoes-loafer":{file:"Miko-loafers.PNG",z:39},
+  "shoes-fancy-loafers":{file:"fancy-loafers.png",z:39},
+  "expression-neutral":{file:"Miko-neutral.PNG",z:44},
+  "headband":{file:"Miko-headband.PNG",z:47},
+  "bangs":{file:"Miko-bangs.PNG",z:48},
+  "bangs-pinned":{file:"Miko-bangs-pinned.PNG",z:48},
+  "hairpins-black":{file:"black-hairpins.png",z:49}
+});
+
+function currentMikoOutfit(){
+  const raw=hubSave.characterOutfits?.miko||{};
+  return {
+    bangsStyle:["bangs","bangs-pinned"].includes(raw.bangsStyle)?raw.bangsStyle:"bangs",
+    shirt:[null,"top-button","shirt-blouse"].includes(raw.shirt)?raw.shirt:"top-button",
+    outer:[null,"top-hoodie","top-sweater","top-big-shirt","outer-black-blazer"].includes(raw.outer)?raw.outer:"top-hoodie",
+    bottom:["bottom-capris","bottom-jeans","bottom-boxers","bottom-shorts"].includes(raw.bottom)?raw.bottom:"bottom-capris",
+    socks:["socks","socks-garter"].includes(raw.socks)?raw.socks:null,
+    shoes:[null,"shoes-loafer","shoes-fancy-loafers"].includes(raw.shoes)?raw.shoes:"shoes-loafer",
+    extras:Array.isArray(raw.extras)?raw.extras:[]
+  };
+}
+
+function currentMikoLayerIds(){
+  const outfit=currentMikoOutfit();
+  const ids=["hair-main","base"];
+  if(outfit.outer==="top-hoodie") ids.push("hoodie-back");
+  if(outfit.socks) ids.push(outfit.socks);
+  if(outfit.bottom) ids.push(outfit.bottom);
+  if(outfit.shirt) ids.push(outfit.shirt);
+  if(outfit.bottom==="bottom-jeans") ids.push("belt");
+  if(outfit.outer) ids.push(outfit.outer);
+  ids.push("arm-base");
+  if(outfit.shirt==="top-button") ids.push("top-button-sleeve");
+  if(outfit.outer==="top-hoodie") ids.push("top-hoodie-sleeve");
+  else if(outfit.outer==="top-sweater") ids.push("top-sweater-sleeve");
+  else if(outfit.outer==="outer-black-blazer") ids.push("outer-black-blazer-arm");
+  if(outfit.shoes) ids.push(outfit.shoes);
+  ids.push(...outfit.extras.filter(id=>MIKO_LAYER_MAP[id]));
+  ids.push("expression-neutral",outfit.bangsStyle);
+  return ids.filter(id=>MIKO_LAYER_MAP[id]).sort((a,b)=>MIKO_LAYER_MAP[a].z-MIKO_LAYER_MAP[b].z);
+}
+
+function renderMikoComposite(container){
+  if(!container) return;
+  container.innerHTML="";
+  currentMikoLayerIds().forEach((id,index)=>{
+    const layer=MIKO_LAYER_MAP[id];
+    const img=document.createElement("img");
+    img.src=`../assets/miko/${layer.file}`;
+    img.alt="";
+    img.style.zIndex=String(index+1);
+    img.dataset.asset=id;
+    container.appendChild(img);
+  });
+}
+
+function activeHeroVisual(){
+  return activeCharacterId==="miko" ? ui.battleHeroComposite : ui.peepSprite;
+}
+
+function renderHeroVisuals(){
+  const isMiko=activeCharacterId==="miko";
+  const name=heroDisplayName();
+  if(ui.heroNameHome) ui.heroNameHome.textContent=name;
+  if(ui.heroNameCombat) ui.heroNameCombat.textContent=name;
+  if(ui.exploreHeading) ui.exploreHeading.textContent=`Where should ${name} Explore?`;
+  if(ui.skillsKicker) ui.skillsKicker.textContent=`${name.toUpperCase()}'S SKILLS`;
+
+  ui.menuPeep?.classList.toggle("hidden",isMiko);
+  ui.menuHeroComposite?.classList.toggle("hidden",!isMiko);
+  ui.peepSprite?.classList.toggle("hidden",isMiko);
+  ui.battleHeroComposite?.classList.toggle("hidden",!isMiko);
+  ui.resultPeep?.classList.toggle("hidden",isMiko);
+  ui.resultHeroComposite?.classList.toggle("hidden",!isMiko);
+
+  if(isMiko){
+    renderMikoComposite(ui.menuHeroComposite);
+    renderMikoComposite(ui.battleHeroComposite);
+    renderMikoComposite(ui.resultHeroComposite);
+  }
+}
+
+function skillDisplayName(skill){
+  if(skill.id==="peep-apocalypse") return `${heroDisplayName()} Apocalypse!`;
+  return skill.name;
+}
+
+function skillDisplayDescription(skill){
+  if(skill.id==="magical-wish") return `Restore 42% of ${heroDisplayName()}'s max HP.`;
+  if(skill.id==="peep-apocalypse") return `${heroDisplayName()} has had enough.`;
+  return skill.description;
 }
 
 function renderMeta() {
   renderIconBackgroundPicker();
   ui.coinCount.textContent=hubSave.coins.toLocaleString();
-  ui.levelBadge.textContent=`Lv. ${questSave.peep.level}`;
-  const need=expNeeded(questSave.peep.level);
-  ui.xpText.textContent=questSave.peep.level>=MAX_LEVEL?"MAX LEVEL":`${Math.floor(questSave.peep.exp)} / ${need} EXP`;
-  ui.xpFill.style.width=questSave.peep.level>=MAX_LEVEL?"100%":`${Math.min(100,(questSave.peep.exp/need)*100)}%`;
-  const hLevel=happinessLevelFromTotal(hubSave.characterProgress?.peep?.happinessTotal);
+  const hero=activeHeroProgress(); renderHeroVisuals();
+  ui.levelBadge.textContent=`Lv. ${hero.level}`;
+  const need=expNeeded(hero.level);
+  ui.xpText.textContent=hero.level>=MAX_LEVEL?"MAX LEVEL":`${Math.floor(hero.exp)} / ${need} EXP`;
+  ui.xpFill.style.width=hero.level>=MAX_LEVEL?"100%":`${Math.min(100,(hero.exp/need)*100)}%`;
+  const hLevel=happinessLevelFromTotal(hubSave.characterProgress?.[activeCharacterId]?.happinessTotal);
   ui.happinessLevel.textContent=`Lv. ${hLevel}`; ui.happinessHearts.innerHTML="";
   const filled=Math.max(1,Math.ceil(hLevel/20));
   for(let i=1;i<=5;i++){const heart=document.createElement("span");heart.textContent="♥";heart.className=i<=filled?"heart-full":"heart-empty";ui.happinessHearts.appendChild(heart);}
@@ -1095,9 +1397,9 @@ function renderMenuSkills() {
   ui.menuSkills.innerHTML="";
   SKILLS.forEach(skill=>{
     const el=document.createElement("div");
-    const unlocked=questSave.peep.level>=skill.unlock;
+    const unlocked=activeHeroProgress().level>=skill.unlock;
     el.className=`skill-summary${unlocked?"":" locked"}`;
-    el.innerHTML=`<strong>${skill.name}</strong><span>${unlocked?skill.description:`Unlocks at Lv. ${skill.unlock}`}</span>`;
+    el.innerHTML=`<strong>${skillDisplayName(skill)}</strong><span>${unlocked?skillDisplayDescription(skill):`Unlocks at Lv. ${skill.unlock}`}</span>`;
     ui.menuSkills.appendChild(el);
   });
 }
@@ -1150,9 +1452,9 @@ function beginRun() {
   selectedRank=Math.min(Math.max(1,selectedRank),progress.unlockedRank);
   currentRun={
     area:selectedArea,rank:selectedRank,index:0,plan:makeEncounterPlan(selectedRank,selectedArea),
-    hp:stats.maxHp,maxHp:stats.maxHp,coinsEarned:0,expEarned:0,itemsEarned:[],levelsGained:[],bossWon:false
+    hp:stats.maxHp,maxHp:stats.maxHp,coinsEarned:0,expEarned:0,itemsEarned:[],iconBackgroundsEarned:[],levelBackgroundsEarned:[],levelsGained:[],bossWon:false
   };
-  progress.lastRank=selectedRank; questSave.lastArea=selectedArea; persistAll();
+  progress.lastRank=selectedRank; activeHeroProgress().lastArea=selectedArea; persistAll();
   showScreen("battle"); startEncounter();
 }
 
@@ -1182,7 +1484,7 @@ function startEncounter() {
     ? `${cfg.stageNames[currentRun.index].toUpperCase()} · ${currentRun.index+1} / 4`
     : `ENCOUNTER ${currentRun.index+1} / 4`;
   ui.rankBattleLabel.textContent=`${cfg.name} · Rank ${currentRun.rank}`;
-  ui.peepLevelCombat.textContent=`Lv. ${questSave.peep.level}`;
+  ui.peepLevelCombat.textContent=`Lv. ${activeHeroProgress().level}`;
   renderPeepHp();
   startPeepIdle();
 
@@ -1244,6 +1546,18 @@ function startEnemy(enemyId) {
   else setMessage(`${currentEnemy.name} appeared!`);
 }
 
+function setHeroPeepFrame(src){
+  if(activeCharacterId==="peep" && ui.peepSprite) ui.peepSprite.src=src;
+}
+
+function addHeroVisualClass(className){
+  activeHeroVisual()?.classList.add(className);
+}
+
+function removeHeroVisualClass(...classNames){
+  activeHeroVisual()?.classList.remove(...classNames);
+}
+
 function renderPeepHp() {
   const pct=Math.max(0,Math.min(100,(currentRun.hp/currentRun.maxHp)*100));
   ui.peepHpFill.style.width=`${pct}%`;
@@ -1260,6 +1574,10 @@ function renderEnemyHp() {
 function startPeepIdle() {
   clearInterval(peepIdleTimer);
   peepIdleIndex=0;
+  if(activeCharacterId==="miko"){
+    renderMikoComposite(ui.battleHeroComposite);
+    return;
+  }
   ui.peepSprite.src=PEepIdle[0];
   peepIdleTimer=setInterval(()=>{
     if(actionLocked) return;
@@ -1290,12 +1608,12 @@ function renderSkills() {
   ui.skillButtons.innerHTML="";
 
   SKILLS
-    .filter(skill => questSave.peep.level >= skill.unlock)
+    .filter(skill => activeHeroProgress().level >= skill.unlock)
     .forEach(skill=>{
       const button=document.createElement("button");
       button.type="button";
       let unavailable=false;
-      let detail=skill.description;
+      let detail=skillDisplayDescription(skill);
 
       if(skill.id==="magical-wish" && skillState.magicalWishCooldown>0) {
         unavailable=true;
@@ -1310,7 +1628,7 @@ function renderSkills() {
 
       button.className=`pixel-button skill-button ${skill.type==="heal"?"heal":skill.id==="duck-throw"?"duck":skill.id==="peep-apocalypse"?"ultimate":""}`;
       button.disabled=unavailable || actionLocked;
-      button.innerHTML=`<strong>${skill.name}</strong><span${detail.startsWith("Cooldown")?' class="cooldown"':""}>${detail}</span>`;
+      button.innerHTML=`<strong>${skillDisplayName(skill)}</strong><span${detail.startsWith("Cooldown")?' class="cooldown"':""}>${detail}</span>`;
 
       if(!unavailable) {
         button.addEventListener("click",()=>{
@@ -1415,7 +1733,7 @@ function renderBattleItems() {
 async function useBattleHeart(itemId) {
   if (actionLocked || !currentEnemy || !currentRun) return;
   if (currentRun.hp >= currentRun.maxHp) {
-    setMessage("Peep is already at full health!");
+    setMessage(`${heroDisplayName()} is already at full health!`);
     renderBattleItems();
     return;
   }
@@ -1447,7 +1765,7 @@ async function useBattleHeart(itemId) {
   const healed = Math.max(0, currentRun.hp - before);
   renderPeepHp();
   showFloat(`+${healed}`, "heal", "peep");
-  setMessage(`${itemName}! Peep restored ${healed} HP.`);
+  setMessage(`${itemName}! ${heroDisplayName()} restored ${healed} HP.`);
   await sleep(600);
 
   // Healing items are intentionally a combat turn so stocking up helps
@@ -1468,21 +1786,21 @@ async function useSkill(skill) {
   renderCommandButtons();
 
   if(skill.type==="heal") {
-    ui.peepSprite.src="assets/characters/peep/base/attack.png";
+    setHeroPeepFrame("assets/characters/peep/base/attack.png");
     const amount=Math.max(1,Math.round(currentRun.maxHp*skill.healPercent));
     const healed=Math.min(amount,currentRun.maxHp-currentRun.hp);
     currentRun.hp+=healed;
     skillState.magicalWishCooldown=skill.cooldown;
-    setMessage(`Magical Wish! Peep restored ${healed} HP.`);
+    setMessage(`Magical Wish! ${heroDisplayName()} restored ${healed} HP.`);
     showFloat(`+${healed}`,"heal","peep");
     renderPeepHp();
     await sleep(650);
   } else {
-    ui.peepSprite.src="assets/characters/peep/base/attack.png";
-    ui.peepSprite.classList.add("attack-pop");
+    setHeroPeepFrame("assets/characters/peep/base/attack.png");
+    addHeroVisualClass("attack-pop");
 
     let multiplier=skill.multiplier||1;
-    let flavor=skill.name;
+    let flavor=skillDisplayName(skill);
 
     if(skill.id==="duck-throw") {
       const duck=pickThrowDuck();
@@ -1544,7 +1862,7 @@ async function performEnemyAttack(multiplier=1,label="",lifeDrainHeal=0){
   if(crit) dmg=Math.round(dmg*1.5);
   if(guardActive){dmg=Math.max(1,Math.ceil(dmg*.5));guardActive=false;}
   currentRun.hp=Math.max(0,currentRun.hp-dmg);
-  ui.peepSprite.src="assets/characters/peep/base/hurt.png";ui.peepSprite.classList.add("hurt-pop");
+  setHeroPeepFrame("assets/characters/peep/base/hurt.png");addHeroVisualClass("hurt-pop");
   showFloat(`-${dmg}`,"damage","peep");renderPeepHp();
   if(lifeDrainHeal>0 && currentEnemy.hpNow>0){
     const before=currentEnemy.hpNow;
@@ -1552,10 +1870,10 @@ async function performEnemyAttack(multiplier=1,label="",lifeDrainHeal=0){
     const healed=currentEnemy.hpNow-before;
     if(healed>0){showFloat(`+${healed}`,"heal","enemy");renderEnemyHp();}
   }
-  await sleep(420);ui.peepSprite.classList.remove("hurt-pop");ui.enemySprite.classList.remove("attack-pop");
-  ui.peepSprite.src=PEepIdle[peepIdleIndex%PEepIdle.length];
+  await sleep(420);removeHeroVisualClass("hurt-pop");ui.enemySprite.classList.remove("attack-pop");
+  setHeroPeepFrame(PEepIdle[peepIdleIndex%PEepIdle.length]);
   if(currentRun.hp<=0) endRun(false);
-  else if(!label) setMessage(crit?`${currentEnemy.name} landed a critical hit!`:"Peep is ready!");
+  else if(!label) setMessage(crit?`${currentEnemy.name} landed a critical hit!`:`${heroDisplayName()} is ready!`);
   return dmg;
 }
 
@@ -1571,7 +1889,7 @@ async function enemyTurn() {
     const before=currentEnemy.hpNow; currentEnemy.hpNow=Math.min(currentEnemy.maxHp,currentEnemy.hpNow+amount); currentEnemy.healsUsed++;
     const gained=currentEnemy.hpNow-before; setMessage(`${currentEnemy.name} used ${currentEnemy.healMoveName||"Recovery!"}`);
     ui.enemySprite.classList.add("attack-pop");showFloat(`+${gained}`,"heal","enemy");renderEnemyHp();await sleep(650);
-    ui.enemySprite.classList.remove("attack-pop");setMessage("Peep is ready!");return;
+    ui.enemySprite.classList.remove("attack-pop");setMessage(`${heroDisplayName()} is ready!`);return;
   }
 
   // Pink Sea Turtle: protects itself from the next two player attacks.
@@ -1595,21 +1913,21 @@ async function enemyTurn() {
      currentEnemy.lifeDrainsUsed<currentEnemy.maxLifeDrains && Math.random()<currentEnemy.lifeDrainChance){
     currentEnemy.lifeDrainsUsed++;
     await performEnemyAttack(currentEnemy.lifeDrainDamage,`${currentEnemy.name} used Life Drain!`,currentEnemy.lifeDrainHeal);
-    if(currentRun.hp>0) setMessage("Life Drain stole some of Peep's HP!");
+    if(currentRun.hp>0) setMessage(`Life Drain stole some of ${heroDisplayName()}'s HP!`);
     return;
   }
 
   const boosted=Boolean(currentEnemy.zoomiesBoost);
   if(boosted) currentEnemy.zoomiesBoost=false;
   await performEnemyAttack(boosted?1.25:1,boosted?`${currentEnemy.name}'s Zoomies-powered attack!`:"");
-  if(currentRun.hp>0) setMessage("Peep is ready!");
+  if(currentRun.hp>0) setMessage(`${heroDisplayName()} is ready!`);
 }
 
 async function guardTurn() {
   if(actionLocked || !currentEnemy) return;
   actionLocked=true;
   guardActive=true;
-  setMessage("Peep guards! Incoming damage is reduced by 50%.");
+  setMessage(`${heroDisplayName()} guards! Incoming damage is reduced by 50%.`);
   await sleep(350);
   decrementCooldowns("guard");
   await enemyTurn();
@@ -1681,6 +1999,7 @@ async function openPendingChest() {
   const textParts=[];
   if(rewards.coins) textParts.push(`+${rewards.coins} Pink Coins`);
   if(rewards.exp) textParts.push(`+${rewards.exp} EXP`);
+  if(rewards.unlockedBackgrounds?.length) textParts.push(rewards.unlockedBackgrounds.map(bg=>`${bg.label} Icon`).join(", "));
   if(rewards.items.length) textParts.push(rewards.items.map(x=>`${x.name} ×${x.qty}`).join(", "));
 
   ui.chestCaption.textContent=textParts.join(" · ");
@@ -1742,7 +2061,8 @@ function generateRewards(chest) {
     }
   }
 
-  return {coins,exp,items};
+  const iconBackground=pickChestIconBackground(chest);
+  return {coins,exp,items,iconBackground};
 }
 
 function weightedItem() {
@@ -1762,10 +2082,20 @@ function applyRewards(rewards) {
   currentRun.coinsEarned+=rewards.coins;
   questSave.totalCoinsEarned=(Number(questSave.totalCoinsEarned)||0)+rewards.coins;
 
+  const chestBackground=rewards.iconBackground ? unlockIconBackground(rewards.iconBackground.id) : null;
+
   const levelResult=grantExp(rewards.exp);
+  const levelBackgrounds=unlockLevelIconBackgrounds(levelResult);
+  rewards.unlockedBackgrounds=[...(chestBackground?[chestBackground]:[]),...levelBackgrounds];
+
   currentRun.expEarned+=rewards.exp;
   questSave.totalExpEarned=(Number(questSave.totalExpEarned)||0)+rewards.exp;
   if(levelResult.length) currentRun.levelsGained.push(...levelResult);
+  if(chestBackground) currentRun.iconBackgroundsEarned.push(chestBackground);
+  if(levelBackgrounds.length){
+    currentRun.iconBackgroundsEarned.push(...levelBackgrounds);
+    currentRun.levelBackgroundsEarned.push(...levelBackgrounds);
+  }
 
   if(!hubSave.inventory || typeof hubSave.inventory!=="object") hubSave.inventory={};
   rewards.items.forEach(item=>{
@@ -1783,16 +2113,17 @@ function applyRewards(rewards) {
 
 function grantExp(amount) {
   const gained=[];
-  if(questSave.peep.level>=MAX_LEVEL) return gained;
-  questSave.peep.exp+=Math.max(0,Number(amount)||0);
-  while(questSave.peep.level<MAX_LEVEL) {
-    const need=expNeeded(questSave.peep.level);
-    if(questSave.peep.exp<need) break;
-    questSave.peep.exp-=need;
-    questSave.peep.level++;
-    gained.push(questSave.peep.level);
-    if(questSave.peep.level>=MAX_LEVEL) {
-      questSave.peep.exp=0;
+  const hero=activeHeroProgress();
+  if(hero.level>=MAX_LEVEL) return gained;
+  hero.exp+=Math.max(0,Number(amount)||0);
+  while(hero.level<MAX_LEVEL) {
+    const need=expNeeded(hero.level);
+    if(hero.exp<need) break;
+    hero.exp-=need;
+    hero.level++;
+    gained.push(hero.level);
+    if(hero.level>=MAX_LEVEL) {
+      hero.exp=0;
       break;
     }
   }
@@ -1814,8 +2145,8 @@ function endRun(won) {
   clearAnimations();
   if(won){
     currentRun.bossWon=true; questSave.completedRuns=(Number(questSave.completedRuns)||0)+1; questSave.bossWins=(Number(questSave.bossWins)||0)+1;
-    if(!hubSave.characterProgress.peep) hubSave.characterProgress.peep={happinessTotal:0};
-    hubSave.characterProgress.peep.happinessTotal=Math.max(0,Number(hubSave.characterProgress.peep.happinessTotal)||0)+2;
+    if(!hubSave.characterProgress[activeCharacterId]) hubSave.characterProgress[activeCharacterId]={happinessTotal:0};
+    hubSave.characterProgress[activeCharacterId].happinessTotal=Math.max(0,Number(hubSave.characterProgress[activeCharacterId].happinessTotal)||0)+2;
     const progress=areaProgress(currentRun.area); const maxRank=getAreaConfig(currentRun.area).maxRank;
     if(currentRun.rank===progress.unlockedRank && progress.unlockedRank<maxRank) progress.unlockedRank++;
   }
@@ -1825,7 +2156,7 @@ function endRun(won) {
 function renderResult(won) {
   const areaId=currentRun?.area||selectedArea; const cfg=getAreaConfig(areaId); const progress=areaProgress(areaId);
   ui.resultKicker.textContent=won?"RUN COMPLETE!":"RUN ENDED";
-  ui.resultTitle.textContent=won?cfg.resultTitle:"Peep needs a little rest.";
+  ui.resultTitle.textContent=won?cfg.resultTitle:`${heroDisplayName()} needs a little rest.`;
   const finishedRank=Math.max(1,Number(currentRun?.rank||selectedRank)||1);
   const nextRank=Math.min(cfg.maxRank,finishedRank+1);
   const canRunNext=Boolean(won)&&nextRank>finishedRank&&nextRank<=progress.unlockedRank;
@@ -1834,10 +2165,23 @@ function renderResult(won) {
   ui.runNextRank.dataset.rank=canRunNext?String(nextRank):"";ui.runNextRank.dataset.area=areaId;
   ui.resultRank.textContent=`${cfg.name} ${finishedRank}`;ui.resultCoins.textContent=currentRun?.coinsEarned||0;ui.resultExp.textContent=currentRun?.expEarned||0;ui.resultItems.innerHTML="";
   (currentRun?.itemsEarned||[]).forEach(item=>{const el=document.createElement("div");el.className="result-item";el.innerHTML=`<img src="${item.image}" alt=""><span>${item.name} ×${item.qty}</span>`;ui.resultItems.appendChild(el);});
-  if(!(currentRun?.itemsEarned||[]).length){const el=document.createElement("div");el.className="result-item";el.textContent="No item drops this time — try another run!";ui.resultItems.appendChild(el);}
+  (currentRun?.iconBackgroundsEarned||[]).forEach(bg=>{
+    const el=document.createElement("div");el.className="result-item";
+    const swatch=document.createElement("span");swatch.className="result-icon-bg-swatch";applyIconBackgroundStyle(swatch,bg);
+    const label=document.createElement("span");label.textContent=`${bg.label} Icon Background`;
+    el.append(swatch,label);ui.resultItems.appendChild(el);
+  });
+  if(!(currentRun?.itemsEarned||[]).length && !(currentRun?.iconBackgroundsEarned||[]).length){const el=document.createElement("div");el.className="result-item";el.textContent="No item drops this time — try another run!";ui.resultItems.appendChild(el);}
   const levels=[...new Set(currentRun?.levelsGained||[])];
-  if(levels.length){ui.levelUpNotice.classList.remove("hidden");const unlocked=SKILLS.filter(s=>levels.includes(s.unlock)).map(s=>s.name);ui.levelUpNotice.textContent=`Level up! Peep reached Lv. ${questSave.peep.level}.${unlocked.length?` New skill unlocked: ${unlocked.join(", ")}`:""}`;}
-  else ui.levelUpNotice.classList.add("hidden");
+  if(levels.length){
+    ui.levelUpNotice.classList.remove("hidden");
+    const unlocked=SKILLS.filter(s=>levels.includes(s.unlock)).map(skillDisplayName);
+    const levelBgs=[...new Map((currentRun?.levelBackgroundsEarned||[]).map(bg=>[bg.id,bg])).values()];
+    const extras=[];
+    if(unlocked.length) extras.push(`New skill unlocked: ${unlocked.join(", ")}`);
+    if(levelBgs.length) extras.push(`New Icon Background: ${levelBgs.map(bg=>bg.label).join(", ")}`);
+    ui.levelUpNotice.textContent=`Level up! ${heroDisplayName()} reached Lv. ${activeHeroProgress().level}.${extras.length?` ${extras.join(" · ")}`:""}`;
+  } else ui.levelUpNotice.classList.add("hidden");
 }
 
 function pickThrowDuck() {
@@ -1884,7 +2228,7 @@ function setMessage(text) { ui.battleMessage.textContent=text; }
 
 function returnHome() {
   clearAnimations(); currentRun=null;
-  selectedArea=AREA_CONFIG[questSave.lastArea]?questSave.lastArea:"meadow";
+  selectedArea=AREA_CONFIG[activeHeroProgress().lastArea]?activeHeroProgress().lastArea:"meadow";
   selectedRank=areaProgress(selectedArea).lastRank||1;
   showScreen("home"); renderMeta();
 }
@@ -1901,7 +2245,7 @@ document.querySelector("#rankDown").addEventListener("click",()=>{selectedRank=M
 document.querySelector("#rankUp").addEventListener("click",()=>{selectedRank=Math.min(areaProgress(selectedArea).unlockedRank,selectedRank+1);renderMeta();});
 ui.areaButtons.forEach(btn=>btn.addEventListener("click",()=>{
   const areaId=btn.dataset.area;if(!AREA_CONFIG[areaId])return;
-  selectedArea=areaId;questSave.lastArea=areaId;selectedRank=areaProgress(areaId).lastRank||1;persistAll();renderMeta();
+  selectedArea=areaId;activeHeroProgress().lastArea=areaId;selectedRank=areaProgress(areaId).lastRank||1;persistAll();renderMeta();
 }));
 document.querySelector("#startRun").addEventListener("click",beginRun);
 document.querySelector("#guardButton").addEventListener("click",guardTurn);
@@ -1919,7 +2263,13 @@ document.querySelector("#backToQuest").addEventListener("click",returnHome);
 ui.cancelEscapeConfirm.addEventListener("click",closeEscapeConfirm);
 ui.confirmEscapeButton.addEventListener("click",confirmEscapeRun);
 
-ui.iconBackgroundSelect?.addEventListener("change",event=>setIconBackground(event.target.value));
+ui.iconBackgroundButton?.addEventListener("click",()=>{
+  const opening=ui.iconBackgroundPicker.classList.contains("hidden");
+  ui.iconBackgroundPicker.classList.toggle("hidden",!opening);
+  ui.iconBackgroundButton.setAttribute("aria-expanded",String(opening));
+});
+syncPastLevelIconBackgrounds();
+persistAll();
 renderMeta();
 renderMenuSkills();
 showScreen("home");
@@ -1929,6 +2279,7 @@ const menuPeep=document.querySelector("#menuPeep");
 let menuFrame=0;
 setInterval(()=>{
   if(ui.home.classList.contains("hidden")) return;
+  if(activeCharacterId!=="peep") return;
   menuFrame=(menuFrame+1)%PEepIdle.length;
   menuPeep.src=PEepIdle[menuFrame];
 },560);

@@ -5566,3 +5566,167 @@ button { color: inherit; }
   .task-card-actions{grid-template-columns:minmax(0,1fr) max-content max-content}.task-today-button{min-width:94px;font-size:.58rem;padding-left:7px;padding-right:7px}
   .game-card-copy > span:last-child{font-size:.59rem}
 }
+
+
+/* V24.56 — Strawberry Cat Slime is the Duck Quest Games-card mascot. */
+.duck-quest-card-strawberry{
+  width:82px;
+  height:82px;
+  transform:translateY(-4px);
+}
+@media(max-width:430px){
+  .duck-quest-card-strawberry{width:72px;height:72px;transform:translateY(-3px)}
+}
+
+
+/* =========================================================
+   V24.57 — OC PROFILE ICON BACKGROUNDS + MIKO POLISH
+   ========================================================= */
+
+/* Miko's selfie crop sits just a hair farther right than Peep's. */
+.profile-avatar[data-character-id="miko"] > img,
+.profile-detail-avatar[data-character-id="miko"] > img {
+  left: -29%;
+}
+.profile-avatar[data-character-id="miko"] .profile-head-duck-layer,
+.profile-detail-avatar[data-character-id="miko"] .profile-head-duck-layer {
+  left: -29%;
+}
+
+.profile-icon-color-card {
+  position: relative;
+  margin-top: 9px;
+  padding: 10px 11px;
+  border: 2px solid rgba(123, 93, 106, .10);
+  border-radius: 17px;
+  background: rgba(255,255,255,.78);
+}
+
+.profile-icon-color-label {
+  display: block;
+  margin-bottom: 7px;
+  color: #a18791;
+  font-size: .62rem;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.profile-icon-picker-wrap {
+  position: relative;
+}
+
+.profile-icon-picker-button {
+  width: 100%;
+  min-height: 42px;
+  padding: 5px 10px 5px 7px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 2px solid rgba(121,91,105,.14);
+  border-radius: 999px;
+  background: #fffafd;
+  color: #775964;
+  font: inherit;
+  font-size: .7rem;
+  font-weight: 850;
+  text-align: left;
+}
+
+.profile-icon-current-swatch,
+.profile-icon-dot {
+  display: block;
+  flex: 0 0 auto;
+  border: 2px solid rgba(81,50,60,.20);
+  border-radius: 50%;
+  box-shadow: inset 0 1px 2px rgba(255,255,255,.55);
+}
+
+.profile-icon-current-swatch {
+  width: 29px;
+  height: 29px;
+  background: #fffaf3;
+}
+
+.profile-icon-picker-button #profileIconPickerText {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-icon-picker-arrow {
+  color: #9b8490;
+  font-size: 1rem;
+}
+
+.profile-icon-picker {
+  position: absolute;
+  z-index: 150;
+  left: 0;
+  top: calc(100% + 7px);
+  width: min(245px, calc(100vw - 72px));
+  max-height: 190px;
+  overflow-y: auto;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(5, 38px);
+  gap: 8px;
+  border: 2px solid rgba(121,91,105,.18);
+  border-radius: 19px;
+  background: rgba(255,250,253,.98);
+  box-shadow: 0 12px 28px rgba(66,43,54,.18);
+}
+
+.profile-icon-choice {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  padding: 2px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.profile-icon-choice[aria-current="true"] {
+  outline: 3px solid rgba(215,125,162,.66);
+  outline-offset: 1px;
+}
+
+.profile-icon-dot {
+  width: 34px;
+  height: 34px;
+}
+
+.profile-icon-choice.locked .profile-icon-dot {
+  filter: saturate(.45);
+  opacity: .42;
+}
+
+.profile-icon-lock {
+  position: absolute;
+  right: -4px;
+  bottom: -2px;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(83,60,71,.90);
+  color: #fff;
+  font-size: .52rem;
+}
+
+@media (max-width: 430px) {
+  .profile-icon-picker {
+    width: min(222px, calc(100vw - 68px));
+    grid-template-columns: repeat(5, 34px);
+    gap: 7px;
+  }
+  .profile-icon-choice {
+    width: 34px;
+    height: 34px;
+  }
+  .profile-icon-dot {
+    width: 30px;
+    height: 30px;
+  }
+}
