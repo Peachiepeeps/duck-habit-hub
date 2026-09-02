@@ -35,6 +35,32 @@ function getAreaConfig(areaId){
   return AREA_CONFIG[areaId] || AREA_CONFIG.meadow;
 }
 
+const ICON_BACKGROUND_COLORS = Object.freeze([
+  {id:"white",label:"White",value:"#fffaf3",paint:"white-paint"},
+  {id:"red",label:"Red",value:"#d95a62",paint:"red-paint"},
+  {id:"dark-red",label:"Dark Red",value:"#8f3d46",paint:"dark-red-paint"},
+  {id:"magenta",label:"Magenta",value:"#d62d79",paint:"magenta-paint"},
+  {id:"orange",label:"Orange",value:"#e99655",paint:"orange-paint"},
+  {id:"peach",label:"Peach",value:"#f2b394",paint:"peach-paint"},
+  {id:"gold",label:"Gold",value:"#c8a24a",paint:"gold-paint"},
+  {id:"silver",label:"Silver",value:"#b9bec8",paint:"silver-paint"},
+  {id:"bronze",label:"Bronze",value:"#a77650",paint:"bronze-paint"},
+  {id:"green",label:"Green",value:"#75a56e",paint:"green-paint"},
+  {id:"mint",label:"Mint",value:"#a7d8bd",paint:"mint-paint"},
+  {id:"aqua",label:"Aqua",value:"#84c9cf",paint:"aqua-paint"},
+  {id:"sky-blue",label:"Sky Blue",value:"#9bc9e9",paint:"sky-blue-paint"},
+  {id:"blue",label:"Blue",value:"#648fc7",paint:"blue-paint"},
+  {id:"periwinkle",label:"Periwinkle",value:"#9fa8dc",paint:"periwinkle-paint"},
+  {id:"purple",label:"Purple",value:"#9874b7",paint:"purple-paint"},
+  {id:"violet",label:"Violet",value:"#c08ecf",paint:"violet-paint"},
+  {id:"pink",label:"Pink",value:"#e9a0bb",paint:"pink-paint"},
+  {id:"grey",label:"Grey",value:"#9b9ca2",paint:"grey-paint"},
+  {id:"black",label:"Black",value:"#333137",paint:"black-paint"},
+  {id:"rainbow",label:"Rainbow",value:"linear-gradient(135deg,#e87083,#e9b469,#9dc985,#80b8db,#a98bd1)",paint:"rainbow-paint"}
+]);
+
+function iconBackgroundById(id){ return ICON_BACKGROUND_COLORS.find(color=>color.id===id) || ICON_BACKGROUND_COLORS[0]; }
+
 
 const DUCK_LIBRARY = [{"id": "standard-duck", "file": "Standard-duck.PNG", "name": "Standard Duck"}, {"id": "pink-duck", "file": "Pink-duck.PNG", "name": "Pink Duck"}, {"id": "rainbow-duck", "file": "Rainbow-duck.PNG", "name": "Rainbow Duck"}];
 
@@ -45,16 +71,16 @@ const SKILLS = [
     unlock: 1,
     type: "damage",
     multiplier: 1.0,
-    description: "A dependable little heart blast."
+    description: "A dependable little heart attack!"
   },
   {
     id: "magical-wish",
     name: "Magical Wish!",
     unlock: 10,
     type: "heal",
-    healPercent: 0.32,
+    healPercent: 0.42,
     cooldown: 3,
-    description: "Restore 32% of Peep's max HP."
+    description: "Restore 42% of Peep's max HP."
   },
   {
     id: "duck-throw",
@@ -195,7 +221,7 @@ function weightedOceanVariant(rank, ids) {
 const SEAGULL_VARIANTS=Object.freeze({
   grey:{id:"grey",name:"Cool Seagull",hp:1,atk:1,exp:1,coin:1,idle:["assets/enemies/cool-seagull/base/idle-1.png","assets/enemies/cool-seagull/base/idle-2.png"],hurt:"assets/enemies/cool-seagull/base/hurt.png"},
   pink:{id:"pink",name:"Pink Cool Seagull",hp:1.2,atk:1.1,exp:1.15,coin:1.15,idle:["assets/enemies/cool-seagull/base/Pink-idle-1.png","assets/enemies/cool-seagull/base/Pink-idle-2.png"],hurt:"assets/enemies/cool-seagull/base/Pink-hurt.png"},
-  blue:{id:"blue",name:"Blue Cool Seagull",hp:1.2,atk:1.1,exp:1.2,coin:1.2,healPercent:.10,maxHeals:2,healChance:.32,healMoveName:"Fish Snack!",idle:["assets/enemies/cool-seagull/base/Blue-idle-1.png","assets/enemies/cool-seagull/base/Blue-idle-2.png"],hurt:"assets/enemies/cool-seagull/base/Blue-hurt.png"},
+  blue:{id:"blue",name:"Blue Cool Seagull",hp:1.2,atk:1.1,exp:1.2,coin:1.2,healPercent:.18,maxHeals:2,healChance:.32,healMoveName:"Fish Snack!",idle:["assets/enemies/cool-seagull/base/Blue-idle-1.png","assets/enemies/cool-seagull/base/Blue-idle-2.png"],hurt:"assets/enemies/cool-seagull/base/Blue-hurt.png"},
   yellow:{id:"yellow",name:"Yellow Cool Seagull",hp:1.4,atk:1.2,exp:1.35,coin:1.35,idle:["assets/enemies/cool-seagull/base/Yellow-idle-1.png","assets/enemies/cool-seagull/base/Yellow-idle-2.png"],hurt:"assets/enemies/cool-seagull/base/Yellow-hurt.png"},
   black:{id:"black",name:"Black Cool Seagull",hp:1.7,atk:1.3,exp:1.5,coin:1.6,elite:true,idle:["assets/enemies/cool-seagull/base/Black-idle-1.png","assets/enemies/cool-seagull/base/Black-idle-2.png"],hurt:"assets/enemies/cool-seagull/base/Black-hurt.png"}
 });
@@ -243,7 +269,7 @@ function applyTurtleVariant(t,r){return applyOceanVariant(t,TURTLE_VARIANTS,["gr
 function applyCatfishVariant(t,r){return applyOceanVariant(t,CATFISH_VARIANTS,["grey","brown","orange","navy","black"],r);}
 function applySquidVariant(t,r){
   return applyOceanVariant(t,SQUID_VARIANTS,["green","purple","coral","blue","pink"],r,{
-    lifeDrain:true,lifeDrainChance:.30,maxLifeDrains:2,lifeDrainDamage:.75,lifeDrainHeal:.50
+    lifeDrain:true,lifeDrainChance:.30,maxLifeDrains:2,lifeDrainDamage:.75,lifeDrainHeal:.65
   });
 }
 
@@ -360,7 +386,7 @@ const FLOWER_VARIANTS = Object.freeze({
     attackMultiplier: 1.10,
     expMultiplier: 1.20,
     coinMultiplier: 1.20,
-    healPercent: 0.10,
+    healPercent: 0.18,
     maxHeals: 2,
     healChance: 0.32,
     healMoveName: "Sunny Day!",
@@ -489,7 +515,7 @@ const CAT_SLIME_VARIANTS = Object.freeze({
     attackMultiplier: 1.10,
     expMultiplier: 1.20,
     coinMultiplier: 1.20,
-    healPercent: 0.10,
+    healPercent: 0.18,
     maxHeals: 2,
     healChance: 0.32,
     healMoveName: "Super Squish!",
@@ -620,7 +646,7 @@ const BEE_VARIANTS = Object.freeze({
     attackMultiplier: 1.10,
     expMultiplier: 1.20,
     coinMultiplier: 1.20,
-    healPercent: 0.10,
+    healPercent: 0.18,
     maxHeals: 2,
     healChance: 0.32,
     healMoveName: "Honey Snack!",
@@ -712,7 +738,7 @@ function applyBeeVariant(template, rank) {
 const MUSHROOM_CAT_VARIANTS = Object.freeze({
   red:{id:"red",name:"Red Mushroom Cat",hpMultiplier:1,attackMultiplier:1,expMultiplier:1,coinMultiplier:1,idle:["assets/bosses/mushroom-cat/base/idle-1.png","assets/bosses/mushroom-cat/base/idle-2.png"],hurt:"assets/bosses/mushroom-cat/base/hurt.png"},
   purple:{id:"purple",name:"Purple Mushroom Cat",hpMultiplier:1.20,attackMultiplier:1.10,expMultiplier:1.15,coinMultiplier:1.15,idle:["assets/bosses/mushroom-cat/base/Purple-idle-1.png","assets/bosses/mushroom-cat/base/Purple-idle-2.png"],hurt:"assets/bosses/mushroom-cat/base/Purple-hurt.png"},
-  green:{id:"green",name:"Green Mushroom Cat",hpMultiplier:1.20,attackMultiplier:1.10,expMultiplier:1.20,coinMultiplier:1.20,healPercent:.10,maxHeals:2,healChance:.32,healMoveName:"Forest Snack!",idle:["assets/bosses/mushroom-cat/base/Green-idle-1.png","assets/bosses/mushroom-cat/base/Green-idle-2.png"],hurt:"assets/bosses/mushroom-cat/base/Green-hurt.png"},
+  green:{id:"green",name:"Green Mushroom Cat",hpMultiplier:1.20,attackMultiplier:1.10,expMultiplier:1.20,coinMultiplier:1.20,healPercent:.18,maxHeals:2,healChance:.32,healMoveName:"Forest Snack!",idle:["assets/bosses/mushroom-cat/base/Green-idle-1.png","assets/bosses/mushroom-cat/base/Green-idle-2.png"],hurt:"assets/bosses/mushroom-cat/base/Green-hurt.png"},
   grey:{id:"grey",name:"Grey Mushroom Cat",hpMultiplier:1.40,attackMultiplier:1.20,expMultiplier:1.35,coinMultiplier:1.35,idle:["assets/bosses/mushroom-cat/base/Grey-idle-1.png","assets/bosses/mushroom-cat/base/Grey-idle-2.png"],hurt:"assets/bosses/mushroom-cat/base/Grey-hurt.png"},
   gold:{id:"gold",name:"Gold Mushroom Cat",hpMultiplier:1.70,attackMultiplier:1.30,expMultiplier:1.75,coinMultiplier:1.80,idle:["assets/bosses/mushroom-cat/base/Gold-idle-1.png","assets/bosses/mushroom-cat/base/Gold-idle-2.png"],hurt:"assets/bosses/mushroom-cat/base/Gold-hurt.png"}
 });
@@ -817,7 +843,9 @@ const ui = {
   resultCoins: document.querySelector("#resultCoins"),
   resultExp: document.querySelector("#resultExp"),
   resultItems: document.querySelector("#resultItems"),
-  levelUpNotice: document.querySelector("#levelUpNotice")
+  levelUpNotice: document.querySelector("#levelUpNotice"),
+  heroSpriteWrap: document.querySelector("#heroSpriteWrap"),
+  iconBackgroundSelect: document.querySelector("#iconBackgroundSelect")
 };
 
 let hubSave = loadHubSave();
@@ -838,6 +866,8 @@ let skillState = {};
 function defaultQuestSave() {
   return {
     peep:{level:1,exp:0},
+    iconBackground:"white",
+    iconBackgroundsUnlocked:["white"],
     lastArea:"meadow",
     areas:{
       meadow:{unlockedRank:1,lastRank:1},
@@ -859,6 +889,9 @@ function normalizeQuestSave(raw) {
   return {
     ...d,...q,
     peep:{level:clampInt(q.peep?.level,1,MAX_LEVEL,1),exp:Math.max(0,Number(q.peep?.exp)||0)},
+    iconBackground:ICON_BACKGROUND_COLORS.some(color=>color.id===q.iconBackground)?q.iconBackground:"white",
+    iconBackgroundsUnlocked:[...new Set(["white",...(Array.isArray(q.iconBackgroundsUnlocked)?q.iconBackgroundsUnlocked:[])])]
+      .filter(id=>ICON_BACKGROUND_COLORS.some(color=>color.id===id)),
     lastArea:AREA_CONFIG[q.lastArea]?q.lastArea:"meadow",
     areas:{
       meadow:{unlockedRank:oldMeadowUnlocked,lastRank:Math.min(oldMeadowLast,oldMeadowUnlocked)},
@@ -974,7 +1007,42 @@ function happinessLevelFromTotal(total) {
   return level;
 }
 
+function syncIconBackgroundUnlocksFromPaints(){
+  const unlocked=new Set(Array.isArray(questSave.iconBackgroundsUnlocked)?questSave.iconBackgroundsUnlocked:["white"]);
+  unlocked.add("white");
+  for(const color of ICON_BACKGROUND_COLORS){
+    if(color.paint && Number(hubSave.inventory?.[color.paint]||0)>0) unlocked.add(color.id);
+  }
+  questSave.iconBackgroundsUnlocked=[...unlocked].filter(id=>ICON_BACKGROUND_COLORS.some(color=>color.id===id));
+  if(!questSave.iconBackgroundsUnlocked.includes(questSave.iconBackground)) questSave.iconBackground="white";
+}
+
+function renderIconBackgroundPicker(){
+  syncIconBackgroundUnlocksFromPaints();
+  if(!ui.iconBackgroundSelect || !ui.heroSpriteWrap) return;
+  ui.iconBackgroundSelect.innerHTML="";
+  for(const color of ICON_BACKGROUND_COLORS){
+    const unlocked=questSave.iconBackgroundsUnlocked.includes(color.id);
+    const option=document.createElement("option");
+    option.value=color.id;
+    option.textContent=unlocked?color.label:`🔒 ${color.label}`;
+    option.disabled=!unlocked;
+    if(color.id===questSave.iconBackground) option.selected=true;
+    ui.iconBackgroundSelect.appendChild(option);
+  }
+  const selected=iconBackgroundById(questSave.iconBackground);
+  ui.heroSpriteWrap.style.background=selected.value;
+}
+
+function setIconBackground(colorId){
+  if(!questSave.iconBackgroundsUnlocked.includes(colorId)) return;
+  questSave.iconBackground=colorId;
+  persistAll();
+  renderIconBackgroundPicker();
+}
+
 function renderMeta() {
+  renderIconBackgroundPicker();
   ui.coinCount.textContent=hubSave.coins.toLocaleString();
   ui.levelBadge.textContent=`Lv. ${questSave.peep.level}`;
   const need=expNeeded(questSave.peep.level);
@@ -1689,6 +1757,8 @@ function weightedItem() {
 
 function applyRewards(rewards) {
   hubSave.coins=Math.max(0,Number(hubSave.coins)||0)+rewards.coins;
+  if(!hubSave.stats || typeof hubSave.stats!=="object") hubSave.stats={};
+  hubSave.stats.coinsEarnedTotal=Math.max(0,Number(hubSave.stats.coinsEarnedTotal)||0)+Math.max(0,Number(rewards.coins)||0);
   currentRun.coinsEarned+=rewards.coins;
   questSave.totalCoinsEarned=(Number(questSave.totalCoinsEarned)||0)+rewards.coins;
 
@@ -1849,6 +1919,7 @@ document.querySelector("#backToQuest").addEventListener("click",returnHome);
 ui.cancelEscapeConfirm.addEventListener("click",closeEscapeConfirm);
 ui.confirmEscapeButton.addEventListener("click",confirmEscapeRun);
 
+ui.iconBackgroundSelect?.addEventListener("change",event=>setIconBackground(event.target.value));
 renderMeta();
 renderMenuSkills();
 showScreen("home");

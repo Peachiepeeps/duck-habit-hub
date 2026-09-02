@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="duck-habit-build" content="24.53" />
+  <meta name="duck-habit-build" content="24.55" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f7dbe5" />
   <title>Duck Habit Hub</title>
   <!-- v24.41 performance update -->
-  <link rel="stylesheet" href="style-v24-53.css" />
+  <link rel="stylesheet" href="style-v24-55.css" />
 
   <link rel="manifest" href="manifest.webmanifest?v=24-38-icon-v4">
   <link rel="apple-touch-icon" href="apple-touch-icon-v4.png">
@@ -50,16 +50,16 @@
         <span>Book</span>
       </button>
 
-      <button id="roomWingButton" class="room-wing-button hidden" type="button" aria-label="Visit duck display area">
+      <button id="roomWingButton" class="room-wing-button hidden" type="button" aria-label="Visit Shelf of Ducks area">
         <span id="roomWingArrow" aria-hidden="true">‹</span>
       </button>
 
-      <section id="duckDisplayWing" class="duck-display-wing hidden" aria-label="Duck display area">
+      <section id="duckDisplayWing" class="duck-display-wing hidden" aria-label="Shelf of Ducks area">
         <img id="wingShelfImage" class="wing-shelf-image" src="assets/room-expansion/shelves/shelf-cream.png" alt="" aria-hidden="true" />
 
         <div class="duck-display-title">
           <span>ROOM TO GROW</span>
-          <strong>Duck Display</strong>
+          <strong>Shelf of Ducks</strong>
         </div>
 
         <div id="wingShelfStylePicker" class="wing-shelf-style-picker" aria-label="Shelf style">
@@ -76,7 +76,7 @@
         <button id="wingDuckPickerBackdrop" class="wing-duck-picker-backdrop" type="button" aria-label="Close duck picker"></button>
         <section class="wing-duck-picker-card" aria-label="Choose a duck">
           <button id="closeWingDuckPicker" class="wing-duck-picker-close" type="button" aria-label="Close duck picker">×</button>
-          <p class="eyebrow">DUCK DISPLAY</p>
+          <p class="eyebrow">SHELF OF DUCKS</p>
           <h2>Choose a Duck</h2>
           <p class="wing-duck-picker-note">Pick one of your discovered ducks for this shelf spot.</p>
           <button id="clearWingDuckSlot" class="wing-duck-clear" type="button">Leave This Spot Empty</button>
@@ -86,12 +86,12 @@
 
 <div class="top-hud">
         <div class="room-picker-wrap">
-          <button id="roomPickerButton" class="room-swatch-button" type="button" aria-expanded="false" aria-label="Change room color">
+          <button id="roomPickerButton" class="room-swatch-button" type="button" aria-expanded="false" aria-label="Change wallpaper color">
             <span id="roomPickerSwatch" class="room-swatch current-room-swatch" aria-hidden="true"></span>
-            <span id="roomPickerText" class="room-picker-text">Room</span>
+            <span id="roomPickerText" class="room-picker-text">Wallpaper</span>
             <span class="room-picker-arrow" aria-hidden="true">▾</span>
           </button>
-          <div id="roomPicker" class="room-picker hidden" role="menu" aria-label="Room colors"></div>
+          <div id="roomPicker" class="room-picker hidden" role="menu" aria-label="Wallpaper colors"></div>
         </div>
 
         <div class="coin-pill" aria-label="Pink coin balance">
@@ -251,18 +251,10 @@
             <span class="game-card-copy">
               <span class="game-card-kicker">PIXEL RPG</span>
               <strong>Duck Quest</strong>
-              <span>Battle through randomized meadow runs, level Peep, find treasure, and watch out for Mimics.</span>
+              <span>Battle through Meadow and Ocean routes, level Peep, find treasure, and watch out for Mimics.</span>
             </span>
             <span class="game-card-play">Play ›</span>
           </button>
-
-          <div class="games-coming-soon">
-            <span>♡</span>
-            <div>
-              <strong>More games can live here later!</strong>
-              <p>The next minigame can be added without changing the Bakery.</p>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -499,10 +491,6 @@
               <div id="shoppingUsesBadge" class="daily-uses-badge">0 / 3</div>
             </div>
 
-            <p class="daily-description">
-              Send your current OC shopping for one hour. When they come back, they’ll bring home one random Duck Crafter ingredient.
-            </p>
-
             <div id="shoppingState" class="shopping-state"></div>
 
             <button id="shoppingActionButton" class="daily-main-button" type="button">
@@ -518,7 +506,6 @@
               <div class="daily-card-title"><span>CREATE</span><h2>Paint Mixing</h2></div>
               <div id="paintMixUsesBadge" class="daily-uses-badge">0 / 2</div>
             </div>
-            <p class="daily-description">Spend one hour mixing a surprise color. When it’s ready, you’ll receive exactly one Paint. You can mix twice each day.</p>
             <div id="paintMixState" class="shopping-state"></div>
             <button id="paintMixActionButton" class="daily-main-button" type="button">Start 1 Hour Mix</button>
             <p class="daily-small-note">Basic colors are common, special mixes are less common, and Rainbow Paint is rare.</p>
@@ -530,10 +517,9 @@
               <div class="daily-card-title"><span>BOND</span><h2>Friendship Date</h2></div>
               <div id="friendshipUsesBadge" class="daily-uses-badge">0 / 1</div>
             </div>
-            <p class="daily-description">Choose any OC you’ve unlocked for a one-hour Friendship Date. When they return, that OC earns Happiness.</p>
             <div id="friendshipState" class="shopping-state"></div>
             <button id="friendshipActionButton" class="daily-main-button" type="button">Choose OC</button>
-            <p class="daily-small-note">One 1-hour date per day · +3 Happiness to the OC you choose.</p>
+            <p class="daily-small-note">One 1-hour date per day · +3 Happiness gain for the OC you choose.</p>
           </section>
 
           <section id="friendshipChooser" class="daily-choice-sheet hidden" aria-hidden="true">
@@ -555,6 +541,7 @@
             <p class="eyebrow">PEEP &amp; YOU</p>
             <h1>Status</h1>
           </div>
+          <div class="status-header-coin" aria-label="Pink Coins"><img src="assets/ui/pink-coin.png" alt="" /><strong id="statusCoins">0</strong></div>
           <button id="closeStatus" class="close-button" type="button" aria-label="Return to menu">×</button>
         </div>
 
@@ -564,27 +551,28 @@
             <div class="status-profile-copy">
               <p id="statusCharacterName" class="status-name">Peep</p>
               <div class="status-level-line">
-                <span id="statusLevelBadge" class="status-level-badge">Level 1</span>
-                <span id="statusHappinessLabel" class="status-happiness-label">Happiness 0 ♡</span>
+                <span id="statusLevelBadge" class="status-level-badge">Happiness Lv. 1</span>
               </div>
 
               <div class="status-progress-copy">
                 <span id="statusProgressLabel">Happiness Goal</span>
-                <span id="statusXpText">0 / 100</span>
+                <span id="statusXpText">0 / 10</span>
               </div>
               <div class="status-xp-track" aria-label="Happiness progress">
                 <div id="statusXpFill" class="status-xp-fill"></div>
+              </div>
+
+              <div class="status-progress-copy status-quest-progress-copy">
+                <span id="statusQuestLevelLabel">Duck Quest Lv. 1</span>
+                <span id="statusQuestXpText">0 / 80 EXP</span>
+              </div>
+              <div class="status-xp-track status-quest-xp-track" aria-label="Duck Quest level progress">
+                <div id="statusQuestXpFill" class="status-xp-fill status-quest-xp-fill"></div>
               </div>
             </div>
           </section>
 
           <section class="status-stat-grid" aria-label="Progress stats">
-            <article class="status-stat-card">
-              <img src="assets/ui/pink-coin.png" alt="" />
-              <span>Pink Coins</span>
-              <strong id="statusCoins">0</strong>
-            </article>
-
             <article class="status-stat-card">
               <div class="status-stat-symbol">✓</div>
               <span>Tasks Completed</span>
@@ -596,26 +584,25 @@
               <span>Ducks Created</span>
               <strong id="statusDucks">0 / 60</strong>
             </article>
-
-            <article class="status-stat-card">
-              <div class="status-stat-symbol heart-symbol">♡</div>
-              <span>Current Happiness</span>
-              <strong id="statusHappiness">Lv. 1 / 100</strong>
-            </article>
           </section>
 
-          <section class="status-extra-card">
+          <section class="status-extra-card status-coin-earned-card">
             <div>
-              <span>Coins earned from Tasks</span>
-              <strong id="statusTaskCoins">0</strong>
-            </div>
-            <div>
-              <span id="statusExtraSecondaryLabel">Total Happiness Points</span>
-              <strong id="statusTotalXp">0</strong>
+              <span>Coins earned total</span>
+              <strong id="statusCoinsEarnedTotal">0</strong>
             </div>
           </section>
 
-          <p class="status-note">Progress only goes up. Missing a task never lowers Happiness, and each OC builds Happiness Levels over time. ♡</p>
+          <section class="status-rank-card" aria-label="Duck Quest ranks">
+            <div class="status-rank-row">
+              <img src="duck-quest/assets/backgrounds/meadow/stage-1-tree.png" alt="" />
+              <div><span>Meadow</span><strong>Current Highest Rank: <b id="statusMeadowRank">1</b> / 20</strong></div>
+            </div>
+            <div class="status-rank-row">
+              <img src="duck-quest/assets/backgrounds/ocean/shore.png" alt="" />
+              <div><span>Ocean</span><strong>Current Highest Rank: <b id="statusOceanRank">1</b> / 50</strong></div>
+            </div>
+          </section>
         </div>
       </section>
 
@@ -876,22 +863,15 @@
         </div>
 
         <div class="save-data-content">
-          <div class="save-data-intro">
-            <div class="save-data-icon" aria-hidden="true">💾</div>
+          <button id="downloadSaveBackup" class="save-data-intro save-data-download-intro" type="button">
+            <div class="save-data-icon" aria-hidden="true">⬇️</div>
             <div>
-              <strong>Back up your whole game</strong>
-              <p>Your backup includes Duck Habit Hub and Bakery progress together in one small JSON file.</p>
+              <strong>Back up your whole game!</strong>
+              <p>Tap here to download your Duck Habit Hub + Bakery backup in one small JSON file.</p>
             </div>
-          </div>
+          </button>
 
           <div class="save-data-actions">
-            <button id="downloadSaveBackup" class="save-data-action" type="button">
-              <span class="save-data-action-icon" aria-hidden="true">⬇️</span>
-              <span>
-                <strong>Download Backup</strong>
-                <small>Save a copy to your phone, computer, or cloud drive.</small>
-              </span>
-            </button>
 
             <button id="importSaveBackup" class="save-data-action" type="button">
               <span class="save-data-action-icon" aria-hidden="true">⬆️</span>
@@ -952,12 +932,12 @@
       </section>
     </section>
   </main>
-  <script src="script-v24-53.js"></script>
+  <script src="script-v24-55.js"></script>
 
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw-v24-53.js", { updateViaCache: "none" }).catch(error => {
+        navigator.serviceWorker.register("./sw-v24-55.js", { updateViaCache: "none" }).catch(error => {
           console.warn("Duck Habit Hub offline setup could not start:", error);
         });
       });

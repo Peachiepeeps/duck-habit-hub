@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f6c6d6" />
   <title>Duck Quest</title>
-  <link rel="stylesheet" href="css/style-v15.css" />
+  <link rel="stylesheet" href="css/style-v16.css" />
 </head>
 <body>
   <main class="quest-shell">
     <header class="quest-header">
-      <button id="backGames" class="pixel-button small" type="button">‹ Games</button>
+      <button id="backGames" class="pixel-button small" type="button" aria-label="Back to Games">←</button>
 
       <div class="quest-title">
         <h1>Duck Quest</h1>
@@ -24,8 +24,14 @@
 
     <section id="homeScreen" class="screen">
       <div class="hero-card">
-        <div class="hero-sprite-wrap">
-          <img id="menuPeep" src="assets/characters/peep/base/idle-1.png" class="pixel-sprite menu-peep" alt="Peep" />
+        <div class="hero-sprite-column">
+          <div id="heroSpriteWrap" class="hero-sprite-wrap">
+            <img id="menuPeep" src="assets/characters/peep/base/idle-1.png" class="pixel-sprite menu-peep" alt="Peep" />
+          </div>
+          <label class="icon-background-control" for="iconBackgroundSelect">
+            <span>Icon Background</span>
+            <select id="iconBackgroundSelect" aria-label="Choose Peep icon background"></select>
+          </label>
         </div>
 
         <div class="hero-info">
@@ -220,6 +226,6 @@
     </section>
   </main>
 
-  <script src="js/game-v15.js"></script>
+  <script src="js/game-v16.js"></script>
 </body>
 </html>

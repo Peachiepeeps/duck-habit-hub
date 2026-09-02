@@ -371,6 +371,7 @@ function addCoins(amount){
   data.coins = Math.max(0, Math.floor(Number(data.coins) || 0) + Math.floor(Number(amount) || 0));
   data.stats = data.stats && typeof data.stats === "object" ? data.stats : {};
   data.stats.cranePrizes = Math.max(0, Number(data.stats.cranePrizes) || 0) + 1;
+  data.stats.coinsEarnedTotal = Math.max(0, Number(data.stats.coinsEarnedTotal) || 0) + Math.max(0, Math.floor(Number(amount) || 0));
   saveHubSave(data);
   coinCount.textContent = data.coins;
 }
@@ -660,7 +661,7 @@ async function showWinToast(prize,machineCleared=false){
 
   winText.textContent = machineCleared
     ? `Machine cleared! Total reward: +${total} Pink Coins. ♡`
-    : "Successful catch! Your duck stays safely unlocked in Duckipedia. ♡";
+    : "";
 
   winToast.classList.add("show");
   winToast.setAttribute("aria-hidden","false");
@@ -824,6 +825,8 @@ async function dropClaw(){
     // Clear bonus should not count as another crane prize statistic.
     const data = loadHubSave();
     data.coins = Math.max(0,Math.floor(Number(data.coins)||0)+MACHINE_CLEAR_BONUS);
+    data.stats = data.stats && typeof data.stats === "object" ? data.stats : {};
+    data.stats.coinsEarnedTotal = Math.max(0, Number(data.stats.coinsEarnedTotal) || 0) + MACHINE_CLEAR_BONUS;
     saveHubSave(data);
     coinCount.textContent = data.coins;
   }

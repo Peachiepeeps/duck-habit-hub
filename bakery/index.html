@@ -929,7 +929,7 @@ button.sort-button{
 </head>
 
 <body>
-<a class="hub-return-btn hub-return-floating bakery-home-link" href="../#games" aria-label="Back to Home Hub">← Back to Games</a>
+<a class="hub-return-btn hub-return-floating bakery-home-link" href="../#games" aria-label="Back to Games">←</a>
 
 <div class="coin-window" aria-label="Pink Coins">
   <img src="../assets/ui/pink-coin.png" class="coin-icon" alt="Pink Coin">
@@ -1097,7 +1097,7 @@ button.sort-button{
       <div id="bakeryRewardRarity" style="font-size:12px;font-weight:800;opacity:.72;margin-top:2px;"></div>
     </div>
     <button id="nextRoundBtn">Start New Bakery</button>
-    <a class="hub-return-btn bakery-home-link" href="../#games" style="margin-top:10px;">← Back to Games</a>
+    <a class="hub-return-btn bakery-home-link" href="../#games" style="margin-top:10px;" aria-label="Back to Games">←</a>
   </div>
 </div>
 
@@ -1343,6 +1343,16 @@ function updateHubSave(mutator){
 
 function hubCoinBalance(){
   return Number(loadHubSave().coins||0);
+}
+
+function awardBakeryCoins(amount){
+  const earned=Math.max(0,Math.floor(Number(amount)||0));
+  if(!earned) return 0;
+  state.coins+=earned;
+  updateHubSave(hub=>{
+    hub.stats.coinsEarnedTotal=Math.max(0,Number(hub.stats.coinsEarnedTotal)||0)+earned;
+  });
+  return earned;
 }
 
 function chooseBakeryReward(){
@@ -1732,7 +1742,7 @@ function handleTap(e,index){
 
   if(current==="coin"){
     state.board[index]=null;
-    state.coins+=GOLD_COIN_REWARD;
+    awardBakeryCoins(GOLD_COIN_REWARD);
     messageEl.textContent=`🪙 Gold Coin collected! +${GOLD_COIN_REWARD} Pink Coins`;
     save();
     render();
@@ -1890,7 +1900,7 @@ async function runEndgameItemMerges(){
         state.board[pair.to].level===nextItem.level
       ){
         state.board[pair.to]=null;
-        state.coins+=FINAL_ITEM_COIN_REWARD;
+        awardBakeryCoins(FINAL_ITEM_COIN_REWARD);
 
         if(pair.chainName==="sweets"){
           state.lifetimeCakes++;
@@ -1938,7 +1948,7 @@ async function runEndgameCoinSweep(){
     sparkleEndgameCell(roseIndex,"redeem");
     await waitMs(430);
     state.board[roseIndex]=null;
-    state.coins+=ROSE_GOLD_COIN_REWARD;
+    awardBakeryCoins(ROSE_GOLD_COIN_REWARD);
     save();
     render();
     await waitMs(120);
@@ -1951,7 +1961,7 @@ async function runEndgameCoinSweep(){
     sparkleEndgameCell(coinIndex,"redeem");
     await waitMs(380);
     state.board[coinIndex]=null;
-    state.coins+=GOLD_COIN_REWARD;
+    awardBakeryCoins(GOLD_COIN_REWARD);
     save();
     render();
     await waitMs(100);
@@ -1985,7 +1995,7 @@ async function beginEndGameSweep(){
   const sweepCoins=Math.max(0,state.coins-coinsBeforeSweep);
 
   /* The normal +50 clear reward is paid only after the sweep is finished. */
-  state.coins+=ROUND_BONUS;
+  awardBakeryCoins(ROUND_BONUS);
   state.bakeryWins++;
   recordBakeryWin();
   const reward=awardBakeryItem();
@@ -2048,7 +2058,7 @@ function activateSavedBonus(index,type){
         ? `💛 Gold Heart! +${gained} Energy!`
         : "💛 Your Energy is already full!";
     }else{
-      state.coins+=ROSE_GOLD_COIN_REWARD;
+      awardBakeryCoins(ROSE_GOLD_COIN_REWARD);
       messageEl.textContent=`🌹 Rose-gold Coin! +${ROSE_GOLD_COIN_REWARD} Pink Coins`;
     }
 
@@ -2155,7 +2165,7 @@ function moveOrMerge(from,to){
 
       /* Every final item pays out 10 coins, even if that specific
          final wasn't needed by the current goal list. */
-      state.coins+=FINAL_ITEM_COIN_REWARD;
+      awardBakeryCoins(FINAL_ITEM_COIN_REWARD);
 
       const notes=[];
 

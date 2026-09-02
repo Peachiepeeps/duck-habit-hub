@@ -195,7 +195,7 @@ body{
 }
 #resetLabel{
   left:38.1%;
-  top:91.3%;
+  top:92.2%;
   color:#67576c;
   font-size:clamp(9px,1.18vw,19px);
   display:flex;
@@ -368,3 +368,6 @@ body{
   #coinBox{padding:5px 8px}
   #winToast{width:min(42%,330px);padding:12px}
 }
+
+#winText:empty{display:none}
+#homeLink{min-width:40px;text-align:center}

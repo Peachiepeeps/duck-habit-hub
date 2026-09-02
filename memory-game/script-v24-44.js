@@ -210,6 +210,7 @@ function finishRound() {
   save.coins = Number(save.coins || 0) + reward;
   if (!save.stats || typeof save.stats !== 'object') save.stats = {};
   save.stats.memoryWins = Number(save.stats.memoryWins || 0) + 1;
+  save.stats.coinsEarnedTotal = Math.max(0, Number(save.stats.coinsEarnedTotal) || 0) + reward;
 
   const sizeKey = activePairs === 10
     ? "memoryWins10"
