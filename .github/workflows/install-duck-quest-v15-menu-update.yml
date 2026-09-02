@@ -1,1 +1,81 @@
+name: Install Duck Quest v15 Menu Update
 
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  install-v15:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Verify update package
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ZIP="Duck-Quest-v15-Menu-and-Peep-Update.zip"
+
+          if [ ! -f "$ZIP" ]; then
+            echo "ERROR: $ZIP was not found in the repository root."
+            exit 1
+          fi
+
+          # Make sure the existing Ocean installation is present.
+          test -f "duck-quest/assets/backgrounds/ocean/shore.png"
+          test -f "duck-quest/assets/backgrounds/ocean/surface.png"
+          test -f "duck-quest/assets/backgrounds/ocean/deep.png"
+          test -f "duck-quest/assets/backgrounds/ocean/floor.png"
+
+          unzip -t "$ZIP"
+
+      - name: Install v15 files
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ZIP="Duck-Quest-v15-Menu-and-Peep-Update.zip"
+
+          # Overlay the small v15 patch. Assets are left untouched.
+          unzip -o "$ZIP" -d .
+
+          test -f "duck-quest/index.html"
+          test -f "duck-quest/battle-v15.html"
+          test -f "duck-quest/css/style-v15.css"
+          test -f "duck-quest/js/game-v15.js"
+
+          # Confirm the new HTML points only to v15 code.
+          grep -q 'css/style-v15.css' "duck-quest/index.html"
+          grep -q 'js/game-v15.js' "duck-quest/index.html"
+
+          # Clean obsolete v14 code files after v15 is safely installed.
+          rm -f "duck-quest/battle-v14.html"
+          rm -f "duck-quest/css/style-v14.css"
+          rm -f "duck-quest/js/game-v14.js"
+          rm -f "duck-quest/README-v14.txt"
+
+          # Remove the temporary upload ZIP.
+          rm -f "$ZIP"
+
+      - name: Commit v15 update
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "Nothing to commit."
+            exit 0
+          fi
+
+          git commit -m "Update Duck Quest menu and Ocean Peep position"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
