@@ -6082,7 +6082,7 @@ function launchMemoryGame() {
 }
 
 function launchDuckQuestGame() {
-  window.location.href = "duck-quest/battle-v13.html";
+  window.location.href = "duck-quest/";
 }
 
 
