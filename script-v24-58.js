@@ -1126,7 +1126,11 @@ const SHOPPING_LOOT_POOL = [
 const SHOP_CATEGORIES = {
   supplies: {
     label: "Duck Supplies",
-    subtitle: "Useful supplies for crafting your duck collection. Food ingredients are earned elsewhere for now."
+    subtitle: "Useful supplies for crafting your duck collection."
+  },
+  food: {
+    label: "Food",
+    subtitle: "Stock up on treats and meals to gift your OCs. Rarer foods cost a little more."
   },
   battle: {
     label: "Battle Items",
@@ -1200,6 +1204,43 @@ const SHOP_STOCK = {
     { itemId: "eyebrows", price: 50 },
     { itemId: "vampire-teeth", price: 60 },
     { itemId: "bathtub", price: 75 }
+  ],
+  food: [
+    { itemId: "water", price: 50 },
+    { itemId: "milk", price: 50 },
+    { itemId: "apple", price: 50 },
+    { itemId: "lemon", price: 50 },
+    { itemId: "lime", price: 50 },
+    { itemId: "strawberry", price: 50 },
+    { itemId: "cookie", price: 50 },
+    { itemId: "gummy-bear", price: 50 },
+    { itemId: "lollipop", price: 50 },
+
+    { itemId: "bread-loaf", price: 60 },
+    { itemId: "fruit-cup", price: 60 },
+    { itemId: "milk-tea", price: 60 },
+    { itemId: "pudding", price: 60 },
+    { itemId: "watermelon", price: 60 },
+    { itemId: "mushroom", price: 60 },
+
+    { itemId: "burger", price: 75 },
+    { itemId: "pizza", price: 75 },
+    { itemId: "cake-slice", price: 75 },
+    { itemId: "croissant", price: 75 },
+    { itemId: "cupcake", price: 75 },
+    { itemId: "fruit-tart", price: 75 },
+
+    { itemId: "fancy-milk-tea", price: 90 },
+    { itemId: "concha", price: 90 },
+
+    { itemId: "cake", price: 100 },
+    { itemId: "strawberry-shortcake", price: 100 },
+
+    { itemId: "champagne", price: 125 },
+    { itemId: "chocolate-brioche", price: 125 },
+    { itemId: "parfait", price: 125 },
+
+    { itemId: "wedding-cake", price: 150 }
   ],
   battle: [
     { itemId: "pink-heart-refill", price: 75 },
@@ -7344,6 +7385,10 @@ function isRepeatBuyShopListing(listing) {
 
   // Battle consumables are meant to be stocked and used repeatedly.
   if (item.category === "battle") return true;
+
+  // Food is a repeatable gift consumable, so it should never disappear
+  // from the Shop just because the player already owns one.
+  if (item.category === "food") return true;
 
   // Future-proofing: if a non-paint supply is ever reused by multiple duck
   // recipes later, it automatically remains a repeat-buy Shop item.

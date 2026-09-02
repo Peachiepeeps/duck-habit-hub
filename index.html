@@ -415,6 +415,7 @@
 
         <div class="shop-tabs" role="tablist" aria-label="Shop categories">
           <button class="shop-tab active" type="button" data-shop-tab="supplies" role="tab" aria-selected="true">Supplies</button>
+          <button class="shop-tab" type="button" data-shop-tab="food" role="tab" aria-selected="false">Food</button>
           <button class="shop-tab" type="button" data-shop-tab="battle" role="tab" aria-selected="false">Battle</button>
           <button class="shop-tab" type="button" data-shop-tab="hair" role="tab" aria-selected="false">Hair</button>
           <button class="shop-tab" type="button" data-shop-tab="clothing" role="tab" aria-selected="false">Clothing</button>
@@ -944,12 +945,12 @@
       </section>
     </section>
   </main>
-  <script src="script-v24-57.js"></script>
+  <script src="script-v24-58.js"></script>
 
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw-v24-57.js", { updateViaCache: "none" }).catch(error => {
+        navigator.serviceWorker.register("./sw-v24-58.js", { updateViaCache: "none" }).catch(error => {
           console.warn("Duck Habit Hub offline setup could not start:", error);
         });
       });
