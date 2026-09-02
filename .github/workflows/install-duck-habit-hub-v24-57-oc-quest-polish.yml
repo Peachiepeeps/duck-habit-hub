@@ -1,0 +1,114 @@
+name: Install Duck Habit Hub v24.57 OC Quest Polish
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  install-polish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Verify update package
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ZIP="Duck-Habit-Hub-v24-57-OC-Quest-Polish.zip"
+
+          if [ ! -f "$ZIP" ]; then
+            echo "ERROR: $ZIP was not found in the repository root."
+            echo "Upload the ZIP to the root of the repo without unzipping it."
+            exit 1
+          fi
+
+          unzip -t "$ZIP"
+
+          unzip -l "$ZIP" | grep -q "script-v24-57.js"
+          unzip -l "$ZIP" | grep -q "style-v24-57.css"
+          unzip -l "$ZIP" | grep -q "sw-v24-57.js"
+          unzip -l "$ZIP" | grep -q "duck-quest/js/game-v18.js"
+          unzip -l "$ZIP" | grep -q "duck-quest/css/style-v18.css"
+          unzip -l "$ZIP" | grep -q "crane-game/script-v24-40.js"
+          unzip -l "$ZIP" | grep -q "memory-game/script-v24-44.js"
+          unzip -l "$ZIP" | grep -q "sort-game/script-v24-32.js"
+          unzip -l "$ZIP" | grep -q "bakery/index.html"
+
+          echo "v24.57 package verified."
+
+      - name: Install update
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ZIP="Duck-Habit-Hub-v24-57-OC-Quest-Polish.zip"
+
+          unzip -o "$ZIP" -d .
+
+          test -f "index.html"
+          test -f "script-v24-57.js"
+          test -f "style-v24-57.css"
+          test -f "sw-v24-57.js"
+
+          test -f "duck-quest/index.html"
+          test -f "duck-quest/battle-v18.html"
+          test -f "duck-quest/css/style-v18.css"
+          test -f "duck-quest/js/game-v18.js"
+
+          grep -q 'style-v24-57.css' "index.html"
+          grep -q 'script-v24-57.js' "index.html"
+          grep -q 'sw-v24-57.js' "index.html"
+
+          grep -q 'css/style-v18.css' "duck-quest/index.html"
+          grep -q 'js/game-v18.js' "duck-quest/index.html"
+
+          # Remove only the immediately previous active code versions.
+          # Artwork, save data, and game assets are untouched.
+          rm -f \
+            "script-v24-55.js" \
+            "style-v24-55.css" \
+            "sw-v24-55.js" \
+            "script-v24-56.js" \
+            "style-v24-56.css" \
+            "sw-v24-56.js"
+
+          rm -f \
+            "duck-quest/battle-v16.html" \
+            "duck-quest/css/style-v16.css" \
+            "duck-quest/js/game-v16.js" \
+            "duck-quest/README-v16.txt" \
+            "duck-quest/battle-v17.html" \
+            "duck-quest/css/style-v17.css" \
+            "duck-quest/js/game-v17.js" \
+            "duck-quest/README-v17.txt"
+
+          rm -f "$ZIP"
+
+          echo "v24.57 files installed."
+
+      - name: Commit update
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "Nothing new to commit."
+            exit 0
+          fi
+
+          git commit -m "Install Duck Habit Hub v24.57 OC Quest polish"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+          echo "v24.57 update committed successfully."
