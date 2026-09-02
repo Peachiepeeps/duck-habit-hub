@@ -1,1 +1,125 @@
+name: Install Duck Habit Hub v24.55 Polish
 
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  install-polish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Verify update package
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ZIP="Duck-Habit-Hub-v24-55-Polish-Update.zip"
+
+          if [ ! -f "$ZIP" ]; then
+            echo "ERROR: $ZIP was not found in the repository root."
+            echo "Upload the ZIP to the root of the repo without unzipping it."
+            exit 1
+          fi
+
+          unzip -t "$ZIP"
+
+          # Make sure this is the expected package before touching active files.
+          unzip -l "$ZIP" | grep -q "script-v24-55.js"
+          unzip -l "$ZIP" | grep -q "duck-quest/js/game-v16.js"
+          unzip -l "$ZIP" | grep -q "crane-game/script-v24-40.js"
+          unzip -l "$ZIP" | grep -q "memory-game/script-v24-44.js"
+          unzip -l "$ZIP" | grep -q "sort-game/script-v24-32.js"
+          unzip -l "$ZIP" | grep -q "bakery/index.html"
+
+          echo "v24.55 polish package verified."
+
+      - name: Install update
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ZIP="Duck-Habit-Hub-v24-55-Polish-Update.zip"
+
+          # Overlay only the updated code/HTML/CSS.
+          # Existing artwork, Ocean assets, saves, and other folders stay untouched.
+          unzip -o "$ZIP" -d .
+
+          # Confirm the new active versions are present.
+          test -f "index.html"
+          test -f "script-v24-55.js"
+          test -f "style-v24-55.css"
+          test -f "sw-v24-55.js"
+
+          test -f "duck-quest/battle-v16.html"
+          test -f "duck-quest/css/style-v16.css"
+          test -f "duck-quest/js/game-v16.js"
+
+          test -f "crane-game/play-v24-40.html"
+          test -f "crane-game/style-v24-40.css"
+          test -f "crane-game/script-v24-40.js"
+
+          test -f "memory-game/script-v24-44.js"
+          test -f "sort-game/script-v24-32.js"
+
+          # Verify the active HTML files point at the new versions.
+          grep -q 'style-v24-55.css' "index.html"
+          grep -q 'script-v24-55.js' "index.html"
+          grep -q 'sw-v24-55.js' "index.html"
+
+          grep -q 'css/style-v16.css' "duck-quest/index.html"
+          grep -q 'js/game-v16.js' "duck-quest/index.html"
+
+          grep -q 'play-v24-40.html' "crane-game/index.html"
+          grep -q 'script-v24-44.js' "memory-game/index.html"
+          grep -q 'script-v24-32.js' "sort-game/index.html"
+
+          # Remove only immediately-obsolete ACTIVE code files after the new
+          # versions have been verified. Artwork/assets are never touched.
+          rm -f "script-v24-54.js" "style-v24-54.css" "sw-v24-54.js"
+
+          rm -f \
+            "duck-quest/battle-v15.html" \
+            "duck-quest/css/style-v15.css" \
+            "duck-quest/js/game-v15.js" \
+            "duck-quest/README-v15.txt"
+
+          rm -f \
+            "crane-game/play-v24-39.html" \
+            "crane-game/style-v24-39.css" \
+            "crane-game/script-v24-39.js"
+
+          rm -f "memory-game/script-v24-43.js"
+          rm -f "sort-game/script-v24-31.js"
+
+          # The upload ZIP was only a transport package.
+          rm -f "$ZIP"
+
+          echo "v24.55 polish files installed."
+
+      - name: Commit update
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "Nothing new to commit."
+            exit 0
+          fi
+
+          git commit -m "Install Duck Habit Hub v24.55 polish update"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+          echo "v24.55 polish update committed successfully."
