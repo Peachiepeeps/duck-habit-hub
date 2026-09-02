@@ -32,8 +32,8 @@
       <img id="floorDuckDisplay" class="floor-duck-display hidden" alt="" aria-hidden="true" />
 
       <!-- Room objects intentionally sit BEHIND Peep. Their invisible hotspots stay clickable. -->
-      <img id="roomMirrorImage" class="stage-layer room-object" src="assets/ui/mirror.png" alt="" aria-hidden="true" />
-      <img id="roomBookImage" class="stage-layer room-object book-room-object" src="assets/ui/book-room.png" alt="" aria-hidden="true" />
+      <img id="roomMirrorImage" class="stage-layer room-object" src="assets/ui/mirror.webp" alt="" aria-hidden="true" loading="eager" decoding="async" fetchpriority="high" />
+      <img id="roomBookImage" class="stage-layer room-object book-room-object" src="assets/ui/book-room.webp" alt="" aria-hidden="true" loading="eager" decoding="async" fetchpriority="high" />
 
       <div id="peepWrap" class="peep-wrap">
         <div id="peepLayers" class="peep-layers" aria-label="Peep"></div>
@@ -55,7 +55,7 @@
       </button>
 
       <section id="duckDisplayWing" class="duck-display-wing hidden" aria-label="Shelf of Ducks area">
-        <img id="wingShelfImage" class="wing-shelf-image" src="assets/room-expansion/shelves/shelf-cream.png" alt="" aria-hidden="true" />
+        <img id="wingShelfImage" class="wing-shelf-image" src="assets/room-expansion/shelves/shelf-cream.webp" alt="" aria-hidden="true" loading="lazy" decoding="async" />
 
         <div class="duck-display-title">
           <span>ROOM TO GROW</span>
@@ -95,7 +95,7 @@
         </div>
 
         <div class="coin-pill" aria-label="Pink coin balance">
-          <img src="assets/ui/pink-coin.png" alt="" />
+          <img src="assets/ui/pink-coin.webp" alt="" loading="lazy" decoding="async" />
           <strong id="coinCount">0</strong>
         </div>
       </div>
@@ -103,7 +103,7 @@
       <div id="toast" class="toast hidden" role="status"></div>
 
       <div id="achievementUnlockToast" class="achievement-unlock-toast hidden" role="status" aria-live="polite">
-        <img id="achievementUnlockTrophy" src="" alt="" />
+        <img id="achievementUnlockTrophy" src="" alt="" loading="lazy" decoding="async" />
         <div>
           <span>ACHIEVEMENT UNLOCKED!</span>
           <strong id="achievementUnlockTitle">Achievement</strong>
@@ -189,8 +189,8 @@
         <div class="games-list">
           <button id="openBakeryGame" class="game-card bakery-game-card" type="button">
             <span class="game-card-preview">
-              <img src="assets/bakery/backgrounds/Bakery-background.PNG" class="game-card-bg" alt="" />
-              <img src="assets/food/Wedding-cake.PNG" class="game-card-feature" alt="" />
+              <img src="assets/bakery/backgrounds/Bakery-background.webp" class="game-card-bg" alt="" loading="lazy" decoding="async" />
+              <img src="assets/food/Wedding-cake.webp" class="game-card-feature" alt="" loading="lazy" decoding="async" />
             </span>
             <span class="game-card-copy">
               <span class="game-card-kicker">MERGE GAME</span>
@@ -203,7 +203,7 @@
           <button id="openDuckSortGame" class="game-card duck-sort-game-card" type="button">
             <span class="game-card-preview duck-sort-card-preview">
               <span class="duck-sort-card-bg" aria-hidden="true"></span>
-              <img src="assets/ducks/Rainbow-duck.PNG" class="game-card-feature duck-sort-card-duck" alt="" />
+              <img src="assets/ducks/Rainbow-duck.webp" class="game-card-feature duck-sort-card-duck" alt="" loading="lazy" decoding="async" />
             </span>
             <span class="game-card-copy">
               <span class="game-card-kicker">SWIPE GAME</span>
@@ -217,8 +217,8 @@
           <button id="openCraneGame" class="game-card crane-game-card" type="button">
             <span class="game-card-preview crane-game-card-preview">
               <span class="crane-card-water" aria-hidden="true"></span>
-              <img src="assets/ducks/Standard-duck.PNG" class="crane-card-duck" alt="" />
-              <img src="crane-game/Crane-opened.png" class="crane-card-claw" alt="" />
+              <img src="assets/ducks/Standard-duck.webp" class="crane-card-duck" alt="" loading="lazy" decoding="async" />
+              <img src="crane-game/Crane-opened.webp" class="crane-card-claw" alt="" loading="lazy" decoding="async" />
             </span>
             <span class="game-card-copy">
               <span class="game-card-kicker">CLAW GAME</span>
@@ -232,8 +232,8 @@
 
           <button id='openMemoryGame' class='game-card memory-game-card' type='button'>
             <span class='game-card-preview memory-game-card-preview'>
-              <img src='memory-game/bg-pattern.png' class='game-card-bg' alt='' />
-              <img src='memory-game/card-back.png' class='memory-game-card-back' alt='' />
+              <img src='memory-game/bg-pattern.webp' class='game-card-bg' alt='' loading="lazy" decoding="async" />
+              <img src='memory-game/card-back.webp' class='memory-game-card-back' alt='' loading="lazy" decoding="async" />
             </span>
             <span class='game-card-copy'>
               <span class='game-card-kicker'>MEMORY GAME</span>
@@ -245,8 +245,8 @@
 
           <button id="openDuckQuestGame" class="game-card duck-quest-game-card" type="button">
             <span class="game-card-preview duck-quest-card-preview">
-              <img src="duck-quest/assets/backgrounds/meadow/stage-1-tree.png" class="game-card-bg" alt="" />
-              <img src="duck-quest/assets/enemies/cat-slime/base/Strawberry-idle-1-neutral.png" class="duck-quest-card-peep duck-quest-card-strawberry" alt="Strawberry Cat Slime" />
+              <img src="duck-quest/assets/backgrounds/meadow/stage-1-tree.webp" class="game-card-bg" alt="" loading="lazy" decoding="async" />
+              <img src="duck-quest/assets/enemies/cat-slime/base/Strawberry-idle-1-neutral.webp" class="duck-quest-card-peep duck-quest-card-strawberry" alt="Strawberry Cat Slime" loading="lazy" decoding="async" />
             </span>
             <span class="game-card-copy">
               <span class="game-card-kicker">PIXEL RPG</span>
@@ -406,7 +406,7 @@
           </div>
           <div class="shop-header-actions">
             <div class="shop-coin-pill" aria-label="Pink coin balance">
-              <img src="assets/ui/pink-coin.png" alt="" />
+              <img src="assets/ui/pink-coin.webp" alt="" loading="lazy" decoding="async" />
               <strong id="shopCoinCount">0</strong>
             </div>
             <button id="closeShop" class="close-button" type="button" aria-label="Close shop">×</button>
@@ -503,7 +503,7 @@
 
           <section class="daily-card paint-mixing-daily">
             <div class="daily-card-top">
-              <div class="daily-icon-bubble daily-image-bubble"><img src="assets/paint/Pink-paint.PNG" alt="" /></div>
+              <div class="daily-icon-bubble daily-image-bubble"><img src="assets/paint/Pink-paint.webp" alt="" loading="lazy" decoding="async" /></div>
               <div class="daily-card-title"><span>CREATE</span><h2>Paint Mixing</h2></div>
               <div id="paintMixUsesBadge" class="daily-uses-badge">0 / 2</div>
             </div>
@@ -514,7 +514,7 @@
 
           <section class="daily-card friendship-date-daily">
             <div class="daily-card-top">
-              <div class="daily-icon-bubble daily-image-bubble"><img src="assets/gifts/Heart-locket.PNG" alt="" /></div>
+              <div class="daily-icon-bubble daily-image-bubble"><img src="assets/gifts/Heart-locket.webp" alt="" loading="lazy" decoding="async" /></div>
               <div class="daily-card-title"><span>BOND</span><h2>Friendship Date</h2></div>
               <div id="friendshipUsesBadge" class="daily-uses-badge">0 / 1</div>
             </div>
@@ -542,7 +542,7 @@
             <p class="eyebrow">PEEP &amp; YOU</p>
             <h1>Status</h1>
           </div>
-          <div class="status-header-coin" aria-label="Pink Coins"><img src="assets/ui/pink-coin.png" alt="" /><strong id="statusCoins">0</strong></div>
+          <div class="status-header-coin" aria-label="Pink Coins"><img src="assets/ui/pink-coin.webp" alt="" loading="lazy" decoding="async" /><strong id="statusCoins">0</strong></div>
           <button id="closeStatus" class="close-button" type="button" aria-label="Return to menu">×</button>
         </div>
 
@@ -596,11 +596,11 @@
 
           <section class="status-rank-card" aria-label="Duck Quest ranks">
             <div class="status-rank-row">
-              <img src="duck-quest/assets/backgrounds/meadow/stage-1-tree.png" alt="" />
+              <img src="duck-quest/assets/backgrounds/meadow/stage-1-tree.webp" alt="" loading="lazy" decoding="async" />
               <div><span>Meadow</span><strong>Current Highest Rank: <b id="statusMeadowRank">1</b> / 20</strong></div>
             </div>
             <div class="status-rank-row">
-              <img src="duck-quest/assets/backgrounds/ocean/shore.png" alt="" />
+              <img src="duck-quest/assets/backgrounds/ocean/shore.webp" alt="" loading="lazy" decoding="async" />
               <div><span>Ocean</span><strong>Current Highest Rank: <b id="statusOceanRank">1</b> / 50</strong></div>
             </div>
           </section>
@@ -849,7 +849,7 @@
           <section class="achievement-detail-card" aria-label="Achievement details">
             <button id="closeAchievementDetail" class="achievement-detail-close" type="button" aria-label="Close achievement details">×</button>
             <div class="achievement-detail-trophy-wrap">
-              <img id="achievementDetailTrophy" class="achievement-detail-trophy" src="" alt="" />
+              <img id="achievementDetailTrophy" class="achievement-detail-trophy" src="" alt="" loading="lazy" decoding="async" />
               <span id="achievementDetailLock" class="achievement-detail-lock hidden" aria-hidden="true">🔒</span>
             </div>
             <span id="achievementDetailTier" class="achievement-detail-tier">Bronze</span>
@@ -945,12 +945,12 @@
       </section>
     </section>
   </main>
-  <script src="script-v24-58.js"></script>
+  <script src="script-v24-59.js"></script>
 
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw-v24-58.js", { updateViaCache: "none" }).catch(error => {
+        navigator.serviceWorker.register("./sw-v24-59.js", { updateViaCache: "none" }).catch(error => {
           console.warn("Duck Habit Hub offline setup could not start:", error);
         });
       });
