@@ -7,10 +7,10 @@ const AREA_CONFIG = Object.freeze({
     label:"MEADOW PATH",
     maxRank:20,
     backgrounds:[
-      "assets/backgrounds/meadow/stage-1-tree.png",
-      "assets/backgrounds/meadow/stage-2-bushes.png",
-      "assets/backgrounds/meadow/stage-3-flowers.png",
-      "assets/backgrounds/meadow/stage-4-boss.png"
+      "assets/backgrounds/meadow/stage-1-tree.webp",
+      "assets/backgrounds/meadow/stage-2-bushes.webp",
+      "assets/backgrounds/meadow/stage-3-flowers.webp",
+      "assets/backgrounds/meadow/stage-4-boss.webp"
     ],
     stageNames:["Meadow Path","Bush Trail","Flower Field","Boss Clearing"],
     resultTitle:"The Meadow is Clear!"
@@ -21,10 +21,10 @@ const AREA_CONFIG = Object.freeze({
     label:"OCEAN ROUTE",
     maxRank:50,
     backgrounds:[
-      "assets/backgrounds/ocean/shore.png",
-      "assets/backgrounds/ocean/surface.png",
-      "assets/backgrounds/ocean/deep.png",
-      "assets/backgrounds/ocean/floor.png"
+      "assets/backgrounds/ocean/shore.webp",
+      "assets/backgrounds/ocean/surface.webp",
+      "assets/backgrounds/ocean/deep.webp",
+      "assets/backgrounds/ocean/floor.webp"
     ],
     stageNames:["Shore","Ocean Surface","Ocean Deep","Ocean Floor"],
     resultTitle:"The Ocean Route is Clear!"
@@ -91,15 +91,16 @@ function iconBackgroundById(id){ return ICON_BACKGROUND_COLORS.find(color=>color
 
 
 
-const DUCK_LIBRARY = [{"id": "standard-duck", "file": "Standard-duck.PNG", "name": "Standard Duck"}, {"id": "pink-duck", "file": "Pink-duck.PNG", "name": "Pink Duck"}, {"id": "rainbow-duck", "file": "Rainbow-duck.PNG", "name": "Rainbow Duck"}];
+const DUCK_LIBRARY = [{"id": "standard-duck", "file": "Standard-duck.webp", "name": "Standard Duck"}, {"id": "pink-duck", "file": "Pink-duck.webp", "name": "Pink Duck"}, {"id": "rainbow-duck", "file": "Rainbow-duck.webp", "name": "Rainbow Duck"}];
 
-const SKILLS = [
+const PEEP_SKILLS = [
   {
     id: "heart-pop",
     name: "Heart Pop!",
     unlock: 1,
     type: "damage",
     multiplier: 1.0,
+    sprite: "assets/characters/peep/base/attack.webp",
     description: "A dependable little heart attack!"
   },
   {
@@ -109,6 +110,7 @@ const SKILLS = [
     type: "heal",
     healPercent: 0.42,
     cooldown: 3,
+    sprite: "assets/characters/peep/base/heal.webp",
     description: "Restore 42% of Peep's max HP."
   },
   {
@@ -118,6 +120,7 @@ const SKILLS = [
     type: "damage",
     multiplier: 1.65,
     cooldown: 2,
+    sprite: "assets/characters/peep/base/duck-throw.webp",
     description: "Throw a random unlocked duck. Obviously."
   },
   {
@@ -127,9 +130,54 @@ const SKILLS = [
     type: "damage",
     multiplier: 3.0,
     oncePerBattle: true,
+    sprite: "assets/characters/peep/base/final-move.webp",
     description: "Peep has had enough."
   }
 ];
+
+const MIKO_SKILLS = [
+  {
+    id: "mock",
+    name: "Mock",
+    unlock: 1,
+    type: "damage",
+    multiplier: 1.0,
+    sprite: "assets/characters/miko/base/mock.webp",
+    description: "A cutting little comment that actually hurts."
+  },
+  {
+    id: "smug",
+    name: "Smug",
+    unlock: 10,
+    type: "buff",
+    attackBoost: 0.30,
+    duration: 3,
+    sprite: "assets/characters/miko/base/smug.webp",
+    description: "Raise Miko's Attack by 30% for 3 turns."
+  },
+  {
+    id: "failed-spell",
+    name: "Failed Spell",
+    unlock: 25,
+    type: "damage",
+    multiplier: 1.85,
+    cooldown: 2,
+    sprite: "assets/characters/miko/base/failed-spell.webp",
+    description: "A magical mishap explodes for heavy damage."
+  },
+  {
+    id: "gun",
+    name: "He has a gun!",
+    unlock: 50,
+    type: "multi-hit",
+    multiplier: 1.50,
+    hits: 4,
+    sprite: "assets/characters/miko/base/gun.webp",
+    description: "Four quick shots for 1.50× total damage."
+  }
+];
+
+function activeSkills(){ return activeCharacterId === "miko" ? MIKO_SKILLS : PEEP_SKILLS; }
 
 const ENEMIES = {
   "cat-slime": {
@@ -140,12 +188,12 @@ const ENEMIES = {
     coinMin: 5,
     coinMax: 9,
     idle: [
-      "assets/enemies/cat-slime/base/idle-1-neutral.png",
-      "assets/enemies/cat-slime/base/idle-2-squish.png",
-      "assets/enemies/cat-slime/base/idle-3-bounce.png",
-      "assets/enemies/cat-slime/base/idle-2-squish.png"
+      "assets/enemies/cat-slime/base/idle-1-neutral.webp",
+      "assets/enemies/cat-slime/base/idle-2-squish.webp",
+      "assets/enemies/cat-slime/base/idle-3-bounce.webp",
+      "assets/enemies/cat-slime/base/idle-2-squish.webp"
     ],
-    hurt: "assets/enemies/cat-slime/base/idle-1-neutral.png",
+    hurt: "assets/enemies/cat-slime/base/idle-1-neutral.webp",
     speed: 310
   },
   "bee": {
@@ -156,10 +204,10 @@ const ENEMIES = {
     coinMin: 5,
     coinMax: 10,
     idle: [
-      "assets/enemies/bee/base/idle-1-high.png",
-      "assets/enemies/bee/base/idle-2-low.png"
+      "assets/enemies/bee/base/idle-1-high.webp",
+      "assets/enemies/bee/base/idle-2-low.webp"
     ],
-    hurt: "assets/enemies/bee/base/hurt.png",
+    hurt: "assets/enemies/bee/base/hurt.webp",
     speed: 360
   },
   "flower": {
@@ -170,31 +218,31 @@ const ENEMIES = {
     coinMin: 6,
     coinMax: 11,
     idle: [
-      "assets/enemies/flower/base/idle-1.png",
-      "assets/enemies/flower/base/idle-2.png"
+      "assets/enemies/flower/base/idle-1.webp",
+      "assets/enemies/flower/base/idle-2.webp"
     ],
-    hurt: "assets/enemies/flower/base/hurt.png",
+    hurt: "assets/enemies/flower/base/hurt.webp",
     speed: 390
   },
   "cool-seagull": {
     name: "Cool Seagull", hp: 26, attack: 5, exp: 28, coinMin: 8, coinMax: 13,
-    idle: ["assets/enemies/cool-seagull/base/idle-1.png","assets/enemies/cool-seagull/base/idle-2.png"],
-    hurt: "assets/enemies/cool-seagull/base/hurt.png", speed: 370
+    idle: ["assets/enemies/cool-seagull/base/idle-1.webp","assets/enemies/cool-seagull/base/idle-2.webp"],
+    hurt: "assets/enemies/cool-seagull/base/hurt.webp", speed: 370
   },
   "sea-turtle": {
     name: "Sea Turtle", hp: 34, attack: 5, exp: 31, coinMin: 9, coinMax: 14,
-    idle: ["assets/enemies/sea-turtle/base/idle-1.png","assets/enemies/sea-turtle/base/idle-2.png"],
-    hurt: "assets/enemies/sea-turtle/base/hurt.png", speed: 430
+    idle: ["assets/enemies/sea-turtle/base/idle-1.webp","assets/enemies/sea-turtle/base/idle-2.webp"],
+    hurt: "assets/enemies/sea-turtle/base/hurt.webp", speed: 430
   },
   "catfish": {
     name: "Cat-Fish", hp: 29, attack: 7, exp: 34, coinMin: 10, coinMax: 16,
-    idle: ["assets/enemies/catfish/base/idle-1.png","assets/enemies/catfish/base/idle-2.png"],
-    hurt: "assets/enemies/catfish/base/hurt.png", speed: 360
+    idle: ["assets/enemies/catfish/base/idle-1.webp","assets/enemies/catfish/base/idle-2.webp"],
+    hurt: "assets/enemies/catfish/base/hurt.webp", speed: 360
   },
   "vampire-squid": {
     name: "Vampire Squid", hp: 66, attack: 8, exp: 70, coinMin: 24, coinMax: 36,
-    idle: ["assets/bosses/vampire-squid/base/idle-1.png","assets/bosses/vampire-squid/base/idle-2.png"],
-    hurt: "assets/bosses/vampire-squid/base/hurt.png", speed: 410, boss: true
+    idle: ["assets/bosses/vampire-squid/base/idle-1.webp","assets/bosses/vampire-squid/base/idle-2.webp"],
+    hurt: "assets/bosses/vampire-squid/base/hurt.webp", speed: 410, boss: true
   },
   "mimic": {
     name: "Mimic",
@@ -204,10 +252,10 @@ const ENEMIES = {
     coinMin: 18,
     coinMax: 28,
     idle: [
-      "assets/enemies/mimic/base/open-1.png",
-      "assets/enemies/mimic/base/open-2.png"
+      "assets/enemies/mimic/base/open-1.webp",
+      "assets/enemies/mimic/base/open-2.webp"
     ],
-    hurt: "assets/items/chests/treasure/closed.png",
+    hurt: "assets/items/chests/treasure/closed.webp",
     speed: 700
   },
   "mushroom-cat": {
@@ -218,10 +266,10 @@ const ENEMIES = {
     coinMin: 16,
     coinMax: 24,
     idle: [
-      "assets/bosses/mushroom-cat/base/idle-1.png",
-      "assets/bosses/mushroom-cat/base/idle-2.png"
+      "assets/bosses/mushroom-cat/base/idle-1.webp",
+      "assets/bosses/mushroom-cat/base/idle-2.webp"
     ],
-    hurt: "assets/bosses/mushroom-cat/base/hurt.png",
+    hurt: "assets/bosses/mushroom-cat/base/hurt.webp",
     speed: 430,
     boss: true
   }
@@ -248,32 +296,32 @@ function weightedOceanVariant(rank, ids) {
 }
 
 const SEAGULL_VARIANTS=Object.freeze({
-  grey:{id:"grey",name:"Cool Seagull",hp:1,atk:1,exp:1,coin:1,idle:["assets/enemies/cool-seagull/base/idle-1.png","assets/enemies/cool-seagull/base/idle-2.png"],hurt:"assets/enemies/cool-seagull/base/hurt.png"},
-  pink:{id:"pink",name:"Pink Cool Seagull",hp:1.2,atk:1.1,exp:1.15,coin:1.15,idle:["assets/enemies/cool-seagull/base/Pink-idle-1.png","assets/enemies/cool-seagull/base/Pink-idle-2.png"],hurt:"assets/enemies/cool-seagull/base/Pink-hurt.png"},
-  blue:{id:"blue",name:"Blue Cool Seagull",hp:1.2,atk:1.1,exp:1.2,coin:1.2,healPercent:.18,maxHeals:2,healChance:.32,healMoveName:"Fish Snack!",idle:["assets/enemies/cool-seagull/base/Blue-idle-1.png","assets/enemies/cool-seagull/base/Blue-idle-2.png"],hurt:"assets/enemies/cool-seagull/base/Blue-hurt.png"},
-  yellow:{id:"yellow",name:"Yellow Cool Seagull",hp:1.4,atk:1.2,exp:1.35,coin:1.35,idle:["assets/enemies/cool-seagull/base/Yellow-idle-1.png","assets/enemies/cool-seagull/base/Yellow-idle-2.png"],hurt:"assets/enemies/cool-seagull/base/Yellow-hurt.png"},
-  black:{id:"black",name:"Black Cool Seagull",hp:1.7,atk:1.3,exp:1.5,coin:1.6,elite:true,idle:["assets/enemies/cool-seagull/base/Black-idle-1.png","assets/enemies/cool-seagull/base/Black-idle-2.png"],hurt:"assets/enemies/cool-seagull/base/Black-hurt.png"}
+  grey:{id:"grey",name:"Cool Seagull",hp:1,atk:1,exp:1,coin:1,idle:["assets/enemies/cool-seagull/base/idle-1.webp","assets/enemies/cool-seagull/base/idle-2.webp"],hurt:"assets/enemies/cool-seagull/base/hurt.webp"},
+  pink:{id:"pink",name:"Pink Cool Seagull",hp:1.2,atk:1.1,exp:1.15,coin:1.15,idle:["assets/enemies/cool-seagull/base/Pink-idle-1.webp","assets/enemies/cool-seagull/base/Pink-idle-2.webp"],hurt:"assets/enemies/cool-seagull/base/Pink-hurt.webp"},
+  blue:{id:"blue",name:"Blue Cool Seagull",hp:1.2,atk:1.1,exp:1.2,coin:1.2,healPercent:.18,maxHeals:2,healChance:.32,healMoveName:"Fish Snack!",idle:["assets/enemies/cool-seagull/base/Blue-idle-1.webp","assets/enemies/cool-seagull/base/Blue-idle-2.webp"],hurt:"assets/enemies/cool-seagull/base/Blue-hurt.webp"},
+  yellow:{id:"yellow",name:"Yellow Cool Seagull",hp:1.4,atk:1.2,exp:1.35,coin:1.35,idle:["assets/enemies/cool-seagull/base/Yellow-idle-1.webp","assets/enemies/cool-seagull/base/Yellow-idle-2.webp"],hurt:"assets/enemies/cool-seagull/base/Yellow-hurt.webp"},
+  black:{id:"black",name:"Black Cool Seagull",hp:1.7,atk:1.3,exp:1.5,coin:1.6,elite:true,idle:["assets/enemies/cool-seagull/base/Black-idle-1.webp","assets/enemies/cool-seagull/base/Black-idle-2.webp"],hurt:"assets/enemies/cool-seagull/base/Black-hurt.webp"}
 });
 const TURTLE_VARIANTS=Object.freeze({
-  green:{id:"green",name:"Sea Turtle",hp:1,atk:1,exp:1,coin:1,idle:["assets/enemies/sea-turtle/base/idle-1.png","assets/enemies/sea-turtle/base/idle-2.png"],hurt:"assets/enemies/sea-turtle/base/hurt.png"},
-  blue:{id:"blue",name:"Blue Sea Turtle",hp:1.2,atk:1.1,exp:1.15,coin:1.15,idle:["assets/enemies/sea-turtle/base/Blue-idle-1.png","assets/enemies/sea-turtle/base/Blue-idle-2.png"],hurt:"assets/enemies/sea-turtle/base/Blue-hurt.png"},
-  pink:{id:"pink",name:"Pink Sea Turtle",hp:1.2,atk:1.1,exp:1.2,coin:1.2,specialType:"harden-shell",specialChance:.30,maxSpecialUses:2,idle:["assets/enemies/sea-turtle/base/Pink-idle-1.png","assets/enemies/sea-turtle/base/Pink-idle-2.png"],hurt:"assets/enemies/sea-turtle/base/Pink-hurt.png"},
-  purple:{id:"purple",name:"Purple Sea Turtle",hp:1.4,atk:1.2,exp:1.35,coin:1.35,idle:["assets/enemies/sea-turtle/base/Purple-idle-1.png","assets/enemies/sea-turtle/base/Purple-idle-2.png"],hurt:"assets/enemies/sea-turtle/base/Purple-hurt.png"},
-  gold:{id:"gold",name:"Gold Sea Turtle",hp:1.7,atk:1.3,exp:1.5,coin:1.6,elite:true,idle:["assets/enemies/sea-turtle/base/Gold-idle-1.png","assets/enemies/sea-turtle/base/Gold-idle-2.png"],hurt:"assets/enemies/sea-turtle/base/Gold-hurt.png"}
+  green:{id:"green",name:"Sea Turtle",hp:1,atk:1,exp:1,coin:1,idle:["assets/enemies/sea-turtle/base/idle-1.webp","assets/enemies/sea-turtle/base/idle-2.webp"],hurt:"assets/enemies/sea-turtle/base/hurt.webp"},
+  blue:{id:"blue",name:"Blue Sea Turtle",hp:1.2,atk:1.1,exp:1.15,coin:1.15,idle:["assets/enemies/sea-turtle/base/Blue-idle-1.webp","assets/enemies/sea-turtle/base/Blue-idle-2.webp"],hurt:"assets/enemies/sea-turtle/base/Blue-hurt.webp"},
+  pink:{id:"pink",name:"Pink Sea Turtle",hp:1.2,atk:1.1,exp:1.2,coin:1.2,specialType:"harden-shell",specialChance:.30,maxSpecialUses:2,idle:["assets/enemies/sea-turtle/base/Pink-idle-1.webp","assets/enemies/sea-turtle/base/Pink-idle-2.webp"],hurt:"assets/enemies/sea-turtle/base/Pink-hurt.webp"},
+  purple:{id:"purple",name:"Purple Sea Turtle",hp:1.4,atk:1.2,exp:1.35,coin:1.35,idle:["assets/enemies/sea-turtle/base/Purple-idle-1.webp","assets/enemies/sea-turtle/base/Purple-idle-2.webp"],hurt:"assets/enemies/sea-turtle/base/Purple-hurt.webp"},
+  gold:{id:"gold",name:"Gold Sea Turtle",hp:1.7,atk:1.3,exp:1.5,coin:1.6,elite:true,idle:["assets/enemies/sea-turtle/base/Gold-idle-1.webp","assets/enemies/sea-turtle/base/Gold-idle-2.webp"],hurt:"assets/enemies/sea-turtle/base/Gold-hurt.webp"}
 });
 const CATFISH_VARIANTS=Object.freeze({
-  grey:{id:"grey",name:"Cat-Fish",hp:1,atk:1,exp:1,coin:1,idle:["assets/enemies/catfish/base/idle-1.png","assets/enemies/catfish/base/idle-2.png"],hurt:"assets/enemies/catfish/base/hurt.png"},
-  brown:{id:"brown",name:"Brown Cat-Fish",hp:1.2,atk:1.1,exp:1.15,coin:1.15,idle:["assets/enemies/catfish/base/Brown-idle-1.png","assets/enemies/catfish/base/Brown-idle-2.png"],hurt:"assets/enemies/catfish/base/Brown-hurt.png"},
-  orange:{id:"orange",name:"Orange Cat-Fish",hp:1.2,atk:1.1,exp:1.2,coin:1.2,specialType:"zoomies",specialChance:.30,maxSpecialUses:2,idle:["assets/enemies/catfish/base/Orange-idle-1.png","assets/enemies/catfish/base/Orange-idle-2.png"],hurt:"assets/enemies/catfish/base/Orange-hurt.png"},
-  navy:{id:"navy",name:"Navy Cat-Fish",hp:1.4,atk:1.2,exp:1.35,coin:1.35,idle:["assets/enemies/catfish/base/Navy-idle-1.png","assets/enemies/catfish/base/Navy-idle-2.png"],hurt:"assets/enemies/catfish/base/Navy-hurt.png"},
-  black:{id:"black",name:"Black Cat-Fish",hp:1.7,atk:1.3,exp:1.5,coin:1.6,elite:true,idle:["assets/enemies/catfish/base/Black-idle-1.png","assets/enemies/catfish/base/Black-idle-2.png"],hurt:"assets/enemies/catfish/base/Black-hurt.png"}
+  grey:{id:"grey",name:"Cat-Fish",hp:1,atk:1,exp:1,coin:1,idle:["assets/enemies/catfish/base/idle-1.webp","assets/enemies/catfish/base/idle-2.webp"],hurt:"assets/enemies/catfish/base/hurt.webp"},
+  brown:{id:"brown",name:"Brown Cat-Fish",hp:1.2,atk:1.1,exp:1.15,coin:1.15,idle:["assets/enemies/catfish/base/Brown-idle-1.webp","assets/enemies/catfish/base/Brown-idle-2.webp"],hurt:"assets/enemies/catfish/base/Brown-hurt.webp"},
+  orange:{id:"orange",name:"Orange Cat-Fish",hp:1.2,atk:1.1,exp:1.2,coin:1.2,specialType:"zoomies",specialChance:.30,maxSpecialUses:2,idle:["assets/enemies/catfish/base/Orange-idle-1.webp","assets/enemies/catfish/base/Orange-idle-2.webp"],hurt:"assets/enemies/catfish/base/Orange-hurt.webp"},
+  navy:{id:"navy",name:"Navy Cat-Fish",hp:1.4,atk:1.2,exp:1.35,coin:1.35,idle:["assets/enemies/catfish/base/Navy-idle-1.webp","assets/enemies/catfish/base/Navy-idle-2.webp"],hurt:"assets/enemies/catfish/base/Navy-hurt.webp"},
+  black:{id:"black",name:"Black Cat-Fish",hp:1.7,atk:1.3,exp:1.5,coin:1.6,elite:true,idle:["assets/enemies/catfish/base/Black-idle-1.webp","assets/enemies/catfish/base/Black-idle-2.webp"],hurt:"assets/enemies/catfish/base/Black-hurt.webp"}
 });
 const SQUID_VARIANTS=Object.freeze({
-  green:{id:"green",name:"Vampire Squid",hp:1,atk:1,exp:1,coin:1,idle:["assets/bosses/vampire-squid/base/idle-1.png","assets/bosses/vampire-squid/base/idle-2.png"],hurt:"assets/bosses/vampire-squid/base/hurt.png"},
-  purple:{id:"purple",name:"Purple Vampire Squid",hp:1.2,atk:1.1,exp:1.15,coin:1.15,idle:["assets/bosses/vampire-squid/base/Purple-idle-1.png","assets/bosses/vampire-squid/base/Purple-idle-2.png"],hurt:"assets/bosses/vampire-squid/base/Purple-hurt.png"},
-  coral:{id:"coral",name:"Coral Vampire Squid",hp:1.3,atk:1.15,exp:1.25,coin:1.25,idle:["assets/bosses/vampire-squid/base/Coral-idle-1.png","assets/bosses/vampire-squid/base/Coral-idle-2.png"],hurt:"assets/bosses/vampire-squid/base/Coral-hurt.png"},
-  blue:{id:"blue",name:"Blue Vampire Squid",hp:1.4,atk:1.2,exp:1.4,coin:1.4,idle:["assets/bosses/vampire-squid/base/Blue-idle-1.png","assets/bosses/vampire-squid/base/Blue-idle-2.png"],hurt:"assets/bosses/vampire-squid/base/Blue-hurt.png"},
-  pink:{id:"pink",name:"Pink Vampire Squid",hp:1.7,atk:1.3,exp:1.75,coin:1.8,elite:true,idle:["assets/bosses/vampire-squid/base/Pink-idle-1.png","assets/bosses/vampire-squid/base/Pink-idle-2.png"],hurt:"assets/bosses/vampire-squid/base/Pink-hurt.png"}
+  green:{id:"green",name:"Vampire Squid",hp:1,atk:1,exp:1,coin:1,idle:["assets/bosses/vampire-squid/base/idle-1.webp","assets/bosses/vampire-squid/base/idle-2.webp"],hurt:"assets/bosses/vampire-squid/base/hurt.webp"},
+  purple:{id:"purple",name:"Purple Vampire Squid",hp:1.2,atk:1.1,exp:1.15,coin:1.15,idle:["assets/bosses/vampire-squid/base/Purple-idle-1.webp","assets/bosses/vampire-squid/base/Purple-idle-2.webp"],hurt:"assets/bosses/vampire-squid/base/Purple-hurt.webp"},
+  coral:{id:"coral",name:"Coral Vampire Squid",hp:1.3,atk:1.15,exp:1.25,coin:1.25,idle:["assets/bosses/vampire-squid/base/Coral-idle-1.webp","assets/bosses/vampire-squid/base/Coral-idle-2.webp"],hurt:"assets/bosses/vampire-squid/base/Coral-hurt.webp"},
+  blue:{id:"blue",name:"Blue Vampire Squid",hp:1.4,atk:1.2,exp:1.4,coin:1.4,idle:["assets/bosses/vampire-squid/base/Blue-idle-1.webp","assets/bosses/vampire-squid/base/Blue-idle-2.webp"],hurt:"assets/bosses/vampire-squid/base/Blue-hurt.webp"},
+  pink:{id:"pink",name:"Pink Vampire Squid",hp:1.7,atk:1.3,exp:1.75,coin:1.8,elite:true,idle:["assets/bosses/vampire-squid/base/Pink-idle-1.webp","assets/bosses/vampire-squid/base/Pink-idle-2.webp"],hurt:"assets/bosses/vampire-squid/base/Pink-hurt.webp"}
 });
 
 function applyOceanVariant(template, table, ids, rank, extra={}){
@@ -388,10 +436,10 @@ const FLOWER_VARIANTS = Object.freeze({
     expMultiplier: 1.00,
     coinMultiplier: 1.00,
     idle: [
-      "assets/enemies/flower/base/idle-1.png",
-      "assets/enemies/flower/base/idle-2.png"
+      "assets/enemies/flower/base/idle-1.webp",
+      "assets/enemies/flower/base/idle-2.webp"
     ],
-    hurt: "assets/enemies/flower/base/hurt.png"
+    hurt: "assets/enemies/flower/base/hurt.webp"
   },
 
   pink: {
@@ -402,10 +450,10 @@ const FLOWER_VARIANTS = Object.freeze({
     expMultiplier: 1.15,
     coinMultiplier: 1.15,
     idle: [
-      "assets/enemies/flower/base/Pink-idle-1.png",
-      "assets/enemies/flower/base/Pink-idle-2.png"
+      "assets/enemies/flower/base/Pink-idle-1.webp",
+      "assets/enemies/flower/base/Pink-idle-2.webp"
     ],
-    hurt: "assets/enemies/flower/base/Pink-hurt.png"
+    hurt: "assets/enemies/flower/base/Pink-hurt.webp"
   },
 
   orange: {
@@ -420,10 +468,10 @@ const FLOWER_VARIANTS = Object.freeze({
     healChance: 0.32,
     healMoveName: "Sunny Day!",
     idle: [
-      "assets/enemies/flower/base/Orange-idle-1.png",
-      "assets/enemies/flower/base/Orange-idle-2.png"
+      "assets/enemies/flower/base/Orange-idle-1.webp",
+      "assets/enemies/flower/base/Orange-idle-2.webp"
     ],
-    hurt: "assets/enemies/flower/base/Orange-hurt.png"
+    hurt: "assets/enemies/flower/base/Orange-hurt.webp"
   },
 
   blue: {
@@ -434,10 +482,10 @@ const FLOWER_VARIANTS = Object.freeze({
     expMultiplier: 1.35,
     coinMultiplier: 1.35,
     idle: [
-      "assets/enemies/flower/base/Blue-idle-1.png",
-      "assets/enemies/flower/base/Blue-idle-2.png"
+      "assets/enemies/flower/base/Blue-idle-1.webp",
+      "assets/enemies/flower/base/Blue-idle-2.webp"
     ],
-    hurt: "assets/enemies/flower/base/Blue-hurt.png"
+    hurt: "assets/enemies/flower/base/Blue-hurt.webp"
   },
 
   rainbow: {
@@ -448,10 +496,10 @@ const FLOWER_VARIANTS = Object.freeze({
     expMultiplier: 1.50,
     coinMultiplier: 1.60,
     idle: [
-      "assets/enemies/flower/base/Rainbow-idle-1.png",
-      "assets/enemies/flower/base/Rainbow-idle-2.png"
+      "assets/enemies/flower/base/Rainbow-idle-1.webp",
+      "assets/enemies/flower/base/Rainbow-idle-2.webp"
     ],
-    hurt: "assets/enemies/flower/base/Rainbow-hurt.png"
+    hurt: "assets/enemies/flower/base/Rainbow-hurt.webp"
   }
 });
 
@@ -513,12 +561,12 @@ const CAT_SLIME_VARIANTS = Object.freeze({
     expMultiplier: 1.00,
     coinMultiplier: 1.00,
     idle: [
-      "assets/enemies/cat-slime/base/idle-1-neutral.png",
-      "assets/enemies/cat-slime/base/idle-2-squish.png",
-      "assets/enemies/cat-slime/base/idle-3-bounce.png",
-      "assets/enemies/cat-slime/base/idle-2-squish.png"
+      "assets/enemies/cat-slime/base/idle-1-neutral.webp",
+      "assets/enemies/cat-slime/base/idle-2-squish.webp",
+      "assets/enemies/cat-slime/base/idle-3-bounce.webp",
+      "assets/enemies/cat-slime/base/idle-2-squish.webp"
     ],
-    hurt: "assets/enemies/cat-slime/base/idle-1-neutral.png"
+    hurt: "assets/enemies/cat-slime/base/idle-1-neutral.webp"
   },
 
   purple: {
@@ -529,12 +577,12 @@ const CAT_SLIME_VARIANTS = Object.freeze({
     expMultiplier: 1.15,
     coinMultiplier: 1.15,
     idle: [
-      "assets/enemies/cat-slime/base/Purple-idle-1-neutral.png",
-      "assets/enemies/cat-slime/base/Purple-idle-2-squish.png",
-      "assets/enemies/cat-slime/base/Purple-idle-3-bounce.png",
-      "assets/enemies/cat-slime/base/Purple-idle-2-squish.png"
+      "assets/enemies/cat-slime/base/Purple-idle-1-neutral.webp",
+      "assets/enemies/cat-slime/base/Purple-idle-2-squish.webp",
+      "assets/enemies/cat-slime/base/Purple-idle-3-bounce.webp",
+      "assets/enemies/cat-slime/base/Purple-idle-2-squish.webp"
     ],
-    hurt: "assets/enemies/cat-slime/base/Purple-idle-1-neutral.png"
+    hurt: "assets/enemies/cat-slime/base/Purple-idle-1-neutral.webp"
   },
 
   green: {
@@ -549,12 +597,12 @@ const CAT_SLIME_VARIANTS = Object.freeze({
     healChance: 0.32,
     healMoveName: "Super Squish!",
     idle: [
-      "assets/enemies/cat-slime/base/Green-idle-1-neutral.png",
-      "assets/enemies/cat-slime/base/Green-idle-2-squish.png",
-      "assets/enemies/cat-slime/base/Green-idle-3-bounce.png",
-      "assets/enemies/cat-slime/base/Green-idle-2-squish.png"
+      "assets/enemies/cat-slime/base/Green-idle-1-neutral.webp",
+      "assets/enemies/cat-slime/base/Green-idle-2-squish.webp",
+      "assets/enemies/cat-slime/base/Green-idle-3-bounce.webp",
+      "assets/enemies/cat-slime/base/Green-idle-2-squish.webp"
     ],
-    hurt: "assets/enemies/cat-slime/base/Green-idle-1-neutral.png"
+    hurt: "assets/enemies/cat-slime/base/Green-idle-1-neutral.webp"
   },
 
   teal: {
@@ -565,12 +613,12 @@ const CAT_SLIME_VARIANTS = Object.freeze({
     expMultiplier: 1.35,
     coinMultiplier: 1.35,
     idle: [
-      "assets/enemies/cat-slime/base/Teal-idle-1-neutral.png",
-      "assets/enemies/cat-slime/base/Teal-idle-2-squish.png",
-      "assets/enemies/cat-slime/base/Teal-idle-3-bounce.png",
-      "assets/enemies/cat-slime/base/Teal-idle-2-squish.png"
+      "assets/enemies/cat-slime/base/Teal-idle-1-neutral.webp",
+      "assets/enemies/cat-slime/base/Teal-idle-2-squish.webp",
+      "assets/enemies/cat-slime/base/Teal-idle-3-bounce.webp",
+      "assets/enemies/cat-slime/base/Teal-idle-2-squish.webp"
     ],
-    hurt: "assets/enemies/cat-slime/base/Teal-idle-1-neutral.png"
+    hurt: "assets/enemies/cat-slime/base/Teal-idle-1-neutral.webp"
   },
 
   strawberry: {
@@ -581,12 +629,12 @@ const CAT_SLIME_VARIANTS = Object.freeze({
     expMultiplier: 1.50,
     coinMultiplier: 1.60,
     idle: [
-      "assets/enemies/cat-slime/base/Strawberry-idle-1-neutral.png",
-      "assets/enemies/cat-slime/base/Strawberry-idle-2-squish.png",
-      "assets/enemies/cat-slime/base/Strawberry-idle-3-bounce.png",
-      "assets/enemies/cat-slime/base/Strawberry-idle-2-squish.png"
+      "assets/enemies/cat-slime/base/Strawberry-idle-1-neutral.webp",
+      "assets/enemies/cat-slime/base/Strawberry-idle-2-squish.webp",
+      "assets/enemies/cat-slime/base/Strawberry-idle-3-bounce.webp",
+      "assets/enemies/cat-slime/base/Strawberry-idle-2-squish.webp"
     ],
-    hurt: "assets/enemies/cat-slime/base/Strawberry-idle-1-neutral.png"
+    hurt: "assets/enemies/cat-slime/base/Strawberry-idle-1-neutral.webp"
   }
 });
 
@@ -648,10 +696,10 @@ const BEE_VARIANTS = Object.freeze({
     expMultiplier: 1.00,
     coinMultiplier: 1.00,
     idle: [
-      "assets/enemies/bee/base/idle-1-high.png",
-      "assets/enemies/bee/base/idle-2-low.png"
+      "assets/enemies/bee/base/idle-1-high.webp",
+      "assets/enemies/bee/base/idle-2-low.webp"
     ],
-    hurt: "assets/enemies/bee/base/hurt.png"
+    hurt: "assets/enemies/bee/base/hurt.webp"
   },
 
   purple: {
@@ -662,10 +710,10 @@ const BEE_VARIANTS = Object.freeze({
     expMultiplier: 1.15,
     coinMultiplier: 1.15,
     idle: [
-      "assets/enemies/bee/base/Purple-idle-1-high.png",
-      "assets/enemies/bee/base/Purple-idle-2-low.png"
+      "assets/enemies/bee/base/Purple-idle-1-high.webp",
+      "assets/enemies/bee/base/Purple-idle-2-low.webp"
     ],
-    hurt: "assets/enemies/bee/base/Purple-hurt.png"
+    hurt: "assets/enemies/bee/base/Purple-hurt.webp"
   },
 
   blue: {
@@ -680,10 +728,10 @@ const BEE_VARIANTS = Object.freeze({
     healChance: 0.32,
     healMoveName: "Honey Snack!",
     idle: [
-      "assets/enemies/bee/base/Blue-idle-1-high.png",
-      "assets/enemies/bee/base/Blue-idle-2-low.png"
+      "assets/enemies/bee/base/Blue-idle-1-high.webp",
+      "assets/enemies/bee/base/Blue-idle-2-low.webp"
     ],
-    hurt: "assets/enemies/bee/base/Blue-hurt.png"
+    hurt: "assets/enemies/bee/base/Blue-hurt.webp"
   },
 
   pink: {
@@ -694,10 +742,10 @@ const BEE_VARIANTS = Object.freeze({
     expMultiplier: 1.35,
     coinMultiplier: 1.35,
     idle: [
-      "assets/enemies/bee/base/Pink-idle-1-high.png",
-      "assets/enemies/bee/base/Pink-idle-2-low.png"
+      "assets/enemies/bee/base/Pink-idle-1-high.webp",
+      "assets/enemies/bee/base/Pink-idle-2-low.webp"
     ],
-    hurt: "assets/enemies/bee/base/Pink-hurt.png"
+    hurt: "assets/enemies/bee/base/Pink-hurt.webp"
   },
 
   queen: {
@@ -708,10 +756,10 @@ const BEE_VARIANTS = Object.freeze({
     expMultiplier: 1.50,
     coinMultiplier: 1.60,
     idle: [
-      "assets/enemies/bee/base/Queen-idle-1-high.png",
-      "assets/enemies/bee/base/Queen-idle-2-low.png"
+      "assets/enemies/bee/base/Queen-idle-1-high.webp",
+      "assets/enemies/bee/base/Queen-idle-2-low.webp"
     ],
-    hurt: "assets/enemies/bee/base/Queen-hurt.png"
+    hurt: "assets/enemies/bee/base/Queen-hurt.webp"
   }
 });
 
@@ -765,11 +813,11 @@ function applyBeeVariant(template, rank) {
 }
 
 const MUSHROOM_CAT_VARIANTS = Object.freeze({
-  red:{id:"red",name:"Red Mushroom Cat",hpMultiplier:1,attackMultiplier:1,expMultiplier:1,coinMultiplier:1,idle:["assets/bosses/mushroom-cat/base/idle-1.png","assets/bosses/mushroom-cat/base/idle-2.png"],hurt:"assets/bosses/mushroom-cat/base/hurt.png"},
-  purple:{id:"purple",name:"Purple Mushroom Cat",hpMultiplier:1.20,attackMultiplier:1.10,expMultiplier:1.15,coinMultiplier:1.15,idle:["assets/bosses/mushroom-cat/base/Purple-idle-1.png","assets/bosses/mushroom-cat/base/Purple-idle-2.png"],hurt:"assets/bosses/mushroom-cat/base/Purple-hurt.png"},
-  green:{id:"green",name:"Green Mushroom Cat",hpMultiplier:1.20,attackMultiplier:1.10,expMultiplier:1.20,coinMultiplier:1.20,healPercent:.18,maxHeals:2,healChance:.32,healMoveName:"Forest Snack!",idle:["assets/bosses/mushroom-cat/base/Green-idle-1.png","assets/bosses/mushroom-cat/base/Green-idle-2.png"],hurt:"assets/bosses/mushroom-cat/base/Green-hurt.png"},
-  grey:{id:"grey",name:"Grey Mushroom Cat",hpMultiplier:1.40,attackMultiplier:1.20,expMultiplier:1.35,coinMultiplier:1.35,idle:["assets/bosses/mushroom-cat/base/Grey-idle-1.png","assets/bosses/mushroom-cat/base/Grey-idle-2.png"],hurt:"assets/bosses/mushroom-cat/base/Grey-hurt.png"},
-  gold:{id:"gold",name:"Gold Mushroom Cat",hpMultiplier:1.70,attackMultiplier:1.30,expMultiplier:1.75,coinMultiplier:1.80,idle:["assets/bosses/mushroom-cat/base/Gold-idle-1.png","assets/bosses/mushroom-cat/base/Gold-idle-2.png"],hurt:"assets/bosses/mushroom-cat/base/Gold-hurt.png"}
+  red:{id:"red",name:"Red Mushroom Cat",hpMultiplier:1,attackMultiplier:1,expMultiplier:1,coinMultiplier:1,idle:["assets/bosses/mushroom-cat/base/idle-1.webp","assets/bosses/mushroom-cat/base/idle-2.webp"],hurt:"assets/bosses/mushroom-cat/base/hurt.webp"},
+  purple:{id:"purple",name:"Purple Mushroom Cat",hpMultiplier:1.20,attackMultiplier:1.10,expMultiplier:1.15,coinMultiplier:1.15,idle:["assets/bosses/mushroom-cat/base/Purple-idle-1.webp","assets/bosses/mushroom-cat/base/Purple-idle-2.webp"],hurt:"assets/bosses/mushroom-cat/base/Purple-hurt.webp"},
+  green:{id:"green",name:"Green Mushroom Cat",hpMultiplier:1.20,attackMultiplier:1.10,expMultiplier:1.20,coinMultiplier:1.20,healPercent:.18,maxHeals:2,healChance:.32,healMoveName:"Forest Snack!",idle:["assets/bosses/mushroom-cat/base/Green-idle-1.webp","assets/bosses/mushroom-cat/base/Green-idle-2.webp"],hurt:"assets/bosses/mushroom-cat/base/Green-hurt.webp"},
+  grey:{id:"grey",name:"Grey Mushroom Cat",hpMultiplier:1.40,attackMultiplier:1.20,expMultiplier:1.35,coinMultiplier:1.35,idle:["assets/bosses/mushroom-cat/base/Grey-idle-1.webp","assets/bosses/mushroom-cat/base/Grey-idle-2.webp"],hurt:"assets/bosses/mushroom-cat/base/Grey-hurt.webp"},
+  gold:{id:"gold",name:"Gold Mushroom Cat",hpMultiplier:1.70,attackMultiplier:1.30,expMultiplier:1.75,coinMultiplier:1.80,idle:["assets/bosses/mushroom-cat/base/Gold-idle-1.webp","assets/bosses/mushroom-cat/base/Gold-idle-2.webp"],hurt:"assets/bosses/mushroom-cat/base/Gold-hurt.webp"}
 });
 function weightedBossVariant(rank){
   const r=Math.max(1,Number(rank)||1); let pool;
@@ -788,29 +836,37 @@ function applyMushroomVariant(template,rank){
 }
 
 const REWARD_ITEMS = [
-  { id:"yarn", name:"Yarn", image:"../assets/ingredients/Yarn.PNG", weight:14 },
-  { id:"thread", name:"Thread", image:"../assets/ingredients/Thread.PNG", weight:14 },
-  { id:"glitter", name:"Glitter", image:"../assets/ingredients/Sparkle.PNG", weight:9 },
-  { id:"flower", name:"Flower", image:"../assets/gifts/Flower.PNG", weight:9 },
-  { id:"bread-loaf", name:"Bread Loaf", image:"../assets/food/Bread-loaf.PNG", weight:8 },
-  { id:"apple", name:"Apple", image:"../assets/food/apple.png", weight:8 },
-  { id:"pink-paint", name:"Pink Paint", image:"../assets/paint/Pink-paint.PNG", weight:7 },
-  { id:"red-paint", name:"Red Paint", image:"../assets/paint/Red-paint.PNG", weight:7 },
-  { id:"mint-paint", name:"Mint Paint", image:"../assets/paint/Mint-paint.PNG", weight:6 },
-  { id:"aqua-paint", name:"Aqua Paint", image:"../assets/paint/Aqua-paint.PNG", weight:5 },
-  { id:"gold-paint", name:"Gold Paint", image:"../assets/paint/Gold-paint.PNG", weight:3 },
-  { id:"rainbow-paint", name:"Rainbow Paint", image:"../assets/paint/Rainbow-paint.PNG", weight:1 },
-  { id:"pink-heart-refill", name:"Pink Heart Refill", image:"../assets/bakery/drops/Pink-heart-refill.PNG", weight:5 },
-  { id:"gold-heart-refill", name:"Gold Heart Refill", image:"../assets/bakery/drops/Gold-heart-refill.PNG", weight:1 }
+  { id:"yarn", name:"Yarn", image:"../assets/ingredients/Yarn.webp", weight:14 },
+  { id:"thread", name:"Thread", image:"../assets/ingredients/Thread.webp", weight:14 },
+  { id:"glitter", name:"Glitter", image:"../assets/ingredients/Sparkle.webp", weight:9 },
+  { id:"flower", name:"Flower", image:"../assets/gifts/Flower.webp", weight:9 },
+  { id:"bread-loaf", name:"Bread Loaf", image:"../assets/food/Bread-loaf.webp", weight:8 },
+  { id:"apple", name:"Apple", image:"../assets/food/apple.webp", weight:8 },
+  { id:"pink-paint", name:"Pink Paint", image:"../assets/paint/Pink-paint.webp", weight:7 },
+  { id:"red-paint", name:"Red Paint", image:"../assets/paint/Red-paint.webp", weight:7 },
+  { id:"mint-paint", name:"Mint Paint", image:"../assets/paint/Mint-paint.webp", weight:6 },
+  { id:"aqua-paint", name:"Aqua Paint", image:"../assets/paint/Aqua-paint.webp", weight:5 },
+  { id:"gold-paint", name:"Gold Paint", image:"../assets/paint/Gold-paint.webp", weight:3 },
+  { id:"rainbow-paint", name:"Rainbow Paint", image:"../assets/paint/Rainbow-paint.webp", weight:1 },
+  { id:"pink-heart-refill", name:"Pink Heart Refill", image:"../assets/bakery/drops/Pink-heart-refill.webp", weight:5 },
+  { id:"gold-heart-refill", name:"Gold Heart Refill", image:"../assets/bakery/drops/Gold-heart-refill.webp", weight:1 }
 ];
 
 function currentAreaConfig(){ return getAreaConfig(currentRun?.area || selectedArea); }
 function areaProgress(areaId=selectedArea){ const progress=activeHeroProgress(); return progress.areas[areaId] || progress.areas.meadow; }
 
 const PEepIdle = [
-  "assets/characters/peep/base/idle-1.png",
-  "assets/characters/peep/base/idle-2.png"
+  "assets/characters/peep/base/idle-1.webp",
+  "assets/characters/peep/base/idle-2.webp"
 ];
+
+const MikoIdle = [
+  "assets/characters/miko/base/idle-1.webp",
+  "assets/characters/miko/base/idle-2.webp"
+];
+
+function heroIdleFrames(){ return activeCharacterId === "miko" ? MikoIdle : PEepIdle; }
+function heroHurtFrame(){ return activeCharacterId === "miko" ? MikoIdle[0] : "assets/characters/peep/base/hurt.webp"; }
 
 const ui = {
   home: document.querySelector("#homeScreen"),
@@ -1228,34 +1284,34 @@ function setIconBackground(colorId){
 
 
 const MIKO_LAYER_MAP=Object.freeze({
-  "hair-main":{file:"Miko-hair.PNG",z:15},
-  "hoodie-back":{file:"Miko-hoodie-back.PNG",z:18},
-  "base":{file:"Miko-base.PNG",z:20},
-  "socks":{file:"Miko-socks.PNG",z:29},
-  "socks-garter":{file:"white-garter-socks.png",z:29},
-  "bottom-capris":{file:"Miko-capri-pants.PNG",z:31},
-  "bottom-jeans":{file:"Miko-jeans.PNG",z:31},
-  "bottom-boxers":{file:"Miko-Boxers.PNG",z:31},
-  "bottom-shorts":{file:"shorts.png",z:31},
-  "top-button":{file:"Miko-button-shirt.PNG",z:32},
-  "shirt-blouse":{file:"blouse.png",z:32},
-  "belt":{file:"Miko-belt.PNG",z:33},
-  "top-hoodie":{file:"Miko-hoodie.PNG",z:34},
-  "top-sweater":{file:"Miko-sweater.PNG",z:34},
-  "outer-black-blazer":{file:"black-blazer.png",z:34},
-  "arm-base":{file:"Miko-base-arm.PNG",z:35},
-  "top-big-shirt":{file:"Miko-big-shirt.PNG",z:36.5},
-  "top-button-sleeve":{file:"Miko-button-sleeve.PNG",z:36},
-  "top-hoodie-sleeve":{file:"Miko-hoodie-sleeve.PNG",z:37},
-  "top-sweater-sleeve":{file:"Miko-sweater-sleeve.PNG",z:37},
-  "outer-black-blazer-arm":{file:"black-blazer-arm-piece.png",z:37},
-  "shoes-loafer":{file:"Miko-loafers.PNG",z:39},
-  "shoes-fancy-loafers":{file:"fancy-loafers.png",z:39},
-  "expression-neutral":{file:"Miko-neutral.PNG",z:44},
-  "headband":{file:"Miko-headband.PNG",z:47},
-  "bangs":{file:"Miko-bangs.PNG",z:48},
-  "bangs-pinned":{file:"Miko-bangs-pinned.PNG",z:48},
-  "hairpins-black":{file:"black-hairpins.png",z:49}
+  "hair-main":{file:"Miko-hair.webp",z:15},
+  "hoodie-back":{file:"Miko-hoodie-back.webp",z:18},
+  "base":{file:"Miko-base.webp",z:20},
+  "socks":{file:"Miko-socks.webp",z:29},
+  "socks-garter":{file:"white-garter-socks.webp",z:29},
+  "bottom-capris":{file:"Miko-capri-pants.webp",z:31},
+  "bottom-jeans":{file:"Miko-jeans.webp",z:31},
+  "bottom-boxers":{file:"Miko-Boxers.webp",z:31},
+  "bottom-shorts":{file:"shorts.webp",z:31},
+  "top-button":{file:"Miko-button-shirt.webp",z:32},
+  "shirt-blouse":{file:"blouse.webp",z:32},
+  "belt":{file:"Miko-belt.webp",z:33},
+  "top-hoodie":{file:"Miko-hoodie.webp",z:34},
+  "top-sweater":{file:"Miko-sweater.webp",z:34},
+  "outer-black-blazer":{file:"black-blazer.webp",z:34},
+  "arm-base":{file:"Miko-base-arm.webp",z:35},
+  "top-big-shirt":{file:"Miko-big-shirt.webp",z:36.5},
+  "top-button-sleeve":{file:"Miko-button-sleeve.webp",z:36},
+  "top-hoodie-sleeve":{file:"Miko-hoodie-sleeve.webp",z:37},
+  "top-sweater-sleeve":{file:"Miko-sweater-sleeve.webp",z:37},
+  "outer-black-blazer-arm":{file:"black-blazer-arm-piece.webp",z:37},
+  "shoes-loafer":{file:"Miko-loafers.webp",z:39},
+  "shoes-fancy-loafers":{file:"fancy-loafers.webp",z:39},
+  "expression-neutral":{file:"Miko-neutral.webp",z:44},
+  "headband":{file:"Miko-headband.webp",z:47},
+  "bangs":{file:"Miko-bangs.webp",z:48},
+  "bangs-pinned":{file:"Miko-bangs-pinned.webp",z:48},
+  "hairpins-black":{file:"black-hairpins.webp",z:49}
 });
 
 function currentMikoOutfit(){
@@ -1291,18 +1347,17 @@ function currentMikoLayerIds(){
   return ids.filter(id=>MIKO_LAYER_MAP[id]).sort((a,b)=>MIKO_LAYER_MAP[a].z-MIKO_LAYER_MAP[b].z);
 }
 
-function renderMikoComposite(container){
+function renderMikoComposite(container,src=MikoIdle[0]){
   if(!container) return;
-  container.innerHTML="";
-  currentMikoLayerIds().forEach((id,index)=>{
-    const layer=MIKO_LAYER_MAP[id];
-    const img=document.createElement("img");
-    img.src=`../assets/miko/${layer.file}`;
-    img.alt="";
-    img.style.zIndex=String(index+1);
-    img.dataset.asset=id;
+  let img=container.querySelector("img");
+  if(!img){
+    container.innerHTML="";
+    img=document.createElement("img");
+    img.className="miko-quest-sprite pixel-sprite";
+    img.alt="Miko";
     container.appendChild(img);
-  });
+  }
+  img.src=src;
 }
 
 function activeHeroVisual(){
@@ -1325,22 +1380,15 @@ function renderHeroVisuals(){
   ui.resultHeroComposite?.classList.toggle("hidden",!isMiko);
 
   if(isMiko){
-    renderMikoComposite(ui.menuHeroComposite);
-    renderMikoComposite(ui.battleHeroComposite);
-    renderMikoComposite(ui.resultHeroComposite);
+    renderMikoComposite(ui.menuHeroComposite,MikoIdle[0]);
+    renderMikoComposite(ui.battleHeroComposite,MikoIdle[0]);
+    renderMikoComposite(ui.resultHeroComposite,MikoIdle[0]);
   }
 }
 
-function skillDisplayName(skill){
-  if(skill.id==="peep-apocalypse") return `${heroDisplayName()} Apocalypse!`;
-  return skill.name;
-}
+function skillDisplayName(skill){ return skill.name; }
 
-function skillDisplayDescription(skill){
-  if(skill.id==="magical-wish") return `Restore 42% of ${heroDisplayName()}'s max HP.`;
-  if(skill.id==="peep-apocalypse") return `${heroDisplayName()} has had enough.`;
-  return skill.description;
-}
+function skillDisplayDescription(skill){ return skill.description; }
 
 function renderMeta() {
   renderIconBackgroundPicker();
@@ -1395,7 +1443,7 @@ function rankDescription(rank,areaId=selectedArea) {
 
 function renderMenuSkills() {
   ui.menuSkills.innerHTML="";
-  SKILLS.forEach(skill=>{
+  activeSkills().forEach(skill=>{
     const el=document.createElement("div");
     const unlocked=activeHeroProgress().level>=skill.unlock;
     el.className=`skill-summary${unlocked?"":" locked"}`;
@@ -1469,7 +1517,7 @@ function startEncounter() {
   actionLocked=false;
   pendingChest=null;
   guardActive=false;
-  skillState={ magicalWishCooldown:0, duckThrowCooldown:0, apocalypseUsed:false };
+  skillState={ cooldowns:{}, onceUsed:{}, attackBuffTurns:0, attackBuffMultiplier:1.30 };
   ui.chestLayer.classList.add("hidden");
   ui.continueButton.classList.add("hidden");
   ui.commandGrid.classList.remove("hidden");
@@ -1546,8 +1594,15 @@ function startEnemy(enemyId) {
   else setMessage(`${currentEnemy.name} appeared!`);
 }
 
-function setHeroPeepFrame(src){
-  if(activeCharacterId==="peep" && ui.peepSprite) ui.peepSprite.src=src;
+function setHeroFrame(src){
+  if(activeCharacterId==="miko") renderMikoComposite(ui.battleHeroComposite,src);
+  else if(ui.peepSprite) ui.peepSprite.src=src;
+}
+
+function restoreHeroIdleFrame(){
+  const frames=heroIdleFrames();
+  const index=peepIdleIndex%frames.length;
+  setHeroFrame(frames[index]);
 }
 
 function addHeroVisualClass(className){
@@ -1574,15 +1629,12 @@ function renderEnemyHp() {
 function startPeepIdle() {
   clearInterval(peepIdleTimer);
   peepIdleIndex=0;
-  if(activeCharacterId==="miko"){
-    renderMikoComposite(ui.battleHeroComposite);
-    return;
-  }
-  ui.peepSprite.src=PEepIdle[0];
+  const frames=heroIdleFrames();
+  setHeroFrame(frames[0]);
   peepIdleTimer=setInterval(()=>{
     if(actionLocked) return;
-    peepIdleIndex=(peepIdleIndex+1)%PEepIdle.length;
-    ui.peepSprite.src=PEepIdle[peepIdleIndex];
+    peepIdleIndex=(peepIdleIndex+1)%frames.length;
+    setHeroFrame(frames[peepIdleIndex]);
   },520);
 }
 
@@ -1607,7 +1659,7 @@ function clearAnimations() {
 function renderSkills() {
   ui.skillButtons.innerHTML="";
 
-  SKILLS
+  activeSkills()
     .filter(skill => activeHeroProgress().level >= skill.unlock)
     .forEach(skill=>{
       const button=document.createElement("button");
@@ -1615,18 +1667,19 @@ function renderSkills() {
       let unavailable=false;
       let detail=skillDisplayDescription(skill);
 
-      if(skill.id==="magical-wish" && skillState.magicalWishCooldown>0) {
+      const cooldown=Number(skillState.cooldowns?.[skill.id]||0);
+      if(skill.cooldown && cooldown>0) {
         unavailable=true;
-        detail=`Cooldown: ${skillState.magicalWishCooldown} turn${skillState.magicalWishCooldown===1?"":"s"}`;
-      } else if(skill.id==="duck-throw" && skillState.duckThrowCooldown>0) {
-        unavailable=true;
-        detail=`Cooldown: ${skillState.duckThrowCooldown} turn${skillState.duckThrowCooldown===1?"":"s"}`;
-      } else if(skill.id==="peep-apocalypse" && skillState.apocalypseUsed) {
+        detail=`Cooldown: ${cooldown} turn${cooldown===1?"":"s"}`;
+      } else if(skill.oncePerBattle && skillState.onceUsed?.[skill.id]) {
         unavailable=true;
         detail="Already used this battle.";
+      } else if(skill.id==="smug" && skillState.attackBuffTurns>0) {
+        unavailable=true;
+        detail=`Attack +30% active · ${skillState.attackBuffTurns} turn${skillState.attackBuffTurns===1?"":"s"}`;
       }
 
-      button.className=`pixel-button skill-button ${skill.type==="heal"?"heal":skill.id==="duck-throw"?"duck":skill.id==="peep-apocalypse"?"ultimate":""}`;
+      button.className=`pixel-button skill-button ${skill.type==="heal"?"heal":skill.type==="buff"?"buff":skill.id==="duck-throw"?"duck":skill.oncePerBattle?"ultimate":""}`;
       button.disabled=unavailable || actionLocked;
       button.innerHTML=`<strong>${skillDisplayName(skill)}</strong><span${detail.startsWith("Cooldown")?' class="cooldown"':""}>${detail}</span>`;
 
@@ -1686,13 +1739,13 @@ function renderBattleItems() {
     {
       id: "pink-heart-refill",
       name: "Pink Heart Refill",
-      image: "../assets/bakery/drops/Pink-heart-refill.PNG",
+      image: "../assets/bakery/drops/Pink-heart-refill.webp",
       detail: "Heal 50% HP"
     },
     {
       id: "gold-heart-refill",
       name: "Gold Heart Refill",
-      image: "../assets/bakery/drops/Gold-heart-refill.PNG",
+      image: "../assets/bakery/drops/Gold-heart-refill.webp",
       detail: "Restore full HP"
     }
   ];
@@ -1785,40 +1838,60 @@ async function useSkill(skill) {
   renderSkills();
   renderCommandButtons();
 
+  setHeroFrame(skill.sprite || heroIdleFrames()[0]);
+  addHeroVisualClass("attack-pop");
+
   if(skill.type==="heal") {
-    setHeroPeepFrame("assets/characters/peep/base/attack.png");
     const amount=Math.max(1,Math.round(currentRun.maxHp*skill.healPercent));
     const healed=Math.min(amount,currentRun.maxHp-currentRun.hp);
     currentRun.hp+=healed;
-    skillState.magicalWishCooldown=skill.cooldown;
-    setMessage(`Magical Wish! ${heroDisplayName()} restored ${healed} HP.`);
+    if(skill.cooldown) skillState.cooldowns[skill.id]=skill.cooldown;
+    setMessage(`${skillDisplayName(skill)} ${heroDisplayName()} restored ${healed} HP.`);
     showFloat(`+${healed}`,"heal","peep");
     renderPeepHp();
-    await sleep(650);
+    await sleep(700);
+  } else if(skill.type==="buff") {
+    skillState.attackBuffTurns=skill.duration||3;
+    skillState.attackBuffMultiplier=1+(skill.attackBoost||0.30);
+    setMessage(`Smug! Miko's Attack rose by 30% for ${skillState.attackBuffTurns} turns.`);
+    await sleep(700);
+  } else if(skill.type==="multi-hit") {
+    const stats=peepStats();
+    const boostedAttack=stats.attack*(skillState.attackBuffTurns>0?skillState.attackBuffMultiplier:1);
+    const hits=Math.max(2,Number(skill.hits)||4);
+    const perHit=(skill.multiplier||1)/hits;
+    setMessage("He has a gun! Miko fires four quick shots!");
+    await sleep(240);
+    for(let i=0;i<hits && currentEnemy && currentEnemy.hpNow>0;i++){
+      const variance=0.96+Math.random()*0.08;
+      const dmg=Math.max(1,Math.round(boostedAttack*perHit*variance));
+      await hurtEnemy(dmg);
+      if(i<hits-1 && currentEnemy?.hpNow>0) await sleep(90);
+    }
   } else {
-    setHeroPeepFrame("assets/characters/peep/base/attack.png");
-    addHeroVisualClass("attack-pop");
-
     let multiplier=skill.multiplier||1;
     let flavor=skillDisplayName(skill);
 
     if(skill.id==="duck-throw") {
       const duck=pickThrowDuck();
       flavor=`Duck Throw! ${duck.name} goes flying!`;
-      skillState.duckThrowCooldown=skill.cooldown;
       showThrownDuck(duck);
     }
-    if(skill.id==="peep-apocalypse") skillState.apocalypseUsed=true;
+    if(skill.cooldown) skillState.cooldowns[skill.id]=skill.cooldown;
+    if(skill.oncePerBattle) skillState.onceUsed[skill.id]=true;
 
     const stats=peepStats();
+    const boostedAttack=stats.attack*(skillState.attackBuffTurns>0?skillState.attackBuffMultiplier:1);
     const crit=Math.random()<0.11;
     const variance=0.9+Math.random()*0.2;
-    const dmg=Math.max(1,Math.round(stats.attack*multiplier*variance*(crit?1.5:1)));
+    const dmg=Math.max(1,Math.round(boostedAttack*multiplier*variance*(crit?1.5:1)));
     setMessage(flavor + (crit?" CRITICAL!":""));
-    await sleep(260);
+    await sleep(280);
     await hurtEnemy(dmg);
   }
 
+  removeHeroVisualClass("attack-pop");
+  restoreHeroIdleFrame();
   decrementCooldowns(skill.id);
 
   if(currentEnemy && currentEnemy.hpNow<=0) {
@@ -1834,8 +1907,11 @@ async function useSkill(skill) {
 }
 
 function decrementCooldowns(usedSkillId) {
-  if(usedSkillId!=="magical-wish" && skillState.magicalWishCooldown>0) skillState.magicalWishCooldown--;
-  if(usedSkillId!=="duck-throw" && skillState.duckThrowCooldown>0) skillState.duckThrowCooldown--;
+  if(!skillState.cooldowns) skillState.cooldowns={};
+  Object.keys(skillState.cooldowns).forEach(id=>{
+    if(id!==usedSkillId && skillState.cooldowns[id]>0) skillState.cooldowns[id]--;
+  });
+  if(usedSkillId!=="smug" && skillState.attackBuffTurns>0) skillState.attackBuffTurns--;
 }
 
 async function hurtEnemy(dmg) {
@@ -1862,7 +1938,7 @@ async function performEnemyAttack(multiplier=1,label="",lifeDrainHeal=0){
   if(crit) dmg=Math.round(dmg*1.5);
   if(guardActive){dmg=Math.max(1,Math.ceil(dmg*.5));guardActive=false;}
   currentRun.hp=Math.max(0,currentRun.hp-dmg);
-  setHeroPeepFrame("assets/characters/peep/base/hurt.png");addHeroVisualClass("hurt-pop");
+  setHeroFrame(heroHurtFrame());addHeroVisualClass("hurt-pop");
   showFloat(`-${dmg}`,"damage","peep");renderPeepHp();
   if(lifeDrainHeal>0 && currentEnemy.hpNow>0){
     const before=currentEnemy.hpNow;
@@ -1871,7 +1947,7 @@ async function performEnemyAttack(multiplier=1,label="",lifeDrainHeal=0){
     if(healed>0){showFloat(`+${healed}`,"heal","enemy");renderEnemyHp();}
   }
   await sleep(420);removeHeroVisualClass("hurt-pop");ui.enemySprite.classList.remove("attack-pop");
-  setHeroPeepFrame(PEepIdle[peepIdleIndex%PEepIdle.length]);
+  restoreHeroIdleFrame();
   if(currentRun.hp<=0) endRun(false);
   else if(!label) setMessage(crit?`${currentEnemy.name} landed a critical hit!`:`${heroDisplayName()} is ready!`);
   return dmg;
@@ -1963,7 +2039,7 @@ async function enemyDefeated() {
 
 function showChest(data) {
   pendingChest=data;
-  ui.chestSprite.src="assets/items/chests/treasure/closed.png";
+  ui.chestSprite.src="assets/items/chests/treasure/closed.webp";
   ui.chestSprite.classList.remove("opening");
   ui.openChest.classList.remove("hidden");
   ui.openChest.disabled=false;
@@ -1984,7 +2060,7 @@ async function openPendingChest() {
   await sleep(260);
 
   if(pendingChest.revealMimic) {
-    ui.chestSprite.src="assets/items/chests/treasure/open.png";
+    ui.chestSprite.src="assets/items/chests/treasure/open.webp";
     await sleep(140);
     ui.chestLayer.classList.add("hidden");
     actionLocked=false;
@@ -1992,7 +2068,7 @@ async function openPendingChest() {
     return;
   }
 
-  ui.chestSprite.src="assets/items/chests/treasure/open.png";
+  ui.chestSprite.src="assets/items/chests/treasure/open.webp";
   const rewards=generateRewards(pendingChest);
   applyRewards(rewards);
 
@@ -2175,7 +2251,7 @@ function renderResult(won) {
   const levels=[...new Set(currentRun?.levelsGained||[])];
   if(levels.length){
     ui.levelUpNotice.classList.remove("hidden");
-    const unlocked=SKILLS.filter(s=>levels.includes(s.unlock)).map(skillDisplayName);
+    const unlocked=activeSkills().filter(s=>levels.includes(s.unlock)).map(skillDisplayName);
     const levelBgs=[...new Map((currentRun?.levelBackgroundsEarned||[]).map(bg=>[bg.id,bg])).values()];
     const extras=[];
     if(unlocked.length) extras.push(`New skill unlocked: ${unlocked.join(", ")}`);
@@ -2196,7 +2272,7 @@ function showThrownDuck(duck) {
   const img=document.createElement("img");
   img.src=`../assets/ducks/${duck.file}`;
   img.alt="";
-  img.style.cssText="position:absolute;z-index:20;width:48px;height:48px;object-fit:contain;image-rendering:pixelated;left:30%;top:52%;transition:transform .45s linear,left .45s linear,top .45s linear;pointer-events:none;";
+  img.style.cssText="position:absolute;z-index:20;width:64px;height:64px;object-fit:contain;image-rendering:pixelated;left:30%;top:52%;transition:transform .45s linear,left .45s linear,top .45s linear;pointer-events:none;";
   document.querySelector("#battlefield").appendChild(img);
   requestAnimationFrame(()=>{
     img.style.left="69%";
@@ -2279,7 +2355,11 @@ const menuPeep=document.querySelector("#menuPeep");
 let menuFrame=0;
 setInterval(()=>{
   if(ui.home.classList.contains("hidden")) return;
-  if(activeCharacterId!=="peep") return;
+  if(activeCharacterId==="miko"){
+    menuFrame=(menuFrame+1)%MikoIdle.length;
+    renderMikoComposite(ui.menuHeroComposite,MikoIdle[menuFrame]);
+    return;
+  }
   menuFrame=(menuFrame+1)%PEepIdle.length;
   menuPeep.src=PEepIdle[menuFrame];
 },560);

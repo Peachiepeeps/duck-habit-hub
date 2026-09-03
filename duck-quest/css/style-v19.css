@@ -592,7 +592,7 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
   z-index:80;
   left:50%;
   top:calc(100% + 6px);
-  transform:translateX(-38%);
+  transform:translateX(-50%);
   width:240px;
   max-height:185px;
   overflow-y:auto;
@@ -715,7 +715,6 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
 
 @media(max-width:600px){
   .icon-background-picker{
-    transform:translateX(-34%);
     width:216px;
     grid-template-columns:repeat(5,33px);
     gap:7px;
@@ -730,5 +729,80 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
   }
   .battlefield.ocean-peep-raised .battle-hero-composite{
     top:-6px !important;
+  }
+}
+
+/* =========================================================
+   V19 — dedicated Peep + Miko Duck Quest battle sprites
+   ========================================================= */
+.skill-button.buff{background:#e8ddff}
+
+.menu-hero-composite{
+  width:120px;
+  height:120px;
+  display:grid;
+  place-items:center;
+  overflow:visible;
+}
+.menu-hero-composite img{
+  position:static;
+  width:120px;
+  height:120px;
+  object-fit:contain;
+  image-rendering:pixelated;
+}
+
+.battle-hero-composite{
+  position:absolute !important;
+  width:45% !important;
+  height:auto !important;
+  aspect-ratio:auto !important;
+  left:8% !important;
+  top:52px !important;
+  margin:0 !important;
+  display:grid;
+  place-items:center;
+  overflow:visible;
+}
+.battle-hero-composite img{
+  position:static;
+  width:100%;
+  height:auto;
+  object-fit:contain;
+  image-rendering:pixelated;
+}
+
+.result-hero-composite{
+  position:absolute;
+  inset:0;
+  width:130px;
+  height:130px;
+  margin:auto;
+  transform:none;
+  display:grid;
+  place-items:center;
+}
+.result-hero-composite img{
+  position:static;
+  width:130px;
+  height:130px;
+  object-fit:contain;
+  image-rendering:pixelated;
+}
+
+.battlefield.ocean-peep-raised .battle-hero-composite{
+  top:30px !important;
+}
+
+@media(max-width:600px){
+  .menu-hero-composite{width:96px;height:96px}
+  .menu-hero-composite img{width:96px;height:96px}
+  .battle-hero-composite{
+    width:45% !important;
+    left:8% !important;
+    top:52px !important;
+  }
+  .battlefield.ocean-peep-raised .battle-hero-composite{
+    top:34px !important;
   }
 }

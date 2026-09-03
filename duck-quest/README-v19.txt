@@ -1,11 +1,6 @@
-Duck Quest v18
-- Separate Battle Level, EXP, Meadow rank, and Ocean rank for each unlocked OC.
-- Miko begins at Level 1 / Rank 1 and uses his current Hub outfit in battle.
-- Icon Background unlocks are shared, but each OC can choose their own background.
-- Icon Background picker now uses Wallpaper-style color/pattern dots.
+Duck Quest v19
 
-
-V19 polish:
-- Duck Throw projectile is smaller.
-- Icon Background picker is shifted right for better visibility.
-- Hub Profile background selection is independent from Duck Quest portrait background.
+- Peep now uses unique sprites for Heart Pop, Magical Wish, Duck Throw, and Peep Apocalypse.
+- Miko now uses dedicated two-frame idle sprites and unique move sprites.
+- Miko moves: Mock (1.0x), Smug (+30% Attack for 3 turns), Failed Spell (1.85x, 2-turn cooldown), He has a gun! (4 hits totaling 1.50x).
+- Miko no longer uses the full-size layered Hub outfit inside Duck Quest; the dedicated pixel sprites are used instead.
