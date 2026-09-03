@@ -1040,3 +1040,33 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
     top:49% !important;
   }
 }
+
+
+/* =========================================================
+   V24 — TALLER BATTLE COMMANDS + OVERLAY ATTACK/ITEM MENUS
+   ========================================================= */
+
+.battle-ui{position:relative}
+.battle-message{padding-right:84px}
+.command-stage{position:relative}
+.command-grid{grid-template-rows:repeat(2,minmax(82px,1fr))}
+.command-button{min-height:82px;padding:10px 12px}
+.command-overlay{position:absolute;inset:0;z-index:20;display:block;padding:0;border:0;border-radius:9px;background:var(--panel);box-shadow:none;overflow:visible}
+.command-overlay::before{content:"";position:absolute;inset:0;z-index:-1;border:3px solid #aa7c88;border-radius:9px;background:#fffaf1}
+.command-overlay .command-window-header{position:absolute;right:4px;top:-49px;z-index:22;display:block}
+.command-overlay .command-window-header>strong{display:none}
+.command-back-button{min-height:30px!important;padding:3px 8px!important;font-size:.58rem!important;box-shadow:0 3px 0 rgba(102,67,61,.18)}
+.command-overlay .skill-grid,.command-overlay .battle-item-grid{width:100%;height:100%;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:8px}
+.command-overlay .skill-button,.command-overlay .battle-item-button{min-height:82px;height:100%;margin:0}
+.command-overlay .no-battle-items{min-height:100%;display:grid;place-items:center;margin:0}
+@media(max-width:600px){
+  .battle-message{padding-right:72px}
+  .command-grid{grid-template-rows:repeat(2,minmax(78px,1fr))}
+  .command-button{min-height:78px;padding:8px 9px}
+  .command-button strong{font-size:.78rem}
+  .command-button span{font-size:.52rem}
+  .command-overlay .skill-grid,.command-overlay .battle-item-grid{gap:6px}
+  .command-overlay .skill-button,.command-overlay .battle-item-button{min-height:78px;height:100%}
+  .command-overlay .command-window-header{top:-45px;right:3px}
+  .command-back-button{min-height:27px!important;padding:2px 6px!important;font-size:.51rem!important}
+}

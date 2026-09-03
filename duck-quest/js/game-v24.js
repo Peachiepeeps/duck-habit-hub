@@ -70,6 +70,21 @@ const ICON_BACKGROUND_COLORS = Object.freeze([
   {id:"starry-periwinkle",label:"Starry Periwinkle",rarity:"rare",source:"chest",weight:1.5,value:"radial-gradient(circle at 18% 22%,#fff9cf 0 2px,transparent 2.5px),radial-gradient(circle at 72% 34%,#fff 0 1.5px,transparent 2px),radial-gradient(circle at 48% 78%,#fff9cf 0 1.5px,transparent 2px),linear-gradient(160deg,#9da9df,#c1b1e5)",size:"30px 30px,26px 26px,34px 34px,auto"},
   {id:"gold-glitter",label:"Gold Glitter",rarity:"rare",source:"chest",weight:1.2,value:"radial-gradient(circle at 18% 20%,#fff8d7 0 1.5px,transparent 2px),radial-gradient(circle at 70% 28%,#fff 0 1px,transparent 1.7px),radial-gradient(circle at 45% 78%,#f7c75e 0 1.5px,transparent 2px),linear-gradient(135deg,#edd38a,#cda654)",size:"20px 20px,26px 26px,30px 30px,auto"},
 
+  // Special pastel chest backgrounds — intentionally harder to find.
+  {id:"strawberry-milk-sparkle",label:"Strawberry Milk Sparkle",rarity:"rare",source:"chest",weight:.70,value:"radial-gradient(circle at 16% 18%,#fff 0 1.5px,transparent 2px),radial-gradient(circle at 72% 34%,#ffe8a8 0 1.2px,transparent 1.8px),radial-gradient(circle at 40% 78%,#fff 0 1px,transparent 1.7px),linear-gradient(145deg,#f8c3d4,#f4dce4,#fff4ed)",size:"21px 21px,29px 29px,18px 18px,auto"},
+  {id:"peach-soda-bubbles",label:"Peach Soda Bubbles",rarity:"rare",source:"chest",weight:.58,value:"radial-gradient(circle at 18% 24%,rgba(255,255,255,.92) 0 3px,transparent 3.7px),radial-gradient(circle at 70% 58%,rgba(255,255,255,.75) 0 2px,transparent 2.8px),radial-gradient(circle at 42% 82%,rgba(255,247,221,.85) 0 1.5px,transparent 2.2px),linear-gradient(145deg,#f7bda7,#f8d5bf,#fff0dc)",size:"34px 34px,27px 27px,23px 23px,auto"},
+  {id:"mint-candy-stars",label:"Mint Candy Stars",rarity:"rare",source:"chest",weight:.48,value:"radial-gradient(circle at 20% 25%,#fff3b8 0 2px,transparent 2.6px),radial-gradient(circle at 72% 35%,#e7c9f4 0 2px,transparent 2.6px),radial-gradient(circle at 42% 78%,#f6b9cf 0 1.8px,transparent 2.4px),linear-gradient(135deg,#bce7cf,#d8f0dc)",size:"28px 28px,34px 34px,24px 24px,auto"},
+  {id:"cotton-candy-clouds",label:"Cotton Candy Clouds",rarity:"rare",source:"chest",weight:.40,value:"radial-gradient(ellipse at 20% 35%,rgba(255,255,255,.62) 0 8px,transparent 9px),radial-gradient(ellipse at 74% 62%,rgba(255,255,255,.52) 0 9px,transparent 10px),linear-gradient(145deg,#bedef5,#f5c3d9 52%,#d9c7f1)",size:"48px 34px,52px 38px,auto"},
+  {id:"sakura-mist",label:"Sakura Mist",rarity:"rare",source:"chest",weight:.32,value:"radial-gradient(ellipse at 18% 24%,#fff2f6 0 3px,transparent 3.8px),radial-gradient(ellipse at 72% 42%,#f6b6cb 0 2.5px,transparent 3.3px),radial-gradient(ellipse at 42% 78%,#fff6f0 0 2px,transparent 2.8px),linear-gradient(145deg,#f4c8d7,#e6d1ef,#f9e6ea)",size:"31px 25px,37px 29px,27px 23px,auto"},
+
+  // Extra ultra-rare special drops.
+  {id:"lavender-moonlight",label:"Lavender Moonlight",rarity:"ultra",source:"chest",weight:.10,value:"radial-gradient(circle at 22% 25%,#fff7c9 0 2px,transparent 2.6px),radial-gradient(circle at 72% 34%,#fff 0 1.4px,transparent 2px),radial-gradient(circle at 45% 78%,#fff7c9 0 1.2px,transparent 1.8px),linear-gradient(155deg,#aeb4e8,#c9b8ec,#e3ccef)",size:"34px 34px,27px 27px,39px 39px,auto"},
+  {id:"angel-ribbon",label:"Angel Ribbon",rarity:"ultra",source:"chest",weight:.08,value:"repeating-linear-gradient(135deg,rgba(255,255,255,.48) 0 7px,transparent 7px 19px),linear-gradient(135deg,#cbe5f6,#fff3df 48%,#f4c7d9)",size:"34px 34px,auto"},
+  {id:"dreamy-hearts",label:"Dreamy Hearts",rarity:"ultra",source:"chest",weight:.065,value:"radial-gradient(circle at 20% 28%,#fff 0 2.4px,transparent 3px),radial-gradient(circle at 72% 38%,#ffe4ef 0 2.4px,transparent 3px),radial-gradient(circle at 44% 78%,#fff5bf 0 1.8px,transparent 2.5px),linear-gradient(145deg,#efb7d0,#d4c1ef,#bfe0ef)",size:"29px 29px,35px 35px,24px 24px,auto"},
+  {id:"pastel-confetti",label:"Pastel Confetti",rarity:"ultra",source:"chest",weight:.05,value:"radial-gradient(circle at 16% 22%,#f0a9c5 0 1.8px,transparent 2.4px),radial-gradient(circle at 70% 28%,#a9d9ed 0 1.8px,transparent 2.4px),radial-gradient(circle at 42% 76%,#bde0bf 0 1.8px,transparent 2.4px),radial-gradient(circle at 82% 82%,#d2b9ec 0 1.8px,transparent 2.4px),#fff7e8",size:"24px 24px,31px 31px,28px 28px,35px 35px,auto"},
+  {id:"holographic-pastel",label:"Holographic Pastel",rarity:"ultra",source:"chest",weight:.035,value:"radial-gradient(circle at 18% 22%,rgba(255,255,255,.9) 0 1.5px,transparent 2px),radial-gradient(circle at 72% 68%,rgba(255,255,255,.8) 0 1.2px,transparent 1.8px),conic-gradient(from 35deg,#f4b7cf,#c3e2f5,#d8c5f0,#c7ead5,#fff0b8,#f4b7cf)",size:"26px 26px,33px 33px,auto"},
+  {id:"sweetheart-rainbow",label:"Sweetheart Rainbow",rarity:"ultra",source:"chest",weight:.02,value:"radial-gradient(circle at 15% 20%,#fff 0 1.7px,transparent 2.2px),radial-gradient(circle at 72% 32%,#fff7ba 0 1.5px,transparent 2px),radial-gradient(circle at 44% 78%,#fff 0 1.3px,transparent 2px),linear-gradient(135deg,#f5a9c3,#f7c999,#d5e5aa,#b6dff0,#c9b8ef,#ecb8dd)",size:"22px 22px,29px 29px,34px 34px,auto"},
+
   // Ultra-rare chest prizes
   {id:"rainbow",label:"Rainbow",rarity:"ultra",source:"chest",weight:.45,value:"linear-gradient(135deg,#ed9baa,#f1c781,#b7daa0,#9dcfe2,#b7a6e4,#e2abd8)"},
   {id:"rainbow-gingham",label:"Rainbow Gingham",rarity:"ultra",source:"chest",weight:.28,value:"linear-gradient(90deg,rgba(255,255,255,.38) 50%,transparent 50%),linear-gradient(rgba(255,255,255,.38) 50%,transparent 50%),linear-gradient(135deg,#ef9cac,#f4d18d,#b6dda2,#9fd4e6,#b8a9e6,#e7add8)",size:"24px 24px,24px 24px,auto"},
@@ -1756,6 +1771,7 @@ function renderCommandButtons() {
 function openCommandWindow(kind) {
   if (actionLocked || !currentEnemy) return;
 
+  ui.commandWindow.dataset.kind = kind;
   ui.commandWindow.classList.remove("hidden");
   ui.skillButtons.classList.add("hidden");
   ui.itemButtons.classList.add("hidden");
@@ -1775,6 +1791,7 @@ function openCommandWindow(kind) {
 }
 
 function closeCommandWindow() {
+  delete ui.commandWindow.dataset.kind;
   ui.commandWindow.classList.add("hidden");
   ui.skillButtons.classList.add("hidden");
   ui.itemButtons.classList.add("hidden");

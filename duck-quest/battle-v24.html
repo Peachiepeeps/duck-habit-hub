@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f6c6d6" />
   <title>Duck Quest</title>
-  <link rel="stylesheet" href="css/style-v23.css" />
+  <link rel="stylesheet" href="css/style-v24.css" />
 </head>
 <body>
   <main class="quest-shell">
@@ -170,31 +170,33 @@
       <div class="battle-ui">
         <div id="battleMessage" class="battle-message" aria-live="polite">Ready!</div>
 
-        <div id="commandGrid" class="command-grid">
-          <button id="attackMenuButton" class="pixel-button command-button attack-command" type="button">
-            <strong>Attack</strong>
-          </button>
-          <button id="itemMenuButton" class="pixel-button command-button item-command" type="button">
-            <strong>Item</strong>
-          </button>
-          <button id="quickHealButton" class="pixel-button command-button quick-heal-command" type="button">
-            <strong>Quick Heal</strong>
-            <span id="quickHealUsesText">25% HP · 4/4</span>
-          </button>
-          <button id="escapeButton" class="pixel-button command-button escape-command" type="button">
-            <strong>Escape</strong>
-          </button>
-        </div>
-
-        <section id="commandWindow" class="command-window hidden" aria-live="polite">
-          <div class="command-window-header">
-            <strong id="commandWindowTitle">Attack</strong>
-            <button id="closeCommandWindow" class="pixel-button small" type="button">‹ Back</button>
+        <div id="commandStage" class="command-stage">
+          <div id="commandGrid" class="command-grid">
+            <button id="attackMenuButton" class="pixel-button command-button attack-command" type="button">
+              <strong>Attack</strong>
+            </button>
+            <button id="itemMenuButton" class="pixel-button command-button item-command" type="button">
+              <strong>Item</strong>
+            </button>
+            <button id="quickHealButton" class="pixel-button command-button quick-heal-command" type="button">
+              <strong>Quick Heal</strong>
+              <span id="quickHealUsesText">25% HP · 4/4</span>
+            </button>
+            <button id="escapeButton" class="pixel-button command-button escape-command" type="button">
+              <strong>Escape</strong>
+            </button>
           </div>
-          <div id="skillButtons" class="skill-grid hidden"></div>
-          <div id="itemButtons" class="battle-item-grid hidden"></div>
-          <p id="noBattleItems" class="no-battle-items hidden">You don't have any battle items right now.</p>
-        </section>
+
+          <section id="commandWindow" class="command-window command-overlay hidden" aria-live="polite">
+            <div class="command-window-header">
+              <strong id="commandWindowTitle">Attack</strong>
+              <button id="closeCommandWindow" class="pixel-button small command-back-button" type="button">‹ Back</button>
+            </div>
+            <div id="skillButtons" class="skill-grid hidden"></div>
+            <div id="itemButtons" class="battle-item-grid hidden"></div>
+            <p id="noBattleItems" class="no-battle-items hidden">You don't have any battle items right now.</p>
+          </section>
+        </div>
 
         <button id="continueButton" class="pixel-button primary large hidden" type="button">Continue</button>
       </div>
@@ -239,6 +241,6 @@
     </section>
   </main>
 
-  <script src="js/game-v23.js"></script>
+  <script src="js/game-v24.js"></script>
 </body>
 </html>
