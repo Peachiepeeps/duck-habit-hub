@@ -6296,7 +6296,7 @@ function launchMemoryGame() {
 }
 
 function launchDuckQuestGame() {
-  window.location.href = "duck-quest/?v=19";
+  window.location.href = "duck-quest/?v=21";
 }
 
 

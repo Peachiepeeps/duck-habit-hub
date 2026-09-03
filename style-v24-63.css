@@ -5738,3 +5738,25 @@ button { color: inherit; }
     height: 30px;
   }
 }
+
+
+/* =========================================================
+   V24.63 — menu + Shelf of Ducks positioning polish
+   ========================================================= */
+
+/* Raise only the Book's main Menu window; other Book panels keep their own positions. */
+.book-panel{
+  bottom:8.5%;
+}
+
+/* The two lowest rows sit just a little higher on their shelf ledges. */
+.wing-duck-slot:nth-child(n+17):nth-child(-n+20) img{
+  transform:translateY(-5%);
+}
+.wing-duck-slot:nth-child(n+21):nth-child(-n+24) img{
+  transform:translateY(-19%);
+}
+
+@media(max-width:430px){
+  .book-panel{bottom:9%;}
+}

@@ -942,7 +942,8 @@ const ui = {
   iconBackgroundButton: document.querySelector("#iconBackgroundButton"),
   iconBackgroundCurrent: document.querySelector("#iconBackgroundCurrent"),
   iconBackgroundLabel: document.querySelector("#iconBackgroundLabel"),
-  iconBackgroundPicker: document.querySelector("#iconBackgroundPicker")
+  iconBackgroundPicker: document.querySelector("#iconBackgroundPicker"),
+  switchQuestOc: document.querySelector("#switchQuestOc")
 };
 
 let hubSave = loadHubSave();
@@ -1391,7 +1392,42 @@ function skillDisplayName(skill){ return skill.name; }
 
 function skillDisplayDescription(skill){ return skill.description; }
 
+
+function availableQuestCharacters(){
+  const unlocked=Array.isArray(hubSave.unlockedCharacters)?hubSave.unlockedCharacters:["peep"];
+  return ["peep","miko"].filter(id=>unlocked.includes(id));
+}
+
+function renderSwitchOcButton(){
+  if(!ui.switchQuestOc) return;
+  const available=availableQuestCharacters();
+  if(available.length<2){
+    ui.switchQuestOc.classList.add("hidden");
+    return;
+  }
+  ui.switchQuestOc.classList.remove("hidden");
+  const currentIndex=Math.max(0,available.indexOf(activeCharacterId));
+  const nextId=available[(currentIndex+1)%available.length];
+  ui.switchQuestOc.textContent=`Switch to ${nextId==="miko"?"Miko":"Peep"}`;
+}
+
+function switchQuestCharacter(){
+  if(currentRun) return;
+  const available=availableQuestCharacters();
+  if(available.length<2) return;
+  const currentIndex=Math.max(0,available.indexOf(activeCharacterId));
+  activeCharacterId=available[(currentIndex+1)%available.length];
+  hubSave.selectedCharacter=activeCharacterId;
+  const progress=activeHeroProgress();
+  selectedArea=AREA_CONFIG[progress.lastArea]?progress.lastArea:"meadow";
+  selectedRank=Math.min(areaProgress(selectedArea).unlockedRank,Math.max(1,areaProgress(selectedArea).lastRank||1));
+  closeIconBackgroundPicker();
+  persistAll();
+  renderMeta();
+}
+
 function renderMeta() {
+  renderSwitchOcButton();
   renderIconBackgroundPicker();
   ui.coinCount.textContent=hubSave.coins.toLocaleString();
   const hero=activeHeroProgress(); renderHeroVisuals();
@@ -2273,7 +2309,7 @@ function showThrownDuck(duck) {
   const img=document.createElement("img");
   img.src=`../assets/ducks/${duck.file}`;
   img.alt="";
-  img.style.cssText="position:absolute;z-index:20;width:64px;height:64px;object-fit:contain;image-rendering:pixelated;left:30%;top:52%;transition:transform .45s linear,left .45s linear,top .45s linear;pointer-events:none;";
+  img.style.cssText="position:absolute;z-index:20;width:36px;height:36px;object-fit:contain;image-rendering:pixelated;left:30%;top:52%;transition:transform .45s linear,left .45s linear,top .45s linear;pointer-events:none;";
   document.querySelector("#battlefield").appendChild(img);
   requestAnimationFrame(()=>{
     img.style.left="69%";
@@ -2340,6 +2376,7 @@ document.querySelector("#backToQuest").addEventListener("click",returnHome);
 ui.cancelEscapeConfirm.addEventListener("click",closeEscapeConfirm);
 ui.confirmEscapeButton.addEventListener("click",confirmEscapeRun);
 
+ui.switchQuestOc?.addEventListener("click",switchQuestCharacter);
 ui.iconBackgroundButton?.addEventListener("click",()=>{
   const opening=ui.iconBackgroundPicker.classList.contains("hidden");
   ui.iconBackgroundPicker.classList.toggle("hidden",!opening);

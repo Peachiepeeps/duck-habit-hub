@@ -875,3 +875,79 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
   .battlefield.ocean-peep-raised .peep-fighter{top:34px}
   .battlefield.miko-active.ocean-peep-raised .battle-hero-composite{top:12px !important}
 }
+
+
+/* =========================================================
+   V21 — character sizing, status spacing, Switch OC
+   ========================================================= */
+
+/* Fixed pixel-height keeps every 96px-tall attack canvas the same body size.
+   This avoids the dramatic shrink on wider special sprites. */
+.peep-fighter{
+  width:auto !important;
+  height:108px !important;
+  max-width:none !important;
+  top:48px;
+}
+
+.battle-hero-composite{
+  width:118px !important;
+  height:104px !important;
+  left:8% !important;
+  top:38px !important;
+  place-items:start center;
+}
+.battle-hero-composite img{
+  width:auto !important;
+  height:104px !important;
+  max-width:none !important;
+}
+
+/* Put the status UI clearly above the character instead of close to their head. */
+.peep-status-stack{
+  transform:translateY(24px);
+}
+.battlefield.miko-active .peep-combatant{
+  bottom:46%;
+}
+.battlefield.miko-active .peep-status-stack{
+  transform:translateY(-8px);
+}
+
+/* Surface + Deep keep the special lift, without over-lifting Miko. */
+.battlefield.ocean-peep-raised .peep-fighter{top:30px}
+.battlefield.miko-active.ocean-peep-raised .battle-hero-composite{top:24px !important}
+
+.switch-quest-oc-button{
+  width:100%;
+  min-height:34px;
+  padding:5px 7px;
+  border-width:3px;
+  border-radius:8px;
+  background:#f8e4ef;
+  color:#6f4f5a;
+  font-size:.6rem;
+  font-weight:900;
+}
+
+@media(max-width:600px){
+  .peep-fighter{
+    height:92px !important;
+    top:48px;
+  }
+  .battle-hero-composite{
+    width:108px !important;
+    height:94px !important;
+    left:8% !important;
+    top:36px !important;
+  }
+  .battle-hero-composite img{
+    height:94px !important;
+  }
+  .peep-status-stack{transform:translateY(18px)}
+  .battlefield.miko-active .peep-combatant{bottom:46%}
+  .battlefield.miko-active .peep-status-stack{transform:translateY(-10px)}
+  .battlefield.ocean-peep-raised .peep-fighter{top:32px}
+  .battlefield.miko-active.ocean-peep-raised .battle-hero-composite{top:22px !important}
+  .switch-quest-oc-button{font-size:.56rem}
+}
