@@ -5760,3 +5760,27 @@ button { color: inherit; }
 @media(max-width:430px){
   .book-panel{bottom:9%;}
 }
+
+
+/* =========================================================
+   V24.64 — tall-phone home fit + final shelf nudge
+   ========================================================= */
+
+/* Tall phones have more vertical viewport than a strict 9:16 canvas.
+   Anchor the room at the top and let it grow slightly past the screen width,
+   which trades a tiny side crop for much less empty grey above/below. */
+@media(max-width:600px){
+  .app-shell{
+    place-items:start center;
+    overflow:hidden;
+  }
+  .stage{
+    width:min(108vw, calc(100dvh * .5625));
+    height:min(100dvh, calc(108vw / .5625));
+  }
+}
+
+/* Only the very last Shelf of Ducks row needs one final tiny lift. */
+.wing-duck-slot:nth-child(n+21):nth-child(-n+24) img{
+  transform:translateY(-23%);
+}

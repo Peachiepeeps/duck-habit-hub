@@ -1,9 +1,9 @@
-const APP_CACHE = 'duck-habit-hub-app-v24-63';
-const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-63';
-const IMAGE_CACHE = 'duck-habit-hub-images-v24-63';
+const APP_CACHE = 'duck-habit-hub-app-v24-64';
+const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-64';
+const IMAGE_CACHE = 'duck-habit-hub-images-v24-64';
 
 const APP_SHELL = [
-  './','./index.html','./manifest.webmanifest','./style-v24-63.css','./script-v24-63.js','./sw-v24-63.js',
+  './','./index.html','./manifest.webmanifest','./style-v24-64.css','./script-v24-64.js','./sw-v24-64.js',
   './apple-touch-icon-v4.png','./favicon-32-v4.png','./icon-192-v4.png','./icon-512-v4.png','./icon-maskable-512-v4.png',
   './assets/ui/book-room.webp','./assets/ui/book-icon.webp','./assets/ui/mirror.webp','./assets/ui/pink-coin.webp'
 ];

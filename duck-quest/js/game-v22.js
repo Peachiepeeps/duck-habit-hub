@@ -2309,11 +2309,11 @@ function showThrownDuck(duck) {
   const img=document.createElement("img");
   img.src=`../assets/ducks/${duck.file}`;
   img.alt="";
-  img.style.cssText="position:absolute;z-index:20;width:36px;height:36px;object-fit:contain;image-rendering:pixelated;left:30%;top:52%;transition:transform .45s linear,left .45s linear,top .45s linear;pointer-events:none;";
+  img.style.cssText="position:absolute;z-index:20;width:36px;height:36px;object-fit:contain;image-rendering:pixelated;left:30%;top:64%;transition:transform .45s linear,left .45s linear,top .45s linear;pointer-events:none;";
   document.querySelector("#battlefield").appendChild(img);
   requestAnimationFrame(()=>{
     img.style.left="69%";
-    img.style.top="34%";
+    img.style.top="56%";
     img.style.transform="rotate(360deg)";
   });
   setTimeout(()=>img.remove(),650);
