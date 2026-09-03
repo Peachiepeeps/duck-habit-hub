@@ -1,5 +1,5 @@
 const STORAGE_KEY = "duckHabitHubSave_v1";
-const SAVE_VERSION = 28;
+const SAVE_VERSION = 29;
 
 const CHARACTERS = {
   peep: {
@@ -13,10 +13,11 @@ const CHARACTERS = {
       width: 18
     },
     profile: {
-      height: "Coming soon",
-      likes: "Coming soon",
-      dislikes: "Coming soon",
-      description: "More profile information will be added in a future update. ♡"
+      height: "5'4''",
+      favoriteItem: "Strawberry, Cupcake, Gummy Bear, Milk Tea, and Wedding cake!",
+      likes: "Sweets, fruit, duckies, naps, cats, her husband, and anything cute!",
+      dislikes: "Veggies, too much social interaction, heat, physical touch unless you're special to her.",
+      description: "A cheerful lady who collects ducks! She's very indulgent in what she loves, and doesn't quite care how others feel about it. She's cuddly and doting to those she deems special."
     },
     giftPreferences: {
       "strawberry": "favorite",
@@ -35,7 +36,7 @@ const CHARACTERS = {
       "burger": "okay",
       "milk": "okay",
       "lemon": "okay",
-      "lime": "okay",
+      "lime": "not-her-thing",
       "water": "not-her-thing"
     }
   },
@@ -49,33 +50,86 @@ const CHARACTERS = {
       top: 36.4,
       width: 17.2
     },
-    invitationImage: "assets/oc-invitations/Miko-invitation.PNG",
+    invitationImage: "assets/oc-invitations/Miko-invitation.webp",
     profile: {
-      height: "Coming soon",
-      likes: "Quiet afternoons, sweet treats, tidy outfits",
-      dislikes: "Being rushed, bitter drinks",
-      description: "A soft, slightly shy boy who looks especially cute with a duck perched nearby. ♡"
+      height: "5'5''",
+      favoriteItem: "Lollipop",
+      likes: "His lovers, being pampered, being complimented, sweets.",
+      dislikes: "Michi, talking about his dad/seeing his dad, sour foods.",
+      description: "A cute but smug young man who originally was a bit of a playboy. He has issues with commitment, so when he learned he can just have multiple lovers, he became poly and is now happy with his little group."
     },
     giftPreferences: {
-      "milk-tea": "favorite",
-      "cookie": "favorite",
+      "lollipop": "favorite",
       "cupcake": "favorite",
+      "apple": "favorite",
+      "milk-tea": "favorite",
+      "wedding-cake": "favorite",
+      "pudding": "like",
+      "milk": "like",
+      "watermelon": "okay",
+      "cookie": "like",
       "cake-slice": "like",
       "cake": "like",
-      "wedding-cake": "like",
-      "burger": "okay",
+      "water": "like",
+      "fancy-milk-tea": "like",
       "pizza": "okay",
-      "water": "okay",
+      "burger": "okay",
+      "strawberry": "okay",
       "lemon": "not-his-thing",
       "lime": "not-his-thing"
     }
   }
 };
 
+const PROFILE_ICON_BACKGROUNDS = Object.freeze([
+  // Starter
+  {id:"white",label:"White",value:"#fffaf3",rarity:"starter",source:"starter"},
+
+  // Guaranteed level-up colors
+  {id:"pink",label:"Pink",value:"#f2b4ca",rarity:"level",source:"level"},
+  {id:"sky-blue",label:"Sky Blue",value:"#b7dbf3",rarity:"level",source:"level"},
+  {id:"mint",label:"Mint",value:"#b9e2cb",rarity:"level",source:"level"},
+  {id:"lavender",label:"Lavender",value:"#d7c4ef",rarity:"level",source:"level"},
+  {id:"periwinkle",label:"Periwinkle",value:"#b9c2ef",rarity:"level",source:"level"},
+  {id:"peach",label:"Peach",value:"#f5c1a8",rarity:"level",source:"level"},
+  {id:"lilac",label:"Lilac",value:"#e3c7ee",rarity:"level",source:"level"},
+  {id:"aqua",label:"Aqua",value:"#a9dfe3",rarity:"level",source:"level"},
+
+  // Chest colors
+  {id:"buttercream",label:"Buttercream",value:"#f8e9ae",rarity:"common",source:"chest",weight:10},
+  {id:"blush",label:"Blush",value:"#f5ccd7",rarity:"common",source:"chest",weight:10},
+  {id:"rose",label:"Rose Pink",value:"#eaa6bb",rarity:"common",source:"chest",weight:9},
+  {id:"baby-blue",label:"Baby Blue",value:"#c7e1f5",rarity:"common",source:"chest",weight:9},
+  {id:"seafoam",label:"Seafoam",value:"#c2e5d8",rarity:"common",source:"chest",weight:9},
+  {id:"soft-coral",label:"Soft Coral",value:"#f2b1a4",rarity:"common",source:"chest",weight:8},
+  {id:"sage",label:"Sage",value:"#c8d8b5",rarity:"common",source:"chest",weight:8},
+
+  // Patterned chest backgrounds — pure CSS, no image files needed.
+  {id:"pink-gingham",label:"Pink Gingham",rarity:"uncommon",source:"chest",weight:5,value:"linear-gradient(90deg,rgba(255,255,255,.45) 50%,transparent 50%),linear-gradient(rgba(255,255,255,.45) 50%,transparent 50%),#efb8ca",size:"24px 24px"},
+  {id:"lavender-gingham",label:"Lavender Gingham",rarity:"uncommon",source:"chest",weight:5,value:"linear-gradient(90deg,rgba(255,255,255,.42) 50%,transparent 50%),linear-gradient(rgba(255,255,255,.42) 50%,transparent 50%),#cdb8eb",size:"24px 24px"},
+  {id:"mint-gingham",label:"Mint Gingham",rarity:"uncommon",source:"chest",weight:5,value:"linear-gradient(90deg,rgba(255,255,255,.42) 50%,transparent 50%),linear-gradient(rgba(255,255,255,.42) 50%,transparent 50%),#afd9c2",size:"24px 24px"},
+  {id:"periwinkle-gingham",label:"Periwinkle Gingham",rarity:"uncommon",source:"chest",weight:5,value:"linear-gradient(90deg,rgba(255,255,255,.4) 50%,transparent 50%),linear-gradient(rgba(255,255,255,.4) 50%,transparent 50%),#adb8ea",size:"24px 24px"},
+  {id:"pink-polka",label:"Pink Polka Dots",rarity:"uncommon",source:"chest",weight:4,value:"radial-gradient(circle at 7px 7px,#fff7fb 0 3px,transparent 3.5px),#ecabc3",size:"22px 22px"},
+  {id:"tiny-hearts",label:"Tiny Hearts",rarity:"rare",source:"chest",weight:2,value:"radial-gradient(circle at 25% 35%,#fff 0 3px,transparent 3.5px),radial-gradient(circle at 75% 65%,#fff 0 3px,transparent 3.5px),linear-gradient(135deg,#f4b7cb,#e6c1ef)",size:"28px 28px"},
+  {id:"pink-glitter",label:"Pink Glitter",rarity:"rare",source:"chest",weight:1.8,value:"radial-gradient(circle at 15% 20%,#fff 0 1.5px,transparent 2px),radial-gradient(circle at 72% 28%,#ffe9a8 0 1.3px,transparent 1.8px),radial-gradient(circle at 38% 75%,#fff 0 1px,transparent 1.7px),linear-gradient(135deg,#eda9c4,#d995c1)",size:"22px 22px,28px 28px,18px 18px,auto"},
+  {id:"lavender-glitter",label:"Lavender Glitter",rarity:"rare",source:"chest",weight:1.8,value:"radial-gradient(circle at 20% 22%,#fff 0 1.5px,transparent 2px),radial-gradient(circle at 68% 40%,#fff0b8 0 1.2px,transparent 1.8px),radial-gradient(circle at 42% 78%,#fff 0 1px,transparent 1.7px),linear-gradient(135deg,#c6b1ea,#aa95d9)",size:"22px 22px,30px 30px,18px 18px,auto"},
+  {id:"starry-periwinkle",label:"Starry Periwinkle",rarity:"rare",source:"chest",weight:1.5,value:"radial-gradient(circle at 18% 22%,#fff9cf 0 2px,transparent 2.5px),radial-gradient(circle at 72% 34%,#fff 0 1.5px,transparent 2px),radial-gradient(circle at 48% 78%,#fff9cf 0 1.5px,transparent 2px),linear-gradient(160deg,#9da9df,#c1b1e5)",size:"30px 30px,26px 26px,34px 34px,auto"},
+  {id:"gold-glitter",label:"Gold Glitter",rarity:"rare",source:"chest",weight:1.2,value:"radial-gradient(circle at 18% 20%,#fff8d7 0 1.5px,transparent 2px),radial-gradient(circle at 70% 28%,#fff 0 1px,transparent 1.7px),radial-gradient(circle at 45% 78%,#f7c75e 0 1.5px,transparent 2px),linear-gradient(135deg,#edd38a,#cda654)",size:"20px 20px,26px 26px,30px 30px,auto"},
+
+  // Ultra-rare chest prizes
+  {id:"rainbow",label:"Rainbow",rarity:"ultra",source:"chest",weight:.45,value:"linear-gradient(135deg,#ed9baa,#f1c781,#b7daa0,#9dcfe2,#b7a6e4,#e2abd8)"},
+  {id:"rainbow-gingham",label:"Rainbow Gingham",rarity:"ultra",source:"chest",weight:.28,value:"linear-gradient(90deg,rgba(255,255,255,.38) 50%,transparent 50%),linear-gradient(rgba(255,255,255,.38) 50%,transparent 50%),linear-gradient(135deg,#ef9cac,#f4d18d,#b6dda2,#9fd4e6,#b8a9e6,#e7add8)",size:"24px 24px,24px 24px,auto"},
+  {id:"rainbow-glitter",label:"Rainbow Glitter",rarity:"ultra",source:"chest",weight:.16,value:"radial-gradient(circle at 14% 20%,#fff 0 1.7px,transparent 2.2px),radial-gradient(circle at 72% 30%,#fff9bd 0 1.5px,transparent 2px),radial-gradient(circle at 42% 76%,#fff 0 1.3px,transparent 2px),linear-gradient(135deg,#ee9dac,#f0c982,#b5dca0,#9fd2e4,#b6a6e2,#e3acd7)",size:"20px 20px,27px 27px,31px 31px,auto"}
+]);
+
+function profileIconBackgroundById(id) {
+  return PROFILE_ICON_BACKGROUNDS.find(background => background.id === id) || PROFILE_ICON_BACKGROUNDS[0];
+}
+
 const CHARACTER_UNLOCKS = {
   miko: {
     name: "Miko Invitation",
-    image: "assets/oc-invitations/Miko-invitation.PNG",
+    image: "assets/oc-invitations/Miko-invitation.webp",
     priceText: "Invite Miko to the hub and unlock his free wardrobe."
   }
 };
@@ -89,7 +143,7 @@ const INVENTORY_CATEGORIES = {
   "paint": {
     "label": "Paint",
     "subtitle": "Base and mixed paints used for ducks and paintable furniture.",
-    "empty": "No paint yet. You may find some while shopping!"
+    "empty": "No paint yet. You may find some while shopping or mix some yourself!"
   },
   "food": {
     "label": "Food",
@@ -104,7 +158,7 @@ const INVENTORY_CATEGORIES = {
   "furniture": {
     "label": "Furniture",
     "subtitle": "Choose your furniture color, then place it in the room.",
-    "empty": "No furniture yet. Visit the Shop to pick out something cozy!"
+    "empty": "No furniture yet. Visit the Shop to get some!"
   },
   "gift": {
     "label": "Gifts",
@@ -151,7 +205,7 @@ const PAINTABLE_FURNITURE_FAMILIES = Object.freeze({
     duckPerch: "petBed",
     assetFolder: "assets/furniture/pet-beds/",
     assetPrefix: "Bed-",
-    assetExtension: ".PNG",
+    assetExtension: ".webp",
     thumbBounds: [837, 1669, 1060, 1787]
   },
   "lights": {
@@ -166,7 +220,7 @@ const PAINTABLE_FURNITURE_FAMILIES = Object.freeze({
     duckPerch: null,
     assetFolder: "assets/furniture/lights/",
     assetPrefix: "Lights-",
-    assetExtension: ".png",
+    assetExtension: ".webp",
     // Full-canvas wall overlay; this crop keeps the string lights large in cards.
     thumbBounds: [0, 80, 1080, 390]
   }
@@ -180,7 +234,7 @@ function makePaintableFurnitureItems() {
       entries.push([itemId, {
         name: color.id === "white" ? family.name : `${color.label} ${family.name}`,
         category: "furniture",
-        image: `${family.assetFolder}${family.assetPrefix}${color.id}${family.assetExtension || ".PNG"}`,
+        image: `${family.assetFolder}${family.assetPrefix}${color.id}${family.assetExtension || ".webp"}`,
         icon: "♡",
         sellValue: 12,
         furnitureSlot: family.furnitureSlot,
@@ -201,406 +255,406 @@ const ITEMS = {
   "pink-heart-refill": {
     "name": "Pink Heart Refill",
     "category": "battle",
-    "image": "assets/bakery/drops/Pink-heart-refill.PNG",
+    "image": "assets/bakery/drops/Pink-heart-refill.webp",
     "icon": "♥",
     "sellValue": 25
   },
   "gold-heart-refill": {
     "name": "Gold Heart Refill",
     "category": "battle",
-    "image": "assets/bakery/drops/Gold-heart-refill.PNG",
+    "image": "assets/bakery/drops/Gold-heart-refill.webp",
     "icon": "♥",
     "sellValue": 80
   },
   "standard-duck": {
     "name": "Standard Duck",
     "category": "crafting",
-    "image": "assets/ducks/Standard-duck.PNG",
+    "image": "assets/ducks/Standard-duck.webp",
     "icon": "🦆",
     "sellValue": 15
   },
   "sunglasses": {
     "name": "Sunglasses",
     "category": "crafting",
-    "image": "assets/gifts/Sunglasses.PNG",
+    "image": "assets/gifts/Sunglasses.webp",
     "icon": "😎",
     "sellValue": 6
   },
   "yarn": {
     "name": "Yarn",
     "category": "crafting",
-    "image": "assets/ingredients/Yarn.PNG",
+    "image": "assets/ingredients/Yarn.webp",
     "icon": "🧶",
     "sellValue": 7
   },
   "thread": {
     "name": "Thread",
     "category": "crafting",
-    "image": "assets/ingredients/Thread.PNG",
+    "image": "assets/ingredients/Thread.webp",
     "icon": "🧵",
     "sellValue": 7
   },
   "party-hat": {
     "name": "Party Hat",
     "category": "crafting",
-    "image": "assets/gifts/Party-hat.PNG",
+    "image": "assets/gifts/Party-hat.webp",
     "icon": "🥳",
     "sellValue": 6
   },
   "knife": {
     "name": "Knife",
     "category": "crafting",
-    "image": "assets/gifts/Knife.PNG",
+    "image": "assets/gifts/Knife.webp",
     "icon": "🔪",
     "sellValue": 8
   },
   "game-controller": {
     "name": "Game Controller",
     "category": "crafting",
-    "image": "assets/gifts/Gaming-controller.PNG",
+    "image": "assets/gifts/Gaming-controller.webp",
     "icon": "🎮",
     "sellValue": 10
   },
   "pill": {
     "name": "Pill",
     "category": "crafting",
-    "image": "assets/gifts/Pill.PNG",
+    "image": "assets/gifts/Pill.webp",
     "icon": "💊",
     "sellValue": 7
   },
   "ufo": {
     "name": "UFO",
     "category": "crafting",
-    "image": "assets/gifts/UFO.PNG",
+    "image": "assets/gifts/UFO.webp",
     "icon": "🛸",
     "sellValue": 12
   },
   "pocket-monster-ball": {
     "name": "Pocket Monster Ball",
     "category": "crafting",
-    "image": "assets/gifts/Pocket-monster-ball.PNG",
+    "image": "assets/gifts/Pocket-monster-ball.webp",
     "icon": "🔴",
     "sellValue": 10
   },
   "jester-bell": {
     "name": "Jester Bell",
     "category": "crafting",
-    "image": "assets/gifts/Jester-bell.PNG",
+    "image": "assets/gifts/Jester-bell.webp",
     "icon": "🔔",
     "sellValue": 8
   },
   "crown": {
     "name": "Crown",
     "category": "crafting",
-    "image": "assets/gifts/Crown.PNG",
+    "image": "assets/gifts/Crown.webp",
     "icon": "👑",
     "sellValue": 12
   },
   "magical-girl-pendant": {
     "name": "Magical Girl Pendant",
     "category": "crafting",
-    "image": "assets/gifts/Magical-girl-pendant.PNG",
+    "image": "assets/gifts/Magical-girl-pendant.webp",
     "icon": "💖",
     "sellValue": 12
   },
   "bunny-ears": {
     "name": "Bunny Ears",
     "category": "crafting",
-    "image": "assets/gifts/Bunny-ears.PNG",
+    "image": "assets/gifts/Bunny-ears.webp",
     "icon": "🐰",
     "sellValue": 8
   },
   "flower": {
     "name": "Flower",
     "category": "crafting",
-    "image": "assets/gifts/Flower.PNG",
+    "image": "assets/gifts/Flower.webp",
     "icon": "🌸",
     "sellValue": 5
   },
   "sleep-mask": {
     "name": "Sleep Mask",
     "category": "crafting",
-    "image": "assets/gifts/Sleep-mask.PNG",
+    "image": "assets/gifts/Sleep-mask.webp",
     "icon": "😴",
     "sellValue": 7
   },
   "paintbrush": {
     "name": "Paintbrush",
     "category": "crafting",
-    "image": "assets/gifts/Paint-brush.PNG",
+    "image": "assets/gifts/Paint-brush.webp",
     "icon": "🖌️",
     "sellValue": 7
   },
   "ghost": {
     "name": "Ghost",
     "category": "crafting",
-    "image": "assets/ingredients/Ghost.PNG",
+    "image": "assets/ingredients/Ghost.webp",
     "icon": "👻",
     "sellValue": 8
   },
   "demon-wing": {
     "name": "Demon Wing",
     "category": "crafting",
-    "image": "assets/ingredients/Demon-wing.PNG",
+    "image": "assets/ingredients/Demon-wing.webp",
     "icon": "🖤",
     "sellValue": 11
   },
   "angel-wing": {
     "name": "Angel Wing",
     "category": "crafting",
-    "image": "assets/ingredients/Angel-wing.PNG",
+    "image": "assets/ingredients/Angel-wing.webp",
     "icon": "🤍",
     "sellValue": 11
   },
   "glitter": {
     "name": "Glitter",
     "category": "crafting",
-    "image": "assets/ingredients/Sparkle.PNG",
+    "image": "assets/ingredients/Sparkle.webp",
     "icon": "✨",
     "sellValue": 8
   },
   "cat-ears": {
     "name": "Cat Ears",
     "category": "crafting",
-    "image": "assets/gifts/Cat-ears.PNG",
+    "image": "assets/gifts/Cat-ears.webp",
     "icon": "🐱",
     "sellValue": 8
   },
   "moon": {
     "name": "Moon",
     "category": "crafting",
-    "image": "assets/ingredients/Moon.PNG",
+    "image": "assets/ingredients/Moon.webp",
     "icon": "🌙",
     "sellValue": 9
   },
   "mustache": {
     "name": "Mustache",
     "category": "crafting",
-    "image": "assets/gifts/Mustache.PNG",
+    "image": "assets/gifts/Mustache.webp",
     "icon": "🥸",
     "sellValue": 6
   },
   "top-hat": {
     "name": "Top Hat",
     "category": "crafting",
-    "image": "assets/gifts/Top-hat.PNG",
+    "image": "assets/gifts/Top-hat.webp",
     "icon": "🎩",
     "sellValue": 9
   },
   "bow": {
     "name": "Bow",
     "category": "crafting",
-    "image": "assets/gifts/Bow.PNG",
+    "image": "assets/gifts/Bow.webp",
     "icon": "🎀",
     "sellValue": 7
   },
   "googly-eyes": {
     "name": "Googly Eyes",
     "category": "crafting",
-    "image": "assets/ingredients/googly-eyes.png",
+    "image": "assets/ingredients/googly-eyes.webp",
     "icon": "👀",
     "sellValue": 6
   },
   "scarf": {
     "name": "Scarf",
     "category": "crafting",
-    "image": "assets/ingredients/scarf.png",
+    "image": "assets/ingredients/scarf.webp",
     "icon": "🧣",
     "sellValue": 7
   },
   "skateboard": {
     "name": "Skateboard",
     "category": "crafting",
-    "image": "assets/ingredients/skateboard.png",
+    "image": "assets/ingredients/skateboard.webp",
     "icon": "🛹",
     "sellValue": 10
   },
   "wig": {
     "name": "Wig",
     "category": "crafting",
-    "image": "assets/ingredients/wig.png",
+    "image": "assets/ingredients/wig.webp",
     "icon": "💇",
     "sellValue": 8
   },
   "eyebrows": {
     "name": "Eyebrows",
     "category": "crafting",
-    "image": "assets/ingredients/eyebrows.png",
+    "image": "assets/ingredients/eyebrows.webp",
     "icon": "😠",
     "sellValue": 6
   },
   "vampire-teeth": {
     "name": "Vampire Teeth",
     "category": "crafting",
-    "image": "assets/ingredients/vampire-teeth.png",
+    "image": "assets/ingredients/vampire-teeth.webp",
     "icon": "🧛",
     "sellValue": 8
   },
   "bathtub": {
     "name": "Bathtub",
     "category": "crafting",
-    "image": "assets/ingredients/bathtub.png",
+    "image": "assets/ingredients/bathtub.webp",
     "icon": "🛁",
     "sellValue": 10
   },
   "flour": {
     "name": "Flour",
     "category": "crafting",
-    "image": "assets/food/Flour.PNG",
+    "image": "assets/food/Flour.webp",
     "icon": "🌾",
     "sellValue": 4
   },
   "red-paint": {
     "name": "Red Paint",
     "category": "paint",
-    "image": "assets/paint/Red-paint.PNG",
+    "image": "assets/paint/Red-paint.webp",
     "icon": "🎨",
     "sellValue": 6
   },
   "dark-red-paint": {
     "name": "Dark Red Paint",
     "category": "paint",
-    "image": "assets/paint/Dark-red-paint.PNG",
+    "image": "assets/paint/Dark-red-paint.webp",
     "icon": "🎨",
     "sellValue": 8
   },
   "magenta-paint": {
     "name": "Magenta Paint",
     "category": "paint",
-    "image": "assets/paint/magenta-paint.png",
+    "image": "assets/paint/magenta-paint.webp",
     "icon": "🎨",
     "sellValue": 9
   },
   "orange-paint": {
     "name": "Orange Paint",
     "category": "paint",
-    "image": "assets/paint/Orange-paint.PNG",
+    "image": "assets/paint/Orange-paint.webp",
     "icon": "🎨",
     "sellValue": 6
   },
   "peach-paint": {
     "name": "Peach Paint",
     "category": "paint",
-    "image": "assets/paint/Peach-paint.PNG",
+    "image": "assets/paint/Peach-paint.webp",
     "icon": "🎨",
     "sellValue": 8
   },
   "gold-paint": {
     "name": "Gold Paint",
     "category": "paint",
-    "image": "assets/paint/Gold-paint.PNG",
+    "image": "assets/paint/Gold-paint.webp",
     "icon": "🎨",
     "sellValue": 12
   },
   "silver-paint": {
     "name": "Silver Paint",
     "category": "paint",
-    "image": "assets/paint/Silver-paint.PNG",
+    "image": "assets/paint/Silver-paint.webp",
     "icon": "🎨",
     "sellValue": 11
   },
   "bronze-paint": {
     "name": "Bronze Paint",
     "category": "paint",
-    "image": "assets/paint/Bronze-paint.PNG",
+    "image": "assets/paint/Bronze-paint.webp",
     "icon": "🎨",
     "sellValue": 10
   },
   "green-paint": {
     "name": "Green Paint",
     "category": "paint",
-    "image": "assets/paint/Green-paint.PNG",
+    "image": "assets/paint/Green-paint.webp",
     "icon": "🎨",
     "sellValue": 6
   },
   "mint-paint": {
     "name": "Mint Paint",
     "category": "paint",
-    "image": "assets/paint/Mint-paint.PNG",
+    "image": "assets/paint/Mint-paint.webp",
     "icon": "🎨",
     "sellValue": 8
   },
   "aqua-paint": {
     "name": "Aqua Paint",
     "category": "paint",
-    "image": "assets/paint/Aqua-paint.PNG",
+    "image": "assets/paint/Aqua-paint.webp",
     "icon": "🎨",
     "sellValue": 9
   },
   "sky-blue-paint": {
     "name": "Sky Blue Paint",
     "category": "paint",
-    "image": "assets/paint/Sky-blue-paint.PNG",
+    "image": "assets/paint/Sky-blue-paint.webp",
     "icon": "🎨",
     "sellValue": 8
   },
   "blue-paint": {
     "name": "Blue Paint",
     "category": "paint",
-    "image": "assets/paint/Blue-paint.PNG",
+    "image": "assets/paint/Blue-paint.webp",
     "icon": "🎨",
     "sellValue": 6
   },
   "periwinkle-paint": {
     "name": "Periwinkle Paint",
     "category": "paint",
-    "image": "assets/paint/Periwinkle-paint.PNG",
+    "image": "assets/paint/Periwinkle-paint.webp",
     "icon": "🎨",
     "sellValue": 10
   },
   "purple-paint": {
     "name": "Purple Paint",
     "category": "paint",
-    "image": "assets/paint/Purple-paint.PNG",
+    "image": "assets/paint/Purple-paint.webp",
     "icon": "🎨",
     "sellValue": 6
   },
   "violet-paint": {
     "name": "Violet Paint",
     "category": "paint",
-    "image": "assets/paint/Violet-paint.PNG",
+    "image": "assets/paint/Violet-paint.webp",
     "icon": "🎨",
     "sellValue": 8
   },
   "pink-paint": {
     "name": "Pink Paint",
     "category": "paint",
-    "image": "assets/paint/Pink-paint.PNG",
+    "image": "assets/paint/Pink-paint.webp",
     "icon": "🎨",
     "sellValue": 8
   },
   "white-paint": {
     "name": "White Paint",
     "category": "paint",
-    "image": "assets/paint/White-paint.PNG",
+    "image": "assets/paint/White-paint.webp",
     "icon": "🎨",
     "sellValue": 6
   },
   "grey-paint": {
     "name": "Grey Paint",
     "category": "paint",
-    "image": "assets/paint/Grey-paint.PNG",
+    "image": "assets/paint/Grey-paint.webp",
     "icon": "🎨",
     "sellValue": 8
   },
   "black-paint": {
     "name": "Black Paint",
     "category": "paint",
-    "image": "assets/paint/Black-paint.PNG",
+    "image": "assets/paint/Black-paint.webp",
     "icon": "🎨",
     "sellValue": 6
   },
   "rainbow-paint": {
     "name": "Rainbow Paint",
     "category": "paint",
-    "image": "assets/paint/Rainbow-paint.PNG",
+    "image": "assets/paint/Rainbow-paint.webp",
     "icon": "🎨",
     "sellValue": 16
   },
   "bread-loaf": {
     "name": "Bread Loaf",
     "category": "food",
-    "image": "assets/food/Bread-loaf.PNG",
+    "image": "assets/food/Bread-loaf.webp",
     "icon": "🍽️",
     "sellValue": 4,
     "giftable": true
@@ -608,7 +662,7 @@ const ITEMS = {
   "apple": {
     "name": "Apple",
     "category": "food",
-    "image": "assets/food/apple.png",
+    "image": "assets/food/apple.webp",
     "icon": "🍎",
     "sellValue": 5,
     "giftable": true
@@ -616,7 +670,7 @@ const ITEMS = {
   "burger": {
     "name": "Burger",
     "category": "food",
-    "image": "assets/food/Burger.PNG",
+    "image": "assets/food/Burger.webp",
     "icon": "🍽️",
     "sellValue": 8,
     "giftable": true
@@ -624,7 +678,7 @@ const ITEMS = {
   "cake-slice": {
     "name": "Cake Slice",
     "category": "food",
-    "image": "assets/food/Cake-slice.PNG",
+    "image": "assets/food/Cake-slice.webp",
     "icon": "🍽️",
     "sellValue": 8,
     "giftable": true
@@ -632,7 +686,7 @@ const ITEMS = {
   "cake": {
     "name": "Cake",
     "category": "food",
-    "image": "assets/food/Cake.PNG",
+    "image": "assets/food/Cake.webp",
     "icon": "🍽️",
     "sellValue": 12,
     "giftable": true
@@ -640,7 +694,7 @@ const ITEMS = {
   "champagne": {
     "name": "Champagne",
     "category": "food",
-    "image": "assets/food/Champagne.PNG",
+    "image": "assets/food/Champagne.webp",
     "icon": "🍽️",
     "sellValue": 12,
     "giftable": true
@@ -648,7 +702,7 @@ const ITEMS = {
   "chocolate-brioche": {
     "name": "Chocolate Brioche",
     "category": "food",
-    "image": "assets/food/Chocolate-brioche.PNG",
+    "image": "assets/food/Chocolate-brioche.webp",
     "icon": "🍽️",
     "sellValue": 7,
     "giftable": true
@@ -656,7 +710,7 @@ const ITEMS = {
   "concha": {
     "name": "Concha",
     "category": "food",
-    "image": "assets/food/Concha.PNG",
+    "image": "assets/food/Concha.webp",
     "icon": "🍽️",
     "sellValue": 6,
     "giftable": true
@@ -664,7 +718,7 @@ const ITEMS = {
   "cookie": {
     "name": "Cookie",
     "category": "food",
-    "image": "assets/food/Cookie.PNG",
+    "image": "assets/food/Cookie.webp",
     "icon": "🍽️",
     "sellValue": 5,
     "giftable": true
@@ -672,7 +726,7 @@ const ITEMS = {
   "croissant": {
     "name": "Croissant",
     "category": "food",
-    "image": "assets/food/Croissant.PNG",
+    "image": "assets/food/Croissant.webp",
     "icon": "🍽️",
     "sellValue": 6,
     "giftable": true
@@ -680,7 +734,7 @@ const ITEMS = {
   "cupcake": {
     "name": "Cupcake",
     "category": "food",
-    "image": "assets/food/Cupcake.PNG",
+    "image": "assets/food/Cupcake.webp",
     "icon": "🍽️",
     "sellValue": 9,
     "giftable": true
@@ -688,7 +742,7 @@ const ITEMS = {
   "fancy-milk-tea": {
     "name": "Fancy Milk Tea",
     "category": "food",
-    "image": "assets/food/Fancy-milk-tea.PNG",
+    "image": "assets/food/Fancy-milk-tea.webp",
     "icon": "🍽️",
     "sellValue": 10,
     "giftable": true
@@ -696,7 +750,7 @@ const ITEMS = {
   "fruit-cup": {
     "name": "Fruit Cup",
     "category": "food",
-    "image": "assets/food/Fruit-cup.PNG",
+    "image": "assets/food/Fruit-cup.webp",
     "icon": "🍽️",
     "sellValue": 6,
     "giftable": true
@@ -704,7 +758,7 @@ const ITEMS = {
   "fruit-tart": {
     "name": "Fruit Tart",
     "category": "food",
-    "image": "assets/food/Fruit-tart.PNG",
+    "image": "assets/food/Fruit-tart.webp",
     "icon": "🍽️",
     "sellValue": 9,
     "giftable": true
@@ -712,7 +766,7 @@ const ITEMS = {
   "gummy-bear": {
     "name": "Gummy Bear",
     "category": "food",
-    "image": "assets/food/Gummy-bear.PNG",
+    "image": "assets/food/Gummy-bear.webp",
     "icon": "🍽️",
     "sellValue": 6,
     "giftable": true
@@ -720,7 +774,7 @@ const ITEMS = {
   "lemon": {
     "name": "Lemon",
     "category": "food",
-    "image": "assets/food/Lemon.PNG",
+    "image": "assets/food/Lemon.webp",
     "icon": "🍽️",
     "sellValue": 5,
     "giftable": true
@@ -728,7 +782,7 @@ const ITEMS = {
   "lime": {
     "name": "Lime",
     "category": "food",
-    "image": "assets/food/Lime.PNG",
+    "image": "assets/food/Lime.webp",
     "icon": "🍽️",
     "sellValue": 5,
     "giftable": true
@@ -736,7 +790,7 @@ const ITEMS = {
   "lollipop": {
     "name": "Lollipop",
     "category": "food",
-    "image": "assets/food/Lollipop.PNG",
+    "image": "assets/food/Lollipop.webp",
     "icon": "🍽️",
     "sellValue": 6,
     "giftable": true
@@ -744,7 +798,7 @@ const ITEMS = {
   "milk-tea": {
     "name": "Milk Tea",
     "category": "food",
-    "image": "assets/food/Milk-tea.PNG",
+    "image": "assets/food/Milk-tea.webp",
     "icon": "🍽️",
     "sellValue": 7,
     "giftable": true
@@ -752,7 +806,7 @@ const ITEMS = {
   "milk": {
     "name": "Milk",
     "category": "food",
-    "image": "assets/food/Milk.PNG",
+    "image": "assets/food/Milk.webp",
     "icon": "🍽️",
     "sellValue": 3,
     "giftable": true
@@ -760,7 +814,7 @@ const ITEMS = {
   "mushroom": {
     "name": "Mushroom",
     "category": "food",
-    "image": "assets/food/Mushroom.PNG",
+    "image": "assets/food/Mushroom.webp",
     "icon": "🍽️",
     "sellValue": 6,
     "giftable": true
@@ -768,7 +822,7 @@ const ITEMS = {
   "parfait": {
     "name": "Parfait",
     "category": "food",
-    "image": "assets/food/Parfait.PNG",
+    "image": "assets/food/Parfait.webp",
     "icon": "🍽️",
     "sellValue": 9,
     "giftable": true
@@ -776,7 +830,7 @@ const ITEMS = {
   "pizza": {
     "name": "Pizza",
     "category": "food",
-    "image": "assets/food/Pizza.PNG",
+    "image": "assets/food/Pizza.webp",
     "icon": "🍽️",
     "sellValue": 8,
     "giftable": true
@@ -784,7 +838,7 @@ const ITEMS = {
   "pudding": {
     "name": "Pudding",
     "category": "food",
-    "image": "assets/food/Pudding.PNG",
+    "image": "assets/food/Pudding.webp",
     "icon": "🍽️",
     "sellValue": 7,
     "giftable": true
@@ -792,7 +846,7 @@ const ITEMS = {
   "strawberry-shortcake": {
     "name": "Strawberry Shortcake",
     "category": "food",
-    "image": "assets/food/Strawberry-shortcake.PNG",
+    "image": "assets/food/Strawberry-shortcake.webp",
     "icon": "🍽️",
     "sellValue": 10,
     "giftable": true
@@ -800,7 +854,7 @@ const ITEMS = {
   "strawberry": {
     "name": "Strawberry",
     "category": "food",
-    "image": "assets/food/Strawberry.PNG",
+    "image": "assets/food/Strawberry.webp",
     "icon": "🍽️",
     "sellValue": 8,
     "giftable": true
@@ -808,7 +862,7 @@ const ITEMS = {
   "water": {
     "name": "Water",
     "category": "food",
-    "image": "assets/food/Water.PNG",
+    "image": "assets/food/Water.webp",
     "icon": "🍽️",
     "sellValue": 1,
     "giftable": true
@@ -816,7 +870,7 @@ const ITEMS = {
   "watermelon": {
     "name": "Watermelon",
     "category": "food",
-    "image": "assets/food/Watermelon.PNG",
+    "image": "assets/food/Watermelon.webp",
     "icon": "🍽️",
     "sellValue": 7,
     "giftable": true
@@ -824,7 +878,7 @@ const ITEMS = {
   "wedding-cake": {
     "name": "Wedding Cake",
     "category": "food",
-    "image": "assets/food/Wedding-cake.PNG",
+    "image": "assets/food/Wedding-cake.webp",
     "icon": "🍽️",
     "sellValue": 25,
     "giftable": true
@@ -832,7 +886,7 @@ const ITEMS = {
   "bouquet": {
     "name": "Bouquet",
     "category": "gift",
-    "image": "assets/gifts/Bouquet.PNG",
+    "image": "assets/gifts/Bouquet.webp",
     "icon": "🎁",
     "sellValue": 10,
     "giftable": true
@@ -840,7 +894,7 @@ const ITEMS = {
   "heart-locket": {
     "name": "Heart Locket",
     "category": "gift",
-    "image": "assets/gifts/Heart-locket.PNG",
+    "image": "assets/gifts/Heart-locket.webp",
     "icon": "🎁",
     "sellValue": 14,
     "giftable": true
@@ -848,7 +902,7 @@ const ITEMS = {
   "love-letter": {
     "name": "Love Letter",
     "category": "gift",
-    "image": "assets/gifts/Love-letter.PNG",
+    "image": "assets/gifts/Love-letter.webp",
     "icon": "🎁",
     "sellValue": 8,
     "giftable": true
@@ -856,7 +910,7 @@ const ITEMS = {
   "rings": {
     "name": "Rings",
     "category": "gift",
-    "image": "assets/gifts/Rings.PNG",
+    "image": "assets/gifts/Rings.webp",
     "icon": "🎁",
     "sellValue": 20,
     "giftable": true
@@ -864,7 +918,7 @@ const ITEMS = {
   "teddy-bear": {
     "name": "Teddy Bear",
     "category": "gift",
-    "image": "assets/gifts/Teddy-bear.PNG",
+    "image": "assets/gifts/Teddy-bear.webp",
     "icon": "🎁",
     "sellValue": 12,
     "giftable": true
@@ -891,7 +945,7 @@ const ITEMS = {
   "shelf-white": {
     "name": "White Six-Shelf",
     "category": "furniture",
-    "image": "assets/furniture/shelves/shelf-white.png",
+    "image": "assets/furniture/shelves/shelf-white.webp",
     "icon": "▤",
     "sellValue": 14,
     "furnitureSlot": "left",
@@ -902,7 +956,7 @@ const ITEMS = {
   "shelf-dark-brown": {
     "name": "Dark Brown Six-Shelf",
     "category": "furniture",
-    "image": "assets/furniture/shelves/shelf-dark-brown.png",
+    "image": "assets/furniture/shelves/shelf-dark-brown.webp",
     "icon": "▤",
     "sellValue": 14,
     "furnitureSlot": "left",
@@ -913,7 +967,7 @@ const ITEMS = {
   "shelf-brown": {
     "name": "Brown Six-Shelf",
     "category": "furniture",
-    "image": "assets/furniture/shelves/shelf-brown.png",
+    "image": "assets/furniture/shelves/shelf-brown.webp",
     "icon": "▤",
     "sellValue": 14,
     "furnitureSlot": "left",
@@ -924,7 +978,7 @@ const ITEMS = {
   "dresser-brown": {
     "name": "Brown Dresser",
     "category": "furniture",
-    "image": "assets/furniture/dressers/dresser-brown.png",
+    "image": "assets/furniture/dressers/dresser-brown.webp",
     "icon": "▰",
     "sellValue": 14,
     "furnitureSlot": "left",
@@ -935,7 +989,7 @@ const ITEMS = {
   "dresser-dark-brown": {
     "name": "Dark Brown Dresser",
     "category": "furniture",
-    "image": "assets/furniture/dressers/dresser-dark-brown.png",
+    "image": "assets/furniture/dressers/dresser-dark-brown.webp",
     "icon": "▰",
     "sellValue": 14,
     "furnitureSlot": "left",
@@ -946,7 +1000,7 @@ const ITEMS = {
   "rug-cloud-dark": {
     "name": "Dark Cloud Rug",
     "category": "furniture",
-    "image": "assets/furniture/rugs/rug-cloud-dark.png",
+    "image": "assets/furniture/rugs/rug-cloud-dark.webp",
     "icon": "☁",
     "sellValue": 10,
     "furnitureSlot": "rug",
@@ -956,7 +1010,7 @@ const ITEMS = {
   "rug-cloud-white": {
     "name": "White Cloud Rug",
     "category": "furniture",
-    "image": "assets/furniture/rugs/rug-cloud-white.png",
+    "image": "assets/furniture/rugs/rug-cloud-white.webp",
     "icon": "☁",
     "sellValue": 10,
     "furnitureSlot": "rug",
@@ -966,7 +1020,7 @@ const ITEMS = {
   "rug-heart-white": {
     "name": "White Heart Rug",
     "category": "furniture",
-    "image": "assets/furniture/rugs/rug-heart-white.png",
+    "image": "assets/furniture/rugs/rug-heart-white.webp",
     "icon": "♡",
     "sellValue": 10,
     "furnitureSlot": "rug",
@@ -976,7 +1030,7 @@ const ITEMS = {
   "rug-heart-dark": {
     "name": "Dark Heart Rug",
     "category": "furniture",
-    "image": "assets/furniture/rugs/rug-heart-dark.png",
+    "image": "assets/furniture/rugs/rug-heart-dark.webp",
     "icon": "♡",
     "sellValue": 10,
     "furnitureSlot": "rug",
@@ -986,7 +1040,7 @@ const ITEMS = {
   "rug-heart-pink": {
     "name": "Pink Heart Rug",
     "category": "furniture",
-    "image": "assets/furniture/rugs/rug-heart-pink.png",
+    "image": "assets/furniture/rugs/rug-heart-pink.webp",
     "icon": "♡",
     "sellValue": 10,
     "furnitureSlot": "rug",
@@ -996,7 +1050,7 @@ const ITEMS = {
   "rug-heart-blue": {
     "name": "Blue Heart Rug",
     "category": "furniture",
-    "image": "assets/furniture/rugs/rug-heart-blue.png",
+    "image": "assets/furniture/rugs/rug-heart-blue.webp",
     "icon": "♡",
     "sellValue": 10,
     "furnitureSlot": "rug",
@@ -1079,11 +1133,15 @@ const SHOPPING_LOOT_POOL = [
 const SHOP_CATEGORIES = {
   supplies: {
     label: "Duck Supplies",
-    subtitle: "Useful supplies for crafting your duck collection. Food ingredients are earned elsewhere for now."
+    subtitle: "Useful supplies for crafting your duck collection."
+  },
+  food: {
+    label: "Food",
+    subtitle: "Stock up on treats to gift your OCs. Rarer foods cost a little more."
   },
   battle: {
     label: "Battle Items",
-    subtitle: "Stock up for Duck Quest. Pink heals half HP; rare Gold restores Peep to full health."
+    subtitle: "Stock up for Duck Quest. Pink heals half HP; rare Gold restores your oc to full health."
   },
   profiles: {
     label: "Invitations",
@@ -1091,7 +1149,7 @@ const SHOP_CATEGORIES = {
   },
   rooms: {
     label: "Room Styles",
-    subtitle: "Unlock a new room color permanently for 350 Pink Coins."
+    subtitle: "Unlock a new room color permanently here."
   },
   furniture: {
     label: "Furniture",
@@ -1153,6 +1211,43 @@ const SHOP_STOCK = {
     { itemId: "eyebrows", price: 50 },
     { itemId: "vampire-teeth", price: 60 },
     { itemId: "bathtub", price: 75 }
+  ],
+  food: [
+    { itemId: "water", price: 50 },
+    { itemId: "milk", price: 50 },
+    { itemId: "apple", price: 50 },
+    { itemId: "lemon", price: 50 },
+    { itemId: "lime", price: 50 },
+    { itemId: "strawberry", price: 50 },
+    { itemId: "cookie", price: 50 },
+    { itemId: "gummy-bear", price: 50 },
+    { itemId: "lollipop", price: 50 },
+
+    { itemId: "bread-loaf", price: 60 },
+    { itemId: "fruit-cup", price: 60 },
+    { itemId: "milk-tea", price: 60 },
+    { itemId: "pudding", price: 60 },
+    { itemId: "watermelon", price: 60 },
+    { itemId: "mushroom", price: 60 },
+
+    { itemId: "burger", price: 75 },
+    { itemId: "pizza", price: 75 },
+    { itemId: "cake-slice", price: 75 },
+    { itemId: "croissant", price: 75 },
+    { itemId: "cupcake", price: 75 },
+    { itemId: "fruit-tart", price: 75 },
+    
+    { itemId: "strawberry-shortcake", price: 90 },
+    { itemId: "fancy-milk-tea", price: 90 },
+    { itemId: "concha", price: 90 },
+
+    { itemId: "cake", price: 100 },
+
+    { itemId: "champagne", price: 125 },
+    { itemId: "chocolate-brioche", price: 125 },
+    { itemId: "parfait", price: 125 },
+
+    { itemId: "wedding-cake", price: 150 }
   ],
   battle: [
     { itemId: "pink-heart-refill", price: 75 },
@@ -1305,7 +1400,7 @@ const FURNITURE_RECIPES = Object.freeze(Object.fromEntries(
 const DUCKS = {
   "angry-duck": {
     "name": "Angry Duck",
-    "file": "assets/ducks/angry-duck.png",
+    "file": "assets/ducks/angry-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "eyebrows": 1
@@ -1313,7 +1408,7 @@ const DUCKS = {
   },
   "apple-duck": {
     "name": "Apple Duck",
-    "file": "assets/ducks/apple-duck.png",
+    "file": "assets/ducks/apple-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "apple": 1
@@ -1321,7 +1416,7 @@ const DUCKS = {
   },
   "bathtime-duck": {
     "name": "Bathtime Duck",
-    "file": "assets/ducks/bathtime-duck.png",
+    "file": "assets/ducks/bathtime-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "bathtub": 1
@@ -1329,7 +1424,7 @@ const DUCKS = {
   },
   "duck-on-skateboard": {
     "name": "Duck on a Skateboard",
-    "file": "assets/ducks/duck-on-skateboard.png",
+    "file": "assets/ducks/duck-on-skateboard.webp",
     "recipe": {
       "standard-duck": 1,
       "skateboard": 1
@@ -1337,7 +1432,7 @@ const DUCKS = {
   },
   "googly-eye-duck": {
     "name": "Googly Eye Duck",
-    "file": "assets/ducks/googly-eye-duck.png",
+    "file": "assets/ducks/googly-eye-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "googly-eyes": 1
@@ -1345,7 +1440,7 @@ const DUCKS = {
   },
   "long-hair-duck": {
     "name": "Long Hair Duck",
-    "file": "assets/ducks/long-hair-duck.png",
+    "file": "assets/ducks/long-hair-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "wig": 1
@@ -1353,7 +1448,7 @@ const DUCKS = {
   },
   "magenta-duck": {
     "name": "Magenta Duck",
-    "file": "assets/ducks/magenta-duck.png",
+    "file": "assets/ducks/magenta-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "magenta-paint": 1
@@ -1361,12 +1456,12 @@ const DUCKS = {
   },
   "pile-of-tiny-ducks": {
     "name": "Pile of Tiny Ducks",
-    "file": "assets/ducks/pile-of-tiny-ducks.png",
+    "file": "assets/ducks/pile-of-tiny-ducks.webp",
     "acquisition": "hundred-tiny-sightings"
   },
   "scarf-duck": {
     "name": "Scarf Duck",
-    "file": "assets/ducks/scarf-duck.png",
+    "file": "assets/ducks/scarf-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "scarf": 1
@@ -1374,7 +1469,7 @@ const DUCKS = {
   },
   "vampire-duck": {
     "name": "Vampire Duck",
-    "file": "assets/ducks/vampire-duck.png",
+    "file": "assets/ducks/vampire-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "vampire-teeth": 1
@@ -1382,7 +1477,7 @@ const DUCKS = {
   },
   "alien-duck": {
     "name": "Alien Duck",
-    "file": "assets/ducks/Alien-duck.PNG",
+    "file": "assets/ducks/Alien-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "ufo": 1
@@ -1390,7 +1485,7 @@ const DUCKS = {
   },
   "angel-duck": {
     "name": "Angel Duck",
-    "file": "assets/ducks/Angel-duck.PNG",
+    "file": "assets/ducks/Angel-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "angel-wing": 1
@@ -1398,7 +1493,7 @@ const DUCKS = {
   },
   "aqua-duck": {
     "name": "Aqua Duck",
-    "file": "assets/ducks/Aqua-duck.PNG",
+    "file": "assets/ducks/Aqua-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "aqua-paint": 1
@@ -1406,7 +1501,7 @@ const DUCKS = {
   },
   "artist-duck": {
     "name": "Artist Duck",
-    "file": "assets/ducks/Artist-duck.PNG",
+    "file": "assets/ducks/Artist-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "paintbrush": 1
@@ -1414,7 +1509,7 @@ const DUCKS = {
   },
   "black-duck": {
     "name": "Black Duck",
-    "file": "assets/ducks/Black-duck.PNG",
+    "file": "assets/ducks/Black-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "black-paint": 1
@@ -1422,7 +1517,7 @@ const DUCKS = {
   },
   "blue-duck": {
     "name": "Blue Duck",
-    "file": "assets/ducks/Blue-duck.PNG",
+    "file": "assets/ducks/Blue-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "blue-paint": 1
@@ -1430,7 +1525,7 @@ const DUCKS = {
   },
   "bow-duck": {
     "name": "Bow Duck",
-    "file": "assets/ducks/Bow-duck.PNG",
+    "file": "assets/ducks/Bow-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "bow": 1
@@ -1438,7 +1533,7 @@ const DUCKS = {
   },
   "bronze-duck": {
     "name": "Bronze Duck",
-    "file": "assets/ducks/Bronze-duck.PNG",
+    "file": "assets/ducks/Bronze-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "bronze-paint": 1
@@ -1446,7 +1541,7 @@ const DUCKS = {
   },
   "bunny-duck": {
     "name": "Bunny Duck",
-    "file": "assets/ducks/Bunny-duck.PNG",
+    "file": "assets/ducks/Bunny-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "bunny-ears": 1
@@ -1454,7 +1549,7 @@ const DUCKS = {
   },
   "burger-duck": {
     "name": "Burger Duck",
-    "file": "assets/ducks/Burger-duck.PNG",
+    "file": "assets/ducks/Burger-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "burger": 1
@@ -1462,7 +1557,7 @@ const DUCKS = {
   },
   "cat-duck": {
     "name": "Cat Duck",
-    "file": "assets/ducks/Cat-duck.PNG",
+    "file": "assets/ducks/Cat-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "cat-ears": 1
@@ -1470,7 +1565,7 @@ const DUCKS = {
   },
   "cool-duck": {
     "name": "Cool Duck",
-    "file": "assets/ducks/Cool-duck.PNG",
+    "file": "assets/ducks/Cool-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "sunglasses": 1
@@ -1478,7 +1573,7 @@ const DUCKS = {
   },
   "cosmic-duck": {
     "name": "Cosmic Duck",
-    "file": "assets/ducks/Cosmic-duck.PNG",
+    "file": "assets/ducks/Cosmic-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "moon": 1
@@ -1486,7 +1581,7 @@ const DUCKS = {
   },
   "cupcake-duck": {
     "name": "Cupcake Duck",
-    "file": "assets/ducks/Cupcake-duck.PNG",
+    "file": "assets/ducks/Cupcake-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "cupcake": 1
@@ -1494,7 +1589,7 @@ const DUCKS = {
   },
   "dark-red-duck": {
     "name": "Dark Red Duck",
-    "file": "assets/ducks/Dark-red-duck.PNG",
+    "file": "assets/ducks/Dark-red-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "dark-red-paint": 1
@@ -1502,7 +1597,7 @@ const DUCKS = {
   },
   "demon-duck": {
     "name": "Demon Duck",
-    "file": "assets/ducks/Demon-duck.PNG",
+    "file": "assets/ducks/Demon-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "demon-wing": 1
@@ -1510,7 +1605,7 @@ const DUCKS = {
   },
   "doctor-duck": {
     "name": "Doctor Duck",
-    "file": "assets/ducks/Doctor-duck.PNG",
+    "file": "assets/ducks/Doctor-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "pill": 1
@@ -1518,7 +1613,7 @@ const DUCKS = {
   },
   "duck-with-a-knife": {
     "name": "Duck with a Knife",
-    "file": "assets/ducks/Duck-with-a-knife.PNG",
+    "file": "assets/ducks/Duck-with-a-knife.webp",
     "recipe": {
       "standard-duck": 1,
       "knife": 1
@@ -1526,7 +1621,7 @@ const DUCKS = {
   },
   "duckvee": {
     "name": "Duckvee",
-    "file": "assets/ducks/Duckvee.PNG",
+    "file": "assets/ducks/Duckvee.webp",
     "recipe": {
       "standard-duck": 1,
       "pocket-monster-ball": 1
@@ -1534,7 +1629,7 @@ const DUCKS = {
   },
   "fancy-duck": {
     "name": "Fancy Duck",
-    "file": "assets/ducks/Fancy-duck.PNG",
+    "file": "assets/ducks/Fancy-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "mustache": 1
@@ -1542,7 +1637,7 @@ const DUCKS = {
   },
   "flower-duck": {
     "name": "Flower Duck",
-    "file": "assets/ducks/Flower-duck.PNG",
+    "file": "assets/ducks/Flower-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "flower": 1
@@ -1550,7 +1645,7 @@ const DUCKS = {
   },
   "gamer-duck": {
     "name": "Gamer Duck",
-    "file": "assets/ducks/Gamer-duck.PNG",
+    "file": "assets/ducks/Gamer-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "game-controller": 1
@@ -1558,7 +1653,7 @@ const DUCKS = {
   },
   "ghost-duck": {
     "name": "Ghost Duck",
-    "file": "assets/ducks/Ghost-duck.PNG",
+    "file": "assets/ducks/Ghost-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "ghost": 1
@@ -1566,7 +1661,7 @@ const DUCKS = {
   },
   "glitter-duck": {
     "name": "Glitter Duck",
-    "file": "assets/ducks/Glitter-duck.PNG",
+    "file": "assets/ducks/Glitter-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "glitter": 1
@@ -1574,7 +1669,7 @@ const DUCKS = {
   },
   "golden-duck": {
     "name": "Golden Duck",
-    "file": "assets/ducks/Golden-duck.PNG",
+    "file": "assets/ducks/Golden-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "gold-paint": 1
@@ -1582,12 +1677,12 @@ const DUCKS = {
   },
   "goose": {
     "name": "Goose",
-    "file": "assets/ducks/Goose.PNG",
+    "file": "assets/ducks/Goose.webp",
     "acquisition": "honk-of-approval"
   },
   "green-duck": {
     "name": "Green Duck",
-    "file": "assets/ducks/Green-duck.PNG",
+    "file": "assets/ducks/Green-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "green-paint": 1
@@ -1595,7 +1690,7 @@ const DUCKS = {
   },
   "grey-duck": {
     "name": "Grey Duck",
-    "file": "assets/ducks/Grey-duck.PNG",
+    "file": "assets/ducks/Grey-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "grey-paint": 1
@@ -1603,7 +1698,7 @@ const DUCKS = {
   },
   "gummy-duck": {
     "name": "Gummy Duck",
-    "file": "assets/ducks/Gummy-duck.PNG",
+    "file": "assets/ducks/Gummy-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "gummy-bear": 1
@@ -1611,7 +1706,7 @@ const DUCKS = {
   },
   "jester-duck": {
     "name": "Jester Duck",
-    "file": "assets/ducks/Jester-duck.PNG",
+    "file": "assets/ducks/Jester-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "jester-bell": 1
@@ -1619,7 +1714,7 @@ const DUCKS = {
   },
   "kidcore-duck": {
     "name": "Kidcore Duck",
-    "file": "assets/ducks/Kidcore-duck.PNG",
+    "file": "assets/ducks/Kidcore-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "lollipop": 1
@@ -1627,7 +1722,7 @@ const DUCKS = {
   },
   "king-duck": {
     "name": "King Duck",
-    "file": "assets/ducks/King-duck.PNG",
+    "file": "assets/ducks/King-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "crown": 1
@@ -1635,7 +1730,7 @@ const DUCKS = {
   },
   "knitted-duck": {
     "name": "Knitted Duck",
-    "file": "assets/ducks/Knitted-duck.PNG",
+    "file": "assets/ducks/Knitted-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "yarn": 1
@@ -1643,7 +1738,7 @@ const DUCKS = {
   },
   "lemon-duck": {
     "name": "Lemon Duck",
-    "file": "assets/ducks/Lemon-duck.PNG",
+    "file": "assets/ducks/Lemon-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "lemon": 1
@@ -1651,7 +1746,7 @@ const DUCKS = {
   },
   "lime-duck": {
     "name": "Lime Duck",
-    "file": "assets/ducks/Lime-duck.PNG",
+    "file": "assets/ducks/Lime-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "lime": 1
@@ -1659,7 +1754,7 @@ const DUCKS = {
   },
   "magical-girl-duck": {
     "name": "Magical Girl Duck",
-    "file": "assets/ducks/Magical-girl-duck.PNG",
+    "file": "assets/ducks/Magical-girl-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "magical-girl-pendant": 1
@@ -1667,7 +1762,7 @@ const DUCKS = {
   },
   "mint-duck": {
     "name": "Mint Duck",
-    "file": "assets/ducks/Mint-duck.PNG",
+    "file": "assets/ducks/Mint-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "mint-paint": 1
@@ -1675,7 +1770,7 @@ const DUCKS = {
   },
   "mushroom-duck": {
     "name": "Mushroom Duck",
-    "file": "assets/ducks/Mushroom-duck.PNG",
+    "file": "assets/ducks/Mushroom-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "mushroom": 1
@@ -1683,13 +1778,13 @@ const DUCKS = {
   },
   "miko-duck": {
     "name": "Miko Duck",
-    "file": "miko-duck.png",
+    "file": "miko-duck.webp",
     "acquisition": "character-happiness-100",
     "characterId": "miko"
   },
   "orange-duck": {
     "name": "Orange Duck",
-    "file": "assets/ducks/Orange-duck.PNG",
+    "file": "assets/ducks/Orange-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "orange-paint": 1
@@ -1697,7 +1792,7 @@ const DUCKS = {
   },
   "party-hat-duck": {
     "name": "Party Hat Duck",
-    "file": "assets/ducks/Party-hat-duck.PNG",
+    "file": "assets/ducks/Party-hat-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "party-hat": 1
@@ -1705,7 +1800,7 @@ const DUCKS = {
   },
   "peach-duck": {
     "name": "Peach Duck",
-    "file": "assets/ducks/Peach-duck.PNG",
+    "file": "assets/ducks/Peach-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "peach-paint": 1
@@ -1713,13 +1808,13 @@ const DUCKS = {
   },
   "peep-duck": {
     "name": "Peep Duck",
-    "file": "peep-duck.png",
+    "file": "peep-duck.webp",
     "acquisition": "character-happiness-100",
     "characterId": "peep"
   },
   "periwinkle-duck": {
     "name": "Periwinkle Duck",
-    "file": "assets/ducks/Periwinkle-duck.PNG",
+    "file": "assets/ducks/Periwinkle-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "periwinkle-paint": 1
@@ -1727,7 +1822,7 @@ const DUCKS = {
   },
   "pink-duck": {
     "name": "Pink Duck",
-    "file": "assets/ducks/Pink-duck.PNG",
+    "file": "assets/ducks/Pink-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "pink-paint": 1
@@ -1735,7 +1830,7 @@ const DUCKS = {
   },
   "pizza-duck": {
     "name": "Pizza Duck",
-    "file": "assets/ducks/Pizza-duck.PNG",
+    "file": "assets/ducks/Pizza-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "pizza": 1
@@ -1743,7 +1838,7 @@ const DUCKS = {
   },
   "plush-duck": {
     "name": "Plush Duck",
-    "file": "assets/ducks/Plush-duck.PNG",
+    "file": "assets/ducks/Plush-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "thread": 1
@@ -1751,7 +1846,7 @@ const DUCKS = {
   },
   "pompompurin-duck": {
     "name": "Pompompurin Duck",
-    "file": "assets/ducks/Pompompurin-duck.PNG",
+    "file": "assets/ducks/Pompompurin-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "pudding": 1
@@ -1759,7 +1854,7 @@ const DUCKS = {
   },
   "purple-duck": {
     "name": "Purple Duck",
-    "file": "assets/ducks/Purple-duck.PNG",
+    "file": "assets/ducks/Purple-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "purple-paint": 1
@@ -1767,7 +1862,7 @@ const DUCKS = {
   },
   "rainbow-duck": {
     "name": "Rainbow Duck",
-    "file": "assets/ducks/Rainbow-duck.PNG",
+    "file": "assets/ducks/Rainbow-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "rainbow-paint": 1
@@ -1775,7 +1870,7 @@ const DUCKS = {
   },
   "red-duck": {
     "name": "Red Duck",
-    "file": "assets/ducks/Red-duck.PNG",
+    "file": "assets/ducks/Red-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "red-paint": 1
@@ -1783,7 +1878,7 @@ const DUCKS = {
   },
   "silver-duck": {
     "name": "Silver Duck",
-    "file": "assets/ducks/Silver-duck.PNG",
+    "file": "assets/ducks/Silver-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "silver-paint": 1
@@ -1791,7 +1886,7 @@ const DUCKS = {
   },
   "sky-blue-duck": {
     "name": "Sky Blue Duck",
-    "file": "assets/ducks/Sky-blue-duck.PNG",
+    "file": "assets/ducks/Sky-blue-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "sky-blue-paint": 1
@@ -1799,7 +1894,7 @@ const DUCKS = {
   },
   "sleepy-time-duck": {
     "name": "Sleepy Time Duck",
-    "file": "assets/ducks/Sleepy-time-duck.PNG",
+    "file": "assets/ducks/Sleepy-time-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "sleep-mask": 1
@@ -1807,12 +1902,12 @@ const DUCKS = {
   },
   "standard-duck": {
     "name": "Standard Duck",
-    "file": "assets/ducks/Standard-duck.PNG",
+    "file": "assets/ducks/Standard-duck.webp",
     "acquisition": "drop-or-shop"
   },
   "strawberry-duck": {
     "name": "Strawberry Duck",
-    "file": "assets/ducks/Strawberry-duck.PNG",
+    "file": "assets/ducks/Strawberry-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "strawberry": 1
@@ -1820,17 +1915,17 @@ const DUCKS = {
   },
   "tiny-duck-stack": {
     "name": "Tiny Duck Stack",
-    "file": "assets/ducks/Tiny-duck-stack.PNG",
+    "file": "assets/ducks/Tiny-duck-stack.webp",
     "acquisition": "four-tiny-sightings"
   },
   "tiny-duck": {
     "name": "Tiny Duck",
-    "file": "assets/ducks/Tiny-duck.PNG",
+    "file": "assets/ducks/Tiny-duck.webp",
     "acquisition": "hidden-sighting"
   },
   "top-hat-duck": {
     "name": "Top Hat Duck",
-    "file": "assets/ducks/Top-hat-duck.PNG",
+    "file": "assets/ducks/Top-hat-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "top-hat": 1
@@ -1838,7 +1933,7 @@ const DUCKS = {
   },
   "violet-duck": {
     "name": "Violet Duck",
-    "file": "assets/ducks/Violet-duck.PNG",
+    "file": "assets/ducks/Violet-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "violet-paint": 1
@@ -1846,7 +1941,7 @@ const DUCKS = {
   },
   "watermelon-duck": {
     "name": "Watermelon Duck",
-    "file": "assets/ducks/Watermelon-duck.PNG",
+    "file": "assets/ducks/Watermelon-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "watermelon": 1
@@ -1854,7 +1949,7 @@ const DUCKS = {
   },
   "white-duck": {
     "name": "White Duck",
-    "file": "assets/ducks/White-duck.PNG",
+    "file": "assets/ducks/White-duck.webp",
     "recipe": {
       "standard-duck": 1,
       "white-paint": 1
@@ -1868,11 +1963,11 @@ const DUCK_NAME_TO_ID = Object.fromEntries(
 );
 
 const BAKERY_ASSETS = {
-  "background": "assets/bakery/backgrounds/Bakery-background.PNG",
+  "background": "assets/bakery/backgrounds/Bakery-background.webp",
   "drops": {
     "gold-coin": {
       "name": "Gold Coin",
-      "file": "assets/bakery/drops/Gold-coin.PNG",
+      "file": "assets/bakery/drops/Gold-coin.webp",
       "effect": {
         "type": "coins",
         "amount": 5
@@ -1880,7 +1975,7 @@ const BAKERY_ASSETS = {
     },
     "rose-gold-coin": {
       "name": "Rose Gold Coin",
-      "file": "assets/bakery/drops/Rose-gold-coin.PNG",
+      "file": "assets/bakery/drops/Rose-gold-coin.webp",
       "effect": {
         "type": "coins",
         "amount": 10
@@ -1888,7 +1983,7 @@ const BAKERY_ASSETS = {
     },
     "pink-heart-refill": {
       "name": "Pink Heart Refill",
-      "file": "assets/bakery/drops/Pink-heart-refill.PNG",
+      "file": "assets/bakery/drops/Pink-heart-refill.webp",
       "effect": {
         "type": "energy-percent",
         "amount": 20
@@ -1896,7 +1991,7 @@ const BAKERY_ASSETS = {
     },
     "gold-heart-refill": {
       "name": "Gold Heart Refill",
-      "file": "assets/bakery/drops/Gold-heart-refill.PNG",
+      "file": "assets/bakery/drops/Gold-heart-refill.webp",
       "effect": {
         "type": "energy-percent",
         "amount": 50
@@ -1908,9 +2003,9 @@ const BAKERY_ASSETS = {
 
 const GIFT_REACTIONS = {
   favorite: { label: "Favorite 💖", happiness: 5, expression: "expression-happy", duration: 2800, burst: "💖" },
-  like: { label: "Likes it 😊", happiness: 3, expression: "expression-happy", duration: 2200, burst: "♡" },
-  okay: { label: "Okay 🙂", happiness: 1, expression: "expression-happy", duration: 1500, burst: "♡" },
-  "not-her-thing": { label: "Not her thing 😐", happiness: 0, expression: "expression-shocked", duration: 1400, burst: "…" }
+  like: { label: "Likes it!", happiness: 3, expression: "expression-happy", duration: 2200, burst: "♡" },
+  okay: { label: "Okay.", happiness: 1, expression: "expression-neutral", duration: 1500, burst: "♡" },
+  "not-her-thing": { label: "Not her thing 😐", happiness: 0, expression: "expression-sad", duration: 1400, burst: "…" }
 };
 
 function normalizeItemId(value) {
@@ -1942,12 +2037,12 @@ const SHOPPING_DAILY_LIMIT = 3;
 const PAINT_MIXING_DURATION_MS = 60 * 60 * 1000;
 const PAINT_MIXING_DAILY_LIMIT = 2;
 const FRIENDSHIP_DATE_DURATION_MS = 60 * 60 * 1000;
-const FRIENDSHIP_DATE_DAILY_LIMIT = 1;
+const FRIENDSHIP_DATE_DAILY_LIMIT = 2;
 const FRIENDSHIP_DATE_HAPPINESS = 3;
 
 const FRIENDSHIP_DATE_ICONS = Object.freeze({
-  peep: "assets/ducks/peep-duck.png",
-  miko: "assets/ducks/miko-duck.png"
+  peep: "assets/ducks/peep-duck.webp",
+  miko: "assets/ducks/miko-duck.webp"
 });
 
 const PAINT_MIXING_LOOT_POOL = [
@@ -1966,185 +2061,185 @@ const PAINT_MIXING_LOOT_POOL = [
 
 
 const ROOMS = [
-  { id: "cream", name: "Cream Room", file: "assets/rooms/cream.png", swatch: "#f4e2c8", unlocked: true },
-  { id: "green", name: "Green Room", file: "assets/rooms/green.png", swatch: "#c8d4bd", unlocked: false },
-  { id: "blue", name: "Blue Room", file: "assets/rooms/blue.png", swatch: "#c9dce8", unlocked: false },
-  { id: "purple", name: "Purple Room", file: "assets/rooms/purple.png", swatch: "#d8cce7", unlocked: false },
-  { id: "peach", name: "Peach Room", file: "assets/rooms/peach.png", swatch: "#f2cdbb", unlocked: false },
-  { id: "pink", name: "Pink Room", file: "assets/rooms/pink.png", swatch: "#f6c9d4", unlocked: false },
-  { id: "dark-purple", name: "Dark Purple Room", file: "assets/rooms/dark-purple.png", swatch: "#b79aad", unlocked: false },
-  { id: "cotton-candy", name: "Cotton Candy Room", file: "assets/rooms/cotton-candy.png", swatch: "#cfe7f7", unlocked: false },
-  { id: "chocolate-brown", name: "Chocolate Brown Room", file: "assets/rooms/chocolate-brown.png", swatch: "#b88e78", unlocked: false }
+  { id: "cream", name: "Cream Room", file: "assets/rooms/cream.webp", swatch: "#f4e2c8", unlocked: true },
+  { id: "green", name: "Green Room", file: "assets/rooms/green.webp", swatch: "#c8d4bd", unlocked: false },
+  { id: "blue", name: "Blue Room", file: "assets/rooms/blue.webp", swatch: "#c9dce8", unlocked: false },
+  { id: "purple", name: "Purple Room", file: "assets/rooms/purple.webp", swatch: "#d8cce7", unlocked: false },
+  { id: "peach", name: "Peach Room", file: "assets/rooms/peach.webp", swatch: "#f2cdbb", unlocked: false },
+  { id: "pink", name: "Pink Room", file: "assets/rooms/pink.webp", swatch: "#f6c9d4", unlocked: false },
+  { id: "dark-purple", name: "Dark Purple Room", file: "assets/rooms/dark-purple.webp", swatch: "#b79aad", unlocked: false },
+  { id: "cotton-candy", name: "Cotton Candy Room", file: "assets/rooms/cotton-candy.webp", swatch: "#cfe7f7", unlocked: false },
+  { id: "chocolate-brown", name: "Chocolate Brown Room", file: "assets/rooms/chocolate-brown.webp", swatch: "#b88e78", unlocked: false }
 ];
 
 const ASSETS = {
   // Back layers
-  "tail-cow": { label: "Cow Tail", file: "cow-tail.png", z: 10 },
-  "tail-bunny": { label: "Bunny Tail", file: "bunny-tail.png", z: 10 },
-  "large-back-bow": { label: "Large Back Hair Bow", file: "large-back-hair-bow.png", z: 12 },
-  "hair-short": { label: "Short Hair", file: "hair-short.png", z: 15 },
-  "hair-low-pigtails": { label: "Low Pigtails", file: "hair-low-pigtails.png", z: 15 },
-  "hair-ponytail": { label: "Ponytail", file: "hair-ponytail.png", z: 15 },
-  "hair-long-pigtails": { label: "Long Pigtails", file: "hair-long-pigtails.png", z: 15 },
-  "hair-jellyfish": { label: "Jellyfish Hair", file: "hair-jellyfish.png", z: 15 },
+  "tail-cow": { label: "Cow Tail", file: "cow-tail.webp", z: 10 },
+  "tail-bunny": { label: "Bunny Tail", file: "bunny-tail.webp", z: 10 },
+  "large-back-bow": { label: "Large Back Hair Bow", file: "large-back-hair-bow.webp", z: 12 },
+  "hair-short": { label: "Short Hair", file: "hair-short.webp", z: 15 },
+  "hair-low-pigtails": { label: "Low Pigtails", file: "hair-low-pigtails.webp", z: 15 },
+  "hair-ponytail": { label: "Ponytail", file: "hair-ponytail.webp", z: 15 },
+  "hair-long-pigtails": { label: "Long Pigtails", file: "hair-long-pigtails.webp", z: 15 },
+  "hair-jellyfish": { label: "Jellyfish Hair", file: "hair-jellyfish.webp", z: 15 },
 
   // Body / clothing
-  "base": { label: "Base", file: "base.png", z: 25 },
-  "sock-left-blue": { label: "Blue Sock · Left", file: "sock-left-blue.png", z: 29 },
-  "sock-right-blue": { label: "Blue Sock · Right", file: "sock-right-blue.png", z: 29 },
-  "sock-left-rainbow": { label: "Rainbow Sock · Left", file: "sock-left-rainbow.png", z: 29 },
-  "sock-right-rainbow": { label: "Rainbow Sock · Right", file: "sock-right-rainbow.png", z: 29 },
-  "leg-bandage": { label: "Right Leg Bandage", file: "right-leg-bandage.png", z: 30 },
-  "bottom-fluffy": { label: "Fluffy Skirt", file: "fluffy-skirt.png", z: 31 },
-  "bottom-pleated": { label: "Pleated Skirt", file: "pleated-skirt.png", z: 31 },
-  "top-shirt": { label: "Short-Sleeved Shirt", file: "short-sleeved-shirt.png", z: 32 },
-  "top-sweater": { label: "Off-Shoulder Sweater", file: "off-shoulder-sweater.png", z: 32 },
-  "jacket": { label: "Cropped Jacket", file: "cropped-jacket.png", z: 34 },
-  "shoes-loafer": { label: "Loafers", file: "loafer-shoes.png", z: 35 },
-  "shoes-sneaker": { label: "Colorful Sneakers", file: "colorful-sneakers.png", z: 35 },
+  "base": { label: "Base", file: "base.webp", z: 25 },
+  "sock-left-blue": { label: "Blue Sock · Left", file: "sock-left-blue.webp", z: 29 },
+  "sock-right-blue": { label: "Blue Sock · Right", file: "sock-right-blue.webp", z: 29 },
+  "sock-left-rainbow": { label: "Rainbow Sock · Left", file: "sock-left-rainbow.webp", z: 29 },
+  "sock-right-rainbow": { label: "Rainbow Sock · Right", file: "sock-right-rainbow.webp", z: 29 },
+  "leg-bandage": { label: "Right Leg Bandage", file: "right-leg-bandage.webp", z: 30 },
+  "bottom-fluffy": { label: "Fluffy Skirt", file: "fluffy-skirt.webp", z: 31 },
+  "bottom-pleated": { label: "Pleated Skirt", file: "pleated-skirt.webp", z: 31 },
+  "top-shirt": { label: "Short-Sleeved Shirt", file: "short-sleeved-shirt.webp", z: 32 },
+  "top-sweater": { label: "Off-Shoulder Sweater", file: "off-shoulder-sweater.webp", z: 32 },
+  "jacket": { label: "Cropped Jacket", file: "cropped-jacket.webp", z: 34 },
+  "shoes-loafer": { label: "Loafers", file: "loafer-shoes.webp", z: 35 },
+  "shoes-sneaker": { label: "Colorful Sneakers", file: "colorful-sneakers.webp", z: 35 },
 
   // Peep shop outfit layers
-  "legwear-white-lace": { label: "White Lace Stockings", file: "white-lace-stockings.png", z: 29.5 },
-  "dress-white": { label: "White Dress", file: "white-dress.png", z: 32.5 },
-  "cardigan-white": { label: "White Cardigan", file: "white-cardigan-sides.png", previewFile: "white-cardigan-shop.png", z: 34.2 },
-  "shoes-white-mary-jane": { label: "White Mary Janes", file: "white-mary-janes.png", z: 35 },
-  "bow-white": { label: "White Bow", file: "white-bow.png", z: 13 },
+  "legwear-white-lace": { label: "White Lace Stockings", file: "white-lace-stockings.webp", z: 29.5 },
+  "dress-white": { label: "White Dress", file: "white-dress.webp", z: 32.5 },
+  "cardigan-white": { label: "White Cardigan", file: "white-cardigan-sides.webp", previewFile: "white-cardigan-shop.webp", z: 34.2 },
+  "shoes-white-mary-jane": { label: "White Mary Janes", file: "white-mary-janes.webp", z: 35 },
+  "bow-white": { label: "White Bow", file: "white-bow.webp", z: 13 },
 
   // Expressions are automatic reactions, not closet choices.
-  "expression-neutral": { label: "Neutral", file: "expression-neutral.png", z: 42 },
-  "expression-happy": { label: "Happy", file: "expression-happy.png", z: 42 },
-  "expression-sad": { label: "Sad", file: "expression-sad.png", z: 42 },
-  "expression-shocked": { label: "Shocked", file: "expression-shocked.png", z: 42 },
-  "expression-mad": { label: "Mad", file: "expression-mad.png", z: 42 },
+  "expression-neutral": { label: "Neutral", file: "expression-neutral.webp", z: 42 },
+  "expression-happy": { label: "Happy", file: "expression-happy.webp", z: 42 },
+  "expression-sad": { label: "Sad", file: "expression-sad.webp", z: 42 },
+  "expression-shocked": { label: "Shocked", file: "expression-shocked.webp", z: 42 },
+  "expression-mad": { label: "Mad", file: "expression-mad.webp", z: 42 },
 
   // Front/head layers
-  "cow-ears": { label: "Cow Ears", file: "cow-ears.png", z: 44 },
-  "cat-ears": { label: "Cat Ears", file: "cat-ears.png", z: 44 },
-  "horns": { label: "Horns", file: "horns.png", z: 45 },
-  "bangs": { label: "Bangs", file: "bangs.png", z: 46 },
-  "collar": { label: "Collar", file: "collar.png", z: 40 },
-  "cheek-bandage": { label: "Cheek Bandage", file: "cheek-bandage.png", z: 49 },
-  "left-bow": { label: "Left Bow", file: "left-bow.png", z: 52 },
-  "right-bow": { label: "Right Bow", file: "right-bow.png", z: 52 },
-  "hair-side-ribbon": { label: "Hair Side Ribbon", file: "hair-side-ribbon.png", z: 52 },
-  "beret": { label: "Beret", file: "beret.png", z: 5 }
+  "cow-ears": { label: "Cow Ears", file: "cow-ears.webp", z: 44 },
+  "cat-ears": { label: "Cat Ears", file: "cat-ears.webp", z: 44 },
+  "horns": { label: "Horns", file: "horns.webp", z: 45 },
+  "bangs": { label: "Bangs", file: "bangs.webp", z: 46 },
+  "collar": { label: "Collar", file: "collar.webp", z: 40 },
+  "cheek-bandage": { label: "Cheek Bandage", file: "cheek-bandage.webp", z: 49 },
+  "left-bow": { label: "Left Bow", file: "left-bow.webp", z: 52 },
+  "right-bow": { label: "Right Bow", file: "right-bow.webp", z: 52 },
+  "hair-side-ribbon": { label: "Hair Side Ribbon", file: "hair-side-ribbon.webp", z: 52 },
+  "beret": { label: "Beret", file: "beret.webp", z: 5 }
 };
 
 // Alpha bounds from the 1080×1920 source canvases. They let us make useful cropped
 // closet previews WITHOUT asking the user to upload a second set of thumbnail files.
 const THUMB_BOUNDS = {
-  "bangs.png": [315,758,874,1246],
-  "beret.png": [291,723,932,1059],
-  "bunny-tail.png": [560,1279,821,1496],
-  "cat-ears.png": [340,715,851,942],
-  "cheek-bandage.png": [697,1160,753,1195],
-  "collar.png": [557,1216,642,1264],
-  "colorful-sneakers.png": [444,1730,746,1818],
-  "cow-ears.png": [200,1023,980,1181],
-  "cow-tail.png": [730,1357,1072,1604],
-  "cropped-jacket.png": [354,1234,845,1525],
-  "fluffy-skirt.png": [408,1343,794,1508],
-  "hair-jellyfish.png": [195,771,1000,1559],
-  "hair-long-pigtails.png": [204,865,991,1426],
-  "hair-low-pigtails.png": [244,780,952,1271],
-  "hair-ponytail.png": [477,659,906,1156],
-  "hair-short.png": [258,784,927,1237],
-  "hair-side-ribbon.png": [805,890,901,1003],
-  "horns.png": [399,784,787,872],
-  "large-back-hair-bow.png": [267,635,924,948],
-  "left-bow.png": [278,868,433,997],
-  "loafer-shoes.png": [445,1742,745,1808],
-  "off-shoulder-sweater.png": [374,1221,839,1531],
-  "pleated-skirt.png": [423,1358,782,1498],
-  "right-bow.png": [753,868,908,997],
-  "right-leg-bandage.png": [615,1591,732,1670],
-  "short-sleeved-shirt.png": [462,1220,732,1356],
-  "sock-left-blue.png": [447,1529,579,1794],
-  "sock-left-rainbow.png": [445,1523,589,1795],
-  "sock-right-blue.png": [611,1529,743,1794],
-  "sock-right-rainbow.png": [601,1523,745,1795],
-  "white-cardigan-shop.png": [308,1212,891,1467],
-  "white-cardigan-sides.png": [308,1212,891,1467],
-  "white-dress.png": [358,1222,834,1530],
-  "white-lace-stockings.png": [446,1399,749,1797],
-  "white-mary-janes.png": [443,1749,749,1803],
-  "white-bow.png": [201,695,1010,1068]
+  "bangs.webp": [315,758,874,1246],
+  "beret.webp": [291,723,932,1059],
+  "bunny-tail.webp": [560,1279,821,1496],
+  "cat-ears.webp": [340,715,851,942],
+  "cheek-bandage.webp": [697,1160,753,1195],
+  "collar.webp": [557,1216,642,1264],
+  "colorful-sneakers.webp": [444,1730,746,1818],
+  "cow-ears.webp": [200,1023,980,1181],
+  "cow-tail.webp": [730,1357,1072,1604],
+  "cropped-jacket.webp": [354,1234,845,1525],
+  "fluffy-skirt.webp": [408,1343,794,1508],
+  "hair-jellyfish.webp": [195,771,1000,1559],
+  "hair-long-pigtails.webp": [204,865,991,1426],
+  "hair-low-pigtails.webp": [244,780,952,1271],
+  "hair-ponytail.webp": [477,659,906,1156],
+  "hair-short.webp": [258,784,927,1237],
+  "hair-side-ribbon.webp": [805,890,901,1003],
+  "horns.webp": [399,784,787,872],
+  "large-back-hair-bow.webp": [267,635,924,948],
+  "left-bow.webp": [278,868,433,997],
+  "loafer-shoes.webp": [445,1742,745,1808],
+  "off-shoulder-sweater.webp": [374,1221,839,1531],
+  "pleated-skirt.webp": [423,1358,782,1498],
+  "right-bow.webp": [753,868,908,997],
+  "right-leg-bandage.webp": [615,1591,732,1670],
+  "short-sleeved-shirt.webp": [462,1220,732,1356],
+  "sock-left-blue.webp": [447,1529,579,1794],
+  "sock-left-rainbow.webp": [445,1523,589,1795],
+  "sock-right-blue.webp": [611,1529,743,1794],
+  "sock-right-rainbow.webp": [601,1523,745,1795],
+  "white-cardigan-shop.webp": [308,1212,891,1467],
+  "white-cardigan-sides.webp": [308,1212,891,1467],
+  "white-dress.webp": [358,1222,834,1530],
+  "white-lace-stockings.webp": [446,1399,749,1797],
+  "white-mary-janes.webp": [443,1749,749,1803],
+  "white-bow.webp": [201,695,1010,1068]
 };
 
 const MIKO_THUMB_BOUNDS = {
-  "Miko-angry.PNG": [332,953,740,1164],
-  "Miko-bangs.PNG": [250,766,826,1216],
-  "Miko-base-arm.PNG": [389,1171,492,1355],
-  "Miko-base.PNG": [319,798,761,1794],
-  "Miko-belt.PNG": [420,1422,654,1465],
-  "Miko-button-shirt-closet.PNG": [390,1202,743,1495],
-  "Miko-button-shirt.PNG": [408,1215,743,1495],
-  "Miko-button-sleeve.PNG": [390,1202,483,1356],
-  "Miko-capri-pants.PNG": [406,1426,665,1687],
-  "Miko-hair.PNG": [178,743,898,1218],
-  "Miko-happy.PNG": [352,961,715,1179],
-  "Miko-headband.PNG": [284,727,798,977],
-  "Miko-hoodie-back.PNG": [496,1445,565,1528],
-  "Miko-hoodie-closet.PNG": [378,1202,764,1544],
-  "Miko-hoodie-sleeve.PNG": [378,1202,487,1355],
-  "Miko-hoodie.PNG": [379,1254,764,1544],
-  "Miko-jeans.PNG": [402,1417,667,1762],
-  "Miko-loafers.PNG": [382,1745,690,1807],
-  "Miko-neutral.PNG": [356,933,716,1146],
-  "Miko-sad.PNG": [332,939,740,1146],
-  "Miko-shocked.PNG": [356,929,716,1165],
-  "Miko-smug.PNG": [332,945,740,1146],
-  "Miko-sweater-closet.PNG": [378,1195,762,1488],
-  "Miko-sweater-sleeve.PNG": [378,1195,495,1371],
-  "Miko-sweater.PNG": [415,1230,762,1488],
-  "Miko-bangs-pinned.PNG": [245,750,835,1225],
-  "Miko-Boxers.PNG": [360,1330,720,1585],
-  "Miko-big-shirt.PNG": [335,1145,805,1605],
-  "Miko-socks.PNG": [425,1680,660,1828],
-  "black-blazer-shop.png": [390,1204,741,1472],
-  "black-blazer.png": [416,1222,741,1472],
-  "black-blazer-arm-piece.png": [390,1204,491,1361],
-  "black-hairpins.png": [684,970,747,1038],
-  "blouse.png": [431,1219,655,1423],
-  "shorts.png": [402,1402,668,1503],
-  "white-garter-socks.png": [384,1614,686,1795],
-  "fancy-loafers.png": [380,1745,688,1816]
+  "Miko-angry.webp": [332,953,740,1164],
+  "Miko-bangs.webp": [250,766,826,1216],
+  "Miko-base-arm.webp": [389,1171,492,1355],
+  "Miko-base.webp": [319,798,761,1794],
+  "Miko-belt.webp": [420,1422,654,1465],
+  "Miko-button-shirt-closet.webp": [390,1202,743,1495],
+  "Miko-button-shirt.webp": [408,1215,743,1495],
+  "Miko-button-sleeve.webp": [390,1202,483,1356],
+  "Miko-capri-pants.webp": [406,1426,665,1687],
+  "Miko-hair.webp": [178,743,898,1218],
+  "Miko-happy.webp": [352,961,715,1179],
+  "Miko-headband.webp": [284,727,798,977],
+  "Miko-hoodie-back.webp": [496,1445,565,1528],
+  "Miko-hoodie-closet.webp": [378,1202,764,1544],
+  "Miko-hoodie-sleeve.webp": [378,1202,487,1355],
+  "Miko-hoodie.webp": [379,1254,764,1544],
+  "Miko-jeans.webp": [402,1417,667,1762],
+  "Miko-loafers.webp": [382,1745,690,1807],
+  "Miko-neutral.webp": [356,933,716,1146],
+  "Miko-sad.webp": [332,939,740,1146],
+  "Miko-shocked.webp": [356,929,716,1165],
+  "Miko-smug.webp": [332,945,740,1146],
+  "Miko-sweater-closet.webp": [378,1195,762,1488],
+  "Miko-sweater-sleeve.webp": [378,1195,495,1371],
+  "Miko-sweater.webp": [415,1230,762,1488],
+  "Miko-bangs-pinned.webp": [245,750,835,1225],
+  "Miko-Boxers.webp": [360,1330,720,1585],
+  "Miko-big-shirt.webp": [335,1145,805,1605],
+  "Miko-socks.webp": [425,1680,660,1828],
+  "black-blazer-shop.webp": [390,1204,741,1472],
+  "black-blazer.webp": [416,1222,741,1472],
+  "black-blazer-arm-piece.webp": [390,1204,491,1361],
+  "black-hairpins.webp": [684,970,747,1038],
+  "blouse.webp": [431,1219,655,1423],
+  "shorts.webp": [402,1402,668,1503],
+  "white-garter-socks.webp": [384,1614,686,1795],
+  "fancy-loafers.webp": [380,1745,688,1816]
 };
 
 const MIKO_ASSETS = {
-  "base": { label: "Body Base", file: "Miko-base.PNG", z: 20 },
-  "hair-main": { label: "Hair", file: "Miko-hair.PNG", z: 15 },
-  "bangs": { label: "Bangs", file: "Miko-bangs.PNG", z: 48 },
-  "bangs-pinned": { label: "Pinned Bangs", file: "Miko-bangs-pinned.PNG", z: 48 },
-  "arm-base": { label: "Arm Base", file: "Miko-base-arm.PNG", z: 35 },
-  "top-button": { label: "Button Shirt", file: "Miko-button-shirt.PNG", previewFile: "Miko-button-shirt-closet.PNG", z: 32 },
-  "top-button-sleeve": { label: "Button Sleeve", file: "Miko-button-sleeve.PNG", z: 36 },
-  "top-hoodie": { label: "Hoodie", file: "Miko-hoodie.PNG", previewFile: "Miko-hoodie-closet.PNG", z: 34 },
-  "top-hoodie-sleeve": { label: "Hoodie Sleeve", file: "Miko-hoodie-sleeve.PNG", z: 37 },
-  "hoodie-back": { label: "Hoodie Back", file: "Miko-hoodie-back.PNG", z: 18 },
-  "top-sweater": { label: "Sweater", file: "Miko-sweater.PNG", previewFile: "Miko-sweater-closet.PNG", z: 34 },
-  "top-sweater-sleeve": { label: "Sweater Sleeve", file: "Miko-sweater-sleeve.PNG", z: 37 },
-  "top-big-shirt": { label: "Big Shirt", file: "Miko-big-shirt.PNG", z: 36.5 },
-  "shirt-blouse": { label: "Blouse", file: "blouse.png", z: 32 },
-  "outer-black-blazer": { label: "Black Blazer", file: "black-blazer.png", previewFile: "black-blazer-shop.png", z: 34 },
-  "outer-black-blazer-arm": { label: "Black Blazer Arm", file: "black-blazer-arm-piece.png", z: 37 },
-  "bottom-capris": { label: "Capris", file: "Miko-capri-pants.PNG", z: 31 },
-  "bottom-jeans": { label: "Jeans", file: "Miko-jeans.PNG", z: 31 },
-  "bottom-boxers": { label: "Boxers", file: "Miko-Boxers.PNG", z: 31 },
-  "bottom-shorts": { label: "Shorts", file: "shorts.png", z: 31 },
-  "belt": { label: "Belt", file: "Miko-belt.PNG", z: 33 },
-  "socks": { label: "Socks", file: "Miko-socks.PNG", z: 38 },
-  "socks-garter": { label: "White Garter Socks", file: "white-garter-socks.png", z: 38 },
-  "shoes-loafer": { label: "Loafers", file: "Miko-loafers.PNG", z: 39 },
-  "shoes-fancy-loafers": { label: "Fancy Loafers", file: "fancy-loafers.png", z: 39 },
-  "headband": { label: "Headband", file: "Miko-headband.PNG", z: 47 },
-  "hairpins-black": { label: "Black Hairpins", file: "black-hairpins.png", z: 49 },
-  "expression-neutral": { label: "Neutral", file: "Miko-neutral.PNG", z: 44 },
-  "expression-happy": { label: "Happy", file: "Miko-happy.PNG", z: 44 },
-  "expression-sad": { label: "Sad", file: "Miko-sad.PNG", z: 44 },
-  "expression-shocked": { label: "Shocked", file: "Miko-shocked.PNG", z: 44 },
-  "expression-mad": { label: "Angry", file: "Miko-angry.PNG", z: 44 },
-  "expression-smug": { label: "Smug", file: "Miko-smug.PNG", z: 44 }
+  "base": { label: "Body Base", file: "Miko-base.webp", z: 20 },
+  "hair-main": { label: "Hair", file: "Miko-hair.webp", z: 15 },
+  "bangs": { label: "Bangs", file: "Miko-bangs.webp", z: 48 },
+  "bangs-pinned": { label: "Pinned Bangs", file: "Miko-bangs-pinned.webp", z: 48 },
+  "arm-base": { label: "Arm Base", file: "Miko-base-arm.webp", z: 35 },
+  "top-button": { label: "Button Shirt", file: "Miko-button-shirt.webp", previewFile: "Miko-button-shirt-closet.webp", z: 32 },
+  "top-button-sleeve": { label: "Button Sleeve", file: "Miko-button-sleeve.webp", z: 36 },
+  "top-hoodie": { label: "Hoodie", file: "Miko-hoodie.webp", previewFile: "Miko-hoodie-closet.webp", z: 34 },
+  "top-hoodie-sleeve": { label: "Hoodie Sleeve", file: "Miko-hoodie-sleeve.webp", z: 37 },
+  "hoodie-back": { label: "Hoodie Back", file: "Miko-hoodie-back.webp", z: 18 },
+  "top-sweater": { label: "Sweater", file: "Miko-sweater.webp", previewFile: "Miko-sweater-closet.webp", z: 34 },
+  "top-sweater-sleeve": { label: "Sweater Sleeve", file: "Miko-sweater-sleeve.webp", z: 37 },
+  "top-big-shirt": { label: "Big Shirt", file: "Miko-big-shirt.webp", z: 36.5 },
+  "shirt-blouse": { label: "Blouse", file: "blouse.webp", z: 32 },
+  "outer-black-blazer": { label: "Black Blazer", file: "black-blazer.webp", previewFile: "black-blazer-shop.webp", z: 34 },
+  "outer-black-blazer-arm": { label: "Black Blazer Arm", file: "black-blazer-arm-piece.webp", z: 37 },
+  "bottom-capris": { label: "Capris", file: "Miko-capri-pants.webp", z: 31 },
+  "bottom-jeans": { label: "Jeans", file: "Miko-jeans.webp", z: 31 },
+  "bottom-boxers": { label: "Boxers", file: "Miko-Boxers.webp", z: 31 },
+  "bottom-shorts": { label: "Shorts", file: "shorts.webp", z: 31 },
+  "belt": { label: "Belt", file: "Miko-belt.webp", z: 33 },
+  "socks": { label: "Socks", file: "Miko-socks.webp", z: 29 },
+  "socks-garter": { label: "White Garter Socks", file: "white-garter-socks.webp", z: 29 },
+  "shoes-loafer": { label: "Loafers", file: "Miko-loafers.webp", z: 39 },
+  "shoes-fancy-loafers": { label: "Fancy Loafers", file: "fancy-loafers.webp", z: 39 },
+  "headband": { label: "Headband", file: "Miko-headband.webp", z: 47 },
+  "hairpins-black": { label: "Black Hairpins", file: "black-hairpins.webp", z: 49 },
+  "expression-neutral": { label: "Neutral", file: "Miko-neutral.webp", z: 44 },
+  "expression-happy": { label: "Happy", file: "Miko-happy.webp", z: 44 },
+  "expression-sad": { label: "Sad", file: "Miko-sad.webp", z: 44 },
+  "expression-shocked": { label: "Shocked", file: "Miko-shocked.webp", z: 44 },
+  "expression-mad": { label: "Angry", file: "Miko-angry.webp", z: 44 },
+  "expression-smug": { label: "Smug", file: "Miko-smug.webp", z: 44 }
 };
 
 const MIKO_CLOSET = [
@@ -2162,7 +2257,7 @@ const MIKO_CLOSET = [
   { id: "shoes", label: "Shoes", type: "single", allowNone: true, options: ["shoes-loafer", "shoes-fancy-loafers"] },
   {
     id: "extras",
-    label: "Accessories",
+    label: "Extras",
     type: "multi",
     options: ["headband", "hairpins-black"]
   }
@@ -2417,6 +2512,7 @@ const DEFAULT_SAVE = {
   stats: {
     tasksCompleted: 0,
     taskCoinsEarned: 0,
+    coinsEarnedTotal: 0,
     xp: 0,
     happiness: 0,
     bakeryWins: 0,
@@ -2528,6 +2624,22 @@ function loadSave() {
         ...(saved.stats || {})
       }
     };
+
+    // v24.55: start a lifetime coin counter. Older saves did not track every
+    // earning source, so seed a conservative historical floor from the data we do have.
+    if (!Number.isFinite(Number(saved.stats?.coinsEarnedTotal))) {
+      const knownTasks = Math.max(0, Number(merged.stats.taskCoinsEarned) || 0);
+      const knownQuest = Math.max(0, Number(saved.duckQuest?.totalCoinsEarned) || 0);
+      const knownCrane = Math.max(0, Number(merged.stats.cranePrizes) || 0) * 3;
+      const knownBakery = Math.max(0, Number(merged.stats.bakeryWins) || 0) * 50;
+      const knownMemory = Math.max(0, Number(merged.stats.memoryWins) || 0) * 12;
+      merged.stats.coinsEarnedTotal = Math.max(
+        Math.max(0, Number(merged.coins) || 0),
+        knownTasks + knownQuest + knownCrane + knownBakery + knownMemory
+      );
+    } else {
+      merged.stats.coinsEarnedTotal = Math.max(0, Number(saved.stats.coinsEarnedTotal) || 0);
+    }
 
     if (Array.isArray(saved.stats?.furnitureCraftedIds)) {
       merged.stats.furnitureCraftedIds = [...new Set(
@@ -2871,11 +2983,15 @@ const profilesCount = document.querySelector("#profilesCount");
 const profileDetailSheet = document.querySelector("#profileDetailSheet");
 const profileDetailAvatar = document.querySelector("#profileDetailAvatar");
 const profileDetailName = document.querySelector("#profileDetailName");
-const profileInfoName = document.querySelector("#profileInfoName");
 const profileInfoHeight = document.querySelector("#profileInfoHeight");
+const profileInfoFavorite = document.querySelector("#profileInfoFavorite");
 const profileInfoLikes = document.querySelector("#profileInfoLikes");
 const profileInfoDislikes = document.querySelector("#profileInfoDislikes");
 const profileInfoDescription = document.querySelector("#profileInfoDescription");
+const profileIconPickerButton = document.querySelector("#profileIconPickerButton");
+const profileIconPickerSwatch = document.querySelector("#profileIconPickerSwatch");
+const profileIconPickerText = document.querySelector("#profileIconPickerText");
+const profileIconPicker = document.querySelector("#profileIconPicker");
 const switchProfileCharacter = document.querySelector("#switchProfileCharacter");
 const tasksPanel = document.querySelector("#tasksPanel");
 const taskFormPanel = document.querySelector("#taskFormPanel");
@@ -2884,16 +3000,17 @@ const statusPeepPreview = document.querySelector("#statusPeepPreview");
 const statusCharacterName = document.querySelector("#statusCharacterName");
 const statusLevelBadge = document.querySelector("#statusLevelBadge");
 const statusProgressLabel = document.querySelector("#statusProgressLabel");
-const statusHappinessLabel = document.querySelector("#statusHappinessLabel");
 const statusXpText = document.querySelector("#statusXpText");
 const statusXpFill = document.querySelector("#statusXpFill");
+const statusQuestLevelLabel = document.querySelector("#statusQuestLevelLabel");
+const statusQuestXpText = document.querySelector("#statusQuestXpText");
+const statusQuestXpFill = document.querySelector("#statusQuestXpFill");
 const statusCoins = document.querySelector("#statusCoins");
 const statusTasksCompleted = document.querySelector("#statusTasksCompleted");
 const statusDucks = document.querySelector("#statusDucks");
-const statusHappiness = document.querySelector("#statusHappiness");
-const statusTaskCoins = document.querySelector("#statusTaskCoins");
-const statusTotalXp = document.querySelector("#statusTotalXp");
-const statusExtraSecondaryLabel = document.querySelector("#statusExtraSecondaryLabel");
+const statusCoinsEarnedTotal = document.querySelector("#statusCoinsEarnedTotal");
+const statusMeadowRank = document.querySelector("#statusMeadowRank");
+const statusOceanRank = document.querySelector("#statusOceanRank");
 const dailiesPanel = document.querySelector("#dailiesPanel");
 const shoppingUsesBadge = document.querySelector("#shoppingUsesBadge");
 const shoppingState = document.querySelector("#shoppingState");
@@ -3186,7 +3303,7 @@ function evaluateHonkOfApproval(options = {}) {
   persist();
 
   if (options.notify !== false) {
-    showToast("🪿 Honk of Approval! Goose unlocked!");
+    showToast("Honk of Approval! Goose unlocked!");
   }
 
   return true;
@@ -3245,7 +3362,7 @@ function evaluateRoomToGrow(options = {}) {
   renderRoomWingToggle();
 
   if (options.notify !== false) {
-    showToast("🏠 Room to Grow! A new part of Peep's room unlocked!");
+    showToast("Room to Grow! A new part of the room unlocked!");
   }
 
   return true;
@@ -3270,17 +3387,17 @@ function renderRoomWingToggle() {
   roomWingArrow.textContent = inWing ? "›" : "‹";
   roomWingButton.setAttribute(
     "aria-label",
-    inWing ? "Return to Peep's main room" : "Visit duck display area"
+    inWing ? "Return to the main room" : "Visit Shelf of Ducks area"
   );
-  roomPickerText.textContent = inWing ? "Accent" : "Room";
+  roomPickerText.textContent = "Wallpaper";
 
   if (inWing) renderWingShelfStyle();
 }
 
 const WING_SHELF_FILES = Object.freeze({
-  cream: "assets/room-expansion/shelves/shelf-cream.png",
-  brown: "assets/room-expansion/shelves/shelf-brown.png",
-  "dark-brown": "assets/room-expansion/shelves/shelf-dark-brown.png"
+  cream: "assets/room-expansion/shelves/shelf-cream.webp",
+  brown: "assets/room-expansion/shelves/shelf-brown.webp",
+  "dark-brown": "assets/room-expansion/shelves/shelf-dark-brown.webp"
 });
 
 function renderWingShelfStyle() {
@@ -3350,7 +3467,7 @@ function renderWingDuckPicker() {
   if (!unlocked.length) {
     const empty = document.createElement("p");
     empty.className = "wing-duck-empty";
-    empty.textContent = "Discover a duck first, then come back to decorate this shelf! ♡";
+    empty.textContent = "Only unlocked ducks can be used here.";
     wingDuckPickerGrid.append(empty);
     return;
   }
@@ -3367,6 +3484,8 @@ function renderWingDuckPicker() {
       : `Place ${duck.name}`);
 
     const img = document.createElement("img");
+    img.decoding = "async";
+    img.loading = "lazy";
     img.src = duck.file;
     img.alt = "";
     img.loading = "lazy";
@@ -3419,6 +3538,8 @@ function renderWingDuckShelf() {
 
     if (duckId && DUCKS[duckId]) {
       const img = document.createElement("img");
+    img.decoding = "async";
+    img.loading = "lazy";
       img.src = DUCKS[duckId].file;
       img.alt = "";
       button.append(img);
@@ -3448,10 +3569,10 @@ function switchRoomView() {
 }
 
 const ACHIEVEMENT_TROPHIES = Object.freeze({
-  bronze: "assets/achievements/trophies/trophy-bronze.png",
-  silver: "assets/achievements/trophies/trophy-silver.png",
-  gold: "assets/achievements/trophies/trophy-gold.png",
-  "rose-gold": "assets/achievements/trophies/trophy-rose-gold.png"
+  bronze: "assets/achievements/trophies/trophy-bronze.webp",
+  silver: "assets/achievements/trophies/trophy-silver.webp",
+  gold: "assets/achievements/trophies/trophy-gold.webp",
+  "rose-gold": "assets/achievements/trophies/trophy-rose-gold.webp"
 });
 
 const ACHIEVEMENT_TIER_LABELS = Object.freeze({
@@ -3484,7 +3605,7 @@ const ACHIEVEMENTS = Object.freeze([
   { id:"furniture-3", title:"Making It Homey", category:"collection", tier:"bronze", description:"Own 3 different Furniture pieces.", metric:"furniture", target:3, reward:{type:"coins",amount:20,label:"20 Pink Coins"} },
   { id:"furniture-5", title:"Interior Ducksigner", category:"collection", tier:"silver", description:"Own 5 different Furniture pieces.", metric:"furniture", target:5, reward:{type:"coins",amount:35,label:"35 Pink Coins"} },
   { id:"rooms-3", title:"A Splash of Color", category:"collection", tier:"bronze", description:"Unlock 3 Room colors.", metric:"rooms", target:3, reward:{type:"coins",amount:20,label:"20 Pink Coins"} },
-  { id:"room-to-grow", title:"Room to Grow", category:"collection", tier:"gold", description:"Unlock every currently available Room color.", metric:"all-rooms", target:1, reward:{type:"room-expansion",label:"Duck Display + Accent Wall"} },
+  { id:"room-to-grow", title:"Room to Grow", category:"collection", tier:"gold", description:"Unlock every currently available Room color.", metric:"all-rooms", target:1, reward:{type:"room-expansion",label:"Shelf of Ducks + Wallpaper"} },
   { id:"honk-of-approval", title:"Honk of Approval", category:"special", tier:"gold", description:"Complete 50 Tasks, win 10 Bakery rounds, discover 20 Ducks, unlock 3 Rooms, and own 5 Furniture pieces.", metric:"honk", target:1, reward:{type:"duck",duckId:"goose",label:"Goose"} },
   { id:"little-bit-of-everything", title:"A Little Bit of Everything", category:"special", tier:"rose-gold", description:"Earn 5 Gold trophies spanning at least 4 different achievement categories.", metric:"gold-diversity", target:5, reward:{type:"coins",amount:300,label:"300 Pink Coins"} },
 
@@ -3576,15 +3697,90 @@ function maxCurrentlyCraftableFurnitureVariants(){
   ).length;
 }
 
+function normalizeDuckQuestCharacterProgress(characterId = save.selectedCharacter) {
+  const id = CHARACTERS[characterId] ? characterId : "peep";
+  if (!save.duckQuest || typeof save.duckQuest !== "object") save.duckQuest = {};
+  const quest = save.duckQuest;
+
+  const existing = quest[id] && typeof quest[id] === "object" ? quest[id] : {};
+  const legacyAreas = id === "peep" && quest.areas && typeof quest.areas === "object" ? quest.areas : {};
+  const legacyMeadowUnlocked = id === "peep"
+    ? Math.max(1, Math.min(20, Number(legacyAreas.meadow?.unlockedRank ?? quest.unlockedRank) || 1))
+    : 1;
+  const legacyMeadowLast = id === "peep"
+    ? Math.max(1, Math.min(legacyMeadowUnlocked, Number(legacyAreas.meadow?.lastRank ?? quest.lastRank) || 1))
+    : 1;
+  const legacyOceanUnlocked = id === "peep"
+    ? Math.max(1, Math.min(50, Number(legacyAreas.ocean?.unlockedRank) || 1))
+    : 1;
+  const legacyOceanLast = id === "peep"
+    ? Math.max(1, Math.min(legacyOceanUnlocked, Number(legacyAreas.ocean?.lastRank) || 1))
+    : 1;
+
+  const meadowUnlocked = Math.max(1, Math.min(20, Number(existing.areas?.meadow?.unlockedRank) || legacyMeadowUnlocked));
+  const oceanUnlocked = Math.max(1, Math.min(50, Number(existing.areas?.ocean?.unlockedRank) || legacyOceanUnlocked));
+
+  const inheritedIcon = id === "peep" ? quest.iconBackground : null;
+  const iconId = PROFILE_ICON_BACKGROUNDS.some(background => background.id === existing.iconBackground)
+    ? existing.iconBackground
+    : PROFILE_ICON_BACKGROUNDS.some(background => background.id === inheritedIcon)
+      ? inheritedIcon
+      : "white";
+  // Profile portraits use the same unlocked collection, but each character can
+  // equip a profile background independently from their Duck Quest portrait.
+  const profileIconId = PROFILE_ICON_BACKGROUNDS.some(background => background.id === existing.profileIconBackground)
+    ? existing.profileIconBackground
+    : iconId;
+
+  quest[id] = {
+    ...existing,
+    level: Math.max(1, Math.min(100, Number(existing.level) || 1)),
+    exp: Math.max(0, Number(existing.exp) || 0),
+    iconBackground: iconId,
+    profileIconBackground: profileIconId,
+    lastArea: ["meadow", "ocean"].includes(existing.lastArea)
+      ? existing.lastArea
+      : id === "peep" && ["meadow", "ocean"].includes(quest.lastArea)
+        ? quest.lastArea
+        : "meadow",
+    areas: {
+      meadow: {
+        unlockedRank: meadowUnlocked,
+        lastRank: Math.max(1, Math.min(meadowUnlocked, Number(existing.areas?.meadow?.lastRank) || legacyMeadowLast))
+      },
+      ocean: {
+        unlockedRank: oceanUnlocked,
+        lastRank: Math.max(1, Math.min(oceanUnlocked, Number(existing.areas?.ocean?.lastRank) || legacyOceanLast))
+      }
+    }
+  };
+
+  if (!Array.isArray(quest.iconBackgroundsUnlocked)) quest.iconBackgroundsUnlocked = ["white"];
+  quest.iconBackgroundsUnlocked = [...new Set(["white", ...quest.iconBackgroundsUnlocked])]
+    .filter(bgId => PROFILE_ICON_BACKGROUNDS.some(background => background.id === bgId));
+
+  // Keep the older Peep mirrors intact for old backups/older code.
+  if (id === "peep") {
+    quest.areas = structuredClone(quest.peep.areas);
+    quest.lastArea = quest.peep.lastArea;
+    quest.unlockedRank = quest.peep.areas.meadow.unlockedRank;
+    quest.lastRank = quest.peep.areas.meadow.lastRank;
+    quest.iconBackground = quest.peep.iconBackground;
+  }
+
+  return quest[id];
+}
+
 function rpgLevelForCharacter(characterId){
-  return Math.max(0, Number(save.duckQuest?.[characterId]?.level) || 0);
+  if (!save.unlockedCharacters?.includes(characterId) && characterId !== "peep") return 0;
+  return normalizeDuckQuestCharacterProgress(characterId).level;
 }
 
 function allRpgCharactersHaveLevelData(){
-  return Object.keys(CHARACTERS).every(characterId =>
-    save.duckQuest?.[characterId]
-    && Number.isFinite(Number(save.duckQuest[characterId].level))
+  const ids = Object.keys(CHARACTERS).filter(characterId =>
+    characterId === "peep" || save.unlockedCharacters?.includes(characterId)
   );
+  return ids.every(characterId => Number.isFinite(Number(normalizeDuckQuestCharacterProgress(characterId).level)));
 }
 
 function isAchievementCurrentlyPossible(a){
@@ -3664,10 +3860,21 @@ function achievementProgressInfo(a){
   return {current,target,percent:Math.min(100,(current/target)*100),complete:current>=target,text:`${Math.min(current,target).toLocaleString()} / ${target.toLocaleString()}`,secondary:""};
 }
 
+function recordCoinsEarned(amount) {
+  const earned = Math.max(0, Number(amount) || 0);
+  if (!earned) return;
+  if (!save.stats || typeof save.stats !== "object") save.stats = structuredClone(DEFAULT_SAVE.stats);
+  save.stats.coinsEarnedTotal = Math.max(0, Number(save.stats.coinsEarnedTotal) || 0) + earned;
+}
+
 function applyAchievementReward(a){
   if(!a || isAchievementRewarded(a.id)) return false;
   const reward=a.reward||{type:"none",label:"Trophy"};
-  if(reward.type === "coins") save.coins += Math.max(0,Number(reward.amount)||0);
+  if(reward.type === "coins") {
+    const earned = Math.max(0,Number(reward.amount)||0);
+    save.coins += earned;
+    recordCoinsEarned(earned);
+  }
   else if(reward.type === "duck" && reward.duckId) unlockDuck(reward.duckId,{notify:false,persistNow:false,skipMilestoneCheck:true,skipAchievementCheck:true});
   else if(reward.type === "room-expansion") evaluateRoomToGrow({notify:false});
   save.achievements.rewarded.push(a.id);
@@ -3776,15 +3983,15 @@ function renderRoom() {
 
   roomImage.src = room.file;
   roomImage.alt = currentRoomView === "wing"
-    ? `${room.name} accent wall`
-    : room.name;
+    ? `${room.name} wallpaper`
+    : `${room.name} wallpaper`;
 
   roomPickerSwatch.style.setProperty("--swatch", room.swatch);
   roomPickerButton.setAttribute(
     "aria-label",
     currentRoomView === "wing"
-      ? `Change accent wall color. Current accent: ${room.name}`
-      : `Change room color. Current room: ${room.name}`
+      ? `Change wallpaper. Current wallpaper: ${room.name}`
+      : `Change wallpaper. Current wallpaper: ${room.name}`
   );
 
   coinCount.textContent = save.coins;
@@ -3918,6 +4125,10 @@ function renderCharacterInto(container, characterId = save.selectedCharacter) {
 
   for (const [index, asset] of equipped.entries()) {
     const img = document.createElement("img");
+    img.decoding = "async";
+    img.loading = "lazy";
+    img.loading = "eager";
+    img.fetchPriority = index < 3 ? "high" : "auto";
     img.src = `${character.assetFolder}${asset.file}`;
     img.alt = "";
     img.style.setProperty("--z", asset.z);
@@ -3984,10 +4195,10 @@ function warmCharacterAssets(characterId) {
 
 function warmStartupAssets() {
   [
-    "./assets/ui/book-room.png",
-    "./assets/ui/book-icon.png",
-    "./assets/ui/mirror.png",
-    "./assets/ui/pink-coin.png"
+    "./assets/ui/book-room.webp",
+    "./assets/ui/book-icon.webp",
+    "./assets/ui/mirror.webp",
+    "./assets/ui/pink-coin.webp"
   ].forEach(warmImage);
 
   const roomStyle = ROOM_OPTIONS.find(option => option.id === save.roomStyle);
@@ -4144,6 +4355,8 @@ function makeThumb(assetId, { boxW = 92, boxH = 82, targetW = 60, targetH = 54, 
 
   if (!asset?.file) return thumb;
   const img = document.createElement("img");
+    img.decoding = "async";
+    img.loading = "lazy";
   const thumbFile = asset.previewFile || asset.file;
   img.src = `${CHARACTERS[characterId].assetFolder}${thumbFile}`;
   img.alt = "";
@@ -4207,6 +4420,8 @@ function makeCombinedThumb(assetIds, { boxW = 104, boxH = 88, targetW = 76, targ
 
   for (const { asset, thumbFile } of entries) {
     const img = document.createElement("img");
+    img.decoding = "async";
+    img.loading = "lazy";
     img.src = `${CHARACTERS[characterId].assetFolder}${thumbFile}`;
     img.alt = "";
     img.style.width = `${1080 * scale}px`;
@@ -4722,7 +4937,7 @@ function renderSockStyle(style) {
 
   card.addEventListener("click", () => {
     if (!unlocked) {
-      showToast(`${style.label} socks are locked — unlock them from Shop → Clothing. ♡`);
+      showToast(`${style.label} Socks are locked! — Unlock them from the shop.`);
       return;
     }
     openSockStyleId = openSockStyleId === style.id ? null : style.id;
@@ -4767,7 +4982,7 @@ function renderSockOptions() {
 
       card.addEventListener("click", () => {
         if (!unlocked) {
-          showToast(`${style.label} socks are locked — unlock them from Shop → Clothing. ♡`);
+          showToast(`${style.label} Socks are locked! — Unlock them from the shop.`);
           return;
         }
         openSockStyleId = style.id;
@@ -4820,7 +5035,7 @@ function renderClosetOptions() {
         locked: !unlocked,
         onClick: () => {
           if (!unlocked) {
-            showToast(`${asset.label} is locked — unlock it from the Shop. ♡`);
+            showToast(`${asset.label} is locked — unlock it from the Shop!`);
             return;
           }
           const outfit = getCurrentOutfit();
@@ -4840,7 +5055,7 @@ function renderClosetOptions() {
         locked: !unlocked,
         onClick: () => {
           if (!unlocked) {
-            showToast(`${asset.label} is locked — unlock it from the Shop. ♡`);
+            showToast(`${asset.label} is locked — unlock it from the Shop!`);
             return;
           }
           chooseSingle(group, id);
@@ -4860,6 +5075,8 @@ function renderItemArtwork(container, item) {
 
   if (item?.image) {
     const img = document.createElement("img");
+    img.decoding = "async";
+    img.loading = "lazy";
     img.src = item.image;
     img.alt = "";
     img.loading = "lazy";
@@ -5225,6 +5442,7 @@ function sellInventoryItem(itemId) {
   }
 
   save.coins += item.sellValue;
+  recordCoinsEarned(item.sellValue);
   persist();
   renderRoom();
   renderInventory();
@@ -5576,6 +5794,8 @@ function appendFurnitureDuck(duckId, placement, extraClass = "") {
 
   const duck = DUCKS[id];
   const img = document.createElement("img");
+    img.decoding = "async";
+    img.loading = "lazy";
   img.src = duck.file;
   img.alt = "";
   img.className = `furniture-perched-duck${extraClass ? ` ${extraClass}` : ""}`;
@@ -5659,7 +5879,7 @@ function assignSelectedDuckToCurrentOc() {
     persist();
     renderDuckPlacements();
     renderDuckDetailPlacementControls();
-    showToast(`${DUCKS[duckId].name} hopped off ${character.name}'s head. ♡`);
+    showToast(`${DUCKS[duckId].name} hopped off ${character.name}'s head.`);
     return;
   }
 
@@ -5667,7 +5887,7 @@ function assignSelectedDuckToCurrentOc() {
   persist();
   renderDuckPlacements();
   renderDuckDetailPlacementControls();
-  showToast(`${DUCKS[duckId].name} is now ${character.name}'s duck! 🦆♡`);
+  showToast(`${DUCKS[duckId].name} is now ${character.name}'s duck!`);
 }
 
 function assignSelectedDuckToCurrentRoomFloor() {
@@ -5684,7 +5904,7 @@ function assignSelectedDuckToCurrentRoomFloor() {
     persist();
     renderDuckPlacements();
     renderDuckDetailPlacementControls();
-    showToast(`${DUCKS[duckId].name} was removed from the ${room.name} floor. ♡`);
+    showToast(`${DUCKS[duckId].name} was removed from the ${room.name} floor.`);
     return;
   }
 
@@ -5692,7 +5912,7 @@ function assignSelectedDuckToCurrentRoomFloor() {
   persist();
   renderDuckPlacements();
   renderDuckDetailPlacementControls();
-  showToast(`${DUCKS[duckId].name} is now hanging out in the ${room.name} room! 🦆`);
+  showToast(`${DUCKS[duckId].name} is now hanging out in the ${room.name} room!`);
 }
 
 
@@ -5748,7 +5968,7 @@ function assignSelectedDuckToFurniturePerch(type) {
   persist();
   renderDuckPlacements();
   renderDuckDetailPlacementControls();
-  showToast(`${DUCKS[duckId].name} is now on the ${label}! 🦆♡`);
+  showToast(`${DUCKS[duckId].name} is now on the ${label}!`);
 }
 
 function renderShelfDuckPicker(selectedDuckId) {
@@ -5941,7 +6161,9 @@ function tryTinyDuckSpawn(force = false) {
   button.style.top = `${pos.top}%`;
 
   const img = document.createElement("img");
-  img.src = "assets/ducks/Tiny-duck.PNG";
+    img.decoding = "async";
+    img.loading = "lazy";
+  img.src = "assets/ducks/Tiny-duck.webp";
   img.alt = "Tiny Duck";
   button.append(img);
 
@@ -6006,15 +6228,15 @@ function collectTinyDuckSighting() {
   hideTinyDuckSecret();
 
   if (pileWasNew) {
-    showToast(`Tiny Duck sighting #${sightings}! Pile of Tiny Ducks unlocked! 🦆✨`);
+    showToast(`Tiny Duck sighting #${sightings}! Pile of Tiny Ducks unlocked!`);
   } else if (stackWasNew) {
-    showToast("Tiny Duck sighting #4! Tiny Duck Stack unlocked! 🦆🦆🦆🦆");
+    showToast("Tiny Duck sighting #4! Tiny Duck Stack unlocked!");
   } else if (tinyWasNew) {
-    showToast("You found Tiny Duck! Added to Duckipedia! 🦆✨");
+    showToast("You found Tiny Duck! Added to Duckipedia!");
   } else if (sightings > TINY_DUCK_STACK_SIGHTINGS) {
-    showToast(`Tiny Duck spotted again! ${sightings} Sightings! ♡`);
+    showToast(`Tiny Duck spotted again! ${sightings} Sightings!`);
   } else {
-    showToast(`Tiny Duck spotted again! ${sightings}/${TINY_DUCK_STACK_SIGHTINGS} sightings ♡`);
+    showToast(`Tiny Duck spotted again! ${sightings}/${TINY_DUCK_STACK_SIGHTINGS} sightings`);
   }
 
   if (!duckipediaPanel.classList.contains("hidden")) {
@@ -6066,23 +6288,23 @@ function closeGamesAll() {
 function launchBakery() {
   // Bakery is its own page so the large merge-game code cannot interfere
   // with the room / Book UI, but it shares this same local save.
-  window.location.href = "bakery/";
+  window.location.href = "bakery/?v=24-55";
 }
 
 function launchDuckSort() {
-  window.location.href = "sort-game/?v=24-31";
+  window.location.href = "sort-game/?v=24-32";
 }
 
 function launchCraneGame() {
-  window.location.href = "crane-game/play-v24-39.html";
+  window.location.href = "crane-game/?v=24-40";
 }
 
 function launchMemoryGame() {
-  window.location.href = "memory-game/?v=24-40";
+  window.location.href = "memory-game/?v=24-44";
 }
 
 function launchDuckQuestGame() {
-  window.location.href = "duck-quest/?v=15";
+  window.location.href = "duck-quest/?v=19";
 }
 
 
@@ -6159,6 +6381,8 @@ function renderCrafterOutputArt(container, target) {
     const duck = DUCKS[target.id];
     if (!duck) return;
     const img = document.createElement("img");
+    img.decoding = "async";
+    img.loading = "lazy";
     img.src = duck.file;
     img.alt = "";
     img.loading = "lazy";
@@ -6212,6 +6436,8 @@ function createCrafterCard(target, name, imagePath, status, ownedText = "") {
     renderItemArtwork(art, ITEMS[target.id]);
   } else {
     const img = document.createElement("img");
+    img.decoding = "async";
+    img.loading = "lazy";
     img.src = imagePath;
     img.alt = "";
     img.loading = "lazy";
@@ -6320,7 +6546,7 @@ function renderFurnitureCraftTab() {
   intro.innerHTML = `
     <div>
       <strong>Paint Furniture</strong>
-      <p>Use a White furniture base + one Paint to create that color. Each color can be owned once per furniture type.</p>
+      <p>Use a White furniture base + one paint to create that color. Each color can be owned once per furniture type.</p>
     </div>
     <span>${totalWhiteBases} white base${totalWhiteBases === 1 ? "" : "s"}</span>
   `;
@@ -6393,6 +6619,8 @@ function createDuckRecipeGuideCard(duckId, duck) {
   const art = document.createElement("span");
   art.className = "recipe-guide-art";
   const img = document.createElement("img");
+    img.decoding = "async";
+    img.loading = "lazy";
   img.src = duck.file;
   img.alt = "";
   img.loading = "lazy";
@@ -6491,7 +6719,7 @@ function renderRecipeGuideTab() {
   intro.innerHTML = `
     <div>
       <strong>Recipe Book</strong>
-      <p>Use this page whenever you want to check a duck, mixed paint, or furniture color recipe.</p>
+      <p>Use this page to check what you need for any recipe.</p>
     </div>
     <span>📖</span>
   `;
@@ -6666,6 +6894,8 @@ function renderCraftSheet() {
     renderItemArtwork(craftSheetArt, ITEMS[target.id]);
   } else {
     const img = document.createElement("img");
+    img.decoding = "async";
+    img.loading = "lazy";
     img.src = target.file;
     img.alt = "";
     craftSheetArt.append(img);
@@ -6681,9 +6911,9 @@ function renderCraftSheet() {
   const ready = recipeHasMaterials(target.recipe);
 
   if (target.type === "duck" && target.alreadyCrafted) {
-    craftSheetNote.textContent = "You already crafted this one-time trophy. It is safely stored in Duckipedia!";
+    craftSheetNote.textContent = "You already crafted this! It is safely stored in Duckipedia!";
   } else if (target.type === "duck") {
-    craftSheetNote.textContent = "Crafting consumes the ingredients below and permanently unlocks this duck in Duckipedia.";
+    craftSheetNote.textContent = "Crafting consumes the ingredients below, and permanently unlocks this duck in Duckipedia.";
   } else if (target.type === "furniture" && target.alreadyCrafted) {
     craftSheetNote.textContent = "You already own this color. Each paintable furniture color can be created once.";
   } else if (target.type === "furniture") {
@@ -6701,7 +6931,7 @@ function renderCraftSheet() {
   if (target.type === "duck" && target.alreadyCrafted) {
     craftReadyBadge.textContent = "Already collected";
     craftReadyBadge.className = "craft-ready-badge collected";
-    craftActionButton.textContent = "Already in Duckipedia ✓";
+    craftActionButton.textContent = "Already in Duckipedia!";
     craftActionButton.disabled = true;
     craftActionButton.classList.remove("ready");
     return;
@@ -6710,7 +6940,7 @@ function renderCraftSheet() {
   if (target.type === "furniture" && target.alreadyCrafted) {
     craftReadyBadge.textContent = "Color owned";
     craftReadyBadge.className = "craft-ready-badge collected";
-    craftActionButton.textContent = "Already Owned ✓";
+    craftActionButton.textContent = "Already Owned!";
     craftActionButton.disabled = true;
     craftActionButton.classList.remove("ready");
     return;
@@ -6744,13 +6974,13 @@ function craftSelectedTarget() {
   if (!target) return;
 
   if (target.type === "duck" && target.alreadyCrafted) {
-    showToast("That duck is already in your Duckipedia! ♡");
+    showToast("That duck is already in your Duckipedia!");
     renderCraftSheet();
     return;
   }
 
   if (target.type === "furniture" && target.alreadyCrafted) {
-    showToast("You already own that furniture color! ♡");
+    showToast("You already own that furniture color!");
     renderCraftSheet();
     return;
   }
@@ -6762,7 +6992,7 @@ function craftSelectedTarget() {
   }
 
   if (!consumeRecipe(target.recipe)) {
-    showToast("Something changed in your Inventory — check the recipe again.");
+    showToast("Something changed in your Inventory— check the recipe again.");
     renderCraftSheet();
     return;
   }
@@ -6786,7 +7016,7 @@ function craftSelectedTarget() {
     renderRoom();
     renderCrafter();
     renderCraftSheet();
-    showToast(`${target.name} crafted! Added to Duckipedia! 🦆✨`);
+    showToast(`${target.name} crafted! Added to Duckipedia!`);
     return;
   }
 
@@ -6819,9 +7049,9 @@ function craftSelectedTarget() {
   if (target.type === "furniture") {
     evaluateHonkOfApproval({ notify: false });
     evaluateAchievements();
-    showToast(`${target.name} painted! Added to your Furniture Inventory. 🎨`);
+    showToast(`${target.name} painted! Added to your Furniture Inventory.`);
   } else {
-    showToast(`${target.name} mixed! 🎨`);
+    showToast(`${target.name} mixed!`);
   }
 }
 
@@ -6917,7 +7147,7 @@ function duckDiscoveryHint(duck) {
     case "hundred-tiny-sightings":
       return "Spot Tiny Duck 100 times to unlock this very crowded special reward.";
     case "drop-or-shop":
-      return "Find or buy a Standard Duck to discover this entry.";
+      return "Find or buy a Standard Duck to unlock!";
     case "character-happiness-100": {
       const characterName = CHARACTERS[duck.characterId]?.name || "this character";
       return `Reach Happiness Level 100 with ${characterName} to unlock their special duck.`;
@@ -6955,6 +7185,8 @@ function renderDuckCard(duckId, duck) {
   art.className = "duckipedia-card-art";
 
   const img = document.createElement("img");
+    img.decoding = "async";
+    img.loading = "lazy";
   img.src = duck.file;
   img.alt = "";
   img.loading = "lazy";
@@ -7014,7 +7246,7 @@ function renderDuckipedia() {
     empty.className = "duckipedia-empty";
     empty.innerHTML = currentDuckipediaFilter === "unlocked"
       ? "<strong>No ducks discovered yet!</strong><span>Your first trophy will appear here once it is unlocked. ♡</span>"
-      : "<strong>Nothing missing!</strong><span>You completed the whole Duckipedia! 🦆✨</span>";
+      : "<strong>Nothing missing!</strong><span>You completed the whole Duckipedia!</span>";
     duckipediaGrid.append(empty);
     return;
   }
@@ -7028,6 +7260,8 @@ function renderDuckDetailArt(duckId, duck, unlocked) {
   duckDetailArt.innerHTML = "";
 
   const img = document.createElement("img");
+    img.decoding = "async";
+    img.loading = "lazy";
   img.src = duck.file;
   img.alt = "";
   if (!unlocked) img.className = "locked";
@@ -7119,6 +7353,8 @@ function isRoomUnlocked(roomId) {
 function renderShopRoomArtwork(container, room) {
   container.innerHTML = "";
   const img = document.createElement("img");
+    img.decoding = "async";
+    img.loading = "lazy";
   img.src = room.file;
   img.alt = "";
   img.loading = "lazy";
@@ -7132,6 +7368,8 @@ function renderCharacterUnlockArtwork(container, characterId) {
   if (!info?.image) return;
 
   const img = document.createElement("img");
+    img.decoding = "async";
+    img.loading = "lazy";
   img.src = info.image;
   img.alt = "";
   img.loading = "lazy";
@@ -7194,6 +7432,10 @@ function isRepeatBuyShopListing(listing) {
 
   // Battle consumables are meant to be stocked and used repeatedly.
   if (item.category === "battle") return true;
+
+  // Food is a repeatable gift consumable, so it should never disappear
+  // from the Shop just because the player already owns one.
+  if (item.category === "food") return true;
 
   // Future-proofing: if a non-paint supply is ever reused by multiple duck
   // recipes later, it automatically remains a repeat-buy Shop item.
@@ -7266,7 +7508,7 @@ function assertShopListingCharacterUnlocked(listing, { notify = false } = {}) {
   if (notify) {
     const characterId = shopListingCharacterId(listing);
     const characterName = CHARACTERS[characterId]?.name || "that OC";
-    showToast(`Invite ${characterName} first to unlock their Shop items! ♡`);
+    showToast(`Invite ${characterName} first to unlock their Shop items!`);
   }
   return false;
 }
@@ -7368,7 +7610,7 @@ function renderShop() {
 
     const message = document.createElement("strong");
     message.textContent = hasCharacterLockedListingsForTab(currentShopTab)
-      ? "More styles will appear here after you invite their OC! ♡"
+      ? "More styles will appear here after you invite their OC!"
       : "You've unlocked all of this category for now! Congrats!";
 
     empty.append(sparkle, message);
@@ -7411,7 +7653,7 @@ function renderShop() {
 
     const price = document.createElement("span");
     price.className = "shop-item-price";
-    price.innerHTML = `<img src="assets/ui/pink-coin.png" alt=""> ${listing.price}`;
+    price.innerHTML = `<img src="assets/ui/pink-coin.webp" alt=""> ${listing.price}`;
 
     const owned = document.createElement("span");
     owned.className = "shop-item-owned";
@@ -7543,7 +7785,7 @@ function renderShopItemSheet() {
     } else {
       shopAffordMessage.textContent = "Once purchased, this room stays unlocked permanently.";
       shopBuyButton.disabled = false;
-      shopBuyButton.innerHTML = `<span>Unlock Room</span><span class="shop-buy-total"><img src="assets/ui/pink-coin.png" alt=""> ${total}</span>`;
+      shopBuyButton.innerHTML = `<span>Unlock Room</span><span class="shop-buy-total"><img src="assets/ui/pink-coin.webp" alt=""> ${total}</span>`;
     }
     return;
   }
@@ -7564,7 +7806,7 @@ function renderShopItemSheet() {
     shopSheetTotal.textContent = `${total} Pink Coins`;
 
     if (unlocked) {
-      shopAffordMessage.textContent = `${CHARACTERS[listing.characterId].name} is already available in Profiles. ♡`;
+      shopAffordMessage.textContent = `${CHARACTERS[listing.characterId].name} is already available in Profiles.`;
       shopBuyButton.disabled = true;
       shopBuyButton.textContent = "Already Unlocked ✓";
     } else if (shortfall > 0) {
@@ -7574,7 +7816,7 @@ function renderShopItemSheet() {
     } else {
       shopAffordMessage.textContent = characterUnlock.priceText;
       shopBuyButton.disabled = false;
-      shopBuyButton.innerHTML = `<span>Invite ${CHARACTERS[listing.characterId].name}</span><span class="shop-buy-total"><img src="assets/ui/pink-coin.png" alt=""> ${total}</span>`;
+      shopBuyButton.innerHTML = `<span>Invite ${CHARACTERS[listing.characterId].name}</span><span class="shop-buy-total"><img src="assets/ui/pink-coin.webp" alt=""> ${total}</span>`;
     }
     return;
   }
@@ -7605,7 +7847,7 @@ function renderShopItemSheet() {
     } else {
       shopAffordMessage.textContent = "Once unlocked, this style stays in the Closet permanently.";
       shopBuyButton.disabled = false;
-      shopBuyButton.innerHTML = `<span>Unlock Style</span><span class="shop-buy-total"><img src="assets/ui/pink-coin.png" alt=""> ${total}</span>`;
+      shopBuyButton.innerHTML = `<span>Unlock Style</span><span class="shop-buy-total"><img src="assets/ui/pink-coin.webp" alt=""> ${total}</span>`;
     }
     return;
   }
@@ -7636,7 +7878,7 @@ function renderShopItemSheet() {
     shopQtyPlus.disabled = selectedShopQuantity >= maxQuantity || remaining <= 0;
 
     if (remaining <= 0) {
-      shopAffordMessage.textContent = `You already own the maximum ${family?.maxOwned || 21} ${family?.name || "Furniture"} pieces — one for every color. ♡`;
+      shopAffordMessage.textContent = `You already own the maximum ${family?.maxOwned || 21} ${family?.name || "Furniture"} pieces — one for every color.`;
       shopBuyButton.disabled = true;
       shopBuyButton.textContent = "Maximum 21 Owned ✓";
     } else if (shortfall > 0) {
@@ -7646,7 +7888,7 @@ function renderShopItemSheet() {
     } else {
       shopAffordMessage.textContent = `New ${family?.name || "Furniture"} start White. Use Furniture Crafting + Paint to recolor them.`;
       shopBuyButton.disabled = false;
-      shopBuyButton.innerHTML = `<span>Buy ×${selectedShopQuantity}</span><span class="shop-buy-total"><img src="assets/ui/pink-coin.png" alt=""> ${total}</span>`;
+      shopBuyButton.innerHTML = `<span>Buy ×${selectedShopQuantity}</span><span class="shop-buy-total"><img src="assets/ui/pink-coin.webp" alt=""> ${total}</span>`;
     }
     return;
   }
@@ -7677,7 +7919,7 @@ function renderShopItemSheet() {
     } else {
       shopAffordMessage.textContent = "Buy once, then use this furniture in any unlocked room.";
       shopBuyButton.disabled = false;
-      shopBuyButton.innerHTML = `<span>Buy Furniture</span><span class="shop-buy-total"><img src="assets/ui/pink-coin.png" alt=""> ${total}</span>`;
+      shopBuyButton.innerHTML = `<span>Buy Furniture</span><span class="shop-buy-total"><img src="assets/ui/pink-coin.webp" alt=""> ${total}</span>`;
     }
     return;
   }
@@ -7704,7 +7946,7 @@ function renderShopItemSheet() {
     } else {
       shopAffordMessage.textContent = "This supply is only needed for one duck recipe, so you only need to buy one.";
       shopBuyButton.disabled = false;
-      shopBuyButton.innerHTML = `<span>Buy Item</span><span class="shop-buy-total"><img src="assets/ui/pink-coin.png" alt=""> ${total}</span>`;
+      shopBuyButton.innerHTML = `<span>Buy Item</span><span class="shop-buy-total"><img src="assets/ui/pink-coin.webp" alt=""> ${total}</span>`;
     }
     return;
   }
@@ -7738,7 +7980,7 @@ function renderShopItemSheet() {
     shopBuyButton.disabled = false;
   }
 
-  shopBuyButton.innerHTML = `<span>Buy ×${selectedShopQuantity}</span><span class="shop-buy-total"><img src="assets/ui/pink-coin.png" alt=""> ${total}</span>`;
+  shopBuyButton.innerHTML = `<span>Buy ×${selectedShopQuantity}</span><span class="shop-buy-total"><img src="assets/ui/pink-coin.webp" alt=""> ${total}</span>`;
 }
 
 function changeShopQuantity(amount) {
@@ -7770,13 +8012,13 @@ function buyShopItem() {
     if (!room) return;
 
     if (isRoomUnlocked(room.id)) {
-      showToast(`${room.name} is already unlocked! ♡`);
+      showToast(`${room.name} is already unlocked!`);
       renderShopItemSheet();
       return;
     }
 
     if (save.coins < listing.price) {
-      showToast("Not quite enough Pink Coins yet! ♡");
+      showToast("Not quite enough Pink Coins yet!");
       renderShopItemSheet();
       return;
     }
@@ -7797,9 +8039,9 @@ function buyShopItem() {
     closeShopItem();
 
     if (roomToGrowWasNew) {
-      showToast("🏠 Room to Grow! Duck Display + Accent Wall unlocked!");
+      showToast("🏠 Room to Grow! Shelf of Ducks + Wallpaper unlocked!");
     } else {
-      showToast(`${room.name} unlocked! You can select it from the room picker. ♡`);
+      showToast(`${room.name} unlocked! You can select it from the room picker.`);
     }
     return;
   }
@@ -7810,13 +8052,13 @@ function buyShopItem() {
     if (!character || !info) return;
 
     if (save.unlockedCharacters.includes(listing.characterId)) {
-      showToast(`${character.name} is already unlocked! ♡`);
+      showToast(`${character.name} is already unlocked!`);
       renderShopItemSheet();
       return;
     }
 
     if (save.coins < listing.price) {
-      showToast("Not quite enough Pink Coins yet! ♡");
+      showToast("Not quite enough Pink Coins yet!");
       renderShopItemSheet();
       return;
     }
@@ -7829,7 +8071,7 @@ function buyShopItem() {
     renderShop();
     renderProfiles();
     closeShopItem();
-    showToast(`${character.name} joined your hub! ♡`);
+    showToast(`${character.name} joined your home!`);
     return;
   }
 
@@ -7838,13 +8080,13 @@ function buyShopItem() {
     if (!wardrobe) return;
 
     if (isWardrobeShopUnlocked(listing.wardrobeId)) {
-      showToast(`${wardrobe.label} is already unlocked! ♡`);
+      showToast(`${wardrobe.label} is already unlocked!`);
       renderShopItemSheet();
       return;
     }
 
     if (save.coins < listing.price) {
-      showToast("Not quite enough Pink Coins yet! ♡");
+      showToast("Not quite enough Pink Coins yet!");
       renderShopItemSheet();
       return;
     }
@@ -7858,7 +8100,7 @@ function buyShopItem() {
     closeShopItem();
     renderCloset();
 
-    showToast(`${wardrobe.label} unlocked for the Closet! ♡`);
+    showToast(`${wardrobe.label} unlocked for the Closet!`);
     return;
   }
 
@@ -7877,7 +8119,7 @@ function buyShopItem() {
     const amount = Math.max(1, Math.min(remaining, Math.floor(Number(selectedShopQuantity) || 1)));
     const total = listing.price * amount;
     if (save.coins < total) {
-      showToast("Not quite enough Pink Coins yet! ♡");
+      showToast("Not quite enough Pink Coins yet!");
       renderShopItemSheet();
       return;
     }
@@ -7893,19 +8135,19 @@ function buyShopItem() {
     renderShop();
     renderInventory();
     closeShopItem();
-    showToast(`${family?.name || item.name} ×${amount} added in White! Paint them in Furniture Crafting. ♡`);
+    showToast(`${family?.name || item.name} ×${amount} added in White! Paint them in Furniture Crafting.`);
     return;
   }
 
   if (item.category === "furniture") {
     if (isFurnitureOwned(listing.itemId)) {
-      showToast(`${item.name} is already in your Furniture Inventory! ♡`);
+      showToast(`${item.name} is already in your Furniture Inventory!`);
       renderShopItemSheet();
       return;
     }
 
     if (save.coins < listing.price) {
-      showToast("Not quite enough Pink Coins yet! ♡");
+      showToast("Not quite enough Pink Coins yet!");
       renderShopItemSheet();
       return;
     }
@@ -7920,7 +8162,7 @@ function buyShopItem() {
     renderRoom();
     renderShop();
     closeShopItem();
-    showToast(`${item.name} added to your Furniture Inventory! ♡`);
+    showToast(`${item.name} added to your Furniture Inventory!`);
     return;
   }
 
@@ -7928,12 +8170,12 @@ function buyShopItem() {
     if (shopListingIsOwned(listing)) {
       renderShop();
       closeShopItem();
-      showToast(`${item.name} is already taken care of for its recipe! ♡`);
+      showToast(`${item.name} is already taken care of for its recipe!`);
       return;
     }
 
     if (save.coins < listing.price) {
-      showToast("Not quite enough Pink Coins yet! ♡");
+      showToast("Not quite enough Pink Coins yet!");
       renderShopItemSheet();
       return;
     }
@@ -7954,7 +8196,7 @@ function buyShopItem() {
   const total = listing.price * quantity;
 
   if (save.coins < total) {
-    showToast("Not quite enough Pink Coins yet! ♡");
+    showToast("Not quite enough Pink Coins yet!");
     renderShopItemSheet();
     return;
   }
@@ -8113,7 +8355,7 @@ function renderPaintMixingDaily() {
       "Two fresh mixes will be ready tomorrow."
     );
     paintMixActionButton.disabled = true;
-    paintMixActionButton.textContent = "Come back tomorrow ♡";
+    paintMixActionButton.textContent = "Come back tomorrow!";
     paintMixActionButton.dataset.action = "done";
   }
 }
@@ -8130,7 +8372,7 @@ function startPaintMixing() {
 
   persist();
   renderDailies();
-  showToast("Paint Mixing started! Your Paint will be ready in 1 hour. 🎨");
+  showToast("Paint Mixing started! Your Paint will be ready in 1 hour.");
 }
 
 function claimPaintMixingReward() {
@@ -8154,7 +8396,7 @@ function claimPaintMixingReward() {
 
   persist();
   renderDailies();
-  showToast(`${reward.name} added to Inventory! 🎨`);
+  showToast(`${reward.name} added to Inventory!`);
 }
 
 function handlePaintMixingAction() {
@@ -8204,7 +8446,7 @@ function renderFriendshipDateDaily() {
       friendshipState,
       "♡",
       "Choose who gets the Happiness",
-      "It does not have to be the OC currently standing in the room."
+      "It does not have to be the OC currently in the room."
     );
     friendshipActionButton.disabled = false;
     friendshipActionButton.textContent = "Choose OC";
@@ -8221,9 +8463,9 @@ function renderFriendshipDateDaily() {
     friendshipActionButton.textContent = "Date complete ♡";
     friendshipActionButton.dataset.action = "done";
   } else {
-    renderSimpleDailyState(friendshipState, "♡", "Date complete", "A new Friendship Date will be available tomorrow.");
+    renderSimpleDailyState(friendshipState, "♡", "Date complete!", "A new Friendship Date will be available tomorrow!");
     friendshipActionButton.disabled = true;
-    friendshipActionButton.textContent = "Come back tomorrow ♡";
+    friendshipActionButton.textContent = "Come back tomorrow!";
     friendshipActionButton.dataset.action = "done";
   }
 }
@@ -8247,6 +8489,8 @@ function openFriendshipChooser() {
     button.className = "daily-character-choice";
 
     const img = document.createElement("img");
+    img.decoding = "async";
+    img.loading = "lazy";
     img.className = "daily-character-choice-icon";
     img.src = characterDateIcon(characterId);
     img.alt = "";
@@ -8289,7 +8533,7 @@ function startFriendshipDate(characterId) {
   persist();
   closeFriendshipChooser();
   renderDailies();
-  showToast(`${CHARACTERS[characterId].name} went on a Friendship Date! Back in 1 hour. ♡`);
+  showToast(`${CHARACTERS[characterId].name} went on a Friendship Date! Back in 1 hour.`);
 }
 
 function claimFriendshipDate() {
@@ -8309,7 +8553,7 @@ function claimFriendshipDate() {
   renderRoom();
 
   if (characterId === save.selectedCharacter) setExpression("expression-happy", 2200);
-  showToast(`${CHARACTERS[characterId].name} gained +${gained} Happiness! ♡`);
+  showToast(`${CHARACTERS[characterId].name} gained +${gained} Happiness!`);
 }
 
 function handleFriendshipAction() {
@@ -8497,7 +8741,7 @@ function renderShoppingDaily() {
     strong.textContent = "All shopping trips used today";
     p.textContent = "The three daily trips will refresh automatically tomorrow.";
     shoppingActionButton.disabled = true;
-    shoppingActionButton.textContent = "Come back tomorrow ♡";
+    shoppingActionButton.textContent = "Come back tomorrow!";
     shoppingActionButton.dataset.action = "done";
   }
 
@@ -8589,7 +8833,7 @@ function claimShoppingReward() {
 
   persist();
   renderDailies();
-  showToast(`Found: ${reward.name}! Added to Inventory. ✨`);
+  showToast(`Found: ${reward.name}! Added to Inventory!`);
 }
 
 function handleShoppingAction() {
@@ -8631,6 +8875,88 @@ function closeDailiesAll() {
 
 // -------------------- PROFILES --------------------
 
+function unlockedProfileIconBackgroundIds() {
+  if (!save.duckQuest || typeof save.duckQuest !== "object") save.duckQuest = {};
+  const unlocked = Array.isArray(save.duckQuest.iconBackgroundsUnlocked)
+    ? save.duckQuest.iconBackgroundsUnlocked
+    : ["white"];
+  save.duckQuest.iconBackgroundsUnlocked = [...new Set(["white", ...unlocked])]
+    .filter(id => PROFILE_ICON_BACKGROUNDS.some(background => background.id === id));
+  return save.duckQuest.iconBackgroundsUnlocked;
+}
+
+function profileIconBackgroundForCharacter(characterId) {
+  const progress = normalizeDuckQuestCharacterProgress(characterId);
+  const unlocked = unlockedProfileIconBackgroundIds();
+  if (!unlocked.includes(progress.profileIconBackground)) progress.profileIconBackground = "white";
+  return profileIconBackgroundById(progress.profileIconBackground);
+}
+
+function applyProfileIconBackground(element, characterId) {
+  if (!element) return;
+  const background = profileIconBackgroundForCharacter(characterId);
+  element.style.background = background.value;
+  element.style.backgroundSize = background.size || "auto";
+  element.style.backgroundPosition = "0 0";
+}
+
+function closeProfileIconPicker() {
+  profileIconPicker?.classList.add("hidden");
+  profileIconPickerButton?.setAttribute("aria-expanded", "false");
+}
+
+function renderProfileIconPicker(characterId = selectedProfileCharacterId) {
+  if (!characterId || !profileIconPicker || !profileIconPickerButton) return;
+  const progress = normalizeDuckQuestCharacterProgress(characterId);
+  const unlocked = new Set(unlockedProfileIconBackgroundIds());
+  const current = profileIconBackgroundById(progress.profileIconBackground);
+
+  if (profileIconPickerSwatch) {
+    profileIconPickerSwatch.style.background = current.value;
+    profileIconPickerSwatch.style.backgroundSize = current.size || "auto";
+  }
+  if (profileIconPickerText) profileIconPickerText.textContent = current.label;
+
+  profileIconPicker.innerHTML = "";
+  for (const background of PROFILE_ICON_BACKGROUNDS) {
+    const isUnlocked = unlocked.has(background.id);
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `profile-icon-choice${isUnlocked ? "" : " locked"}`;
+    button.setAttribute("aria-current", String(progress.profileIconBackground === background.id));
+    button.setAttribute("aria-label", `${background.label}${isUnlocked ? "" : ", locked"}`);
+    button.title = background.label;
+
+    const swatch = document.createElement("span");
+    swatch.className = "profile-icon-dot";
+    swatch.style.background = background.value;
+    swatch.style.backgroundSize = background.size || "auto";
+    button.append(swatch);
+
+    if (!isUnlocked) {
+      const lock = document.createElement("span");
+      lock.className = "profile-icon-lock";
+      lock.textContent = "🔒";
+      button.append(lock);
+    }
+
+    button.addEventListener("click", () => {
+      if (!isUnlocked) {
+        showToast("That Icon Background is still locked. Find it in Duck Quest!");
+        return;
+      }
+      progress.profileIconBackground = background.id;
+      persist();
+      applyProfileIconBackground(profileDetailAvatar, characterId);
+      renderProfileIconPicker(characterId);
+      renderProfiles();
+      closeProfileIconPicker();
+    });
+
+    profileIconPicker.append(button);
+  }
+}
+
 function renderProfileHeadDuck(container, characterId) {
   const character = CHARACTERS[characterId];
   if (!character) return;
@@ -8650,6 +8976,8 @@ function renderProfileHeadDuck(container, characterId) {
   layer.setAttribute("aria-hidden", "true");
 
   const img = document.createElement("img");
+    img.decoding = "async";
+    img.loading = "lazy";
   img.className = "profile-head-duck";
   img.src = duck.file;
   img.alt = "";
@@ -8664,6 +8992,10 @@ function renderProfileHeadDuck(container, characterId) {
 function switchToProfileCharacter(characterId) {
   if (!CHARACTERS[characterId]) return;
   if (!save.unlockedCharacters.includes(characterId)) return;
+  if (save.selectedCharacter === characterId) {
+    showToast(`${CHARACTERS[characterId].name} is already out!`);
+    return;
+  }
 
   save.selectedCharacter = characterId;
   currentExpression = "expression-neutral";
@@ -8685,15 +9017,19 @@ function openProfileDetail(characterId) {
   const profile = character.profile || {};
 
   profileDetailName.textContent = character.name;
-  profileInfoName.textContent = character.name;
   profileInfoHeight.textContent = profile.height || "Coming soon";
+  if (profileInfoFavorite) profileInfoFavorite.textContent = profile.favoriteItem || "Coming soon";
   profileInfoLikes.textContent = profile.likes || "Coming soon";
   profileInfoDislikes.textContent = profile.dislikes || "Coming soon";
   profileInfoDescription.textContent =
-    profile.description || "More profile information will be added in a future update. ♡";
+    profile.description || "More profile information will be added in a future update.";
 
+  profileDetailAvatar.dataset.characterId = character.id;
   renderCharacterInto(profileDetailAvatar, character.id);
   renderProfileHeadDuck(profileDetailAvatar, character.id);
+  applyProfileIconBackground(profileDetailAvatar, character.id);
+  renderProfileIconPicker(character.id);
+  closeProfileIconPicker();
 
   switchProfileCharacter.textContent = `Switch to ${character.name}`;
   switchProfileCharacter.disabled = false;
@@ -8703,8 +9039,10 @@ function openProfileDetail(characterId) {
 }
 
 function closeProfileDetail() {
+  closeProfileIconPicker();
   selectedProfileCharacterId = null;
   profileDetailAvatar.innerHTML = "";
+  delete profileDetailAvatar.dataset.characterId;
   profileDetailSheet.classList.add("hidden");
   profileDetailSheet.setAttribute("aria-hidden", "true");
 }
@@ -8725,6 +9063,7 @@ function renderProfiles() {
 
     const button = document.createElement("button");
     button.type = "button";
+    button.dataset.characterId = character.id;
     button.className = `profile-card${unlocked ? "" : " locked"}${current ? " current" : ""}`;
     button.disabled = !unlocked;
     button.setAttribute("aria-label", unlocked
@@ -8733,6 +9072,8 @@ function renderProfiles() {
 
     const avatar = document.createElement("div");
     avatar.className = "profile-avatar";
+    avatar.dataset.characterId = character.id;
+    applyProfileIconBackground(avatar, character.id);
 
     if (character.type === "layered") {
       renderCharacterInto(avatar, character.id);
@@ -8834,6 +9175,8 @@ function renderStatusHeadDuck() {
   layer.setAttribute("aria-hidden", "true");
 
   const img = document.createElement("img");
+    img.decoding = "async";
+    img.loading = "lazy";
   img.className = "status-head-duck";
   img.src = duck.file;
   img.alt = "";
@@ -8853,32 +9196,41 @@ function renderStatusCharacter() {
   renderStatusHeadDuck();
 }
 
+function duckQuestExpNeeded(level) {
+  const safeLevel = Math.max(1, Math.min(100, Number(level) || 1));
+  return safeLevel >= 100 ? 0 : 80 + (safeLevel - 1) * 25;
+}
+
 function renderStatus() {
   const stats = save.stats || DEFAULT_SAVE.stats;
   const happiness = getCharacterHappinessInfo(save.selectedCharacter);
+  const questProgress = normalizeDuckQuestCharacterProgress(save.selectedCharacter);
+  const questLevel = Math.max(1, Math.min(100, Number(questProgress.level) || 1));
+  const questExp = Math.max(0, Number(questProgress.exp) || 0);
+  const questNeed = duckQuestExpNeeded(questLevel);
+  const meadowRank = Math.max(1, Math.min(20, Number(questProgress.areas?.meadow?.unlockedRank) || 1));
+  const oceanRank = Math.max(1, Math.min(50, Number(questProgress.areas?.ocean?.unlockedRank) || 1));
 
   if (statusProgressLabel) {
     statusProgressLabel.textContent = happiness.atMax ? "Happiness Maxed" : `To Level ${happiness.nextLevel}`;
   }
-  if (statusExtraSecondaryLabel) {
-    statusExtraSecondaryLabel.textContent = "Total Happiness Points";
-  }
 
   statusLevelBadge.textContent = `Happiness Lv. ${happiness.level}`;
-  statusHappinessLabel.textContent = happiness.atMax
-    ? `MAX · ${happiness.total} ♡`
-    : `${happiness.total} ♡ total`;
   statusXpText.textContent = happiness.atMax
     ? "MAX"
     : `${happiness.currentLevelPoints} / ${happiness.pointsForNextLevel}`;
   statusXpFill.style.width = `${happiness.progressPercent}%`;
 
-  statusCoins.textContent = save.coins.toLocaleString();
-  statusTasksCompleted.textContent = stats.tasksCompleted.toLocaleString();
+  if (statusQuestLevelLabel) statusQuestLevelLabel.textContent = `Duck Quest Lv. ${questLevel}`;
+  if (statusQuestXpText) statusQuestXpText.textContent = questLevel >= 100 ? "MAX" : `${Math.floor(questExp)} / ${questNeed} EXP`;
+  if (statusQuestXpFill) statusQuestXpFill.style.width = questLevel >= 100 ? "100%" : `${Math.min(100, questNeed ? (questExp / questNeed) * 100 : 0)}%`;
+
+  statusCoins.textContent = Math.max(0, Number(save.coins) || 0).toLocaleString();
+  statusTasksCompleted.textContent = Math.max(0, Number(stats.tasksCompleted) || 0).toLocaleString();
   statusDucks.textContent = `${save.unlockedDucks.length} / ${DUCK_TOTAL}`;
-  statusHappiness.textContent = `Lv. ${happiness.level} / ${MAX_CHARACTER_LEVEL}`;
-  statusTaskCoins.textContent = stats.taskCoinsEarned.toLocaleString();
-  statusTotalXp.textContent = getTotalUnlockedCharacterHappiness().toLocaleString();
+  if (statusCoinsEarnedTotal) statusCoinsEarnedTotal.textContent = Math.max(0, Number(stats.coinsEarnedTotal) || 0).toLocaleString();
+  if (statusMeadowRank) statusMeadowRank.textContent = meadowRank;
+  if (statusOceanRank) statusOceanRank.textContent = oceanRank;
 
   renderStatusCharacter();
 }
@@ -9159,14 +9511,27 @@ function sendTaskToTomorrow(id) {
   persist();
   currentTaskTab = "tomorrow";
   renderTasks();
-  showToast(`Moved "${task.name}" to Tomorrow. ♡`);
+  showToast(`Moved "${task.name}" to Tomorrow!`);
+}
+
+function sendTaskToToday(id) {
+  const task = save.tasks.find(item => item.id === id);
+  if (!task) return;
+  task.nextDue = localDateKey();
+  task.pinned = false;
+  persist();
+  currentTaskTab = "today";
+  renderTasks();
+  showToast(`Moved "${task.name}" back to Today!`);
 }
 
 function createCoinInline(amount) {
   const wrap = document.createElement("span");
   wrap.className = "task-coin-reward";
   const img = document.createElement("img");
-  img.src = "assets/ui/pink-coin.png";
+    img.decoding = "async";
+    img.loading = "lazy";
+  img.src = "assets/ui/pink-coin.webp";
   img.alt = "";
   const value = document.createElement("b");
   value.textContent = amount;
@@ -9212,7 +9577,7 @@ function confirmTaskRemoval() {
     persist();
     closeTaskRemovalConfirm();
     refreshSavedTaskPicker();
-    showToast("Saved task removed. ♡");
+    showToast("Saved task removed.");
     return;
   }
 
@@ -9260,6 +9625,7 @@ function completeTask(id) {
 
   const reward = Math.max(1, Number(task.reward) || 5);
   save.coins += reward;
+  recordCoinsEarned(reward);
   save.stats.tasksCompleted += 1;
   save.stats.taskCoinsEarned += reward;
   const happinessGained = addCharacterHappiness(1);
@@ -9296,7 +9662,7 @@ function toggleTaskPinned(id) {
     : `"${task.name}" will clear after its due day if unfinished.`);
 }
 
-function renderTaskCard(task, { showTomorrowButton = false } = {}) {
+function renderTaskCard(task, { showTomorrowButton = false, showTodayButton = false } = {}) {
   const card = document.createElement("article");
   card.className = `task-card${isTaskReady(task) ? " ready" : " upcoming"}`;
 
@@ -9353,6 +9719,15 @@ function renderTaskCard(task, { showTomorrowButton = false } = {}) {
     tomorrow.textContent = "→ Tomorrow";
     tomorrow.addEventListener("click", () => sendTaskToTomorrow(task.id));
     actions.append(tomorrow);
+  }
+
+  if (showTodayButton) {
+    const today = document.createElement("button");
+    today.type = "button";
+    today.className = "task-tomorrow-button task-today-button";
+    today.textContent = "Send back to Today.";
+    today.addEventListener("click", () => sendTaskToToday(task.id));
+    actions.append(today);
   }
 
   const pinButton = document.createElement("button");
@@ -9439,9 +9814,9 @@ function renderTaskBucket(bucket) {
 
   if (!tasks.length) {
     const messages = {
-      today: ["Nothing for today!", "Enjoy the breathing room, or tap + Add Task. ♡"],
-      tomorrow: ["Nothing for tomorrow", "Tasks dated for tomorrow will wait here for you."],
-      future: ["No future tasks", "Tasks scheduled after tomorrow will live here instead of cluttering Today."]
+      today: ["Nothing for today!", "Enjoy time off, or tap the Add Task button!"],
+      tomorrow: ["Nothing for tomorrow", "Tasks dated for tomorrow will show here."],
+      future: ["No future tasks", "Tasks scheduled after tomorrow will live here!."]
     };
     const [title, detail] = messages[bucket] || messages.today;
     list.append(createEmptyTasksMessage(title, detail));
@@ -9455,6 +9830,7 @@ function renderTaskBucket(bucket) {
   list.append(heading);
 
   if (bucket === "today") tasks.forEach(task => list.append(renderTaskCard(task, { showTomorrowButton: true })));
+  else if (bucket === "tomorrow") tasks.forEach(task => list.append(renderTaskCard(task, { showTodayButton: true })));
   else tasks.forEach(task => list.append(renderTaskCard(task)));
 
   tasksContent.append(list);
@@ -9619,7 +9995,7 @@ function ensureSpecificDateControls() {
   label.innerHTML = `
     <span>Specific date</span>
     <input id="taskSpecificDate" type="date" />
-    <small>Choose exactly when this one-time task should become ready.</small>
+    <small>Choose exactly when this one-time task should appear.</small>
   `;
 
   repeatField.insertAdjacentElement("afterend", label);
@@ -9946,7 +10322,7 @@ function downloadSaveBackup(label = "save", options = {}) {
   );
 
   if (options.notify !== false) {
-    showToast("💾 Backup downloaded! Keep it somewhere safe. ♡");
+    showToast("💾 Backup downloaded! Keep it somewhere safe!");
   }
 
   return payload;
@@ -9958,7 +10334,7 @@ function validateImportedBackup(payload) {
   }
 
   if (payload.game !== SAVE_BACKUP_GAME_ID) {
-    return "That does not look like a Duck Habit Hub backup.";
+    return "That does not look like a valid backup.";
   }
 
   if (payload.backupVersion !== SAVE_BACKUP_VERSION) {
@@ -10275,6 +10651,12 @@ document.querySelectorAll("[data-achievement-tab]").forEach(button => {
 document.querySelector("#closeProfiles").addEventListener("click", closeProfilesToBook);
 document.querySelector("#closeProfileDetail").addEventListener("click", closeProfileDetail);
 document.querySelector("#profileDetailBackdrop").addEventListener("click", closeProfileDetail);
+profileIconPickerButton?.addEventListener("click", () => {
+  if (!selectedProfileCharacterId) return;
+  const opening = profileIconPicker.classList.contains("hidden");
+  profileIconPicker.classList.toggle("hidden", !opening);
+  profileIconPickerButton.setAttribute("aria-expanded", String(opening));
+});
 switchProfileCharacter.addEventListener("click", () => {
   if (selectedProfileCharacterId) switchToProfileCharacter(selectedProfileCharacterId);
 });
@@ -10476,7 +10858,7 @@ setTimeout(() => {
       const rewardEntry = getCharacterHappinessDuckReward(characterId);
       const characterName = CHARACTERS[characterId]?.name || characterId;
       const duckName = rewardEntry?.[1]?.name || "Special Duck";
-      showToast(`${characterName} reached Happiness Level 100! ${duckName} unlocked! 🦆✨`);
+      showToast(`${characterName} reached Happiness Level 100! ${duckName} unlocked!`);
     }
   } catch (error) {
     console.error("Level 100 duck reward check failed safely:", error);
@@ -10485,17 +10867,17 @@ setTimeout(() => {
 
 if (ocShopGateRepair.refunded > 0) {
   setTimeout(() => {
-    showToast(`Fixed locked-OC Shop items and refunded ${ocShopGateRepair.refunded} Pink Coins. ♡`);
+    showToast(`Fixed locked-OC Shop items and refunded ${ocShopGateRepair.refunded} Pink Coins.`);
   }, 250);
 } else if (achievementsUnlockedOnLoad.length) {
   setTimeout(() => {
     const count = achievementsUnlockedOnLoad.length;
-    showToast(`${count} retroactive achievement${count === 1 ? "" : "s"} unlocked! Check your Trophy Case. 🏆`);
+    showToast(`${count} retroactive achievement${count === 1 ? "" : "s"} unlocked! Check your Trophy Case.`);
   }, 250);
 } else if (honkUnlockedOnLoad) {
-  setTimeout(() => showToast("🪿 Honk of Approval! Goose unlocked!"), 250);
+  setTimeout(() => showToast("Honk of Approval! Goose unlocked!"), 250);
 } else if (roomToGrowUnlockedOnLoad) {
-  setTimeout(() => showToast("🏠 Room to Grow! Duck Display + Accent Wall unlocked!"), 250);
+  setTimeout(() => showToast("Room to Grow! Shelf of Ducks + Wallpaper unlocked!"), 250);
 }
 
 

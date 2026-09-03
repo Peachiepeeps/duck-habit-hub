@@ -292,7 +292,7 @@ button { color: inherit; }
   position: relative;
   flex: 0 0 auto;
   width: 100%;
-  min-height: 118px;
+  min-height: 142px;
   border: 2px solid transparent;
   border-radius: 18px;
   padding: 7px 5px 8px;
@@ -1099,7 +1099,7 @@ button { color: inherit; }
   margin-top: 9px;
 }
 .status-stat-card {
-  min-height: 105px;
+  min-height: 126px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -3206,7 +3206,7 @@ button { color: inherit; }
   padding: 0;
   overflow: hidden;
   display: grid;
-  grid-template-columns: 112px minmax(0,1fr) auto;
+  grid-template-columns: 128px minmax(0,1fr) auto;
   align-items: center;
   gap: 10px;
   border: 2px solid rgba(126,96,104,.13);
@@ -3318,7 +3318,7 @@ button { color: inherit; }
 
 @media (max-width: 430px) {
   .game-card {
-    grid-template-columns: 92px minmax(0,1fr);
+    grid-template-columns: 104px minmax(0,1fr);
   }
 
   .game-card-preview {
@@ -3378,8 +3378,8 @@ button { color: inherit; }
 .tiny-duck-secret {
   position: absolute;
   z-index: 62;
-  width: clamp(42px, 7.5vw, 68px);
-  height: clamp(42px, 7.5vw, 68px);
+  width: clamp(60px, 10vw, 88px);
+  height: clamp(60px, 10vw, 88px);
   padding: 0;
   display: grid;
   place-items: center;
@@ -3401,8 +3401,8 @@ button { color: inherit; }
 }
 
 .tiny-duck-secret img {
-  width: 100%;
-  height: 100%;
+  width: 72%;
+  height: 72%;
   display: block;
   object-fit: contain;
   filter: drop-shadow(0 3px 4px rgba(82,55,64,.18));
@@ -4757,6 +4757,14 @@ button { color: inherit; }
   transform: translateY(5%);filter: drop-shadow(0 3px 2px rgba(54, 38, 33, .15));
 }
 
+/* v24.60 — lift the two lowest shelf rows so the ducks sit naturally on the shelves. */
+.wing-duck-slot:nth-child(n+17):nth-child(-n+20) img {
+  transform: translateY(0%);
+}
+.wing-duck-slot:nth-child(n+21):nth-child(-n+24) img {
+  transform: translateY(-14%);
+}
+
 .wing-duck-slot > span {
   width: 30px;
   height: 30px;
@@ -5523,4 +5531,210 @@ button { color: inherit; }
 }
 @media(max-width:430px){
   .daily-character-choice-icon{width:38px;height:38px}
+}
+
+
+/* =========================================================
+   V24.55 — polish pass
+   ========================================================= */
+.status-header{gap:7px}
+.status-header-coin{
+  display:inline-flex;align-items:center;justify-content:center;gap:4px;
+  min-height:34px;padding:4px 8px;border:2px solid rgba(130,95,106,.14);
+  border-radius:999px;background:rgba(255,255,255,.88);color:#704f5a;
+  font-size:.66rem;font-weight:900;white-space:nowrap;
+}
+.status-header-coin img{width:20px;height:20px;object-fit:contain}
+.status-quest-progress-copy{margin-top:10px}
+.status-quest-xp-fill{background:linear-gradient(90deg,#7fb8db,#9f93db)}
+.status-stat-grid{grid-template-columns:1fr 1fr}
+.status-coin-earned-card{grid-template-columns:1fr}
+.status-rank-card{
+  margin-top:9px;display:grid;gap:7px;padding:8px;
+  border:2px solid rgba(130,95,106,.15);border-radius:16px;background:rgba(255,255,255,.82)
+}
+.status-rank-row{display:grid;grid-template-columns:54px minmax(0,1fr);gap:9px;align-items:center}
+.status-rank-row img{width:54px;height:42px;object-fit:cover;image-rendering:pixelated;border:2px solid rgba(117,85,96,.17);border-radius:9px}
+.status-rank-row div{min-width:0;display:grid;gap:2px}
+.status-rank-row span{color:#a27f8d;font-size:.54rem;font-weight:900;text-transform:uppercase;letter-spacing:.06em}
+.status-rank-row strong{color:#704f5a;font-size:.67rem}
+.status-rank-row b{font:inherit;color:#a45e7a}
+.task-today-button{background:#f8e3ed;color:#8b5f72;white-space:normal;line-height:1.15;min-width:108px}
+.save-data-download-intro{
+  width:100%;border:2px solid rgba(157,112,130,.18);font:inherit;text-align:left;color:inherit;cursor:pointer;
+  transition:transform .12s ease,box-shadow .12s ease;background:#fffafb;
+}
+.save-data-download-intro:active{transform:translateY(1px);box-shadow:0 2px 7px rgba(78,51,62,.05)}
+.games-list{gap:14px}
+.game-card-copy{padding:14px 0;gap:5px}
+.game-card-copy > span:last-child{font-size:.64rem;line-height:1.48}
+@media(max-width:430px){
+  .status-header-coin{min-height:30px;padding:3px 6px;font-size:.6rem}.status-header-coin img{width:18px;height:18px}
+  .status-rank-row{grid-template-columns:48px minmax(0,1fr)}.status-rank-row img{width:48px;height:38px}
+  .task-card-actions{grid-template-columns:minmax(0,1fr) max-content max-content}.task-today-button{min-width:94px;font-size:.58rem;padding-left:7px;padding-right:7px}
+  .game-card-copy > span:last-child{font-size:.59rem}
+}
+
+
+/* V24.56 — Strawberry Cat Slime is the Duck Quest Games-card mascot. */
+.duck-quest-card-strawberry{
+  width:82px;
+  height:82px;
+  transform:translateY(-4px);
+}
+@media(max-width:430px){
+  .duck-quest-card-strawberry{width:72px;height:72px;transform:translateY(-3px)}
+}
+
+
+/* =========================================================
+   V24.57 — OC PROFILE ICON BACKGROUNDS + MIKO POLISH
+   ========================================================= */
+
+/* Miko's selfie crop sits just a hair farther right than Peep's. */
+.profile-avatar[data-character-id="miko"] > img,
+.profile-detail-avatar[data-character-id="miko"] > img {
+  left: -29%;
+}
+.profile-avatar[data-character-id="miko"] .profile-head-duck-layer,
+.profile-detail-avatar[data-character-id="miko"] .profile-head-duck-layer {
+  left: -29%;
+}
+
+.profile-icon-color-card {
+  position: relative;
+  margin-top: 9px;
+  padding: 10px 11px;
+  border: 2px solid rgba(123, 93, 106, .10);
+  border-radius: 17px;
+  background: rgba(255,255,255,.78);
+}
+
+.profile-icon-color-label {
+  display: block;
+  margin-bottom: 7px;
+  color: #a18791;
+  font-size: .62rem;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.profile-icon-picker-wrap {
+  position: relative;
+}
+
+.profile-icon-picker-button {
+  width: 100%;
+  min-height: 42px;
+  padding: 5px 10px 5px 7px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 2px solid rgba(121,91,105,.14);
+  border-radius: 999px;
+  background: #fffafd;
+  color: #775964;
+  font: inherit;
+  font-size: .7rem;
+  font-weight: 850;
+  text-align: left;
+}
+
+.profile-icon-current-swatch,
+.profile-icon-dot {
+  display: block;
+  flex: 0 0 auto;
+  border: 2px solid rgba(81,50,60,.20);
+  border-radius: 50%;
+  box-shadow: inset 0 1px 2px rgba(255,255,255,.55);
+}
+
+.profile-icon-current-swatch {
+  width: 29px;
+  height: 29px;
+  background: #fffaf3;
+}
+
+.profile-icon-picker-button #profileIconPickerText {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-icon-picker-arrow {
+  color: #9b8490;
+  font-size: 1rem;
+}
+
+.profile-icon-picker {
+  position: absolute;
+  z-index: 150;
+  left: 0;
+  top: calc(100% + 7px);
+  width: min(245px, calc(100vw - 72px));
+  max-height: 190px;
+  overflow-y: auto;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(5, 38px);
+  gap: 8px;
+  border: 2px solid rgba(121,91,105,.18);
+  border-radius: 19px;
+  background: rgba(255,250,253,.98);
+  box-shadow: 0 12px 28px rgba(66,43,54,.18);
+}
+
+.profile-icon-choice {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  padding: 2px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.profile-icon-choice[aria-current="true"] {
+  outline: 3px solid rgba(215,125,162,.66);
+  outline-offset: 1px;
+}
+
+.profile-icon-dot {
+  width: 34px;
+  height: 34px;
+}
+
+.profile-icon-choice.locked .profile-icon-dot {
+  filter: saturate(.45);
+  opacity: .42;
+}
+
+.profile-icon-lock {
+  position: absolute;
+  right: -4px;
+  bottom: -2px;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(83,60,71,.90);
+  color: #fff;
+  font-size: .52rem;
+}
+
+@media (max-width: 430px) {
+  .profile-icon-picker {
+    width: min(222px, calc(100vw - 68px));
+    grid-template-columns: repeat(5, 34px);
+    gap: 7px;
+  }
+  .profile-icon-choice {
+    width: 34px;
+    height: 34px;
+  }
+  .profile-icon-dot {
+    width: 30px;
+    height: 30px;
+  }
 }

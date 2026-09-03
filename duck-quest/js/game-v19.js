@@ -2196,7 +2196,7 @@ function showThrownDuck(duck) {
   const img=document.createElement("img");
   img.src=`../assets/ducks/${duck.file}`;
   img.alt="";
-  img.style.cssText="position:absolute;z-index:20;width:64px;height:64px;object-fit:contain;image-rendering:pixelated;left:30%;top:52%;transition:transform .45s linear,left .45s linear,top .45s linear;pointer-events:none;";
+  img.style.cssText="position:absolute;z-index:20;width:48px;height:48px;object-fit:contain;image-rendering:pixelated;left:30%;top:52%;transition:transform .45s linear,left .45s linear,top .45s linear;pointer-events:none;";
   document.querySelector("#battlefield").appendChild(img);
   requestAnimationFrame(()=>{
     img.style.left="69%";

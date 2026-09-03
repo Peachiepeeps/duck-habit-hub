@@ -592,7 +592,7 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
   z-index:80;
   left:50%;
   top:calc(100% + 6px);
-  transform:translateX(-50%);
+  transform:translateX(-38%);
   width:240px;
   max-height:185px;
   overflow-y:auto;
@@ -715,6 +715,7 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
 
 @media(max-width:600px){
   .icon-background-picker{
+    transform:translateX(-34%);
     width:216px;
     grid-template-columns:repeat(5,33px);
     gap:7px;
