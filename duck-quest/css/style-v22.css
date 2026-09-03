@@ -964,7 +964,7 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
 
 /* Give Miko's status panel a clearly visible gap above his sprite. */
 .battlefield.miko-active .peep-status-stack{
-  transform:translateY(-42px);
+  transform:translateY(-54px);
 }
 
 @media(max-width:600px){
@@ -972,6 +972,6 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
     height:106px !important;
   }
   .battlefield.miko-active .peep-status-stack{
-    transform:translateY(-44px);
+    transform:translateY(-58px);
   }
 }
