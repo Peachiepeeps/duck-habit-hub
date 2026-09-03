@@ -960,7 +960,7 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
 }
 
 .battlefield.miko-active .peep-status-stack{
-  transform:translateY(-54px);
+  transform:translateY(-57px);
 }
 
 @media(max-width:600px){
@@ -969,6 +969,6 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
   }
 
   .battlefield.miko-active .peep-status-stack{
-    transform:translateY(-56px);
+    transform:translateY(-59px);
   }
 }
