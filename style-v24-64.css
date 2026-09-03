@@ -5775,8 +5775,8 @@ button { color: inherit; }
     overflow:hidden;
   }
   .stage{
-    width:min(108vw, calc(100dvh * .5625));
-    height:min(100dvh, calc(108vw / .5625));
+    width:min(100vw, calc(100dvh * .5625));
+    height:min(100dvh, calc(100vw / .5625));
   }
 }
 
