@@ -972,3 +972,37 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
     transform:translateY(-59px);
   }
 }
+
+/* Miko status: line up directly with enemy status */
+.battlefield.miko-active .peep-combatant{
+  top:1%;
+  bottom:auto;
+  height:99%;
+}
+
+.battlefield.miko-active .peep-status-stack{
+  transform:none;
+  position:relative;
+  z-index:4;
+}
+
+/* Keep Miko himself down on the battlefield */
+.battlefield.miko-active .battle-hero-composite{
+  top:47% !important;
+}
+
+@media(max-width:600px){
+  .battlefield.miko-active .peep-combatant{
+    top:1%;
+    bottom:auto;
+    height:99%;
+  }
+
+  .battlefield.miko-active .peep-status-stack{
+    transform:none;
+  }
+
+  .battlefield.miko-active .battle-hero-composite{
+    top:47% !important;
+  }
+}
