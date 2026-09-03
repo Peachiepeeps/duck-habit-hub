@@ -953,25 +953,22 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
 }
 
 
-/* =========================================================
-   V22 — Peep scale + Miko status spacing
-   ========================================================= */
+/* V22 — Peep scale + Miko status spacing */
 
-/* Peep was reading too tiny next to the enemies. */
 .peep-fighter{
   height:122px !important;
 }
 
-/* Give Miko's status panel a clearly visible gap above his sprite. */
 .battlefield.miko-active .peep-status-stack{
-  transform:translateY(-68px);
+  transform:translateY(-35px);
 }
 
 @media(max-width:600px){
   .peep-fighter{
     height:106px !important;
   }
+
   .battlefield.miko-active .peep-status-stack{
-    transform:translateY(-70px);
+    transform:translateY(-38px);
   }
 }
