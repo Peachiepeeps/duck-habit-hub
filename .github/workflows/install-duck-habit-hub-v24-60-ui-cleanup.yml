@@ -1,0 +1,157 @@
+name: Install Duck Habit Hub v24.60 UI + Cleanup
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  install-and-clean:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Verify update package
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ZIP="Duck-Habit-Hub-v24-60-UI-and-Cleanup.zip"
+
+          if [ ! -f "$ZIP" ]; then
+            echo "ERROR: $ZIP was not found in the repository root."
+            echo "Upload the ZIP to the repo root WITHOUT unzipping it."
+            exit 1
+          fi
+
+          unzip -t "$ZIP"
+
+          unzip -l "$ZIP" | grep -q "script-v24-60.js"
+          unzip -l "$ZIP" | grep -q "style-v24-60.css"
+          unzip -l "$ZIP" | grep -q "sw-v24-60.js"
+          unzip -l "$ZIP" | grep -q "duck-quest/js/game-v19.js"
+          unzip -l "$ZIP" | grep -q "duck-quest/css/style-v19.css"
+
+          echo "v24.60 package verified."
+
+      - name: Install v24.60 update
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ZIP="Duck-Habit-Hub-v24-60-UI-and-Cleanup.zip"
+
+          unzip -o "$ZIP" -d .
+
+          test -f "index.html"
+          test -f "script-v24-60.js"
+          test -f "style-v24-60.css"
+          test -f "sw-v24-60.js"
+          test -f "duck-quest/index.html"
+          test -f "duck-quest/battle-v19.html"
+          test -f "duck-quest/js/game-v19.js"
+          test -f "duck-quest/css/style-v19.css"
+
+          grep -q 'style-v24-60.css' "index.html"
+          grep -q 'script-v24-60.js' "index.html"
+          grep -q 'sw-v24-60.js' "index.html"
+
+          grep -q 'css/style-v19.css' "duck-quest/index.html"
+          grep -q 'js/game-v19.js' "duck-quest/index.html"
+
+          echo "v24.60 installed successfully."
+
+      - name: Clean obsolete root files
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          find . -maxdepth 1 -type f -name 'script-v24-*.js' \
+            ! -name 'script-v24-60.js' -print -delete
+
+          find . -maxdepth 1 -type f -name 'style-v24-*.css' \
+            ! -name 'style-v24-60.css' -print -delete
+
+          find . -maxdepth 1 -type f -name 'sw-v24-*.js' \
+            ! -name 'sw-v24-60.js' -print -delete
+
+          find . -maxdepth 1 -type f -name 'README-v24-*.txt' -print -delete
+
+          find . -maxdepth 1 -type f \( \
+            -name 'Duck-Habit-Hub-v*.zip' -o \
+            -name 'Duck-Quest-v*.zip' -o \
+            -name 'duck-quest-ocean-*.zip' -o \
+            -name 'fixed-ocean-workflow.zip' \
+          \) -print -delete
+
+      - name: Clean obsolete Duck Quest active versions
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          find duck-quest -maxdepth 1 -type f -name 'battle-v*.html' \
+            ! -name 'battle-v19.html' -print -delete
+
+          find duck-quest/css -maxdepth 1 -type f -name 'style-v*.css' \
+            ! -name 'style-v19.css' -print -delete
+
+          find duck-quest/js -maxdepth 1 -type f -name 'game-v*.js' \
+            ! -name 'game-v19.js' -print -delete
+
+          find duck-quest -maxdepth 1 -type f -name 'README-v*.txt' \
+            ! -name 'README-v19.txt' -print -delete
+
+      - name: Clean one-time installer workflows
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ -d ".github/workflows" ]; then
+            find .github/workflows -maxdepth 1 -type f \( \
+              -name 'install-duck-*.yml' -o \
+              -name 'install-duck-*.yaml' -o \
+              -name 'cleanup-duck-habit-hub*.yml' -o \
+              -name 'cleanup-duck-habit-hub*.yaml' \
+            \) -print -delete
+          fi
+
+      - name: Final verification
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test -f "index.html"
+          test -f "script-v24-60.js"
+          test -f "style-v24-60.css"
+          test -f "sw-v24-60.js"
+
+          test -f "duck-quest/index.html"
+          test -f "duck-quest/js/game-v19.js"
+          test -f "duck-quest/css/style-v19.css"
+
+          test -f "README.md"
+          test -f "manifest.webmanifest"
+          test -f "duck-hub-cache-reset.html"
+
+      - name: Commit update and cleanup
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "Nothing new to commit."
+            exit 0
+          fi
+
+          git commit -m "Install v24.60 UI polish and clean obsolete files"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
