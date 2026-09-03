@@ -988,7 +988,7 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
 
 /* Keep Miko himself down on the battlefield */
 .battlefield.miko-active .battle-hero-composite{
-  top:47% !important;
+  top:45% !important;
 }
 
 @media(max-width:600px){
