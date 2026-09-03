@@ -1366,6 +1366,7 @@ function activeHeroVisual(){
 
 function renderHeroVisuals(){
   const isMiko=activeCharacterId==="miko";
+  ui.battlefield?.classList.toggle("miko-active",isMiko);
   const name=heroDisplayName();
   if(ui.heroNameHome) ui.heroNameHome.textContent=name;
   if(ui.heroNameCombat) ui.heroNameCombat.textContent=name;
