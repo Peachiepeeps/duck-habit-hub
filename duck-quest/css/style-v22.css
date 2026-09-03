@@ -972,6 +972,6 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
     height:106px !important;
   }
   .battlefield.miko-active .peep-status-stack{
-    transform:translateY(-75px);
+    transform:translateY(-70px);
   }
 }
