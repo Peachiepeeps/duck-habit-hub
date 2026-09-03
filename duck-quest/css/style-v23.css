@@ -309,7 +309,7 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
 }
 .attack-command{background:#ffe2e7}
 .item-command{background:#fff0c8}
-.guard-command{background:#e9e1ff}
+.quick-heal-command{background:#e6f5e1}
 .escape-command{background:#e9edf1}
 .command-window{
   border:3px solid #aa7c88;
@@ -973,36 +973,70 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
   }
 }
 
-/* Miko status: line up directly with enemy status */
+
+/* =========================================================
+   V23 — Miko status alignment + Quick Heal
+   ========================================================= */
+
+/*
+   Miko's status and sprite are positioned independently.
+   The status block mirrors the enemy's top/width instead of stretching the
+   entire hero combatant. This keeps the nameplate, HP bar, and HP label compact.
+*/
 .battlefield.miko-active .peep-combatant{
+  left:5%;
   top:1%;
-  bottom:auto;
-  height:99%;
+  bottom:auto !important;
+  width:41%;
+  height:98%;
+  display:block;
 }
 
 .battlefield.miko-active .peep-status-stack{
-  transform:none;
-  position:relative;
-  z-index:4;
+  position:absolute;
+  z-index:5;
+  left:0;
+  top:0;
+  width:100%;
+  transform:none !important;
+  display:grid;
+  gap:4px;
 }
 
-/* Keep Miko himself down on the battlefield */
 .battlefield.miko-active .battle-hero-composite{
-  top:45% !important;
+  position:absolute !important;
+  left:8% !important;
+  top:49% !important;
+  margin:0 !important;
+}
+
+/* Quick Heal replaces Guard. */
+.quick-heal-command{
+  background:#e6f5e1;
+}
+.quick-heal-command:disabled{
+  opacity:.48;
 }
 
 @media(max-width:600px){
   .battlefield.miko-active .peep-combatant{
+    left:5%;
     top:1%;
-    bottom:auto;
-    height:99%;
+    bottom:auto !important;
+    width:45%;
+    height:98%;
   }
 
   .battlefield.miko-active .peep-status-stack{
-    transform:none;
+    left:0;
+    top:0;
+    width:100%;
+    transform:none !important;
   }
 
   .battlefield.miko-active .battle-hero-composite{
-    top:47% !important;
+    position:absolute !important;
+    left:8% !important;
+    top:49% !important;
   }
 }

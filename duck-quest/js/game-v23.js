@@ -915,7 +915,8 @@ const ui = {
   skillButtons: document.querySelector("#skillButtons"),
   itemButtons: document.querySelector("#itemButtons"),
   noBattleItems: document.querySelector("#noBattleItems"),
-  guardButton: document.querySelector("#guardButton"),
+  quickHealButton: document.querySelector("#quickHealButton"),
+  quickHealUsesText: document.querySelector("#quickHealUsesText"),
   continueButton: document.querySelector("#continueButton"),
   escapeConfirm: document.querySelector("#escapeConfirm"),
   escapeConfirmText: document.querySelector("#escapeConfirmText"),
@@ -1042,7 +1043,9 @@ let enemyIdleIndex = 0;
 let peepIdleIndex = 0;
 let actionLocked = false;
 let pendingChest = null;
-let guardActive = false;
+const QUICK_HEAL_PERCENT = 0.25;
+const QUICK_HEAL_MAX_USES = 4;
+let quickHealUses = 0;
 let skillState = {};
 
 function loadHubSave() {
@@ -1553,7 +1556,7 @@ function startEncounter() {
   clearAnimations();
   actionLocked=false;
   pendingChest=null;
-  guardActive=false;
+  quickHealUses=0;
   skillState={ cooldowns:{}, onceUsed:{}, attackBuffTurns:0, attackBuffMultiplier:1.30 };
   ui.chestLayer.classList.add("hidden");
   ui.continueButton.classList.add("hidden");
@@ -1737,7 +1740,16 @@ function renderCommandButtons() {
   const disabled = actionLocked || !currentEnemy;
   if (ui.attackMenuButton) ui.attackMenuButton.disabled = disabled;
   if (ui.itemMenuButton) ui.itemMenuButton.disabled = disabled;
-  if (ui.guardButton) ui.guardButton.disabled = disabled;
+
+  if (ui.quickHealButton) {
+    const usesLeft = Math.max(0, QUICK_HEAL_MAX_USES - quickHealUses);
+    const atFullHp = !currentRun || currentRun.hp >= currentRun.maxHp;
+    ui.quickHealButton.disabled = disabled || atFullHp || usesLeft <= 0;
+    if (ui.quickHealUsesText) {
+      ui.quickHealUsesText.textContent = `25% HP · ${usesLeft}/${QUICK_HEAL_MAX_USES}`;
+    }
+  }
+
   if (ui.escapeButton) ui.escapeButton.disabled = actionLocked || !currentRun;
 }
 
@@ -1973,7 +1985,6 @@ async function performEnemyAttack(multiplier=1,label="",lifeDrainHeal=0){
   const stats=peepStats(); const crit=Math.random()<.05;
   let dmg=Math.max(1,Math.round((currentEnemy.attackNow-(stats.defense*.55))*(.85+Math.random()*.25)*multiplier));
   if(crit) dmg=Math.round(dmg*1.5);
-  if(guardActive){dmg=Math.max(1,Math.ceil(dmg*.5));guardActive=false;}
   currentRun.hp=Math.max(0,currentRun.hp-dmg);
   setHeroFrame(heroHurtFrame());addHeroVisualClass("hurt-pop");
   showFloat(`-${dmg}`,"damage","peep");renderPeepHp();
@@ -2036,14 +2047,38 @@ async function enemyTurn() {
   if(currentRun.hp>0) setMessage(`${heroDisplayName()} is ready!`);
 }
 
-async function guardTurn() {
-  if(actionLocked || !currentEnemy) return;
+async function quickHealTurn() {
+  if(actionLocked || !currentEnemy || !currentRun) return;
+
+  if(quickHealUses >= QUICK_HEAL_MAX_USES){
+    setMessage("No Quick Heals left this battle!");
+    renderCommandButtons();
+    return;
+  }
+
+  if(currentRun.hp >= currentRun.maxHp){
+    setMessage(`${heroDisplayName()} is already at full health!`);
+    renderCommandButtons();
+    return;
+  }
+
   actionLocked=true;
-  guardActive=true;
-  setMessage(`${heroDisplayName()} guards! Incoming damage is reduced by 50%.`);
-  await sleep(350);
-  decrementCooldowns("guard");
+  quickHealUses++;
+
+  const amount=Math.max(1,Math.round(currentRun.maxHp*QUICK_HEAL_PERCENT));
+  const before=currentRun.hp;
+  currentRun.hp=Math.min(currentRun.maxHp,currentRun.hp+amount);
+  const healed=currentRun.hp-before;
+
+  setMessage(`Quick Heal! ${heroDisplayName()} restored ${healed} HP.`);
+  showFloat(`+${healed}`,"heal","peep");
+  renderPeepHp();
+  renderCommandButtons();
+  await sleep(500);
+
+  decrementCooldowns("quick-heal");
   await enemyTurn();
+
   actionLocked=false;
   renderCommandButtons();
   renderSkills();
@@ -2361,7 +2396,7 @@ ui.areaButtons.forEach(btn=>btn.addEventListener("click",()=>{
   selectedArea=areaId;activeHeroProgress().lastArea=areaId;selectedRank=areaProgress(areaId).lastRank||1;persistAll();renderMeta();
 }));
 document.querySelector("#startRun").addEventListener("click",beginRun);
-document.querySelector("#guardButton").addEventListener("click",guardTurn);
+ui.quickHealButton?.addEventListener("click",quickHealTurn);
 ui.attackMenuButton.addEventListener("click",()=>openCommandWindow("attack"));
 ui.itemMenuButton.addEventListener("click",()=>openCommandWindow("item"));
 ui.closeCommandWindow.addEventListener("click",closeCommandWindow);
