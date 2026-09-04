@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="duck-habit-build" content="24.55" />
+  <meta name="duck-habit-build" content="24.69" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f7dbe5" />
   <title>Duck Habit Hub</title>
   <!-- v24.41 performance update -->
-  <link rel="stylesheet" href="style-v24-68.css" />
+  <link rel="stylesheet" href="style-v24-69.css" />
 
   <link rel="manifest" href="manifest.webmanifest?v=24-38-icon-v4">
   <link rel="apple-touch-icon" href="apple-touch-icon-v4.png">
@@ -268,10 +268,10 @@
         </div>
 
         <div class="crafter-tabs" role="tablist" aria-label="Duck Crafter sections">
-          <button class="crafter-tab active" type="button" data-crafter-tab="ducks" role="tab" aria-selected="true">🦆 Ducks</button>
-          <button class="crafter-tab" type="button" data-crafter-tab="paint" role="tab" aria-selected="false">🎨 Paint</button>
-          <button class="crafter-tab" type="button" data-crafter-tab="furniture" role="tab" aria-selected="false">🪑 Furniture</button>
-          <button class="crafter-tab" type="button" data-crafter-tab="recipes" role="tab" aria-selected="false">📖 Recipes</button>
+          <button class="crafter-tab active" type="button" data-crafter-tab="ducks" role="tab" aria-selected="true">Ducks</button>
+          <button class="crafter-tab" type="button" data-crafter-tab="paint" role="tab" aria-selected="false">Paint</button>
+          <button class="crafter-tab" type="button" data-crafter-tab="furniture" role="tab" aria-selected="false">Furniture</button>
+          <button class="crafter-tab" type="button" data-crafter-tab="recipes" role="tab" aria-selected="false">Recipes</button>
         </div>
 
         <div id="crafterContent" class="crafter-content"></div>
@@ -1039,12 +1039,12 @@
       </section>
     </section>
   </main>
-  <script src="script-v24-68.js"></script>
+  <script src="script-v24-69.js"></script>
 
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw-v24-68.js", { updateViaCache: "none" }).catch(error => {
+        navigator.serviceWorker.register("./sw-v24-69.js", { updateViaCache: "none" }).catch(error => {
           console.warn("Duck Habit Hub offline setup could not start:", error);
         });
       });

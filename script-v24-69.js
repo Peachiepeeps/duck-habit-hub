@@ -3001,6 +3001,7 @@ let achievementEvaluationInProgress = false;
 let currentRoomView = "main";
 let selectedWingDuckSlot = null;
 let currentCrafterTab = "ducks";
+let crafterMissingOnly = false;
 let selectedCraftTarget = null;
 let dailyTimerInterval = null;
 let toastTimer;
@@ -5909,6 +5910,38 @@ function renderFurnitureDuckPlacements() {
   }
 }
 
+function layerPeepHeadDuckBehindBangs() {
+  const character = getCurrentCharacter();
+
+  // Peep's assigned duck should sit above her other face/hair artwork,
+  // but immediately BEHIND the bangs so the fringe overlaps the duck naturally.
+  if (character.id === "peep") {
+    const bangs = peepLayers.querySelector('[data-asset="bangs"]');
+    if (bangs) {
+      const bangsZ = bangs.style.zIndex || "1";
+      headDuckDisplay.style.zIndex = bangsZ;
+      peepLayers.insertBefore(headDuckDisplay, bangs);
+      return;
+    }
+  }
+
+  // Keep the existing behavior for other characters.
+  headDuckDisplay.style.zIndex = "12";
+  peepWrap.insertBefore(headDuckDisplay, peepHotspot);
+}
+
+function insertPortraitHeadDuckLayer(container, layer, characterId) {
+  if (characterId === "peep") {
+    const bangs = container.querySelector('[data-asset="bangs"]');
+    if (bangs) {
+      layer.style.zIndex = bangs.style.zIndex || "1";
+      container.insertBefore(layer, bangs);
+      return;
+    }
+  }
+  container.insertBefore(layer, container.firstChild);
+}
+
 function renderDuckPlacements() {
   normalizeDuckDisplays();
 
@@ -5935,6 +5968,8 @@ function renderDuckPlacements() {
     headDuckDisplay.alt = "";
     headDuckDisplay.classList.add("hidden");
   }
+
+  layerPeepHeadDuckBehindBangs();
 
   if (floorId) {
     const duck = DUCKS[floorId];
@@ -7009,19 +7044,46 @@ function renderDuckCraftTab() {
 
   const intro = document.createElement("section");
   intro.className = "crafter-intro";
-  intro.innerHTML = `
-    <div>
-      <strong>Craft a Duck</strong>
-      <p>Craft as many copies as you have ingredients for! Every duplicate counts toward that duck's Trophy milestones.</p>
-    </div>
-    <span>${save.unlockedDucks.length} / ${DUCK_TOTAL} discovered</span>
+
+  const copy = document.createElement("div");
+  copy.innerHTML = `
+    <strong>Craft a Duck</strong>
+    <p>Craft as many copies as you have ingredients for! Every duplicate counts toward that duck's Trophy milestones.</p>
   `;
+
+  const meta = document.createElement("div");
+  meta.className = "crafter-intro-meta";
+
+  const discovered = document.createElement("span");
+  discovered.className = "crafter-discovered-count";
+  discovered.textContent = `${save.unlockedDucks.length} / ${DUCK_TOTAL} discovered`;
+
+  const filterToggle = document.createElement("button");
+  filterToggle.type = "button";
+  filterToggle.className = `crafter-missing-toggle${crafterMissingOnly ? " active" : ""}`;
+  filterToggle.setAttribute("role", "switch");
+  filterToggle.setAttribute("aria-checked", String(crafterMissingOnly));
+  filterToggle.innerHTML = `
+    <span class="crafter-toggle-track"><span class="crafter-toggle-knob"></span></span>
+    <span>Only undiscovered</span>
+  `;
+  filterToggle.addEventListener("click", () => {
+    crafterMissingOnly = !crafterMissingOnly;
+    renderCrafter();
+  });
+
+  meta.append(discovered, filterToggle);
+  intro.append(copy, meta);
   wrapper.append(intro);
 
   const grid = document.createElement("div");
   grid.className = "crafter-grid";
 
-  craftableDuckEntries().forEach(([duckId, duck]) => {
+  const entries = craftableDuckEntries().filter(([duckId]) => {
+    return !crafterMissingOnly || !isDuckUnlocked(duckId);
+  });
+
+  entries.forEach(([duckId, duck]) => {
     const status = crafterCardStatusForDuck(duckId, duck);
     grid.append(
       createCrafterCard(
@@ -7034,7 +7096,17 @@ function renderDuckCraftTab() {
     );
   });
 
-  wrapper.append(grid);
+  if (!entries.length) {
+    const empty = document.createElement("div");
+    empty.className = "crafter-filter-empty";
+    empty.innerHTML = crafterMissingOnly
+      ? "<strong>All craftable ducks discovered! ♡</strong><span>Turn the toggle off to craft more copies for Trophy progress.</span>"
+      : "<strong>No ducks to show yet.</strong>";
+    wrapper.append(empty);
+  } else {
+    wrapper.append(grid);
+  }
+
   crafterContent.append(wrapper);
 }
 
@@ -9545,7 +9617,7 @@ function renderProfileHeadDuck(container, characterId) {
   img.style.width = `${placement.width}%`;
 
   layer.append(img);
-  container.insertBefore(layer, container.firstChild);
+  insertPortraitHeadDuckLayer(container, layer, character.id);
 }
 
 function switchToProfileCharacter(characterId) {
@@ -9744,7 +9816,7 @@ function renderStatusHeadDuck() {
   img.style.width = `${placement.width}%`;
 
   layer.append(img);
-  statusPeepPreview.insertBefore(layer, statusPeepPreview.firstChild);
+  insertPortraitHeadDuckLayer(statusPeepPreview, layer, character.id);
 }
 
 function renderStatusCharacter() {
