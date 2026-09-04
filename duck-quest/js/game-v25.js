@@ -2171,9 +2171,8 @@ async function openPendingChest() {
   ui.openChest.classList.add("hidden");
   setMessage("Treasure collected!");
 
-  // A little recovery between encounters; challenge carries over, but you're not left helpless.
-  const recovery=Math.max(1,Math.round(currentRun.maxHp*0.20));
-  currentRun.hp=Math.min(currentRun.maxHp,currentRun.hp+recovery);
+  // Fully recover between encounters so every new fight begins at max HP.
+  currentRun.hp=currentRun.maxHp;
   renderPeepHp();
 
   await sleep(350);

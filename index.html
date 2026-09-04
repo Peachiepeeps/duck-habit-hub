@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#f7dbe5" />
   <title>Duck Habit Hub</title>
   <!-- v24.41 performance update -->
-  <link rel="stylesheet" href="style-v24-65.css" />
+  <link rel="stylesheet" href="style-v24-66.css" />
 
   <link rel="manifest" href="manifest.webmanifest?v=24-38-icon-v4">
   <link rel="apple-touch-icon" href="apple-touch-icon-v4.png">
@@ -840,6 +840,7 @@
           <button class="achievement-tab active" type="button" data-achievement-tab="all">All</button>
           <button class="achievement-tab" type="button" data-achievement-tab="tasks">Tasks</button>
           <button class="achievement-tab" type="button" data-achievement-tab="ducks">Ducks</button>
+          <button class="achievement-tab" type="button" data-achievement-tab="duck-trophies">Duck Trophies</button>
           <button class="achievement-tab" type="button" data-achievement-tab="bakery">Bakery</button>
           <button class="achievement-tab" type="button" data-achievement-tab="games">Games</button>
           <button class="achievement-tab" type="button" data-achievement-tab="collection">Collection</button>
@@ -847,6 +848,14 @@
         </div>
 
         <div id="achievementsGrid" class="achievements-grid"></div>
+
+        <div id="duckTrophyCase" class="duck-trophy-case hidden">
+          <div class="gacha-trophy-summary">
+            <strong>Duck Trophy Collection</strong>
+            <span>1 Bronze · 25 Silver · 50 Gold · 100 Rose Gold</span>
+          </div>
+          <div id="gachaTrophyGrid" class="gacha-trophy-grid"></div>
+        </div>
 
         <div id="achievementDetailSheet" class="achievement-detail-sheet hidden" aria-hidden="true">
           <button id="achievementDetailBackdrop" class="achievement-detail-backdrop" type="button" aria-label="Close achievement details"></button>
@@ -938,11 +947,6 @@
           </div>
         </div>
 
-        <div class="gacha-view-tabs" role="tablist" aria-label="Gacha views">
-          <button id="gachaMachineTab" class="gacha-view-tab active" type="button" role="tab" aria-selected="true">🎰 Gacha</button>
-          <button id="gachaTrophyTab" class="gacha-view-tab" type="button" role="tab" aria-selected="false">🏆 Duck Trophies</button>
-        </div>
-
         <div id="gachaMachineView" class="gacha-machine-view">
           <div id="gachaStage" class="gacha-stage" aria-live="polite">
             <img class="gacha-machine-base" src="assets/gacha/gacha-machine.webp" alt="Duck gachapon machine" />
@@ -980,14 +984,6 @@
 
           <p class="gacha-rates">Common 60% · Uncommon 25% · Rare 12% · Super Rare 3%</p>
           <p class="gacha-note">Duplicates count toward Duck Trophies! Tiny Ducks stay exclusive to their secret sightings. ♡</p>
-        </div>
-
-        <div id="gachaTrophyView" class="gacha-trophy-view hidden">
-          <div class="gacha-trophy-summary">
-            <strong>Duck Trophy Collection</strong>
-            <span>1 Bronze · 25 Silver · 50 Gold · 100 Rose Gold</span>
-          </div>
-          <div id="gachaTrophyGrid" class="gacha-trophy-grid"></div>
         </div>
 
         <div id="gachaResultModal" class="gacha-result-modal hidden" aria-hidden="true">
@@ -1031,7 +1027,7 @@
           <button data-book-page="crafter">🦆 <span>Duck Crafter</span></button>
           <button data-book-page="duckipedia">📖 <span>Duckipedia</span></button>
           <button data-book-page="games">🎮 <span>Games</span></button>
-          <button data-book-page="gacha">🎰 <span>Gacha</span></button>
+          <button class="book-menu-gacha" data-book-page="gacha"><img class="book-menu-gacha-icon" src="assets/gacha/gacha-machine.png" alt="" /><span>Gacha</span></button>
           <button data-book-page="achievements">🏆 <span>Achievements</span></button>
           <button data-book-page="status">★ <span>Status</span></button>
           <button data-book-page="profiles">👤 <span>Profiles</span></button>
@@ -1040,12 +1036,12 @@
       </section>
     </section>
   </main>
-  <script src="script-v24-65.js"></script>
+  <script src="script-v24-66.js"></script>
 
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw-v24-65.js", { updateViaCache: "none" }).catch(error => {
+        navigator.serviceWorker.register("./sw-v24-66.js", { updateViaCache: "none" }).catch(error => {
           console.warn("Duck Habit Hub offline setup could not start:", error);
         });
       });

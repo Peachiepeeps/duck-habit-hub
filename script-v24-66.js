@@ -3042,6 +3042,7 @@ const resetSaveDataButton = document.querySelector("#resetSaveData");
 const profilesPanel = document.querySelector("#profilesPanel");
 const achievementsPanel = document.querySelector("#achievementsPanel");
 const achievementsGrid = document.querySelector("#achievementsGrid");
+const duckTrophyCase = document.querySelector("#duckTrophyCase");
 const achievementCompletedCount = document.querySelector("#achievementCompletedCount");
 const achievementSummaryFill = document.querySelector("#achievementSummaryFill");
 const achievementDetailSheet = document.querySelector("#achievementDetailSheet");
@@ -4028,6 +4029,15 @@ function renderAchievements(){
   const done=ACHIEVEMENTS.filter(a=>isAchievementCompleted(a.id)).length;
   achievementCompletedCount.textContent=`${done} / ${ACHIEVEMENTS.length}`; achievementSummaryFill.style.width=`${(done/ACHIEVEMENTS.length)*100}%`;
   document.querySelectorAll("[data-achievement-tab]").forEach(b=>{const active=b.dataset.achievementTab===currentAchievementTab;b.classList.toggle("active",active);b.setAttribute("aria-selected",String(active));});
+
+  const showingDuckTrophies=currentAchievementTab==="duck-trophies";
+  achievementsGrid.classList.toggle("hidden",showingDuckTrophies);
+  duckTrophyCase?.classList.toggle("hidden",!showingDuckTrophies);
+  if(showingDuckTrophies){
+    renderGachaTrophies();
+    return;
+  }
+
   achievementsGrid.innerHTML="";
   for(const a of achievementEntriesForTab()){
     const completed=isAchievementCompleted(a.id), p=achievementProgressInfo(a);
@@ -6330,9 +6340,7 @@ scheduleTinyDuckCheck();
 
 const gachaPanel = document.querySelector("#gachaPanel");
 const gachaMachineTab = document.querySelector("#gachaMachineTab");
-const gachaTrophyTab = document.querySelector("#gachaTrophyTab");
 const gachaMachineView = document.querySelector("#gachaMachineView");
-const gachaTrophyView = document.querySelector("#gachaTrophyView");
 const gachaCoinCount = document.querySelector("#gachaCoinCount");
 const gachaRarePity = document.querySelector("#gachaRarePity");
 const gachaSuperPity = document.querySelector("#gachaSuperPity");
@@ -6361,7 +6369,6 @@ const gachaSummaryModal = document.querySelector("#gachaSummaryModal");
 const gachaSummaryGrid = document.querySelector("#gachaSummaryGrid");
 const gachaSummaryClose = document.querySelector("#gachaSummaryClose");
 let gachaBusy = false;
-let currentGachaView = "machine";
 
 function gachaSleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -6505,16 +6512,8 @@ function updateGachaHud() {
   if (gachaPullTen) gachaPullTen.disabled = gachaBusy || Number(save.coins || 0) < GACHA_TEN_PULL_COST;
 }
 
-function setGachaView(view) {
-  currentGachaView = view === "trophies" ? "trophies" : "machine";
-  const trophy = currentGachaView === "trophies";
-  gachaMachineView?.classList.toggle("hidden", trophy);
-  gachaTrophyView?.classList.toggle("hidden", !trophy);
-  gachaMachineTab?.classList.toggle("active", !trophy);
-  gachaTrophyTab?.classList.toggle("active", trophy);
-  gachaMachineTab?.setAttribute("aria-selected", String(!trophy));
-  gachaTrophyTab?.setAttribute("aria-selected", String(trophy));
-  if (trophy) renderGachaTrophies();
+function setGachaView() {
+  gachaMachineView?.classList.remove("hidden");
 }
 
 function renderGachaTrophies() {
@@ -6738,7 +6737,7 @@ async function performGachaPulls(count) {
   } finally {
     gachaBusy = false;
     updateGachaHud();
-    if (!gachaTrophyView?.classList.contains("hidden")) renderGachaTrophies();
+    if (duckTrophyCase && !duckTrophyCase.classList.contains("hidden")) renderGachaTrophies();
   }
 }
 
@@ -6785,7 +6784,6 @@ function closeGachaAll() {
 }
 
 gachaMachineTab?.addEventListener("click", () => setGachaView("machine"));
-gachaTrophyTab?.addEventListener("click", () => setGachaView("trophies"));
 gachaPullOne?.addEventListener("click", () => performGachaPulls(1));
 gachaPullTen?.addEventListener("click", () => performGachaPulls(10));
 gachaResultClose?.addEventListener("click", closeSingleGachaResult);
@@ -6846,7 +6844,7 @@ function launchMemoryGame() {
 }
 
 function launchDuckQuestGame() {
-  window.location.href = "duck-quest/?v=22";
+  window.location.href = "duck-quest/?v=25";
 }
 
 
