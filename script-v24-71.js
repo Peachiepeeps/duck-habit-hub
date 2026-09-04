@@ -1,5 +1,5 @@
 const STORAGE_KEY = "duckHabitHubSave_v1";
-const SAVE_VERSION = 30;
+const SAVE_VERSION = 31;
 
 const CHARACTERS = {
   peep: {
@@ -78,6 +78,19 @@ const CHARACTERS = {
       "lemon": "not-his-thing",
       "lime": "not-his-thing"
     }
+  },
+  io: {
+    id: "io",
+    name: "Io",
+    type: "layered",
+    assetFolder: "assets/io/",
+    duckHeadPlacement: {
+      left: 53,
+      top: 36.4,
+      width: 17.2
+    },
+    invitationImage: "assets/oc-invitations/Io-invitation.webp",
+    profile: {}
   }
 };
 
@@ -131,6 +144,11 @@ const CHARACTER_UNLOCKS = {
     name: "Miko Invitation",
     image: "assets/oc-invitations/Miko-invitation.webp",
     priceText: "Invite Miko to the hub and unlock his free wardrobe."
+  },
+  io: {
+    name: "Io Invitation",
+    image: "assets/oc-invitations/Io-invitation.webp",
+    priceText: "Invite Io to the hub and unlock her default wardrobe."
   }
 };
 
@@ -1254,7 +1272,8 @@ const SHOP_STOCK = {
     { itemId: "gold-heart-refill", price: 250 }
   ],
   profiles: [
-    { characterId: "miko", price: 1500 }
+    { characterId: "miko", price: 1500 },
+    { characterId: "io", price: 1500 }
   ],
   rooms: [
     { roomId: "green", price: 350 },
@@ -1282,6 +1301,8 @@ const SHOP_STOCK = {
     { itemId: "rug-heart-blue", price: 160 }
   ],
   hair: [
+    { wardrobeId: "io-hair-pigtails", price: 150 },
+    { wardrobeId: "io-hair-long", price: 150 },
     { wardrobeId: "hair-low-pigtails", price: 150 },
     { wardrobeId: "hair-ponytail", price: 150 },
     { wardrobeId: "hair-long-pigtails", price: 150 },
@@ -1289,6 +1310,10 @@ const SHOP_STOCK = {
     { wardrobeId: "miko-bangs-pinned", price: 150 }
   ],
   clothing: [
+    { wardrobeId: "io-magical-stockings", price: 150 },
+    { wardrobeId: "io-magical-dress", price: 150 },
+    { wardrobeId: "io-mew-dress", price: 150 },
+    { wardrobeId: "io-mew-jacket", price: 150 },
     { wardrobeId: "top-shirt", price: 150 },
     { wardrobeId: "bottom-fluffy", price: 150 },
     { wardrobeId: "socks-blue", price: 150 },
@@ -1307,11 +1332,18 @@ const SHOP_STOCK = {
     { wardrobeId: "miko-outer-black-blazer", price: 150 }
   ],
   shoes: [
+    { wardrobeId: "io-magical-boots", price: 150 },
+    { wardrobeId: "io-mew-boots", price: 150 },
     { wardrobeId: "shoes-sneaker", price: 150 },
     { wardrobeId: "peep-shoes-white-mary-jane", price: 150 },
     { wardrobeId: "miko-shoes-fancy-loafers", price: 150 }
   ],
   accessories: [
+    { wardrobeId: "io-magical-back-bow", price: 150 },
+    { wardrobeId: "io-sheep-ears", price: 150 },
+    { wardrobeId: "io-crown", price: 150 },
+    { wardrobeId: "io-mew-garter", price: 150 },
+    { wardrobeId: "io-mew-collar", price: 150 },
     { wardrobeId: "cow-ears", price: 150 },
     { wardrobeId: "tail-cow", price: 150 },
     { wardrobeId: "collar", price: 150 },
@@ -1782,6 +1814,12 @@ const DUCKS = {
     "acquisition": "character-happiness-100",
     "characterId": "miko"
   },
+  "io-duck": {
+    "name": "Io Duck",
+    "file": "assets/ducks/io-duck.webp",
+    "acquisition": "character-happiness-100",
+    "characterId": "io"
+  },
   "orange-duck": {
     "name": "Orange Duck",
     "file": "assets/ducks/Orange-duck.webp",
@@ -2042,7 +2080,8 @@ const FRIENDSHIP_DATE_HAPPINESS = 3;
 
 const FRIENDSHIP_DATE_ICONS = Object.freeze({
   peep: "assets/ducks/peep-duck.webp",
-  miko: "assets/ducks/miko-duck.webp"
+  miko: "assets/ducks/miko-duck.webp",
+  io: "assets/ducks/io-duck.webp"
 });
 
 const PAINT_MIXING_LOOT_POOL = [
@@ -2242,6 +2281,88 @@ const MIKO_ASSETS = {
   "expression-smug": { label: "Smug", file: "Miko-smug.webp", z: 44 }
 };
 
+const IO_THUMB_BOUNDS = {
+  "Io-ahoge.webp": [468,681,597,826],
+  "Io-angry.webp": [356,946,711,1159],
+  "Io-back-school-bow.webp": [330,1302,721,1565],
+  "Io-bangs.webp": [272,781,794,1206],
+  "Io-body-base.webp": [319,798,761,1794],
+  "Io-buns.webp": [168,728,899,1048],
+  "Io-crown.webp": [413,713,658,806],
+  "Io-happy.webp": [356,937,711,1134],
+  "Io-heart-pin.webp": [686,994,770,1041],
+  "Io-long-hair.webp": [151,762,908,1510],
+  "Io-magical-back-bow.webp": [289,1235,779,1689],
+  "Io-magical-boots.webp": [383,1625,685,1810],
+  "Io-magical-dress.webp": [238,1219,836,1539],
+  "Io-magical-stockings.webp": [390,1552,682,1796],
+  "Io-magical-stockings-shop.webp": [390,1552,682,1796],
+  "Io-mew-boots.webp": [384,1721,687,1808],
+  "Io-mew-collar.webp": [503,1220,566,1255],
+  "Io-mew-dress.webp": [386,1223,696,1482],
+  "Io-mew-garter.webp": [534,1506,690,1567],
+  "Io-mew-jacket.webp": [339,1217,734,1494],
+  "Io-mew-jacket-shop.webp": [339,1214,734,1494],
+  "Io-neutral.webp": [356,960,711,1130],
+  "Io-pigtails.webp": [91,820,975,1599],
+  "Io-school-shirt.webp": [407,1219,670,1422],
+  "Io-school-shoes.webp": [384,1751,687,1805],
+  "Io-school-skirt.webp": [362,1371,725,1515],
+  "Io-l-school-sock.webp": [386,1623,504,1794],
+  "Io-r-school-sock.webp": [565,1623,683,1794],
+  "Io-l-magical-stocking.webp": [390,1552,515,1795],
+  "Io-r-magical-stocking.webp": [557,1553,682,1796],
+  "Io-school-socks.webp": [386,1623,683,1794],
+  "Io-school-socks-shop.webp": [386,1623,683,1794],
+  "Io-sheep-ears.webp": [177,878,893,1139]
+};
+
+const IO_ASSETS = {
+  "hair-buns": { label: "Twin Buns", file: "Io-buns.webp", z: 10 },
+  "hair-pigtails": { label: "Pigtails", file: "Io-pigtails.webp", z: 10 },
+  "hair-long": { label: "Long Hair", file: "Io-long-hair.webp", z: 10 },
+  "back-school-bow": { label: "School Back Bow", file: "Io-back-school-bow.webp", z: 11 },
+  "back-magical-bow": { label: "Magical Back Bow", file: "Io-magical-back-bow.webp", z: 11 },
+  "base": { label: "Body Base", file: "Io-body-base.webp", z: 20 },
+  "sock-left-school": { label: "School Sock · Left", file: "Io-l-school-sock.webp", z: 24 },
+  "sock-right-school": { label: "School Sock · Right", file: "Io-r-school-sock.webp", z: 24 },
+  "sock-left-magical": { label: "Magical Stocking · Left", file: "Io-l-magical-stocking.webp", z: 24 },
+  "sock-right-magical": { label: "Magical Stocking · Right", file: "Io-r-magical-stocking.webp", z: 24 },
+  "socks-preview-school": { label: "School Socks", file: "Io-school-socks-shop.webp", z: 24 },
+  "socks-preview-magical": { label: "Magical Stockings", file: "Io-magical-stockings-shop.webp", z: 24 },
+  "mew-garter": { label: "Mew Garter", file: "Io-mew-garter.webp", z: 25 },
+  "shoes-school": { label: "School Shoes", file: "Io-school-shoes.webp", z: 26 },
+  "shoes-magical": { label: "Magical Boots", file: "Io-magical-boots.webp", z: 26 },
+  "shoes-mew": { label: "Mew Boots", file: "Io-mew-boots.webp", z: 26 },
+  "bottom-school": { label: "Rainbow School Skirt", file: "Io-school-skirt.webp", z: 28 },
+  "top-school": { label: "White Top with Bow", file: "Io-school-shirt.webp", z: 30 },
+  "dress-magical": { label: "Magical Dress", file: "Io-magical-dress.webp", z: 29 },
+  "dress-mew": { label: "Mew Dress", file: "Io-mew-dress.webp", z: 29 },
+  "mew-jacket": { label: "Mew Jacket", file: "Io-mew-jacket.webp", previewFile: "Io-mew-jacket-shop.webp", z: 32 },
+  "mew-collar": { label: "Mew Collar", file: "Io-mew-collar.webp", z: 33 },
+  "expression-neutral": { label: "Neutral", file: "Io-neutral.webp", z: 40 },
+  "expression-happy": { label: "Happy", file: "Io-happy.webp", z: 40 },
+  "expression-mad": { label: "Angry", file: "Io-angry.webp", z: 40 },
+  "expression-sad": { label: "Neutral", file: "Io-neutral.webp", z: 40 },
+  "expression-shocked": { label: "Neutral", file: "Io-neutral.webp", z: 40 },
+  "ahoge": { label: "Hair Curl", file: "Io-ahoge.webp", z: 42 },
+  "sheep-ears": { label: "Sheep Ears", file: "Io-sheep-ears.webp", z: 43 },
+  "bangs": { label: "Bangs", file: "Io-bangs.webp", z: 44 },
+  "heart-pin": { label: "Heart Hairpin", file: "Io-heart-pin.webp", z: 45 },
+  "crown": { label: "Crown", file: "Io-crown.webp", z: 46 }
+};
+
+const IO_CLOSET = [
+  { id: "hair", label: "Hair", type: "hair", options: ["hair-buns", "hair-pigtails", "hair-long"] },
+  { id: "backBow", label: "Back Bows", type: "single", allowNone: true, options: ["back-school-bow", "back-magical-bow"] },
+  { id: "top", label: "Tops", type: "single", options: ["top-school"] },
+  { id: "bottom", label: "Skirts", type: "single", options: ["bottom-school"] },
+  { id: "dress", label: "Dresses", type: "single", allowNone: true, options: ["dress-magical", "dress-mew"] },
+  { id: "socks", label: "Socks", type: "socks" },
+  { id: "shoes", label: "Shoes", type: "single", allowNone: true, options: ["shoes-school", "shoes-magical", "shoes-mew"] },
+  { id: "extras", label: "Extras", type: "multi", options: ["heart-pin", "sheep-ears", "crown", "mew-garter", "mew-jacket", "mew-collar"] }
+];
+
 const MIKO_CLOSET = [
   {
     id: "hair",
@@ -2310,6 +2431,47 @@ const DEFAULT_MIKO_OUTFIT = {
   shoes: "shoes-loafer",
   extras: []
 };
+
+const DEFAULT_IO_OUTFIT = {
+  hair: "hair-buns",
+  backBow: "back-school-bow",
+  top: "top-school",
+  bottom: "bottom-school",
+  dress: null,
+  leftSock: "sock-left-school",
+  rightSock: "sock-right-school",
+  shoes: "shoes-school",
+  extras: ["heart-pin"]
+};
+
+function normalizeIoOutfit(rawOutfit = {}) {
+  const incoming = rawOutfit && typeof rawOutfit === "object" ? rawOutfit : {};
+  const normalized = { ...structuredClone(DEFAULT_IO_OUTFIT), ...incoming };
+  if (!["hair-buns", "hair-pigtails", "hair-long"].includes(normalized.hair)) normalized.hair = "hair-buns";
+  if (![null, "back-school-bow", "back-magical-bow"].includes(normalized.backBow)) normalized.backBow = "back-school-bow";
+  if (normalized.top !== "top-school") normalized.top = "top-school";
+  if (normalized.bottom !== "bottom-school") normalized.bottom = "bottom-school";
+  if (![null, "dress-magical", "dress-mew"].includes(normalized.dress)) normalized.dress = null;
+  // Migrate the brief combined-legwear draft into the split left/right system.
+  if (incoming.legwear === "legwear-magical") {
+    normalized.leftSock = "sock-left-magical";
+    normalized.rightSock = "sock-right-magical";
+  } else if (incoming.legwear === "legwear-school") {
+    normalized.leftSock = "sock-left-school";
+    normalized.rightSock = "sock-right-school";
+  }
+  delete normalized.legwear;
+  const validLeftSocks = [null, "sock-left-school", "sock-left-magical"];
+  const validRightSocks = [null, "sock-right-school", "sock-right-magical"];
+  if (!validLeftSocks.includes(normalized.leftSock)) normalized.leftSock = "sock-left-school";
+  if (!validRightSocks.includes(normalized.rightSock)) normalized.rightSock = "sock-right-school";
+  if (![null, "shoes-school", "shoes-magical", "shoes-mew"].includes(normalized.shoes)) normalized.shoes = "shoes-school";
+  normalized.extras = Array.isArray(normalized.extras)
+    ? normalized.extras.filter(id => ["heart-pin", "sheep-ears", "crown", "mew-garter", "mew-jacket", "mew-collar"].includes(id))
+    : ["heart-pin"];
+  return normalized;
+}
+
 
 function normalizeMikoOutfit(rawOutfit = {}) {
   const incoming = rawOutfit && typeof rawOutfit === "object" ? rawOutfit : {};
@@ -2443,7 +2605,8 @@ const DEFAULT_SAVE = {
   unlockedItems: ["hair-short", "cat-ears", "left-bow", "right-bow", "top-sweater", "bottom-pleated", "sock-left-rainbow", "sock-right-rainbow", "shoes-loafer", "collar", "cheek-bandage", "tail-bunny"],
   characterUnlockedItems: {
     peep: ["hair-short", "cat-ears", "left-bow", "right-bow", "top-sweater", "bottom-pleated", "sock-left-rainbow", "sock-right-rainbow", "shoes-loafer", "collar", "cheek-bandage", "tail-bunny"],
-    miko: ["hair-main", "top-hoodie", "top-button", "bottom-capris", "shoes-loafer"]
+    miko: ["hair-main", "top-hoodie", "top-button", "bottom-capris", "shoes-loafer"],
+    io: ["hair-buns", "back-school-bow", "top-school", "bottom-school", "sock-left-school", "sock-right-school", "shoes-school", "heart-pin"]
   },
   wardrobeResetV1261: true,
   wardrobeResetV1262: false,
@@ -2456,11 +2619,13 @@ const DEFAULT_SAVE = {
   outfit: structuredClone(DEFAULT_OUTFIT),
   characterOutfits: {
     peep: structuredClone(DEFAULT_OUTFIT),
-    miko: structuredClone(DEFAULT_MIKO_OUTFIT)
+    miko: structuredClone(DEFAULT_MIKO_OUTFIT),
+    io: structuredClone(DEFAULT_IO_OUTFIT)
   },
   characterProgress: {
     peep: { happinessTotal: 0 },
-    miko: { happinessTotal: 0 }
+    miko: { happinessTotal: 0 },
+    io: { happinessTotal: 0 }
   },
   tasks: [],
   savedTaskTemplates: [],
@@ -2547,7 +2712,10 @@ function loadSave() {
             : [...structuredClone(DEFAULT_SAVE.characterUnlockedItems.peep)],
         miko: Array.isArray(saved.characterUnlockedItems?.miko)
           ? [...new Set(saved.characterUnlockedItems.miko)]
-          : [...structuredClone(DEFAULT_SAVE.characterUnlockedItems.miko)]
+          : [...structuredClone(DEFAULT_SAVE.characterUnlockedItems.miko)],
+        io: Array.isArray(saved.characterUnlockedItems?.io)
+          ? [...new Set(saved.characterUnlockedItems.io)]
+          : [...structuredClone(DEFAULT_SAVE.characterUnlockedItems.io)]
       },
       outfit: { ...structuredClone(DEFAULT_OUTFIT), ...(saved.outfit || {}) },
       characterOutfits: {
@@ -2555,14 +2723,16 @@ function loadSave() {
           ...structuredClone(DEFAULT_OUTFIT),
           ...(saved.characterOutfits?.peep || saved.outfit || {})
         },
-        miko: normalizeMikoOutfit(saved.characterOutfits?.miko || {})
+        miko: normalizeMikoOutfit(saved.characterOutfits?.miko || {}),
+        io: normalizeIoOutfit(saved.characterOutfits?.io || {})
       },
       characterProgress: {
         peep: normalizeLoadedCharacterProgress(
           saved.characterProgress?.peep,
           Number(saved.stats?.happiness) || 0
         ),
-        miko: normalizeLoadedCharacterProgress(saved.characterProgress?.miko, 0)
+        miko: normalizeLoadedCharacterProgress(saved.characterProgress?.miko, 0),
+        io: normalizeLoadedCharacterProgress(saved.characterProgress?.io, 0)
       },
       tasks: Array.isArray(saved.tasks) ? saved.tasks : [],
       savedTaskTemplates: Array.isArray(saved.savedTaskTemplates) ? saved.savedTaskTemplates : [],
@@ -2689,8 +2859,8 @@ const GACHA_RARITY_WEIGHTS = Object.freeze({
   rare: 12,
   super: 3
 });
-const GACHA_SUPER_DUCKS = new Set(["peep-duck", "miko-duck", "goose", "rainbow-duck"]);
-const GACHA_GATED_SUPER_DUCKS = new Set(["peep-duck", "miko-duck", "goose"]);
+const GACHA_SUPER_DUCKS = new Set(["peep-duck", "miko-duck", "io-duck", "goose", "rainbow-duck"]);
+const GACHA_GATED_SUPER_DUCKS = new Set(["peep-duck", "miko-duck", "io-duck", "goose"]);
 const GACHA_EXCLUDED_DUCKS = new Set(["tiny-duck", "tiny-duck-stack", "pile-of-tiny-ducks"]);
 const DUCK_TROPHY_MILESTONES = Object.freeze([
   { count: 1, tier: "bronze", label: "Bronze" },
@@ -2757,15 +2927,21 @@ ensureDuckCollectionState();
 
 
 function getCharacterAssetMap(characterId = save.selectedCharacter) {
-  return characterId === "miko" ? MIKO_ASSETS : ASSETS;
+  if (characterId === "miko") return MIKO_ASSETS;
+  if (characterId === "io") return IO_ASSETS;
+  return ASSETS;
 }
 
 function getCharacterCloset(characterId = save.selectedCharacter) {
-  return characterId === "miko" ? MIKO_CLOSET : CLOSET;
+  if (characterId === "miko") return MIKO_CLOSET;
+  if (characterId === "io") return IO_CLOSET;
+  return CLOSET;
 }
 
 function getCharacterThumbBounds(characterId = save.selectedCharacter) {
-  return characterId === "miko" ? MIKO_THUMB_BOUNDS : THUMB_BOUNDS;
+  if (characterId === "miko") return MIKO_THUMB_BOUNDS;
+  if (characterId === "io") return IO_THUMB_BOUNDS;
+  return THUMB_BOUNDS;
 }
 
 function getCharacterStarterWardrobe(characterId = save.selectedCharacter) {
@@ -2774,6 +2950,13 @@ function getCharacterStarterWardrobe(characterId = save.selectedCharacter) {
       "hair-main", "bangs",
       "top-hoodie", "top-button",
       "bottom-capris", "shoes-loafer"
+    ];
+  }
+  if (characterId === "io") {
+    return [
+      "hair-buns", "back-school-bow",
+      "top-school", "bottom-school",
+      "sock-left-school", "sock-right-school", "shoes-school", "heart-pin"
     ];
   }
 
@@ -2794,7 +2977,9 @@ function getCharacterStarterWardrobe(characterId = save.selectedCharacter) {
 }
 
 function getCharacterDefaultOutfit(characterId = save.selectedCharacter) {
-  return characterId === "miko" ? DEFAULT_MIKO_OUTFIT : DEFAULT_OUTFIT;
+  if (characterId === "miko") return DEFAULT_MIKO_OUTFIT;
+  if (characterId === "io") return DEFAULT_IO_OUTFIT;
+  return DEFAULT_OUTFIT;
 }
 
 function normalizeCharacterState() {
@@ -2807,6 +2992,7 @@ function normalizeCharacterState() {
     ...(save.characterOutfits.peep || save.outfit || {})
   };
   save.characterOutfits.miko = normalizeMikoOutfit(save.characterOutfits.miko || {});
+  save.characterOutfits.io = normalizeIoOutfit(save.characterOutfits.io || {});
 
   const peepUnlocks = new Set([
     ...(Array.isArray(save.characterUnlockedItems.peep) ? save.characterUnlockedItems.peep : []),
@@ -2817,14 +3003,20 @@ function normalizeCharacterState() {
     ...(Array.isArray(save.characterUnlockedItems.miko) ? save.characterUnlockedItems.miko : []),
     ...getCharacterStarterWardrobe("miko")
   ]);
+  const ioUnlocks = new Set([
+    ...(Array.isArray(save.characterUnlockedItems.io) ? save.characterUnlockedItems.io : []),
+    ...getCharacterStarterWardrobe("io")
+  ]);
   save.characterUnlockedItems.peep = [...peepUnlocks];
   save.characterUnlockedItems.miko = [...mikoUnlocks];
+  save.characterUnlockedItems.io = [...ioUnlocks];
 
   save.characterProgress.peep = normalizeLoadedCharacterProgress(
     save.characterProgress.peep,
     save.stats?.happiness ?? 0
   );
   save.characterProgress.miko = normalizeLoadedCharacterProgress(save.characterProgress.miko, 0);
+  save.characterProgress.io = normalizeLoadedCharacterProgress(save.characterProgress.io, 0);
 
   if (!save.stats || typeof save.stats !== "object") save.stats = structuredClone(DEFAULT_SAVE.stats);
   save.stats.happiness = save.characterProgress.peep.happinessTotal;
@@ -4150,6 +4342,19 @@ function getMikoEquippedAssetIds() {
   return ids.filter(Boolean);
 }
 
+function getIoEquippedAssetIds() {
+  const outfit = getCharacterOutfit("io");
+  const ids = [outfit.hair, outfit.backBow, "base"];
+  if (outfit.leftSock) ids.push(outfit.leftSock);
+  if (outfit.rightSock) ids.push(outfit.rightSock);
+  if (outfit.shoes) ids.push(outfit.shoes);
+  if (outfit.dress) ids.push(outfit.dress);
+  else ids.push(outfit.bottom, outfit.top);
+  ids.push(...(Array.isArray(outfit.extras) ? outfit.extras : []));
+  ids.push(currentExpression, "ahoge", "bangs");
+  return ids.filter(Boolean);
+}
+
 function getCurrentCharacter() {
   return CHARACTERS[save.selectedCharacter] || CHARACTERS.peep;
 }
@@ -4157,6 +4362,7 @@ function getCurrentCharacter() {
 function getCharacterAssetIds(characterId = save.selectedCharacter) {
   const character = CHARACTERS[characterId] || CHARACTERS.peep;
   if (character.id === "miko") return getMikoEquippedAssetIds();
+  if (character.id === "io") return getIoEquippedAssetIds();
   return getEquippedAssetIds();
 }
 
@@ -4571,14 +4777,14 @@ function chooseSingle(group, id) {
   const outfit = getCurrentOutfit();
   outfit[group.id] = id;
 
-  if (save.selectedCharacter === "peep") {
-    // Dresses replace Peep's regular top + skirt visually. Picking a regular
+  if (save.selectedCharacter === "peep" || save.selectedCharacter === "io") {
+    // Dresses replace the regular top + skirt visually. Picking a regular
     // top or skirt switches back out of the one-piece dress automatically.
     if ((group.id === "top" || group.id === "bottom") && id) outfit.dress = null;
 
     // Full-leg stockings and the older separate sock system are mutually
     // exclusive so two different leg layers never accidentally overlap.
-    if (group.id === "legwear" && id) {
+    if (save.selectedCharacter === "peep" && group.id === "legwear" && id) {
       outfit.leftSock = null;
       outfit.rightSock = null;
     }
@@ -4635,6 +4841,15 @@ const SOCK_STYLES = [
   { id: "rainbow", label: "Rainbow", left: "sock-left-rainbow", right: "sock-right-rainbow" },
   { id: "blue", label: "White + Blue", left: "sock-left-blue", right: "sock-right-blue" }
 ];
+
+const IO_SOCK_STYLES = [
+  { id: "school", label: "School", left: "sock-left-school", right: "sock-right-school", previewAssetId: "socks-preview-school" },
+  { id: "magical", label: "Magical", left: "sock-left-magical", right: "sock-right-magical", previewAssetId: "socks-preview-magical" }
+];
+
+function getSockStyles(characterId = save.selectedCharacter) {
+  return characterId === "io" ? IO_SOCK_STYLES : SOCK_STYLES;
+}
 
 const WARDROBE_SHOP_META = {
   "socks-blue": {
@@ -4754,7 +4969,20 @@ const WARDROBE_SHOP_META = {
     label: "Miko · Black Hairpins",
     assetIds: ["hairpins-black"],
     unlockIds: ["hairpins-black"]
-  }
+  },
+  "io-hair-pigtails": { characterId: "io", label: "Io · Pigtails", assetIds: ["hair-pigtails"], unlockIds: ["hair-pigtails"] },
+  "io-hair-long": { characterId: "io", label: "Io · Long Hair", assetIds: ["hair-long"], unlockIds: ["hair-long"] },
+  "io-magical-stockings": { characterId: "io", label: "Io · Magical Stockings", assetIds: ["socks-preview-magical"], unlockIds: ["sock-left-magical", "sock-right-magical"] },
+  "io-magical-dress": { characterId: "io", label: "Io · Magical Dress", assetIds: ["dress-magical"], unlockIds: ["dress-magical"] },
+  "io-mew-dress": { characterId: "io", label: "Io · Mew Dress", assetIds: ["dress-mew"], unlockIds: ["dress-mew"] },
+  "io-mew-jacket": { characterId: "io", label: "Io · Mew Jacket", assetIds: ["mew-jacket"], unlockIds: ["mew-jacket"] },
+  "io-magical-boots": { characterId: "io", label: "Io · Magical Boots", assetIds: ["shoes-magical"], unlockIds: ["shoes-magical"] },
+  "io-mew-boots": { characterId: "io", label: "Io · Mew Boots", assetIds: ["shoes-mew"], unlockIds: ["shoes-mew"] },
+  "io-magical-back-bow": { characterId: "io", label: "Io · Magical Back Bow", assetIds: ["back-magical-bow"], unlockIds: ["back-magical-bow"] },
+  "io-sheep-ears": { characterId: "io", label: "Io · Sheep Ears", assetIds: ["sheep-ears"], unlockIds: ["sheep-ears"] },
+  "io-crown": { characterId: "io", label: "Io · Crown", assetIds: ["crown"], unlockIds: ["crown"] },
+  "io-mew-garter": { characterId: "io", label: "Io · Mew Garter", assetIds: ["mew-garter"], unlockIds: ["mew-garter"] },
+  "io-mew-collar": { characterId: "io", label: "Io · Mew Collar", assetIds: ["mew-collar"], unlockIds: ["mew-collar"] }
 };
 
 function getWardrobeShopMeta(wardrobeId) {
@@ -4839,6 +5067,11 @@ function ensureStarterWardrobeUnlocked() {
   const miko = new Set(getCharacterUnlockedItems("miko"));
   getCharacterStarterWardrobe("miko").forEach(id => miko.add(id));
   save.characterUnlockedItems.miko = [...miko];
+
+  const io = new Set(getCharacterUnlockedItems("io"));
+  getCharacterStarterWardrobe("io").forEach(id => io.add(id));
+  save.characterUnlockedItems.io = [...io];
+
   save.unlockedItems = [...save.characterUnlockedItems.peep];
 }
 
@@ -4993,12 +5226,14 @@ function renderSockStyle(style) {
   card.setAttribute("aria-expanded", String(openSockStyleId === style.id));
   card.setAttribute("aria-label", `${style.label} socks. Choose placement.`);
 
-  card.append(makeCombinedThumb([style.left, style.right], {
-    boxW: 94,
-    boxH: 82,
-    targetW: 58,
-    targetH: 62
-  }));
+  card.append(style.previewAssetId
+    ? makeThumb(style.previewAssetId, { boxW: 94, boxH: 82, targetW: 58, targetH: 62 })
+    : makeCombinedThumb([style.left, style.right], {
+        boxW: 94,
+        boxH: 82,
+        targetW: 58,
+        targetH: 62
+      }));
 
   const name = document.createElement("span");
   name.className = "sock-style-name";
@@ -5042,7 +5277,7 @@ function renderSockOptions() {
   helper.textContent = "Tap a sock style, then choose left, right, or both.";
   closetOptions.append(helper);
 
-  for (const style of SOCK_STYLES) {
+  for (const style of getSockStyles()) {
     try {
       renderSockStyle(style);
     } catch (error) {
@@ -6879,7 +7114,7 @@ function launchMemoryGame() {
 }
 
 function launchDuckQuestGame() {
-  window.location.href = "duck-quest/?v=26";
+  window.location.href = "duck-quest/?v=27";
 }
 
 
@@ -11521,7 +11756,7 @@ scheduleNonCriticalWarmup(warmStartupAssets, 150);
 // Miko or Peep from appearing during app startup.
 setTimeout(() => {
   try {
-    const unlockedOnLoad = ["peep", "miko"]
+    const unlockedOnLoad = ["peep", "miko", "io"]
       .filter(characterId => isCharacterUnlocked(characterId))
       .filter(characterId => evaluateCharacterHappinessDuckReward(characterId, { notify: false, persistNow: false }));
 

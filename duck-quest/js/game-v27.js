@@ -106,7 +106,7 @@ function iconBackgroundById(id){ return ICON_BACKGROUND_COLORS.find(color=>color
 
 
 
-const DUCK_LIBRARY = [{"id": "standard-duck", "file": "Standard-duck.webp", "name": "Standard Duck"}, {"id": "pink-duck", "file": "Pink-duck.webp", "name": "Pink Duck"}, {"id": "rainbow-duck", "file": "Rainbow-duck.webp", "name": "Rainbow Duck"}];
+const DUCK_LIBRARY = [{"id":"angry-duck","name":"Angry Duck","file":"angry-duck.webp"},{"id":"apple-duck","name":"Apple Duck","file":"apple-duck.webp"},{"id":"bathtime-duck","name":"Bathtime Duck","file":"bathtime-duck.webp"},{"id":"duck-on-skateboard","name":"Duck on a Skateboard","file":"duck-on-skateboard.webp"},{"id":"googly-eye-duck","name":"Googly Eye Duck","file":"googly-eye-duck.webp"},{"id":"long-hair-duck","name":"Long Hair Duck","file":"long-hair-duck.webp"},{"id":"magenta-duck","name":"Magenta Duck","file":"magenta-duck.webp"},{"id":"pile-of-tiny-ducks","name":"Pile of Tiny Ducks","file":"pile-of-tiny-ducks.webp"},{"id":"scarf-duck","name":"Scarf Duck","file":"scarf-duck.webp"},{"id":"vampire-duck","name":"Vampire Duck","file":"vampire-duck.webp"},{"id":"alien-duck","name":"Alien Duck","file":"Alien-duck.webp"},{"id":"angel-duck","name":"Angel Duck","file":"Angel-duck.webp"},{"id":"aqua-duck","name":"Aqua Duck","file":"Aqua-duck.webp"},{"id":"artist-duck","name":"Artist Duck","file":"Artist-duck.webp"},{"id":"black-duck","name":"Black Duck","file":"Black-duck.webp"},{"id":"blue-duck","name":"Blue Duck","file":"Blue-duck.webp"},{"id":"bow-duck","name":"Bow Duck","file":"Bow-duck.webp"},{"id":"bronze-duck","name":"Bronze Duck","file":"Bronze-duck.webp"},{"id":"bunny-duck","name":"Bunny Duck","file":"Bunny-duck.webp"},{"id":"burger-duck","name":"Burger Duck","file":"Burger-duck.webp"},{"id":"cat-duck","name":"Cat Duck","file":"Cat-duck.webp"},{"id":"cool-duck","name":"Cool Duck","file":"Cool-duck.webp"},{"id":"cosmic-duck","name":"Cosmic Duck","file":"Cosmic-duck.webp"},{"id":"cupcake-duck","name":"Cupcake Duck","file":"Cupcake-duck.webp"},{"id":"dark-red-duck","name":"Dark Red Duck","file":"Dark-red-duck.webp"},{"id":"demon-duck","name":"Demon Duck","file":"Demon-duck.webp"},{"id":"doctor-duck","name":"Doctor Duck","file":"Doctor-duck.webp"},{"id":"duck-with-a-knife","name":"Duck with a Knife","file":"Duck-with-a-knife.webp"},{"id":"duckvee","name":"Duckvee","file":"Duckvee.webp"},{"id":"fancy-duck","name":"Fancy Duck","file":"Fancy-duck.webp"},{"id":"flower-duck","name":"Flower Duck","file":"Flower-duck.webp"},{"id":"gamer-duck","name":"Gamer Duck","file":"Gamer-duck.webp"},{"id":"ghost-duck","name":"Ghost Duck","file":"Ghost-duck.webp"},{"id":"glitter-duck","name":"Glitter Duck","file":"Glitter-duck.webp"},{"id":"golden-duck","name":"Golden Duck","file":"Golden-duck.webp"},{"id":"goose","name":"Goose","file":"Goose.webp"},{"id":"green-duck","name":"Green Duck","file":"Green-duck.webp"},{"id":"grey-duck","name":"Grey Duck","file":"Grey-duck.webp"},{"id":"gummy-duck","name":"Gummy Duck","file":"Gummy-duck.webp"},{"id":"jester-duck","name":"Jester Duck","file":"Jester-duck.webp"},{"id":"kidcore-duck","name":"Kidcore Duck","file":"Kidcore-duck.webp"},{"id":"king-duck","name":"King Duck","file":"King-duck.webp"},{"id":"knitted-duck","name":"Knitted Duck","file":"Knitted-duck.webp"},{"id":"lemon-duck","name":"Lemon Duck","file":"Lemon-duck.webp"},{"id":"lime-duck","name":"Lime Duck","file":"Lime-duck.webp"},{"id":"magical-girl-duck","name":"Magical Girl Duck","file":"Magical-girl-duck.webp"},{"id":"mint-duck","name":"Mint Duck","file":"Mint-duck.webp"},{"id":"mushroom-duck","name":"Mushroom Duck","file":"Mushroom-duck.webp"},{"id":"miko-duck","name":"Miko Duck","file":"miko-duck.webp"},{"id":"io-duck","name":"Io Duck","file":"io-duck.webp"},{"id":"orange-duck","name":"Orange Duck","file":"Orange-duck.webp"},{"id":"party-hat-duck","name":"Party Hat Duck","file":"Party-hat-duck.webp"},{"id":"peach-duck","name":"Peach Duck","file":"Peach-duck.webp"},{"id":"peep-duck","name":"Peep Duck","file":"peep-duck.webp"},{"id":"periwinkle-duck","name":"Periwinkle Duck","file":"Periwinkle-duck.webp"},{"id":"pink-duck","name":"Pink Duck","file":"Pink-duck.webp"},{"id":"pizza-duck","name":"Pizza Duck","file":"Pizza-duck.webp"},{"id":"plush-duck","name":"Plush Duck","file":"Plush-duck.webp"},{"id":"pompompurin-duck","name":"Pompompurin Duck","file":"Pompompurin-duck.webp"},{"id":"purple-duck","name":"Purple Duck","file":"Purple-duck.webp"},{"id":"rainbow-duck","name":"Rainbow Duck","file":"Rainbow-duck.webp"},{"id":"red-duck","name":"Red Duck","file":"Red-duck.webp"},{"id":"silver-duck","name":"Silver Duck","file":"Silver-duck.webp"},{"id":"sky-blue-duck","name":"Sky Blue Duck","file":"Sky-blue-duck.webp"},{"id":"sleepy-time-duck","name":"Sleepy Time Duck","file":"Sleepy-time-duck.webp"},{"id":"standard-duck","name":"Standard Duck","file":"Standard-duck.webp"},{"id":"strawberry-duck","name":"Strawberry Duck","file":"Strawberry-duck.webp"},{"id":"tiny-duck-stack","name":"Tiny Duck Stack","file":"Tiny-duck-stack.webp"},{"id":"tiny-duck","name":"Tiny Duck","file":"Tiny-duck.webp"},{"id":"top-hat-duck","name":"Top Hat Duck","file":"Top-hat-duck.webp"},{"id":"violet-duck","name":"Violet Duck","file":"Violet-duck.webp"},{"id":"watermelon-duck","name":"Watermelon Duck","file":"Watermelon-duck.webp"},{"id":"white-duck","name":"White Duck","file":"White-duck.webp"}];
 
 const PEEP_SKILLS = [
   {
@@ -192,7 +192,34 @@ const MIKO_SKILLS = [
   }
 ];
 
-function activeSkills(){ return activeCharacterId === "miko" ? MIKO_SKILLS : PEEP_SKILLS; }
+const IO_SKILLS = [
+  {
+    id:"heart-ray", name:"Heart Ray", unlock:1, type:"damage", multiplier:1.0, boostedMultiplier:1.8,
+    sprite:"assets/characters/io/base/heart-ray.webp",
+    description:"A heart-shaped beam. Every 5th use is boosted!"
+  },
+  {
+    id:"magic-juice", name:"Magic Juice Drink", unlock:10, type:"buff", attackBoost:0.40, duration:4,
+    sprite:"assets/characters/io/base/magic-juice.webp",
+    description:"Raise Io's Attack by 40% for 4 turns. Does not stack."
+  },
+  {
+    id:"sparkle-shot", name:"Sparkle Shot", unlock:25, type:"multi-hit", multiplier:1.35, hits:3,
+    sprite:"assets/characters/io/base/sparkle-shot.webp",
+    description:"Three little star hits from one sparkling beam."
+  },
+  {
+    id:"rainbow-check", name:"Rainbow Check", unlock:50, type:"full-heal", maxUses:2,
+    sprite:"assets/characters/io/base/rainbow-check.webp",
+    description:"Fully restore Io's HP. Can be used twice per battle."
+  }
+];
+
+function activeSkills(){
+  if(activeCharacterId === "miko") return MIKO_SKILLS;
+  if(activeCharacterId === "io") return IO_SKILLS;
+  return PEEP_SKILLS;
+}
 
 const ENEMIES = {
   "cat-slime": {
@@ -880,8 +907,21 @@ const MikoIdle = [
   "assets/characters/miko/base/idle-2.webp"
 ];
 
-function heroIdleFrames(){ return activeCharacterId === "miko" ? MikoIdle : PEepIdle; }
-function heroHurtFrame(){ return activeCharacterId === "miko" ? MikoIdle[0] : "assets/characters/peep/base/hurt.webp"; }
+const IoIdle = [
+  "assets/characters/io/base/idle-1.webp",
+  "assets/characters/io/base/idle-2.webp"
+];
+
+function heroIdleFrames(){
+  if(activeCharacterId === "miko") return MikoIdle;
+  if(activeCharacterId === "io") return IoIdle;
+  return PEepIdle;
+}
+function heroHurtFrame(){
+  if(activeCharacterId === "miko") return MikoIdle[0];
+  if(activeCharacterId === "io") return IoIdle[0];
+  return "assets/characters/peep/base/hurt.webp";
+}
 
 const ui = {
   home: document.querySelector("#homeScreen"),
@@ -970,13 +1010,15 @@ function activeCharacterIdFromQuest(){
   // On the first v26 launch, inherit the Hub OC once. After that Duck Quest
   // remembers its own independently selected hero.
   const requested=String(questSave.activeCharacter || hubSave.selectedCharacter || "peep");
-  return requested==="miko" && unlocked.includes("miko") ? "miko" : "peep";
+  if(requested==="miko" && unlocked.includes("miko")) return "miko";
+  if(requested==="io" && unlocked.includes("io")) return "io";
+  return "peep";
 }
 
 let activeCharacterId = activeCharacterIdFromQuest();
 questSave.activeCharacter = activeCharacterId;
 
-function heroDisplayName(){ return activeCharacterId==="miko" ? "Miko" : "Peep"; }
+function heroDisplayName(){ return activeCharacterId==="miko" ? "Miko" : activeCharacterId==="io" ? "Io" : "Peep"; }
 
 function defaultCharacterQuestProgress(){
   return {
@@ -1034,12 +1076,13 @@ function normalizeQuestSave(raw) {
       lastArea:q.lastArea,
       iconBackground:q.iconBackground
     }),
-    activeCharacter:q.activeCharacter==="miko"?"miko":(q.activeCharacter==="peep"?"peep":null),
+    activeCharacter:["peep","miko","io"].includes(q.activeCharacter)?q.activeCharacter:null,
     iconBackgroundsUnlocked:[...new Set(["white",...(Array.isArray(q.iconBackgroundsUnlocked)?q.iconBackgroundsUnlocked:[])])]
       .filter(id=>ICON_BACKGROUND_COLORS.some(color=>color.id===id)),
     bossWins:Math.max(0,Number(q.bossWins ?? q.completedRuns)||0)
   };
   if(q.miko&&typeof q.miko==="object") normalized.miko=normalizeCharacterQuestProgress(q.miko);
+  if(q.io&&typeof q.io==="object") normalized.io=normalizeCharacterQuestProgress(q.io);
   return normalized;
 }
 
@@ -1080,13 +1123,16 @@ function loadHubSave() {
     if (!parsed.characterProgress.miko || typeof parsed.characterProgress.miko !== "object") {
       parsed.characterProgress.miko = { happinessTotal:0 };
     }
+    if (!parsed.characterProgress.io || typeof parsed.characterProgress.io !== "object") {
+      parsed.characterProgress.io = { happinessTotal:0 };
+    }
     if (!Array.isArray(parsed.unlockedCharacters)) parsed.unlockedCharacters=["peep"];
     if (!parsed.unlockedCharacters.includes("peep")) parsed.unlockedCharacters.unshift("peep");
     parsed.selectedCharacter = parsed.unlockedCharacters.includes(parsed.selectedCharacter) ? parsed.selectedCharacter : "peep";
     parsed.coins = Math.max(0, Number(parsed.coins) || 0);
     return parsed;
   } catch {
-    return { coins:0, inventory:{}, unlockedDucks:[], unlockedCharacters:["peep"], selectedCharacter:"peep", characterProgress:{peep:{happinessTotal:0},miko:{happinessTotal:0}} };
+    return { coins:0, inventory:{}, unlockedDucks:[], unlockedCharacters:["peep"], selectedCharacter:"peep", characterProgress:{peep:{happinessTotal:0},miko:{happinessTotal:0},io:{happinessTotal:0}} };
   }
 }
 
@@ -1371,43 +1417,48 @@ function currentMikoLayerIds(){
   return ids.filter(id=>MIKO_LAYER_MAP[id]).sort((a,b)=>MIKO_LAYER_MAP[a].z-MIKO_LAYER_MAP[b].z);
 }
 
-function renderMikoComposite(container,src=MikoIdle[0]){
+function renderHeroComposite(container,src=heroIdleFrames()[0]){
   if(!container) return;
   let img=container.querySelector("img");
   if(!img){
     container.innerHTML="";
     img=document.createElement("img");
-    img.className="miko-quest-sprite pixel-sprite";
-    img.alt="Miko";
+    img.className="quest-composite-sprite pixel-sprite";
     container.appendChild(img);
   }
+  img.alt=heroDisplayName();
   img.src=src;
 }
 
+
 function activeHeroVisual(){
-  return activeCharacterId==="miko" ? ui.battleHeroComposite : ui.peepSprite;
+  return activeCharacterId==="peep" ? ui.peepSprite : ui.battleHeroComposite;
 }
 
 function renderHeroVisuals(){
+  const usesComposite=activeCharacterId!=="peep";
   const isMiko=activeCharacterId==="miko";
+  const isIo=activeCharacterId==="io";
   ui.battlefield?.classList.toggle("miko-active",isMiko);
+  ui.battlefield?.classList.toggle("io-active",isIo);
   const name=heroDisplayName();
   if(ui.heroNameHome) ui.heroNameHome.textContent=name;
   if(ui.heroNameCombat) ui.heroNameCombat.textContent=name;
   if(ui.exploreHeading) ui.exploreHeading.textContent=`Where should ${name} Explore?`;
   if(ui.skillsKicker) ui.skillsKicker.textContent=`${name.toUpperCase()}'S SKILLS`;
 
-  ui.menuPeep?.classList.toggle("hidden",isMiko);
-  ui.menuHeroComposite?.classList.toggle("hidden",!isMiko);
-  ui.peepSprite?.classList.toggle("hidden",isMiko);
-  ui.battleHeroComposite?.classList.toggle("hidden",!isMiko);
-  ui.resultPeep?.classList.toggle("hidden",isMiko);
-  ui.resultHeroComposite?.classList.toggle("hidden",!isMiko);
+  ui.menuPeep?.classList.toggle("hidden",usesComposite);
+  ui.menuHeroComposite?.classList.toggle("hidden",!usesComposite);
+  ui.peepSprite?.classList.toggle("hidden",usesComposite);
+  ui.battleHeroComposite?.classList.toggle("hidden",!usesComposite);
+  ui.resultPeep?.classList.toggle("hidden",usesComposite);
+  ui.resultHeroComposite?.classList.toggle("hidden",!usesComposite);
 
-  if(isMiko){
-    renderMikoComposite(ui.menuHeroComposite,MikoIdle[0]);
-    renderMikoComposite(ui.battleHeroComposite,MikoIdle[0]);
-    renderMikoComposite(ui.resultHeroComposite,MikoIdle[0]);
+  if(usesComposite){
+    const idle=heroIdleFrames()[0];
+    renderHeroComposite(ui.menuHeroComposite,idle);
+    renderHeroComposite(ui.battleHeroComposite,idle);
+    renderHeroComposite(ui.resultHeroComposite,idle);
   }
 }
 
@@ -1418,7 +1469,7 @@ function skillDisplayDescription(skill){ return skill.description; }
 
 function availableQuestCharacters(){
   const unlocked=Array.isArray(hubSave.unlockedCharacters)?hubSave.unlockedCharacters:["peep"];
-  return ["peep","miko"].filter(id=>unlocked.includes(id));
+  return ["peep","miko","io"].filter(id=>unlocked.includes(id));
 }
 
 function renderSwitchOcButton(){
@@ -1431,7 +1482,8 @@ function renderSwitchOcButton(){
   ui.switchQuestOc.classList.remove("hidden");
   const currentIndex=Math.max(0,available.indexOf(activeCharacterId));
   const nextId=available[(currentIndex+1)%available.length];
-  ui.switchQuestOc.textContent=`Switch to ${nextId==="miko"?"Miko":"Peep"}`;
+  const names={peep:"Peep",miko:"Miko",io:"Io"};
+  ui.switchQuestOc.textContent=`Switch to ${names[nextId]||nextId}`;
 }
 
 function switchQuestCharacter(){
@@ -1577,7 +1629,7 @@ function startEncounter() {
   actionLocked=false;
   pendingChest=null;
   quickHealUses=0;
-  skillState={ cooldowns:{}, onceUsed:{}, attackBuffTurns:0, attackBuffMultiplier:1.30 };
+  skillState={ cooldowns:{}, onceUsed:{}, attackBuffTurns:0, attackBuffMultiplier:1.30, activeBuffSkillId:null, heartRayCount:0, ioRainbowUses:0 };
   ui.chestLayer.classList.add("hidden");
   ui.continueButton.classList.add("hidden");
   ui.commandGrid.classList.remove("hidden");
@@ -1655,7 +1707,7 @@ function startEnemy(enemyId) {
 }
 
 function setHeroFrame(src){
-  if(activeCharacterId==="miko") renderMikoComposite(ui.battleHeroComposite,src);
+  if(activeCharacterId!=="peep") renderHeroComposite(ui.battleHeroComposite,src);
   else if(ui.peepSprite) ui.peepSprite.src=src;
 }
 
@@ -1734,12 +1786,23 @@ function renderSkills() {
       } else if(skill.oncePerBattle && skillState.onceUsed?.[skill.id]) {
         unavailable=true;
         detail="Already used this battle.";
-      } else if(skill.id==="smug" && skillState.attackBuffTurns>0) {
+      } else if(skill.type==="buff" && skillState.attackBuffTurns>0) {
         unavailable=true;
-        detail=`Attack +30% active · ${skillState.attackBuffTurns} turn${skillState.attackBuffTurns===1?"":"s"}`;
+        const boost=Math.round((skill.attackBoost||0.30)*100);
+        detail=`Attack +${boost}% active · ${skillState.attackBuffTurns} turn${skillState.attackBuffTurns===1?"":"s"}`;
+      } else if(skill.id==="rainbow-check") {
+        const used=Math.max(0,Number(skillState.ioRainbowUses)||0);
+        const maxUses=Math.max(1,Number(skill.maxUses)||2);
+        if(used>=maxUses){ unavailable=true; detail="No uses left this battle."; }
+        else if(currentRun && currentRun.hp>=currentRun.maxHp){ unavailable=true; detail=`Full HP · ${maxUses-used}/${maxUses} uses left`; }
+        else detail=`Full heal · ${maxUses-used}/${maxUses} uses left`;
+      } else if(skill.id==="heart-ray") {
+        const count=Math.max(0,Number(skillState.heartRayCount)||0);
+        const until=5-(count%5);
+        detail=until===1?"Next Heart Ray is boosted!":`Boost in ${until} uses`;
       }
 
-      button.className=`pixel-button skill-button ${skill.type==="heal"?"heal":skill.type==="buff"?"buff":skill.id==="duck-throw"?"duck":skill.oncePerBattle?"ultimate":""}`;
+      button.className=`pixel-button skill-button ${(skill.type==="heal"||skill.type==="full-heal")?"heal":skill.type==="buff"?"buff":skill.id==="duck-throw"?"duck":skill.oncePerBattle?"ultimate":""}`;
       button.disabled=unavailable || actionLocked;
       button.innerHTML=`<strong>${skillDisplayName(skill)}</strong><span${detail.startsWith("Cooldown")?' class="cooldown"':""}>${detail}</span>`;
 
@@ -1921,17 +1984,38 @@ async function useSkill(skill) {
     showFloat(`+${healed}`,"heal","peep");
     renderPeepHp();
     await sleep(700);
+  } else if(skill.type==="full-heal") {
+    const maxUses=Math.max(1,Number(skill.maxUses)||2);
+    if((skillState.ioRainbowUses||0)>=maxUses){
+      setMessage(`${skillDisplayName(skill)} has no uses left this battle!`);
+      actionLocked=false; renderSkills(); renderCommandButtons(); return;
+    }
+    const before=currentRun.hp;
+    currentRun.hp=currentRun.maxHp;
+    skillState.ioRainbowUses=(skillState.ioRainbowUses||0)+1;
+    const healed=Math.max(0,currentRun.hp-before);
+    setMessage(`${skillDisplayName(skill)}! ${heroDisplayName()} restored ${healed} HP.`);
+    showFloat(`+${healed}`,"heal","peep");
+    renderPeepHp();
+    await sleep(700);
   } else if(skill.type==="buff") {
     skillState.attackBuffTurns=skill.duration||3;
     skillState.attackBuffMultiplier=1+(skill.attackBoost||0.30);
-    setMessage(`Smug! Miko's Attack rose by 30% for ${skillState.attackBuffTurns} turns.`);
+    skillState.activeBuffSkillId=skill.id;
+    const boost=Math.round((skill.attackBoost||0.30)*100);
+    setMessage(`${skillDisplayName(skill)}! ${heroDisplayName()}'s Attack rose by ${boost}% for ${skillState.attackBuffTurns} turns.`);
     await sleep(700);
   } else if(skill.type==="multi-hit") {
     const stats=peepStats();
     const boostedAttack=stats.attack*(skillState.attackBuffTurns>0?skillState.attackBuffMultiplier:1);
     const hits=Math.max(2,Number(skill.hits)||4);
     const perHit=(skill.multiplier||1)/hits;
-    setMessage("He has a gun! Miko fires four quick shots!");
+    const multiMessage = skill.id==="gun"
+      ? "He has a gun! Miko fires four quick shots!"
+      : skill.id==="sparkle-shot"
+        ? "Sparkle Shot! Io fires three sparkling stars!"
+        : `${skillDisplayName(skill)}! ${heroDisplayName()} attacks ${hits} times!`;
+    setMessage(multiMessage);
     await sleep(240);
     for(let i=0;i<hits && currentEnemy && currentEnemy.hpNow>0;i++){
       const variance=0.96+Math.random()*0.08;
@@ -1942,6 +2026,14 @@ async function useSkill(skill) {
   } else {
     let multiplier=skill.multiplier||1;
     let flavor=skillDisplayName(skill);
+
+    if(skill.id==="heart-ray") {
+      skillState.heartRayCount=(skillState.heartRayCount||0)+1;
+      if(skillState.heartRayCount%5===0){
+        multiplier=skill.boostedMultiplier||1.8;
+        flavor="Heart Ray! The 5th heart bursts with extra power!";
+      }
+    }
 
     if(skill.id==="duck-throw") {
       const duck=pickThrowDuck();
@@ -1982,7 +2074,10 @@ function decrementCooldowns(usedSkillId) {
   Object.keys(skillState.cooldowns).forEach(id=>{
     if(id!==usedSkillId && skillState.cooldowns[id]>0) skillState.cooldowns[id]--;
   });
-  if(usedSkillId!=="smug" && skillState.attackBuffTurns>0) skillState.attackBuffTurns--;
+  if(usedSkillId!==skillState.activeBuffSkillId && skillState.attackBuffTurns>0) {
+    skillState.attackBuffTurns--;
+    if(skillState.attackBuffTurns<=0) skillState.activeBuffSkillId=null;
+  }
 }
 
 async function hurtEnemy(dmg) {
@@ -2356,9 +2451,10 @@ function renderResult(won) {
 function pickThrowDuck() {
   const unlocked=Array.isArray(hubSave.unlockedDucks)?hubSave.unlockedDucks:[];
   const normalize=v=>String(v||"").toLowerCase().replace(/\.[^.]+$/,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
-  const pool=DUCK_LIBRARY.filter(d=>unlocked.some(id=>normalize(id)===normalize(d.id)));
-  const candidates=pool.length?pool:DUCK_LIBRARY;
-  return candidates[randInt(0,candidates.length-1)];
+  const unlockedIds=new Set(unlocked.map(normalize));
+  const pool=DUCK_LIBRARY.filter(d=>unlockedIds.has(normalize(d.id)));
+  const candidates=pool.length?pool:DUCK_LIBRARY.filter(d=>normalize(d.id)==="standard-duck");
+  return candidates[randInt(0,candidates.length-1)] || DUCK_LIBRARY[0];
 }
 
 function showThrownDuck(duck) {
@@ -2449,9 +2545,10 @@ const menuPeep=document.querySelector("#menuPeep");
 let menuFrame=0;
 setInterval(()=>{
   if(ui.home.classList.contains("hidden")) return;
-  if(activeCharacterId==="miko"){
-    menuFrame=(menuFrame+1)%MikoIdle.length;
-    renderMikoComposite(ui.menuHeroComposite,MikoIdle[menuFrame]);
+  if(activeCharacterId!=="peep"){
+    const frames=heroIdleFrames();
+    menuFrame=(menuFrame+1)%frames.length;
+    renderHeroComposite(ui.menuHeroComposite,frames[menuFrame]);
     return;
   }
   menuFrame=(menuFrame+1)%PEepIdle.length;

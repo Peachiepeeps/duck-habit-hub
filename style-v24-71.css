@@ -6584,3 +6584,17 @@ button { color: inherit; }
     flex-basis:38px;
   }
 }
+
+
+/* =========================================================
+   V24.71 — Io + capsule split polish
+   ========================================================= */
+
+/* Open capsule halves like a real gachapon: upright halves separate
+   horizontally instead of dropping/tilting over one another. */
+.gacha-capsule.cracking .clear-half{
+  transform:translate(-8.6%,6.5%) rotate(-2deg);
+}
+.gacha-capsule.cracking .color-half{
+  transform:translate(8.6%,6.5%) rotate(2deg);
+}

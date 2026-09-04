@@ -1070,3 +1070,24 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
   .command-overlay .command-window-header{top:-45px;right:3px}
   .command-back-button{min-height:27px!important;padding:2px 6px!important;font-size:.51rem!important}
 }
+
+
+/* =========================================================
+   V25 — Io support
+   ========================================================= */
+.battlefield.io-active .peep-combatant{
+  left:5%; top:1%; bottom:auto !important; width:41%; height:98%; display:block;
+}
+.battlefield.io-active .peep-status-stack{
+  position:absolute; z-index:5; left:0; top:0; width:100%; transform:none !important; display:grid; gap:4px;
+}
+.battlefield.io-active .battle-hero-composite{
+  position:absolute !important; left:8% !important; top:49% !important; margin:0 !important;
+}
+.battlefield.io-active.ocean-peep-raised .battle-hero-composite{top:24px !important}
+@media(max-width:600px){
+  .battlefield.io-active .peep-combatant{left:5%;top:1%;bottom:auto !important;width:45%;height:98%}
+  .battlefield.io-active .peep-status-stack{left:0;top:0;width:100%;transform:none !important}
+  .battlefield.io-active .battle-hero-composite{left:8% !important;top:49% !important}
+  .battlefield.io-active.ocean-peep-raised .battle-hero-composite{top:22px !important}
+}
