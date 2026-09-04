@@ -965,13 +965,16 @@ const ui = {
 let hubSave = loadHubSave();
 let questSave = normalizeQuestSave(hubSave.duckQuest);
 
-function activeCharacterIdFromHub(){
-  const requested=String(hubSave.selectedCharacter||"peep");
+function activeCharacterIdFromQuest(){
   const unlocked=Array.isArray(hubSave.unlockedCharacters)?hubSave.unlockedCharacters:["peep"];
+  // On the first v26 launch, inherit the Hub OC once. After that Duck Quest
+  // remembers its own independently selected hero.
+  const requested=String(questSave.activeCharacter || hubSave.selectedCharacter || "peep");
   return requested==="miko" && unlocked.includes("miko") ? "miko" : "peep";
 }
 
-let activeCharacterId = activeCharacterIdFromHub();
+let activeCharacterId = activeCharacterIdFromQuest();
+questSave.activeCharacter = activeCharacterId;
 
 function heroDisplayName(){ return activeCharacterId==="miko" ? "Miko" : "Peep"; }
 
@@ -1013,6 +1016,7 @@ function normalizeCharacterQuestProgress(raw, legacy={}){
 function defaultQuestSave() {
   return {
     peep:defaultCharacterQuestProgress(),
+    activeCharacter:"peep",
     iconBackgroundsUnlocked:["white"],
     completedRuns:0,bossWins:0,totalBattlesWon:0,totalCoinsEarned:0,totalExpEarned:0
   };
@@ -1030,6 +1034,7 @@ function normalizeQuestSave(raw) {
       lastArea:q.lastArea,
       iconBackground:q.iconBackground
     }),
+    activeCharacter:q.activeCharacter==="miko"?"miko":(q.activeCharacter==="peep"?"peep":null),
     iconBackgroundsUnlocked:[...new Set(["white",...(Array.isArray(q.iconBackgroundsUnlocked)?q.iconBackgroundsUnlocked:[])])]
       .filter(id=>ICON_BACKGROUND_COLORS.some(color=>color.id===id)),
     bossWins:Math.max(0,Number(q.bossWins ?? q.completedRuns)||0)
@@ -1435,7 +1440,7 @@ function switchQuestCharacter(){
   if(available.length<2) return;
   const currentIndex=Math.max(0,available.indexOf(activeCharacterId));
   activeCharacterId=available[(currentIndex+1)%available.length];
-  hubSave.selectedCharacter=activeCharacterId;
+  questSave.activeCharacter=activeCharacterId;
   const progress=activeHeroProgress();
   selectedArea=AREA_CONFIG[progress.lastArea]?progress.lastArea:"meadow";
   selectedRank=Math.min(areaProgress(selectedArea).unlockedRank,Math.max(1,areaProgress(selectedArea).lastRank||1));

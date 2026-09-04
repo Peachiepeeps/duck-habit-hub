@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#f7dbe5" />
   <title>Duck Habit Hub</title>
   <!-- v24.41 performance update -->
-  <link rel="stylesheet" href="style-v24-66.css" />
+  <link rel="stylesheet" href="style-v24-67.css" />
 
   <link rel="manifest" href="manifest.webmanifest?v=24-38-icon-v4">
   <link rel="apple-touch-icon" href="apple-touch-icon-v4.png">
@@ -792,7 +792,7 @@
             </div>
 
             <div class="profile-icon-color-card">
-              <span class="profile-icon-color-label">Icon Color</span>
+              <span class="profile-icon-color-label">Profile Icon Background</span>
               <div class="profile-icon-picker-wrap">
                 <button id="profileIconPickerButton" class="profile-icon-picker-button" type="button" aria-expanded="false">
                   <span id="profileIconPickerSwatch" class="profile-icon-current-swatch" aria-hidden="true"></span>
@@ -1027,7 +1027,10 @@
           <button data-book-page="crafter">🦆 <span>Duck Crafter</span></button>
           <button data-book-page="duckipedia">📖 <span>Duckipedia</span></button>
           <button data-book-page="games">🎮 <span>Games</span></button>
-          <button class="book-menu-gacha" data-book-page="gacha"><img class="book-menu-gacha-icon" src="assets/gacha/gacha-machine.png" alt="" /><span>Gacha</span></button>
+          <button class="book-menu-gacha" type="button" data-book-page="gacha">
+            <img class="book-gacha-icon" src="assets/gacha/gacha-menu-icon.webp" alt="" aria-hidden="true" />
+            <span>Gacha</span>
+          </button>
           <button data-book-page="achievements">🏆 <span>Achievements</span></button>
           <button data-book-page="status">★ <span>Status</span></button>
           <button data-book-page="profiles">👤 <span>Profiles</span></button>
@@ -1036,12 +1039,12 @@
       </section>
     </section>
   </main>
-  <script src="script-v24-66.js"></script>
+  <script src="script-v24-67.js"></script>
 
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw-v24-66.js", { updateViaCache: "none" }).catch(error => {
+        navigator.serviceWorker.register("./sw-v24-67.js", { updateViaCache: "none" }).catch(error => {
           console.warn("Duck Habit Hub offline setup could not start:", error);
         });
       });

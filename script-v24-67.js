@@ -6844,7 +6844,7 @@ function launchMemoryGame() {
 }
 
 function launchDuckQuestGame() {
-  window.location.href = "duck-quest/?v=25";
+  window.location.href = "duck-quest/?v=26";
 }
 
 
@@ -9429,11 +9429,34 @@ function unlockedProfileIconBackgroundIds() {
   return save.duckQuest.iconBackgroundsUnlocked;
 }
 
-function profileIconBackgroundForCharacter(characterId) {
-  const progress = normalizeDuckQuestCharacterProgress(characterId);
+function normalizeProfileIconBackgroundSelections() {
+  if (!save.profileIconBackgrounds || typeof save.profileIconBackgrounds !== "object") {
+    save.profileIconBackgrounds = {};
+  }
+
   const unlocked = unlockedProfileIconBackgroundIds();
-  if (!unlocked.includes(progress.iconBackground)) progress.iconBackground = "white";
-  return profileIconBackgroundById(progress.iconBackground);
+  for (const characterId of Object.keys(CHARACTERS)) {
+    let selected = save.profileIconBackgrounds[characterId];
+
+    // One-time migration: start with that OC's current Duck Quest background,
+    // then let Profile and Duck Quest choices diverge independently afterward.
+    if (!PROFILE_ICON_BACKGROUNDS.some(background => background.id === selected)) {
+      const questProgress = normalizeDuckQuestCharacterProgress(characterId);
+      selected = unlocked.includes(questProgress.iconBackground)
+        ? questProgress.iconBackground
+        : "white";
+    }
+
+    if (!unlocked.includes(selected)) selected = "white";
+    save.profileIconBackgrounds[characterId] = selected;
+  }
+
+  return save.profileIconBackgrounds;
+}
+
+function profileIconBackgroundForCharacter(characterId) {
+  const selections = normalizeProfileIconBackgroundSelections();
+  return profileIconBackgroundById(selections[characterId] || "white");
 }
 
 function applyProfileIconBackground(element, characterId) {
@@ -9451,9 +9474,10 @@ function closeProfileIconPicker() {
 
 function renderProfileIconPicker(characterId = selectedProfileCharacterId) {
   if (!characterId || !profileIconPicker || !profileIconPickerButton) return;
-  const progress = normalizeDuckQuestCharacterProgress(characterId);
+  const selections = normalizeProfileIconBackgroundSelections();
   const unlocked = new Set(unlockedProfileIconBackgroundIds());
-  const current = profileIconBackgroundById(progress.iconBackground);
+  const currentId = selections[characterId] || "white";
+  const current = profileIconBackgroundById(currentId);
 
   if (profileIconPickerSwatch) {
     profileIconPickerSwatch.style.background = current.value;
@@ -9467,7 +9491,7 @@ function renderProfileIconPicker(characterId = selectedProfileCharacterId) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = `profile-icon-choice${isUnlocked ? "" : " locked"}`;
-    button.setAttribute("aria-current", String(progress.iconBackground === background.id));
+    button.setAttribute("aria-current", String(currentId === background.id));
     button.setAttribute("aria-label", `${background.label}${isUnlocked ? "" : ", locked"}`);
     button.title = background.label;
 
@@ -9489,8 +9513,8 @@ function renderProfileIconPicker(characterId = selectedProfileCharacterId) {
         showToast("That Icon Background is still locked. Find it in Duck Quest!");
         return;
       }
-      progress.iconBackground = background.id;
-      if (characterId === "peep") save.duckQuest.iconBackground = background.id;
+      selections[characterId] = background.id;
+      save.profileIconBackgrounds = selections;
       persist();
       applyProfileIconBackground(profileDetailAvatar, characterId);
       renderProfileIconPicker(characterId);
