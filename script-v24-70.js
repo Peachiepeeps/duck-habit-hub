@@ -8930,7 +8930,7 @@ function renderPaintMixingDaily() {
   if (daily.activeUntil) {
     renderSimpleDailyState(
       paintMixState,
-      "🎨",
+      "pink-paint",
       "Mixing in progress…",
       `Ready in ${formatCountdown(Number(daily.activeUntil) - Date.now())}`
     );
@@ -8946,7 +8946,7 @@ function renderPaintMixingDaily() {
   if (remaining > 0) {
     renderSimpleDailyState(
       paintMixState,
-      "🎨",
+      "pink-paint",
       `${remaining} mix${remaining === 1 ? "" : "es"} left today`,
       "Each one takes an hour and gives exactly one Paint."
     );
@@ -9311,8 +9311,12 @@ function renderShoppingDaily() {
 
   if (daily.activeUntil) {
     const icon = document.createElement("div");
-    icon.className = "shopping-state-icon";
-    icon.textContent = "🛍";
+    icon.className = "shopping-state-icon shopping-state-image-icon";
+    const iconImage = document.createElement("img");
+    iconImage.src = "assets/ui/icons/shop.webp";
+    iconImage.alt = "";
+    iconImage.setAttribute("aria-hidden", "true");
+    icon.append(iconImage);
 
     const copy = document.createElement("div");
     const strong = document.createElement("strong");

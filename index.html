@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#f7dbe5" />
   <title>Duck Habit Hub</title>
   <!-- v24.41 performance update -->
-  <link rel="stylesheet" href="style-v24-69.css" />
+  <link rel="stylesheet" href="style-v24-70.css" />
 
   <link rel="manifest" href="manifest.webmanifest?v=24-38-icon-v4">
   <link rel="apple-touch-icon" href="apple-touch-icon-v4.png">
@@ -345,7 +345,7 @@
               <p class="duck-placement-note">Display ducks without using them up. You can swap them anytime! ♡</p>
 
               <button id="assignDuckToOc" class="duck-placement-button" type="button">
-                <span class="duck-placement-button-icon">🦆</span>
+                <span class="duck-placement-button-icon"><img class="tiny-standard-duck-icon" src="assets/ducks/Standard-duck.webp" alt="" aria-hidden="true" /></span>
                 <span class="duck-placement-button-copy">
                   <strong>Assign to OC</strong>
                   <small id="assignDuckToOcNote">Place this duck on Peep's head.</small>
@@ -484,7 +484,7 @@
 
           <section class="daily-card shopping-daily">
             <div class="daily-card-top">
-              <div class="daily-icon-bubble">🛍</div>
+              <div class="daily-icon-bubble daily-image-bubble handmade-daily-icon"><img src="assets/ui/icons/shop.webp" alt="" loading="lazy" decoding="async" /></div>
               <div class="daily-card-title">
                 <span>FORAGE</span>
                 <h2>Shopping Trip</h2>
@@ -581,7 +581,7 @@
             </article>
 
             <article class="status-stat-card">
-              <div class="status-stat-symbol duck-symbol">🦆</div>
+              <div class="status-stat-symbol duck-symbol"><img class="tiny-standard-duck-icon" src="assets/ducks/Standard-duck.webp" alt="" aria-hidden="true" /></div>
               <span>Ducks Created</span>
               <strong id="statusDucks">0 / 60</strong>
             </article>
@@ -1017,34 +1017,31 @@
           <button id="closeBook" class="close-button" type="button" aria-label="Close book">×</button>
         </div>
         <div class="book-grid">
-          <button data-book-page="tasks">✓ <span>Tasks</span></button>
-          <button class="book-menu-button" type="button" data-book-page="dailies">
-            <b>☀</b>
-            <span>Dailies</span>
-          </button>
-          <button data-book-page="inventory">🎒 <span>Inventory</span></button>
-          <button data-book-page="shop">♡ <span>Shop</span></button>
-          <button data-book-page="crafter">🦆 <span>Duck Crafter</span></button>
-          <button data-book-page="duckipedia">📖 <span>Duckipedia</span></button>
-          <button data-book-page="games">🎮 <span>Games</span></button>
+          <button class="book-menu-image-button" data-book-page="tasks"><img class="book-menu-icon" src="assets/ui/icons/tasks.webp" alt="" aria-hidden="true" /><span>Tasks</span></button>
+          <button class="book-menu-image-button" type="button" data-book-page="dailies"><img class="book-menu-icon" src="assets/ui/icons/dailies.webp" alt="" aria-hidden="true" /><span>Dailies</span></button>
+          <button class="book-menu-image-button" data-book-page="inventory"><img class="book-menu-icon" src="assets/ui/icons/inventory.webp" alt="" aria-hidden="true" /><span>Inventory</span></button>
+          <button class="book-menu-image-button" data-book-page="shop"><img class="book-menu-icon" src="assets/ui/icons/shop.webp" alt="" aria-hidden="true" /><span>Shop</span></button>
+          <button class="book-menu-image-button" data-book-page="crafter"><img class="book-menu-icon" src="assets/ducks/Standard-duck.webp" alt="" aria-hidden="true" /><span>Duck Crafter</span></button>
+          <button class="book-menu-image-button" data-book-page="duckipedia"><img class="book-menu-icon" src="assets/ui/icons/duckipedia.webp" alt="" aria-hidden="true" /><span>Duckipedia</span></button>
+          <button class="book-menu-image-button" data-book-page="games"><img class="book-menu-icon" src="assets/gifts/Gaming-controller.webp" alt="" aria-hidden="true" /><span>Games</span></button>
           <button class="book-menu-gacha" type="button" data-book-page="gacha">
             <img class="book-gacha-icon" src="assets/gacha/gacha-menu-icon.webp" alt="" aria-hidden="true" />
             <span>Gacha</span>
           </button>
-          <button data-book-page="achievements">🏆 <span>Achievements</span></button>
-          <button data-book-page="status">★ <span>Status</span></button>
-          <button data-book-page="profiles">👤 <span>Profiles</span></button>
-          <button data-book-page="save-data">💾 <span>Save Data</span></button>
+          <button class="book-menu-image-button" data-book-page="achievements"><img class="book-menu-icon" src="assets/achievements/trophies/trophy-gold.webp" alt="" aria-hidden="true" /><span>Achievements</span></button>
+          <button class="book-menu-image-button" data-book-page="status"><img class="book-menu-icon" src="assets/ui/icons/status.webp" alt="" aria-hidden="true" /><span>Status</span></button>
+          <button class="book-menu-image-button" data-book-page="profiles"><img class="book-menu-icon" src="assets/ui/icons/profiles.webp" alt="" aria-hidden="true" /><span>Profiles</span></button>
+          <button class="book-menu-image-button" data-book-page="save-data"><img class="book-menu-icon" src="assets/ui/icons/save-data.webp" alt="" aria-hidden="true" /><span>Save Data</span></button>
         </div>
       </section>
     </section>
   </main>
-  <script src="script-v24-69.js"></script>
+  <script src="script-v24-70.js"></script>
 
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw-v24-69.js", { updateViaCache: "none" }).catch(error => {
+        navigator.serviceWorker.register("./sw-v24-70.js", { updateViaCache: "none" }).catch(error => {
           console.warn("Duck Habit Hub offline setup could not start:", error);
         });
       });
