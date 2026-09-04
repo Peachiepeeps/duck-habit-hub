@@ -1,5 +1,5 @@
 const STORAGE_KEY = "duckHabitHubSave_v1";
-const SAVE_VERSION = 29;
+const SAVE_VERSION = 30;
 
 const CHARACTERS = {
   peep: {
@@ -1778,7 +1778,7 @@ const DUCKS = {
   },
   "miko-duck": {
     "name": "Miko Duck",
-    "file": "miko-duck.webp",
+    "file": "assets/ducks/miko-duck.webp",
     "acquisition": "character-happiness-100",
     "characterId": "miko"
   },
@@ -1808,7 +1808,7 @@ const DUCKS = {
   },
   "peep-duck": {
     "name": "Peep Duck",
-    "file": "peep-duck.webp",
+    "file": "assets/ducks/peep-duck.webp",
     "acquisition": "character-happiness-100",
     "characterId": "peep"
   },
@@ -2674,6 +2674,87 @@ function loadSave() {
 }
 let save = loadSave();
 
+const GACHA_PULL_COST = 100;
+const GACHA_TEN_PULL_COST = 900;
+const GACHA_RARITY_ORDER = Object.freeze(["common", "uncommon", "rare", "super"]);
+const GACHA_RARITY_LABELS = Object.freeze({
+  common: "COMMON",
+  uncommon: "UNCOMMON",
+  rare: "RARE",
+  super: "SUPER RARE"
+});
+const GACHA_RARITY_WEIGHTS = Object.freeze({
+  common: 60,
+  uncommon: 25,
+  rare: 12,
+  super: 3
+});
+const GACHA_SUPER_DUCKS = new Set(["peep-duck", "miko-duck", "goose", "rainbow-duck"]);
+const GACHA_GATED_SUPER_DUCKS = new Set(["peep-duck", "miko-duck", "goose"]);
+const GACHA_EXCLUDED_DUCKS = new Set(["tiny-duck", "tiny-duck-stack", "pile-of-tiny-ducks"]);
+const DUCK_TROPHY_MILESTONES = Object.freeze([
+  { count: 1, tier: "bronze", label: "Bronze" },
+  { count: 25, tier: "silver", label: "Silver" },
+  { count: 50, tier: "gold", label: "Gold" },
+  { count: 100, tier: "rose-gold", label: "Rose Gold" }
+]);
+
+function ensureDuckCollectionState() {
+  if (!save.duckCollectionCounts || typeof save.duckCollectionCounts !== "object" || Array.isArray(save.duckCollectionCounts)) {
+    save.duckCollectionCounts = {};
+  }
+  for (const [duckId, quantity] of Object.entries(save.duckCollectionCounts)) {
+    if (!DUCKS[duckId]) {
+      delete save.duckCollectionCounts[duckId];
+      continue;
+    }
+    save.duckCollectionCounts[duckId] = Math.max(0, Math.floor(Number(quantity) || 0));
+  }
+  for (const duckId of Array.isArray(save.unlockedDucks) ? save.unlockedDucks : []) {
+    if (DUCKS[duckId]) save.duckCollectionCounts[duckId] = Math.max(1, Number(save.duckCollectionCounts[duckId]) || 0);
+  }
+
+  if (!save.gacha || typeof save.gacha !== "object" || Array.isArray(save.gacha)) save.gacha = {};
+  save.gacha.totalPulls = Math.max(0, Math.floor(Number(save.gacha.totalPulls) || 0));
+  save.gacha.rareMisses = Math.max(0, Math.floor(Number(save.gacha.rareMisses) || 0));
+  save.gacha.superMisses = Math.max(0, Math.floor(Number(save.gacha.superMisses) || 0));
+}
+
+function duckCollectionCount(duckId) {
+  ensureDuckCollectionState();
+  return Math.max(0, Math.floor(Number(save.duckCollectionCounts[duckId]) || 0));
+}
+
+function duckTrophyInfoForCount(count) {
+  const safe = Math.max(0, Math.floor(Number(count) || 0));
+  let earned = null;
+  for (const milestone of DUCK_TROPHY_MILESTONES) {
+    if (safe >= milestone.count) earned = milestone;
+  }
+  const next = DUCK_TROPHY_MILESTONES.find(milestone => safe < milestone.count) || null;
+  return { count: safe, earned, next };
+}
+
+function incrementDuckCollection(duckId, amount = 1, options = {}) {
+  const id = normalizeDuckId(duckId);
+  if (!id || !DUCKS[id]) return { before: 0, after: 0, upgraded: null };
+  ensureDuckCollectionState();
+
+  const before = duckCollectionCount(id);
+  const after = before + Math.max(0, Math.floor(Number(amount) || 0));
+  save.duckCollectionCounts[id] = after;
+
+  const beforeTier = duckTrophyInfoForCount(before).earned?.tier || null;
+  const afterInfo = duckTrophyInfoForCount(after);
+  const afterTier = afterInfo.earned?.tier || null;
+  const upgraded = beforeTier !== afterTier ? afterInfo.earned : null;
+
+  if (options.persistNow !== false) persist();
+  return { before, after, upgraded };
+}
+
+ensureDuckCollectionState();
+
 
 function getCharacterAssetMap(characterId = save.selectedCharacter) {
   return characterId === "miko" ? MIKO_ASSETS : ASSETS;
@@ -3110,6 +3191,7 @@ const tasksContent = document.querySelector("#tasksContent");
 const todayTab = document.querySelector("#todayTab");
 const tomorrowTab = document.querySelector("#tomorrowTab");
 const futureTab = document.querySelector("#futureTab");
+const anytimeTab = document.querySelector("#anytimeTab");
 const completedTab = document.querySelector("#completedTab");
 const taskForm = document.querySelector("#taskForm");
 const taskSource = document.querySelector("#taskSource");
@@ -6243,6 +6325,474 @@ document.addEventListener("visibilitychange", () => {
 scheduleTinyDuckCheck();
 
 
+
+// -------------------- DUCK GACHA + DUCK TROPHIES --------------------
+
+const gachaPanel = document.querySelector("#gachaPanel");
+const gachaMachineTab = document.querySelector("#gachaMachineTab");
+const gachaTrophyTab = document.querySelector("#gachaTrophyTab");
+const gachaMachineView = document.querySelector("#gachaMachineView");
+const gachaTrophyView = document.querySelector("#gachaTrophyView");
+const gachaCoinCount = document.querySelector("#gachaCoinCount");
+const gachaRarePity = document.querySelector("#gachaRarePity");
+const gachaSuperPity = document.querySelector("#gachaSuperPity");
+const gachaPullOne = document.querySelector("#gachaPullOne");
+const gachaPullTen = document.querySelector("#gachaPullTen");
+const gachaStage = document.querySelector("#gachaStage");
+const gachaTurnLayer = document.querySelector("#gachaTurnLayer");
+const gachaCapsule = document.querySelector("#gachaCapsule");
+const gachaCapsuleColor = document.querySelector("#gachaCapsuleColor");
+const gachaSparkles = document.querySelector("#gachaSparkles");
+const gachaQuickReveal = document.querySelector("#gachaQuickReveal");
+const gachaQuickDuck = document.querySelector("#gachaQuickDuck");
+const gachaQuickRarity = document.querySelector("#gachaQuickRarity");
+const gachaQuickName = document.querySelector("#gachaQuickName");
+const gachaTrophyGrid = document.querySelector("#gachaTrophyGrid");
+const gachaResultModal = document.querySelector("#gachaResultModal");
+const gachaResultCard = document.querySelector("#gachaResultCard");
+const gachaResultRarity = document.querySelector("#gachaResultRarity");
+const gachaResultDuck = document.querySelector("#gachaResultDuck");
+const gachaResultName = document.querySelector("#gachaResultName");
+const gachaResultOwned = document.querySelector("#gachaResultOwned");
+const gachaResultProgress = document.querySelector("#gachaResultProgress");
+const gachaTrophyUpgrade = document.querySelector("#gachaTrophyUpgrade");
+const gachaResultClose = document.querySelector("#gachaResultClose");
+const gachaSummaryModal = document.querySelector("#gachaSummaryModal");
+const gachaSummaryGrid = document.querySelector("#gachaSummaryGrid");
+const gachaSummaryClose = document.querySelector("#gachaSummaryClose");
+let gachaBusy = false;
+let currentGachaView = "machine";
+
+function gachaSleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function gachaRarityForDuck(duckId) {
+  const id = normalizeDuckId(duckId);
+  const duck = DUCKS[id];
+  if (!duck || GACHA_EXCLUDED_DUCKS.has(id)) return null;
+  if (GACHA_SUPER_DUCKS.has(id)) return "super";
+  if (id === "standard-duck") return "common";
+
+  const ingredientIds = Object.keys(duck.recipe || {});
+  if (ingredientIds.some(itemId => ITEMS[itemId]?.category === "paint")) return "common";
+  if (ingredientIds.some(itemId => ITEMS[itemId]?.category === "food")) return "uncommon";
+  return "rare";
+}
+
+function gachaDuckIsAvailable(duckId) {
+  const id = normalizeDuckId(duckId);
+  if (!id || !DUCKS[id] || GACHA_EXCLUDED_DUCKS.has(id)) return false;
+  if (GACHA_GATED_SUPER_DUCKS.has(id) && !isDuckUnlocked(id)) return false;
+  return Boolean(gachaRarityForDuck(id));
+}
+
+function gachaPoolForRarity(rarity) {
+  return Object.keys(DUCKS).filter(duckId =>
+    gachaDuckIsAvailable(duckId) && gachaRarityForDuck(duckId) === rarity
+  );
+}
+
+function gachaWeightedRarity(minimumRarity = null) {
+  ensureDuckCollectionState();
+
+  // Pity is guaranteed only after the full miss count has already occurred:
+  // 10 misses -> pull 11 is Rare+, 40 misses -> pull 41 is Super Rare.
+  if (save.gacha.superMisses >= 40) return "super";
+
+  if (save.gacha.rareMisses >= 10) {
+    const rareWeight = GACHA_RARITY_WEIGHTS.rare;
+    const superWeight = GACHA_RARITY_WEIGHTS.super;
+    return Math.random() * (rareWeight + superWeight) < rareWeight ? "rare" : "super";
+  }
+
+  if (minimumRarity) {
+    const minIndex = Math.max(0, GACHA_RARITY_ORDER.indexOf(minimumRarity));
+    const choices = GACHA_RARITY_ORDER.slice(minIndex)
+      .filter(rarity => gachaPoolForRarity(rarity).length);
+    const total = choices.reduce((sum, rarity) => sum + GACHA_RARITY_WEIGHTS[rarity], 0);
+    let roll = Math.random() * total;
+    for (const rarity of choices) {
+      roll -= GACHA_RARITY_WEIGHTS[rarity];
+      if (roll <= 0) return rarity;
+    }
+    return choices[choices.length - 1] || "uncommon";
+  }
+
+  let roll = Math.random() * 100;
+  if ((roll -= GACHA_RARITY_WEIGHTS.common) < 0) return "common";
+  if ((roll -= GACHA_RARITY_WEIGHTS.uncommon) < 0) return "uncommon";
+  if ((roll -= GACHA_RARITY_WEIGHTS.rare) < 0) return "rare";
+  return "super";
+}
+
+function chooseGachaDuck(rarity) {
+  let pool = gachaPoolForRarity(rarity);
+  if (!pool.length) {
+    // Safe fallback if a future edit temporarily leaves a category empty.
+    for (let index = GACHA_RARITY_ORDER.indexOf(rarity); index >= 0; index -= 1) {
+      pool = gachaPoolForRarity(GACHA_RARITY_ORDER[index]);
+      if (pool.length) break;
+    }
+  }
+  return pool[Math.floor(Math.random() * pool.length)] || "standard-duck";
+}
+
+function updateGachaPityForRarity(rarity) {
+  ensureDuckCollectionState();
+  save.gacha.totalPulls += 1;
+
+  if (rarity === "rare" || rarity === "super") save.gacha.rareMisses = 0;
+  else save.gacha.rareMisses += 1;
+
+  if (rarity === "super") save.gacha.superMisses = 0;
+  else save.gacha.superMisses += 1;
+}
+
+function awardGachaDuck(duckId, rarity) {
+  const id = normalizeDuckId(duckId);
+  const wasUnlocked = isDuckUnlocked(id);
+
+  if (!wasUnlocked) {
+    unlockDuck(id, {
+      notify: false,
+      persistNow: false,
+      skipCollectionIncrement: true
+    });
+  }
+
+  const collection = incrementDuckCollection(id, 1, { persistNow: false });
+
+  // Standard Duck is also a crafting ingredient, so a gacha copy is usable there too.
+  if (id === "standard-duck") addInventoryItem("standard-duck", 1);
+
+  updateGachaPityForRarity(rarity);
+
+  return {
+    duckId: id,
+    duck: DUCKS[id],
+    rarity,
+    wasNew: !wasUnlocked,
+    owned: collection.after,
+    trophyUpgrade: collection.upgraded
+  };
+}
+
+function makeGachaPull(options = {}) {
+  const rarity = gachaWeightedRarity(options.minimumRarity || null);
+  const duckId = chooseGachaDuck(rarity);
+  return awardGachaDuck(duckId, rarity);
+}
+
+function gachaCapsuleImage(rarity) {
+  return `assets/gacha/capsule-${rarity}.webp`;
+}
+
+function gachaTierBase(tier) {
+  return `assets/achievements/trophies/trophy-${tier}.webp`;
+}
+
+function updateGachaHud() {
+  ensureDuckCollectionState();
+  if (gachaCoinCount) gachaCoinCount.textContent = Number(save.coins || 0).toLocaleString();
+
+  const rareRemaining = Math.max(1, 11 - Math.min(10, save.gacha.rareMisses));
+  const superRemaining = Math.max(1, 41 - Math.min(40, save.gacha.superMisses));
+  if (gachaRarePity) gachaRarePity.textContent = `${rareRemaining} pull${rareRemaining === 1 ? "" : "s"}`;
+  if (gachaSuperPity) gachaSuperPity.textContent = `${superRemaining} pull${superRemaining === 1 ? "" : "s"}`;
+
+  if (gachaPullOne) gachaPullOne.disabled = gachaBusy || Number(save.coins || 0) < GACHA_PULL_COST;
+  if (gachaPullTen) gachaPullTen.disabled = gachaBusy || Number(save.coins || 0) < GACHA_TEN_PULL_COST;
+}
+
+function setGachaView(view) {
+  currentGachaView = view === "trophies" ? "trophies" : "machine";
+  const trophy = currentGachaView === "trophies";
+  gachaMachineView?.classList.toggle("hidden", trophy);
+  gachaTrophyView?.classList.toggle("hidden", !trophy);
+  gachaMachineTab?.classList.toggle("active", !trophy);
+  gachaTrophyTab?.classList.toggle("active", trophy);
+  gachaMachineTab?.setAttribute("aria-selected", String(!trophy));
+  gachaTrophyTab?.setAttribute("aria-selected", String(trophy));
+  if (trophy) renderGachaTrophies();
+}
+
+function renderGachaTrophies() {
+  ensureDuckCollectionState();
+  if (!gachaTrophyGrid) return;
+  gachaTrophyGrid.innerHTML = "";
+
+  const owned = Object.keys(DUCKS)
+    .filter(id => !GACHA_EXCLUDED_DUCKS.has(id) && duckCollectionCount(id) > 0)
+    .sort((a, b) => DUCKS[a].name.localeCompare(DUCKS[b].name));
+
+  if (!owned.length) {
+    const empty = document.createElement("div");
+    empty.className = "gacha-trophy-empty";
+    empty.innerHTML = "<strong>No Duck Trophies yet!</strong><span>Your first collected duck earns Bronze. ♡</span>";
+    gachaTrophyGrid.append(empty);
+    return;
+  }
+
+  owned.forEach(duckId => {
+    const count = duckCollectionCount(duckId);
+    const info = duckTrophyInfoForCount(count);
+    if (!info.earned) return;
+
+    const card = document.createElement("article");
+    card.className = `gacha-trophy-card tier-${info.earned.tier}`;
+
+    const art = document.createElement("div");
+    art.className = "gacha-trophy-art";
+
+    const base = document.createElement("img");
+    base.className = "gacha-trophy-base";
+    base.src = gachaTierBase(info.earned.tier);
+    base.alt = "";
+
+    const duck = document.createElement("img");
+    duck.className = "gacha-trophy-duck";
+    duck.src = DUCKS[duckId].file;
+    duck.alt = "";
+
+    art.append(base, duck);
+
+    const copy = document.createElement("div");
+    copy.className = "gacha-trophy-copy";
+    const name = document.createElement("strong");
+    name.textContent = DUCKS[duckId].name;
+    const tier = document.createElement("span");
+    tier.textContent = `${info.earned.label} Trophy · ${count} owned`;
+    const progress = document.createElement("small");
+    progress.textContent = info.next
+      ? `Next: ${info.next.label} ${count}/${info.next.count}`
+      : "Mastered! 100+ ♡";
+
+    copy.append(name, tier, progress);
+    card.append(art, copy);
+    gachaTrophyGrid.append(card);
+  });
+}
+
+function clearGachaSparkles() {
+  if (gachaSparkles) gachaSparkles.innerHTML = "";
+}
+
+function burstGachaSparkles(rarity) {
+  if (!gachaSparkles) return;
+  clearGachaSparkles();
+  const count = rarity === "super" ? 26 : rarity === "rare" ? 16 : rarity === "uncommon" ? 11 : 8;
+  for (let index = 0; index < count; index += 1) {
+    const sparkle = document.createElement("span");
+    sparkle.className = index % 3 === 0 ? "gacha-sparkle star" : "gacha-sparkle";
+    const angle = (Math.PI * 2 * index) / count + (Math.random() - .5) * .35;
+    const distance = (rarity === "super" ? 74 : 52) + Math.random() * (rarity === "super" ? 62 : 34);
+    sparkle.style.setProperty("--sx", `${Math.cos(angle) * distance}px`);
+    sparkle.style.setProperty("--sy", `${Math.sin(angle) * distance}px`);
+    sparkle.style.setProperty("--delay", `${Math.random() * 90}ms`);
+    gachaSparkles.append(sparkle);
+  }
+}
+
+async function animateGachaMachineTurn() {
+  gachaStage?.classList.add("machine-turning");
+  await gachaSleep(330);
+  gachaStage?.classList.remove("machine-turning");
+}
+
+async function animateGachaCapsule(result, options = {}) {
+  const fast = Boolean(options.fast);
+  if (!gachaCapsule || !gachaCapsuleColor) return;
+
+  gachaCapsuleColor.src = gachaCapsuleImage(result.rarity);
+  gachaCapsule.dataset.rarity = result.rarity;
+  gachaCapsule.className = "gacha-capsule";
+  clearGachaSparkles();
+  void gachaCapsule.offsetWidth;
+
+  gachaCapsule.classList.add("show", "dropping");
+  await gachaSleep(fast ? 150 : 250);
+
+  gachaCapsule.classList.add("landed");
+  await gachaSleep(fast ? 80 : 150);
+
+  gachaCapsule.classList.add("cracking");
+  burstGachaSparkles(result.rarity);
+  if (result.rarity === "super") gachaStage?.classList.add("super-reveal");
+  await gachaSleep(fast ? 220 : result.rarity === "super" ? 520 : 350);
+
+  if (fast && gachaQuickReveal) {
+    gachaQuickDuck.src = result.duck.file;
+    gachaQuickDuck.alt = result.duck.name;
+    gachaQuickName.textContent = result.duck.name;
+    gachaQuickRarity.textContent = GACHA_RARITY_LABELS[result.rarity];
+    gachaQuickRarity.dataset.rarity = result.rarity;
+    gachaQuickReveal.classList.remove("hidden");
+    await gachaSleep(result.rarity === "super" ? 430 : 260);
+    gachaQuickReveal.classList.add("hidden");
+  }
+
+  gachaStage?.classList.remove("super-reveal");
+  gachaCapsule.className = "gacha-capsule";
+  clearGachaSparkles();
+}
+
+function showSingleGachaResult(result) {
+  if (!gachaResultModal) return;
+  gachaResultRarity.textContent = GACHA_RARITY_LABELS[result.rarity];
+  gachaResultRarity.dataset.rarity = result.rarity;
+  gachaResultDuck.src = result.duck.file;
+  gachaResultDuck.alt = result.duck.name;
+  gachaResultName.textContent = result.duck.name;
+  gachaResultOwned.textContent = `${result.wasNew ? "New Duck! · " : ""}Owned: ${result.owned}`;
+
+  const trophyInfo = duckTrophyInfoForCount(result.owned);
+  gachaResultProgress.textContent = trophyInfo.next
+    ? `Next Trophy: ${trophyInfo.next.label} · ${result.owned} / ${trophyInfo.next.count}`
+    : "Rose Gold Mastered! 100+ ♡";
+
+  gachaTrophyUpgrade.classList.toggle("hidden", !result.trophyUpgrade);
+  gachaTrophyUpgrade.innerHTML = result.trophyUpgrade
+    ? `🏆 <strong>${result.trophyUpgrade.label} Trophy Unlocked!</strong>`
+    : "";
+
+  gachaResultCard.dataset.rarity = result.rarity;
+  gachaResultModal.classList.remove("hidden");
+  gachaResultModal.setAttribute("aria-hidden", "false");
+}
+
+function closeSingleGachaResult() {
+  gachaResultModal?.classList.add("hidden");
+  gachaResultModal?.setAttribute("aria-hidden", "true");
+  updateGachaHud();
+}
+
+function showTenPullSummary(results) {
+  if (!gachaSummaryModal || !gachaSummaryGrid) return;
+  gachaSummaryGrid.innerHTML = "";
+
+  results.forEach(result => {
+    const card = document.createElement("div");
+    card.className = `gacha-summary-item rarity-${result.rarity}`;
+    const img = document.createElement("img");
+    img.src = result.duck.file;
+    img.alt = result.duck.name;
+    const name = document.createElement("strong");
+    name.textContent = result.duck.name;
+    const rarity = document.createElement("span");
+    rarity.textContent = GACHA_RARITY_LABELS[result.rarity];
+    const owned = document.createElement("small");
+    owned.textContent = result.trophyUpgrade
+      ? `${result.trophyUpgrade.label} Trophy! · ${result.owned} owned`
+      : `${result.owned} owned`;
+    card.append(img, name, rarity, owned);
+    gachaSummaryGrid.append(card);
+  });
+
+  gachaSummaryModal.classList.remove("hidden");
+  gachaSummaryModal.setAttribute("aria-hidden", "false");
+}
+
+function closeTenPullSummary() {
+  gachaSummaryModal?.classList.add("hidden");
+  gachaSummaryModal?.setAttribute("aria-hidden", "true");
+  updateGachaHud();
+}
+
+async function performGachaPulls(count) {
+  if (gachaBusy) return;
+
+  const pullCount = count === 10 ? 10 : 1;
+  const cost = pullCount === 10 ? GACHA_TEN_PULL_COST : GACHA_PULL_COST;
+  if (Number(save.coins || 0) < cost) {
+    showToast(`You need ${cost} Pink Coins for that pull!`);
+    return;
+  }
+
+  gachaBusy = true;
+  save.coins = Math.max(0, Number(save.coins || 0) - cost);
+  updateGachaHud();
+  renderRoom();
+
+  const results = [];
+  for (let index = 0; index < pullCount; index += 1) {
+    const tenPullMinimum = pullCount === 10 && index === 9 && results.every(result => result.rarity === "common")
+      ? "uncommon"
+      : null;
+    results.push(makeGachaPull({ minimumRarity: tenPullMinimum }));
+  }
+  persist();
+
+  try {
+    await animateGachaMachineTurn();
+
+    if (pullCount === 1) {
+      await animateGachaCapsule(results[0], { fast: false });
+      showSingleGachaResult(results[0]);
+    } else {
+      for (const result of results) {
+        await animateGachaCapsule(result, { fast: true });
+      }
+      showTenPullSummary(results);
+    }
+  } finally {
+    gachaBusy = false;
+    updateGachaHud();
+    if (!gachaTrophyView?.classList.contains("hidden")) renderGachaTrophies();
+  }
+}
+
+function openGacha() {
+  closeCloset();
+  closeInventoryItem();
+  closeShopItem();
+  closeDuckDetail();
+  closeCraftSheet();
+
+  inventoryPanel.classList.add("hidden");
+  shopPanel.classList.add("hidden");
+  duckipediaPanel.classList.add("hidden");
+  crafterPanel.classList.add("hidden");
+  gamesPanel.classList.add("hidden");
+  clearDailyTimer();
+  dailiesPanel.classList.add("hidden");
+  statusPanel.classList.add("hidden");
+  profilesPanel.classList.add("hidden");
+  achievementsPanel.classList.add("hidden");
+  saveDataPanel.classList.add("hidden");
+  tasksPanel.classList.add("hidden");
+  taskFormPanel.classList.add("hidden");
+  bookPanel.classList.add("hidden");
+
+  ensureDuckCollectionState();
+  setGachaView("machine");
+  updateGachaHud();
+  gachaPanel.classList.remove("hidden");
+}
+
+function closeGachaToBook() {
+  if (gachaBusy) return;
+  closeSingleGachaResult();
+  closeTenPullSummary();
+  gachaPanel.classList.add("hidden");
+  bookPanel.classList.remove("hidden");
+}
+
+function closeGachaAll() {
+  closeSingleGachaResult();
+  closeTenPullSummary();
+  gachaPanel?.classList.add("hidden");
+}
+
+gachaMachineTab?.addEventListener("click", () => setGachaView("machine"));
+gachaTrophyTab?.addEventListener("click", () => setGachaView("trophies"));
+gachaPullOne?.addEventListener("click", () => performGachaPulls(1));
+gachaPullTen?.addEventListener("click", () => performGachaPulls(10));
+gachaResultClose?.addEventListener("click", closeSingleGachaResult);
+gachaSummaryClose?.addEventListener("click", closeTenPullSummary);
+document.querySelector("#closeGacha")?.addEventListener("click", closeGachaToBook);
+
+
 // -------------------- GAMES --------------------
 
 function openGames() {
@@ -7100,6 +7650,10 @@ function unlockDuck(duckId, options = {}) {
   if (isDuckUnlocked(id)) return false;
 
   save.unlockedDucks.push(id);
+
+  if (!options.skipCollectionIncrement) {
+    incrementDuckCollection(id, 1, { persistNow: false });
+  }
 
   if (options.persistNow !== false) persist();
 
@@ -9338,6 +9892,7 @@ function nextMonthEnd(afterKey) {
 
 function initialDueForRepeat(repeat, todayKey = localDateKey()) {
   const definition = repeat || { type: "once" };
+  if (definition.type === "anytime") return null;
   const today = parseDateKey(todayKey);
 
   if (definition.type === "weekdays") {
@@ -9387,6 +9942,7 @@ function formatFriendlyDate(key) {
 function repeatLabel(task) {
   const repeat = task.repeat || { type: "once" };
   if (repeat.type === "once") return "One-time";
+  if (repeat.type === "anytime") return "Anytime";
   if (repeat.type === "daily") return "Daily";
   if (repeat.type === "weekly") return "Weekly";
   if (repeat.type === "monthly") return "Monthly";
@@ -9406,7 +9962,7 @@ function normalizeTask(task) {
     name: String(task.name || "Untitled Task"),
     reward: Math.max(1, Number(task.reward) || 5),
     repeat: task.repeat || { type: "once" },
-    nextDue: task.nextDue || localDateKey(),
+    nextDue: task.repeat?.type === "anytime" ? null : (task.nextDue || localDateKey()),
     createdAt: task.createdAt || Date.now(),
     completions: Number(task.completions) || 0,
     pinned: Boolean(task.pinned)
@@ -9421,6 +9977,13 @@ function refreshTasksForToday() {
   const kept = [];
 
   for (const task of save.tasks) {
+    if (task.repeat?.type === "anytime") {
+      task.nextDue = null;
+      task.pinned = false;
+      kept.push(task);
+      continue;
+    }
+
     if (!task.nextDue) {
       task.nextDue = initialDueForRepeat(task.repeat, today);
       changed = true;
@@ -9470,10 +10033,12 @@ function refreshTasksForToday() {
 refreshTasksForToday();
 
 function isTaskReady(task) {
+  if (task.repeat?.type === "anytime") return true;
   return !task.nextDue || task.nextDue <= localDateKey();
 }
 
 function taskDueText(task) {
+  if (task.repeat?.type === "anytime") return "Anytime";
   if (isTaskReady(task)) {
     if (task.nextDue && task.nextDue < localDateKey()) return "Ready whenever you are";
     return "Ready today";
@@ -9482,7 +10047,9 @@ function taskDueText(task) {
 }
 
 function taskBucket(task) {
-  // Pinned tasks are intentionally kept on Today, regardless of their due date.
+  if (task.repeat?.type === "anytime") return "anytime";
+
+  // Pinned dated tasks are intentionally kept on Today, regardless of their due date.
   if (task.pinned) return "today";
 
   const today = localDateKey();
@@ -9625,7 +10192,7 @@ function completeTask(id) {
   task.completions = (task.completions || 0) + 1;
   recordTaskCompletion(task, reward);
 
-  if (task.repeat?.type === "once") {
+  if (task.repeat?.type === "once" || task.repeat?.type === "anytime") {
     save.tasks = save.tasks.filter(item => item.id !== id);
   } else {
     task.nextDue = nextDueAfterCompletion(task, localDateKey());
@@ -9723,13 +10290,15 @@ function renderTaskCard(task, { showTomorrowButton = false, showTodayButton = fa
     actions.append(today);
   }
 
-  const pinButton = document.createElement("button");
-  pinButton.type = "button";
-  pinButton.className = `task-pin-button${task.pinned ? " active" : ""}`;
-  pinButton.textContent = task.pinned ? "📌 Pinned" : "📌 Pin";
-  pinButton.setAttribute("aria-pressed", task.pinned ? "true" : "false");
-  pinButton.addEventListener("click", () => toggleTaskPinned(task.id));
-  actions.append(pinButton);
+  if (task.repeat?.type !== "anytime") {
+    const pinButton = document.createElement("button");
+    pinButton.type = "button";
+    pinButton.className = `task-pin-button${task.pinned ? " active" : ""}`;
+    pinButton.textContent = task.pinned ? "📌 Pinned" : "📌 Pin";
+    pinButton.setAttribute("aria-pressed", task.pinned ? "true" : "false");
+    pinButton.addEventListener("click", () => toggleTaskPinned(task.id));
+    actions.append(pinButton);
+  }
 
   card.append(top, meta, actions);
   return card;
@@ -9739,7 +10308,7 @@ function addTaskFromTemplate(template) {
   save.tasks.push(normalizeTask({
     ...template,
     id: makeId(),
-    nextDue: initialDueForRepeat(template.repeat),
+    nextDue: template.repeat?.type === "anytime" ? null : initialDueForRepeat(template.repeat),
     createdAt: Date.now(),
     completions: 0
   }));
@@ -9809,7 +10378,8 @@ function renderTaskBucket(bucket) {
     const messages = {
       today: ["Nothing for today!", "Enjoy time off, or tap the Add Task button!"],
       tomorrow: ["Nothing for tomorrow", "Tasks dated for tomorrow will show here."],
-      future: ["No future tasks", "Tasks scheduled after tomorrow will live here!."]
+      future: ["No future tasks", "Tasks scheduled after tomorrow will live here!."],
+      anytime: ["Nothing in Anytime", "One-time tasks with no due date can wait here as long as you need. ♡"]
     };
     const [title, detail] = messages[bucket] || messages.today;
     list.append(createEmptyTasksMessage(title, detail));
@@ -9819,7 +10389,13 @@ function renderTaskBucket(bucket) {
 
   const heading = document.createElement("h2");
   heading.className = "task-list-heading task-date-heading";
-  heading.textContent = bucket === "today" ? "Today" : bucket === "tomorrow" ? "Tomorrow" : "Future";
+  heading.textContent = bucket === "today"
+    ? "Today"
+    : bucket === "tomorrow"
+      ? "Tomorrow"
+      : bucket === "anytime"
+        ? "Anytime"
+        : "Future";
   list.append(heading);
 
   if (bucket === "today") tasks.forEach(task => list.append(renderTaskCard(task, { showTomorrowButton: true })));
@@ -9839,6 +10415,10 @@ function renderTomorrowTasks() {
 
 function renderFutureTasks() {
   renderTaskBucket("future");
+}
+
+function renderAnytimeTasks() {
+  renderTaskBucket("anytime");
 }
 
 function renderSavedTasks() {
@@ -9927,6 +10507,7 @@ function renderTasks() {
     [todayTab, "today"],
     [tomorrowTab, "tomorrow"],
     [futureTab, "future"],
+    [anytimeTab, "anytime"],
     [completedTab, "completed"]
   ];
 
@@ -9939,6 +10520,7 @@ function renderTasks() {
   tasksContent.innerHTML = "";
   if (currentTaskTab === "tomorrow") renderTomorrowTasks();
   else if (currentTaskTab === "future") renderFutureTasks();
+  else if (currentTaskTab === "anytime") renderAnytimeTasks();
   else if (currentTaskTab === "completed") renderCompletedTasks();
   else renderTodayTasks();
 }
@@ -10481,6 +11063,7 @@ function closePanels() {
   statusPanel.classList.add("hidden");
   profilesPanel.classList.add("hidden");
   achievementsPanel.classList.add("hidden");
+  gachaPanel?.classList.add("hidden");
   tasksPanel.classList.add("hidden");
   taskFormPanel.classList.add("hidden");
 }
@@ -10512,6 +11095,7 @@ function isHomeRoomInteractive() {
     statusPanel,
     profilesPanel,
     achievementsPanel,
+    gachaPanel,
     saveDataPanel,
     tasksPanel,
     taskFormPanel,
@@ -10585,6 +11169,10 @@ document.querySelectorAll("[data-book-page]").forEach(button => {
     }
     if (page === "games") {
       openGames();
+      return;
+    }
+    if (page === "gacha") {
+      openGacha();
       return;
     }
     if (page === "duckipedia") {
@@ -10752,6 +11340,10 @@ tomorrowTab.addEventListener("click", () => {
 });
 futureTab.addEventListener("click", () => {
   currentTaskTab = "future";
+  renderTasks();
+});
+anytimeTab.addEventListener("click", () => {
+  currentTaskTab = "anytime";
   renderTasks();
 });
 completedTab.addEventListener("click", () => {

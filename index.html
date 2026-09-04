@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#f7dbe5" />
   <title>Duck Habit Hub</title>
   <!-- v24.41 performance update -->
-  <link rel="stylesheet" href="style-v24-64.css" />
+  <link rel="stylesheet" href="style-v24-65.css" />
 
   <link rel="manifest" href="manifest.webmanifest?v=24-38-icon-v4">
   <link rel="apple-touch-icon" href="apple-touch-icon-v4.png">
@@ -613,7 +613,10 @@
             <p class="eyebrow">YOUR TASKS</p>
             <h1>Tasks</h1>
           </div>
-          <button id="addTaskButton" class="add-task-button" type="button">＋ Add Task</button>
+          <div class="tasks-header-actions">
+            <button id="completedTab" class="completed-tasks-button" type="button" aria-selected="false">✓ Completed</button>
+            <button id="addTaskButton" class="add-task-button" type="button">＋ Add Task</button>
+          </div>
           <button id="closeTasks" class="close-button" type="button" aria-label="Return to menu">×</button>
         </div>
 
@@ -622,12 +625,12 @@
             <button id="todayTab" class="task-tab active" type="button" role="tab" aria-selected="true">Today</button>
             <button id="tomorrowTab" class="task-tab" type="button" role="tab" aria-selected="false">Tomorrow</button>
             <button id="futureTab" class="task-tab" type="button" role="tab" aria-selected="false">Future</button>
-            <button id="completedTab" class="task-tab" type="button" role="tab" aria-selected="false">Completed</button>
+            <button id="anytimeTab" class="task-tab" type="button" role="tab" aria-selected="false">Anytime</button>
           </div>
         </div>
 
         <div id="tasksContent" class="tasks-content"></div>
-        <p class="task-kind-note">Pinned tasks stay on Today. Use “Tomorrow” for anything you want to tackle later. No penalties. ♡</p>
+        <p class="task-kind-note">Anytime tasks wait until you complete them once. Pinned dated tasks stay on Today. No penalties. ♡</p>
       </section>
 
       <section id="taskFormPanel" class="task-form-panel hidden" aria-label="Create a task">
@@ -679,6 +682,7 @@
               <span>Repeat</span>
               <select id="taskRepeat">
                 <option value="once">One-time</option>
+                <option value="anytime">Anytime (one-time)</option>
                 <option value="daily">Daily</option>
                 <option value="weekly">Weekly</option>
                 <option value="monthly">Monthly</option>
@@ -918,6 +922,96 @@
         </div>
       </section>
 
+
+      <section id="gachaPanel" class="panel gacha-panel hidden" aria-label="Duck Gacha">
+        <div class="panel-header gacha-header">
+          <div>
+            <p class="eyebrow">DUCK GACHA</p>
+            <h1>Lucky Duck Machine</h1>
+          </div>
+          <div class="gacha-header-actions">
+            <div class="gacha-coin-pill" aria-label="Pink Coin balance">
+              <img src="assets/ui/pink-coin.webp" alt="" />
+              <strong id="gachaCoinCount">0</strong>
+            </div>
+            <button id="closeGacha" class="close-button" type="button" aria-label="Return to menu">×</button>
+          </div>
+        </div>
+
+        <div class="gacha-view-tabs" role="tablist" aria-label="Gacha views">
+          <button id="gachaMachineTab" class="gacha-view-tab active" type="button" role="tab" aria-selected="true">🎰 Gacha</button>
+          <button id="gachaTrophyTab" class="gacha-view-tab" type="button" role="tab" aria-selected="false">🏆 Duck Trophies</button>
+        </div>
+
+        <div id="gachaMachineView" class="gacha-machine-view">
+          <div id="gachaStage" class="gacha-stage" aria-live="polite">
+            <img class="gacha-machine-base" src="assets/gacha/gacha-machine.webp" alt="Duck gachapon machine" />
+            <img id="gachaTurnLayer" class="gacha-machine-turn" src="assets/gacha/gacha-turn.webp" alt="" aria-hidden="true" />
+            <div id="gachaCapsule" class="gacha-capsule" aria-hidden="true">
+              <img id="gachaCapsuleClear" class="gacha-capsule-half clear-half" src="assets/gacha/capsule-clear.webp" alt="" />
+              <img id="gachaCapsuleColor" class="gacha-capsule-half color-half" src="assets/gacha/capsule-common.webp" alt="" />
+              <div id="gachaSparkles" class="gacha-sparkles"></div>
+            </div>
+            <div id="gachaQuickReveal" class="gacha-quick-reveal hidden">
+              <img id="gachaQuickDuck" src="" alt="" />
+              <div>
+                <span id="gachaQuickRarity">COMMON</span>
+                <strong id="gachaQuickName">Duck</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="gacha-pity-card">
+            <div><span>Rare+ Guarantee</span><strong id="gachaRarePity">11 pulls</strong></div>
+            <div><span>Super Rare Guarantee</span><strong id="gachaSuperPity">41 pulls</strong></div>
+          </div>
+
+          <div class="gacha-pull-actions">
+            <button id="gachaPullOne" class="gacha-pull-button" type="button">
+              <span>1 Pull</span>
+              <strong><img src="assets/ui/pink-coin.webp" alt="" />100</strong>
+            </button>
+            <button id="gachaPullTen" class="gacha-pull-button ten" type="button">
+              <span>10 Pulls</span>
+              <strong><img src="assets/ui/pink-coin.webp" alt="" />900</strong>
+              <small>At least 1 Uncommon+</small>
+            </button>
+          </div>
+
+          <p class="gacha-rates">Common 60% · Uncommon 25% · Rare 12% · Super Rare 3%</p>
+          <p class="gacha-note">Duplicates count toward Duck Trophies! Tiny Ducks stay exclusive to their secret sightings. ♡</p>
+        </div>
+
+        <div id="gachaTrophyView" class="gacha-trophy-view hidden">
+          <div class="gacha-trophy-summary">
+            <strong>Duck Trophy Collection</strong>
+            <span>1 Bronze · 25 Silver · 50 Gold · 100 Rose Gold</span>
+          </div>
+          <div id="gachaTrophyGrid" class="gacha-trophy-grid"></div>
+        </div>
+
+        <div id="gachaResultModal" class="gacha-result-modal hidden" aria-hidden="true">
+          <div id="gachaResultCard" class="gacha-result-card">
+            <p id="gachaResultRarity" class="gacha-result-rarity">COMMON</p>
+            <img id="gachaResultDuck" class="gacha-result-duck" src="" alt="" />
+            <h2 id="gachaResultName">Duck</h2>
+            <p id="gachaResultOwned">Owned: 1</p>
+            <p id="gachaResultProgress" class="gacha-result-progress">Next Trophy: Silver 1 / 25</p>
+            <div id="gachaTrophyUpgrade" class="gacha-trophy-upgrade hidden"></div>
+            <button id="gachaResultClose" class="primary-button" type="button">Yay! ♡</button>
+          </div>
+        </div>
+
+        <div id="gachaSummaryModal" class="gacha-result-modal hidden" aria-hidden="true">
+          <div class="gacha-summary-card">
+            <p class="eyebrow">10-PULL RESULTS</p>
+            <h2>Your Ducks!</h2>
+            <div id="gachaSummaryGrid" class="gacha-summary-grid"></div>
+            <button id="gachaSummaryClose" class="primary-button" type="button">Done! ♡</button>
+          </div>
+        </div>
+      </section>
+
       <section id="bookPanel" class="panel book-panel hidden" aria-label="Book menu">
         <div class="panel-header">
           <div>
@@ -936,21 +1030,22 @@
           <button data-book-page="shop">♡ <span>Shop</span></button>
           <button data-book-page="crafter">🦆 <span>Duck Crafter</span></button>
           <button data-book-page="duckipedia">📖 <span>Duckipedia</span></button>
-          <button data-book-page="profiles">👤 <span>Profiles</span></button>
           <button data-book-page="games">🎮 <span>Games</span></button>
+          <button data-book-page="gacha">🎰 <span>Gacha</span></button>
           <button data-book-page="achievements">🏆 <span>Achievements</span></button>
           <button data-book-page="status">★ <span>Status</span></button>
+          <button data-book-page="profiles">👤 <span>Profiles</span></button>
           <button data-book-page="save-data">💾 <span>Save Data</span></button>
         </div>
       </section>
     </section>
   </main>
-  <script src="script-v24-64.js"></script>
+  <script src="script-v24-65.js"></script>
 
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw-v24-64.js", { updateViaCache: "none" }).catch(error => {
+        navigator.serviceWorker.register("./sw-v24-65.js", { updateViaCache: "none" }).catch(error => {
           console.warn("Duck Habit Hub offline setup could not start:", error);
         });
       });
