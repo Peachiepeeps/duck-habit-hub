@@ -1,0 +1,99 @@
+name: Install Duck Habit Hub v24.70 Handmade Icons
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  install-update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Verify update package
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duck-Habit-Hub-v24-70-Handmade-Icons.zip"
+
+          if [ ! -f "$ZIP" ]; then
+            echo "ERROR: $ZIP was not found in the repository root."
+            echo "Upload the ZIP untouched to the repo root."
+            exit 1
+          fi
+
+          unzip -t "$ZIP"
+          unzip -l "$ZIP" | grep -q "index.html"
+          unzip -l "$ZIP" | grep -q "script-v24-70.js"
+          unzip -l "$ZIP" | grep -q "style-v24-70.css"
+          unzip -l "$ZIP" | grep -q "sw-v24-70.js"
+          unzip -l "$ZIP" | grep -q "assets/ui/icons/tasks.webp"
+          unzip -l "$ZIP" | grep -q "assets/ui/icons/shop.webp"
+          unzip -l "$ZIP" | grep -q "assets/ui/icons/duckipedia.webp"
+
+      - name: Install v24.70
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duck-Habit-Hub-v24-70-Handmade-Icons.zip"
+          unzip -o "$ZIP" -d .
+
+          test -f "index.html"
+          test -f "script-v24-70.js"
+          test -f "style-v24-70.css"
+          test -f "sw-v24-70.js"
+          test -f "assets/ui/icons/tasks.webp"
+          test -f "assets/ui/icons/dailies.webp"
+          test -f "assets/ui/icons/inventory.webp"
+          test -f "assets/ui/icons/shop.webp"
+          test -f "assets/ui/icons/duckipedia.webp"
+          test -f "assets/ui/icons/status.webp"
+          test -f "assets/ui/icons/profiles.webp"
+          test -f "assets/ui/icons/save-data.webp"
+
+          # Existing assets reused by the new menu icons.
+          test -f "assets/ducks/Standard-duck.webp"
+          test -f "assets/gifts/Gaming-controller.webp"
+          test -f "assets/achievements/trophies/trophy-gold.webp"
+          test -f "assets/paint/Pink-paint.webp"
+          test -f "assets/gifts/Heart-locket.webp"
+
+          grep -q 'style-v24-70.css' index.html
+          grep -q 'script-v24-70.js' index.html
+          grep -q 'sw-v24-70.js' index.html
+          grep -q 'assets/ui/icons/tasks.webp' index.html
+          grep -q 'assets/ui/icons/dailies.webp' index.html
+          grep -q 'assets/ui/icons/shop.webp' index.html
+          grep -q 'assets/gifts/Gaming-controller.webp' index.html
+          grep -q 'assets/achievements/trophies/trophy-gold.webp' index.html
+
+          rm -f \
+            "script-v24-69.js" \
+            "style-v24-69.css" \
+            "sw-v24-69.js"
+
+          rm -f "$ZIP"
+
+      - name: Commit update
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "Nothing new to commit."
+            exit 0
+          fi
+
+          git commit -m "Add handmade UI icon set"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
