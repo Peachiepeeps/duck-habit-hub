@@ -1,0 +1,96 @@
+name: Install Duck Habit Hub v24.66 Gacha + Trophy Polish
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  install-update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Verify update package
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ZIP="Duck-Habit-Hub-v24-66-Gacha-Trophy-Polish.zip"
+
+          if [ ! -f "$ZIP" ]; then
+            echo "ERROR: $ZIP was not found in the repository root."
+            echo "Upload the ZIP untouched to the repo root."
+            exit 1
+          fi
+
+          unzip -t "$ZIP"
+          unzip -l "$ZIP" | grep -q "index.html"
+          unzip -l "$ZIP" | grep -q "script-v24-66.js"
+          unzip -l "$ZIP" | grep -q "style-v24-66.css"
+          unzip -l "$ZIP" | grep -q "sw-v24-66.js"
+          unzip -l "$ZIP" | grep -q "assets/gacha/gacha-machine.png"
+          unzip -l "$ZIP" | grep -q "duck-quest/js/game-v25.js"
+
+      - name: Install v24.66
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ZIP="Duck-Habit-Hub-v24-66-Gacha-Trophy-Polish.zip"
+          unzip -o "$ZIP" -d .
+
+          test -f "index.html"
+          test -f "script-v24-66.js"
+          test -f "style-v24-66.css"
+          test -f "sw-v24-66.js"
+          test -f "assets/gacha/gacha-machine.png"
+
+          test -f "duck-quest/index.html"
+          test -f "duck-quest/battle-v25.html"
+          test -f "duck-quest/js/game-v25.js"
+
+          grep -q 'style-v24-66.css' "index.html"
+          grep -q 'script-v24-66.js' "index.html"
+          grep -q 'sw-v24-66.js' "index.html"
+          grep -q 'data-achievement-tab="duck-trophies"' "index.html"
+          grep -q 'book-menu-gacha-icon' "index.html"
+          grep -q 'duck-quest/?v=25' "script-v24-66.js"
+          grep -q 'js/game-v25.js' "duck-quest/index.html"
+          grep -q 'currentRun.hp=currentRun.maxHp' "duck-quest/js/game-v25.js"
+
+          # Remove only code versions superseded by this update.
+          rm -f \
+            "script-v24-65.js" \
+            "style-v24-65.css" \
+            "sw-v24-65.js"
+
+          rm -f \
+            "duck-quest/battle-v24.html" \
+            "duck-quest/js/game-v24.js" \
+            "duck-quest/README-v24.txt"
+
+          rm -f "$ZIP"
+
+      - name: Commit update
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "Nothing new to commit."
+            exit 0
+          fi
+
+          git commit -m "Polish gacha trophies and restore Duck Quest HP"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
