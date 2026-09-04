@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="duck-habit-build" content="24.69" />
+  <meta name="duck-habit-build" content="24.72" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f7dbe5" />
   <title>Duck Habit Hub</title>
   <!-- v24.41 performance update -->
-  <link rel="stylesheet" href="style-v24-71.css" />
+  <link rel="stylesheet" href="style-v24-72.css" />
 
   <link rel="manifest" href="manifest.webmanifest?v=24-38-icon-v4">
   <link rel="apple-touch-icon" href="apple-touch-icon-v4.png">
@@ -791,6 +791,26 @@
               <p id="profileInfoDescription">More profile information will be added soon. ♡</p>
             </div>
 
+            <div class="profile-buddies-card">
+              <div class="profile-buddies-heading">
+                <div>
+                  <span>Buddies</span>
+                  <small>Slot 1 is your ★ Main Buddy for Duck Quest.</small>
+                </div>
+                <strong id="profileBuddyCount">0 / 6</strong>
+              </div>
+              <div id="profileBuddySlots" class="profile-buddy-slots" aria-label="Equipped buddies"></div>
+              <p class="profile-buddies-note">Tap a circle to choose from Buddies you’ve befriended.</p>
+
+              <div id="profileBuddyPicker" class="profile-buddy-picker hidden">
+                <div class="profile-buddy-picker-heading">
+                  <strong id="profileBuddyPickerTitle">Choose Buddy</strong>
+                  <button id="closeProfileBuddyPicker" type="button" aria-label="Close Buddy picker">×</button>
+                </div>
+                <div id="profileBuddyPickerGrid" class="profile-buddy-picker-grid"></div>
+              </div>
+            </div>
+
             <div class="profile-icon-color-card">
               <span class="profile-icon-color-label">Profile Icon Background</span>
               <div class="profile-icon-picker-wrap">
@@ -1036,12 +1056,12 @@
       </section>
     </section>
   </main>
-  <script src="script-v24-71.js"></script>
+  <script src="script-v24-72.js"></script>
 
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw-v24-71.js", { updateViaCache: "none" }).catch(error => {
+        navigator.serviceWorker.register("./sw-v24-72.js", { updateViaCache: "none" }).catch(error => {
           console.warn("Duck Habit Hub offline setup could not start:", error);
         });
       });

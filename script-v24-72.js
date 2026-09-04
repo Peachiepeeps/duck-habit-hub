@@ -1,5 +1,5 @@
 const STORAGE_KEY = "duckHabitHubSave_v1";
-const SAVE_VERSION = 31;
+const SAVE_VERSION = 32;
 
 const CHARACTERS = {
   peep: {
@@ -270,6 +270,13 @@ function makePaintableFurnitureItems() {
 }
 
 const ITEMS = {
+  "buddy-pon": {
+    "name": "Buddy Pon",
+    "category": "battle",
+    "image": "assets/gacha/capsule-common.webp",
+    "icon": "◉",
+    "sellValue": 15
+  },
   "pink-heart-refill": {
     "name": "Pink Heart Refill",
     "category": "battle",
@@ -1159,7 +1166,7 @@ const SHOP_CATEGORIES = {
   },
   battle: {
     label: "Battle Items",
-    subtitle: "Stock up for Duck Quest. Pink heals half HP; rare Gold restores your oc to full health."
+    subtitle: "Stock up for Duck Quest. Buddy Pons befriend defeated enemies; Pink and Gold Hearts restore HP."
   },
   profiles: {
     label: "Invitations",
@@ -1268,6 +1275,7 @@ const SHOP_STOCK = {
     { itemId: "wedding-cake", price: 150 }
   ],
   battle: [
+    { itemId: "buddy-pon", price: 50 },
     { itemId: "pink-heart-refill", price: 75 },
     { itemId: "gold-heart-refill", price: 250 }
   ],
@@ -2595,6 +2603,57 @@ function getCharacterHappinessInfo(characterId = save.selectedCharacter) {
   };
 }
 
+const BUDDY_SLOT_COUNT = 6;
+
+function emptyBuddySlots() {
+  return Array(BUDDY_SLOT_COUNT).fill(null);
+}
+
+function normalizeBuddyRecord(record, fallbackKey = "") {
+  if (!record || typeof record !== "object" || Array.isArray(record)) return null;
+  const key = String(record.key || fallbackKey || "").trim();
+  if (!key) return null;
+
+  const image = String(record.image || "").trim();
+  const name = String(record.name || "Buddy").trim() || "Buddy";
+
+  return {
+    key,
+    enemyId: String(record.enemyId || "").trim(),
+    variantId: String(record.variantId || "base").trim() || "base",
+    name,
+    image,
+    shiny: Boolean(record.shiny),
+    boss: Boolean(record.boss),
+    capturedAt: Math.max(0, Number(record.capturedAt) || 0)
+  };
+}
+
+function normalizeBuddySave(raw) {
+  const collection = {};
+  const rawCollection = raw?.collection && typeof raw.collection === "object" && !Array.isArray(raw.collection)
+    ? raw.collection
+    : {};
+
+  for (const [fallbackKey, value] of Object.entries(rawCollection)) {
+    const buddy = normalizeBuddyRecord(value, fallbackKey);
+    if (buddy) collection[buddy.key] = buddy;
+  }
+
+  const equippedByCharacter = {};
+  for (const characterId of Object.keys(CHARACTERS)) {
+    const source = Array.isArray(raw?.equippedByCharacter?.[characterId])
+      ? raw.equippedByCharacter[characterId]
+      : [];
+    equippedByCharacter[characterId] = Array.from({ length: BUDDY_SLOT_COUNT }, (_, index) => {
+      const key = typeof source[index] === "string" ? source[index] : null;
+      return key && collection[key] ? key : null;
+    });
+  }
+
+  return { collection, equippedByCharacter };
+}
+
 const DEFAULT_SAVE = {
   version: SAVE_VERSION,
   coins: 0,
@@ -2642,6 +2701,14 @@ const DEFAULT_SAVE = {
     accentRoom: null,
     shelfStyle: "cream",
     duckSlots: Array(24).fill(null)
+  },
+  buddies: {
+    collection: {},
+    equippedByCharacter: {
+      peep: emptyBuddySlots(),
+      miko: emptyBuddySlots(),
+      io: emptyBuddySlots()
+    }
   },
   achievements: {
     completed: [],
@@ -2765,6 +2832,7 @@ function loadSave() {
           return typeof value === "string" ? value : null;
         })
       },
+      buddies: normalizeBuddySave(saved.buddies),
       achievements: {
         completed: Array.isArray(saved.achievements?.completed)
           ? [...new Set(saved.achievements.completed)]
@@ -3185,6 +3253,7 @@ let selectedShopQuantity = 1;
 let currentDuckipediaFilter = "all";
 let selectedDuckId = null;
 let selectedProfileCharacterId = null;
+let selectedBuddySlotIndex = null;
 let currentAchievementTab = "all";
 let selectedAchievementId = null;
 let achievementUnlockQueue = [];
@@ -3263,6 +3332,12 @@ const profileInfoFavorite = document.querySelector("#profileInfoFavorite");
 const profileInfoLikes = document.querySelector("#profileInfoLikes");
 const profileInfoDislikes = document.querySelector("#profileInfoDislikes");
 const profileInfoDescription = document.querySelector("#profileInfoDescription");
+const profileBuddySlots = document.querySelector("#profileBuddySlots");
+const profileBuddyCount = document.querySelector("#profileBuddyCount");
+const profileBuddyPicker = document.querySelector("#profileBuddyPicker");
+const profileBuddyPickerTitle = document.querySelector("#profileBuddyPickerTitle");
+const profileBuddyPickerGrid = document.querySelector("#profileBuddyPickerGrid");
+const closeProfileBuddyPickerButton = document.querySelector("#closeProfileBuddyPicker");
 const profileIconPickerButton = document.querySelector("#profileIconPickerButton");
 const profileIconPickerSwatch = document.querySelector("#profileIconPickerSwatch");
 const profileIconPickerText = document.querySelector("#profileIconPickerText");
@@ -9859,6 +9934,182 @@ function renderProfileHeadDuck(container, characterId) {
   insertPortraitHeadDuckLayer(container, layer, character.id);
 }
 
+function buddyCollectionEntries() {
+  const collection = save.buddies?.collection && typeof save.buddies.collection === "object"
+    ? save.buddies.collection
+    : {};
+  return Object.values(collection)
+    .filter(Boolean)
+    .sort((a, b) => {
+      if (Boolean(a.shiny) !== Boolean(b.shiny)) return a.shiny ? -1 : 1;
+      if (Boolean(a.boss) !== Boolean(b.boss)) return a.boss ? -1 : 1;
+      return String(a.name || "Buddy").localeCompare(String(b.name || "Buddy"));
+    });
+}
+
+function buddyByKey(key) {
+  if (!key) return null;
+  return save.buddies?.collection?.[key] || null;
+}
+
+function getBuddySlots(characterId = save.selectedCharacter) {
+  if (!save.buddies || typeof save.buddies !== "object") save.buddies = normalizeBuddySave(null);
+  if (!save.buddies.equippedByCharacter || typeof save.buddies.equippedByCharacter !== "object") {
+    save.buddies.equippedByCharacter = {};
+  }
+
+  const source = Array.isArray(save.buddies.equippedByCharacter[characterId])
+    ? save.buddies.equippedByCharacter[characterId]
+    : [];
+  const slots = Array.from({ length: BUDDY_SLOT_COUNT }, (_, index) => {
+    const key = typeof source[index] === "string" ? source[index] : null;
+    return key && buddyByKey(key) ? key : null;
+  });
+  save.buddies.equippedByCharacter[characterId] = slots;
+  return slots;
+}
+
+function buddyImageSource(buddy) {
+  const image = String(buddy?.image || "").trim();
+  if (!image) return "";
+  if (/^(?:https?:|data:|blob:|\/)/i.test(image)) return image;
+  if (image.startsWith("duck-quest/")) return image;
+  if (image.startsWith("assets/")) return `duck-quest/${image}`;
+  return image;
+}
+
+function renderBuddyPortrait(container, buddy) {
+  container.innerHTML = "";
+  if (!buddy) return;
+
+  const imageSource = buddyImageSource(buddy);
+  if (imageSource) {
+    const img = document.createElement("img");
+    img.src = imageSource;
+    img.alt = "";
+    img.loading = "lazy";
+    img.decoding = "async";
+    img.addEventListener("error", () => {
+      container.innerHTML = "";
+      container.textContent = buddy.shiny ? "✨" : buddy.boss ? "★" : "♡";
+    }, { once: true });
+    container.append(img);
+  } else {
+    container.textContent = buddy.shiny ? "✨" : buddy.boss ? "★" : "♡";
+  }
+
+  if (buddy.shiny) {
+    const sparkle = document.createElement("span");
+    sparkle.className = "profile-buddy-shiny";
+    sparkle.textContent = "✦";
+    sparkle.setAttribute("aria-hidden", "true");
+    container.append(sparkle);
+  }
+}
+
+function closeProfileBuddyPicker() {
+  selectedBuddySlotIndex = null;
+  profileBuddyPicker?.classList.add("hidden");
+}
+
+function assignBuddyToProfile(characterId, slotIndex, buddyKey) {
+  if (!CHARACTERS[characterId]) return;
+  const slots = getBuddySlots(characterId);
+  const index = Math.max(0, Math.min(BUDDY_SLOT_COUNT - 1, Number(slotIndex) || 0));
+
+  if (buddyKey) {
+    const buddy = buddyByKey(buddyKey);
+    if (!buddy) return;
+    for (let i = 0; i < slots.length; i += 1) {
+      if (i !== index && slots[i] === buddyKey) slots[i] = null;
+    }
+    slots[index] = buddyKey;
+  } else {
+    slots[index] = null;
+  }
+
+  save.buddies.equippedByCharacter[characterId] = slots;
+  persist();
+  renderProfileBuddies(characterId);
+  closeProfileBuddyPicker();
+}
+
+function renderProfileBuddyPicker(characterId, slotIndex) {
+  if (!profileBuddyPicker || !profileBuddyPickerGrid) return;
+  const slots = getBuddySlots(characterId);
+  const buddies = buddyCollectionEntries();
+  selectedBuddySlotIndex = slotIndex;
+  profileBuddyPickerTitle.textContent = slotIndex === 0 ? "Choose Main Buddy" : `Choose Buddy ${slotIndex + 1}`;
+  profileBuddyPickerGrid.innerHTML = "";
+
+  const remove = document.createElement("button");
+  remove.type = "button";
+  remove.className = "profile-buddy-pick profile-buddy-remove";
+  remove.innerHTML = '<span class="profile-buddy-pick-art">×</span><strong>Empty Slot</strong>';
+  remove.addEventListener("click", () => assignBuddyToProfile(characterId, slotIndex, null));
+  profileBuddyPickerGrid.append(remove);
+
+  if (!buddies.length) {
+    const empty = document.createElement("p");
+    empty.className = "profile-buddy-picker-empty";
+    empty.textContent = "No Buddies captured yet. Buddy Pons are ready in the Shop for the upcoming Duck Quest catching update! ♡";
+    profileBuddyPickerGrid.append(empty);
+  } else {
+    buddies.forEach(buddy => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = `profile-buddy-pick${slots[slotIndex] === buddy.key ? " selected" : ""}`;
+      const art = document.createElement("span");
+      art.className = "profile-buddy-pick-art";
+      renderBuddyPortrait(art, buddy);
+      const name = document.createElement("strong");
+      name.textContent = `${buddy.shiny ? "✨ " : ""}${buddy.name}`;
+      const state = document.createElement("small");
+      const assignedIndex = slots.findIndex(key => key === buddy.key);
+      state.textContent = assignedIndex === 0 ? "★ Main Buddy"
+        : assignedIndex > 0 ? `Buddy ${assignedIndex + 1}`
+        : buddy.boss ? "Boss Buddy" : "Available";
+      button.append(art, name, state);
+      button.addEventListener("click", () => assignBuddyToProfile(characterId, slotIndex, buddy.key));
+      profileBuddyPickerGrid.append(button);
+    });
+  }
+
+  profileBuddyPicker.classList.remove("hidden");
+}
+
+function renderProfileBuddies(characterId = selectedProfileCharacterId) {
+  if (!characterId || !profileBuddySlots) return;
+  const slots = getBuddySlots(characterId);
+  profileBuddySlots.innerHTML = "";
+
+  const equippedCount = slots.filter(Boolean).length;
+  if (profileBuddyCount) profileBuddyCount.textContent = `${equippedCount} / ${BUDDY_SLOT_COUNT}`;
+
+  slots.forEach((buddyKey, index) => {
+    const buddy = buddyByKey(buddyKey);
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `profile-buddy-slot${index === 0 ? " main" : ""}${buddy ? " filled" : ""}`;
+    button.setAttribute("aria-label", buddy
+      ? `${index === 0 ? "Main Buddy" : `Buddy slot ${index + 1}`}: ${buddy.name}`
+      : `${index === 0 ? "Main Buddy" : `Buddy slot ${index + 1}`}, empty`);
+
+    const art = document.createElement("span");
+    art.className = "profile-buddy-slot-art";
+    if (buddy) renderBuddyPortrait(art, buddy);
+    else art.textContent = "+";
+
+    const badge = document.createElement("span");
+    badge.className = "profile-buddy-slot-badge";
+    badge.textContent = index === 0 ? "★" : String(index + 1);
+
+    button.append(art, badge);
+    button.addEventListener("click", () => renderProfileBuddyPicker(characterId, index));
+    profileBuddySlots.append(button);
+  });
+}
+
 function switchToProfileCharacter(characterId) {
   if (!CHARACTERS[characterId]) return;
   if (!save.unlockedCharacters.includes(characterId)) return;
@@ -9900,6 +10151,8 @@ function openProfileDetail(characterId) {
   applyProfileIconBackground(profileDetailAvatar, character.id);
   renderProfileIconPicker(character.id);
   closeProfileIconPicker();
+  closeProfileBuddyPicker();
+  renderProfileBuddies(character.id);
 
   switchProfileCharacter.textContent = `Switch to ${character.name}`;
   switchProfileCharacter.disabled = false;
@@ -9910,6 +10163,7 @@ function openProfileDetail(characterId) {
 
 function closeProfileDetail() {
   closeProfileIconPicker();
+  closeProfileBuddyPicker();
   selectedProfileCharacterId = null;
   profileDetailAvatar.innerHTML = "";
   delete profileDetailAvatar.dataset.characterId;
@@ -11555,6 +11809,7 @@ document.querySelectorAll("[data-achievement-tab]").forEach(button => {
 document.querySelector("#closeProfiles").addEventListener("click", closeProfilesToBook);
 document.querySelector("#closeProfileDetail").addEventListener("click", closeProfileDetail);
 document.querySelector("#profileDetailBackdrop").addEventListener("click", closeProfileDetail);
+closeProfileBuddyPickerButton?.addEventListener("click", closeProfileBuddyPicker);
 profileIconPickerButton?.addEventListener("click", () => {
   if (!selectedProfileCharacterId) return;
   const opening = profileIconPicker.classList.contains("hidden");
