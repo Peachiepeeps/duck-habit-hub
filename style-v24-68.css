@@ -6394,3 +6394,26 @@ button { color: inherit; }
     flex-basis:38px;
   }
 }
+
+
+/* =========================================================
+   V24.68 — Taller Gacha panel
+   ========================================================= */
+
+/* The generic .panel rule has max-height:68%, which was still capping Gacha.
+   Remove that cap and extend the card down to the requested lower point. */
+.gacha-panel{
+  top:1.5% !important;
+  bottom:8.5% !important;
+  max-height:none !important;
+  height:auto !important;
+}
+
+@media(max-width:420px){
+  .gacha-panel{
+    top:1% !important;
+    bottom:9.25% !important;
+    max-height:none !important;
+    height:auto !important;
+  }
+}

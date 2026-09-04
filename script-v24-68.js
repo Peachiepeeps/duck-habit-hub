@@ -6855,9 +6855,8 @@ function craftableDuckEntries() {
     .filter(([, duck]) => Boolean(duck.recipe))
     .sort(([aId, aDuck], [bId, bDuck]) => {
       // Keep ducks the player can craft RIGHT NOW at the very top.
-      // Missing recipes come next, and already-collected trophies go last.
+      // Already-discovered ducks remain fully craftable for duplicate collection counts.
       const rank = (duckId, duck) => {
-        if (isDuckUnlocked(duckId)) return 2;
         if (recipeHasMaterials(duck.recipe)) return 0;
         return 1;
       };
@@ -6936,9 +6935,6 @@ function renderCrafterOutputArt(container, target) {
 }
 
 function crafterCardStatusForDuck(duckId, duck) {
-  if (isDuckUnlocked(duckId)) {
-    return { label: "Collected ✓", className: "collected" };
-  }
   if (recipeHasMaterials(duck.recipe)) {
     return { label: "Ready!", className: "ready" };
   }
@@ -7016,9 +7012,9 @@ function renderDuckCraftTab() {
   intro.innerHTML = `
     <div>
       <strong>Craft a Duck</strong>
-      <p>Each crafted duck is a one-time trophy. Once made, it is permanently saved to Duckipedia.</p>
+      <p>Craft as many copies as you have ingredients for! Every duplicate counts toward that duck's Trophy milestones.</p>
     </div>
-    <span>${save.unlockedDucks.length} / ${DUCK_TOTAL}</span>
+    <span>${save.unlockedDucks.length} / ${DUCK_TOTAL} discovered</span>
   `;
   wrapper.append(intro);
 
@@ -7032,7 +7028,8 @@ function renderDuckCraftTab() {
         { type: "duck", id: duckId },
         duck.name,
         duck.file,
-        status
+        status,
+        `Owned ×${duckCollectionCount(duckId)}`
       )
     );
   });
@@ -7450,10 +7447,9 @@ function renderCraftSheet() {
 
   const ready = recipeHasMaterials(target.recipe);
 
-  if (target.type === "duck" && target.alreadyCrafted) {
-    craftSheetNote.textContent = "You already crafted this! It is safely stored in Duckipedia!";
-  } else if (target.type === "duck") {
-    craftSheetNote.textContent = "Crafting consumes the ingredients below, and permanently unlocks this duck in Duckipedia.";
+  if (target.type === "duck") {
+    const owned = duckCollectionCount(target.id);
+    craftSheetNote.textContent = `You currently own ${owned}. Crafting consumes the ingredients below. Every copy counts toward Duck Trophies.`;
   } else if (target.type === "furniture" && target.alreadyCrafted) {
     craftSheetNote.textContent = "You already own this color. Each paintable furniture color can be created once.";
   } else if (target.type === "furniture") {
@@ -7467,15 +7463,6 @@ function renderCraftSheet() {
     const row = renderCraftRequirementRow(itemId, needed);
     if (row) craftRequirements.append(row);
   });
-
-  if (target.type === "duck" && target.alreadyCrafted) {
-    craftReadyBadge.textContent = "Already collected";
-    craftReadyBadge.className = "craft-ready-badge collected";
-    craftActionButton.textContent = "Already in Duckipedia!";
-    craftActionButton.disabled = true;
-    craftActionButton.classList.remove("ready");
-    return;
-  }
 
   if (target.type === "furniture" && target.alreadyCrafted) {
     craftReadyBadge.textContent = "Color owned";
@@ -7513,12 +7500,6 @@ function craftSelectedTarget() {
   const target = getCraftTargetData();
   if (!target) return;
 
-  if (target.type === "duck" && target.alreadyCrafted) {
-    showToast("That duck is already in your Duckipedia!");
-    renderCraftSheet();
-    return;
-  }
-
   if (target.type === "furniture" && target.alreadyCrafted) {
     showToast("You already own that furniture color!");
     renderCraftSheet();
@@ -7538,25 +7519,30 @@ function craftSelectedTarget() {
   }
 
   if (target.type === "duck") {
-    const unlocked = unlockDuck(target.id, { notify: false, persistNow: false });
+    const wasUnlocked = isDuckUnlocked(target.id);
 
-    if (!unlocked) {
-      // Should never happen after the checks above. Restore materials rather
-      // than ever allowing a duplicate craft to consume them.
-      Object.entries(target.recipe).forEach(([itemId, quantity]) => {
-        addInventoryItem(itemId, quantity);
-      });
-      persist();
-      showToast("That duck was already unlocked, so your items were returned.");
-      renderCraftSheet();
-      return;
+    if (wasUnlocked) {
+      incrementDuckCollection(target.id, 1, { persistNow: false });
+    } else {
+      const unlocked = unlockDuck(target.id, { notify: false, persistNow: false });
+      if (!unlocked) {
+        // Defensive fallback: restore ingredients if the first unlock could not be recorded.
+        Object.entries(target.recipe).forEach(([itemId, quantity]) => {
+          addInventoryItem(itemId, quantity);
+        });
+        persist();
+        showToast("Something changed while crafting, so your ingredients were returned.");
+        renderCraftSheet();
+        return;
+      }
     }
 
     persist();
     renderRoom();
     renderCrafter();
     renderCraftSheet();
-    showToast(`${target.name} crafted! Added to Duckipedia!`);
+    const owned = duckCollectionCount(target.id);
+    showToast(`${target.name} crafted! You now own ×${owned}.`);
     return;
   }
 
@@ -7641,7 +7627,7 @@ function isDuckUnlocked(duckId) {
 }
 
 // This is the single unlock function Duck Crafter will call next.
-// It refuses duplicate unlocks because each duck is a one-time trophy.
+// Discovery stays one-time; duplicate copies are tracked separately in duckCollectionCounts.
 function unlockDuck(duckId, options = {}) {
   const id = normalizeDuckId(duckId);
   if (!id || !DUCKS[id]) return false;
@@ -7832,7 +7818,7 @@ function openDuckDetail(duckId) {
   duckDetailState.classList.toggle("unlocked", unlocked);
   duckDetailName.textContent = duck.name;
   duckDetailHint.textContent = unlocked
-    ? "This one-time trophy is permanently unlocked. Choose where this little friend should hang out!"
+    ? `Discovered! You currently own ×${duckCollectionCount(id)}. Duplicate copies count toward Duck Trophies. Choose where this little friend should hang out!`
     : duckDiscoveryHint(duck);
 
   if (unlocked) renderDuckDetailPlacementControls();
@@ -7981,9 +7967,13 @@ function isRepeatBuyShopListing(listing) {
   // from the Shop just because the player already owns one.
   if (item.category === "food") return true;
 
-  // Future-proofing: if a non-paint supply is ever reused by multiple duck
-  // recipes later, it automatically remains a repeat-buy Shop item.
-  return duckRecipesUsingItem(listing.itemId).length > 1;
+  // Crafting supplies stay available forever now that duplicate ducks can be crafted.
+  // This includes special one-recipe ingredients such as wings, hats, props, etc.
+  if (item.category === "crafting") return true;
+
+  // Any Shop item used by a duck recipe is repeat-buy, even if only one recipe uses it.
+  // Players may craft unlimited copies of that duck for collection trophies.
+  return duckRecipesUsingItem(listing.itemId).length > 0;
 }
 
 function singleRecipeSupplyNoLongerNeeded(itemId) {
