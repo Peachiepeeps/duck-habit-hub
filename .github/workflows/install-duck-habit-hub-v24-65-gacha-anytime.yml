@@ -1,1 +1,102 @@
+name: Install Duck Habit Hub v24.65 Gacha + Anytime Tasks
 
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  install-update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Verify update package
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ZIP="Duck-Habit-Hub-v24-65-Gacha-and-Anytime-Tasks.zip"
+
+          if [ ! -f "$ZIP" ]; then
+            echo "ERROR: $ZIP was not found in the repository root."
+            echo "Upload the ZIP untouched to the repo root."
+            exit 1
+          fi
+
+          unzip -t "$ZIP"
+
+          unzip -l "$ZIP" | grep -q "index.html"
+          unzip -l "$ZIP" | grep -q "script-v24-65.js"
+          unzip -l "$ZIP" | grep -q "style-v24-65.css"
+          unzip -l "$ZIP" | grep -q "sw-v24-65.js"
+          unzip -l "$ZIP" | grep -q "assets/gacha/gacha-machine.webp"
+          unzip -l "$ZIP" | grep -q "assets/gacha/gacha-turn.webp"
+          unzip -l "$ZIP" | grep -q "assets/gacha/capsule-common.webp"
+          unzip -l "$ZIP" | grep -q "assets/gacha/capsule-super.webp"
+
+      - name: Install v24.65
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ZIP="Duck-Habit-Hub-v24-65-Gacha-and-Anytime-Tasks.zip"
+
+          unzip -o "$ZIP" -d .
+
+          test -f "index.html"
+          test -f "script-v24-65.js"
+          test -f "style-v24-65.css"
+          test -f "sw-v24-65.js"
+
+          test -f "assets/gacha/gacha-machine.webp"
+          test -f "assets/gacha/gacha-turn.webp"
+          test -f "assets/gacha/capsule-clear.webp"
+          test -f "assets/gacha/capsule-common.webp"
+          test -f "assets/gacha/capsule-uncommon.webp"
+          test -f "assets/gacha/capsule-rare.webp"
+          test -f "assets/gacha/capsule-super.webp"
+
+          grep -q 'script-v24-65.js' "index.html"
+          grep -q 'style-v24-65.css' "index.html"
+          grep -q 'sw-v24-65.js' "index.html"
+          grep -q 'data-book-page="gacha"' "index.html"
+          grep -q 'id="anytimeTab"' "index.html"
+          grep -q 'id="completedTab"' "index.html"
+
+          grep -q '"file": "assets/ducks/peep-duck.webp"' "script-v24-65.js"
+          grep -q '"file": "assets/ducks/miko-duck.webp"' "script-v24-65.js"
+          grep -q 'GACHA_PULL_COST = 100' "script-v24-65.js"
+          grep -q 'GACHA_TEN_PULL_COST = 900' "script-v24-65.js"
+
+          # Remove only the root versions replaced by this update.
+          rm -f \
+            "script-v24-64.js" \
+            "style-v24-64.css" \
+            "sw-v24-64.js"
+
+          # The ZIP is only the transport package.
+          rm -f "$ZIP"
+
+      - name: Commit update
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "Nothing new to commit."
+            exit 0
+          fi
+
+          git commit -m "Add duck gacha, trophies, and Anytime tasks"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
