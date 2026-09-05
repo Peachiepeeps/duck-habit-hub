@@ -1,3 +1,4 @@
+// Duck Quest game-v33 — Hub v24.78 battle polish fixes
 const HUB_SAVE_KEY = "duckHabitHubSave_v1";
 const MAX_LEVEL = 100;
 const AREA_CONFIG = Object.freeze({
@@ -2637,9 +2638,23 @@ function removeHeroVisualClass(...classNames){
   activeHeroVisual()?.classList.remove(...classNames);
 }
 
+function hpFillColor(pct, enemy=false) {
+  const value=Math.max(0,Math.min(100,Number(pct)||0));
+  if(enemy){
+    if(value<=25) return "#b94456";
+    if(value<=50) return "#dc7a68";
+    return "#d76570";
+  }
+  if(value<=25) return "#d85b63";
+  if(value<=50) return "#d6aa52";
+  return "#6fb875";
+}
+
 function renderPeepHp() {
   const pct=Math.max(0,Math.min(100,(currentRun.hp/currentRun.maxHp)*100));
   ui.peepHpFill.style.width=`${pct}%`;
+  ui.peepHpFill.style.backgroundColor=hpFillColor(pct,false);
+  ui.peepHpFill.setAttribute("aria-valuenow",String(Math.round(pct)));
   ui.peepHpText.textContent=`${Math.max(0,Math.round(currentRun.hp))} / ${currentRun.maxHp} HP`;
 }
 
@@ -2647,6 +2662,8 @@ function renderEnemyHp() {
   if(!currentEnemy) return;
   const pct=Math.max(0,Math.min(100,(currentEnemy.hpNow/currentEnemy.maxHp)*100));
   ui.enemyHpFill.style.width=`${pct}%`;
+  ui.enemyHpFill.style.backgroundColor=hpFillColor(pct,true);
+  ui.enemyHpFill.setAttribute("aria-valuenow",String(Math.round(pct)));
   ui.enemyHpText.textContent=`${Math.max(0,Math.round(currentEnemy.hpNow))} / ${currentEnemy.maxHp} HP`;
 }
 
@@ -3210,9 +3227,16 @@ function renderPonPurchaseChoices() {
     const button=document.createElement("button");
     button.type="button";
     button.className=`pon-purchase-option${pon.className?` ${pon.className}`:""}`;
+    button.dataset.ponId=pon.id;
     const price=Math.max(0,Number(pon.price)||0);
-    button.disabled=befriendAttempted || actionLocked || Number(hubSave.coins)<price;
-    button.innerHTML=`<img src="${pon.image}" alt=""><span><strong>${pon.name}</strong><small>${price} Pink Coins</small></span>`;
+    const catchRate=pendingDefeatedEnemy ? buddyPonCatchRate(pon,pendingDefeatedEnemy) : 0;
+    const compatible=Boolean(pendingDefeatedEnemy) && catchRate>0;
+    const canAfford=Number(hubSave.coins)>=price;
+    button.disabled=befriendAttempted || actionLocked || !compatible || !canAfford;
+    const detail=!compatible
+      ? (pendingDefeatedEnemy?.boss && !pendingDefeatedEnemy?.shiny ? "Can't catch this boss" : "Not compatible")
+      : `${price} Pink Coins · ${Math.round(catchRate*100)}% catch`;
+    button.innerHTML=`<img src="${pon.image}" alt=""><span><strong>${pon.name}</strong><small>${detail}</small></span>`;
     button.addEventListener("click",()=>purchaseBuddyPon(pon.id));
     ui.ponPurchaseChoices.appendChild(button);
   });
@@ -3233,6 +3257,12 @@ function purchaseBuddyPon(ponId) {
   if(actionLocked || befriendAttempted || !pendingDefeatedEnemy) return;
   const pon=BUDDY_PONS.find(item=>item.id===ponId);
   if(!pon) return;
+  const catchRate=buddyPonCatchRate(pon,pendingDefeatedEnemy);
+  if(catchRate<=0){
+    if(ui.ponPurchaseMessage) ui.ponPurchaseMessage.textContent=`${pon.name} can't be used on this Buddy. Choose a compatible Pon.`;
+    renderPonPurchaseChoices();
+    return;
+  }
   const price=Math.max(0,Number(pon.price)||0);
   const coins=Math.max(0,Number(hubSave.coins)||0);
   if(coins<price) {
@@ -3241,13 +3271,26 @@ function purchaseBuddyPon(ponId) {
     return;
   }
   hubSave.coins=coins-price;
-  if(!hubSave.inventory || typeof hubSave.inventory!=="object") hubSave.inventory={};
-  hubSave.inventory[pon.id]=hubInventoryQty(pon.id)+1;
+  if(!hubSave.inventory || typeof hubSave.inventory!=="object" || Array.isArray(hubSave.inventory)) hubSave.inventory={};
+  const nextQty=hubInventoryQty(pon.id)+1;
+  hubSave.inventory[pon.id]=nextQty;
   persistAll();
   renderMeta();
   renderBefriendChoices();
-  if(ui.ponPurchaseMessage) ui.ponPurchaseMessage.textContent=`Purchased 1 ${pon.name}! You can use it right now. ♡`;
-  renderPonPurchaseChoices();
+
+  // v33: Return immediately to the throw choices so the newly purchased Pon
+  // visibly becomes usable instead of leaving the player in the shop panel.
+  ui.ponPurchasePanel?.classList.add("hidden");
+  if(ui.purchasePonButton) ui.purchasePonButton.textContent="Purchase Another Pon";
+  if(ui.befriendText) ui.befriendText.textContent=`Purchased 1 ${pon.name}! You now have ×${nextQty}. Choose it above to throw it.`;
+  requestAnimationFrame(()=>{
+    const throwButton=ui.befriendPonChoices?.querySelector(`[data-pon-id="${pon.id}"]`);
+    if(throwButton && !throwButton.disabled){
+      throwButton.classList.add("pon-just-purchased");
+      throwButton.focus({preventScroll:true});
+      setTimeout(()=>throwButton.classList.remove("pon-just-purchased"),900);
+    }
+  });
 }
 
 function renderBefriendChoices() {
@@ -3259,6 +3302,7 @@ function renderBefriendChoices() {
     const button=document.createElement("button");
     button.type="button";
     button.className=`befriend-pon-button${pon.className?` ${pon.className}`:""}`;
+    button.dataset.ponId=pon.id;
     button.disabled=befriendAttempted || qty<=0 || rate<=0 || actionLocked;
     const rateLabel=rate>0?`${Math.round(rate*100)}% chance`:"Normal enemies only";
     button.innerHTML=`<img src="${pon.image}" alt=""><strong>${pon.name}</strong><small>×${qty} · ${rateLabel}</small>`;
@@ -3353,7 +3397,8 @@ async function enemyDefeated() {
   clearInterval(idleTimer);
   const defeated={...currentEnemy};
   currentEnemy=null;
-  ui.buddyCombatant?.classList.add("hidden");
+  // v33: Keep the Main Buddy on the field while the capture panel is open.
+  // It disappears only when the player continues to the treasure chest.
   ui.commandGrid.classList.add("hidden");
   closeCommandWindow();
   setMessage(`${defeated.name}${defeated.shiny?" ✨":""} was defeated!`);

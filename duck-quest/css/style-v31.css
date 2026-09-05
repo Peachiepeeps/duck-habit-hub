@@ -1762,3 +1762,106 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
   .battlefield .hp-bar{height:9px}
   .battlefield .combatant small,.enemy-status-stack small{font-size:.45rem}
 }
+
+/* =========================================================
+   V33 / Hub v24.78 — battle polish fixes
+   - Raise Peep, Buddy, and enemies slightly
+   - Keep Miko the same visual height on wide attack frames
+   - Restore unmistakable HP fill colors
+   - Highlight a newly purchased emergency Buddy Pon
+   ========================================================= */
+
+/* HP fills: keep a visible colored inner bar regardless of older cascade rules. */
+.battlefield .hp-bar > span{
+  display:block !important;
+  height:100% !important;
+  min-width:0 !important;
+  border-radius:1px;
+  opacity:1 !important;
+  visibility:visible !important;
+  background:#6fb875;
+  transition:width .25s ease, background-color .2s ease !important;
+}
+.battlefield .enemy-hp > span{
+  background:#d76570;
+}
+
+/* Lift the combat sprites a little off the bottom edge. */
+.battlefield .peep-combatant .peep-fighter{
+  top:auto !important;
+  bottom:6% !important;
+}
+.battlefield .enemy-combatant .enemy-fighter{
+  top:auto !important;
+  bottom:6% !important;
+}
+.buddy-combatant,
+.buddy-combatant.boss-buddy{
+  top:auto !important;
+  bottom:9% !important;
+}
+
+/* Miko: size every 96px-tall frame by HEIGHT, not width.
+   Mock/Gun have wider canvases, so width-sizing made him shrink on attack. */
+.battlefield.miko-active .peep-combatant .battle-hero-composite,
+.battlefield.miko-active.ocean-peep-raised .peep-combatant .battle-hero-composite{
+  position:absolute !important;
+  left:5% !important;
+  top:auto !important;
+  bottom:6% !important;
+  width:auto !important;
+  height:55% !important;
+  margin:0 !important;
+  display:grid !important;
+  place-items:end start !important;
+}
+.battlefield.miko-active .peep-combatant .battle-hero-composite img,
+.battlefield.miko-active.ocean-peep-raised .peep-combatant .battle-hero-composite img{
+  width:auto !important;
+  height:100% !important;
+  max-width:none !important;
+  max-height:none !important;
+  object-fit:contain !important;
+}
+
+/* Keep the enemy at the same raised baseline whether or not Miko has a Buddy. */
+.battlefield.miko-active .enemy-combatant .enemy-fighter{
+  top:auto !important;
+  bottom:6% !important;
+}
+
+/* Newly bought Pon: make the now-usable throw button obvious. */
+.befriend-pon-button.pon-just-purchased{
+  animation:ponReadyPulse .9s ease-in-out;
+  outline:3px solid rgba(229,111,152,.55);
+  outline-offset:2px;
+}
+@keyframes ponReadyPulse{
+  0%,100%{transform:scale(1)}
+  45%{transform:scale(1.035)}
+}
+
+@media(max-width:600px){
+  .battlefield .peep-combatant .peep-fighter{
+    bottom:7% !important;
+  }
+  .battlefield .enemy-combatant .enemy-fighter{
+    bottom:7% !important;
+  }
+  .buddy-combatant,
+  .buddy-combatant.boss-buddy{
+    bottom:10% !important;
+  }
+  .battlefield.miko-active .peep-combatant .battle-hero-composite,
+  .battlefield.miko-active.ocean-peep-raised .peep-combatant .battle-hero-composite{
+    left:5% !important;
+    top:auto !important;
+    bottom:7% !important;
+    width:auto !important;
+    height:56% !important;
+  }
+  .battlefield.miko-active .enemy-combatant .enemy-fighter{
+    top:auto !important;
+    bottom:7% !important;
+  }
+}
