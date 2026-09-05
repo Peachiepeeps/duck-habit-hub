@@ -1,5 +1,5 @@
 {
-  "version": "24.92",
+  "version": "24.93",
   "updated": "2026-09-05",
-  "note": "Fixes persistent broken Duck Quest images by bypassing stale browser HTTP image-cache misses and re-ships all enemy, boss, and shiny art."
+  "note": "Just a Smack now deals normal basic-attack damage while always leaving the enemy at 1 HP or higher."
 }

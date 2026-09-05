@@ -177,7 +177,7 @@ const PEEP_SKILLS = [
     unlock: 1,
     type: "safe-chip",
     sprite: "assets/characters/peep/base/attack.webp",
-    description: "Deals exactly 1 HP of damage and can never knock an enemy below 1 HP. Perfect for catching!"
+    description: "Deals normal basic-attack damage, but can never knock an enemy below 1 HP. Perfect for catching!"
   }
 ];
 
@@ -237,7 +237,7 @@ const MIKO_SKILLS = [
     unlock: 1,
     type: "safe-chip",
     sprite: "assets/characters/miko/base/mock.webp",
-    description: "Deals exactly 1 HP of damage and can never knock an enemy below 1 HP. Perfect for catching!"
+    description: "Deals normal basic-attack damage, but can never knock an enemy below 1 HP. Perfect for catching!"
   }
 ];
 
@@ -270,7 +270,7 @@ const IO_SKILLS = [
   {
     id:"just-a-smack", name:"Just a smack!", unlock:1, type:"safe-chip",
     sprite:"assets/characters/io/base/heart-ray.webp",
-    description:"Deals exactly 1 HP of damage and can never knock an enemy below 1 HP. Perfect for catching!"
+    description:"Deals normal basic-attack damage, but can never knock an enemy below 1 HP. Perfect for catching!"
   }
 ];
 
@@ -3410,12 +3410,22 @@ async function useSkill(skill) {
   } else if(skill.type==="safe-chip") {
     const beforeHp=Math.max(0,Number(currentEnemy.hpNow)||0);
     const canDamage=beforeHp>1;
-    setMessage(canDamage
-      ? `${skillDisplayName(skill)} ${heroDisplayName()} gives ${currentEnemy.name} a careful smack!`
-      : `${currentEnemy.name} is already at 1 HP — the smack won't knock it out!`);
-    await sleep(280);
-    if(canDamage) await hurtEnemyNonLethal(1);
-    else await sleep(260);
+    if(canDamage){
+      const stats=peepStats();
+      const boostedAttack=stats.attack
+        *(skillState.attackBuffTurns>0?skillState.attackBuffMultiplier:1)
+        *(skillState.buddyAttackBuffTurns>0?skillState.buddyAttackMultiplier:1)
+        *(skillState.enemyDefenseDownTurns>0?skillState.enemyDefenseMultiplier:1);
+      const crit=Math.random()<0.11;
+      const variance=0.9+Math.random()*0.2;
+      const dmg=Math.max(1,Math.round(boostedAttack*variance*(crit?1.5:1)));
+      setMessage(`${skillDisplayName(skill)} ${heroDisplayName()} gives ${currentEnemy.name} a careful smack!${crit?" CRITICAL!":""}`);
+      await sleep(280);
+      await hurtEnemyNonLethal(dmg);
+    } else {
+      setMessage(`${currentEnemy.name} is already at 1 HP — the smack won't knock it out!`);
+      await sleep(540);
+    }
   } else if(skill.type==="multi-hit") {
     if(skill.cooldown) skillState.cooldowns[skill.id]=skill.cooldown;
     if(skill.oncePerBattle) skillState.onceUsed[skill.id]=true;

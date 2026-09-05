@@ -1,5 +1,5 @@
-const APP_CACHE = 'duck-habit-hub-app-v24-92';
-const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-92';
+const APP_CACHE = 'duck-habit-hub-app-v24-93';
+const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-93';
 const IMAGE_CACHE = 'duck-habit-hub-images-stable-v1';
 
 const APP_SHELL = [
