@@ -1,9 +1,9 @@
-Duck Habit Hub v24.86 — Item & Pon Menu Layout Fix
+Duck Habit Hub v24.87 — Just a smack!
 
 Changes:
-- Pulls the Duck Quest Item menu lower on the battle screen.
-- Makes the Item overlay taller on mobile so its contents are easier to use.
-- Fixes the Purchase Pons panel being constrained to the tiny footer height.
-- Gives the Buddy Pon shop a full-size scrollable panel with all three purchase choices visible and tappable.
-- Keeps the Back to Items button accessible at the bottom of the Pon shop.
-- No battle logic, catch rates, saves, or encounter behavior changed.
+- Adds “Just a smack!” to Peep, Miko, and Io from level 1.
+- The move deals exactly 1 HP of damage per use.
+- It can never lower an enemy or boss below 1 HP, so it cannot accidentally KO something you are preparing to catch.
+- If the target is already at 1 HP, the move safely leaves it there.
+- Uses existing OC attack sprites; no new art is required.
+- All v24.86 Item/Pon layout fixes remain intact.
