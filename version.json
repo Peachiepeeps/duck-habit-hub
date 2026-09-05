@@ -1,5 +1,5 @@
 {
-  "version": "24.88",
+  "version": "24.89",
   "updated": "2026-09-05",
-  "note": "Image performance pass: lightweight thumbnails, battle preloading, WebP gameplay art, and a larger image cache"
+  "note": "Buddy image path repair, PNG fallback support, and Io head-duck layering behind her hair."
 }
