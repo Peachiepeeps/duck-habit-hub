@@ -2374,7 +2374,7 @@ const IO_ASSETS = {
   "sheep-ears": { label: "Sheep Ears", file: "Io-sheep-ears.webp", z: 43 },
   "bangs": { label: "Bangs", file: "Io-bangs.webp", z: 44 },
   "heart-pin": { label: "Heart Hairpin", file: "Io-heart-pin.webp", z: 45 },
-  "crown": { label: "Crown", file: "Io-crown.webp", z: 46 }
+  "crown": { label: "Crown", file: "Io-crown.webp", z: 43.5 }
 };
 
 const IO_CLOSET = [

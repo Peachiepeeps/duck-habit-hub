@@ -1,4 +1,4 @@
-// Duck Quest game-v35 — Hub v24.80 Buddy Book assignment
+// Duck Quest game-v37 — Hub v24.82 in-battle Buddy Pon catching
 const HUB_SAVE_KEY = "duckHabitHubSave_v1";
 const MAX_LEVEL = 100;
 const AREA_CONFIG = Object.freeze({
@@ -1422,7 +1422,9 @@ const ui = {
   befriendText: document.querySelector("#befriendText"),
   befriendPonChoices: document.querySelector("#befriendPonChoices"),
   skipBefriend: document.querySelector("#skipBefriend"),
+  itemPonShopActions: document.querySelector("#itemPonShopActions"),
   purchasePonButton: document.querySelector("#purchasePonButton"),
+  closePonPurchaseButton: document.querySelector("#closePonPurchaseButton"),
   ponPurchasePanel: document.querySelector("#ponPurchasePanel"),
   ponPurchaseCoins: document.querySelector("#ponPurchaseCoins"),
   ponPurchaseMessage: document.querySelector("#ponPurchaseMessage"),
@@ -1708,7 +1710,13 @@ function syncPastLevelIconBackgrounds(){
 
 function pickChestIconBackground(chest){
   normalizeIconBackgroundUnlocks();
-  const locked=ICON_BACKGROUND_COLORS.filter(bg=>bg.source==="chest" && !questSave.iconBackgroundsUnlocked.includes(bg.id));
+  // v37: A discovered icon background can never be rolled again.
+  // Exclude both persistent unlocks and anything already awarded in this run.
+  const alreadyDiscovered=new Set([
+    ...questSave.iconBackgroundsUnlocked,
+    ...((currentRun?.iconBackgroundsEarned||[]).map(bg=>bg?.id).filter(Boolean))
+  ]);
+  const locked=ICON_BACKGROUND_COLORS.filter(bg=>bg.source==="chest" && !alreadyDiscovered.has(bg.id));
   if(!locked.length) return null;
 
   const isMimic=chest?.enemy?.id==="mimic";
@@ -2459,6 +2467,7 @@ function startEncounter() {
   pendingDefeatedEnemy=null;
   befriendAttempted=false;
   ui.befriendPanel?.classList.add("hidden");
+  ui.ponPurchasePanel?.classList.add("hidden");
   quickHealUses=0;
   skillState={
     cooldowns:{}, onceUsed:{}, attackBuffTurns:0, attackBuffMultiplier:1.30, activeBuffSkillId:null,
@@ -3016,6 +3025,8 @@ function openCommandWindow(kind) {
   ui.skillButtons.classList.add("hidden");
   ui.itemButtons.classList.add("hidden");
   ui.noBattleItems.classList.add("hidden");
+  ui.itemPonShopActions?.classList.add("hidden");
+  ui.ponPurchasePanel?.classList.add("hidden");
 
   if (kind === "attack") {
     ui.commandWindowTitle.textContent = "Attack";
@@ -3029,8 +3040,8 @@ function openCommandWindow(kind) {
     ui.commandWindowTitle.textContent = "Item";
     renderBattleItems();
     ui.itemButtons.classList.remove("hidden");
-    const hasItems = ui.itemButtons.children.length > 0;
-    ui.noBattleItems.classList.toggle("hidden", hasItems);
+    ui.itemPonShopActions?.classList.remove("hidden");
+    ui.noBattleItems.classList.add("hidden");
   }
 }
 
@@ -3040,6 +3051,8 @@ function closeCommandWindow() {
   ui.skillButtons.classList.add("hidden");
   ui.itemButtons.classList.add("hidden");
   ui.noBattleItems.classList.add("hidden");
+  ui.itemPonShopActions?.classList.add("hidden");
+  ui.ponPurchasePanel?.classList.add("hidden");
 }
 
 function renderBattleItems() {
@@ -3061,20 +3074,18 @@ function renderBattleItems() {
   ];
 
   ui.itemButtons.innerHTML = "";
-  let shown = 0;
 
+  // Healing items stay in Item and only appear when the player owns one.
   battleItems.forEach(item => {
     const qty = hubInventoryQty(item.id);
     if (qty <= 0) return;
 
-    shown++;
     const button = document.createElement("button");
     button.type = "button";
     button.className = `pixel-button battle-item-button${item.id === "gold-heart-refill" ? " gold" : ""}`;
 
     const fullHp = !currentRun || currentRun.hp >= currentRun.maxHp;
     button.disabled = actionLocked || !currentEnemy || fullHp;
-
     button.innerHTML = `
       <img src="${item.image}" alt="">
       <span>
@@ -3082,17 +3093,39 @@ function renderBattleItems() {
         <small>${item.detail} · ×${qty}</small>
       </span>
     `;
-
     button.addEventListener("click", () => {
       closeCommandWindow();
       useBattleHeart(item.id);
     });
-
     ui.itemButtons.appendChild(button);
   });
 
-  ui.noBattleItems.classList.toggle("hidden", shown > 0);
+  // v37: Buddy Pons are now battle items. They are always shown so the
+  // player can see their current quantity and exact catch chance.
+  BUDDY_PONS.forEach(pon => {
+    const qty=hubInventoryQty(pon.id);
+    const rate=buddyPonCatchRate(pon,currentEnemy);
+    const button=document.createElement("button");
+    button.type="button";
+    button.className=`pixel-button battle-item-button buddy-pon-item${pon.className?` ${pon.className}`:""}`;
+    button.dataset.ponId=pon.id;
+    button.disabled=actionLocked || !currentEnemy || qty<=0 || rate<=0;
+    const rateLabel=rate>0 ? `${Math.round(rate*100)}% catch` : "Can't catch this boss";
+    button.innerHTML=`
+      <img src="${pon.image}" alt="">
+      <span>
+        <strong>${pon.name}</strong>
+        <small>×${qty} · ${rateLabel}</small>
+      </span>
+    `;
+    button.addEventListener("click",()=>attemptBattleCapture(pon.id));
+    ui.itemButtons.appendChild(button);
+  });
+
+  ui.noBattleItems.classList.add("hidden");
+  renderPonPurchaseChoices();
 }
+
 async function useBattleHeart(itemId) {
   if (actionLocked || !currentEnemy || !currentRun) return;
   if (currentRun.hp >= currentRun.maxHp) {
@@ -3431,40 +3464,33 @@ function renderPonPurchaseChoices() {
     button.className=`pon-purchase-option${pon.className?` ${pon.className}`:""}`;
     button.dataset.ponId=pon.id;
     const price=Math.max(0,Number(pon.price)||0);
-    const catchRate=pendingDefeatedEnemy ? buddyPonCatchRate(pon,pendingDefeatedEnemy) : 0;
-    const compatible=Boolean(pendingDefeatedEnemy) && catchRate>0;
+    const catchRate=currentEnemy ? buddyPonCatchRate(pon,currentEnemy) : 0;
     const canAfford=Number(hubSave.coins)>=price;
-    button.disabled=befriendAttempted || actionLocked || !compatible || !canAfford;
-    const detail=!compatible
-      ? (pendingDefeatedEnemy?.boss && !pendingDefeatedEnemy?.shiny ? "Can't catch this boss" : "Not compatible")
-      : `${price} Pink Coins · ${Math.round(catchRate*100)}% catch`;
-    button.innerHTML=`<img src="${pon.image}" alt=""><span><strong>${pon.name}</strong><small>${detail}</small></span>`;
+    button.disabled=actionLocked || !currentEnemy || !canAfford || catchRate<=0;
+    const chanceLabel=catchRate>0 ? `${Math.round(catchRate*100)}% vs ${currentEnemy.name}${currentEnemy.shiny?" ✨":""}` : "0% vs this boss";
+    button.innerHTML=`<img src="${pon.image}" alt=""><span><strong>${pon.name}</strong><small>${price} Pink Coins · ${chanceLabel}</small></span>`;
     button.addEventListener("click",()=>purchaseBuddyPon(pon.id));
     ui.ponPurchaseChoices.appendChild(button);
   });
-  if(ui.purchasePonButton) ui.purchasePonButton.disabled=befriendAttempted || actionLocked;
+  if(ui.purchasePonButton) ui.purchasePonButton.disabled=actionLocked || !currentEnemy;
 }
 
 function togglePonPurchasePanel() {
-  if(!ui.ponPurchasePanel || befriendAttempted || actionLocked) return;
+  if(!ui.ponPurchasePanel || actionLocked || !currentEnemy) return;
   const willOpen=ui.ponPurchasePanel.classList.contains("hidden");
   ui.ponPurchasePanel.classList.toggle("hidden",!willOpen);
   if(willOpen) {
-    if(ui.ponPurchaseMessage) ui.ponPurchaseMessage.textContent="Buy a Buddy Pon without leaving this encounter.";
+    if(ui.ponPurchaseMessage) ui.ponPurchaseMessage.textContent="Buy Pons here and use them immediately in this battle.";
     renderPonPurchaseChoices();
   }
 }
 
 function purchaseBuddyPon(ponId) {
-  if(actionLocked || befriendAttempted || !pendingDefeatedEnemy) return;
+  if(actionLocked || !currentEnemy) return;
   const pon=BUDDY_PONS.find(item=>item.id===ponId);
   if(!pon) return;
-  const catchRate=buddyPonCatchRate(pon,pendingDefeatedEnemy);
-  if(catchRate<=0){
-    if(ui.ponPurchaseMessage) ui.ponPurchaseMessage.textContent=`${pon.name} can't be used on this Buddy. Choose a compatible Pon.`;
-    renderPonPurchaseChoices();
-    return;
-  }
+  const catchRate=buddyPonCatchRate(pon,currentEnemy);
+  if(catchRate<=0) return;
   const price=Math.max(0,Number(pon.price)||0);
   const coins=Math.max(0,Number(hubSave.coins)||0);
   if(coins<price) {
@@ -3478,21 +3504,48 @@ function purchaseBuddyPon(ponId) {
   hubSave.inventory[pon.id]=nextQty;
   persistAll();
   renderMeta();
-  renderBefriendChoices();
+  renderBattleItems();
+  renderPonPurchaseChoices();
+  if(ui.ponPurchaseMessage) ui.ponPurchaseMessage.textContent=`Purchased 1 ${pon.name}! You now have ×${nextQty}.`;
+}
 
-  // v33: Return immediately to the throw choices so the newly purchased Pon
-  // visibly becomes usable instead of leaving the player in the shop panel.
-  ui.ponPurchasePanel?.classList.add("hidden");
-  if(ui.purchasePonButton) ui.purchasePonButton.textContent="Purchase Another Pon";
-  if(ui.befriendText) ui.befriendText.textContent=`Purchased 1 ${pon.name}! You now have ×${nextQty}. Choose it above to throw it.`;
-  requestAnimationFrame(()=>{
-    const throwButton=ui.befriendPonChoices?.querySelector(`[data-pon-id="${pon.id}"]`);
-    if(throwButton && !throwButton.disabled){
-      throwButton.classList.add("pon-just-purchased");
-      throwButton.focus({preventScroll:true});
-      setTimeout(()=>throwButton.classList.remove("pon-just-purchased"),900);
-    }
-  });
+async function attemptBattleCapture(ponId) {
+  if(actionLocked || !currentEnemy || !currentRun) return;
+  const pon=BUDDY_PONS.find(item=>item.id===ponId);
+  if(!pon) return;
+  const target=currentEnemy;
+  const rate=buddyPonCatchRate(pon,target);
+  if(rate<=0 || hubInventoryQty(pon.id)<=0) return;
+  if(!consumeHubItem(pon.id,1)) return;
+
+  closeCommandWindow();
+  actionLocked=true;
+  renderCommandButtons();
+  renderBattleItems();
+  setMessage(`${heroDisplayName()} threw a ${pon.name}!`);
+  animateBuddyPon(pon);
+  await sleep(760);
+
+  const success=rate>=1 || Math.random()<rate;
+  if(success) {
+    const buddy=captureBuddy(target);
+    renderEnemyName(target);
+    renderBuddyHomeCount();
+    setMessage(`${target.name}${target.shiny?" ✨":""} became your Buddy! You now own ×${buddy.quantity}.`);
+    await sleep(520);
+    await enemyDefeated({captured:true});
+    return;
+  }
+
+  setMessage(`${target.name}${target.shiny?" ✨":""} slipped out of the ${pon.name}!`);
+  await sleep(520);
+  // A failed throw is the OC's Item action, just like a healing item.
+  decrementCooldowns("buddy-pon");
+  await enemyTurn();
+  actionLocked=false;
+  renderCommandButtons();
+  renderSkills();
+  renderBattleItems();
 }
 
 function renderBefriendChoices() {
@@ -3595,17 +3648,19 @@ async function finishBefriendStep() {
   showChest(pendingChest);
 }
 
-async function enemyDefeated() {
+async function enemyDefeated(options={}) {
   clearInterval(idleTimer);
+  if(!currentEnemy) return;
   const defeated={...currentEnemy};
   currentEnemy=null;
-  // v33: Keep the Main Buddy on the field while the capture panel is open.
-  // It disappears only when the player continues to the treasure chest.
   ui.commandGrid.classList.add("hidden");
   closeCommandWindow();
-  setMessage(`${defeated.name}${defeated.shiny?" ✨":""} was defeated!`);
+  ui.enemyCombatant.classList.add("hidden");
+  setMessage(options.captured
+    ? `${defeated.name}${defeated.shiny?" ✨":""} was befriended — battle won!`
+    : `${defeated.name}${defeated.shiny?" ✨":""} was defeated!`);
 
-  await sleep(350);
+  await sleep(options.captured?280:350);
 
   const isBoss=Boolean(defeated.boss);
   pendingChest={
@@ -3614,9 +3669,10 @@ async function enemyDefeated() {
     enemy:defeated
   };
 
-  // Pause before the victory chest so the player gets one Buddy Pon attempt.
+  // v37: Catching happens from Item during combat. Once a foe is defeated
+  // or successfully befriended, go directly to the victory chest.
   actionLocked=false;
-  showBefriendPanel(defeated);
+  showChest(pendingChest);
 }
 
 function showChest(data) {
@@ -4068,6 +4124,7 @@ ui.escapeButton.addEventListener("click",()=>{
 document.querySelector("#openChest").addEventListener("click",openPendingChest);
 ui.skipBefriend?.addEventListener("click",finishBefriendStep);
 ui.purchasePonButton?.addEventListener("click",togglePonPurchasePanel);
+ui.closePonPurchaseButton?.addEventListener("click",()=>ui.ponPurchasePanel?.classList.add("hidden"));
 document.querySelector("#continueButton").addEventListener("click",nextEncounter);
 ui.leaveEndlessButton?.addEventListener("click",leaveEndlessAfterFloor);
 document.querySelector("#runAgain").addEventListener("click",()=>{

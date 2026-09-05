@@ -6884,3 +6884,15 @@ button { color: inherit; }
 .book-hotspot.on-shelf {
   top: 81.2%;
 }
+
+
+/* =========================================================
+   V24.82 — Io crown layering + shelf Book final nudge
+   ========================================================= */
+/* The crown now sorts below Io's bangs in script-v24-82.js. */
+.book-room-object.on-shelf {
+  transform: translateY(-5.2%);
+}
+.book-hotspot.on-shelf {
+  top: 79.6%;
+}

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f6c6d6" />
   <title>Duck Quest</title>
-  <link rel="stylesheet" href="css/style-v34.css" />
+  <link rel="stylesheet" href="css/style-v35.css" />
 </head>
 <body>
   <main class="quest-shell">
@@ -279,27 +279,20 @@
             <div id="skillButtons" class="skill-grid hidden"></div>
             <div id="itemButtons" class="battle-item-grid hidden"></div>
             <p id="noBattleItems" class="no-battle-items hidden">You don't have any battle items right now.</p>
+            <div id="itemPonShopActions" class="item-pon-shop-actions hidden">
+              <button id="purchasePonButton" class="pixel-button purchase-pon-button" type="button">Purchase Pons</button>
+              <section id="ponPurchasePanel" class="pon-purchase-panel hidden" aria-live="polite">
+                <div class="pon-purchase-heading">
+                  <strong>Buddy Pon Shop</strong>
+                  <span id="ponPurchaseCoins">0 Pink Coins</span>
+                </div>
+                <p id="ponPurchaseMessage">Buy Pons here and use them immediately in this battle.</p>
+                <div id="ponPurchaseChoices" class="pon-purchase-grid"></div>
+                <button id="closePonPurchaseButton" class="pixel-button small" type="button">Back to Items</button>
+              </section>
+            </div>
           </section>
         </div>
-
-        <section id="befriendPanel" class="befriend-panel hidden" aria-live="polite">
-          <div class="befriend-heading">
-            <span class="mini-label">BUDDY CHANCE</span>
-            <h3 id="befriendTitle">Befriend this enemy?</h3>
-            <p id="befriendText">Choose a Buddy Pon, or continue without trying.</p>
-          </div>
-          <div id="befriendPonChoices" class="befriend-pon-grid"></div>
-          <button id="skipBefriend" class="pixel-button" type="button">Continue to Chest</button>
-          <button id="purchasePonButton" class="pixel-button purchase-pon-button" type="button">Purchase Pon</button>
-          <section id="ponPurchasePanel" class="pon-purchase-panel hidden" aria-live="polite">
-            <div class="pon-purchase-heading">
-              <strong>Emergency Pon Shop</strong>
-              <span id="ponPurchaseCoins">0 Pink Coins</span>
-            </div>
-            <p id="ponPurchaseMessage">Buy a Buddy Pon without leaving this encounter.</p>
-            <div id="ponPurchaseChoices" class="pon-purchase-grid"></div>
-          </section>
-        </section>
 
         <div id="postFloorActions" class="post-floor-actions hidden">
           <button id="continueButton" class="pixel-button primary large" type="button">Continue</button>
@@ -347,6 +340,6 @@
     </section>
   </main>
 
-  <script src="js/game-v36.js"></script>
+  <script src="js/game-v37.js"></script>
 </body>
 </html>
