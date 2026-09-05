@@ -1091,3 +1091,277 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
   .battlefield.io-active .battle-hero-composite{left:8% !important;top:49% !important}
   .battlefield.io-active.ocean-peep-raised .battle-hero-composite{top:22px !important}
 }
+
+/* v28 — Buddy Pons, Buddy Book, capture flow, and shiny sparkle support */
+.buddy-home-card{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  background:var(--panel);
+  border:3px solid var(--border);
+  border-radius:12px;
+  box-shadow:var(--shadow);
+}
+.buddy-home-card>div{display:grid;gap:2px}
+.buddy-home-card>div>strong{font-size:1rem}
+.buddy-home-card small{font-size:.64rem;font-weight:900;color:#91736f}
+
+.buddy-book-card{
+  position:relative;
+  background:var(--panel);
+  border:3px solid var(--border);
+  border-radius:12px;
+  box-shadow:var(--shadow);
+  padding:14px;
+}
+.buddy-book-heading{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  gap:10px;
+  align-items:center;
+}
+.buddy-book-heading>div{text-align:center}
+.buddy-book-heading h2{margin:2px 0 0}
+.buddy-count-pill{
+  min-width:74px;
+  text-align:center;
+  background:#f5c7d7;
+  border:3px solid #a66a80;
+  border-radius:8px;
+  padding:7px 8px;
+  font-size:.74rem;
+}
+.buddy-book-note{
+  margin:12px 0 10px;
+  padding:9px 10px;
+  border:2px dashed #c99aab;
+  border-radius:8px;
+  background:#fffaf3;
+  font-size:.7rem;
+  font-weight:800;
+  line-height:1.4;
+}
+.buddy-filters{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:7px;
+  margin-bottom:10px;
+}
+.buddy-filter{
+  min-height:38px;
+  border:2px solid #b98998;
+  border-radius:8px;
+  background:#fff8ef;
+  color:var(--brown);
+  font:inherit;
+  font-size:.68rem;
+  font-weight:900;
+  cursor:pointer;
+}
+.buddy-filter.selected{background:#ef9dbb;color:#fff;border-color:#9d5e73}
+.buddy-collection-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:9px;
+}
+.buddy-tile{
+  position:relative;
+  min-width:0;
+  min-height:148px;
+  display:grid;
+  grid-template-rows:92px auto auto;
+  align-items:center;
+  gap:4px;
+  border:3px solid #bd8e9c;
+  border-radius:10px;
+  background:#fffaf0;
+  color:var(--brown);
+  padding:7px;
+  font:inherit;
+  cursor:pointer;
+  overflow:hidden;
+}
+.buddy-tile.caught{background:#fff5f8}
+.buddy-tile.boss{border-color:#c79a42;background:#fff8df}
+.buddy-tile.shiny{box-shadow:inset 0 0 0 2px rgba(255,255,255,.6),0 0 12px rgba(230,183,83,.38)}
+.buddy-tile-art{
+  position:relative;
+  width:100%;
+  height:92px;
+  display:grid;
+  place-items:center;
+}
+.buddy-tile-art img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
+.buddy-tile.unknown .buddy-tile-art img{filter:brightness(0);opacity:.35}
+.buddy-tile strong{font-size:.68rem;line-height:1.15;overflow-wrap:anywhere}
+.buddy-tile small{font-size:.55rem;color:#8f7470;font-weight:900}
+.buddy-tile-badge{
+  position:absolute;
+  top:5px;
+  right:5px;
+  min-width:25px;
+  min-height:25px;
+  display:grid;
+  place-items:center;
+  padding:2px 5px;
+  border:2px solid #ad7d8e;
+  border-radius:999px;
+  background:#fff8ef;
+  font-size:.55rem;
+  font-weight:900;
+  z-index:2;
+}
+.buddy-collection-empty{text-align:center;font-size:.72rem;font-weight:900;color:#927674;margin:16px 0 4px}
+
+.buddy-detail{
+  position:fixed;
+  inset:0;
+  z-index:80;
+  display:grid;
+  place-items:center;
+  padding:18px;
+  background:rgba(72,48,52,.48);
+}
+.buddy-detail-card{
+  position:relative;
+  width:min(420px,100%);
+  max-height:min(680px,90vh);
+  overflow:auto;
+  display:grid;
+  justify-items:center;
+  gap:8px;
+  padding:18px;
+  background:#fff7e5;
+  border:4px solid var(--border);
+  border-radius:14px;
+  box-shadow:0 9px 0 rgba(102,67,61,.3);
+  text-align:center;
+}
+.buddy-detail-close{
+  position:absolute;
+  top:7px;
+  right:7px;
+  width:38px;
+  height:38px;
+  border:3px solid var(--border);
+  border-radius:8px;
+  background:#fff;
+  color:var(--brown);
+  font:inherit;
+  font-size:1.1rem;
+  font-weight:900;
+  cursor:pointer;
+}
+.buddy-detail-art{
+  position:relative;
+  width:170px;
+  height:170px;
+  display:grid;
+  place-items:center;
+  margin-top:4px;
+  background:#f7dce7;
+  border:3px dashed #c88ba0;
+  border-radius:50%;
+  overflow:hidden;
+}
+.buddy-detail-art img{width:92%;height:92%;object-fit:contain;image-rendering:pixelated}
+.buddy-detail-art.unknown img{filter:brightness(0);opacity:.35}
+.buddy-detail-card h2{margin:0}
+.buddy-detail-card>p{margin:0;font-size:.72rem;font-weight:800;line-height:1.45}
+.buddy-detail-stats{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.buddy-detail-stats>div{padding:8px;border:2px solid #caa1aa;border-radius:8px;background:#fffaf0}
+.buddy-detail-stats span{display:block;font-size:.55rem;color:#98716a;font-weight:900}
+.buddy-detail-stats strong{font-size:.78rem}
+.buddy-skill-preview{width:100%;padding:9px;border:2px dashed #c99aab;border-radius:8px;background:#fffaf3}
+
+.befriend-panel{
+  display:grid;
+  gap:9px;
+  border:3px solid #ad7a8d;
+  border-radius:10px;
+  background:#fff4f8;
+  padding:10px;
+}
+.befriend-heading{text-align:center;display:grid;gap:3px}
+.befriend-heading h3{margin:0;font-size:.95rem}
+.befriend-heading p{margin:0;font-size:.65rem;font-weight:800;color:#8b6d6b}
+.befriend-pon-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.befriend-pon-button{
+  min-width:0;
+  min-height:94px;
+  display:grid;
+  grid-template-rows:52px auto auto;
+  justify-items:center;
+  align-items:center;
+  gap:2px;
+  border:3px solid #bd8e9c;
+  border-radius:9px;
+  background:#fffaf0;
+  color:var(--brown);
+  padding:6px;
+  font:inherit;
+  cursor:pointer;
+}
+.befriend-pon-button.super{background:#f1e8ff;border-color:#8b6dc3}
+.befriend-pon-button.boss{background:#fff2bd;border-color:#bd9140}
+.befriend-pon-button img{width:50px;height:50px;object-fit:contain}
+.befriend-pon-button strong{font-size:.61rem;line-height:1.05;text-align:center}
+.befriend-pon-button small{font-size:.53rem;font-weight:900;color:#866d69;text-align:center}
+.befriend-pon-button:disabled{opacity:.4;cursor:not-allowed}
+.befriend-result{
+  border:2px dashed #c99aab;
+  border-radius:8px;
+  background:#fffaf3;
+  padding:8px;
+  text-align:center;
+  font-size:.72rem;
+  font-weight:900;
+}
+.capture-pon-fly{
+  position:absolute;
+  z-index:30;
+  width:58px;
+  height:58px;
+  object-fit:contain;
+  pointer-events:none;
+  left:31%;
+  top:65%;
+  animation:buddyPonThrow .72s ease-in-out forwards;
+}
+@keyframes buddyPonThrow{
+  0%{transform:translate(0,0) rotate(0deg) scale(.7)}
+  55%{transform:translate(250%,-175%) rotate(420deg) scale(1)}
+  75%{transform:translate(270%,-160%) rotate(520deg) scale(.92)}
+  100%{transform:translate(270%,-160%) rotate(580deg) scale(0);opacity:.15}
+}
+.enemy-shiny-sparkle{
+  display:inline-block;
+  margin-left:4px;
+  color:#f2c85d;
+  text-shadow:0 0 5px #fff,0 0 8px #eeb5df;
+  animation:shinyBuddyTwinkle .8s ease-in-out infinite alternate;
+}
+@keyframes shinyBuddyTwinkle{from{transform:scale(.8) rotate(-9deg);opacity:.6}to{transform:scale(1.2) rotate(9deg);opacity:1}}
+
+@media(max-width:700px){
+  .buddy-collection-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .buddy-tile{min-height:128px;grid-template-rows:76px auto auto;padding:5px}
+  .buddy-tile-art{height:76px}
+  .buddy-tile strong{font-size:.59rem}
+  .buddy-tile small{font-size:.49rem}
+  .buddy-book-heading{grid-template-columns:auto minmax(0,1fr)}
+  .buddy-count-pill{grid-column:1/-1;justify-self:center}
+  .buddy-filters{gap:4px}.buddy-filter{font-size:.57rem;padding:5px 3px}
+  .befriend-pon-grid{gap:5px}
+  .befriend-pon-button{min-height:82px;grid-template-rows:44px auto auto;padding:4px}
+  .befriend-pon-button img{width:42px;height:42px}
+  .befriend-pon-button strong{font-size:.54rem}.befriend-pon-button small{font-size:.47rem}
+}
+@media(max-width:420px){
+  .buddy-collection-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .buddy-home-card{padding:10px}
+  .buddy-home-card>div>strong{font-size:.86rem}
+  .buddy-detail-art{width:145px;height:145px}
+}

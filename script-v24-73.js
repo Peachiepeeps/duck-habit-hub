@@ -1,5 +1,5 @@
 const STORAGE_KEY = "duckHabitHubSave_v1";
-const SAVE_VERSION = 32;
+const SAVE_VERSION = 33;
 
 const CHARACTERS = {
   peep: {
@@ -273,9 +273,23 @@ const ITEMS = {
   "buddy-pon": {
     "name": "Buddy Pon",
     "category": "battle",
-    "image": "assets/gacha/capsule-common.webp",
-    "icon": "◉",
+    "image": "assets/items/buddy-pons/buddy-pon.png",
+    "icon": "♡",
     "sellValue": 15
+  },
+  "super-buddy-pon": {
+    "name": "Super Buddy Pon",
+    "category": "battle",
+    "image": "assets/items/buddy-pons/super-buddy-pon.png",
+    "icon": "✦",
+    "sellValue": 30
+  },
+  "boss-buddy-pon": {
+    "name": "Boss Buddy Pon",
+    "category": "battle",
+    "image": "assets/items/buddy-pons/boss-buddy-pon.png",
+    "icon": "★",
+    "sellValue": 50
   },
   "pink-heart-refill": {
     "name": "Pink Heart Refill",
@@ -1276,6 +1290,8 @@ const SHOP_STOCK = {
   ],
   battle: [
     { itemId: "buddy-pon", price: 50 },
+    { itemId: "super-buddy-pon", price: 100 },
+    { itemId: "boss-buddy-pon", price: 175 },
     { itemId: "pink-heart-refill", price: 75 },
     { itemId: "gold-heart-refill", price: 250 }
   ],
@@ -2625,6 +2641,7 @@ function normalizeBuddyRecord(record, fallbackKey = "") {
     image,
     shiny: Boolean(record.shiny),
     boss: Boolean(record.boss),
+    quantity: Math.max(1, Math.floor(Number(record.quantity) || 1)),
     capturedAt: Math.max(0, Number(record.capturedAt) || 0)
   };
 }
@@ -2641,13 +2658,19 @@ function normalizeBuddySave(raw) {
   }
 
   const equippedByCharacter = {};
+  const usedCounts = {};
   for (const characterId of Object.keys(CHARACTERS)) {
     const source = Array.isArray(raw?.equippedByCharacter?.[characterId])
       ? raw.equippedByCharacter[characterId]
       : [];
     equippedByCharacter[characterId] = Array.from({ length: BUDDY_SLOT_COUNT }, (_, index) => {
       const key = typeof source[index] === "string" ? source[index] : null;
-      return key && collection[key] ? key : null;
+      const buddy = key ? collection[key] : null;
+      if (!buddy) return null;
+      const used = Math.max(0, Number(usedCounts[key]) || 0);
+      if (used >= buddy.quantity) return null;
+      usedCounts[key] = used + 1;
+      return key;
     });
   }
 
@@ -9952,6 +9975,19 @@ function buddyByKey(key) {
   return save.buddies?.collection?.[key] || null;
 }
 
+function buddyEquippedCount(key, excludeCharacterId = "", excludeSlotIndex = -1) {
+  if (!key) return 0;
+  let count = 0;
+  for (const characterId of Object.keys(CHARACTERS)) {
+    const slots = getBuddySlots(characterId);
+    slots.forEach((slotKey, index) => {
+      if (characterId === excludeCharacterId && index === excludeSlotIndex) return;
+      if (slotKey === key) count += 1;
+    });
+  }
+  return count;
+}
+
 function getBuddySlots(characterId = save.selectedCharacter) {
   if (!save.buddies || typeof save.buddies !== "object") save.buddies = normalizeBuddySave(null);
   if (!save.buddies.equippedByCharacter || typeof save.buddies.equippedByCharacter !== "object") {
@@ -10020,8 +10056,10 @@ function assignBuddyToProfile(characterId, slotIndex, buddyKey) {
   if (buddyKey) {
     const buddy = buddyByKey(buddyKey);
     if (!buddy) return;
-    for (let i = 0; i < slots.length; i += 1) {
-      if (i !== index && slots[i] === buddyKey) slots[i] = null;
+    const equippedElsewhere = buddyEquippedCount(buddyKey, characterId, index);
+    if (equippedElsewhere >= Math.max(1, Number(buddy.quantity) || 1)) {
+      showToast(`All ${buddy.name} copies are already assigned.`);
+      return;
     }
     slots[index] = buddyKey;
   } else {
@@ -10052,7 +10090,7 @@ function renderProfileBuddyPicker(characterId, slotIndex) {
   if (!buddies.length) {
     const empty = document.createElement("p");
     empty.className = "profile-buddy-picker-empty";
-    empty.textContent = "No Buddies captured yet. Buddy Pons are ready in the Shop for the upcoming Duck Quest catching update! ♡";
+    empty.textContent = "No Buddies befriended yet. Visit Duck Quest, defeat an enemy, and try a Buddy Pon! ♡";
     profileBuddyPickerGrid.append(empty);
   } else {
     buddies.forEach(buddy => {
@@ -10065,10 +10103,14 @@ function renderProfileBuddyPicker(characterId, slotIndex) {
       const name = document.createElement("strong");
       name.textContent = `${buddy.shiny ? "✨ " : ""}${buddy.name}`;
       const state = document.createElement("small");
-      const assignedIndex = slots.findIndex(key => key === buddy.key);
-      state.textContent = assignedIndex === 0 ? "★ Main Buddy"
-        : assignedIndex > 0 ? `Buddy ${assignedIndex + 1}`
-        : buddy.boss ? "Boss Buddy" : "Available";
+      const owned = Math.max(1, Number(buddy.quantity) || 1);
+      const equippedElsewhere = buddyEquippedCount(buddy.key, characterId, slotIndex);
+      const equippedTotal = buddyEquippedCount(buddy.key);
+      const isSelected = slots[slotIndex] === buddy.key;
+      const availableForSlot = Math.max(0, owned - equippedElsewhere);
+      state.textContent = `${buddy.boss ? "★ Boss · " : ""}Owned ×${owned} · Equipped ×${equippedTotal}`;
+      button.disabled = !isSelected && availableForSlot <= 0;
+      if (button.disabled) button.classList.add("unavailable");
       button.append(art, name, state);
       button.addEventListener("click", () => assignBuddyToProfile(characterId, slotIndex, buddy.key));
       profileBuddyPickerGrid.append(button);
@@ -11809,6 +11851,7 @@ document.querySelectorAll("[data-achievement-tab]").forEach(button => {
 document.querySelector("#closeProfiles").addEventListener("click", closeProfilesToBook);
 document.querySelector("#closeProfileDetail").addEventListener("click", closeProfileDetail);
 document.querySelector("#profileDetailBackdrop").addEventListener("click", closeProfileDetail);
+document.querySelector("#viewBuddyCollection")?.addEventListener("click", () => { window.location.href = "duck-quest/?screen=buddies"; });
 closeProfileBuddyPickerButton?.addEventListener("click", closeProfileBuddyPicker);
 profileIconPickerButton?.addEventListener("click", () => {
   if (!selectedProfileCharacterId) return;

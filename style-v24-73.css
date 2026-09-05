@@ -6832,3 +6832,26 @@ button { color: inherit; }
 .gacha-capsule.cracking .color-half{
   transform:translate(8.6%,6.5%) rotate(2deg);
 }
+
+/* v24.73 — Buddy collection/profile polish */
+.profile-buddy-pick.unavailable{
+  opacity:.46;
+  cursor:not-allowed;
+}
+.profile-buddy-collection-link{
+  width:100%;
+  margin-top:8px;
+  border:2px solid #a77a87;
+  border-radius:10px;
+  background:#fff2f7;
+  color:#76535d;
+  padding:9px 12px;
+  font:inherit;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 3px 0 rgba(103,70,78,.16);
+}
+.profile-buddy-collection-link:active{
+  transform:translateY(2px);
+  box-shadow:0 1px 0 rgba(103,70,78,.16);
+}

@@ -1,13 +1,14 @@
-const APP_CACHE = 'duck-habit-hub-app-v24-72';
-const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-72';
-const IMAGE_CACHE = 'duck-habit-hub-images-v24-72';
+const APP_CACHE = 'duck-habit-hub-app-v24-73';
+const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-73';
+const IMAGE_CACHE = 'duck-habit-hub-images-v24-73';
 
 const APP_SHELL = [
-  './','./index.html','./manifest.webmanifest','./style-v24-72.css','./script-v24-72.js','./sw-v24-72.js',
+  './','./index.html','./manifest.webmanifest','./style-v24-73.css','./script-v24-73.js','./sw-v24-73.js',
   './apple-touch-icon-v4.png','./favicon-32-v4.png','./icon-192-v4.png','./icon-512-v4.png','./icon-maskable-512-v4.png',
   './assets/ui/book-room.webp','./assets/ui/book-icon.webp','./assets/ui/mirror.webp','./assets/ui/pink-coin.webp',
   './assets/gacha/gacha-machine.webp','./assets/gacha/gacha-menu-icon.webp','./assets/gacha/gacha-turn.webp','./assets/gacha/capsule-clear.webp','./assets/gacha/capsule-common.webp','./assets/gacha/capsule-uncommon.webp','./assets/gacha/capsule-rare.webp','./assets/gacha/capsule-super.webp',
   './assets/ui/icons/tasks.webp','./assets/ui/icons/dailies.webp','./assets/ui/icons/inventory.webp','./assets/ui/icons/shop.webp','./assets/ui/icons/duckipedia.webp','./assets/ui/icons/status.webp','./assets/ui/icons/profiles.webp','./assets/ui/icons/save-data.webp',
+  './assets/items/buddy-pons/buddy-pon.png','./assets/items/buddy-pons/super-buddy-pon.png','./assets/items/buddy-pons/boss-buddy-pon.png',
   './assets/ducks/Standard-duck.webp','./assets/gifts/Gaming-controller.webp','./assets/achievements/trophies/trophy-gold.webp','./assets/paint/Pink-paint.webp','./assets/gifts/Heart-locket.webp',
   './assets/oc-invitations/Io-invitation.webp','./assets/ducks/io-duck.webp'
 ];

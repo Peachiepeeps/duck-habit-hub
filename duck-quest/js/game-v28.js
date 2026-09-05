@@ -877,6 +877,161 @@ function applyMushroomVariant(template,rank){
   return {...template,name:v.name,idle:v.idle,hurt:v.hurt,hp:Math.round(template.hp*v.hpMultiplier),attack:Math.round(template.attack*v.attackMultiplier),exp:Math.round(template.exp*v.expMultiplier),coinMin:Math.round(template.coinMin*v.coinMultiplier),coinMax:Math.round(template.coinMax*v.coinMultiplier),mushroomVariant:v.id,healPercent:Number(v.healPercent)||0,maxHeals:Number(v.maxHeals)||0,healChance:Number(v.healChance)||0,healMoveName:v.healMoveName||""};
 }
 
+const SHINY_RATE = 0.01;
+
+// Add one special recolor per enemy family here when its art is ready.
+// A shiny replaces whichever normal recolor rolled, keeps that encounter's stats,
+// appears with a sparkle, and is a guaranteed catch with any Buddy Pon.
+const SHINY_VARIANTS = Object.freeze({
+  // Example for later:
+  // "cat-slime": { id:"rainbow", name:"Rainbow Cat Slime", idle:["assets/..."], hurt:"assets/..." }
+});
+
+const BUDDY_PONS = Object.freeze([
+  {
+    id:"buddy-pon", name:"Buddy Pon", image:"../assets/items/buddy-pons/buddy-pon.png",
+    normalRate:.50, bossRate:0, className:""
+  },
+  {
+    id:"super-buddy-pon", name:"Super Buddy Pon", image:"../assets/items/buddy-pons/super-buddy-pon.png",
+    normalRate:.75, bossRate:.35, className:"super"
+  },
+  {
+    id:"boss-buddy-pon", name:"Boss Buddy Pon", image:"../assets/items/buddy-pons/boss-buddy-pon.png",
+    normalRate:1, bossRate:.70, className:"boss"
+  }
+]);
+
+function catalogEntry(enemyId, variantId, variant, boss=false, shiny=false) {
+  return {
+    key:`${enemyId}:${shiny ? "shiny" : variantId}`,
+    enemyId,
+    variantId:shiny ? "shiny" : variantId,
+    name:String(variant?.name || ENEMIES[enemyId]?.name || "Buddy"),
+    image:String(variant?.idle?.[0] || ENEMIES[enemyId]?.idle?.[0] || ""),
+    boss:Boolean(boss),
+    shiny:Boolean(shiny)
+  };
+}
+
+function buildBuddyCatalog() {
+  const entries=[];
+  const addTable=(enemyId,table,boss=false)=>{
+    Object.values(table).forEach(v=>entries.push(catalogEntry(enemyId,v.id,v,boss,false)));
+    const shiny=SHINY_VARIANTS[enemyId];
+    if(shiny) entries.push(catalogEntry(enemyId,"shiny",shiny,boss,true));
+  };
+  addTable("cat-slime",CAT_SLIME_VARIANTS,false);
+  addTable("bee",BEE_VARIANTS,false);
+  addTable("flower",FLOWER_VARIANTS,false);
+  addTable("mushroom-cat",MUSHROOM_CAT_VARIANTS,true);
+  entries.push(catalogEntry("mimic","base",ENEMIES.mimic,false,false));
+  const mimicShiny=SHINY_VARIANTS.mimic;
+  if(mimicShiny) entries.push(catalogEntry("mimic","shiny",mimicShiny,false,true));
+  addTable("cool-seagull",SEAGULL_VARIANTS,false);
+  addTable("sea-turtle",TURTLE_VARIANTS,false);
+  addTable("catfish",CATFISH_VARIANTS,false);
+  addTable("vampire-squid",SQUID_VARIANTS,true);
+  return entries;
+}
+
+const BUDDY_CATALOG = Object.freeze(buildBuddyCatalog());
+const BUDDY_CATALOG_BY_KEY = new Map(BUDDY_CATALOG.map(entry=>[entry.key,entry]));
+
+function normalizeBuddyCollection(raw) {
+  const collection={};
+  if(raw && typeof raw==="object" && !Array.isArray(raw)) {
+    for(const [fallbackKey,value] of Object.entries(raw)) {
+      if(!value || typeof value!=="object" || Array.isArray(value)) continue;
+      const key=String(value.key || fallbackKey || "").trim();
+      if(!key) continue;
+      collection[key]={
+        key,
+        enemyId:String(value.enemyId || ""),
+        variantId:String(value.variantId || "base"),
+        name:String(value.name || "Buddy"),
+        image:String(value.image || ""),
+        shiny:Boolean(value.shiny),
+        boss:Boolean(value.boss),
+        quantity:Math.max(1,Math.floor(Number(value.quantity)||1)),
+        capturedAt:Math.max(0,Number(value.capturedAt)||0)
+      };
+    }
+  }
+  return collection;
+}
+
+function ensureBuddySave() {
+  if(!hubSave.buddies || typeof hubSave.buddies!=="object" || Array.isArray(hubSave.buddies)) hubSave.buddies={};
+  hubSave.buddies.collection=normalizeBuddyCollection(hubSave.buddies.collection);
+  if(!hubSave.buddies.equippedByCharacter || typeof hubSave.buddies.equippedByCharacter!=="object") hubSave.buddies.equippedByCharacter={};
+  ["peep","miko","io"].forEach(id=>{
+    const slots=Array.isArray(hubSave.buddies.equippedByCharacter[id])?hubSave.buddies.equippedByCharacter[id]:[];
+    hubSave.buddies.equippedByCharacter[id]=Array.from({length:6},(_,i)=>typeof slots[i]==="string"?slots[i]:null);
+  });
+}
+
+function buddyOwnedQuantity(key) {
+  return Math.max(0,Number(hubSave.buddies?.collection?.[key]?.quantity)||0);
+}
+
+function enemyVariantId(enemy) {
+  if(!enemy) return "base";
+  if(enemy.shiny) return "shiny";
+  return String(
+    enemy.catSlimeVariant || enemy.beeVariant || enemy.flowerVariant || enemy.mushroomVariant || enemy.oceanVariant || "base"
+  );
+}
+
+function buddyKeyForEnemy(enemy) {
+  return `${enemy?.id || "enemy"}:${enemy?.shiny ? "shiny" : enemyVariantId(enemy)}`;
+}
+
+function buddyRecordFromEnemy(enemy) {
+  const key=buddyKeyForEnemy(enemy);
+  return {
+    key,
+    enemyId:String(enemy?.id || ""),
+    variantId:enemy?.shiny ? "shiny" : enemyVariantId(enemy),
+    name:String(enemy?.name || "Buddy"),
+    image:String(enemy?.idle?.[0] || enemy?.hurt || ""),
+    shiny:Boolean(enemy?.shiny),
+    boss:Boolean(enemy?.boss),
+    quantity:1,
+    capturedAt:Date.now()
+  };
+}
+
+function captureBuddy(enemy) {
+  ensureBuddySave();
+  const incoming=buddyRecordFromEnemy(enemy);
+  const existing=hubSave.buddies.collection[incoming.key];
+  if(existing) {
+    existing.quantity=Math.max(1,Number(existing.quantity)||1)+1;
+    existing.name=incoming.name;
+    existing.image=incoming.image;
+    existing.shiny=incoming.shiny;
+    existing.boss=incoming.boss;
+  } else {
+    hubSave.buddies.collection[incoming.key]=incoming;
+  }
+  persistAll();
+  return hubSave.buddies.collection[incoming.key];
+}
+
+function maybeApplyShinyVariant(enemyId, template) {
+  const shiny=SHINY_VARIANTS[enemyId];
+  if(!shiny || Math.random()>=SHINY_RATE) return template;
+  return {
+    ...template,
+    name:String(shiny.name || template.name),
+    idle:Array.isArray(shiny.idle)&&shiny.idle.length?shiny.idle:template.idle,
+    hurt:String(shiny.hurt || template.hurt),
+    shiny:true,
+    shinyId:String(shiny.id || "shiny")
+  };
+}
+
 const REWARD_ITEMS = [
   { id:"yarn", name:"Yarn", image:"../assets/ingredients/Yarn.webp", weight:14 },
   { id:"thread", name:"Thread", image:"../assets/ingredients/Thread.webp", weight:14 },
@@ -891,7 +1046,10 @@ const REWARD_ITEMS = [
   { id:"gold-paint", name:"Gold Paint", image:"../assets/paint/Gold-paint.webp", weight:3 },
   { id:"rainbow-paint", name:"Rainbow Paint", image:"../assets/paint/Rainbow-paint.webp", weight:1 },
   { id:"pink-heart-refill", name:"Pink Heart Refill", image:"../assets/bakery/drops/Pink-heart-refill.webp", weight:5 },
-  { id:"gold-heart-refill", name:"Gold Heart Refill", image:"../assets/bakery/drops/Gold-heart-refill.webp", weight:1 }
+  { id:"gold-heart-refill", name:"Gold Heart Refill", image:"../assets/bakery/drops/Gold-heart-refill.webp", weight:1 },
+  { id:"buddy-pon", name:"Buddy Pon", image:"../assets/items/buddy-pons/buddy-pon.png", weight:6 },
+  { id:"super-buddy-pon", name:"Super Buddy Pon", image:"../assets/items/buddy-pons/super-buddy-pon.png", weight:2.4 },
+  { id:"boss-buddy-pon", name:"Boss Buddy Pon", image:"../assets/items/buddy-pons/boss-buddy-pon.png", weight:.65 }
 ];
 
 function currentAreaConfig(){ return getAreaConfig(currentRun?.area || selectedArea); }
@@ -925,6 +1083,7 @@ function heroHurtFrame(){
 
 const ui = {
   home: document.querySelector("#homeScreen"),
+  buddy: document.querySelector("#buddyScreen"),
   battle: document.querySelector("#battleScreen"),
   result: document.querySelector("#resultScreen"),
   coinCount: document.querySelector("#coinCount"),
@@ -999,10 +1158,31 @@ const ui = {
   iconBackgroundCurrent: document.querySelector("#iconBackgroundCurrent"),
   iconBackgroundLabel: document.querySelector("#iconBackgroundLabel"),
   iconBackgroundPicker: document.querySelector("#iconBackgroundPicker"),
-  switchQuestOc: document.querySelector("#switchQuestOc")
+  switchQuestOc: document.querySelector("#switchQuestOc"),
+  buddyHomeCount: document.querySelector("#buddyHomeCount"),
+  openBuddyCollection: document.querySelector("#openBuddyCollection"),
+  backFromBuddies: document.querySelector("#backFromBuddies"),
+  buddyCollectionCount: document.querySelector("#buddyCollectionCount"),
+  buddyCollectionGrid: document.querySelector("#buddyCollectionGrid"),
+  buddyCollectionEmpty: document.querySelector("#buddyCollectionEmpty"),
+  buddyFilters: Array.from(document.querySelectorAll("[data-buddy-filter]")),
+  buddyDetail: document.querySelector("#buddyDetail"),
+  closeBuddyDetail: document.querySelector("#closeBuddyDetail"),
+  buddyDetailArt: document.querySelector("#buddyDetailArt"),
+  buddyDetailTag: document.querySelector("#buddyDetailTag"),
+  buddyDetailName: document.querySelector("#buddyDetailName"),
+  buddyDetailStatus: document.querySelector("#buddyDetailStatus"),
+  buddyDetailOwned: document.querySelector("#buddyDetailOwned"),
+  buddyDetailType: document.querySelector("#buddyDetailType"),
+  befriendPanel: document.querySelector("#befriendPanel"),
+  befriendTitle: document.querySelector("#befriendTitle"),
+  befriendText: document.querySelector("#befriendText"),
+  befriendPonChoices: document.querySelector("#befriendPonChoices"),
+  skipBefriend: document.querySelector("#skipBefriend")
 };
 
 let hubSave = loadHubSave();
+ensureBuddySave();
 let questSave = normalizeQuestSave(hubSave.duckQuest);
 
 function activeCharacterIdFromQuest(){
@@ -1106,6 +1286,9 @@ let enemyIdleIndex = 0;
 let peepIdleIndex = 0;
 let actionLocked = false;
 let pendingChest = null;
+let pendingDefeatedEnemy = null;
+let befriendAttempted = false;
+let buddyCollectionFilter = "all";
 const QUICK_HEAL_PERCENT = 0.25;
 const QUICK_HEAL_MAX_USES = 4;
 let quickHealUses = 0;
@@ -1501,6 +1684,123 @@ function switchQuestCharacter(){
   renderMeta();
 }
 
+function buddyDisplayCatalog() {
+  ensureBuddySave();
+  const byKey=new Map(BUDDY_CATALOG.map(entry=>[entry.key,{...entry}]));
+  Object.values(hubSave.buddies.collection||{}).forEach(record=>{
+    if(!record?.key) return;
+    if(!byKey.has(record.key)) byKey.set(record.key,{...record});
+  });
+  return [...byKey.values()];
+}
+
+function buddyCollectionProgress() {
+  const catalog=buddyDisplayCatalog();
+  const caught=catalog.filter(entry=>buddyOwnedQuantity(entry.key)>0).length;
+  return {caught,total:catalog.length};
+}
+
+function renderBuddyHomeCount() {
+  const progress=buddyCollectionProgress();
+  if(ui.buddyHomeCount) ui.buddyHomeCount.textContent=`${progress.caught} / ${progress.total} befriended`;
+}
+
+function closeBuddyDetail() {
+  ui.buddyDetail?.classList.add("hidden");
+  ui.buddyDetail?.setAttribute("aria-hidden","true");
+}
+
+function setBuddyScreenUrl(isOpen) {
+  try {
+    const url=new URL(window.location.href);
+    if(isOpen) url.searchParams.set("screen","buddies");
+    else url.searchParams.delete("screen");
+    window.history.replaceState(null,"",url);
+  } catch {}
+}
+
+function openBuddyDetail(entry) {
+  if(!entry || !ui.buddyDetail) return;
+  const owned=buddyOwnedQuantity(entry.key);
+  const caught=owned>0;
+  ui.buddyDetailArt.innerHTML="";
+  ui.buddyDetailArt.classList.toggle("unknown",!caught);
+  if(entry.image) {
+    const img=document.createElement("img");
+    img.src=entry.image;
+    img.alt="";
+    ui.buddyDetailArt.appendChild(img);
+  } else {
+    ui.buddyDetailArt.textContent=caught?(entry.shiny?"✨":entry.boss?"★":"♡"):"?";
+  }
+  ui.buddyDetailTag.textContent=entry.shiny?"SHINY BUDDY ✨":entry.boss?"BOSS BUDDY":"BUDDY";
+  ui.buddyDetailName.textContent=caught?entry.name:"???";
+  ui.buddyDetailStatus.textContent=caught
+    ? `Befriended! You currently own ${owned} ${owned===1?"copy":"copies"}.`
+    : "Not befriended yet. Find this Buddy in Duck Quest and use a Buddy Pon!";
+  ui.buddyDetailOwned.textContent=`×${owned}`;
+  ui.buddyDetailType.textContent=entry.shiny?(entry.boss?"Shiny Boss":"Shiny"):entry.boss?"Boss":"Normal";
+  ui.buddyDetail.classList.remove("hidden");
+  ui.buddyDetail.setAttribute("aria-hidden","false");
+}
+
+function renderBuddyCollection() {
+  ensureBuddySave();
+  const catalog=buddyDisplayCatalog();
+  const progress=buddyCollectionProgress();
+  if(ui.buddyCollectionCount) ui.buddyCollectionCount.textContent=`${progress.caught} / ${progress.total}`;
+  renderBuddyHomeCount();
+  ui.buddyFilters.forEach(button=>button.classList.toggle("selected",button.dataset.buddyFilter===buddyCollectionFilter));
+
+  let entries=catalog.filter(entry=>{
+    if(buddyCollectionFilter==="normal") return !entry.boss && !entry.shiny;
+    if(buddyCollectionFilter==="boss") return Boolean(entry.boss);
+    if(buddyCollectionFilter==="shiny") return Boolean(entry.shiny);
+    return true;
+  });
+
+  ui.buddyCollectionGrid.innerHTML="";
+  entries.forEach(entry=>{
+    const owned=buddyOwnedQuantity(entry.key);
+    const caught=owned>0;
+    const button=document.createElement("button");
+    button.type="button";
+    button.className=`buddy-tile${caught?" caught":" unknown"}${entry.boss?" boss":""}${entry.shiny?" shiny":""}`;
+    button.setAttribute("aria-label",caught?`${entry.name}, owned ${owned}`:"Undiscovered Buddy");
+
+    const art=document.createElement("span");
+    art.className="buddy-tile-art";
+    if(entry.image) {
+      const img=document.createElement("img");
+      img.src=entry.image;
+      img.alt="";
+      art.appendChild(img);
+    } else {
+      art.textContent=caught?(entry.shiny?"✨":entry.boss?"★":"♡"):"?";
+    }
+
+    const name=document.createElement("strong");
+    name.textContent=caught?`${entry.name}${entry.shiny?" ✨":""}`:"???";
+    const state=document.createElement("small");
+    state.textContent=caught?`Owned ×${owned}`:"Not Befriended";
+    const badge=document.createElement("span");
+    badge.className="buddy-tile-badge";
+    badge.textContent=entry.shiny?"✨":entry.boss?"★":caught?"♡":"?";
+
+    button.append(art,name,state,badge);
+    button.addEventListener("click",()=>openBuddyDetail(entry));
+    ui.buddyCollectionGrid.appendChild(button);
+  });
+
+  const empty=!entries.length;
+  ui.buddyCollectionEmpty?.classList.toggle("hidden",!empty);
+  if(empty && ui.buddyCollectionEmpty) {
+    ui.buddyCollectionEmpty.textContent=buddyCollectionFilter==="shiny" && !Object.keys(SHINY_VARIANTS).length
+      ? "Shiny slots will appear here as their special recolor art is added. ✨"
+      : "No Buddies match this filter yet.";
+  }
+}
+
 function renderMeta() {
   renderSwitchOcButton();
   renderIconBackgroundPicker();
@@ -1525,6 +1825,7 @@ function renderMeta() {
   document.querySelector("#rankDown").disabled=selectedRank<=1;
   document.querySelector("#rankUp").disabled=selectedRank>=progress.unlockedRank;
   ui.areaButtons.forEach(btn=>btn.classList.toggle("selected",btn.dataset.area===selectedArea));
+  renderBuddyHomeCount();
   renderMenuSkills();
 }
 
@@ -1620,14 +1921,19 @@ function beginRun() {
 
 function showScreen(which) {
   ui.home.classList.toggle("hidden", which!=="home");
+  ui.buddy?.classList.toggle("hidden", which!=="buddy");
   ui.battle.classList.toggle("hidden", which!=="battle");
   ui.result.classList.toggle("hidden", which!=="result");
+  if(which==="buddy") renderBuddyCollection();
 }
 
 function startEncounter() {
   clearAnimations();
   actionLocked=false;
   pendingChest=null;
+  pendingDefeatedEnemy=null;
+  befriendAttempted=false;
+  ui.befriendPanel?.classList.add("hidden");
   quickHealUses=0;
   skillState={ cooldowns:{}, onceUsed:{}, attackBuffTurns:0, attackBuffMultiplier:1.30, activeBuffSkillId:null, heartRayCount:0, ioRainbowUses:0 };
   ui.chestLayer.classList.add("hidden");
@@ -1671,9 +1977,21 @@ function startEncounter() {
   startEnemy(encounter.enemyId);
 }
 
+function renderEnemyName(enemy) {
+  ui.enemyName.textContent="";
+  ui.enemyName.append(document.createTextNode(String(enemy?.name || "Enemy")));
+  if(enemy?.shiny) {
+    const sparkle=document.createElement("span");
+    sparkle.className="enemy-shiny-sparkle";
+    sparkle.textContent=" ✨";
+    sparkle.setAttribute("aria-label","Shiny");
+    ui.enemyName.append(sparkle);
+  }
+}
+
 function startEnemy(enemyId) {
   const baseTemplate=ENEMIES[enemyId];
-  const template =
+  const normalTemplate =
     enemyId==="mushroom-cat" ? applyMushroomVariant(baseTemplate,currentRun.rank) :
     enemyId==="bee" ? applyBeeVariant(baseTemplate,currentRun.rank) :
     enemyId==="cat-slime" ? applyCatSlimeVariant(baseTemplate,currentRun.rank) :
@@ -1683,6 +2001,7 @@ function startEnemy(enemyId) {
     enemyId==="catfish" ? applyCatfishVariant(baseTemplate,currentRun.rank) :
     enemyId==="vampire-squid" ? applySquidVariant(baseTemplate,currentRun.rank) :
     enemyId==="mimic" ? applyMimicProfile(baseTemplate,currentRun.rank) : baseTemplate;
+  const template=maybeApplyShinyVariant(enemyId,normalTemplate);
 
   currentEnemy=enemyScaled(template,currentRun.rank,currentRun.area);
   currentEnemy.id=enemyId;
@@ -1690,7 +2009,7 @@ function startEnemy(enemyId) {
   currentEnemy.zoomiesBoost=false; currentEnemy.lifeDrainsUsed=0;
   ui.enemyCombatant.classList.remove("hidden");
   ui.enemySprite.classList.remove("boss-fighter","gold-boss-fighter","queen-bee-fighter","strawberry-slime-fighter","rainbow-flower-fighter","ocean-elite-fighter","ocean-boss-fighter");
-  ui.enemyName.textContent=currentEnemy.name;
+  renderEnemyName(currentEnemy);
   ui.enemyRank.textContent=currentEnemy.boss?`BOSS · Rank ${currentRun.rank}`:`Rank ${currentRun.rank}`;
   ui.enemySprite.classList.toggle("boss-fighter",Boolean(currentEnemy.boss));
   ui.enemySprite.classList.toggle("gold-boss-fighter",currentEnemy.mushroomVariant==="gold");
@@ -1701,7 +2020,8 @@ function startEnemy(enemyId) {
   ui.enemySprite.classList.toggle("ocean-boss-fighter",enemyId==="vampire-squid");
   renderEnemyHp(); startEnemyIdle(); renderSkills(); renderBattleItems();
   ui.commandGrid.classList.remove("hidden"); closeCommandWindow(); renderBattleItems(); renderCommandButtons();
-  if(enemyId==="vampire-squid") setMessage(`${currentEnemy.name} rises from the Ocean Floor!`);
+  if(currentEnemy.shiny) setMessage(`${currentEnemy.name} ✨ appeared! A super-rare Shiny Buddy!`);
+  else if(enemyId==="vampire-squid") setMessage(`${currentEnemy.name} rises from the Ocean Floor!`);
   else if(currentEnemy.boss) setMessage("The Big Mushroom Cat blocks the end of the path!");
   else setMessage(`${currentEnemy.name} appeared!`);
 }
@@ -2201,17 +2521,109 @@ async function quickHealTurn() {
   renderSkills();
 }
 
+function buddyPonCatchRate(pon, enemy) {
+  if(!pon || !enemy) return 0;
+  if(enemy.shiny) return 1;
+  if(enemy.boss) return Math.max(0,Math.min(1,Number(pon.bossRate)||0));
+  return Math.max(0,Math.min(1,Number(pon.normalRate)||0));
+}
+
+function renderBefriendChoices() {
+  if(!ui.befriendPonChoices || !pendingDefeatedEnemy) return;
+  ui.befriendPonChoices.innerHTML="";
+  BUDDY_PONS.forEach(pon=>{
+    const qty=hubInventoryQty(pon.id);
+    const rate=buddyPonCatchRate(pon,pendingDefeatedEnemy);
+    const button=document.createElement("button");
+    button.type="button";
+    button.className=`befriend-pon-button${pon.className?` ${pon.className}`:""}`;
+    button.disabled=befriendAttempted || qty<=0 || rate<=0 || actionLocked;
+    const rateLabel=rate>0?`${Math.round(rate*100)}% chance`:"Normal enemies only";
+    button.innerHTML=`<img src="${pon.image}" alt=""><strong>${pon.name}</strong><small>×${qty} · ${rateLabel}</small>`;
+    button.addEventListener("click",()=>attemptBefriend(pon.id));
+    ui.befriendPonChoices.appendChild(button);
+  });
+}
+
+function showBefriendPanel(enemy) {
+  pendingDefeatedEnemy=enemy;
+  befriendAttempted=false;
+  const owned=buddyOwnedQuantity(buddyKeyForEnemy(enemy));
+  ui.befriendTitle.textContent=`Befriend ${enemy.name}${enemy.shiny?" ✨":""}?`;
+  if(enemy.shiny) {
+    ui.befriendText.textContent=`Shiny Buddy! Any Buddy Pon is a guaranteed catch. Owned so far: ×${owned}.`;
+  } else if(enemy.boss) {
+    ui.befriendText.textContent=`Boss Buddies are tougher to befriend. Owned so far: ×${owned}.`;
+  } else {
+    ui.befriendText.textContent=`Choose one Buddy Pon for a chance to befriend it. Owned so far: ×${owned}.`;
+  }
+  ui.skipBefriend.textContent="Continue to Chest";
+  ui.befriendPanel.classList.remove("hidden");
+  renderBefriendChoices();
+}
+
+function animateBuddyPon(pon) {
+  const img=document.createElement("img");
+  img.src=pon.image;
+  img.alt="";
+  img.className="capture-pon-fly";
+  ui.battlefield.appendChild(img);
+  setTimeout(()=>img.remove(),820);
+}
+
+async function attemptBefriend(ponId) {
+  if(actionLocked || befriendAttempted || !pendingDefeatedEnemy) return;
+  const pon=BUDDY_PONS.find(item=>item.id===ponId);
+  if(!pon) return;
+  const rate=buddyPonCatchRate(pon,pendingDefeatedEnemy);
+  if(rate<=0 || hubInventoryQty(pon.id)<=0) return;
+  if(!consumeHubItem(pon.id,1)) return;
+
+  actionLocked=true;
+  befriendAttempted=true;
+  renderBefriendChoices();
+  setMessage(`${heroDisplayName()} used a ${pon.name}!`);
+  animateBuddyPon(pon);
+  await sleep(760);
+
+  const success=rate>=1 || Math.random()<rate;
+  if(success) {
+    const buddy=captureBuddy(pendingDefeatedEnemy);
+    ui.befriendTitle.textContent=`${pendingDefeatedEnemy.name}${pendingDefeatedEnemy.shiny?" ✨":""} became your Buddy!`;
+    ui.befriendText.textContent=`Befriended! You now own ×${buddy.quantity}.`;
+    setMessage(`${pendingDefeatedEnemy.name}${pendingDefeatedEnemy.shiny?" ✨":""} became your Buddy!`);
+    renderBuddyHomeCount();
+  } else {
+    ui.befriendTitle.textContent=`Almost! ${pendingDefeatedEnemy.name} slipped away.`;
+    ui.befriendText.textContent="That Buddy Pon was used up. You can try again next time you meet this Buddy!";
+    setMessage(`${pendingDefeatedEnemy.name} slipped away this time!`);
+  }
+  ui.skipBefriend.textContent="Continue to Chest";
+  actionLocked=false;
+  renderBefriendChoices();
+}
+
+async function finishBefriendStep() {
+  if(actionLocked || !pendingChest) return;
+  actionLocked=true;
+  ui.befriendPanel?.classList.add("hidden");
+  ui.enemyCombatant.classList.add("hidden");
+  await sleep(220);
+  pendingDefeatedEnemy=null;
+  befriendAttempted=false;
+  actionLocked=false;
+  showChest(pendingChest);
+}
+
 async function enemyDefeated() {
   clearInterval(idleTimer);
   const defeated={...currentEnemy};
   currentEnemy=null;
   ui.commandGrid.classList.add("hidden");
   closeCommandWindow();
-  setMessage(`${defeated.name} was defeated!`);
+  setMessage(`${defeated.name}${defeated.shiny?" ✨":""} was defeated!`);
 
   await sleep(350);
-  ui.enemyCombatant.classList.add("hidden");
-  await sleep(280);
 
   const isBoss=Boolean(defeated.boss);
   pendingChest={
@@ -2220,10 +2632,9 @@ async function enemyDefeated() {
     enemy:defeated
   };
 
-  // The finishing attack leaves actionLocked=true while its animation resolves.
-  // Release that lock before showing the chest so Open Chest can actually be tapped.
+  // Pause before the victory chest so the player gets one Buddy Pon attempt.
   actionLocked=false;
-  showChest(pendingChest);
+  showBefriendPanel(defeated);
 }
 
 function showChest(data) {
@@ -2492,13 +2903,21 @@ function showFloat(text,type="damage",target="enemy") {
 function setMessage(text) { ui.battleMessage.textContent=text; }
 
 function returnHome() {
-  clearAnimations(); currentRun=null;
+  clearAnimations(); closeBuddyDetail(); currentRun=null;
   selectedArea=AREA_CONFIG[activeHeroProgress().lastArea]?activeHeroProgress().lastArea:"meadow";
   selectedRank=areaProgress(selectedArea).lastRank||1;
   showScreen("home"); renderMeta();
 }
 
 document.querySelector("#backGames").addEventListener("click",()=>window.location.href="../#games");
+ui.openBuddyCollection?.addEventListener("click",()=>{ closeBuddyDetail(); setBuddyScreenUrl(true); showScreen("buddy"); });
+ui.backFromBuddies?.addEventListener("click",()=>{ closeBuddyDetail(); setBuddyScreenUrl(false); showScreen("home"); renderMeta(); });
+ui.buddyFilters.forEach(button=>button.addEventListener("click",()=>{
+  buddyCollectionFilter=button.dataset.buddyFilter || "all";
+  renderBuddyCollection();
+}));
+ui.closeBuddyDetail?.addEventListener("click",closeBuddyDetail);
+ui.buddyDetail?.addEventListener("click",event=>{ if(event.target===ui.buddyDetail) closeBuddyDetail(); });
 ui.runNextRank.addEventListener("click",()=>{
   const areaId=AREA_CONFIG[ui.runNextRank.dataset.area]?ui.runNextRank.dataset.area:selectedArea;
   const nextRank=Math.max(1,Number(ui.runNextRank.dataset.rank)||0);
@@ -2522,6 +2941,7 @@ ui.escapeButton.addEventListener("click",()=>{
   openEscapeConfirm();
 });
 document.querySelector("#openChest").addEventListener("click",openPendingChest);
+ui.skipBefriend?.addEventListener("click",finishBefriendStep);
 document.querySelector("#continueButton").addEventListener("click",nextEncounter);
 document.querySelector("#runAgain").addEventListener("click",()=>{selectedArea=currentRun?.area||selectedArea;selectedRank=currentRun?.rank||selectedRank;beginRun();});
 document.querySelector("#backToQuest").addEventListener("click",returnHome);
@@ -2538,7 +2958,8 @@ syncPastLevelIconBackgrounds();
 persistAll();
 renderMeta();
 renderMenuSkills();
-showScreen("home");
+const initialQuestScreen=new URLSearchParams(window.location.search).get("screen");
+showScreen(initialQuestScreen==="buddies"?"buddy":"home");
 
 // Menu idle bounce.
 const menuPeep=document.querySelector("#menuPeep");
