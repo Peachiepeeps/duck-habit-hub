@@ -1,5 +1,5 @@
 {
-  "version": "24.91",
+  "version": "24.92",
   "updated": "2026-09-05",
-  "note": "Lowered Io head duck slightly and re-shipped new Duck Quest enemy, boss, and shiny assets to fix broken images."
+  "note": "Fixes persistent broken Duck Quest images by bypassing stale browser HTTP image-cache misses and re-ships all enemy, boss, and shiny art."
 }
