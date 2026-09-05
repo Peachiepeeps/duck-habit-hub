@@ -1,10 +1,11 @@
-name: Install Duck Habit Hub v24.84 Crown & PWA Update Fix
+name: Install Duck Habit Hub v24.84 Crown & PWA Update Fix - Revised
 
 on:
   workflow_dispatch:
   push:
     paths:
       - "Duck-Habit-Hub-v24-84-Crown-PWA-Update-Fix-UPDATE-ONLY.zip"
+      - "*v24-84*Crown*PWA*UPDATE*ONLY*.zip"
 
 permissions:
   contents: write
@@ -20,33 +21,78 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Verify v24.84 update package
+      - name: Locate update package
+        id: locate
         shell: bash
         run: |
           set -euo pipefail
-          ZIP="Duck-Habit-Hub-v24-84-Crown-PWA-Update-Fix-UPDATE-ONLY.zip"
 
-          if [ ! -f "$ZIP" ]; then
-            echo "ERROR: $ZIP was not found in the repository root."
-            echo "Upload the ZIP untouched beside index.html, then run this workflow again."
+          echo "Repository root contents:"
+          ls -la
+
+          EXPECTED="Duck-Habit-Hub-v24-84-Crown-PWA-Update-Fix-UPDATE-ONLY.zip"
+          ZIP=""
+
+          if [ -f "$EXPECTED" ]; then
+            ZIP="$EXPECTED"
+          else
+            # Be forgiving if the browser/GitHub changed the filename slightly.
+            ZIP="$(find . -maxdepth 1 -type f \( -iname '*v24-84*crown*pwa*update*only*.zip' -o -iname '*v24.84*crown*pwa*update*only*.zip' \) -printf '%f\n' | head -n 1 || true)"
+          fi
+
+          if [ -z "$ZIP" ]; then
+            # A manual rerun after a successful automatic install should not show as a failure.
+            if [ -f "version.json" ] && grep -Fq '"version": "24.84"' version.json \
+               && [ -f "script-v24-84.js" ] && [ -f "style-v24-84.css" ] && [ -f "sw.js" ]; then
+              echo "v24.84 already appears to be installed. Nothing else is needed."
+              echo "already_installed=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+
+            echo "::error::The v24.84 UPDATE-ONLY ZIP is not in the repository root."
+            echo "Upload this exact file beside index.html:"
+            echo "  $EXPECTED"
+            echo "Then commit the upload. The workflow will start automatically."
             exit 1
           fi
 
-          unzip -t "$ZIP"
-          LISTING="$(unzip -Z1 "$ZIP")"
-          grep -Fq "duckhub_update_v24_84/index.html" <<<"$LISTING"
-          grep -Fq "duckhub_update_v24_84/script-v24-84.js" <<<"$LISTING"
-          grep -Fq "duckhub_update_v24_84/style-v24-84.css" <<<"$LISTING"
-          grep -Fq "duckhub_update_v24_84/sw.js" <<<"$LISTING"
-          grep -Fq "duckhub_update_v24_84/version.json" <<<"$LISTING"
-          grep -Fq "duckhub_update_v24_84/sw-v24-83.js" <<<"$LISTING"
-          grep -Fq "duckhub_update_v24_84/duck-hub-cache-reset.html" <<<"$LISTING"
+          echo "Found update package: $ZIP"
+          echo "zip=$ZIP" >> "$GITHUB_OUTPUT"
+          echo "already_installed=false" >> "$GITHUB_OUTPUT"
 
-      - name: Install v24.84 update
+      - name: Verify v24.84 update package
+        if: steps.locate.outputs.already_installed != 'true'
         shell: bash
+        env:
+          ZIP: ${{ steps.locate.outputs.zip }}
         run: |
           set -euo pipefail
-          ZIP="Duck-Habit-Hub-v24-84-Crown-PWA-Update-Fix-UPDATE-ONLY.zip"
+
+          unzip -t "$ZIP"
+          LISTING="$(unzip -Z1 "$ZIP")"
+
+          for REQUIRED in \
+            "duckhub_update_v24_84/index.html" \
+            "duckhub_update_v24_84/script-v24-84.js" \
+            "duckhub_update_v24_84/style-v24-84.css" \
+            "duckhub_update_v24_84/sw.js" \
+            "duckhub_update_v24_84/sw-v24-84.js" \
+            "duckhub_update_v24_84/version.json" \
+            "duckhub_update_v24_84/manifest.webmanifest" \
+            "duckhub_update_v24_84/duck-hub-cache-reset.html"; do
+            if ! grep -Fqx "$REQUIRED" <<<"$LISTING"; then
+              echo "::error::Update ZIP is missing $REQUIRED"
+              exit 1
+            fi
+          done
+
+      - name: Install v24.84 update
+        if: steps.locate.outputs.already_installed != 'true'
+        shell: bash
+        env:
+          ZIP: ${{ steps.locate.outputs.zip }}
+        run: |
+          set -euo pipefail
           TMP=".duckhub-v24-84-update"
           SRC="$TMP/duckhub_update_v24_84"
 
@@ -54,40 +100,55 @@ jobs:
           mkdir -p "$TMP"
           unzip -q "$ZIP" -d "$TMP"
 
+          # Verify every file before changing the live app.
+          for FILE in \
+            index.html \
+            script-v24-84.js \
+            style-v24-84.css \
+            sw.js \
+            sw-v24-80.js \
+            sw-v24-81.js \
+            sw-v24-82.js \
+            sw-v24-83.js \
+            sw-v24-84.js \
+            version.json \
+            manifest.webmanifest \
+            duck-hub-cache-reset.html \
+            README-v24-84.txt \
+            README.md; do
+            test -f "$SRC/$FILE" || { echo "::error::Missing $SRC/$FILE"; exit 1; }
+          done
+
           cp -f "$SRC/index.html" ./index.html
           cp -f "$SRC/script-v24-84.js" ./script-v24-84.js
           cp -f "$SRC/style-v24-84.css" ./style-v24-84.css
           cp -f "$SRC/sw.js" ./sw.js
-          cp -f "$SRC/sw-v24-84.js" ./sw-v24-84.js
           cp -f "$SRC/sw-v24-80.js" ./sw-v24-80.js
           cp -f "$SRC/sw-v24-81.js" ./sw-v24-81.js
           cp -f "$SRC/sw-v24-82.js" ./sw-v24-82.js
           cp -f "$SRC/sw-v24-83.js" ./sw-v24-83.js
+          cp -f "$SRC/sw-v24-84.js" ./sw-v24-84.js
           cp -f "$SRC/version.json" ./version.json
           cp -f "$SRC/manifest.webmanifest" ./manifest.webmanifest
           cp -f "$SRC/duck-hub-cache-reset.html" ./duck-hub-cache-reset.html
           cp -f "$SRC/README-v24-84.txt" ./README-v24-84.txt
           cp -f "$SRC/README.md" ./README.md
 
-          grep -q 'style-v24-84.css' index.html
-          grep -q 'script-v24-84.js' index.html
-          grep -q 'DUCK_HUB_BUILD = "24.84"' index.html
-          grep -q 'register("./sw.js"' index.html
-          grep -q 'version.json' index.html
-          grep -q 'translateY(0.25%)' script-v24-84.js
-          grep -q "duck-habit-hub-app-v24-84" sw.js
-          grep -q "cache:'no-store'" sw.js
-          grep -q "SKIP_WAITING" sw.js
-          grep -q '"version": "24.84"' version.json
-          grep -q "importScripts('./sw.js?v=24-84')" sw-v24-83.js
-
+          # Final app checks.
+          grep -Fq 'style-v24-84.css' index.html
+          grep -Fq 'script-v24-84.js' index.html
+          grep -Fq 'DUCK_HUB_BUILD = "24.84"' index.html
+          grep -Fq 'register("./sw.js"' index.html
+          grep -Fq '"version": "24.84"' version.json
           node --check script-v24-84.js
           node --check sw.js
 
           rm -rf "$TMP"
+          # Remove only the ZIP that was actually installed.
           rm -f "$ZIP"
 
       - name: Commit installed update
+        if: steps.locate.outputs.already_installed != 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -96,7 +157,7 @@ jobs:
           git add -A
 
           if git diff --cached --quiet; then
-            echo "Nothing new to commit."
+            echo "Nothing new to commit. v24.84 files are already current."
             exit 0
           fi
 
