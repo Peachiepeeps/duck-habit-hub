@@ -1,4 +1,4 @@
-// Hub v24.78 — battle polish cache-bust build
+// Hub v24.79 — battle polish cache-bust build
 const STORAGE_KEY = "duckHabitHubSave_v1";
 const SAVE_VERSION = 34;
 

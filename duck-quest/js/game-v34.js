@@ -2650,20 +2650,38 @@ function hpFillColor(pct, enemy=false) {
   return "#6fb875";
 }
 
+function paintHpBar(fillEl,pct,enemy=false) {
+  if(!fillEl) return;
+  const value=Math.max(0,Math.min(100,Number(pct)||0));
+  const bar=fillEl.parentElement;
+  const color=hpFillColor(value,enemy);
+
+  // Hub v24.79: paint the fill on the OUTER bar itself. Some mobile
+  // browsers were reporting the correct HP/width while failing to paint
+  // the inner span, leaving a visually empty bar.
+  if(bar){
+    bar.style.setProperty("--hp-pct",`${value}%`);
+    bar.style.setProperty("--hp-color",color);
+    bar.setAttribute("aria-valuenow",String(Math.round(value)));
+  }
+
+  // Keep the legacy child updated for compatibility/accessibility, but the
+  // visible fill no longer depends on this element.
+  fillEl.style.width=`${value}%`;
+  fillEl.style.backgroundColor=color;
+  fillEl.setAttribute("aria-valuenow",String(Math.round(value)));
+}
+
 function renderPeepHp() {
   const pct=Math.max(0,Math.min(100,(currentRun.hp/currentRun.maxHp)*100));
-  ui.peepHpFill.style.width=`${pct}%`;
-  ui.peepHpFill.style.backgroundColor=hpFillColor(pct,false);
-  ui.peepHpFill.setAttribute("aria-valuenow",String(Math.round(pct)));
+  paintHpBar(ui.peepHpFill,pct,false);
   ui.peepHpText.textContent=`${Math.max(0,Math.round(currentRun.hp))} / ${currentRun.maxHp} HP`;
 }
 
 function renderEnemyHp() {
   if(!currentEnemy) return;
   const pct=Math.max(0,Math.min(100,(currentEnemy.hpNow/currentEnemy.maxHp)*100));
-  ui.enemyHpFill.style.width=`${pct}%`;
-  ui.enemyHpFill.style.backgroundColor=hpFillColor(pct,true);
-  ui.enemyHpFill.setAttribute("aria-valuenow",String(Math.round(pct)));
+  paintHpBar(ui.enemyHpFill,pct,true);
   ui.enemyHpText.textContent=`${Math.max(0,Math.round(currentEnemy.hpNow))} / ${currentEnemy.maxHp} HP`;
 }
 

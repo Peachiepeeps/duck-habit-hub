@@ -1865,3 +1865,32 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
     bottom:7% !important;
   }
 }
+
+
+/* =========================================================
+   V34 / Hub v24.79 — mobile-safe HP meter rendering
+   Paint HP directly on the outer meter so the visible fill does not
+   depend on Android Chrome painting a nested percentage-width span.
+   ========================================================= */
+.battlefield .hp-bar{
+  --hp-pct:0%;
+  --hp-color:#6fb875;
+  background:linear-gradient(
+    90deg,
+    var(--hp-color) 0%,
+    var(--hp-color) var(--hp-pct),
+    #e6c8c6 var(--hp-pct),
+    #e6c8c6 100%
+  ) !important;
+  background-color:#e6c8c6 !important;
+}
+.battlefield .enemy-hp{
+  --hp-color:#d76570;
+}
+/* The legacy span remains in the DOM but is no longer responsible for
+   painting the meter. Hiding it also prevents double-fill artifacts. */
+.battlefield .hp-bar > span{
+  opacity:0 !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
+}
