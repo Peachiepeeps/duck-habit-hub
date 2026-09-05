@@ -1,6 +1,6 @@
-// Hub v24.79 — battle polish cache-bust build
+// Hub v24.81 — Switch OC + profile/room/battle polish
 const STORAGE_KEY = "duckHabitHubSave_v1";
-const SAVE_VERSION = 34;
+const SAVE_VERSION = 35;
 
 const CHARACTERS = {
   peep: {
@@ -86,7 +86,7 @@ const CHARACTERS = {
     type: "layered",
     assetFolder: "assets/io/",
     duckHeadPlacement: {
-      left: 53,
+      left: 50.8,
       top: 36.4,
       width: 17.2
     },
@@ -129,6 +129,32 @@ const PROFILE_ICON_BACKGROUNDS = Object.freeze([
   {id:"lavender-glitter",label:"Lavender Glitter",rarity:"rare",source:"chest",weight:1.8,value:"radial-gradient(circle at 20% 22%,#fff 0 1.5px,transparent 2px),radial-gradient(circle at 68% 40%,#fff0b8 0 1.2px,transparent 1.8px),radial-gradient(circle at 42% 78%,#fff 0 1px,transparent 1.7px),linear-gradient(135deg,#c6b1ea,#aa95d9)",size:"22px 22px,30px 30px,18px 18px,auto"},
   {id:"starry-periwinkle",label:"Starry Periwinkle",rarity:"rare",source:"chest",weight:1.5,value:"radial-gradient(circle at 18% 22%,#fff9cf 0 2px,transparent 2.5px),radial-gradient(circle at 72% 34%,#fff 0 1.5px,transparent 2px),radial-gradient(circle at 48% 78%,#fff9cf 0 1.5px,transparent 2px),linear-gradient(160deg,#9da9df,#c1b1e5)",size:"30px 30px,26px 26px,34px 34px,auto"},
   {id:"gold-glitter",label:"Gold Glitter",rarity:"rare",source:"chest",weight:1.2,value:"radial-gradient(circle at 18% 20%,#fff8d7 0 1.5px,transparent 2px),radial-gradient(circle at 70% 28%,#fff 0 1px,transparent 1.7px),radial-gradient(circle at 45% 78%,#f7c75e 0 1.5px,transparent 2px),linear-gradient(135deg,#edd38a,#cda654)",size:"20px 20px,26px 26px,30px 30px,auto"},
+
+  // Special pastel chest backgrounds — intentionally harder to find.
+  {id:"strawberry-milk-sparkle",label:"Strawberry Milk Sparkle",rarity:"rare",source:"chest",weight:.70,value:"radial-gradient(circle at 16% 18%,#fff 0 1.5px,transparent 2px),radial-gradient(circle at 72% 34%,#ffe8a8 0 1.2px,transparent 1.8px),radial-gradient(circle at 40% 78%,#fff 0 1px,transparent 1.7px),linear-gradient(145deg,#f8c3d4,#f4dce4,#fff4ed)",size:"21px 21px,29px 29px,18px 18px,auto"},
+  {id:"peach-soda-bubbles",label:"Peach Soda Bubbles",rarity:"rare",source:"chest",weight:.58,value:"radial-gradient(circle at 18% 24%,rgba(255,255,255,.92) 0 3px,transparent 3.7px),radial-gradient(circle at 70% 58%,rgba(255,255,255,.75) 0 2px,transparent 2.8px),radial-gradient(circle at 42% 82%,rgba(255,247,221,.85) 0 1.5px,transparent 2.2px),linear-gradient(145deg,#f7bda7,#f8d5bf,#fff0dc)",size:"34px 34px,27px 27px,23px 23px,auto"},
+  {id:"mint-candy-stars",label:"Mint Candy Stars",rarity:"rare",source:"chest",weight:.48,value:"radial-gradient(circle at 20% 25%,#fff3b8 0 2px,transparent 2.6px),radial-gradient(circle at 72% 35%,#e7c9f4 0 2px,transparent 2.6px),radial-gradient(circle at 42% 78%,#f6b9cf 0 1.8px,transparent 2.4px),linear-gradient(135deg,#bce7cf,#d8f0dc)",size:"28px 28px,34px 34px,24px 24px,auto"},
+  {id:"cotton-candy-clouds",label:"Cotton Candy Clouds",rarity:"rare",source:"chest",weight:.40,value:"radial-gradient(ellipse at 20% 35%,rgba(255,255,255,.62) 0 8px,transparent 9px),radial-gradient(ellipse at 74% 62%,rgba(255,255,255,.52) 0 9px,transparent 10px),linear-gradient(145deg,#bedef5,#f5c3d9 52%,#d9c7f1)",size:"48px 34px,52px 38px,auto"},
+  {id:"sakura-mist",label:"Sakura Mist",rarity:"rare",source:"chest",weight:.32,value:"radial-gradient(ellipse at 18% 24%,#fff2f6 0 3px,transparent 3.8px),radial-gradient(ellipse at 72% 42%,#f6b6cb 0 2.5px,transparent 3.3px),radial-gradient(ellipse at 42% 78%,#fff6f0 0 2px,transparent 2.8px),linear-gradient(145deg,#f4c8d7,#e6d1ef,#f9e6ea)",size:"31px 25px,37px 29px,27px 23px,auto"},
+
+  // Extra ultra-rare special drops.
+  {id:"lavender-moonlight",label:"Lavender Moonlight",rarity:"ultra",source:"chest",weight:.10,value:"radial-gradient(circle at 22% 25%,#fff7c9 0 2px,transparent 2.6px),radial-gradient(circle at 72% 34%,#fff 0 1.4px,transparent 2px),radial-gradient(circle at 45% 78%,#fff7c9 0 1.2px,transparent 1.8px),linear-gradient(155deg,#aeb4e8,#c9b8ec,#e3ccef)",size:"34px 34px,27px 27px,39px 39px,auto"},
+  {id:"angel-ribbon",label:"Angel Ribbon",rarity:"ultra",source:"chest",weight:.08,value:"repeating-linear-gradient(135deg,rgba(255,255,255,.48) 0 7px,transparent 7px 19px),linear-gradient(135deg,#cbe5f6,#fff3df 48%,#f4c7d9)",size:"34px 34px,auto"},
+  {id:"dreamy-hearts",label:"Dreamy Hearts",rarity:"ultra",source:"chest",weight:.065,value:"radial-gradient(circle at 20% 28%,#fff 0 2.4px,transparent 3px),radial-gradient(circle at 72% 38%,#ffe4ef 0 2.4px,transparent 3px),radial-gradient(circle at 44% 78%,#fff5bf 0 1.8px,transparent 2.5px),linear-gradient(145deg,#efb7d0,#d4c1ef,#bfe0ef)",size:"29px 29px,35px 35px,24px 24px,auto"},
+  {id:"pastel-confetti",label:"Pastel Confetti",rarity:"ultra",source:"chest",weight:.05,value:"radial-gradient(circle at 16% 22%,#f0a9c5 0 1.8px,transparent 2.4px),radial-gradient(circle at 70% 28%,#a9d9ed 0 1.8px,transparent 2.4px),radial-gradient(circle at 42% 76%,#bde0bf 0 1.8px,transparent 2.4px),radial-gradient(circle at 82% 82%,#d2b9ec 0 1.8px,transparent 2.4px),#fff7e8",size:"24px 24px,31px 31px,28px 28px,35px 35px,auto"},
+  {id:"holographic-pastel",label:"Holographic Pastel",rarity:"ultra",source:"chest",weight:.035,value:"radial-gradient(circle at 18% 22%,rgba(255,255,255,.9) 0 1.5px,transparent 2px),radial-gradient(circle at 72% 68%,rgba(255,255,255,.8) 0 1.2px,transparent 1.8px),conic-gradient(from 35deg,#f4b7cf,#c3e2f5,#d8c5f0,#c7ead5,#fff0b8,#f4b7cf)",size:"26px 26px,33px 33px,auto"},
+  {id:"sweetheart-rainbow",label:"Sweetheart Rainbow",rarity:"ultra",source:"chest",weight:.02,value:"radial-gradient(circle at 15% 20%,#fff 0 1.7px,transparent 2.2px),radial-gradient(circle at 72% 32%,#fff7ba 0 1.5px,transparent 2px),radial-gradient(circle at 44% 78%,#fff 0 1.3px,transparent 2px),linear-gradient(135deg,#f5a9c3,#f7c999,#d5e5aa,#b6dff0,#c9b8ef,#ecb8dd)",size:"22px 22px,29px 29px,34px 34px,auto"},
+
+
+  // v39 — extra CSS-only chest backgrounds.
+  {id:"lemon-cream-dots",label:"Lemon Cream Dots",rarity:"uncommon",source:"chest",weight:4.2,value:"radial-gradient(circle at 7px 7px,#fffaf0 0 3px,transparent 3.6px),#f4dda0",size:"22px 22px"},
+  {id:"peach-checker",label:"Peach Checker",rarity:"uncommon",source:"chest",weight:4,value:"conic-gradient(#f8d2c5 25%,#efb6a7 0 50%,#f8d2c5 0 75%,#efb6a7 0)",size:"22px 22px"},
+  {id:"mint-heart-confetti",label:"Mint Heart Confetti",rarity:"rare",source:"chest",weight:1.6,value:"radial-gradient(circle at 18% 25%,#fff 0 2.5px,transparent 3.1px),radial-gradient(circle at 72% 38%,#f6b8cf 0 2.3px,transparent 3px),radial-gradient(circle at 45% 78%,#d1b8ec 0 1.9px,transparent 2.6px),linear-gradient(145deg,#bce5ce,#dff2e5)",size:"29px 29px,35px 35px,25px 25px,auto"},
+  {id:"blueberry-stardust",label:"Blueberry Stardust",rarity:"rare",source:"chest",weight:1.25,value:"radial-gradient(circle at 17% 21%,#fff5bd 0 1.8px,transparent 2.4px),radial-gradient(circle at 71% 33%,#fff 0 1.4px,transparent 2px),radial-gradient(circle at 43% 77%,#d9c8ff 0 1.7px,transparent 2.3px),linear-gradient(155deg,#6f78ba,#8d91ce,#b1a7dc)",size:"27px 27px,34px 34px,23px 23px,auto"},
+  {id:"lilac-bubbles",label:"Lilac Bubbles",rarity:"rare",source:"chest",weight:1.1,value:"radial-gradient(circle at 18% 24%,rgba(255,255,255,.88) 0 3px,rgba(255,255,255,.25) 3.2px 4.5px,transparent 4.8px),radial-gradient(circle at 70% 62%,rgba(255,255,255,.7) 0 2px,rgba(255,255,255,.18) 2.2px 3.5px,transparent 3.8px),linear-gradient(145deg,#d5bce9,#ead9f2)",size:"36px 36px,29px 29px,auto"},
+  {id:"rose-gold-sparkle",label:"Rose Gold Sparkle",rarity:"rare",source:"chest",weight:.9,value:"radial-gradient(circle at 15% 20%,#fff7e8 0 1.6px,transparent 2.1px),radial-gradient(circle at 71% 31%,#f8dcae 0 1.4px,transparent 2px),radial-gradient(circle at 43% 78%,#fff 0 1.2px,transparent 1.8px),linear-gradient(135deg,#d89a9c,#e5b7ac,#c99a80)",size:"21px 21px,28px 28px,32px 32px,auto"},
+  {id:"cherry-blossom-glow",label:"Cherry Blossom Glow",rarity:"rare",source:"chest",weight:.7,value:"radial-gradient(circle at 20% 27%,rgba(255,255,255,.9) 0 2.5px,transparent 3.2px),radial-gradient(circle at 74% 43%,#f2a8c2 0 2.7px,transparent 3.5px),radial-gradient(circle at 43% 79%,#fff2f6 0 2px,transparent 2.8px),linear-gradient(145deg,#f1b7c9,#f8d9df,#f4c6d8)",size:"32px 32px,38px 38px,27px 27px,auto"},
+  {id:"midnight-hearts",label:"Midnight Hearts",rarity:"ultra",source:"chest",weight:.12,value:"radial-gradient(circle at 18% 26%,#f8bfdc 0 2.5px,transparent 3.1px),radial-gradient(circle at 72% 39%,#d5c2ff 0 2.4px,transparent 3px),radial-gradient(circle at 44% 79%,#fff3b9 0 1.7px,transparent 2.4px),linear-gradient(150deg,#34355f,#545083,#735a91)",size:"29px 29px,36px 36px,24px 24px,auto"},
 
   // Ultra-rare chest prizes
   {id:"rainbow",label:"Rainbow",rarity:"ultra",source:"chest",weight:.45,value:"linear-gradient(135deg,#ed9baa,#f1c781,#b7daa0,#9dcfe2,#b7a6e4,#e2abd8)"},
@@ -274,21 +300,21 @@ const ITEMS = {
   "buddy-pon": {
     "name": "Buddy Pon",
     "category": "battle",
-    "image": "assets/items/buddy-pons/buddy-pon.png",
+    "image": "assets/items/buddy-pons/buddy-pon.webp",
     "icon": "♡",
     "sellValue": 15
   },
   "super-buddy-pon": {
     "name": "Super Buddy Pon",
     "category": "battle",
-    "image": "assets/items/buddy-pons/super-buddy-pon.png",
+    "image": "assets/items/buddy-pons/super-buddy-pon.webp",
     "icon": "✦",
     "sellValue": 30
   },
   "boss-buddy-pon": {
     "name": "Boss Buddy Pon",
     "category": "battle",
-    "image": "assets/items/buddy-pons/boss-buddy-pon.png",
+    "image": "assets/items/buddy-pons/boss-buddy-pon.webp",
     "icon": "★",
     "sellValue": 50
   },
@@ -2374,7 +2400,7 @@ const IO_ASSETS = {
   "sheep-ears": { label: "Sheep Ears", file: "Io-sheep-ears.webp", z: 43 },
   "bangs": { label: "Bangs", file: "Io-bangs.webp", z: 44 },
   "heart-pin": { label: "Heart Hairpin", file: "Io-heart-pin.webp", z: 45 },
-  "crown": { label: "Crown", file: "Io-crown.webp", z: 46 }
+  "crown": { label: "Crown", file: "Io-crown.webp", z: 43.5 }
 };
 
 const IO_CLOSET = [
@@ -2385,7 +2411,7 @@ const IO_CLOSET = [
   { id: "dress", label: "Dresses", type: "single", allowNone: true, options: ["dress-magical", "dress-mew"] },
   { id: "socks", label: "Socks", type: "socks" },
   { id: "shoes", label: "Shoes", type: "single", allowNone: true, options: ["shoes-school", "shoes-magical", "shoes-mew"] },
-  { id: "extras", label: "Extras", type: "multi", options: ["heart-pin", "sheep-ears", "crown", "mew-garter", "mew-jacket", "mew-collar"] }
+  { id: "extras", label: "Extras", type: "multi", options: ["ahoge", "heart-pin", "sheep-ears", "crown", "mew-garter", "mew-jacket", "mew-collar"] }
 ];
 
 const MIKO_CLOSET = [
@@ -2466,7 +2492,7 @@ const DEFAULT_IO_OUTFIT = {
   leftSock: "sock-left-school",
   rightSock: "sock-right-school",
   shoes: "shoes-school",
-  extras: ["heart-pin"]
+  extras: ["ahoge", "heart-pin"]
 };
 
 function normalizeIoOutfit(rawOutfit = {}) {
@@ -2492,7 +2518,7 @@ function normalizeIoOutfit(rawOutfit = {}) {
   if (!validRightSocks.includes(normalized.rightSock)) normalized.rightSock = "sock-right-school";
   if (![null, "shoes-school", "shoes-magical", "shoes-mew"].includes(normalized.shoes)) normalized.shoes = "shoes-school";
   normalized.extras = Array.isArray(normalized.extras)
-    ? normalized.extras.filter(id => ["heart-pin", "sheep-ears", "crown", "mew-garter", "mew-jacket", "mew-collar"].includes(id))
+    ? normalized.extras.filter(id => ["ahoge", "heart-pin", "sheep-ears", "crown", "mew-garter", "mew-jacket", "mew-collar"].includes(id))
     : ["heart-pin"];
   return normalized;
 }
@@ -2626,6 +2652,17 @@ function emptyBuddySlots() {
   return Array(BUDDY_SLOT_COUNT).fill(null);
 }
 
+function emptyBuddyPersonalizationSlots() {
+  return Array(BUDDY_SLOT_COUNT).fill(null);
+}
+
+function normalizeBuddyPersonalization(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const nickname = String(value.nickname || "").trim().slice(0, 20);
+  const gender = ["female", "male", "nonbinary"].includes(value.gender) ? value.gender : "";
+  return nickname || gender ? { nickname, gender } : null;
+}
+
 function normalizeBuddyRecord(record, fallbackKey = "") {
   if (!record || typeof record !== "object" || Array.isArray(record)) return null;
   const key = String(record.key || fallbackKey || "").trim();
@@ -2659,10 +2696,14 @@ function normalizeBuddySave(raw) {
   }
 
   const equippedByCharacter = {};
+  const personalizationByCharacter = {};
   const usedCounts = {};
   for (const characterId of Object.keys(CHARACTERS)) {
     const source = Array.isArray(raw?.equippedByCharacter?.[characterId])
       ? raw.equippedByCharacter[characterId]
+      : [];
+    const personalSource = Array.isArray(raw?.personalizationByCharacter?.[characterId])
+      ? raw.personalizationByCharacter[characterId]
       : [];
     equippedByCharacter[characterId] = Array.from({ length: BUDDY_SLOT_COUNT }, (_, index) => {
       const key = typeof source[index] === "string" ? source[index] : null;
@@ -2673,9 +2714,12 @@ function normalizeBuddySave(raw) {
       usedCounts[key] = used + 1;
       return key;
     });
+    personalizationByCharacter[characterId] = Array.from({ length: BUDDY_SLOT_COUNT }, (_, index) =>
+      equippedByCharacter[characterId][index] ? normalizeBuddyPersonalization(personalSource[index]) : null
+    );
   }
 
-  return { collection, equippedByCharacter };
+  return { collection, equippedByCharacter, personalizationByCharacter };
 }
 
 const DEFAULT_SAVE = {
@@ -2694,12 +2738,13 @@ const DEFAULT_SAVE = {
   characterUnlockedItems: {
     peep: ["hair-short", "cat-ears", "left-bow", "right-bow", "top-sweater", "bottom-pleated", "sock-left-rainbow", "sock-right-rainbow", "shoes-loafer", "collar", "cheek-bandage", "tail-bunny"],
     miko: ["hair-main", "top-hoodie", "top-button", "bottom-capris", "shoes-loafer"],
-    io: ["hair-buns", "back-school-bow", "top-school", "bottom-school", "sock-left-school", "sock-right-school", "shoes-school", "heart-pin"]
+    io: ["hair-buns", "back-school-bow", "top-school", "bottom-school", "sock-left-school", "sock-right-school", "shoes-school", "ahoge", "heart-pin"]
   },
   wardrobeResetV1261: true,
   wardrobeResetV1262: false,
   mikoNewOutfitShopMigrationV2413: false,
   paintablePetBedMigrationV2418: false,
+  ioAhogeClosetMigrationV2483: false,
   progressRecoveryV1431: true,
   ocShopGateRepairV242: false,
   peepPokes: 0,
@@ -2739,6 +2784,11 @@ const DEFAULT_SAVE = {
       peep: emptyBuddySlots(),
       miko: emptyBuddySlots(),
       io: emptyBuddySlots()
+    },
+    personalizationByCharacter: {
+      peep: emptyBuddyPersonalizationSlots(),
+      miko: emptyBuddyPersonalizationSlots(),
+      io: emptyBuddyPersonalizationSlots()
     }
   },
   achievements: {
@@ -3077,7 +3127,7 @@ function getCharacterStarterWardrobe(characterId = save.selectedCharacter) {
     return [
       "hair-buns", "back-school-bow",
       "top-school", "bottom-school",
-      "sock-left-school", "sock-right-school", "shoes-school", "heart-pin"
+      "sock-left-school", "sock-right-school", "shoes-school", "ahoge", "heart-pin"
     ];
   }
 
@@ -3131,6 +3181,15 @@ function normalizeCharacterState() {
   save.characterUnlockedItems.peep = [...peepUnlocks];
   save.characterUnlockedItems.miko = [...mikoUnlocks];
   save.characterUnlockedItems.io = [...ioUnlocks];
+
+  // v24.83: Io's ahoge used to be forced on every render. Preserve the
+  // existing look once, then let the player remove/add the now-free Closet piece.
+  if (!save.ioAhogeClosetMigrationV2483) {
+    if (!save.characterUnlockedItems.io.includes("ahoge")) save.characterUnlockedItems.io.push("ahoge");
+    if (!Array.isArray(save.characterOutfits.io.extras)) save.characterOutfits.io.extras = [];
+    if (!save.characterOutfits.io.extras.includes("ahoge")) save.characterOutfits.io.extras.unshift("ahoge");
+    save.ioAhogeClosetMigrationV2483 = true;
+  }
 
   save.characterProgress.peep = normalizeLoadedCharacterProgress(
     save.characterProgress.peep,
@@ -3927,7 +3986,7 @@ function renderWingDuckPicker() {
     const img = document.createElement("img");
     img.decoding = "async";
     img.loading = "lazy";
-    img.src = duck.file;
+    img.src = duckThumbFile(duck);
     img.alt = "";
     img.loading = "lazy";
 
@@ -4516,7 +4575,7 @@ function getIoEquippedAssetIds() {
   if (outfit.dress) ids.push(outfit.dress);
   else ids.push(outfit.bottom, outfit.top);
   ids.push(...(Array.isArray(outfit.extras) ? outfit.extras : []));
-  ids.push(currentExpression, "ahoge", "bangs");
+  ids.push(currentExpression, "bangs");
   return ids.filter(Boolean);
 }
 
@@ -4590,6 +4649,7 @@ function renderCharacterInto(container, characterId = save.selectedCharacter) {
     img.style.setProperty("--z", asset.z);
     img.style.zIndex = String(index + 1);
     img.dataset.asset = asset.id;
+    if (character.id === "io" && asset.id === "crown") img.style.transform = "translateY(0.25%)";
     if (asset.id.startsWith("expression-")) img.dataset.expressionLayer = "true";
     container.append(img);
   }
@@ -4802,6 +4862,26 @@ function renderCloset() {
   renderClosetOptions();
 }
 
+const CHARACTER_PREVIEW_THUMB_FILES = {
+  peep: new Set(["bangs.png", "bangs.webp", "base.png", "base.webp", "beret.png", "beret.webp", "bunny-tail.png", "bunny-tail.webp", "cat-ears.png", "cat-ears.webp", "cheek-bandage.png", "cheek-bandage.webp", "collar.png", "collar.webp", "colorful-sneakers.png", "colorful-sneakers.webp", "cow-ears.png", "cow-ears.webp", "cow-tail.png", "cow-tail.webp", "cropped-jacket.png", "cropped-jacket.webp", "expression-happy.png", "expression-happy.webp", "expression-mad.png", "expression-mad.webp", "expression-neutral.png", "expression-neutral.webp", "expression-sad.png", "expression-sad.webp", "expression-shocked.png", "expression-shocked.webp", "fluffy-skirt.png", "fluffy-skirt.webp", "hair-jellyfish.png", "hair-jellyfish.webp", "hair-long-pigtails.png", "hair-long-pigtails.webp", "hair-low-pigtails.png", "hair-low-pigtails.webp", "hair-ponytail.png", "hair-ponytail.webp", "hair-short.png", "hair-short.webp", "hair-side-ribbon.png", "hair-side-ribbon.webp", "horns.png", "horns.webp", "large-back-hair-bow.png", "large-back-hair-bow.webp", "left-bow.png", "left-bow.webp", "loafer-shoes.png", "loafer-shoes.webp", "off-shoulder-sweater.png", "off-shoulder-sweater.webp", "pleated-skirt.png", "pleated-skirt.webp", "right-bow.png", "right-bow.webp", "right-leg-bandage.png", "right-leg-bandage.webp", "short-sleeved-shirt.png", "short-sleeved-shirt.webp", "sock-left-blue.png", "sock-left-blue.webp", "sock-left-rainbow.png", "sock-left-rainbow.webp", "sock-right-blue.png", "sock-right-blue.webp", "sock-right-rainbow.png", "sock-right-rainbow.webp", "white-bow.png", "white-bow.webp", "white-cardigan-shop.png", "white-cardigan-shop.webp", "white-cardigan-sides.png", "white-cardigan-sides.webp", "white-cardigan.png", "white-cardigan.webp", "white-dress.png", "white-dress.webp", "white-lace-stockings.png", "white-lace-stockings.webp", "white-mary-janes.png", "white-mary-janes.webp"]),
+  miko: new Set(["Miko-Boxers.PNG", "Miko-Boxers.webp", "Miko-angry.PNG", "Miko-angry.webp", "Miko-bangs-pinned.PNG", "Miko-bangs-pinned.webp", "Miko-bangs.PNG", "Miko-bangs.webp", "Miko-base-arm.PNG", "Miko-base-arm.webp", "Miko-base.PNG", "Miko-base.webp", "Miko-belt.PNG", "Miko-belt.webp", "Miko-big-shirt.PNG", "Miko-big-shirt.webp", "Miko-button-shirt-closet.PNG", "Miko-button-shirt-closet.webp", "Miko-button-shirt.PNG", "Miko-button-shirt.webp", "Miko-button-sleeve.PNG", "Miko-button-sleeve.webp", "Miko-capri-pants.PNG", "Miko-capri-pants.webp", "Miko-hair.PNG", "Miko-hair.webp", "Miko-happy.PNG", "Miko-happy.webp", "Miko-headband.PNG", "Miko-headband.webp", "Miko-hoodie-back.PNG", "Miko-hoodie-back.webp", "Miko-hoodie-closet.PNG", "Miko-hoodie-closet.webp", "Miko-hoodie-sleeve.PNG", "Miko-hoodie-sleeve.webp", "Miko-hoodie.PNG", "Miko-hoodie.webp", "Miko-jeans.PNG", "Miko-jeans.webp", "Miko-loafers.PNG", "Miko-loafers.webp", "Miko-neutral.PNG", "Miko-neutral.webp", "Miko-sad.PNG", "Miko-sad.webp", "Miko-shocked.PNG", "Miko-shocked.webp", "Miko-smug.PNG", "Miko-smug.webp", "Miko-socks.PNG", "Miko-socks.webp", "Miko-sweater-closet.PNG", "Miko-sweater-closet.webp", "Miko-sweater-sleeve.PNG", "Miko-sweater-sleeve.webp", "Miko-sweater.PNG", "Miko-sweater.webp", "black-blazer-arm-piece.png", "black-blazer-arm-piece.webp", "black-blazer-shop.png", "black-blazer-shop.webp", "black-blazer.png", "black-blazer.webp", "black-hairpins.png", "black-hairpins.webp", "blouse.png", "blouse.webp", "fancy-loafers.png", "fancy-loafers.webp", "shorts.png", "shorts.webp", "white-garter-sock-left.png", "white-garter-sock-left.webp", "white-garter-sock-right.png", "white-garter-sock-right.webp", "white-garter-socks.png", "white-garter-socks.webp"]),
+  io: new Set(["Io-ahoge.webp", "Io-angry.webp", "Io-back-school-bow.webp", "Io-bangs.webp", "Io-body-base.webp", "Io-buns.webp", "Io-crown.webp", "Io-happy.webp", "Io-heart-pin.webp", "Io-l-magical-stocking.webp", "Io-l-school-sock.webp", "Io-long-hair.webp", "Io-magical-back-bow.webp", "Io-magical-boots.webp", "Io-magical-dress.webp", "Io-magical-stockings-shop.webp", "Io-magical-stockings.webp", "Io-mew-boots.webp", "Io-mew-collar.webp", "Io-mew-dress.webp", "Io-mew-garter.webp", "Io-mew-jacket-shop.webp", "Io-mew-jacket.webp", "Io-neutral.webp", "Io-pigtails.webp", "Io-r-magical-stocking.webp", "Io-r-school-sock.webp", "Io-school-shirt.webp", "Io-school-shoes.webp", "Io-school-skirt.webp", "Io-school-socks-shop.webp", "Io-school-socks.webp", "Io-sheep-ears.webp"])
+};
+
+function characterPreviewSrc(characterId, file) {
+  const name = String(file || "").split("/").pop();
+  if (CHARACTER_PREVIEW_THUMB_FILES[characterId]?.has(name)) {
+    return `assets/thumbs/characters/${characterId}/${name.replace(/\.[^.]+$/, ".webp")}`;
+  }
+  return `${CHARACTERS[characterId].assetFolder}${file}`;
+}
+
+function duckThumbFile(duck) {
+  const file = String(duck?.file || "");
+  const name = file.split("/").pop();
+  return name ? `assets/thumbs/ducks/${name.replace(/\.[^.]+$/, ".webp")}` : file;
+}
+
 function makeThumb(assetId, { boxW = 92, boxH = 82, targetW = 60, targetH = 54, characterId = save.selectedCharacter } = {}) {
   const asset = getCharacterAssetMap(characterId)[assetId];
   const thumb = document.createElement("span");
@@ -4814,7 +4894,7 @@ function makeThumb(assetId, { boxW = 92, boxH = 82, targetW = 60, targetH = 54, 
     img.decoding = "async";
     img.loading = "lazy";
   const thumbFile = asset.previewFile || asset.file;
-  img.src = `${CHARACTERS[characterId].assetFolder}${thumbFile}`;
+  img.src = characterPreviewSrc(characterId, thumbFile);
   img.alt = "";
 
   const bbox = getCharacterThumbBounds(characterId)[thumbFile] || getCharacterThumbBounds(characterId)[asset.file];
@@ -4878,7 +4958,7 @@ function makeCombinedThumb(assetIds, { boxW = 104, boxH = 88, targetW = 76, targ
     const img = document.createElement("img");
     img.decoding = "async";
     img.loading = "lazy";
-    img.src = `${CHARACTERS[characterId].assetFolder}${thumbFile}`;
+    img.src = characterPreviewSrc(characterId, thumbFile);
     img.alt = "";
     img.style.width = `${1080 * scale}px`;
     img.style.height = `${1920 * scale}px`;
@@ -6310,35 +6390,37 @@ function renderFurnitureDuckPlacements() {
   }
 }
 
+function headDuckBangLayerAssetId(characterId) {
+  return characterId === "peep" ? "bangs" : "";
+}
+
+function placeHeadDuckBehindFrontHair(container, layer, characterId) {
+  if (characterId === "io") {
+    layer.style.zIndex = "0";
+    container.insertBefore(layer, container.firstChild);
+    return true;
+  }
+  const assetId = headDuckBangLayerAssetId(characterId);
+  if (!assetId) return false;
+  const frontHair = container.querySelector(`[data-asset="${assetId}"]`);
+  if (!frontHair) return false;
+  const frontHairZ = frontHair.style.zIndex || "1";
+  layer.style.zIndex = frontHairZ;
+  container.insertBefore(layer, frontHair);
+  return true;
+}
+
 function layerPeepHeadDuckBehindBangs() {
   const character = getCurrentCharacter();
+  if (placeHeadDuckBehindFrontHair(peepLayers, headDuckDisplay, character.id)) return;
 
-  // Peep's assigned duck should sit above her other face/hair artwork,
-  // but immediately BEHIND the bangs so the fringe overlaps the duck naturally.
-  if (character.id === "peep") {
-    const bangs = peepLayers.querySelector('[data-asset="bangs"]');
-    if (bangs) {
-      const bangsZ = bangs.style.zIndex || "1";
-      headDuckDisplay.style.zIndex = bangsZ;
-      peepLayers.insertBefore(headDuckDisplay, bangs);
-      return;
-    }
-  }
-
-  // Keep the existing behavior for other characters.
+  // Keep the existing behavior for characters without a special front-hair rule.
   headDuckDisplay.style.zIndex = "12";
   peepWrap.insertBefore(headDuckDisplay, peepHotspot);
 }
 
 function insertPortraitHeadDuckLayer(container, layer, characterId) {
-  if (characterId === "peep") {
-    const bangs = container.querySelector('[data-asset="bangs"]');
-    if (bangs) {
-      layer.style.zIndex = bangs.style.zIndex || "1";
-      container.insertBefore(layer, bangs);
-      return;
-    }
-  }
+  if (placeHeadDuckBehindFrontHair(container, layer, characterId)) return;
   container.insertBefore(layer, container.firstChild);
 }
 
@@ -7489,7 +7571,7 @@ function renderDuckCraftTab() {
       createCrafterCard(
         { type: "duck", id: duckId },
         duck.name,
-        duck.file,
+        duckThumbFile(duck),
         status,
         `Owned ×${duckCollectionCount(duckId)}`
       )
@@ -7630,7 +7712,7 @@ function createDuckRecipeGuideCard(duckId, duck) {
   const img = document.createElement("img");
     img.decoding = "async";
     img.loading = "lazy";
-  img.src = duck.file;
+  img.src = duckThumbFile(duck);
   img.alt = "";
   img.loading = "lazy";
   art.append(img);
@@ -8189,7 +8271,7 @@ function renderDuckCard(duckId, duck) {
   const img = document.createElement("img");
     img.decoding = "async";
     img.loading = "lazy";
-  img.src = duck.file;
+  img.src = duckThumbFile(duck);
   img.alt = "";
   img.loading = "lazy";
   img.decoding = "async";
@@ -10072,13 +10154,45 @@ function getBuddySlots(characterId = save.selectedCharacter) {
   return slots;
 }
 
+function getBuddySlotPersonalization(characterId, slotIndex) {
+  if (!save.buddies || typeof save.buddies !== "object") save.buddies = normalizeBuddySave(null);
+  if (!save.buddies.personalizationByCharacter || typeof save.buddies.personalizationByCharacter !== "object") {
+    save.buddies.personalizationByCharacter = {};
+  }
+  const source = Array.isArray(save.buddies.personalizationByCharacter[characterId])
+    ? save.buddies.personalizationByCharacter[characterId]
+    : [];
+  const normalized = Array.from({ length: BUDDY_SLOT_COUNT }, (_, index) => normalizeBuddyPersonalization(source[index]));
+  save.buddies.personalizationByCharacter[characterId] = normalized;
+  return normalized[Math.max(0, Math.min(BUDDY_SLOT_COUNT - 1, Number(slotIndex) || 0))];
+}
+
+function clearBuddySlotPersonalization(characterId, slotIndex) {
+  getBuddySlotPersonalization(characterId, slotIndex);
+  save.buddies.personalizationByCharacter[characterId][slotIndex] = null;
+}
+
+function buddyGenderSymbol(gender) {
+  if (gender === "female") return "♀";
+  if (gender === "male") return "♂";
+  if (gender === "nonbinary") return "✦";
+  return "";
+}
+
 function buddyImageSource(buddy) {
   const image = String(buddy?.image || "").trim();
   if (!image) return "";
   if (/^(?:https?:|data:|blob:|\/)/i.test(image)) return image;
+  if (image.startsWith("../assets/")) return `duck-quest/${image.slice(3)}`;
+  if (image.startsWith("./assets/")) return `duck-quest/${image.slice(2)}`;
   if (image.startsWith("duck-quest/")) return image;
   if (image.startsWith("assets/")) return `duck-quest/${image}`;
   return image;
+}
+
+function buddyFallbackImageSource(src) {
+  if (!src) return "";
+  return /\.webp(?:$|[?#])/i.test(src) ? src.replace(/\.webp(?=$|[?#])/i, ".png") : "";
 }
 
 function renderBuddyPortrait(container, buddy) {
@@ -10093,9 +10207,15 @@ function renderBuddyPortrait(container, buddy) {
     img.loading = "lazy";
     img.decoding = "async";
     img.addEventListener("error", () => {
+      const fallback = buddyFallbackImageSource(imageSource);
+      if (fallback && img.dataset.fallbackApplied !== "true") {
+        img.dataset.fallbackApplied = "true";
+        img.src = fallback;
+        return;
+      }
       container.innerHTML = "";
       container.textContent = buddy.shiny ? "✨" : buddy.boss ? "★" : "♡";
-    }, { once: true });
+    });
     container.append(img);
   } else {
     container.textContent = buddy.shiny ? "✨" : buddy.boss ? "★" : "♡";
@@ -10120,6 +10240,7 @@ function assignBuddyToProfile(characterId, slotIndex, buddyKey) {
   const slots = getBuddySlots(characterId);
   const index = Math.max(0, Math.min(BUDDY_SLOT_COUNT - 1, Number(slotIndex) || 0));
 
+  const previousKey = slots[index];
   if (buddyKey) {
     const buddy = buddyByKey(buddyKey);
     if (!buddy) return;
@@ -10134,6 +10255,7 @@ function assignBuddyToProfile(characterId, slotIndex, buddyKey) {
   }
 
   save.buddies.equippedByCharacter[characterId] = slots;
+  if (previousKey !== slots[index]) clearBuddySlotPersonalization(characterId, index);
   persist();
   renderProfileBuddies(characterId);
   closeProfileBuddyPicker();
@@ -10197,11 +10319,14 @@ function renderProfileBuddies(characterId = selectedProfileCharacterId) {
 
   slots.forEach((buddyKey, index) => {
     const buddy = buddyByKey(buddyKey);
+    const personalization = getBuddySlotPersonalization(characterId, index);
+    const buddyDisplayName = personalization?.nickname || buddy?.name || "Buddy";
+    const genderMark = buddyGenderSymbol(personalization?.gender);
     const button = document.createElement("button");
     button.type = "button";
     button.className = `profile-buddy-slot${index === 0 ? " main" : ""}${buddy ? " filled" : ""}`;
     button.setAttribute("aria-label", buddy
-      ? `${index === 0 ? "Main Buddy" : `Buddy slot ${index + 1}`}: ${buddy.name}`
+      ? `${index === 0 ? "Main Buddy" : `Buddy slot ${index + 1}`}: ${buddyDisplayName}${genderMark ? ` ${genderMark}` : ""}`
       : `${index === 0 ? "Main Buddy" : `Buddy slot ${index + 1}`}, empty`);
 
     const art = document.createElement("span");

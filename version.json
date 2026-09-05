@@ -1,5 +1,5 @@
 {
-  "version": "24.89",
+  "version": "24.90",
   "updated": "2026-09-05",
-  "note": "Buddy image path repair, PNG fallback support, and Io head-duck layering behind her hair."
+  "note": "Repository cleanup, removed old update files, and fixed Io head-duck layering/position."
 }
