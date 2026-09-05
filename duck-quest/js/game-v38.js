@@ -1112,11 +1112,34 @@ function buddySkillForEnemyId(enemyId){
   return BUDDY_SKILLS[String(enemyId||"")] || null;
 }
 
+function buddyGenderSymbol(gender){
+  if(gender==="female") return "♀";
+  if(gender==="male") return "♂";
+  if(gender==="nonbinary") return "✦";
+  return "";
+}
+
+function buddySlotPersonalization(characterId,slotIndex){
+  ensureBuddySave();
+  return hubSave.buddies?.personalizationByCharacter?.[characterId]?.[slotIndex] || null;
+}
+
 function mainBuddyRecord(){
   ensureBuddySave();
   const slots=hubSave.buddies?.equippedByCharacter?.[activeCharacterId];
   const key=Array.isArray(slots) && typeof slots[0]==="string" ? slots[0] : null;
-  return key ? hubSave.buddies?.collection?.[key] || null : null;
+  const base=key ? hubSave.buddies?.collection?.[key] || null : null;
+  if(!base) return null;
+  const personal=buddySlotPersonalization(activeCharacterId,0);
+  const nickname=String(personal?.nickname||"").trim();
+  return {
+    ...base,
+    speciesName:base.name,
+    name:nickname || base.name,
+    nickname,
+    gender:String(personal?.gender||""),
+    genderSymbol:buddyGenderSymbol(personal?.gender)
+  };
 }
 
 
@@ -1187,9 +1210,19 @@ function ensureBuddySave() {
   if(!hubSave.buddies || typeof hubSave.buddies!=="object" || Array.isArray(hubSave.buddies)) hubSave.buddies={};
   hubSave.buddies.collection=normalizeBuddyCollection(hubSave.buddies.collection);
   if(!hubSave.buddies.equippedByCharacter || typeof hubSave.buddies.equippedByCharacter!=="object") hubSave.buddies.equippedByCharacter={};
+  if(!hubSave.buddies.personalizationByCharacter || typeof hubSave.buddies.personalizationByCharacter!=="object") hubSave.buddies.personalizationByCharacter={};
   ["peep","miko","io"].forEach(id=>{
     const slots=Array.isArray(hubSave.buddies.equippedByCharacter[id])?hubSave.buddies.equippedByCharacter[id]:[];
     hubSave.buddies.equippedByCharacter[id]=Array.from({length:6},(_,i)=>typeof slots[i]==="string"?slots[i]:null);
+    const personal=Array.isArray(hubSave.buddies.personalizationByCharacter[id])?hubSave.buddies.personalizationByCharacter[id]:[];
+    hubSave.buddies.personalizationByCharacter[id]=Array.from({length:6},(_,i)=>{
+      if(!hubSave.buddies.equippedByCharacter[id][i]) return null;
+      const value=personal[i];
+      if(!value || typeof value!=="object" || Array.isArray(value)) return null;
+      const nickname=String(value.nickname||"").trim().slice(0,20);
+      const gender=["female","male","nonbinary"].includes(value.gender)?value.gender:"";
+      return nickname||gender?{nickname,gender}:null;
+    });
   });
 }
 
@@ -1417,6 +1450,12 @@ const ui = {
   buddyAssignCharacters: document.querySelector("#buddyAssignCharacters"),
   buddyAssignSlots: document.querySelector("#buddyAssignSlots"),
   buddyAssignMessage: document.querySelector("#buddyAssignMessage"),
+  buddyPersonalizePanel: document.querySelector("#buddyPersonalizePanel"),
+  buddyPersonalizeSpecies: document.querySelector("#buddyPersonalizeSpecies"),
+  buddyNicknameInput: document.querySelector("#buddyNicknameInput"),
+  buddyGenderButtons: [...document.querySelectorAll("[data-buddy-gender]")],
+  saveBuddyPersonalization: document.querySelector("#saveBuddyPersonalization"),
+  buddyPersonalizeMessage: document.querySelector("#buddyPersonalizeMessage"),
   befriendPanel: document.querySelector("#befriendPanel"),
   befriendTitle: document.querySelector("#befriendTitle"),
   befriendText: document.querySelector("#befriendText"),
@@ -1424,6 +1463,7 @@ const ui = {
   skipBefriend: document.querySelector("#skipBefriend"),
   itemPonShopActions: document.querySelector("#itemPonShopActions"),
   purchasePonButton: document.querySelector("#purchasePonButton"),
+  itemBackButton: document.querySelector("#itemBackButton"),
   closePonPurchaseButton: document.querySelector("#closePonPurchaseButton"),
   ponPurchasePanel: document.querySelector("#ponPurchasePanel"),
   ponPurchaseCoins: document.querySelector("#ponPurchaseCoins"),
@@ -1547,6 +1587,9 @@ let endlessExitReason = "";
 let buddyCollectionFilter = "all";
 let buddyDetailEntryKey = "";
 let buddyAssignCharacterId = "";
+let buddyPersonalizeCharacterId = "";
+let buddyPersonalizeSlotIndex = -1;
+let buddyPersonalizeGender = "";
 const QUICK_HEAL_PERCENT = 0.25;
 const QUICK_HEAL_MAX_USES = 4;
 let quickHealUses = 0;
@@ -1999,6 +2042,10 @@ function renderBuddyHomeCount() {
 function closeBuddyDetail() {
   buddyDetailEntryKey="";
   buddyAssignCharacterId="";
+  buddyPersonalizeCharacterId="";
+  buddyPersonalizeSlotIndex=-1;
+  buddyPersonalizeGender="";
+  ui.buddyPersonalizePanel?.classList.add("hidden");
   ui.buddyAssignPanel?.classList.add("hidden");
   if(ui.buddyAssignMessage) ui.buddyAssignMessage.textContent="";
   ui.buddyDetail?.classList.add("hidden");
@@ -2040,6 +2087,48 @@ function buddyAssignCharacters(){
   return ["peep","miko","io"].map(id=>({id,name:BUDDY_ASSIGN_CHARACTER_NAMES[id],unlocked:unlocked.includes(id)}));
 }
 
+function hideBuddyPersonalization(){
+  buddyPersonalizeCharacterId="";
+  buddyPersonalizeSlotIndex=-1;
+  buddyPersonalizeGender="";
+  ui.buddyPersonalizePanel?.classList.add("hidden");
+  if(ui.buddyPersonalizeMessage) ui.buddyPersonalizeMessage.textContent="";
+}
+
+function openBuddyPersonalization(entry,characterId,slotIndex){
+  ensureBuddySave();
+  const slots=hubSave.buddies.equippedByCharacter[characterId] || [];
+  if(!entry || slots[slotIndex]!==entry.key){ hideBuddyPersonalization(); return; }
+  buddyPersonalizeCharacterId=characterId;
+  buddyPersonalizeSlotIndex=slotIndex;
+  const personal=buddySlotPersonalization(characterId,slotIndex);
+  buddyPersonalizeGender=String(personal?.gender||"");
+  if(ui.buddyPersonalizeSpecies) ui.buddyPersonalizeSpecies.textContent=`${BUDDY_ASSIGN_CHARACTER_NAMES[characterId]}'s ${slotIndex===0?"★ Main Buddy":`Buddy ${slotIndex+1}`} · ${entry.name}`;
+  if(ui.buddyNicknameInput) ui.buddyNicknameInput.value=String(personal?.nickname||"");
+  ui.buddyGenderButtons?.forEach(button=>button.classList.toggle("selected",button.dataset.buddyGender===buddyPersonalizeGender));
+  if(ui.buddyPersonalizeMessage) ui.buddyPersonalizeMessage.textContent="";
+  ui.buddyPersonalizePanel?.classList.remove("hidden");
+}
+
+function saveBuddyPersonalization(){
+  if(!buddyPersonalizeCharacterId || buddyPersonalizeSlotIndex<0) return;
+  ensureBuddySave();
+  const slots=hubSave.buddies.equippedByCharacter[buddyPersonalizeCharacterId] || [];
+  const key=slots[buddyPersonalizeSlotIndex];
+  if(!key) return;
+  const nickname=String(ui.buddyNicknameInput?.value||"").trim().slice(0,20);
+  const gender=["female","male","nonbinary"].includes(buddyPersonalizeGender)?buddyPersonalizeGender:"";
+  hubSave.buddies.personalizationByCharacter[buddyPersonalizeCharacterId][buddyPersonalizeSlotIndex]=nickname||gender?{nickname,gender}:null;
+  persistAll();
+  const species=buddyRecordByKey(key);
+  const shownName=nickname || species?.name || "Buddy";
+  const entry=buddyRecordByKey(buddyDetailEntryKey);
+  if(entry) renderBuddyAssignPanel(entry);
+  // Re-open after rerender so the editor remains visible.
+  if(entry) openBuddyPersonalization(entry,buddyPersonalizeCharacterId,buddyPersonalizeSlotIndex);
+  if(ui.buddyPersonalizeMessage) ui.buddyPersonalizeMessage.textContent=`Saved! ${shownName}${gender?` ${buddyGenderSymbol(gender)}`:""} is ready to adventure. ♡`;
+}
+
 function renderBuddyAssignPanel(entry){
   if(!entry || !ui.buddyAssignPanel || !ui.buddyAssignCharacters || !ui.buddyAssignSlots) return;
   ensureBuddySave();
@@ -2072,6 +2161,7 @@ function renderBuddyAssignPanel(entry){
     button.textContent=character.unlocked?character.name:`${character.name} 🔒`;
     button.addEventListener("click",()=>{
       buddyAssignCharacterId=character.id;
+      hideBuddyPersonalization();
       if(ui.buddyAssignMessage) ui.buddyAssignMessage.textContent="";
       renderBuddyAssignPanel(entry);
     });
@@ -2085,6 +2175,9 @@ function renderBuddyAssignPanel(entry){
 
   slots.forEach((currentKey,index)=>{
     const currentBuddy=buddyRecordByKey(currentKey);
+    const personal=buddySlotPersonalization(buddyAssignCharacterId,index);
+    const personalName=String(personal?.nickname||"").trim();
+    const personalGender=buddyGenderSymbol(personal?.gender);
     const alreadyHere=currentKey===entry.key;
     const canAssign=alreadyHere || freeCopies>0 || canMoveWithinOc;
     const button=document.createElement("button");
@@ -2109,7 +2202,8 @@ function renderBuddyAssignPanel(entry){
     }
 
     const label=document.createElement("strong");
-    label.textContent=alreadyHere?`${entry.name} ✓`:(currentBuddy?.name || "Empty");
+    const baseLabel=alreadyHere?`${personalName || entry.name} ✓`:(personalName || currentBuddy?.name || "Empty");
+    label.textContent=`${baseLabel}${personalGender?` ${personalGender}`:""}`;
     button.append(badge,art,label);
     button.addEventListener("click",()=>assignBuddyFromBook(entry,buddyAssignCharacterId,index));
     ui.buddyAssignSlots.appendChild(button);
@@ -2125,16 +2219,20 @@ function assignBuddyFromBook(entry,characterId,slotIndex){
   const slots=hubSave.buddies.equippedByCharacter[characterId];
   const index=Math.max(0,Math.min(5,Number(slotIndex)||0));
   if(slots[index]===entry.key){
-    if(ui.buddyAssignMessage) ui.buddyAssignMessage.textContent=`${entry.name} is already in ${BUDDY_ASSIGN_CHARACTER_NAMES[characterId]}'s ${index===0?"★ Main Buddy":"Buddy "+(index+1)} slot.`;
+    if(ui.buddyAssignMessage) ui.buddyAssignMessage.textContent=`Personalize this ${entry.name} below. ♡`;
+    openBuddyPersonalization(entry,characterId,index);
     return;
   }
 
   const owned=buddyOwnedQuantity(entry.key);
   const assignedElsewhere=buddyEquippedCount(entry.key,characterId,index);
+  let personalizationForNewSlot=null;
   if(assignedElsewhere>=owned){
     const moveFrom=slots.findIndex((key,sourceIndex)=>sourceIndex!==index && key===entry.key);
     if(moveFrom>=0){
+      personalizationForNewSlot=hubSave.buddies.personalizationByCharacter[characterId]?.[moveFrom] || null;
       slots[moveFrom]=null;
+      hubSave.buddies.personalizationByCharacter[characterId][moveFrom]=null;
     }else{
       if(ui.buddyAssignMessage) ui.buddyAssignMessage.textContent=`All ${entry.name} copies are already assigned to other OCs.`;
       renderBuddyAssignPanel(entry);
@@ -2142,6 +2240,9 @@ function assignBuddyFromBook(entry,characterId,slotIndex){
     }
   }
 
+  // A freshly assigned copy starts unnamed unless this exact copy was moved
+  // from another slot on the same OC, in which case its personalization moves too.
+  hubSave.buddies.personalizationByCharacter[characterId][index]=personalizationForNewSlot;
   slots[index]=entry.key;
   hubSave.buddies.equippedByCharacter[characterId]=slots;
   persistAll();
@@ -2149,6 +2250,7 @@ function assignBuddyFromBook(entry,characterId,slotIndex){
     ui.buddyAssignMessage.textContent=`Assigned ${entry.name} to ${BUDDY_ASSIGN_CHARACTER_NAMES[characterId]}'s ${index===0?"★ Main Buddy":"Buddy "+(index+1)} slot! ♡`;
   }
   renderBuddyAssignPanel(entry);
+  openBuddyPersonalization(entry,characterId,index);
 }
 
 function openBuddyDetail(entry) {
@@ -2622,9 +2724,10 @@ function renderBattleBuddy(){
     ui.buddyCombatant.classList.add("hidden");
     return;
   }
-  ui.buddyBattleName.textContent=buddy.name || "Buddy";
+  const buddyLabel=`${buddy.name || "Buddy"}${buddy.genderSymbol?` ${buddy.genderSymbol}`:""}`;
+  ui.buddyBattleName.textContent=buddyLabel;
   ui.buddyBattleSprite.src=String(buddy.image||"");
-  ui.buddyBattleSprite.alt=buddy.name || "Main Buddy";
+  ui.buddyBattleSprite.alt=buddyLabel;
   ui.buddyCombatant.classList.toggle("boss-buddy",Boolean(buddy.boss));
   ui.buddyBattleSparkle?.classList.toggle("hidden",!buddy.shiny);
   ui.buddyCombatant.classList.remove("hidden");
@@ -2995,6 +3098,10 @@ function renderCommandButtons() {
   if (ui.escapeButton) ui.escapeButton.disabled = actionLocked || !currentRun;
 }
 
+function escapeHtml(value){
+  return String(value??"").replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[char]));
+}
+
 function renderBuddySkillMenu(){
   if(!ui.skillButtons) return;
   ui.skillButtons.innerHTML="";
@@ -3012,7 +3119,8 @@ function renderBuddySkillMenu(){
   button.type="button";
   button.className=`pixel-button skill-button buddy-skill-button${buddy.shiny?" shiny":""}${buddy.boss?" boss":""}`;
   button.disabled=actionLocked || cooldown>0 || buddyUsedThisHeroTurn || !currentEnemy;
-  button.innerHTML=`<span class="buddy-skill-row"><img src="${buddy.image}" alt=""><span><strong>${buddy.shiny?"✨ ":""}${buddy.name}</strong><em>${skill.name}</em></span></span><span>${cooldown>0?`Cooldown: ${cooldown} turn${cooldown===1?"":"s"}`:skill.description}</span>`;
+  const buddyNameLabel=`${buddy.shiny?"✨ ":""}${escapeHtml(buddy.name)}${buddy.genderSymbol?` ${buddy.genderSymbol}`:""}`;
+  button.innerHTML=`<span class="buddy-skill-row"><img src="${buddy.image}" alt=""><span><strong>${buddyNameLabel}</strong><em>${skill.name}</em></span></span><span>${cooldown>0?`Cooldown: ${cooldown} turn${cooldown===1?"":"s"}`:skill.description}</span>`;
   button.addEventListener("click",useBuddySkill);
   ui.skillButtons.appendChild(button);
 }
@@ -3110,7 +3218,8 @@ function renderBattleItems() {
     button.className=`pixel-button battle-item-button buddy-pon-item${pon.className?` ${pon.className}`:""}`;
     button.dataset.ponId=pon.id;
     button.disabled=actionLocked || !currentEnemy || qty<=0 || rate<=0;
-    const rateLabel=rate>0 ? `${Math.round(rate*100)}% catch` : "Can't catch this boss";
+    const lowHpBonus=buddyLowHpCatchBonus(currentEnemy)>0;
+    const rateLabel=rate>0 ? `${Math.round(rate*100)}% catch${lowHpBonus?" · Low HP bonus!":""}` : "Can't catch this boss";
     button.innerHTML=`
       <img src="${pon.image}" alt="">
       <span>
@@ -3443,11 +3552,21 @@ async function quickHealTurn() {
   renderSkills();
 }
 
+function buddyLowHpCatchBonus(enemy){
+  if(!enemy || enemy.shiny) return 0;
+  const maxHp=Math.max(1,Number(enemy.maxHp)||1);
+  const hpNow=Math.max(0,Number(enemy.hpNow));
+  return hpNow/maxHp<=0.50 ? 0.10 : 0;
+}
+
 function buddyPonCatchRate(pon, enemy) {
   if(!pon || !enemy) return 0;
   if(enemy.shiny) return 1;
-  if(enemy.boss) return Math.max(0,Math.min(1,Number(pon.bossRate)||0));
-  return Math.max(0,Math.min(1,Number(pon.normalRate)||0));
+  const base=enemy.boss
+    ? Math.max(0,Math.min(1,Number(pon.bossRate)||0))
+    : Math.max(0,Math.min(1,Number(pon.normalRate)||0));
+  if(base<=0) return 0;
+  return Math.max(0,Math.min(1,base+buddyLowHpCatchBonus(enemy)));
 }
 
 function hasCompatibleBuddyPon(enemy) {
@@ -3467,7 +3586,8 @@ function renderPonPurchaseChoices() {
     const catchRate=currentEnemy ? buddyPonCatchRate(pon,currentEnemy) : 0;
     const canAfford=Number(hubSave.coins)>=price;
     button.disabled=actionLocked || !currentEnemy || !canAfford || catchRate<=0;
-    const chanceLabel=catchRate>0 ? `${Math.round(catchRate*100)}% vs ${currentEnemy.name}${currentEnemy.shiny?" ✨":""}` : "0% vs this boss";
+    const lowHpBonus=buddyLowHpCatchBonus(currentEnemy)>0;
+    const chanceLabel=catchRate>0 ? `${Math.round(catchRate*100)}% vs ${currentEnemy.name}${currentEnemy.shiny?" ✨":""}${lowHpBonus?" · Low HP bonus":""}` : "0% vs this boss";
     button.innerHTML=`<img src="${pon.image}" alt=""><span><strong>${pon.name}</strong><small>${price} Pink Coins · ${chanceLabel}</small></span>`;
     button.addEventListener("click",()=>purchaseBuddyPon(pon.id));
     ui.ponPurchaseChoices.appendChild(button);
@@ -4074,6 +4194,13 @@ ui.buddyFilters.forEach(button=>button.addEventListener("click",()=>{
   renderBuddyCollection();
 }));
 ui.closeBuddyDetail?.addEventListener("click",closeBuddyDetail);
+ui.buddyGenderButtons?.forEach(button=>button.addEventListener("click",()=>{
+  const selected=button.dataset.buddyGender || "";
+  buddyPersonalizeGender=buddyPersonalizeGender===selected?"":selected;
+  ui.buddyGenderButtons.forEach(item=>item.classList.toggle("selected",item.dataset.buddyGender===buddyPersonalizeGender));
+}));
+ui.saveBuddyPersonalization?.addEventListener("click",saveBuddyPersonalization);
+
 ui.buddyAssignOpen?.addEventListener("click",()=>{
   const entry=buddyDisplayCatalog().find(candidate=>candidate.key===buddyDetailEntryKey);
   if(!entry || buddyOwnedQuantity(entry.key)<=0) return;
@@ -4123,6 +4250,7 @@ ui.escapeButton.addEventListener("click",()=>{
 });
 document.querySelector("#openChest").addEventListener("click",openPendingChest);
 ui.skipBefriend?.addEventListener("click",finishBefriendStep);
+ui.itemBackButton?.addEventListener("click",closeCommandWindow);
 ui.purchasePonButton?.addEventListener("click",togglePonPurchasePanel);
 ui.closePonPurchaseButton?.addEventListener("click",()=>ui.ponPurchasePanel?.classList.add("hidden"));
 document.querySelector("#continueButton").addEventListener("click",nextEncounter);

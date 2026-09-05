@@ -1,6 +1,6 @@
 // Hub v24.81 — Switch OC + profile/room/battle polish
 const STORAGE_KEY = "duckHabitHubSave_v1";
-const SAVE_VERSION = 34;
+const SAVE_VERSION = 35;
 
 const CHARACTERS = {
   peep: {
@@ -2385,7 +2385,7 @@ const IO_CLOSET = [
   { id: "dress", label: "Dresses", type: "single", allowNone: true, options: ["dress-magical", "dress-mew"] },
   { id: "socks", label: "Socks", type: "socks" },
   { id: "shoes", label: "Shoes", type: "single", allowNone: true, options: ["shoes-school", "shoes-magical", "shoes-mew"] },
-  { id: "extras", label: "Extras", type: "multi", options: ["heart-pin", "sheep-ears", "crown", "mew-garter", "mew-jacket", "mew-collar"] }
+  { id: "extras", label: "Extras", type: "multi", options: ["ahoge", "heart-pin", "sheep-ears", "crown", "mew-garter", "mew-jacket", "mew-collar"] }
 ];
 
 const MIKO_CLOSET = [
@@ -2466,7 +2466,7 @@ const DEFAULT_IO_OUTFIT = {
   leftSock: "sock-left-school",
   rightSock: "sock-right-school",
   shoes: "shoes-school",
-  extras: ["heart-pin"]
+  extras: ["ahoge", "heart-pin"]
 };
 
 function normalizeIoOutfit(rawOutfit = {}) {
@@ -2492,7 +2492,7 @@ function normalizeIoOutfit(rawOutfit = {}) {
   if (!validRightSocks.includes(normalized.rightSock)) normalized.rightSock = "sock-right-school";
   if (![null, "shoes-school", "shoes-magical", "shoes-mew"].includes(normalized.shoes)) normalized.shoes = "shoes-school";
   normalized.extras = Array.isArray(normalized.extras)
-    ? normalized.extras.filter(id => ["heart-pin", "sheep-ears", "crown", "mew-garter", "mew-jacket", "mew-collar"].includes(id))
+    ? normalized.extras.filter(id => ["ahoge", "heart-pin", "sheep-ears", "crown", "mew-garter", "mew-jacket", "mew-collar"].includes(id))
     : ["heart-pin"];
   return normalized;
 }
@@ -2626,6 +2626,17 @@ function emptyBuddySlots() {
   return Array(BUDDY_SLOT_COUNT).fill(null);
 }
 
+function emptyBuddyPersonalizationSlots() {
+  return Array(BUDDY_SLOT_COUNT).fill(null);
+}
+
+function normalizeBuddyPersonalization(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const nickname = String(value.nickname || "").trim().slice(0, 20);
+  const gender = ["female", "male", "nonbinary"].includes(value.gender) ? value.gender : "";
+  return nickname || gender ? { nickname, gender } : null;
+}
+
 function normalizeBuddyRecord(record, fallbackKey = "") {
   if (!record || typeof record !== "object" || Array.isArray(record)) return null;
   const key = String(record.key || fallbackKey || "").trim();
@@ -2659,10 +2670,14 @@ function normalizeBuddySave(raw) {
   }
 
   const equippedByCharacter = {};
+  const personalizationByCharacter = {};
   const usedCounts = {};
   for (const characterId of Object.keys(CHARACTERS)) {
     const source = Array.isArray(raw?.equippedByCharacter?.[characterId])
       ? raw.equippedByCharacter[characterId]
+      : [];
+    const personalSource = Array.isArray(raw?.personalizationByCharacter?.[characterId])
+      ? raw.personalizationByCharacter[characterId]
       : [];
     equippedByCharacter[characterId] = Array.from({ length: BUDDY_SLOT_COUNT }, (_, index) => {
       const key = typeof source[index] === "string" ? source[index] : null;
@@ -2673,9 +2688,12 @@ function normalizeBuddySave(raw) {
       usedCounts[key] = used + 1;
       return key;
     });
+    personalizationByCharacter[characterId] = Array.from({ length: BUDDY_SLOT_COUNT }, (_, index) =>
+      equippedByCharacter[characterId][index] ? normalizeBuddyPersonalization(personalSource[index]) : null
+    );
   }
 
-  return { collection, equippedByCharacter };
+  return { collection, equippedByCharacter, personalizationByCharacter };
 }
 
 const DEFAULT_SAVE = {
@@ -2694,12 +2712,13 @@ const DEFAULT_SAVE = {
   characterUnlockedItems: {
     peep: ["hair-short", "cat-ears", "left-bow", "right-bow", "top-sweater", "bottom-pleated", "sock-left-rainbow", "sock-right-rainbow", "shoes-loafer", "collar", "cheek-bandage", "tail-bunny"],
     miko: ["hair-main", "top-hoodie", "top-button", "bottom-capris", "shoes-loafer"],
-    io: ["hair-buns", "back-school-bow", "top-school", "bottom-school", "sock-left-school", "sock-right-school", "shoes-school", "heart-pin"]
+    io: ["hair-buns", "back-school-bow", "top-school", "bottom-school", "sock-left-school", "sock-right-school", "shoes-school", "ahoge", "heart-pin"]
   },
   wardrobeResetV1261: true,
   wardrobeResetV1262: false,
   mikoNewOutfitShopMigrationV2413: false,
   paintablePetBedMigrationV2418: false,
+  ioAhogeClosetMigrationV2483: false,
   progressRecoveryV1431: true,
   ocShopGateRepairV242: false,
   peepPokes: 0,
@@ -2739,6 +2758,11 @@ const DEFAULT_SAVE = {
       peep: emptyBuddySlots(),
       miko: emptyBuddySlots(),
       io: emptyBuddySlots()
+    },
+    personalizationByCharacter: {
+      peep: emptyBuddyPersonalizationSlots(),
+      miko: emptyBuddyPersonalizationSlots(),
+      io: emptyBuddyPersonalizationSlots()
     }
   },
   achievements: {
@@ -3077,7 +3101,7 @@ function getCharacterStarterWardrobe(characterId = save.selectedCharacter) {
     return [
       "hair-buns", "back-school-bow",
       "top-school", "bottom-school",
-      "sock-left-school", "sock-right-school", "shoes-school", "heart-pin"
+      "sock-left-school", "sock-right-school", "shoes-school", "ahoge", "heart-pin"
     ];
   }
 
@@ -3131,6 +3155,15 @@ function normalizeCharacterState() {
   save.characterUnlockedItems.peep = [...peepUnlocks];
   save.characterUnlockedItems.miko = [...mikoUnlocks];
   save.characterUnlockedItems.io = [...ioUnlocks];
+
+  // v24.83: Io's ahoge used to be forced on every render. Preserve the
+  // existing look once, then let the player remove/add the now-free Closet piece.
+  if (!save.ioAhogeClosetMigrationV2483) {
+    if (!save.characterUnlockedItems.io.includes("ahoge")) save.characterUnlockedItems.io.push("ahoge");
+    if (!Array.isArray(save.characterOutfits.io.extras)) save.characterOutfits.io.extras = [];
+    if (!save.characterOutfits.io.extras.includes("ahoge")) save.characterOutfits.io.extras.unshift("ahoge");
+    save.ioAhogeClosetMigrationV2483 = true;
+  }
 
   save.characterProgress.peep = normalizeLoadedCharacterProgress(
     save.characterProgress.peep,
@@ -4516,7 +4549,7 @@ function getIoEquippedAssetIds() {
   if (outfit.dress) ids.push(outfit.dress);
   else ids.push(outfit.bottom, outfit.top);
   ids.push(...(Array.isArray(outfit.extras) ? outfit.extras : []));
-  ids.push(currentExpression, "ahoge", "bangs");
+  ids.push(currentExpression, "bangs");
   return ids.filter(Boolean);
 }
 
@@ -4590,6 +4623,7 @@ function renderCharacterInto(container, characterId = save.selectedCharacter) {
     img.style.setProperty("--z", asset.z);
     img.style.zIndex = String(index + 1);
     img.dataset.asset = asset.id;
+    if (character.id === "io" && asset.id === "crown") img.style.transform = "translateY(0.65%)";
     if (asset.id.startsWith("expression-")) img.dataset.expressionLayer = "true";
     container.append(img);
   }
@@ -10072,6 +10106,31 @@ function getBuddySlots(characterId = save.selectedCharacter) {
   return slots;
 }
 
+function getBuddySlotPersonalization(characterId, slotIndex) {
+  if (!save.buddies || typeof save.buddies !== "object") save.buddies = normalizeBuddySave(null);
+  if (!save.buddies.personalizationByCharacter || typeof save.buddies.personalizationByCharacter !== "object") {
+    save.buddies.personalizationByCharacter = {};
+  }
+  const source = Array.isArray(save.buddies.personalizationByCharacter[characterId])
+    ? save.buddies.personalizationByCharacter[characterId]
+    : [];
+  const normalized = Array.from({ length: BUDDY_SLOT_COUNT }, (_, index) => normalizeBuddyPersonalization(source[index]));
+  save.buddies.personalizationByCharacter[characterId] = normalized;
+  return normalized[Math.max(0, Math.min(BUDDY_SLOT_COUNT - 1, Number(slotIndex) || 0))];
+}
+
+function clearBuddySlotPersonalization(characterId, slotIndex) {
+  getBuddySlotPersonalization(characterId, slotIndex);
+  save.buddies.personalizationByCharacter[characterId][slotIndex] = null;
+}
+
+function buddyGenderSymbol(gender) {
+  if (gender === "female") return "♀";
+  if (gender === "male") return "♂";
+  if (gender === "nonbinary") return "✦";
+  return "";
+}
+
 function buddyImageSource(buddy) {
   const image = String(buddy?.image || "").trim();
   if (!image) return "";
@@ -10120,6 +10179,7 @@ function assignBuddyToProfile(characterId, slotIndex, buddyKey) {
   const slots = getBuddySlots(characterId);
   const index = Math.max(0, Math.min(BUDDY_SLOT_COUNT - 1, Number(slotIndex) || 0));
 
+  const previousKey = slots[index];
   if (buddyKey) {
     const buddy = buddyByKey(buddyKey);
     if (!buddy) return;
@@ -10134,6 +10194,7 @@ function assignBuddyToProfile(characterId, slotIndex, buddyKey) {
   }
 
   save.buddies.equippedByCharacter[characterId] = slots;
+  if (previousKey !== slots[index]) clearBuddySlotPersonalization(characterId, index);
   persist();
   renderProfileBuddies(characterId);
   closeProfileBuddyPicker();
@@ -10197,11 +10258,14 @@ function renderProfileBuddies(characterId = selectedProfileCharacterId) {
 
   slots.forEach((buddyKey, index) => {
     const buddy = buddyByKey(buddyKey);
+    const personalization = getBuddySlotPersonalization(characterId, index);
+    const buddyDisplayName = personalization?.nickname || buddy?.name || "Buddy";
+    const genderMark = buddyGenderSymbol(personalization?.gender);
     const button = document.createElement("button");
     button.type = "button";
     button.className = `profile-buddy-slot${index === 0 ? " main" : ""}${buddy ? " filled" : ""}`;
     button.setAttribute("aria-label", buddy
-      ? `${index === 0 ? "Main Buddy" : `Buddy slot ${index + 1}`}: ${buddy.name}`
+      ? `${index === 0 ? "Main Buddy" : `Buddy slot ${index + 1}`}: ${buddyDisplayName}${genderMark ? ` ${genderMark}` : ""}`
       : `${index === 0 ? "Main Buddy" : `Buddy slot ${index + 1}`}, empty`);
 
     const art = document.createElement("span");

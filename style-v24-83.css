@@ -6896,3 +6896,11 @@ button { color: inherit; }
 .book-hotspot.on-shelf {
   top: 79.6%;
 }
+
+
+/* =========================================================
+   V24.83 — Io/room micro-polish
+   ========================================================= */
+/* Tiny step back down after the previous shelf lift. */
+.book-room-object.on-shelf { transform: translateY(-4.8%); }
+.book-hotspot.on-shelf { top: 80.0%; }

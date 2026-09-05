@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f6c6d6" />
   <title>Duck Quest</title>
-  <link rel="stylesheet" href="css/style-v35.css" />
+  <link rel="stylesheet" href="css/style-v36.css" />
 </head>
 <body>
   <main class="quest-shell">
@@ -194,6 +194,21 @@
             <div id="buddyAssignCharacters" class="buddy-assign-characters" role="group" aria-label="Choose OC"></div>
             <div id="buddyAssignSlots" class="buddy-assign-slots" aria-label="Choose Buddy slot"></div>
             <p id="buddyAssignMessage" class="buddy-assign-message" aria-live="polite"></p>
+            <section id="buddyPersonalizePanel" class="buddy-personalize-panel hidden" aria-label="Personalize assigned Buddy">
+              <strong>Personalize this Buddy</strong>
+              <small id="buddyPersonalizeSpecies">Assign a Buddy copy to personalize it.</small>
+              <label class="buddy-name-field">
+                <span>Name</span>
+                <input id="buddyNicknameInput" type="text" maxlength="20" autocomplete="off" placeholder="Buddy name" />
+              </label>
+              <div class="buddy-gender-group" role="group" aria-label="Choose Buddy gender">
+                <button class="buddy-gender-button" type="button" data-buddy-gender="female">Girl ♀</button>
+                <button class="buddy-gender-button" type="button" data-buddy-gender="male">Boy ♂</button>
+                <button class="buddy-gender-button" type="button" data-buddy-gender="nonbinary">Nonbinary ✦</button>
+              </div>
+              <button id="saveBuddyPersonalization" class="pixel-button primary small" type="button">Save Name & Gender</button>
+              <p id="buddyPersonalizeMessage" class="buddy-assign-message" aria-live="polite"></p>
+            </section>
           </section>
         </div>
       </section>
@@ -280,6 +295,7 @@
             <div id="itemButtons" class="battle-item-grid hidden"></div>
             <p id="noBattleItems" class="no-battle-items hidden">You don't have any battle items right now.</p>
             <div id="itemPonShopActions" class="item-pon-shop-actions hidden">
+              <button id="itemBackButton" class="pixel-button item-back-button" type="button">‹ Back</button>
               <button id="purchasePonButton" class="pixel-button purchase-pon-button" type="button">Purchase Pons</button>
               <section id="ponPurchasePanel" class="pon-purchase-panel hidden" aria-live="polite">
                 <div class="pon-purchase-heading">
@@ -340,6 +356,6 @@
     </section>
   </main>
 
-  <script src="js/game-v37.js"></script>
+  <script src="js/game-v38.js"></script>
 </body>
 </html>

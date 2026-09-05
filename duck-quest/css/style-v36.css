@@ -2145,3 +2145,83 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
   .command-overlay[data-kind="item"] .battle-item-button small{font-size:.45rem}
   .command-overlay[data-kind="item"] .pon-purchase-panel{inset:3px}
 }
+
+
+/* =========================================================
+   V36 / Hub v24.83 — Buddy personalization + Item footer polish
+   ========================================================= */
+/* Main Buddies fight FOR the OC, so face them toward the enemy on the right. */
+.buddy-battle-sprite{
+  transform:scaleX(-1);
+  transform-origin:center center;
+}
+
+/* Keep the Item footer truly below the scrollable item choices. */
+.command-overlay[data-kind="item"]{padding-bottom:5px}
+.command-overlay[data-kind="item"] .battle-item-grid{
+  padding-bottom:5px;
+}
+.item-pon-shop-actions{
+  margin-top:auto;
+  grid-template-columns:1fr 1.35fr;
+  gap:5px;
+  padding-top:4px;
+  position:relative;
+  z-index:3;
+  background:#fffaf1;
+}
+.command-overlay[data-kind="item"] .item-back-button,
+.command-overlay[data-kind="item"] .purchase-pon-button{
+  width:100%;
+  min-height:27px!important;
+  padding:3px 7px!important;
+  font-size:.54rem;
+}
+.command-overlay[data-kind="item"] .item-back-button{background:#f1ece6}
+.command-overlay[data-kind="item"] .pon-purchase-panel{grid-column:1/-1}
+
+.buddy-personalize-panel{
+  margin-top:9px;
+  padding:9px;
+  border:2px solid #caa0b2;
+  border-radius:8px;
+  background:#fffaf3;
+  display:grid;
+  gap:7px;
+}
+.buddy-personalize-panel.hidden{display:none!important}
+.buddy-personalize-panel>strong{text-align:center;font-size:.78rem}
+.buddy-personalize-panel>small{text-align:center;color:#8f7374;font-size:.58rem;font-weight:800}
+.buddy-name-field{display:grid;gap:3px;text-align:left}
+.buddy-name-field span{font-size:.55rem;font-weight:900;color:#7d6468}
+.buddy-name-field input{
+  width:100%;
+  min-width:0;
+  border:2px solid #c59aa9;
+  border-radius:6px;
+  background:white;
+  padding:7px 8px;
+  color:#5f4b51;
+  font:inherit;
+  font-size:.66rem;
+  font-weight:800;
+}
+.buddy-gender-group{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+.buddy-gender-button{
+  border:2px solid #caa0b2;
+  border-radius:6px;
+  background:#fff;
+  padding:6px 4px;
+  color:#6e5660;
+  font:inherit;
+  font-size:.53rem;
+  font-weight:900;
+  cursor:pointer;
+}
+.buddy-gender-button.selected{background:#f5c7d7;border-color:#a66a80}
+@media(max-width:600px){
+  .item-pon-shop-actions{gap:4px;padding-top:3px}
+  .command-overlay[data-kind="item"] .item-back-button,
+  .command-overlay[data-kind="item"] .purchase-pon-button{min-height:25px!important;font-size:.49rem}
+  .buddy-gender-button{font-size:.47rem;padding:5px 2px}
+}
