@@ -1,5 +1,5 @@
 {
-  "version": "24.87",
+  "version": "24.88",
   "updated": "2026-09-05",
-  "note": "Added the universal capture-safe Just a smack! move to every OC"
+  "note": "Image performance pass: lightweight thumbnails, battle preloading, WebP gameplay art, and a larger image cache"
 }

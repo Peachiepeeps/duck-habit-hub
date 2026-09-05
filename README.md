@@ -1,3 +1,5 @@
+Duck Habit Hub v24.88 — Image Performance Pass
+
 Duck Habit Hub v24.87 — Just a smack!
 
 Changes:
