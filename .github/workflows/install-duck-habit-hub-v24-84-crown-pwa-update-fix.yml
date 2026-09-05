@@ -1,0 +1,104 @@
+name: Install Duck Habit Hub v24.84 Crown & PWA Update Fix
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "Duck-Habit-Hub-v24-84-Crown-PWA-Update-Fix-UPDATE-ONLY.zip"
+
+permissions:
+  contents: write
+
+jobs:
+  install-update:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Verify v24.84 update package
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duck-Habit-Hub-v24-84-Crown-PWA-Update-Fix-UPDATE-ONLY.zip"
+
+          if [ ! -f "$ZIP" ]; then
+            echo "ERROR: $ZIP was not found in the repository root."
+            echo "Upload the ZIP untouched beside index.html, then run this workflow again."
+            exit 1
+          fi
+
+          unzip -t "$ZIP"
+          LISTING="$(unzip -Z1 "$ZIP")"
+          grep -Fq "duckhub_update_v24_84/index.html" <<<"$LISTING"
+          grep -Fq "duckhub_update_v24_84/script-v24-84.js" <<<"$LISTING"
+          grep -Fq "duckhub_update_v24_84/style-v24-84.css" <<<"$LISTING"
+          grep -Fq "duckhub_update_v24_84/sw.js" <<<"$LISTING"
+          grep -Fq "duckhub_update_v24_84/version.json" <<<"$LISTING"
+          grep -Fq "duckhub_update_v24_84/sw-v24-83.js" <<<"$LISTING"
+          grep -Fq "duckhub_update_v24_84/duck-hub-cache-reset.html" <<<"$LISTING"
+
+      - name: Install v24.84 update
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duck-Habit-Hub-v24-84-Crown-PWA-Update-Fix-UPDATE-ONLY.zip"
+          TMP=".duckhub-v24-84-update"
+          SRC="$TMP/duckhub_update_v24_84"
+
+          rm -rf "$TMP"
+          mkdir -p "$TMP"
+          unzip -q "$ZIP" -d "$TMP"
+
+          cp -f "$SRC/index.html" ./index.html
+          cp -f "$SRC/script-v24-84.js" ./script-v24-84.js
+          cp -f "$SRC/style-v24-84.css" ./style-v24-84.css
+          cp -f "$SRC/sw.js" ./sw.js
+          cp -f "$SRC/sw-v24-84.js" ./sw-v24-84.js
+          cp -f "$SRC/sw-v24-80.js" ./sw-v24-80.js
+          cp -f "$SRC/sw-v24-81.js" ./sw-v24-81.js
+          cp -f "$SRC/sw-v24-82.js" ./sw-v24-82.js
+          cp -f "$SRC/sw-v24-83.js" ./sw-v24-83.js
+          cp -f "$SRC/version.json" ./version.json
+          cp -f "$SRC/manifest.webmanifest" ./manifest.webmanifest
+          cp -f "$SRC/duck-hub-cache-reset.html" ./duck-hub-cache-reset.html
+          cp -f "$SRC/README-v24-84.txt" ./README-v24-84.txt
+          cp -f "$SRC/README.md" ./README.md
+
+          grep -q 'style-v24-84.css' index.html
+          grep -q 'script-v24-84.js' index.html
+          grep -q 'DUCK_HUB_BUILD = "24.84"' index.html
+          grep -q 'register("./sw.js"' index.html
+          grep -q 'version.json' index.html
+          grep -q 'translateY(0.25%)' script-v24-84.js
+          grep -q "duck-habit-hub-app-v24-84" sw.js
+          grep -q "cache:'no-store'" sw.js
+          grep -q "SKIP_WAITING" sw.js
+          grep -q '"version": "24.84"' version.json
+          grep -q "importScripts('./sw.js?v=24-84')" sw-v24-83.js
+
+          node --check script-v24-84.js
+          node --check sw.js
+
+          rm -rf "$TMP"
+          rm -f "$ZIP"
+
+      - name: Commit installed update
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "Nothing new to commit."
+            exit 0
+          fi
+
+          git commit -m "Install Duck Habit Hub v24.84 crown and PWA update fix"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
