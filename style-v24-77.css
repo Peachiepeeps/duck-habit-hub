@@ -6855,3 +6855,8 @@ button { color: inherit; }
   transform:translateY(2px);
   box-shadow:0 1px 0 rgba(103,70,78,.16);
 }
+
+/* =========================================================
+   V24.77 — per-OC rooms + Buddy count status card
+   ========================================================= */
+.status-coin-earned-card{grid-template-columns:1fr 1fr}

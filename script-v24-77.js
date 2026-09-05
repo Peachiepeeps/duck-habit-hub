@@ -1,5 +1,5 @@
 const STORAGE_KEY = "duckHabitHubSave_v1";
-const SAVE_VERSION = 33;
+const SAVE_VERSION = 34;
 
 const CHARACTERS = {
   peep: {
@@ -2681,6 +2681,11 @@ const DEFAULT_SAVE = {
   version: SAVE_VERSION,
   coins: 0,
   room: "cream",
+  roomsByCharacter: {
+    peep: "cream",
+    miko: "cream",
+    io: "cream"
+  },
   selectedCharacter: "peep",
   unlockedCharacters: ["peep"],
   unlockedRooms: ["cream"],
@@ -2721,9 +2726,11 @@ const DEFAULT_SAVE = {
   roomFurniture: {},
   roomExpansion: {
     unlocked: false,
-    accentRoom: null,
-    shelfStyle: "cream",
-    duckSlots: Array(24).fill(null)
+    byCharacter: {
+      peep: { accentRoom: null, shelfStyle: "cream", duckSlots: Array(24).fill(null) },
+      miko: { accentRoom: null, shelfStyle: "cream", duckSlots: Array(24).fill(null) },
+      io: { accentRoom: null, shelfStyle: "cream", duckSlots: Array(24).fill(null) }
+    }
   },
   buddies: {
     collection: {},
@@ -2791,6 +2798,17 @@ function loadSave() {
       ...saved,
       version: SAVE_VERSION,
       selectedCharacter: CHARACTERS[saved.selectedCharacter] ? saved.selectedCharacter : "peep",
+      roomsByCharacter: {
+        peep: ROOMS.some(room => room.id === saved.roomsByCharacter?.peep)
+          ? saved.roomsByCharacter.peep
+          : (ROOMS.some(room => room.id === saved.room) ? saved.room : "cream"),
+        miko: ROOMS.some(room => room.id === saved.roomsByCharacter?.miko)
+          ? saved.roomsByCharacter.miko
+          : "cream",
+        io: ROOMS.some(room => room.id === saved.roomsByCharacter?.io)
+          ? saved.roomsByCharacter.io
+          : "cream"
+      },
       unlockedCharacters: Array.isArray(saved.unlockedCharacters) ? saved.unlockedCharacters : ["peep"],
       unlockedRooms: Array.isArray(saved.unlockedRooms) ? saved.unlockedRooms : ["cream"],
       unlockedItems: Array.isArray(saved.unlockedItems) ? saved.unlockedItems : ["hair-short", "hair-low-pigtails"],
@@ -2848,12 +2866,20 @@ function loadSave() {
         ...(saved.roomFurniture || {})
       },
       roomExpansion: {
-        ...structuredClone(DEFAULT_SAVE.roomExpansion),
-        ...(saved.roomExpansion || {}),
-        duckSlots: Array.from({ length: 24 }, (_, index) => {
-          const value = saved.roomExpansion?.duckSlots?.[index];
-          return typeof value === "string" ? value : null;
-        })
+        unlocked: Boolean(saved.roomExpansion?.unlocked),
+        byCharacter: Object.fromEntries(Object.keys(CHARACTERS).map(characterId => {
+          const modern = saved.roomExpansion?.byCharacter?.[characterId];
+          const useLegacy = !modern && characterId === "peep";
+          const source = modern || (useLegacy ? saved.roomExpansion : null) || {};
+          return [characterId, {
+            accentRoom: typeof source.accentRoom === "string" ? source.accentRoom : null,
+            shelfStyle: typeof source.shelfStyle === "string" ? source.shelfStyle : "cream",
+            duckSlots: Array.from({ length: 24 }, (_, index) => {
+              const value = source.duckSlots?.[index];
+              return typeof value === "string" ? value : null;
+            })
+          }];
+        }))
       },
       buddies: normalizeBuddySave(saved.buddies),
       achievements: {
@@ -2926,6 +2952,9 @@ function loadSave() {
       merged.outfit = structuredClone(DEFAULT_OUTFIT);
       merged.characterOutfits.peep = structuredClone(DEFAULT_OUTFIT);
     }
+
+    const selectedRoom = merged.roomsByCharacter?.[merged.selectedCharacter];
+    merged.room = ROOMS.some(room => room.id === selectedRoom) ? selectedRoom : "cream";
 
     delete merged.craftingInventory;
     return merged;
@@ -3199,35 +3228,67 @@ function addCharacterHappiness(amount, characterId = save.selectedCharacter) {
   return gained;
 }
 
-function mainRoomStorageId(roomId = save.room) {
-  return MAIN_ROOM_STORAGE_ID;
+function getCharacterRoomId(characterId = save.selectedCharacter) {
+  if (!save.roomsByCharacter || typeof save.roomsByCharacter !== "object") {
+    save.roomsByCharacter = structuredClone(DEFAULT_SAVE.roomsByCharacter);
+  }
+  const safeCharacterId = CHARACTERS[characterId] ? characterId : "peep";
+  const roomId = save.roomsByCharacter[safeCharacterId];
+  return ROOMS.some(room => room.id === roomId) ? roomId : "cream";
+}
+
+function setCharacterRoomId(roomId, characterId = save.selectedCharacter) {
+  if (!ROOMS.some(room => room.id === roomId)) return false;
+  if (!save.roomsByCharacter || typeof save.roomsByCharacter !== "object") {
+    save.roomsByCharacter = structuredClone(DEFAULT_SAVE.roomsByCharacter);
+  }
+  const safeCharacterId = CHARACTERS[characterId] ? characterId : "peep";
+  save.roomsByCharacter[safeCharacterId] = roomId;
+  if (safeCharacterId === save.selectedCharacter) save.room = roomId;
+  return true;
+}
+
+function syncSelectedCharacterRoom() {
+  save.room = getCharacterRoomId(save.selectedCharacter);
+}
+
+function mainRoomStorageId(roomId = save.room, characterId = save.selectedCharacter) {
+  const safeCharacterId = CHARACTERS[characterId] ? characterId : "peep";
+  return `${MAIN_ROOM_STORAGE_ID}:${safeCharacterId}`;
 }
 
 function migrateLegacyMainRoomDecor() {
   normalizeRoomFurniture();
-  const sharedKey = mainRoomStorageId();
-  const currentRoomId = save.room;
+  normalizeDuckDisplays();
+
+  // The old shared Hub room was Peep's original room. Preserve that decor
+  // for Peep while Miko and Io start with their own clean rooms.
+  const characterId = "peep";
+  const sharedKey = mainRoomStorageId(getCharacterRoomId("peep"), characterId);
+  const legacySharedKey = MAIN_ROOM_STORAGE_ID;
+  const currentRoomId = getCharacterRoomId("peep");
 
   if (!save.roomFurniture[sharedKey]) {
-    const source = save.roomFurniture[currentRoomId]
+    const source = save.roomFurniture[legacySharedKey]
+      || save.roomFurniture[currentRoomId]
       || Object.entries(save.roomFurniture)
-        .find(([key, value]) => key !== sharedKey && value && typeof value === "object")?.[1];
+        .find(([key, value]) => !String(key).startsWith(`${MAIN_ROOM_STORAGE_ID}:`) && value && typeof value === "object")?.[1];
     if (source) save.roomFurniture[sharedKey] = { ...EMPTY_ROOM_FURNITURE, ...source };
   }
 
-  normalizeDuckDisplays();
-
   if (!(sharedKey in save.duckDisplays.floorByRoom)) {
-    const floorSource = save.duckDisplays.floorByRoom[currentRoomId]
+    const floorSource = save.duckDisplays.floorByRoom[legacySharedKey]
+      ?? save.duckDisplays.floorByRoom[currentRoomId]
       ?? Object.entries(save.duckDisplays.floorByRoom)
-        .find(([key, value]) => key !== sharedKey && value)?.[1];
+        .find(([key, value]) => !String(key).startsWith(`${MAIN_ROOM_STORAGE_ID}:`) && value)?.[1];
     if (floorSource) save.duckDisplays.floorByRoom[sharedKey] = floorSource;
   }
 
   if (!save.duckDisplays.furnitureByRoom[sharedKey]) {
-    const furnitureSource = save.duckDisplays.furnitureByRoom[currentRoomId]
+    const furnitureSource = save.duckDisplays.furnitureByRoom[legacySharedKey]
+      || save.duckDisplays.furnitureByRoom[currentRoomId]
       || Object.entries(save.duckDisplays.furnitureByRoom)
-        .find(([key, value]) => key !== sharedKey && value && typeof value === "object")?.[1];
+        .find(([key, value]) => !String(key).startsWith(`${MAIN_ROOM_STORAGE_ID}:`) && value && typeof value === "object")?.[1];
     if (furnitureSource) save.duckDisplays.furnitureByRoom[sharedKey] = structuredClone(furnitureSource);
   }
 }
@@ -3382,6 +3443,7 @@ const statusCoins = document.querySelector("#statusCoins");
 const statusTasksCompleted = document.querySelector("#statusTasksCompleted");
 const statusDucks = document.querySelector("#statusDucks");
 const statusCoinsEarnedTotal = document.querySelector("#statusCoinsEarnedTotal");
+const statusBuddies = document.querySelector("#statusBuddies");
 const statusMeadowRank = document.querySelector("#statusMeadowRank");
 const statusOceanRank = document.querySelector("#statusOceanRank");
 const dailiesPanel = document.querySelector("#dailiesPanel");
@@ -3686,31 +3748,44 @@ function evaluateHonkOfApproval(options = {}) {
 
 // -------------------- ROOM TO GROW --------------------
 
+function emptyRoomExpansionCharacterState() {
+  return { accentRoom: null, shelfStyle: "cream", duckSlots: Array(24).fill(null) };
+}
+
 function normalizeRoomExpansion() {
   if (!save.roomExpansion || typeof save.roomExpansion !== "object") {
     save.roomExpansion = structuredClone(DEFAULT_SAVE.roomExpansion);
   }
 
   save.roomExpansion.unlocked = Boolean(save.roomExpansion.unlocked);
+  if (!save.roomExpansion.byCharacter || typeof save.roomExpansion.byCharacter !== "object") {
+    save.roomExpansion.byCharacter = {};
+  }
 
   const validShelfStyles = new Set(["cream", "brown", "dark-brown"]);
-  if (!validShelfStyles.has(save.roomExpansion.shelfStyle)) {
-    save.roomExpansion.shelfStyle = "cream";
+  for (const characterId of Object.keys(CHARACTERS)) {
+    const incoming = save.roomExpansion.byCharacter[characterId];
+    const state = incoming && typeof incoming === "object" ? incoming : emptyRoomExpansionCharacterState();
+    if (!validShelfStyles.has(state.shelfStyle)) state.shelfStyle = "cream";
+
+    const characterRoom = getCharacterRoomId(characterId);
+    if (!ROOMS.some(room => room.id === state.accentRoom && isRoomUnlocked(room.id))) {
+      state.accentRoom = characterRoom;
+    }
+
+    const slots = Array.isArray(state.duckSlots) ? state.duckSlots : [];
+    state.duckSlots = Array.from({ length: 24 }, (_, index) => {
+      const id = normalizeDuckId(slots[index]);
+      return id && isDuckUnlocked(id) ? id : null;
+    });
+    save.roomExpansion.byCharacter[characterId] = state;
   }
+}
 
-  const accent = save.roomExpansion.accentRoom;
-  if (!ROOMS.some(room => room.id === accent && isRoomUnlocked(room.id))) {
-    save.roomExpansion.accentRoom = save.room;
-  }
-
-  const incoming = Array.isArray(save.roomExpansion.duckSlots)
-    ? save.roomExpansion.duckSlots
-    : [];
-
-  save.roomExpansion.duckSlots = Array.from({ length: 24 }, (_, index) => {
-    const id = normalizeDuckId(incoming[index]);
-    return id && isDuckUnlocked(id) ? id : null;
-  });
+function currentRoomExpansionState(characterId = save.selectedCharacter) {
+  normalizeRoomExpansion();
+  const safeCharacterId = CHARACTERS[characterId] ? characterId : "peep";
+  return save.roomExpansion.byCharacter[safeCharacterId];
 }
 
 function allCurrentRoomsUnlocked() {
@@ -3719,52 +3794,42 @@ function allCurrentRoomsUnlocked() {
 
 function evaluateRoomToGrow(options = {}) {
   normalizeRoomExpansion();
-
   if (save.roomExpansion.unlocked) {
     renderRoomWingToggle();
     return false;
   }
-
   if (!allCurrentRoomsUnlocked()) {
     renderRoomWingToggle();
     return false;
   }
 
   save.roomExpansion.unlocked = true;
-  save.roomExpansion.accentRoom = save.room;
+  currentRoomExpansionState().accentRoom = getCharacterRoomId();
   persist();
   renderRoomWingToggle();
 
-  if (options.notify !== false) {
-    showToast("Room to Grow! A new part of the room unlocked!");
-  }
-
+  if (options.notify !== false) showToast("Room to Grow! A new part of the room unlocked!");
   return true;
 }
 
 function currentDisplayedRoomId() {
   if (currentRoomView === "wing" && save.roomExpansion?.unlocked) {
-    return save.roomExpansion.accentRoom || save.room;
+    return currentRoomExpansionState().accentRoom || getCharacterRoomId();
   }
-  return save.room;
+  return getCharacterRoomId();
 }
 
 function renderRoomWingToggle() {
   const unlocked = Boolean(save.roomExpansion?.unlocked);
   roomWingButton.classList.toggle("hidden", !unlocked);
-
   if (!unlocked && currentRoomView === "wing") currentRoomView = "main";
 
   const inWing = currentRoomView === "wing" && unlocked;
   stage.classList.toggle("room-wing-view", inWing);
   duckDisplayWing.classList.toggle("hidden", !inWing);
   roomWingArrow.textContent = inWing ? "›" : "‹";
-  roomWingButton.setAttribute(
-    "aria-label",
-    inWing ? "Return to the main room" : "Visit Shelf of Ducks area"
-  );
+  roomWingButton.setAttribute("aria-label", inWing ? "Return to the main room" : "Visit Shelf of Ducks area");
   roomPickerText.textContent = "Wallpaper";
-
   if (inWing) renderWingShelfStyle();
 }
 
@@ -3777,7 +3842,7 @@ const WING_SHELF_FILES = Object.freeze({
 function renderWingShelfStyle() {
   normalizeRoomExpansion();
 
-  const styleId = save.roomExpansion.shelfStyle || "cream";
+  const styleId = currentRoomExpansionState().shelfStyle || "cream";
   wingShelfImage.src = WING_SHELF_FILES[styleId] || WING_SHELF_FILES.cream;
 
   document.querySelectorAll("[data-wing-shelf-style]").forEach(button => {
@@ -3790,7 +3855,7 @@ function renderWingShelfStyle() {
 function setWingShelfStyle(styleId) {
   if (!WING_SHELF_FILES[styleId]) return;
 
-  save.roomExpansion.shelfStyle = styleId;
+  currentRoomExpansionState().shelfStyle = styleId;
   persist();
   renderWingShelfStyle();
 }
@@ -3805,7 +3870,7 @@ function chooseWingDuck(duckId) {
   if (!Number.isInteger(selectedWingDuckSlot)) return;
   if (!isDuckUnlocked(duckId)) return;
 
-  const slots = save.roomExpansion.duckSlots;
+  const slots = currentRoomExpansionState().duckSlots;
 
   // A duck can occupy one spot on this display shelf at a time.
   slots.forEach((id, index) => {
@@ -3820,7 +3885,7 @@ function chooseWingDuck(duckId) {
 
 function clearSelectedWingDuckSlot() {
   if (!Number.isInteger(selectedWingDuckSlot)) return;
-  save.roomExpansion.duckSlots[selectedWingDuckSlot] = null;
+  currentRoomExpansionState().duckSlots[selectedWingDuckSlot] = null;
   persist();
   closeWingDuckPicker();
   renderWingDuckShelf();
@@ -3832,8 +3897,9 @@ function renderWingDuckPicker() {
   const unlocked = sortedDuckEntries()
     .filter(([id]) => isDuckUnlocked(id))
     .sort(([idA, duckA], [idB, duckB]) => {
-      const aPlaced = save.roomExpansion.duckSlots.includes(idA);
-      const bPlaced = save.roomExpansion.duckSlots.includes(idB);
+      const slots = currentRoomExpansionState().duckSlots;
+      const aPlaced = slots.includes(idA);
+      const bPlaced = slots.includes(idB);
       if (aPlaced !== bPlaced) return aPlaced ? 1 : -1;
       return duckA.name.localeCompare(duckB.name);
     });
@@ -3851,7 +3917,7 @@ function renderWingDuckPicker() {
     button.type = "button";
     button.className = "wing-duck-choice";
 
-    const placedSlot = save.roomExpansion.duckSlots.findIndex(slotDuckId => slotDuckId === id);
+    const placedSlot = currentRoomExpansionState().duckSlots.findIndex(slotDuckId => slotDuckId === id);
     const alreadyPlaced = placedSlot !== -1;
     button.setAttribute("aria-label", alreadyPlaced
       ? `Place ${duck.name}. Already on shelf slot ${placedSlot + 1}`
@@ -3886,7 +3952,7 @@ function openWingDuckPicker(slotIndex) {
   selectedWingDuckSlot = slotIndex;
   renderWingDuckPicker();
 
-  const current = save.roomExpansion.duckSlots[slotIndex];
+  const current = currentRoomExpansionState().duckSlots[slotIndex];
   clearWingDuckSlot.textContent = current
     ? "Remove Duck From This Spot"
     : "Leave This Spot Empty";
@@ -3899,7 +3965,7 @@ function openWingDuckPicker(slotIndex) {
 function renderWingDuckShelf() {
   wingDuckSlots.innerHTML = "";
 
-  save.roomExpansion.duckSlots.forEach((duckId, index) => {
+  currentRoomExpansionState().duckSlots.forEach((duckId, index) => {
     const button = document.createElement("button");
     button.type = "button";
     button.className = `wing-duck-slot${duckId ? " occupied" : ""}`;
@@ -4686,9 +4752,9 @@ function renderRoomPicker() {
         return;
       }
       if (currentRoomView === "wing" && save.roomExpansion?.unlocked) {
-        save.roomExpansion.accentRoom = room.id;
+        currentRoomExpansionState().accentRoom = room.id;
       } else {
-        save.room = room.id;
+        setCharacterRoomId(room.id);
       }
       persist();
       renderRoom();
@@ -10161,6 +10227,9 @@ function switchToProfileCharacter(characterId) {
   }
 
   save.selectedCharacter = characterId;
+  syncSelectedCharacterRoom();
+  currentRoomView = "main";
+  closeWingDuckPicker();
   currentExpression = "expression-neutral";
   persist();
 
@@ -10367,6 +10436,13 @@ function duckQuestExpNeeded(level) {
   return safeLevel >= 100 ? 0 : 80 + (safeLevel - 1) * 25;
 }
 
+function totalBuddyCount() {
+  const collection = save.buddies?.collection && typeof save.buddies.collection === "object"
+    ? save.buddies.collection
+    : {};
+  return Object.values(collection).reduce((sum, buddy) => sum + Math.max(0, Math.floor(Number(buddy?.quantity) || 0)), 0);
+}
+
 function renderStatus() {
   const stats = save.stats || DEFAULT_SAVE.stats;
   const happiness = getCharacterHappinessInfo(save.selectedCharacter);
@@ -10395,6 +10471,7 @@ function renderStatus() {
   statusTasksCompleted.textContent = Math.max(0, Number(stats.tasksCompleted) || 0).toLocaleString();
   statusDucks.textContent = `${save.unlockedDucks.length} / ${DUCK_TOTAL}`;
   if (statusCoinsEarnedTotal) statusCoinsEarnedTotal.textContent = Math.max(0, Number(stats.coinsEarnedTotal) || 0).toLocaleString();
+  if (statusBuddies) statusBuddies.textContent = totalBuddyCount().toLocaleString();
   if (statusMeadowRank) statusMeadowRank.textContent = meadowRank;
   if (statusOceanRank) statusOceanRank.textContent = oceanRank;
 
@@ -12024,6 +12101,7 @@ resetAccidentalWardrobeUnlocksOnce();
 migrateMikoNewOutfitToShopOnce();
 ensureStarterWardrobeUnlocked();
 const ocShopGateRepair = repairLockedOcPurchasesOnce();
+syncSelectedCharacterRoom();
 normalizeRoomExpansion();
 migrateLegacyPetBedsOnce();
 migrateLegacyMainRoomDecor();

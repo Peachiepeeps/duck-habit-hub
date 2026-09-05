@@ -1539,6 +1539,7 @@ const QUICK_HEAL_PERCENT = 0.25;
 const QUICK_HEAL_MAX_USES = 4;
 let quickHealUses = 0;
 let skillState = {};
+let buddyUsedThisHeroTurn = false;
 
 function loadHubSave() {
   try {
@@ -2285,6 +2286,7 @@ function startEncounter() {
     enemyAccuracyDownTurns:0, enemyMissChance:0,
     enemyNextAttackMultiplier:1, enemyStunned:false
   };
+  buddyUsedThisHeroTurn=false;
   ui.chestLayer.classList.add("hidden");
   ui.postFloorActions?.classList.add("hidden");
   ui.leaveEndlessButton?.classList.add("hidden");
@@ -2455,8 +2457,11 @@ function animateBuddyAction(){
   setTimeout(()=>ui.buddyCombatant?.classList.remove("buddy-action-pop"),520);
 }
 
-function tickPlayerBuddyEffects(usedBuddy=false){
-  if(!usedBuddy && skillState.buddyCooldown>0) skillState.buddyCooldown--;
+function tickPlayerBuddyEffects(){
+  // Buddy is a bonus action. The cooldown begins AFTER the OC finishes the
+  // turn in which the Buddy was used, so "3 turns" means three full OC turns.
+  if(skillState.buddyCooldown>0 && !buddyUsedThisHeroTurn) skillState.buddyCooldown--;
+  buddyUsedThisHeroTurn=false;
   if(skillState.buddyAttackBuffTurns>0) skillState.buddyAttackBuffTurns--;
   if(skillState.enemyDefenseDownTurns>0){
     skillState.enemyDefenseDownTurns--;
@@ -2486,6 +2491,7 @@ async function useBuddySkill(){
   closeCommandWindow();
   actionLocked=true;
   skillState.buddyCooldown=3;
+  buddyUsedThisHeroTurn=true;
   renderCommandButtons();
   animateBuddyAction();
   setMessage(`${buddy.name}${buddy.shiny?" ✨":""} used ${skill.name}!`);
@@ -2605,9 +2611,9 @@ async function useBuddySkill(){
     await enemyDefeated();
     return;
   }
-  await sleep(360);
-  await enemyTurn();
+  await sleep(320);
   actionLocked=false;
+  setMessage(`${buddy.name}${buddy.shiny?" ✨":""} helped! Now choose ${heroDisplayName()}'s move.`);
   renderCommandButtons();
   renderSkills();
 }
@@ -2744,15 +2750,17 @@ function renderCommandButtons() {
   const buddySkill=buddySkillForEnemyId(buddy?.enemyId);
   const buddyCooldown=Math.max(0,Number(skillState.buddyCooldown)||0);
   if(ui.buddyMenuButton){
-    ui.buddyMenuButton.disabled=disabled || !buddy || !buddySkill || buddyCooldown>0;
+    ui.buddyMenuButton.disabled=disabled || !buddy || !buddySkill || buddyCooldown>0 || buddyUsedThisHeroTurn;
     if(ui.buddyCommandText){
       ui.buddyCommandText.textContent=!buddy
         ? "No Main Buddy"
         : !buddySkill
           ? "No helper skill"
-          : buddyCooldown>0
-            ? `${buddySkill.name} · ${buddyCooldown} turn${buddyCooldown===1?"":"s"}`
-            : `${buddy.name} · ${buddySkill.name}`;
+          : buddyUsedThisHeroTurn
+            ? "Bonus move used · choose an OC move"
+            : buddyCooldown>0
+              ? `${buddySkill.name} · ${buddyCooldown} turn${buddyCooldown===1?"":"s"}`
+              : `${buddy.name} · Bonus Move`;
     }
   }
 
@@ -2775,7 +2783,7 @@ function renderBuddySkillMenu(){
   const button=document.createElement("button");
   button.type="button";
   button.className=`pixel-button skill-button buddy-skill-button${buddy.shiny?" shiny":""}${buddy.boss?" boss":""}`;
-  button.disabled=actionLocked || cooldown>0 || !currentEnemy;
+  button.disabled=actionLocked || cooldown>0 || buddyUsedThisHeroTurn || !currentEnemy;
   button.innerHTML=`<span class="buddy-skill-row"><img src="${buddy.image}" alt=""><span><strong>${buddy.shiny?"✨ ":""}${buddy.name}</strong><em>${skill.name}</em></span></span><span>${cooldown>0?`Cooldown: ${cooldown} turn${cooldown===1?"":"s"}`:skill.description}</span>`;
   button.addEventListener("click",useBuddySkill);
   ui.skillButtons.appendChild(button);
@@ -3029,7 +3037,7 @@ function decrementCooldowns(usedSkillId) {
     skillState.attackBuffTurns--;
     if(skillState.attackBuffTurns<=0) skillState.activeBuffSkillId=null;
   }
-  tickPlayerBuddyEffects(usedSkillId==="buddy-skill");
+  tickPlayerBuddyEffects();
 }
 
 async function hurtEnemy(dmg) {

@@ -1606,3 +1606,159 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
   .pon-purchase-option{min-height:52px;grid-template-columns:34px minmax(0,1fr)}
   .pon-purchase-option img{width:32px;height:32px}
 }
+
+/* =========================================================
+   V32 / Hub v24.77 — reference-style battle composition
+   Buddy is a bonus action, so its field sprite reads as a small helper.
+   ========================================================= */
+.battlefield{
+  aspect-ratio:16/9 !important;
+}
+
+.battlefield .peep-combatant{
+  left:4% !important;
+  top:2% !important;
+  bottom:auto !important;
+  width:45% !important;
+  height:96% !important;
+  display:block !important;
+}
+.battlefield .peep-status-stack{
+  position:absolute !important;
+  z-index:7 !important;
+  left:0 !important;
+  top:0 !important;
+  width:100% !important;
+  transform:none !important;
+  display:grid !important;
+  gap:3px !important;
+}
+.battlefield .peep-combatant .peep-fighter{
+  position:absolute !important;
+  left:5% !important;
+  top:auto !important;
+  bottom:1% !important;
+  width:auto !important;
+  height:54% !important;
+  margin:0 !important;
+  justify-self:auto !important;
+}
+.battlefield .peep-combatant .battle-hero-composite{
+  position:absolute !important;
+  left:4% !important;
+  top:auto !important;
+  bottom:0 !important;
+  width:36% !important;
+  height:auto !important;
+  margin:0 !important;
+}
+.battlefield .peep-combatant .battle-hero-composite img{
+  width:100% !important;
+  height:auto !important;
+}
+
+.battlefield .enemy-combatant{
+  right:4% !important;
+  left:auto !important;
+  top:2% !important;
+  bottom:auto !important;
+  width:45% !important;
+  height:96% !important;
+  display:block !important;
+}
+.enemy-status-stack{
+  position:absolute;
+  z-index:7;
+  left:0;
+  top:0;
+  width:100%;
+  display:grid;
+  gap:3px;
+}
+.enemy-status-stack small{
+  justify-self:end;
+  background:rgba(255,247,229,.92);
+  padding:2px 5px;
+  font-weight:900;
+  font-size:.58rem;
+  border-radius:4px;
+}
+.battlefield .enemy-combatant .enemy-fighter{
+  position:absolute !important;
+  right:1% !important;
+  left:auto !important;
+  top:auto !important;
+  bottom:0 !important;
+  width:34% !important;
+  max-width:none !important;
+  max-height:76% !important;
+  height:auto !important;
+  margin:0 !important;
+  justify-self:auto !important;
+}
+.battlefield .enemy-combatant .enemy-fighter.boss-fighter,
+.battlefield .enemy-combatant .enemy-fighter.ocean-boss-fighter{
+  width:92% !important;
+  max-height:82% !important;
+}
+.battlefield .enemy-combatant .enemy-fighter.gold-boss-fighter,
+.battlefield .enemy-combatant .enemy-fighter.ocean-boss-fighter.ocean-elite-fighter{
+  width:98% !important;
+  max-height:84% !important;
+}
+.battlefield .enemy-combatant .enemy-fighter.queen-bee-fighter{
+  width:72% !important;
+}
+.battlefield .enemy-combatant .enemy-fighter.ocean-elite-fighter:not(.ocean-boss-fighter){
+  width:48% !important;
+}
+
+.buddy-combatant,
+.buddy-combatant.boss-buddy{
+  left:28% !important;
+  right:auto !important;
+  bottom:4% !important;
+  width:13% !important;
+  max-width:none !important;
+  gap:0 !important;
+  z-index:6 !important;
+}
+.buddy-combatant.boss-buddy{width:16% !important;left:27% !important}
+.buddy-battle-name{display:none !important}
+.buddy-battle-sprite{
+  width:100% !important;
+  max-height:68px !important;
+  object-fit:contain !important;
+}
+.buddy-battle-sparkle{
+  top:-5px !important;
+  right:-5px !important;
+  font-size:.9rem !important;
+}
+
+/* Keep both status bars compact and mirrored at the top, like the reference. */
+.battlefield .nameplate{font-size:.66rem;padding:4px 6px}
+.battlefield .hp-bar{height:11px}
+.battlefield .combatant small{font-size:.52rem}
+
+@media(max-width:600px){
+  .battlefield{aspect-ratio:16/9 !important}
+  .battlefield .peep-combatant,
+  .battlefield .enemy-combatant{width:46% !important}
+  .battlefield .peep-combatant .peep-fighter{height:56% !important;bottom:0 !important}
+  .battlefield .peep-combatant .battle-hero-composite{width:39% !important;bottom:0 !important}
+  .battlefield .enemy-combatant .enemy-fighter{width:37% !important;max-height:74% !important}
+  .battlefield .enemy-combatant .enemy-fighter.boss-fighter,
+  .battlefield .enemy-combatant .enemy-fighter.ocean-boss-fighter{width:96% !important;max-height:82% !important}
+  .battlefield .enemy-combatant .enemy-fighter.gold-boss-fighter,
+  .battlefield .enemy-combatant .enemy-fighter.ocean-boss-fighter.ocean-elite-fighter{width:100% !important}
+  .battlefield .enemy-combatant .enemy-fighter.queen-bee-fighter{width:78% !important}
+  .battlefield .enemy-combatant .enemy-fighter.ocean-elite-fighter:not(.ocean-boss-fighter){width:52% !important}
+  .buddy-combatant,.buddy-combatant.boss-buddy{left:29% !important;bottom:3% !important;width:13% !important}
+  .buddy-combatant.boss-buddy{left:28% !important;width:16% !important}
+  .buddy-battle-sprite{max-height:56px !important}
+  .buddy-battle-sparkle{font-size:.72rem !important}
+  .battlefield .nameplate{font-size:.52rem;padding:3px 4px}
+  .battlefield .hp-bar{height:9px}
+  .battlefield .combatant small,.enemy-status-stack small{font-size:.45rem}
+}

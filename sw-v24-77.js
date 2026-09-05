@@ -1,9 +1,9 @@
-const APP_CACHE = 'duck-habit-hub-app-v24-76';
-const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-76';
-const IMAGE_CACHE = 'duck-habit-hub-images-v24-76';
+const APP_CACHE = 'duck-habit-hub-app-v24-77';
+const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-77';
+const IMAGE_CACHE = 'duck-habit-hub-images-v24-77';
 
 const APP_SHELL = [
-  './','./index.html','./manifest.webmanifest','./style-v24-76.css','./script-v24-76.js','./sw-v24-76.js',
+  './','./index.html','./manifest.webmanifest','./style-v24-77.css','./script-v24-77.js','./sw-v24-77.js',
   './apple-touch-icon-v4.png','./favicon-32-v4.png','./icon-192-v4.png','./icon-512-v4.png','./icon-maskable-512-v4.png',
   './assets/ui/book-room.webp','./assets/ui/book-icon.webp','./assets/ui/mirror.webp','./assets/ui/pink-coin.webp',
   './assets/gacha/gacha-machine.webp','./assets/gacha/gacha-menu-icon.webp','./assets/gacha/gacha-turn.webp','./assets/gacha/capsule-clear.webp','./assets/gacha/capsule-common.webp','./assets/gacha/capsule-uncommon.webp','./assets/gacha/capsule-rare.webp','./assets/gacha/capsule-super.webp',

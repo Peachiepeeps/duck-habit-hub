@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f6c6d6" />
   <title>Duck Quest</title>
-  <link rel="stylesheet" href="css/style-v29.css" />
+  <link rel="stylesheet" href="css/style-v30.css" />
 </head>
 <body>
   <main class="quest-shell">
@@ -220,13 +220,15 @@
         </div>
 
         <div id="enemyCombatant" class="combatant enemy-combatant">
-          <div class="nameplate enemy-nameplate">
-            <strong id="enemyName">Cat Slime</strong>
-            <span id="enemyRank">Rank 1</span>
+          <div class="enemy-status-stack">
+            <div class="nameplate enemy-nameplate">
+              <strong id="enemyName">Cat Slime</strong>
+              <span id="enemyRank">Rank 1</span>
+            </div>
+            <div class="hp-bar enemy-hp"><span id="enemyHpFill"></span></div>
+            <div id="enemyDamageText" class="damage-pop-line hidden" aria-hidden="true"></div>
+            <small id="enemyHpText">20 / 20 HP</small>
           </div>
-          <div class="hp-bar enemy-hp"><span id="enemyHpFill"></span></div>
-          <div id="enemyDamageText" class="damage-pop-line hidden" aria-hidden="true"></div>
-          <small id="enemyHpText">20 / 20 HP</small>
           <img id="enemySprite" class="pixel-sprite fighter enemy-fighter" src="" alt="" />
         </div>
 
@@ -334,6 +336,6 @@
     </section>
   </main>
 
-  <script src="js/game-v31.js"></script>
+  <script src="js/game-v32.js"></script>
 </body>
 </html>
