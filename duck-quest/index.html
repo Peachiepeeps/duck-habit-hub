@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f6c6d6" />
   <title>Duck Quest</title>
-  <link rel="stylesheet" href="css/style-v27.css" />
+  <link rel="stylesheet" href="css/style-v28.css" />
 </head>
 <body>
   <main class="quest-shell">
@@ -96,7 +96,7 @@
           <button id="continueEndless" class="pixel-button primary" type="button">Continue from Floor 1</button>
           <button id="startNewEndless" class="pixel-button" type="button">Start New</button>
         </div>
-        <p class="tiny-note endless-note">Every 5th floor is a boss. Leave whenever you want—your checkpoint and record are saved.</p>
+        <p class="tiny-note endless-note">Every floor rolls a random background and enemy. Every 5th floor is a boss. Leave whenever you want—your checkpoint and record are saved.</p>
       </section>
 
       <section class="area-select-card">
@@ -183,7 +183,7 @@
             <div><span>Owned</span><strong id="buddyDetailOwned">×0</strong></div>
             <div><span>Type</span><strong id="buddyDetailType">Normal</strong></div>
           </div>
-          <p class="buddy-skill-preview"><strong>Buddy Skill:</strong> Coming in the next update! ♡</p>
+          <p id="buddyDetailSkill" class="buddy-skill-preview"><strong>Buddy Skill:</strong> Select a Buddy to see its helper skill. ♡</p>
         </div>
       </section>
     </section>
@@ -211,6 +211,12 @@
           </div>
           <img id="peepSprite" class="pixel-sprite fighter peep-fighter" src="assets/characters/peep/base/idle-1.webp" alt="Peep" />
           <div id="battleHeroComposite" class="battle-hero-composite fighter hidden" aria-hidden="true"></div>
+        </div>
+
+        <div id="buddyCombatant" class="buddy-combatant hidden" aria-label="Main Buddy helper">
+          <span id="buddyBattleName" class="buddy-battle-name">Buddy</span>
+          <img id="buddyBattleSprite" class="pixel-sprite buddy-battle-sprite" src="" alt="Main Buddy" />
+          <span id="buddyBattleSparkle" class="buddy-battle-sparkle hidden" aria-hidden="true">✨</span>
         </div>
 
         <div id="enemyCombatant" class="combatant enemy-combatant">
@@ -243,9 +249,9 @@
             <button id="itemMenuButton" class="pixel-button command-button item-command" type="button">
               <strong>Item</strong>
             </button>
-            <button id="quickHealButton" class="pixel-button command-button quick-heal-command" type="button">
-              <strong>Quick Heal</strong>
-              <span id="quickHealUsesText">25% HP · 4/4</span>
+            <button id="buddyMenuButton" class="pixel-button command-button buddy-command" type="button">
+              <strong>Buddy</strong>
+              <span id="buddyCommandText">No Main Buddy</span>
             </button>
             <button id="escapeButton" class="pixel-button command-button escape-command" type="button">
               <strong>Escape</strong>
@@ -319,6 +325,6 @@
     </section>
   </main>
 
-  <script src="js/game-v29.js"></script>
+  <script src="js/game-v30.js"></script>
 </body>
 </html>

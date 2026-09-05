@@ -1423,3 +1423,107 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
   .endless-symbol{width:42px;height:42px;font-size:1.6rem}
   .post-floor-actions{grid-template-columns:1fr}
 }
+
+/* V28 — Main Buddy helper + six-action Attack menu */
+.buddy-command{background:#eadff8}
+.buddy-command:disabled{opacity:.5;filter:grayscale(.2)}
+
+.buddy-combatant{
+  position:absolute;
+  z-index:4;
+  left:30%;
+  bottom:7%;
+  width:19%;
+  display:grid;
+  justify-items:center;
+  gap:2px;
+  pointer-events:none;
+}
+.buddy-battle-name{
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  border:2px solid var(--border);
+  border-radius:5px;
+  background:rgba(255,247,229,.94);
+  padding:2px 5px;
+  font-size:.48rem;
+  font-weight:900;
+  line-height:1.2;
+  box-shadow:1px 2px 0 rgba(85,60,49,.16);
+}
+.buddy-battle-sprite{
+  width:100%;
+  max-height:92px;
+  object-fit:contain;
+  image-rendering:pixelated;
+  filter:drop-shadow(2px 4px 0 rgba(85,60,49,.22));
+}
+.buddy-combatant.boss-buddy{width:22%;left:28%}
+.buddy-battle-sparkle{
+  position:absolute;
+  top:14px;
+  right:0;
+  z-index:2;
+  font-size:1.05rem;
+  filter:drop-shadow(1px 2px 0 rgba(85,60,49,.18));
+  animation:shinyBuddyTwinkle .8s ease-in-out infinite alternate;
+}
+.buddy-combatant.buddy-action-pop{animation:buddyHelperHop .5s steps(3,end)}
+@keyframes buddyHelperHop{
+  0%,100%{transform:translate(0,0) scale(1)}
+  35%{transform:translate(12px,-8px) scale(1.08)}
+  70%{transform:translate(4px,-2px) scale(1.02)}
+}
+
+.command-overlay[data-kind="attack"] .skill-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-rows:repeat(3,minmax(0,1fr));
+  align-content:stretch;
+}
+.command-overlay[data-kind="attack"] .skill-button{
+  min-height:48px;
+  padding:5px 8px;
+}
+.command-overlay[data-kind="buddy"] .skill-grid{
+  grid-template-columns:1fr;
+  grid-template-rows:1fr;
+}
+.buddy-skill-button{
+  min-height:96px;
+  background:#f3eaff;
+  border-color:#a985c4;
+}
+.buddy-skill-button.shiny{box-shadow:inset 0 0 0 2px #fff5bf,0 0 0 2px rgba(255,211,83,.3)}
+.buddy-skill-button.boss{background:#efe0f7}
+.buddy-skill-row{
+  display:grid;
+  grid-template-columns:58px minmax(0,1fr);
+  align-items:center;
+  gap:8px;
+}
+.buddy-skill-row>img{
+  width:58px;
+  height:58px;
+  object-fit:contain;
+  image-rendering:pixelated;
+}
+.buddy-skill-row>span{display:grid;gap:3px;min-width:0}
+.buddy-skill-row strong{font-size:.78rem;white-space:normal}
+.buddy-skill-row em{font-style:normal;font-size:.65rem;font-weight:900;color:#76528c}
+.quick-heal-skill{background:#e6f5e1}
+
+@media(max-width:600px){
+  .buddy-combatant{left:29%;bottom:6%;width:20%}
+  .buddy-combatant.boss-buddy{left:27%;width:23%}
+  .buddy-battle-name{font-size:.4rem;padding:2px 4px}
+  .buddy-battle-sprite{max-height:72px}
+  .buddy-battle-sparkle{font-size:.85rem;top:12px}
+  .command-overlay[data-kind="attack"] .skill-grid{gap:5px}
+  .command-overlay[data-kind="attack"] .skill-button{min-height:44px;padding:4px 6px}
+  .command-overlay[data-kind="attack"] .skill-button strong{font-size:.62rem}
+  .command-overlay[data-kind="attack"] .skill-button span{font-size:.47rem}
+  .buddy-skill-row{grid-template-columns:48px minmax(0,1fr)}
+  .buddy-skill-row>img{width:48px;height:48px}
+}
