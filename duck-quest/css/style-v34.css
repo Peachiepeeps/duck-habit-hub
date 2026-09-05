@@ -1,0 +1,2081 @@
+
+:root{
+  --cream:#fff7e5;
+  --pink:#f4a7c1;
+  --deep-pink:#ca6c91;
+  --brown:#6f4a45;
+  --brown-2:#98716a;
+  --green:#79ae76;
+  --red:#d96272;
+  --gold:#eabf59;
+  --panel:rgba(255,247,229,.96);
+  --border:#8c625d;
+  --shadow:0 6px 0 rgba(102,67,61,.24);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#efc1d2;color:var(--brown)}
+body{
+  font-family:"Courier New",monospace;
+  background:
+    linear-gradient(rgba(255,255,255,.18),rgba(255,255,255,.18)),
+    repeating-linear-gradient(0deg,#efbfd0 0 18px,#f4cbda 18px 36px);
+}
+button{font:inherit}
+button:focus-visible{outline:4px solid #fff;outline-offset:2px}
+.hidden{display:none!important}
+.pixel-sprite,.pixel-background{image-rendering:pixelated;image-rendering:crisp-edges}
+.quest-shell{width:min(980px,100%);margin:0 auto;padding:12px 12px 28px}
+.quest-header{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;margin-bottom:12px}
+.quest-title{text-align:center;min-width:0}
+.quest-title span,.mini-label{display:block;font-size:.68rem;font-weight:900;letter-spacing:.11em;color:#a85f7b}
+.quest-title h1{margin:1px 0 0;font-size:1.7rem;text-shadow:2px 2px 0 rgba(255,255,255,.7)}
+.pixel-button{
+  border:3px solid var(--border);
+  border-radius:8px;
+  background:#fff6df;
+  color:var(--brown);
+  box-shadow:var(--shadow);
+  min-height:44px;
+  padding:8px 14px;
+  font-weight:900;
+  cursor:pointer;
+}
+.pixel-button:active{transform:translateY(3px);box-shadow:0 3px 0 rgba(102,67,61,.24)}
+.pixel-button.small{min-height:38px;padding:6px 10px;font-size:.76rem}
+.pixel-button.icon{width:42px;padding:0;min-height:42px;font-size:1.25rem}
+.pixel-button.primary{background:#ef8fb3;color:#fff;border-color:#9f586f;text-shadow:1px 1px #98566d}
+.pixel-button.large{width:100%;min-height:54px;font-size:1rem}
+.pixel-button.danger{background:#f6d1d4;color:#964f58}
+.coin-pill{
+  min-height:44px;display:flex;align-items:center;gap:6px;padding:5px 10px;
+  background:var(--panel);border:3px solid var(--border);border-radius:8px;box-shadow:var(--shadow)
+}
+.coin-pill img{width:26px;height:26px;object-fit:contain}.coin-pill strong{font-size:1rem}
+
+.screen{display:grid;gap:12px}
+.hero-card,.run-card,.skills-card,.result-card{
+  background:var(--panel);border:3px solid var(--border);border-radius:12px;box-shadow:var(--shadow)
+}
+.hero-card{display:grid;grid-template-columns:150px minmax(0,1fr);gap:14px;padding:14px}
+.hero-sprite-wrap{min-height:150px;display:grid;place-items:center;background:#f5dce2;border:3px dashed #c88ba0;border-radius:10px}
+.menu-peep{width:120px;height:120px;object-fit:contain}
+.hero-info{display:grid;align-content:center;gap:14px}
+.hero-name-row,.run-card-top,.meter-label,.happiness-row,.section-title{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.hero-name-row h2,.run-card h2,.skills-card h2,.result-card h2{margin:2px 0 0}
+.level-badge{background:#f5c7d7;border:3px solid #a66a80;border-radius:8px;padding:8px 10px}
+.meter-group{display:grid;gap:5px}.meter-label{font-size:.72rem;font-weight:900}
+.pixel-meter,.hp-bar{
+  height:18px;border:3px solid var(--border);background:#ead8d0;padding:2px;border-radius:4px;overflow:hidden
+}
+.pixel-meter span,.hp-bar span{display:block;height:100%;width:0;background:#77b6d8;transition:width .25s ease}
+.hearts{display:flex;gap:3px;margin-top:4px;font-size:1.35rem}.heart-empty{opacity:.22}.heart-full{color:#e06491;text-shadow:1px 1px #a35070}
+.happiness-row>strong{font-size:.8rem}
+.run-card,.skills-card{padding:14px}.rank-picker{display:flex;align-items:center;gap:8px}.rank-picker>strong{min-width:40px;text-align:center;font-size:1.3rem}
+.run-description{margin:10px 0;color:#886a68;font-weight:700}
+.run-rules{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0 14px}
+.run-rules span{border:2px solid #d3a4b2;background:#fce6ed;border-radius:6px;padding:6px 8px;font-size:.7rem;font-weight:900}
+.tiny-note{font-size:.68rem;text-align:center;color:#987b78;margin:9px 0 0}
+.menu-skills{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.skill-summary{border:3px solid #bd8e9c;border-radius:8px;background:#fffaf0;padding:10px;display:grid;gap:3px}
+.skill-summary.locked{opacity:.5;filter:grayscale(.5)}
+.skill-summary strong{font-size:.82rem}.skill-summary span{font-size:.66rem;color:#8f7470;font-weight:700}
+
+.battle-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.battle-top>div{display:grid;gap:3px}
+.battlefield{
+  position:relative;aspect-ratio:16/9;border:4px solid var(--border);border-radius:10px;overflow:hidden;
+  box-shadow:var(--shadow);background:#bad9a8
+}
+.battle-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.combatant{position:absolute;z-index:3;display:grid;gap:4px}
+.peep-combatant{left:5%;bottom:43%;width:41%}.enemy-combatant{right:5%;top:1%;width:41%}
+.nameplate{display:flex;justify-content:space-between;gap:6px;background:rgba(255,247,229,.95);border:3px solid var(--border);padding:5px 7px;border-radius:6px;font-size:.72rem}
+.enemy-nameplate{background:rgba(255,238,235,.95)}
+.hp-bar{height:14px;background:#e6c8c6}.hp-bar span{background:#6fb875}.enemy-hp span{background:#d76570}
+.combatant small{justify-self:end;background:rgba(255,247,229,.9);padding:2px 5px;font-weight:900;font-size:.58rem;border-radius:4px}
+.fighter{position:absolute;object-fit:contain;filter:drop-shadow(3px 5px 0 rgba(85,60,49,.25))}
+.peep-fighter{width:45%;height:auto;left:8%;top:52px}
+.enemy-fighter{width:43%;height:auto;right:8%;top:72px}
+.enemy-combatant .fighter{position:relative;justify-self:end;margin-top:3px}
+.peep-combatant .fighter{position:relative;justify-self:start;margin-top:3px}
+.fighter.attack-pop{animation:attackPop .34s steps(2,end)}
+.fighter.hurt-pop{animation:hurtPop .3s steps(2,end)}
+@keyframes attackPop{50%{transform:translateX(12px) scale(1.05)}}
+@keyframes hurtPop{25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
+.battle-ui{
+  background:var(--panel);border:3px solid var(--border);border-radius:10px;box-shadow:var(--shadow);
+  padding:10px;display:grid;gap:9px
+}
+.battle-message{min-height:42px;display:flex;align-items:center;border:2px dashed #c99aab;background:#fffaf3;padding:8px;font-size:.78rem;font-weight:900;line-height:1.35}
+.skill-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.skill-button{min-height:62px;text-align:left;display:grid;gap:2px}
+.skill-button strong{font-size:.8rem}.skill-button span{font-size:.62rem;color:#836a68}.skill-button.locked{opacity:.48}.skill-button:disabled{cursor:not-allowed}
+.skill-button.heal{background:#e6f5e1}.skill-button.duck{background:#fff0bf}.skill-button.ultimate{background:#3e2b45;color:#fff}.skill-button.ultimate span{color:#eadbea}
+.cooldown{color:#b25d7c!important}
+.chest-layer{
+  position:absolute;inset:0;z-index:10;background:rgba(74,52,48,.24);
+  display:grid;place-items:center;align-content:center;gap:8px;text-align:center
+}
+.chest-layer p{margin:0;background:#fff6e6;border:3px solid var(--border);padding:7px 10px;border-radius:7px;font-weight:900}
+.chest-sprite{width:100px;height:100px;object-fit:contain;filter:drop-shadow(4px 5px 0 rgba(85,60,49,.25))}
+.chest-sprite.opening{animation:chestBounce .35s steps(2,end)}
+@keyframes chestBounce{50%{transform:translateY(-8px)}}
+
+.result-card{padding:18px;text-align:center}.result-peep{width:130px;height:130px;object-fit:contain;margin:0 auto}
+.result-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.result-stats>div{background:#fffaf0;border:3px solid #c49aa4;border-radius:8px;padding:10px 5px}
+.result-stats span{display:block;font-size:.62rem;font-weight:900;color:#a07982}.result-stats strong{font-size:1.15rem}
+.result-items{display:flex;flex-wrap:wrap;justify-content:center;gap:7px}
+.result-item{display:flex;align-items:center;gap:5px;border:2px solid #caa1aa;background:#fffaf0;border-radius:7px;padding:6px 8px;font-size:.7rem;font-weight:900}
+.result-item img{width:28px;height:28px;object-fit:contain}
+.level-up-notice{background:#fff0b7;border:3px solid #c89845;border-radius:8px;padding:10px;font-weight:900}
+.result-actions{display:grid;gap:8px;margin-top:6px}
+
+@media(max-width:600px){
+  .peep-combatant{bottom:36%}
+  .enemy-combatant{top:1%}
+
+  .quest-shell{padding:8px 8px 20px}
+  .quest-header{gap:6px}
+  .quest-title span{font-size:.5rem}.quest-title h1{font-size:1.15rem}
+  .pixel-button.small{font-size:.66rem;padding:5px 8px}
+  .coin-pill{min-height:39px;padding:4px 7px}.coin-pill img{width:22px;height:22px}
+  .hero-card{grid-template-columns:110px minmax(0,1fr);gap:9px;padding:10px}
+  .hero-sprite-wrap{min-height:112px}.menu-peep{width:96px;height:96px}
+  .hero-info{gap:8px}.hero-name-row h2{font-size:1rem}.level-badge{padding:5px 7px;font-size:.72rem}
+  .meter-label{font-size:.58rem}.pixel-meter{height:14px}
+  .hearts{font-size:1rem}.happiness-row>strong{font-size:.65rem}
+  .run-card,.skills-card{padding:10px}.run-card h2,.skills-card h2{font-size:1rem}
+  .menu-skills{gap:6px}.skill-summary{padding:7px}.skill-summary strong{font-size:.7rem}.skill-summary span{font-size:.55rem}
+  .run-rules{margin:7px 0 10px}.run-rules span{font-size:.57rem;padding:5px 6px}
+  .battlefield{aspect-ratio:16/10}
+  .peep-combatant,.enemy-combatant{width:45%}
+  .nameplate{font-size:.58rem;padding:4px 5px}.combatant small{font-size:.5rem}
+  .skill-grid{gap:6px}.skill-button{min-height:56px;padding:6px 8px}.skill-button strong{font-size:.68rem}.skill-button span{font-size:.52rem}
+  .battle-message{font-size:.67rem;min-height:38px}
+  .chest-sprite{width:82px;height:82px}
+  .result-stats{gap:5px}.result-stats span{font-size:.5rem}.result-stats strong{font-size:.9rem}
+}
+
+
+/* V03: compact damage/healing numbers directly under HP bars */
+.damage-pop-line{
+  height:0;
+  min-height:0;
+  position:relative;
+  top:1px;
+  z-index:8;
+  justify-self:end;
+  margin-right:5px;
+  font-size:.64rem;
+  line-height:1;
+  font-weight:900;
+  letter-spacing:.02em;
+  color:#c34f61;
+  text-shadow:
+    1px 0 #fff7e5,
+    -1px 0 #fff7e5,
+    0 1px #fff7e5,
+    0 -1px #fff7e5;
+  pointer-events:none;
+}
+.damage-pop-line.heal-pop{color:#4b9a60}
+.damage-pop-line.damage-show{
+  display:block!important;
+  animation:damageTinyPop .48s steps(3,end);
+}
+@keyframes damageTinyPop{
+  0%{opacity:0;transform:translateY(2px)}
+  20%{opacity:1;transform:translateY(0)}
+  80%{opacity:1}
+  100%{opacity:0;transform:translateY(-3px)}
+}
+@media(max-width:600px){
+  .damage-pop-line{font-size:.56rem;margin-right:3px}
+}
+
+
+/* V04 — Battle consumables */
+.battle-items-panel{
+  display:grid;
+  gap:6px;
+  padding-top:2px;
+}
+.battle-items-heading{
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  gap:8px;
+}
+.battle-items-heading small{
+  font-size:.58rem;
+  font-weight:800;
+  color:#947876;
+  text-align:right;
+}
+.battle-item-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+.battle-item-button{
+  min-height:58px;
+  display:grid;
+  grid-template-columns:42px minmax(0,1fr);
+  align-items:center;
+  gap:8px;
+  text-align:left;
+  background:#ffe4ef;
+}
+.battle-item-button.gold{
+  background:#fff0bf;
+}
+.battle-item-button img{
+  width:42px;
+  height:42px;
+  object-fit:contain;
+}
+.battle-item-button span{
+  min-width:0;
+  display:grid;
+  gap:2px;
+}
+.battle-item-button strong{
+  font-size:.73rem;
+}
+.battle-item-button small{
+  font-size:.56rem;
+  color:#866d69;
+  font-weight:800;
+}
+.battle-item-button:disabled{
+  opacity:.42;
+  cursor:not-allowed;
+}
+@media(max-width:600px){
+  .battle-item-grid{gap:6px}
+  .battle-item-button{
+    min-height:52px;
+    grid-template-columns:34px minmax(0,1fr);
+    gap:6px;
+    padding:5px 7px;
+  }
+  .battle-item-button img{width:34px;height:34px}
+  .battle-item-button strong{font-size:.64rem}
+  .battle-item-button small{font-size:.49rem}
+  .battle-items-heading small{font-size:.5rem}
+}
+
+
+/* V05 — Peep status is lower while the sprite stays high */
+.peep-status-stack{
+  display:grid;
+  gap:4px;
+  transform:translateY(54px);
+}
+@media(max-width:600px){
+  .peep-status-stack{transform:translateY(40px)}
+}
+
+/* Mushroom Cat should read as a proper boss */
+.enemy-fighter.boss-fighter{
+  width:80%;
+  max-width:none;
+}
+@media(max-width:600px){
+  .enemy-fighter.boss-fighter{width:84%}
+}
+
+/* Classic 2x2 RPG command menu */
+.command-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+.command-button{
+  min-height:58px;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  gap:2px;
+  text-align:left;
+}
+.command-button strong{font-size:.9rem}
+.command-button span{
+  font-size:.58rem;
+  color:#806d88;
+  font-weight:800;
+}
+.attack-command{background:#ffe2e7}
+.item-command{background:#fff0c8}
+.quick-heal-command{background:#e6f5e1}
+.escape-command{background:#e9edf1}
+.command-window{
+  border:3px solid #aa7c88;
+  border-radius:9px;
+  background:#fffaf1;
+  padding:9px;
+  display:grid;
+  gap:8px;
+}
+.command-window-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+.command-window-header>strong{
+  font-size:.9rem;
+}
+.no-battle-items{
+  margin:0;
+  padding:12px 8px;
+  border:2px dashed #cfa8b0;
+  border-radius:7px;
+  text-align:center;
+  font-size:.7rem;
+  font-weight:800;
+  color:#957573;
+}
+@media(max-width:600px){
+  .command-grid{gap:6px}
+  .command-button{min-height:50px;padding:6px 8px}
+  .command-button strong{font-size:.72rem}
+  .command-button span{font-size:.5rem}
+}
+
+
+/* V08 — Escape confirmation */
+.escape-confirm{
+  position:fixed; inset:0; z-index:100; display:grid; place-items:center;
+  padding:18px; background:rgba(77,53,54,.42);
+}
+.escape-confirm-card{
+  width:min(390px,100%); padding:18px; border:3px solid var(--border);
+  border-radius:12px; background:#fff8e9; box-shadow:0 8px 0 rgba(82,55,54,.22);
+  text-align:center;
+}
+.escape-confirm-card h2{margin:4px 0 5px;font-size:1.15rem}
+.escape-confirm-card p{margin:0 0 14px;color:#8c716d;font-size:.75rem;font-weight:800}
+.escape-confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+/* V09 — Gold Mushroom Cat */
+.enemy-fighter.gold-boss-fighter{width:96%;transform-origin:center bottom}
+@media(max-width:600px){.enemy-fighter.gold-boss-fighter{width:100%}}
+
+
+/* V10 — reliably raise Mushroom Cat itself (base .enemy-fighter uses top:72px) */
+.enemy-combatant .fighter.boss-fighter{
+  top: 12px;
+  margin-top: -6px;
+}
+.enemy-combatant .fighter.gold-boss-fighter{
+  top: 2px;
+  margin-top: -10px;
+}
+
+/* Queen Bee is the top-tier Bee and gets a larger sprite */
+.enemy-combatant .fighter.queen-bee-fighter{
+  width: 62%;
+  top: 48px;
+}
+
+@media(max-width:600px){
+  .enemy-combatant .fighter.boss-fighter{
+    top: 6px;
+    margin-top: -8px;
+  }
+  .enemy-combatant .fighter.gold-boss-fighter{
+    top: -2px;
+    margin-top: -10px;
+  }
+  .enemy-combatant .fighter.queen-bee-fighter{
+    width: 66%;
+    top: 42px;
+  }
+}
+
+
+/* V11 — strongest Cat Slime variant */
+.enemy-combatant .fighter.strawberry-slime-fighter{
+  width: 62%;
+  top: 48px;
+}
+@media(max-width:600px){
+  .enemy-combatant .fighter.strawberry-slime-fighter{
+    width: 66%;
+    top: 42px;
+  }
+}
+
+
+/* V12 — strongest Flower variant */
+.enemy-combatant .fighter.rainbow-flower-fighter{
+  width: 62%;
+  top: 48px;
+}
+@media(max-width:600px){
+  .enemy-combatant .fighter.rainbow-flower-fighter{
+    width: 66%;
+    top: 42px;
+  }
+}
+
+
+/* V14 — Area selection + Ocean route */
+.area-select-card{background:var(--panel);border:3px solid var(--border);border-radius:12px;box-shadow:var(--shadow);padding:14px}
+.area-select-card h2{margin:2px 0 0;font-size:1.05rem}
+.area-picker{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:10px}
+.area-option{min-height:82px;display:grid;gap:3px;text-align:left;padding:10px;border:3px solid #bd8e9c;border-radius:9px;background:#fffaf0;color:var(--brown);font:inherit;cursor:pointer}
+.area-option strong{font-size:.92rem}.area-option span{font-size:.7rem;font-weight:900;color:#a85f7b}.area-option small{font-size:.58rem;font-weight:700;color:#8f7470}
+.area-option.selected{background:#f8dce7;border-color:#a45f79;box-shadow:inset 0 0 0 2px rgba(255,255,255,.75)}
+.enemy-combatant .fighter.ocean-elite-fighter{width:62%;top:46px}
+.enemy-combatant .fighter.ocean-boss-fighter{width:86%;top:4px}
+.enemy-combatant .fighter.ocean-boss-fighter.ocean-elite-fighter{width:98%;top:-4px}
+@media(max-width:600px){
+  .area-select-card{padding:10px}.area-picker{gap:6px}.area-option{min-height:70px;padding:8px}.area-option strong{font-size:.78rem}.area-option span{font-size:.6rem}.area-option small{font-size:.5rem}
+  .enemy-combatant .fighter.ocean-elite-fighter{width:67%;top:40px}
+  .enemy-combatant .fighter.ocean-boss-fighter{width:92%;top:0}
+  .enemy-combatant .fighter.ocean-boss-fighter.ocean-elite-fighter{width:100%;top:-6px}
+}
+
+
+/* V15 — scenic route picker + compact route window */
+.area-select-title{align-items:flex-end}
+.area-picker{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin-top:10px;
+}
+.area-option{
+  min-height:88px;
+  display:grid;
+  grid-template-columns:96px minmax(0,1fr);
+  align-items:center;
+  gap:10px;
+  padding:7px;
+  text-align:left;
+  overflow:hidden;
+}
+.area-option-image{
+  display:block;
+  width:96px;
+  height:68px;
+  object-fit:cover;
+  object-position:center;
+  border:2px solid #bd8e9c;
+  border-radius:6px;
+  background:#f1d9df;
+}
+.area-option-copy{
+  min-width:0;
+  display:grid;
+  gap:4px;
+}
+.area-option-copy strong{font-size:1rem}
+.area-option-copy small{font-size:.64rem;font-weight:900;color:#a85f7b}
+.area-option.selected .area-option-image{border-color:#9f586f;box-shadow:0 0 0 2px rgba(255,255,255,.8)}
+.route-window{padding:14px}
+.route-window-top{align-items:center}
+.route-window #areaRunLabel{margin:2px 0 0;font-size:1.08rem}
+.start-rank-prompt{
+  margin:13px 0 12px;
+  text-align:center;
+  color:#80635f;
+  font-size:.92rem;
+  font-weight:900;
+}
+.route-window .tiny-note{margin-top:10px}
+
+/* Ocean Surface + Ocean Deep: raise only Peep's sprite, leaving its HP panel in place. */
+.battlefield.ocean-peep-raised .peep-fighter{top:30px}
+
+@media(max-width:600px){
+  .area-picker{gap:6px}
+  .area-option{
+    min-height:68px;
+    grid-template-columns:65px minmax(0,1fr);
+    gap:6px;
+    padding:5px;
+  }
+  .area-option-image{width:65px;height:52px}
+  .area-option-copy strong{font-size:.78rem}
+  .area-option-copy small{font-size:.52rem}
+  .route-window{padding:10px}
+  .route-window #areaRunLabel{font-size:.95rem}
+  .start-rank-prompt{margin:10px 0;font-size:.78rem}
+  .battlefield.ocean-peep-raised .peep-fighter{top:34px}
+}
+
+
+/* v16 — customizable hero icon background */
+.hero-sprite-column{display:grid;gap:7px;align-content:center}
+.hero-sprite-wrap{transition:background .2s ease}
+.icon-background-control{display:grid;gap:4px;color:#8c6674;font-size:.58rem;font-weight:900;text-align:center}
+.icon-background-control select{
+  width:100%;min-height:34px;padding:5px 24px 5px 8px;border:3px solid #bd8e9c;border-radius:7px;
+  background:#fffaf0;color:#674650;font:inherit;font-size:.63rem;font-weight:900
+}
+@media(max-width:520px){.hero-sprite-column{gap:5px}.icon-background-control{font-size:.52rem}.icon-background-control select{min-height:30px;font-size:.57rem}}
+
+
+/* V17 — collectible Icon Background rewards. */
+.hero-sprite-wrap{background-repeat:repeat;transition:background .18s ease}
+.result-icon-bg-swatch{
+  width:28px;
+  height:28px;
+  flex:0 0 28px;
+  display:inline-block;
+  border:2px solid #caa1aa;
+  border-radius:6px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.55);
+}
+
+
+/* =========================================================
+   V18 — PER-OC QUEST PROGRESS + DOT ICON BACKGROUND PICKER
+   ========================================================= */
+
+.icon-background-control{
+  position:relative;
+  display:grid;
+  gap:4px;
+}
+
+.icon-background-picker-wrap{position:relative}
+
+.icon-background-button{
+  width:100%;
+  min-height:35px;
+  padding:4px 7px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  border:3px solid #bd8e9c;
+  border-radius:8px;
+  background:#fffaf0;
+  color:#674650;
+  font:inherit;
+  font-size:.62rem;
+  font-weight:900;
+}
+
+.icon-background-current,
+.icon-background-dot{
+  display:block;
+  border:2px solid rgba(91,58,70,.28);
+  border-radius:50%;
+  box-shadow:inset 0 1px 2px rgba(255,255,255,.65);
+}
+
+.icon-background-current{
+  width:24px;
+  height:24px;
+  flex:0 0 24px;
+}
+
+#iconBackgroundLabel{
+  flex:1;
+  min-width:0;
+  text-align:left;
+}
+
+.icon-background-arrow{
+  color:#9c7582;
+  font-size:.9rem;
+}
+
+.icon-background-picker{
+  position:absolute;
+  z-index:80;
+  left:50%;
+  top:calc(100% + 6px);
+  transform:translateX(-50%);
+  width:240px;
+  max-height:185px;
+  overflow-y:auto;
+  padding:9px;
+  display:grid;
+  grid-template-columns:repeat(5,36px);
+  gap:8px;
+  justify-content:center;
+  border:3px solid #bd8e9c;
+  border-radius:10px;
+  background:#fffaf0;
+  box-shadow:5px 6px 0 rgba(93,64,71,.17);
+}
+
+.icon-background-choice{
+  position:relative;
+  width:36px;
+  height:36px;
+  padding:2px;
+  border:0;
+  border-radius:50%;
+  background:transparent;
+}
+
+.icon-background-dot{
+  width:32px;
+  height:32px;
+}
+
+.icon-background-choice[aria-current="true"]{
+  outline:3px solid #e26f9a;
+  outline-offset:1px;
+}
+
+.icon-background-choice.locked .icon-background-dot{
+  opacity:.40;
+  filter:saturate(.45);
+}
+
+.icon-background-lock{
+  position:absolute;
+  right:-4px;
+  bottom:-3px;
+  width:17px;
+  height:17px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:#6d4d58;
+  color:#fff;
+  font-size:.47rem;
+}
+
+/* Miko uses his current Hub outfit in Duck Quest until dedicated pixel
+   battle frames are added. His whole layered figure moves as one fighter. */
+.menu-hero-composite{
+  position:relative;
+  width:120px;
+  height:120px;
+  overflow:hidden;
+  pointer-events:none;
+}
+.menu-hero-composite img{
+  position:absolute;
+  left:-32%;
+  top:-90%;
+  width:155%;
+  height:auto;
+  pointer-events:none;
+}
+
+.battle-hero-composite{
+  position:relative !important;
+  width:34% !important;
+  aspect-ratio:1080 / 1920;
+  left:11% !important;
+  top:8px !important;
+  justify-self:start;
+  margin-top:0 !important;
+  filter:drop-shadow(3px 5px 0 rgba(85,60,49,.25));
+  pointer-events:none;
+}
+.battle-hero-composite img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:auto;
+  pointer-events:none;
+}
+
+.result-hero-wrap{
+  position:relative;
+  width:130px;
+  height:145px;
+  margin:0 auto;
+}
+.result-hero-wrap .result-peep{
+  position:absolute;
+  inset:7px 0 auto;
+  margin:auto;
+}
+.result-hero-composite{
+  position:absolute;
+  left:50%;
+  bottom:0;
+  width:76px;
+  aspect-ratio:1080 / 1920;
+  transform:translateX(-50%);
+}
+.result-hero-composite img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:auto;
+}
+
+.battlefield.ocean-peep-raised .battle-hero-composite{
+  top:-10px !important;
+}
+
+@media(max-width:600px){
+  .icon-background-picker{
+    width:216px;
+    grid-template-columns:repeat(5,33px);
+    gap:7px;
+  }
+  .icon-background-choice{width:33px;height:33px}
+  .icon-background-dot{width:29px;height:29px}
+  .menu-hero-composite{width:96px;height:96px}
+  .battle-hero-composite{
+    width:36% !important;
+    left:10% !important;
+    top:10px !important;
+  }
+  .battlefield.ocean-peep-raised .battle-hero-composite{
+    top:-6px !important;
+  }
+}
+
+/* =========================================================
+   V19 — dedicated Peep + Miko Duck Quest battle sprites
+   ========================================================= */
+.skill-button.buff{background:#e8ddff}
+
+.menu-hero-composite{
+  width:120px;
+  height:120px;
+  display:grid;
+  place-items:center;
+  overflow:visible;
+}
+.menu-hero-composite img{
+  position:static;
+  width:120px;
+  height:120px;
+  object-fit:contain;
+  image-rendering:pixelated;
+}
+
+.battle-hero-composite{
+  position:absolute !important;
+  width:45% !important;
+  height:auto !important;
+  aspect-ratio:auto !important;
+  left:8% !important;
+  top:52px !important;
+  margin:0 !important;
+  display:grid;
+  place-items:center;
+  overflow:visible;
+}
+.battle-hero-composite img{
+  position:static;
+  width:100%;
+  height:auto;
+  object-fit:contain;
+  image-rendering:pixelated;
+}
+
+.result-hero-composite{
+  position:absolute;
+  inset:0;
+  width:130px;
+  height:130px;
+  margin:auto;
+  transform:none;
+  display:grid;
+  place-items:center;
+}
+.result-hero-composite img{
+  position:static;
+  width:130px;
+  height:130px;
+  object-fit:contain;
+  image-rendering:pixelated;
+}
+
+.battlefield.ocean-peep-raised .battle-hero-composite{
+  top:30px !important;
+}
+
+@media(max-width:600px){
+  .menu-hero-composite{width:96px;height:96px}
+  .menu-hero-composite img{width:96px;height:96px}
+  .battle-hero-composite{
+    width:45% !important;
+    left:8% !important;
+    top:52px !important;
+  }
+  .battlefield.ocean-peep-raised .battle-hero-composite{
+    top:34px !important;
+  }
+}
+
+/* =========================================================
+   V20 — restore UI placement + steadier character sizing
+   ========================================================= */
+
+/* Restore the previously approved Icon Background popup position. */
+.icon-background-picker{
+  transform:translateX(-38%);
+}
+@media(max-width:600px){
+  .icon-background-picker{transform:translateX(-34%)}
+}
+
+/* Size Peep by HEIGHT instead of width so wider special-attack canvases do
+   not make her body look smaller. */
+.peep-fighter{
+  width:auto;
+  height:55%;
+  max-width:none;
+  object-fit:contain;
+}
+
+/* Miko's dedicated sprites use the same height rule. This keeps Mock's
+   speech bubble and Gun's wider canvas from shrinking his character. */
+.battle-hero-composite{
+  width:45% !important;
+  height:55% !important;
+  left:8% !important;
+  top:30px !important;
+  place-items:start center;
+}
+.battle-hero-composite img{
+  width:auto !important;
+  height:100% !important;
+  max-width:none !important;
+  object-fit:contain;
+}
+
+/* Miko + his status stack sit a little higher than Peep. */
+.battlefield.miko-active .peep-combatant{
+  bottom:48%;
+}
+.battlefield.miko-active .peep-status-stack{
+  transform:translateY(28px);
+}
+
+/* Surface + Deep still receive their extra upward nudge. */
+.battlefield.ocean-peep-raised .peep-fighter{top:30px}
+.battlefield.miko-active.ocean-peep-raised .battle-hero-composite{top:14px !important}
+
+/* Attack animation should lunge, not resize the character. */
+@keyframes attackPop{
+  0%,100%{transform:translateX(0) scale(1)}
+  50%{transform:translateX(12px) scale(1)}
+}
+
+@media(max-width:600px){
+  .peep-fighter{height:54%}
+  .battle-hero-composite{
+    width:45% !important;
+    height:54% !important;
+    left:8% !important;
+    top:28px !important;
+  }
+  .battlefield.miko-active .peep-combatant{bottom:48%}
+  .battlefield.miko-active .peep-status-stack{transform:translateY(20px)}
+  .battlefield.ocean-peep-raised .peep-fighter{top:34px}
+  .battlefield.miko-active.ocean-peep-raised .battle-hero-composite{top:12px !important}
+}
+
+
+/* =========================================================
+   V21 — character sizing, status spacing, Switch OC
+   ========================================================= */
+
+/* Fixed pixel-height keeps every 96px-tall attack canvas the same body size.
+   This avoids the dramatic shrink on wider special sprites. */
+.peep-fighter{
+  width:auto !important;
+  height:108px !important;
+  max-width:none !important;
+  top:48px;
+}
+
+.battle-hero-composite{
+  width:118px !important;
+  height:104px !important;
+  left:8% !important;
+  top:38px !important;
+  place-items:start center;
+}
+.battle-hero-composite img{
+  width:auto !important;
+  height:104px !important;
+  max-width:none !important;
+}
+
+/* Put the status UI clearly above the character instead of close to their head. */
+.peep-status-stack{
+  transform:translateY(24px);
+}
+.battlefield.miko-active .peep-combatant{
+  bottom:46%;
+}
+.battlefield.miko-active .peep-status-stack{
+  transform:translateY(-8px);
+}
+
+/* Surface + Deep keep the special lift, without over-lifting Miko. */
+.battlefield.ocean-peep-raised .peep-fighter{top:30px}
+.battlefield.miko-active.ocean-peep-raised .battle-hero-composite{top:24px !important}
+
+.switch-quest-oc-button{
+  width:100%;
+  min-height:34px;
+  padding:5px 7px;
+  border-width:3px;
+  border-radius:8px;
+  background:#f8e4ef;
+  color:#6f4f5a;
+  font-size:.6rem;
+  font-weight:900;
+}
+
+@media(max-width:600px){
+  .peep-fighter{
+    height:92px !important;
+    top:48px;
+  }
+  .battle-hero-composite{
+    width:108px !important;
+    height:94px !important;
+    left:8% !important;
+    top:36px !important;
+  }
+  .battle-hero-composite img{
+    height:94px !important;
+  }
+  .peep-status-stack{transform:translateY(18px)}
+  .battlefield.miko-active .peep-combatant{bottom:46%}
+  .battlefield.miko-active .peep-status-stack{transform:translateY(-10px)}
+  .battlefield.ocean-peep-raised .peep-fighter{top:32px}
+  .battlefield.miko-active.ocean-peep-raised .battle-hero-composite{top:22px !important}
+  .switch-quest-oc-button{font-size:.56rem}
+}
+
+
+/* V22 — Peep scale + Miko status spacing */
+
+.peep-fighter{
+  height:122px !important;
+}
+
+.battlefield.miko-active .peep-status-stack{
+  transform:translateY(-57px);
+}
+
+@media(max-width:600px){
+  .peep-fighter{
+    height:106px !important;
+  }
+
+  .battlefield.miko-active .peep-status-stack{
+    transform:translateY(-59px);
+  }
+}
+
+
+/* =========================================================
+   V23 — Miko status alignment + Quick Heal
+   ========================================================= */
+
+/*
+   Miko's status and sprite are positioned independently.
+   The status block mirrors the enemy's top/width instead of stretching the
+   entire hero combatant. This keeps the nameplate, HP bar, and HP label compact.
+*/
+.battlefield.miko-active .peep-combatant{
+  left:5%;
+  top:1%;
+  bottom:auto !important;
+  width:41%;
+  height:98%;
+  display:block;
+}
+
+.battlefield.miko-active .peep-status-stack{
+  position:absolute;
+  z-index:5;
+  left:0;
+  top:0;
+  width:100%;
+  transform:none !important;
+  display:grid;
+  gap:4px;
+}
+
+.battlefield.miko-active .battle-hero-composite{
+  position:absolute !important;
+  left:8% !important;
+  top:49% !important;
+  margin:0 !important;
+}
+
+/* Quick Heal replaces Guard. */
+.quick-heal-command{
+  background:#e6f5e1;
+}
+.quick-heal-command:disabled{
+  opacity:.48;
+}
+
+@media(max-width:600px){
+  .battlefield.miko-active .peep-combatant{
+    left:5%;
+    top:1%;
+    bottom:auto !important;
+    width:45%;
+    height:98%;
+  }
+
+  .battlefield.miko-active .peep-status-stack{
+    left:0;
+    top:0;
+    width:100%;
+    transform:none !important;
+  }
+
+  .battlefield.miko-active .battle-hero-composite{
+    position:absolute !important;
+    left:8% !important;
+    top:49% !important;
+  }
+}
+
+
+/* =========================================================
+   V24 — TALLER BATTLE COMMANDS + OVERLAY ATTACK/ITEM MENUS
+   ========================================================= */
+
+.battle-ui{position:relative}
+.battle-message{padding-right:84px}
+.command-stage{position:relative}
+.command-grid{grid-template-rows:repeat(2,minmax(82px,1fr))}
+.command-button{min-height:82px;padding:10px 12px}
+.command-overlay{position:absolute;inset:0;z-index:20;display:block;padding:0;border:0;border-radius:9px;background:var(--panel);box-shadow:none;overflow:visible}
+.command-overlay::before{content:"";position:absolute;inset:0;z-index:-1;border:3px solid #aa7c88;border-radius:9px;background:#fffaf1}
+.command-overlay .command-window-header{position:absolute;right:4px;top:-49px;z-index:22;display:block}
+.command-overlay .command-window-header>strong{display:none}
+.command-back-button{min-height:30px!important;padding:3px 8px!important;font-size:.58rem!important;box-shadow:0 3px 0 rgba(102,67,61,.18)}
+.command-overlay .skill-grid,.command-overlay .battle-item-grid{width:100%;height:100%;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:8px}
+.command-overlay .skill-button,.command-overlay .battle-item-button{min-height:82px;height:100%;margin:0}
+.command-overlay .no-battle-items{min-height:100%;display:grid;place-items:center;margin:0}
+@media(max-width:600px){
+  .battle-message{padding-right:72px}
+  .command-grid{grid-template-rows:repeat(2,minmax(78px,1fr))}
+  .command-button{min-height:78px;padding:8px 9px}
+  .command-button strong{font-size:.78rem}
+  .command-button span{font-size:.52rem}
+  .command-overlay .skill-grid,.command-overlay .battle-item-grid{gap:6px}
+  .command-overlay .skill-button,.command-overlay .battle-item-button{min-height:78px;height:100%}
+  .command-overlay .command-window-header{top:-45px;right:3px}
+  .command-back-button{min-height:27px!important;padding:2px 6px!important;font-size:.51rem!important}
+}
+
+
+/* =========================================================
+   V25 — Io support
+   ========================================================= */
+.battlefield.io-active .peep-combatant{
+  left:5%; top:1%; bottom:auto !important; width:41%; height:98%; display:block;
+}
+.battlefield.io-active .peep-status-stack{
+  position:absolute; z-index:5; left:0; top:0; width:100%; transform:none !important; display:grid; gap:4px;
+}
+.battlefield.io-active .battle-hero-composite{
+  position:absolute !important; left:8% !important; top:49% !important; margin:0 !important;
+}
+.battlefield.io-active.ocean-peep-raised .battle-hero-composite{top:24px !important}
+@media(max-width:600px){
+  .battlefield.io-active .peep-combatant{left:5%;top:1%;bottom:auto !important;width:45%;height:98%}
+  .battlefield.io-active .peep-status-stack{left:0;top:0;width:100%;transform:none !important}
+  .battlefield.io-active .battle-hero-composite{left:8% !important;top:49% !important}
+  .battlefield.io-active.ocean-peep-raised .battle-hero-composite{top:22px !important}
+}
+
+/* v28 — Buddy Pons, Buddy Book, capture flow, and shiny sparkle support */
+.buddy-home-card{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  background:var(--panel);
+  border:3px solid var(--border);
+  border-radius:12px;
+  box-shadow:var(--shadow);
+}
+.buddy-home-card>div{display:grid;gap:2px}
+.buddy-home-card>div>strong{font-size:1rem}
+.buddy-home-card small{font-size:.64rem;font-weight:900;color:#91736f}
+
+.buddy-book-card{
+  position:relative;
+  background:var(--panel);
+  border:3px solid var(--border);
+  border-radius:12px;
+  box-shadow:var(--shadow);
+  padding:14px;
+}
+.buddy-book-heading{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  gap:10px;
+  align-items:center;
+}
+.buddy-book-heading>div{text-align:center}
+.buddy-book-heading h2{margin:2px 0 0}
+.buddy-count-pill{
+  min-width:74px;
+  text-align:center;
+  background:#f5c7d7;
+  border:3px solid #a66a80;
+  border-radius:8px;
+  padding:7px 8px;
+  font-size:.74rem;
+}
+.buddy-book-note{
+  margin:12px 0 10px;
+  padding:9px 10px;
+  border:2px dashed #c99aab;
+  border-radius:8px;
+  background:#fffaf3;
+  font-size:.7rem;
+  font-weight:800;
+  line-height:1.4;
+}
+.buddy-filters{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:7px;
+  margin-bottom:10px;
+}
+.buddy-filter{
+  min-height:38px;
+  border:2px solid #b98998;
+  border-radius:8px;
+  background:#fff8ef;
+  color:var(--brown);
+  font:inherit;
+  font-size:.68rem;
+  font-weight:900;
+  cursor:pointer;
+}
+.buddy-filter.selected{background:#ef9dbb;color:#fff;border-color:#9d5e73}
+.buddy-collection-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:9px;
+}
+.buddy-tile{
+  position:relative;
+  min-width:0;
+  min-height:148px;
+  display:grid;
+  grid-template-rows:92px auto auto;
+  align-items:center;
+  gap:4px;
+  border:3px solid #bd8e9c;
+  border-radius:10px;
+  background:#fffaf0;
+  color:var(--brown);
+  padding:7px;
+  font:inherit;
+  cursor:pointer;
+  overflow:hidden;
+}
+.buddy-tile.caught{background:#fff5f8}
+.buddy-tile.boss{border-color:#c79a42;background:#fff8df}
+.buddy-tile.shiny{box-shadow:inset 0 0 0 2px rgba(255,255,255,.6),0 0 12px rgba(230,183,83,.38)}
+.buddy-tile-art{
+  position:relative;
+  width:100%;
+  height:92px;
+  display:grid;
+  place-items:center;
+}
+.buddy-tile-art img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
+.buddy-tile.unknown .buddy-tile-art img{filter:brightness(0);opacity:.35}
+.buddy-tile strong{font-size:.68rem;line-height:1.15;overflow-wrap:anywhere}
+.buddy-tile small{font-size:.55rem;color:#8f7470;font-weight:900}
+.buddy-tile-badge{
+  position:absolute;
+  top:5px;
+  right:5px;
+  min-width:25px;
+  min-height:25px;
+  display:grid;
+  place-items:center;
+  padding:2px 5px;
+  border:2px solid #ad7d8e;
+  border-radius:999px;
+  background:#fff8ef;
+  font-size:.55rem;
+  font-weight:900;
+  z-index:2;
+}
+.buddy-collection-empty{text-align:center;font-size:.72rem;font-weight:900;color:#927674;margin:16px 0 4px}
+
+.buddy-detail{
+  position:fixed;
+  inset:0;
+  z-index:80;
+  display:grid;
+  place-items:center;
+  padding:18px;
+  background:rgba(72,48,52,.48);
+}
+.buddy-detail-card{
+  position:relative;
+  width:min(420px,100%);
+  max-height:min(680px,90vh);
+  overflow:auto;
+  display:grid;
+  justify-items:center;
+  gap:8px;
+  padding:18px;
+  background:#fff7e5;
+  border:4px solid var(--border);
+  border-radius:14px;
+  box-shadow:0 9px 0 rgba(102,67,61,.3);
+  text-align:center;
+}
+.buddy-detail-close{
+  position:absolute;
+  top:7px;
+  right:7px;
+  width:38px;
+  height:38px;
+  border:3px solid var(--border);
+  border-radius:8px;
+  background:#fff;
+  color:var(--brown);
+  font:inherit;
+  font-size:1.1rem;
+  font-weight:900;
+  cursor:pointer;
+}
+.buddy-detail-art{
+  position:relative;
+  width:170px;
+  height:170px;
+  display:grid;
+  place-items:center;
+  margin-top:4px;
+  background:#f7dce7;
+  border:3px dashed #c88ba0;
+  border-radius:50%;
+  overflow:hidden;
+}
+.buddy-detail-art img{width:92%;height:92%;object-fit:contain;image-rendering:pixelated}
+.buddy-detail-art.unknown img{filter:brightness(0);opacity:.35}
+.buddy-detail-card h2{margin:0}
+.buddy-detail-card>p{margin:0;font-size:.72rem;font-weight:800;line-height:1.45}
+.buddy-detail-stats{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.buddy-detail-stats>div{padding:8px;border:2px solid #caa1aa;border-radius:8px;background:#fffaf0}
+.buddy-detail-stats span{display:block;font-size:.55rem;color:#98716a;font-weight:900}
+.buddy-detail-stats strong{font-size:.78rem}
+.buddy-skill-preview{width:100%;padding:9px;border:2px dashed #c99aab;border-radius:8px;background:#fffaf3}
+
+.befriend-panel{
+  display:grid;
+  gap:9px;
+  border:3px solid #ad7a8d;
+  border-radius:10px;
+  background:#fff4f8;
+  padding:10px;
+}
+.befriend-heading{text-align:center;display:grid;gap:3px}
+.befriend-heading h3{margin:0;font-size:.95rem}
+.befriend-heading p{margin:0;font-size:.65rem;font-weight:800;color:#8b6d6b}
+.befriend-pon-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.befriend-pon-button{
+  min-width:0;
+  min-height:94px;
+  display:grid;
+  grid-template-rows:52px auto auto;
+  justify-items:center;
+  align-items:center;
+  gap:2px;
+  border:3px solid #bd8e9c;
+  border-radius:9px;
+  background:#fffaf0;
+  color:var(--brown);
+  padding:6px;
+  font:inherit;
+  cursor:pointer;
+}
+.befriend-pon-button.super{background:#f1e8ff;border-color:#8b6dc3}
+.befriend-pon-button.boss{background:#fff2bd;border-color:#bd9140}
+.befriend-pon-button img{width:50px;height:50px;object-fit:contain}
+.befriend-pon-button strong{font-size:.61rem;line-height:1.05;text-align:center}
+.befriend-pon-button small{font-size:.53rem;font-weight:900;color:#866d69;text-align:center}
+.befriend-pon-button:disabled{opacity:.4;cursor:not-allowed}
+.befriend-result{
+  border:2px dashed #c99aab;
+  border-radius:8px;
+  background:#fffaf3;
+  padding:8px;
+  text-align:center;
+  font-size:.72rem;
+  font-weight:900;
+}
+.capture-pon-fly{
+  position:absolute;
+  z-index:30;
+  width:58px;
+  height:58px;
+  object-fit:contain;
+  pointer-events:none;
+  left:31%;
+  top:65%;
+  animation:buddyPonThrow .72s ease-in-out forwards;
+}
+@keyframes buddyPonThrow{
+  0%{transform:translate(0,0) rotate(0deg) scale(.7)}
+  55%{transform:translate(250%,-175%) rotate(420deg) scale(1)}
+  75%{transform:translate(270%,-160%) rotate(520deg) scale(.92)}
+  100%{transform:translate(270%,-160%) rotate(580deg) scale(0);opacity:.15}
+}
+.enemy-shiny-sparkle{
+  display:inline-block;
+  margin-left:4px;
+  color:#f2c85d;
+  text-shadow:0 0 5px #fff,0 0 8px #eeb5df;
+  animation:shinyBuddyTwinkle .8s ease-in-out infinite alternate;
+}
+@keyframes shinyBuddyTwinkle{from{transform:scale(.8) rotate(-9deg);opacity:.6}to{transform:scale(1.2) rotate(9deg);opacity:1}}
+
+@media(max-width:700px){
+  .buddy-collection-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .buddy-tile{min-height:128px;grid-template-rows:76px auto auto;padding:5px}
+  .buddy-tile-art{height:76px}
+  .buddy-tile strong{font-size:.59rem}
+  .buddy-tile small{font-size:.49rem}
+  .buddy-book-heading{grid-template-columns:auto minmax(0,1fr)}
+  .buddy-count-pill{grid-column:1/-1;justify-self:center}
+  .buddy-filters{gap:4px}.buddy-filter{font-size:.57rem;padding:5px 3px}
+  .befriend-pon-grid{gap:5px}
+  .befriend-pon-button{min-height:82px;grid-template-rows:44px auto auto;padding:4px}
+  .befriend-pon-button img{width:42px;height:42px}
+  .befriend-pon-button strong{font-size:.54rem}.befriend-pon-button small{font-size:.47rem}
+}
+@media(max-width:420px){
+  .buddy-collection-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .buddy-home-card{padding:10px}
+  .buddy-home-card>div>strong{font-size:.86rem}
+  .buddy-detail-art{width:145px;height:145px}
+}
+
+/* v29 — Shiny families, Mystery Chest, and Endless Quest */
+.endless-home-card{
+  display:grid;
+  gap:10px;
+  padding:14px;
+  border:3px solid #8d79b8;
+  border-radius:12px;
+  background:linear-gradient(145deg,#f6edff,#fff5fb);
+  box-shadow:0 5px 0 rgba(105,78,119,.16);
+}
+.endless-home-heading{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:10px;
+  align-items:center;
+}
+.endless-home-heading h2{margin:1px 0 2px;font-size:1.12rem}
+.endless-home-heading small{display:block;font-size:.64rem;font-weight:800;color:#846c83;line-height:1.35}
+.endless-symbol{
+  display:grid;
+  place-items:center;
+  width:48px;
+  height:48px;
+  border:3px solid #8d79b8;
+  border-radius:50%;
+  background:#fff;
+  color:#8e6dc4;
+  font-size:1.9rem;
+  font-weight:900;
+  line-height:1;
+}
+.endless-record-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+.endless-record-grid>div{
+  padding:8px 10px;
+  border:2px solid #c5add6;
+  border-radius:9px;
+  background:#fffafc;
+}
+.endless-record-grid span{display:block;font-size:.56rem;font-weight:900;color:#947894;text-transform:uppercase;letter-spacing:.04em}
+.endless-record-grid strong{font-size:.82rem}
+.endless-home-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.endless-home-actions .pixel-button{min-width:0}
+.endless-note{margin:0!important;text-align:center;color:#806d7f!important}
+.post-floor-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.post-floor-actions>.pixel-button{min-width:0}
+.post-floor-actions>.pixel-button:only-child{grid-column:1/-1}
+.mystery-chest-sprite{filter:drop-shadow(0 0 7px rgba(154,109,214,.55)) drop-shadow(4px 5px 0 rgba(85,60,49,.20))}
+
+@media(max-width:520px){
+  .endless-home-actions{grid-template-columns:1fr}
+  .endless-symbol{width:42px;height:42px;font-size:1.6rem}
+  .post-floor-actions{grid-template-columns:1fr}
+}
+
+/* V28 — Main Buddy helper + six-action Attack menu */
+.buddy-command{background:#eadff8}
+.buddy-command:disabled{opacity:.5;filter:grayscale(.2)}
+
+.buddy-combatant{
+  position:absolute;
+  z-index:4;
+  left:30%;
+  bottom:7%;
+  width:19%;
+  display:grid;
+  justify-items:center;
+  gap:2px;
+  pointer-events:none;
+}
+.buddy-battle-name{
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  border:2px solid var(--border);
+  border-radius:5px;
+  background:rgba(255,247,229,.94);
+  padding:2px 5px;
+  font-size:.48rem;
+  font-weight:900;
+  line-height:1.2;
+  box-shadow:1px 2px 0 rgba(85,60,49,.16);
+}
+.buddy-battle-sprite{
+  width:100%;
+  max-height:92px;
+  object-fit:contain;
+  image-rendering:pixelated;
+  filter:drop-shadow(2px 4px 0 rgba(85,60,49,.22));
+}
+.buddy-combatant.boss-buddy{width:22%;left:28%}
+.buddy-battle-sparkle{
+  position:absolute;
+  top:14px;
+  right:0;
+  z-index:2;
+  font-size:1.05rem;
+  filter:drop-shadow(1px 2px 0 rgba(85,60,49,.18));
+  animation:shinyBuddyTwinkle .8s ease-in-out infinite alternate;
+}
+.buddy-combatant.buddy-action-pop{animation:buddyHelperHop .5s steps(3,end)}
+@keyframes buddyHelperHop{
+  0%,100%{transform:translate(0,0) scale(1)}
+  35%{transform:translate(12px,-8px) scale(1.08)}
+  70%{transform:translate(4px,-2px) scale(1.02)}
+}
+
+.command-overlay[data-kind="attack"] .skill-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-rows:repeat(3,minmax(0,1fr));
+  align-content:stretch;
+}
+.command-overlay[data-kind="attack"] .skill-button{
+  min-height:48px;
+  padding:5px 8px;
+}
+.command-overlay[data-kind="buddy"] .skill-grid{
+  grid-template-columns:1fr;
+  grid-template-rows:1fr;
+}
+.buddy-skill-button{
+  min-height:96px;
+  background:#f3eaff;
+  border-color:#a985c4;
+}
+.buddy-skill-button.shiny{box-shadow:inset 0 0 0 2px #fff5bf,0 0 0 2px rgba(255,211,83,.3)}
+.buddy-skill-button.boss{background:#efe0f7}
+.buddy-skill-row{
+  display:grid;
+  grid-template-columns:58px minmax(0,1fr);
+  align-items:center;
+  gap:8px;
+}
+.buddy-skill-row>img{
+  width:58px;
+  height:58px;
+  object-fit:contain;
+  image-rendering:pixelated;
+}
+.buddy-skill-row>span{display:grid;gap:3px;min-width:0}
+.buddy-skill-row strong{font-size:.78rem;white-space:normal}
+.buddy-skill-row em{font-style:normal;font-size:.65rem;font-weight:900;color:#76528c}
+.quick-heal-skill{background:#e6f5e1}
+
+@media(max-width:600px){
+  .buddy-combatant{left:29%;bottom:6%;width:20%}
+  .buddy-combatant.boss-buddy{left:27%;width:23%}
+  .buddy-battle-name{font-size:.4rem;padding:2px 4px}
+  .buddy-battle-sprite{max-height:72px}
+  .buddy-battle-sparkle{font-size:.85rem;top:12px}
+  .command-overlay[data-kind="attack"] .skill-grid{gap:5px}
+  .command-overlay[data-kind="attack"] .skill-button{min-height:44px;padding:4px 6px}
+  .command-overlay[data-kind="attack"] .skill-button strong{font-size:.62rem}
+  .command-overlay[data-kind="attack"] .skill-button span{font-size:.47rem}
+  .buddy-skill-row{grid-template-columns:48px minmax(0,1fr)}
+  .buddy-skill-row>img{width:48px;height:48px}
+}
+
+/* v31 / Hub v24.76 — captured-heart marker + emergency Buddy Pon shop */
+.enemy-captured-heart{
+  display:inline-block;
+  margin-left:4px;
+  color:#e56f98;
+  text-shadow:0 1px 0 #fff,0 0 4px rgba(229,111,152,.28);
+  font-size:.92em;
+  line-height:1;
+  vertical-align:baseline;
+}
+.purchase-pon-button{
+  background:#ffe5ef;
+  border-color:#b8778f;
+}
+.pon-purchase-panel{
+  display:grid;
+  gap:8px;
+  padding:9px;
+  border:2px dashed #b98a9a;
+  border-radius:9px;
+  background:#fffaf3;
+}
+.pon-purchase-heading{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  font-size:.67rem;
+}
+.pon-purchase-heading>span{
+  white-space:nowrap;
+  padding:4px 6px;
+  border:2px solid #d4a8b6;
+  border-radius:999px;
+  background:#fff;
+  font-size:.56rem;
+  font-weight:900;
+}
+.pon-purchase-panel>p{
+  margin:0;
+  text-align:center;
+  font-size:.59rem;
+  font-weight:800;
+  color:#8b6d6b;
+}
+.pon-purchase-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:6px;
+}
+.pon-purchase-option{
+  min-width:0;
+  min-height:64px;
+  display:grid;
+  grid-template-columns:38px minmax(0,1fr);
+  align-items:center;
+  gap:5px;
+  padding:5px;
+  border:2px solid #bd8e9c;
+  border-radius:8px;
+  background:#fff4f7;
+  color:var(--brown);
+  font:inherit;
+  cursor:pointer;
+}
+.pon-purchase-option.super{background:#f1e8ff;border-color:#8b6dc3}
+.pon-purchase-option.boss{background:#fff2bd;border-color:#bd9140}
+.pon-purchase-option img{width:36px;height:36px;object-fit:contain}
+.pon-purchase-option span{min-width:0;display:grid;gap:2px;text-align:left}
+.pon-purchase-option strong{font-size:.55rem;line-height:1.05}
+.pon-purchase-option small{font-size:.48rem;font-weight:900;color:#866d69;line-height:1.15}
+.pon-purchase-option:disabled{opacity:.42;cursor:not-allowed}
+
+@media(max-width:520px){
+  .pon-purchase-grid{grid-template-columns:1fr}
+  .pon-purchase-option{min-height:52px;grid-template-columns:34px minmax(0,1fr)}
+  .pon-purchase-option img{width:32px;height:32px}
+}
+
+/* =========================================================
+   V32 / Hub v24.77 — reference-style battle composition
+   Buddy is a bonus action, so its field sprite reads as a small helper.
+   ========================================================= */
+.battlefield{
+  aspect-ratio:16/9 !important;
+}
+
+.battlefield .peep-combatant{
+  left:4% !important;
+  top:2% !important;
+  bottom:auto !important;
+  width:45% !important;
+  height:96% !important;
+  display:block !important;
+}
+.battlefield .peep-status-stack{
+  position:absolute !important;
+  z-index:7 !important;
+  left:0 !important;
+  top:0 !important;
+  width:100% !important;
+  transform:none !important;
+  display:grid !important;
+  gap:3px !important;
+}
+.battlefield .peep-combatant .peep-fighter{
+  position:absolute !important;
+  left:5% !important;
+  top:auto !important;
+  bottom:1% !important;
+  width:auto !important;
+  height:54% !important;
+  margin:0 !important;
+  justify-self:auto !important;
+}
+.battlefield .peep-combatant .battle-hero-composite{
+  position:absolute !important;
+  left:4% !important;
+  top:auto !important;
+  bottom:0 !important;
+  width:36% !important;
+  height:auto !important;
+  margin:0 !important;
+}
+.battlefield .peep-combatant .battle-hero-composite img{
+  width:100% !important;
+  height:auto !important;
+}
+
+.battlefield .enemy-combatant{
+  right:4% !important;
+  left:auto !important;
+  top:2% !important;
+  bottom:auto !important;
+  width:45% !important;
+  height:96% !important;
+  display:block !important;
+}
+.enemy-status-stack{
+  position:absolute;
+  z-index:7;
+  left:0;
+  top:0;
+  width:100%;
+  display:grid;
+  gap:3px;
+}
+.enemy-status-stack small{
+  justify-self:end;
+  background:rgba(255,247,229,.92);
+  padding:2px 5px;
+  font-weight:900;
+  font-size:.58rem;
+  border-radius:4px;
+}
+.battlefield .enemy-combatant .enemy-fighter{
+  position:absolute !important;
+  right:1% !important;
+  left:auto !important;
+  top:auto !important;
+  bottom:0 !important;
+  width:34% !important;
+  max-width:none !important;
+  max-height:76% !important;
+  height:auto !important;
+  margin:0 !important;
+  justify-self:auto !important;
+}
+.battlefield .enemy-combatant .enemy-fighter.boss-fighter,
+.battlefield .enemy-combatant .enemy-fighter.ocean-boss-fighter{
+  width:92% !important;
+  max-height:82% !important;
+}
+.battlefield .enemy-combatant .enemy-fighter.gold-boss-fighter,
+.battlefield .enemy-combatant .enemy-fighter.ocean-boss-fighter.ocean-elite-fighter{
+  width:98% !important;
+  max-height:84% !important;
+}
+.battlefield .enemy-combatant .enemy-fighter.queen-bee-fighter{
+  width:72% !important;
+}
+.battlefield .enemy-combatant .enemy-fighter.ocean-elite-fighter:not(.ocean-boss-fighter){
+  width:48% !important;
+}
+
+.buddy-combatant,
+.buddy-combatant.boss-buddy{
+  left:28% !important;
+  right:auto !important;
+  bottom:4% !important;
+  width:13% !important;
+  max-width:none !important;
+  gap:0 !important;
+  z-index:6 !important;
+}
+.buddy-combatant.boss-buddy{width:16% !important;left:27% !important}
+.buddy-battle-name{display:none !important}
+.buddy-battle-sprite{
+  width:100% !important;
+  max-height:68px !important;
+  object-fit:contain !important;
+}
+.buddy-battle-sparkle{
+  top:-5px !important;
+  right:-5px !important;
+  font-size:.9rem !important;
+}
+
+/* Keep both status bars compact and mirrored at the top, like the reference. */
+.battlefield .nameplate{font-size:.66rem;padding:4px 6px}
+.battlefield .hp-bar{height:11px}
+.battlefield .combatant small{font-size:.52rem}
+
+@media(max-width:600px){
+  .battlefield{aspect-ratio:16/9 !important}
+  .battlefield .peep-combatant,
+  .battlefield .enemy-combatant{width:46% !important}
+  .battlefield .peep-combatant .peep-fighter{height:56% !important;bottom:0 !important}
+  .battlefield .peep-combatant .battle-hero-composite{width:39% !important;bottom:0 !important}
+  .battlefield .enemy-combatant .enemy-fighter{width:37% !important;max-height:74% !important}
+  .battlefield .enemy-combatant .enemy-fighter.boss-fighter,
+  .battlefield .enemy-combatant .enemy-fighter.ocean-boss-fighter{width:96% !important;max-height:82% !important}
+  .battlefield .enemy-combatant .enemy-fighter.gold-boss-fighter,
+  .battlefield .enemy-combatant .enemy-fighter.ocean-boss-fighter.ocean-elite-fighter{width:100% !important}
+  .battlefield .enemy-combatant .enemy-fighter.queen-bee-fighter{width:78% !important}
+  .battlefield .enemy-combatant .enemy-fighter.ocean-elite-fighter:not(.ocean-boss-fighter){width:52% !important}
+  .buddy-combatant,.buddy-combatant.boss-buddy{left:29% !important;bottom:3% !important;width:13% !important}
+  .buddy-combatant.boss-buddy{left:28% !important;width:16% !important}
+  .buddy-battle-sprite{max-height:56px !important}
+  .buddy-battle-sparkle{font-size:.72rem !important}
+  .battlefield .nameplate{font-size:.52rem;padding:3px 4px}
+  .battlefield .hp-bar{height:9px}
+  .battlefield .combatant small,.enemy-status-stack small{font-size:.45rem}
+}
+
+/* =========================================================
+   V33 / Hub v24.78 — battle polish fixes
+   - Raise Peep, Buddy, and enemies slightly
+   - Keep Miko the same visual height on wide attack frames
+   - Restore unmistakable HP fill colors
+   - Highlight a newly purchased emergency Buddy Pon
+   ========================================================= */
+
+/* HP fills: keep a visible colored inner bar regardless of older cascade rules. */
+.battlefield .hp-bar > span{
+  display:block !important;
+  height:100% !important;
+  min-width:0 !important;
+  border-radius:1px;
+  opacity:1 !important;
+  visibility:visible !important;
+  background:#6fb875;
+  transition:width .25s ease, background-color .2s ease !important;
+}
+.battlefield .enemy-hp > span{
+  background:#d76570;
+}
+
+/* Lift the combat sprites a little off the bottom edge. */
+.battlefield .peep-combatant .peep-fighter{
+  top:auto !important;
+  bottom:6% !important;
+}
+.battlefield .enemy-combatant .enemy-fighter{
+  top:auto !important;
+  bottom:6% !important;
+}
+.buddy-combatant,
+.buddy-combatant.boss-buddy{
+  top:auto !important;
+  bottom:9% !important;
+}
+
+/* Miko: size every 96px-tall frame by HEIGHT, not width.
+   Mock/Gun have wider canvases, so width-sizing made him shrink on attack. */
+.battlefield.miko-active .peep-combatant .battle-hero-composite,
+.battlefield.miko-active.ocean-peep-raised .peep-combatant .battle-hero-composite{
+  position:absolute !important;
+  left:5% !important;
+  top:auto !important;
+  bottom:6% !important;
+  width:auto !important;
+  height:55% !important;
+  margin:0 !important;
+  display:grid !important;
+  place-items:end start !important;
+}
+.battlefield.miko-active .peep-combatant .battle-hero-composite img,
+.battlefield.miko-active.ocean-peep-raised .peep-combatant .battle-hero-composite img{
+  width:auto !important;
+  height:100% !important;
+  max-width:none !important;
+  max-height:none !important;
+  object-fit:contain !important;
+}
+
+/* Keep the enemy at the same raised baseline whether or not Miko has a Buddy. */
+.battlefield.miko-active .enemy-combatant .enemy-fighter{
+  top:auto !important;
+  bottom:6% !important;
+}
+
+/* Newly bought Pon: make the now-usable throw button obvious. */
+.befriend-pon-button.pon-just-purchased{
+  animation:ponReadyPulse .9s ease-in-out;
+  outline:3px solid rgba(229,111,152,.55);
+  outline-offset:2px;
+}
+@keyframes ponReadyPulse{
+  0%,100%{transform:scale(1)}
+  45%{transform:scale(1.035)}
+}
+
+@media(max-width:600px){
+  .battlefield .peep-combatant .peep-fighter{
+    bottom:7% !important;
+  }
+  .battlefield .enemy-combatant .enemy-fighter{
+    bottom:7% !important;
+  }
+  .buddy-combatant,
+  .buddy-combatant.boss-buddy{
+    bottom:10% !important;
+  }
+  .battlefield.miko-active .peep-combatant .battle-hero-composite,
+  .battlefield.miko-active.ocean-peep-raised .peep-combatant .battle-hero-composite{
+    left:5% !important;
+    top:auto !important;
+    bottom:7% !important;
+    width:auto !important;
+    height:56% !important;
+  }
+  .battlefield.miko-active .enemy-combatant .enemy-fighter{
+    top:auto !important;
+    bottom:7% !important;
+  }
+}
+
+
+/* =========================================================
+   V34 / Hub v24.79 — mobile-safe HP meter rendering
+   Paint HP directly on the outer meter so the visible fill does not
+   depend on Android Chrome painting a nested percentage-width span.
+   ========================================================= */
+.battlefield .hp-bar{
+  --hp-pct:0%;
+  --hp-color:#6fb875;
+  background:linear-gradient(
+    90deg,
+    var(--hp-color) 0%,
+    var(--hp-color) var(--hp-pct),
+    #e6c8c6 var(--hp-pct),
+    #e6c8c6 100%
+  ) !important;
+  background-color:#e6c8c6 !important;
+}
+.battlefield .enemy-hp{
+  --hp-color:#d76570;
+}
+/* The legacy span remains in the DOM but is no longer responsible for
+   painting the meter. Hiding it also prevents double-fill artifacts. */
+.battlefield .hp-bar > span{
+  opacity:0 !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
+}
+
+/* v33 — Buddy Book assignment controls */
+.buddy-assign-open{
+  width:100%;
+  margin-top:2px;
+}
+.buddy-assign-panel{
+  width:100%;
+  display:grid;
+  gap:9px;
+  padding:10px;
+  border:2px dashed #bf8fa0;
+  border-radius:10px;
+  background:#fff4f8;
+  text-align:left;
+}
+.buddy-assign-heading{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:8px;
+}
+.buddy-assign-heading strong{font-size:.78rem}
+.buddy-assign-heading small{
+  max-width:65%;
+  color:#8d6b70;
+  font-size:.54rem;
+  font-weight:900;
+  line-height:1.3;
+  text-align:right;
+}
+.buddy-assign-characters{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:6px;
+}
+.buddy-assign-character{
+  min-height:36px;
+  border:2px solid #b88c94;
+  border-radius:7px;
+  background:#fffaf0;
+  color:#765b59;
+  font:inherit;
+  font-size:.62rem;
+  font-weight:900;
+  cursor:pointer;
+}
+.buddy-assign-character.selected{
+  background:#f4d7ec;
+  box-shadow:inset 0 0 0 2px #fff;
+}
+.buddy-assign-character.locked{
+  opacity:.45;
+  cursor:not-allowed;
+}
+.buddy-assign-slots{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:7px;
+}
+.buddy-assign-slot{
+  min-width:0;
+  min-height:104px;
+  display:grid;
+  grid-template-rows:auto 58px auto;
+  align-items:center;
+  justify-items:center;
+  gap:3px;
+  padding:5px;
+  border:2px solid #c69aa6;
+  border-radius:9px;
+  background:#fffaf0;
+  color:#735c59;
+  font:inherit;
+  cursor:pointer;
+  overflow:hidden;
+}
+.buddy-assign-slot.main{
+  border-color:#d5a449;
+  background:#fff5cf;
+}
+.buddy-assign-slot.assigned{
+  outline:3px solid #e9a9c9;
+  outline-offset:-4px;
+}
+.buddy-assign-slot:disabled{
+  opacity:.42;
+  cursor:not-allowed;
+}
+.buddy-assign-slot-badge{
+  font-size:.48rem;
+  font-weight:900;
+  color:#9a7477;
+}
+.buddy-assign-slot.main .buddy-assign-slot-badge{color:#a27620}
+.buddy-assign-slot-art{
+  width:58px;
+  height:58px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:#f7dce7;
+  overflow:hidden;
+  font-size:1.1rem;
+  font-weight:900;
+}
+.buddy-assign-slot-art img{
+  width:92%;
+  height:92%;
+  object-fit:contain;
+  image-rendering:pixelated;
+}
+.buddy-assign-slot strong{
+  width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:.51rem;
+  text-align:center;
+}
+.buddy-assign-message{
+  min-height:1.2em;
+  margin:0!important;
+  color:#8b5f70;
+  font-size:.58rem!important;
+  font-weight:900!important;
+  text-align:center;
+}
+@media(max-width:420px){
+  .buddy-assign-slots{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .buddy-assign-slot{min-height:98px}
+  .buddy-assign-heading{display:grid;gap:2px}
+  .buddy-assign-heading small{max-width:none;text-align:left}
+}
+
+
+/* =========================================================
+   V36 / Hub v24.81 — Switch OC picker + Io battle baseline
+   ========================================================= */
+.quest-oc-picker{
+  width:100%;
+  display:grid;
+  gap:4px;
+  padding:6px;
+  border:2px solid #bd8e9c;
+  border-radius:8px;
+  background:#fffaf0;
+  box-shadow:0 4px 0 rgba(102,67,61,.14);
+}
+.quest-oc-choice{
+  width:100%;
+  min-height:29px;
+  padding:4px 6px;
+  border:2px solid #d5a9b6;
+  border-radius:6px;
+  background:#fff1f6;
+  color:#6f4f5a;
+  font:inherit;
+  font-size:.58rem;
+  font-weight:900;
+  cursor:pointer;
+}
+.quest-oc-choice.current{
+  background:#f5c7d7;
+  border-color:#a66a80;
+}
+.quest-oc-choice:active{transform:translateY(1px)}
+
+/* Io should sit a little higher than the generic composite, but never use
+   the old ocean top-position rule. The extra-specific selector prevents
+   Mystery/Mimic encounters on ocean backgrounds from stretching/lifting Io. */
+.battlefield.io-active .peep-combatant .battle-hero-composite,
+.battlefield.io-active.ocean-peep-raised .peep-combatant .battle-hero-composite{
+  top:auto !important;
+  bottom:10% !important;
+}
+@media(max-width:600px){
+  .quest-oc-picker{gap:3px;padding:5px}
+  .quest-oc-choice{min-height:27px;font-size:.52rem}
+  .battlefield.io-active .peep-combatant .battle-hero-composite,
+  .battlefield.io-active.ocean-peep-raised .peep-combatant .battle-hero-composite{
+    top:auto !important;
+    bottom:11% !important;
+  }
+}

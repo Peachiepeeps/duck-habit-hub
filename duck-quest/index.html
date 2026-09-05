@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f6c6d6" />
   <title>Duck Quest</title>
-  <link rel="stylesheet" href="css/style-v32.css" />
+  <link rel="stylesheet" href="css/style-v34.css" />
 </head>
 <body>
   <main class="quest-shell">
@@ -40,7 +40,8 @@
               <div id="iconBackgroundPicker" class="icon-background-picker hidden" role="menu" aria-label="Icon background colors"></div>
             </div>
           </div>
-          <button id="switchQuestOc" class="switch-quest-oc-button pixel-button" type="button">Switch OC</button>
+          <button id="switchQuestOc" class="switch-quest-oc-button pixel-button" type="button" aria-expanded="false" aria-controls="questOcPicker">Switch OC</button>
+          <div id="questOcPicker" class="quest-oc-picker hidden" role="menu" aria-label="Choose OC"></div>
         </div>
 
         <div class="hero-info">
@@ -161,7 +162,7 @@
           </div>
           <strong id="buddyCollectionCount" class="buddy-count-pill">0 / 0</strong>
         </div>
-        <p class="buddy-book-note">Befriend enemies with Buddy Pons. You can catch multiple copies and assign them to your OCs from Profiles.</p>
+        <p class="buddy-book-note">Befriend enemies with Buddy Pons. You can catch multiple copies, then tap a caught Buddy to assign it to an OC without leaving Duck Quest.</p>
         <div id="buddyFilters" class="buddy-filters" role="group" aria-label="Buddy collection filters">
           <button class="buddy-filter selected" data-buddy-filter="all" type="button">All</button>
           <button class="buddy-filter" data-buddy-filter="normal" type="button">Normal</button>
@@ -184,6 +185,16 @@
             <div><span>Type</span><strong id="buddyDetailType">Normal</strong></div>
           </div>
           <p id="buddyDetailSkill" class="buddy-skill-preview"><strong>Buddy Skill:</strong> Select a Buddy to see its helper skill. ♡</p>
+          <button id="buddyAssignOpen" class="pixel-button primary buddy-assign-open hidden" type="button">Assign to OC</button>
+          <section id="buddyAssignPanel" class="buddy-assign-panel hidden" aria-label="Assign Buddy to OC">
+            <div class="buddy-assign-heading">
+              <strong>Assign Buddy</strong>
+              <small id="buddyAssignAvailability">Choose an OC and Buddy slot.</small>
+            </div>
+            <div id="buddyAssignCharacters" class="buddy-assign-characters" role="group" aria-label="Choose OC"></div>
+            <div id="buddyAssignSlots" class="buddy-assign-slots" aria-label="Choose Buddy slot"></div>
+            <p id="buddyAssignMessage" class="buddy-assign-message" aria-live="polite"></p>
+          </section>
         </div>
       </section>
     </section>
@@ -336,6 +347,6 @@
     </section>
   </main>
 
-  <script src="js/game-v34.js"></script>
+  <script src="js/game-v36.js"></script>
 </body>
 </html>
