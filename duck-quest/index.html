@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f6c6d6" />
   <title>Duck Quest</title>
-  <link rel="stylesheet" href="css/style-v28.css" />
+  <link rel="stylesheet" href="css/style-v29.css" />
 </head>
 <body>
   <main class="quest-shell">
@@ -277,6 +277,15 @@
           </div>
           <div id="befriendPonChoices" class="befriend-pon-grid"></div>
           <button id="skipBefriend" class="pixel-button" type="button">Continue to Chest</button>
+          <button id="purchasePonButton" class="pixel-button purchase-pon-button" type="button">Purchase Pon</button>
+          <section id="ponPurchasePanel" class="pon-purchase-panel hidden" aria-live="polite">
+            <div class="pon-purchase-heading">
+              <strong>Emergency Pon Shop</strong>
+              <span id="ponPurchaseCoins">0 Pink Coins</span>
+            </div>
+            <p id="ponPurchaseMessage">Buy a Buddy Pon without leaving this encounter.</p>
+            <div id="ponPurchaseChoices" class="pon-purchase-grid"></div>
+          </section>
         </section>
 
         <div id="postFloorActions" class="post-floor-actions hidden">
@@ -325,6 +334,6 @@
     </section>
   </main>
 
-  <script src="js/game-v30.js"></script>
+  <script src="js/game-v31.js"></script>
 </body>
 </html>
