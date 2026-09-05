@@ -1,5 +1,5 @@
 {
-  "version": "24.90",
+  "version": "24.91",
   "updated": "2026-09-05",
-  "note": "Repository cleanup, removed old update files, and fixed Io head-duck layering/position."
+  "note": "Lowered Io head duck slightly and re-shipped new Duck Quest enemy, boss, and shiny assets to fix broken images."
 }
