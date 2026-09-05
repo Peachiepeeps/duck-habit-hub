@@ -1365,3 +1365,61 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
   .buddy-home-card>div>strong{font-size:.86rem}
   .buddy-detail-art{width:145px;height:145px}
 }
+
+/* v29 — Shiny families, Mystery Chest, and Endless Quest */
+.endless-home-card{
+  display:grid;
+  gap:10px;
+  padding:14px;
+  border:3px solid #8d79b8;
+  border-radius:12px;
+  background:linear-gradient(145deg,#f6edff,#fff5fb);
+  box-shadow:0 5px 0 rgba(105,78,119,.16);
+}
+.endless-home-heading{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:10px;
+  align-items:center;
+}
+.endless-home-heading h2{margin:1px 0 2px;font-size:1.12rem}
+.endless-home-heading small{display:block;font-size:.64rem;font-weight:800;color:#846c83;line-height:1.35}
+.endless-symbol{
+  display:grid;
+  place-items:center;
+  width:48px;
+  height:48px;
+  border:3px solid #8d79b8;
+  border-radius:50%;
+  background:#fff;
+  color:#8e6dc4;
+  font-size:1.9rem;
+  font-weight:900;
+  line-height:1;
+}
+.endless-record-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+.endless-record-grid>div{
+  padding:8px 10px;
+  border:2px solid #c5add6;
+  border-radius:9px;
+  background:#fffafc;
+}
+.endless-record-grid span{display:block;font-size:.56rem;font-weight:900;color:#947894;text-transform:uppercase;letter-spacing:.04em}
+.endless-record-grid strong{font-size:.82rem}
+.endless-home-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.endless-home-actions .pixel-button{min-width:0}
+.endless-note{margin:0!important;text-align:center;color:#806d7f!important}
+.post-floor-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.post-floor-actions>.pixel-button{min-width:0}
+.post-floor-actions>.pixel-button:only-child{grid-column:1/-1}
+.mystery-chest-sprite{filter:drop-shadow(0 0 7px rgba(154,109,214,.55)) drop-shadow(4px 5px 0 rgba(85,60,49,.20))}
+
+@media(max-width:520px){
+  .endless-home-actions{grid-template-columns:1fr}
+  .endless-symbol{width:42px;height:42px;font-size:1.6rem}
+  .post-floor-actions{grid-template-columns:1fr}
+}

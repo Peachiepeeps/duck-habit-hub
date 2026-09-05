@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f6c6d6" />
   <title>Duck Quest</title>
-  <link rel="stylesheet" href="css/style-v26.css" />
+  <link rel="stylesheet" href="css/style-v27.css" />
 </head>
 <body>
   <main class="quest-shell">
@@ -77,6 +77,26 @@
           <small id="buddyHomeCount">0 / 0 befriended</small>
         </div>
         <button id="openBuddyCollection" class="pixel-button" type="button">Buddies</button>
+      </section>
+
+      <section class="endless-home-card">
+        <div class="endless-home-heading">
+          <div>
+            <span class="mini-label">ENDLESS QUEST</span>
+            <h2>Endless Run</h2>
+            <small>Random areas, enemies, bosses, Buddies, and Shiny hunting.</small>
+          </div>
+          <span class="endless-symbol" aria-hidden="true">∞</span>
+        </div>
+        <div class="endless-record-grid">
+          <div><span>Record</span><strong id="endlessRecord">Floor 0</strong></div>
+          <div><span>Checkpoint</span><strong id="endlessCheckpoint">Floor 1</strong></div>
+        </div>
+        <div class="endless-home-actions">
+          <button id="continueEndless" class="pixel-button primary" type="button">Continue from Floor 1</button>
+          <button id="startNewEndless" class="pixel-button" type="button">Start New</button>
+        </div>
+        <p class="tiny-note endless-note">Every 5th floor is a boss. Leave whenever you want—your checkpoint and record are saved.</p>
       </section>
 
       <section class="area-select-card">
@@ -253,7 +273,10 @@
           <button id="skipBefriend" class="pixel-button" type="button">Continue to Chest</button>
         </section>
 
-        <button id="continueButton" class="pixel-button primary large hidden" type="button">Continue</button>
+        <div id="postFloorActions" class="post-floor-actions hidden">
+          <button id="continueButton" class="pixel-button primary large" type="button">Continue</button>
+          <button id="leaveEndlessButton" class="pixel-button large hidden" type="button">Leave Endless</button>
+        </div>
       </div>
     </section>
 
@@ -267,7 +290,7 @@
         </div>
 
         <div class="result-stats">
-          <div><span>Rank</span><strong id="resultRank">1</strong></div>
+          <div><span id="resultProgressLabel">Rank</span><strong id="resultRank">1</strong></div>
           <div><span>Coins Earned</span><strong id="resultCoins">0</strong></div>
           <div><span>EXP Earned</span><strong id="resultExp">0</strong></div>
         </div>
@@ -296,6 +319,6 @@
     </section>
   </main>
 
-  <script src="js/game-v28.js"></script>
+  <script src="js/game-v29.js"></script>
 </body>
 </html>

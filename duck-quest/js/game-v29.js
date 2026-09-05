@@ -878,14 +878,72 @@ function applyMushroomVariant(template,rank){
 }
 
 const SHINY_RATE = 0.01;
+const MYSTERY_CHEST_RATE = 1 / 50;
 
-// Add one special recolor per enemy family here when its art is ready.
-// A shiny replaces whichever normal recolor rolled, keeps that encounter's stats,
-// appears with a sparkle, and is a guaranteed catch with any Buddy Pon.
+// One rare recolor per enemy family. The special family variant replaces any
+// normal recolor at 1/100 and is guaranteed to befriend with any Buddy Pon.
+// Amethyst Mimic is intentionally different: it only reveals itself from the
+// purple Mystery Chest so the chest keeps its surprise.
 const SHINY_VARIANTS = Object.freeze({
-  // Example for later:
-  // "cat-slime": { id:"rainbow", name:"Rainbow Cat Slime", idle:["assets/..."], hurt:"assets/..." }
+  "cat-slime": {
+    id:"rainbow", name:"Rainbow Slime Kitty",
+    idle:[
+      "assets/shinies/rainbow-slime-kitty-idle-1.png",
+      "assets/shinies/rainbow-slime-kitty-idle-2.png",
+      "assets/shinies/rainbow-slime-kitty-idle-3.png",
+      "assets/shinies/rainbow-slime-kitty-idle-2.png"
+    ],
+    hurt:"assets/shinies/rainbow-slime-kitty-idle-1.png"
+  },
+  "bee": {
+    id:"sky", name:"Sky Bee",
+    idle:["assets/shinies/sky-bee-idle-1.png","assets/shinies/sky-bee-idle-2.png"],
+    hurt:"assets/shinies/sky-bee-hurt.png"
+  },
+  "flower": {
+    id:"midnight", name:"Midnight Bloom",
+    idle:["assets/shinies/midnight-bloom-idle-1.png","assets/shinies/midnight-bloom-idle-2.png"],
+    hurt:"assets/shinies/midnight-bloom-hurt.png"
+  },
+  "mushroom-cat": {
+    id:"cocoa", name:"Cocoa Mushroom Cat",
+    idle:["assets/shinies/cocoa-mushroom-cat-idle-1.png","assets/shinies/cocoa-mushroom-cat-idle-2.png"],
+    hurt:"assets/shinies/cocoa-mushroom-cat-hurt.png"
+  },
+  "mimic": {
+    id:"amethyst", name:"Amethyst Mimic",
+    idle:["assets/shinies/amethyst-mimic-idle-1.png","assets/shinies/amethyst-mimic-idle-2.png"],
+    hurt:"assets/shinies/amethyst-mimic-closed.png"
+  },
+  "cool-seagull": {
+    id:"royal", name:"Royal Seagull",
+    idle:["assets/shinies/royal-seagull-idle-1.png","assets/shinies/royal-seagull-idle-2.png"],
+    hurt:"assets/shinies/royal-seagull-hurt.png"
+  },
+  "sea-turtle": {
+    id:"ruby", name:"Ruby Shell Turtle",
+    idle:["assets/shinies/ruby-shell-turtle-idle-1.png","assets/shinies/ruby-shell-turtle-idle-2.png"],
+    hurt:"assets/shinies/ruby-shell-turtle-hurt.png"
+  },
+  "catfish": {
+    id:"bubblegum", name:"Bubblegum Catfish",
+    idle:["assets/shinies/bubblegum-catfish-idle-1.png","assets/shinies/bubblegum-catfish-idle-2.png"],
+    hurt:"assets/shinies/bubblegum-catfish-hurt.png"
+  },
+  "vampire-squid": {
+    id:"crimson", name:"Crimson Squid",
+    idle:["assets/shinies/crimson-squid-idle-1.png","assets/shinies/crimson-squid-idle-2.png"],
+    hurt:"assets/shinies/crimson-squid-hurt.png"
+  }
 });
+
+const ENDLESS_NORMAL_ENEMIES = Object.freeze([
+  "cat-slime","bee","flower","cool-seagull","sea-turtle","catfish"
+]);
+const ENDLESS_BOSSES = Object.freeze(["mushroom-cat","vampire-squid"]);
+const ENDLESS_BACKGROUNDS = Object.freeze(
+  Object.values(AREA_CONFIG).flatMap(area=>area.backgrounds)
+);
 
 const BUDDY_PONS = Object.freeze([
   {
@@ -1019,9 +1077,11 @@ function captureBuddy(enemy) {
   return hubSave.buddies.collection[incoming.key];
 }
 
-function maybeApplyShinyVariant(enemyId, template) {
+function maybeApplyShinyVariant(enemyId, template, forceShiny=false) {
   const shiny=SHINY_VARIANTS[enemyId];
-  if(!shiny || Math.random()>=SHINY_RATE) return template;
+  if(!shiny) return template;
+  // The Mimic's shiny is only revealed by the purple Mystery Chest.
+  if(!forceShiny && (enemyId==="mimic" || Math.random()>=SHINY_RATE)) return template;
   return {
     ...template,
     name:String(shiny.name || template.name),
@@ -1097,6 +1157,10 @@ const ui = {
   rankValue: document.querySelector("#rankValue"),
   rankDescription: document.querySelector("#rankDescription"),
   bestRunText: document.querySelector("#bestRunText"),
+  endlessRecord: document.querySelector("#endlessRecord"),
+  endlessCheckpoint: document.querySelector("#endlessCheckpoint"),
+  continueEndless: document.querySelector("#continueEndless"),
+  startNewEndless: document.querySelector("#startNewEndless"),
   menuSkills: document.querySelector("#menuSkills"),
   battlefield: document.querySelector("#battlefield"),
   battleBg: document.querySelector("#battleBg"),
@@ -1132,6 +1196,8 @@ const ui = {
   quickHealButton: document.querySelector("#quickHealButton"),
   quickHealUsesText: document.querySelector("#quickHealUsesText"),
   continueButton: document.querySelector("#continueButton"),
+  postFloorActions: document.querySelector("#postFloorActions"),
+  leaveEndlessButton: document.querySelector("#leaveEndlessButton"),
   escapeConfirm: document.querySelector("#escapeConfirm"),
   escapeConfirmText: document.querySelector("#escapeConfirmText"),
   cancelEscapeConfirm: document.querySelector("#cancelEscapeConfirm"),
@@ -1139,6 +1205,7 @@ const ui = {
   runNextRank: document.querySelector("#runNextRank"),
   resultKicker: document.querySelector("#resultKicker"),
   resultTitle: document.querySelector("#resultTitle"),
+  resultProgressLabel: document.querySelector("#resultProgressLabel"),
   resultRank: document.querySelector("#resultRank"),
   resultCoins: document.querySelector("#resultCoins"),
   resultExp: document.querySelector("#resultExp"),
@@ -1209,7 +1276,8 @@ function defaultCharacterQuestProgress(){
     areas:{
       meadow:{unlockedRank:1,lastRank:1},
       ocean:{unlockedRank:1,lastRank:1}
-    }
+    },
+    endless:{record:0,checkpoint:1}
   };
 }
 
@@ -1231,6 +1299,10 @@ function normalizeCharacterQuestProgress(raw, legacy={}){
     areas:{
       meadow:{unlockedRank:meadowUnlocked,lastRank:Math.min(meadowLast,meadowUnlocked)},
       ocean:{unlockedRank:oceanUnlocked,lastRank:Math.min(oceanLast,oceanUnlocked)}
+    },
+    endless:{
+      record:Math.max(0,Math.floor(Number(q.endless?.record)||0)),
+      checkpoint:Math.max(1,Math.floor(Number(q.endless?.checkpoint)||1))
     }
   };
 }
@@ -1288,6 +1360,7 @@ let actionLocked = false;
 let pendingChest = null;
 let pendingDefeatedEnemy = null;
 let befriendAttempted = false;
+let endlessExitReason = "";
 let buddyCollectionFilter = "all";
 const QUICK_HEAL_PERCENT = 0.25;
 const QUICK_HEAL_MAX_USES = 4;
@@ -1825,6 +1898,16 @@ function renderMeta() {
   document.querySelector("#rankDown").disabled=selectedRank<=1;
   document.querySelector("#rankUp").disabled=selectedRank>=progress.unlockedRank;
   ui.areaButtons.forEach(btn=>btn.classList.toggle("selected",btn.dataset.area===selectedArea));
+
+  const endless=hero.endless || {record:0,checkpoint:1};
+  if(ui.endlessRecord) ui.endlessRecord.textContent=`Floor ${Math.max(0,Number(endless.record)||0)}`;
+  if(ui.endlessCheckpoint) ui.endlessCheckpoint.textContent=`Floor ${Math.max(1,Number(endless.checkpoint)||1)}`;
+  if(ui.continueEndless){
+    const checkpoint=Math.max(1,Number(endless.checkpoint)||1);
+    ui.continueEndless.textContent=`Continue from Floor ${checkpoint}`;
+    ui.continueEndless.disabled=checkpoint<=1 && Math.max(0,Number(endless.record)||0)===0;
+  }
+
   renderBuddyHomeCount();
   renderMenuSkills();
 }
@@ -1870,6 +1953,7 @@ function makeEncounterPlan(rank,areaId=selectedArea) {
   if(areaId==="ocean"){
     const staged=["cool-seagull","sea-turtle","catfish"];
     staged.forEach(enemyId=>{
+      if(Math.random()<MYSTERY_CHEST_RATE){ encounters.push({type:"mystery-chest"}); return; }
       const roll=Math.random();
       if(roll<.12) encounters.push({type:"rare-chest"});
       else if(roll<.20) encounters.push({type:"mimic"});
@@ -1880,6 +1964,7 @@ function makeEncounterPlan(rank,areaId=selectedArea) {
   }
   const regular=shuffle(["cat-slime","bee","flower"]);
   for(let i=0;i<3;i++){
+    if(Math.random()<MYSTERY_CHEST_RATE){ encounters.push({type:"mystery-chest"}); continue; }
     const roll=Math.random();
     if(roll<.12) encounters.push({type:"rare-chest"});
     else if(roll<.20) encounters.push({type:"mimic"});
@@ -1889,9 +1974,78 @@ function makeEncounterPlan(rank,areaId=selectedArea) {
   return encounters;
 }
 
+function endlessProgress(){
+  const hero=activeHeroProgress();
+  if(!hero.endless || typeof hero.endless!=="object") hero.endless={record:0,checkpoint:1};
+  hero.endless.record=Math.max(0,Math.floor(Number(hero.endless.record)||0));
+  hero.endless.checkpoint=Math.max(1,Math.floor(Number(hero.endless.checkpoint)||1));
+  return hero.endless;
+}
+
+function endlessEffectiveRank(floor){
+  return Math.max(1,Math.min(50,1+Math.floor((Math.max(1,floor)-1)/2)));
+}
+
+function endlessEnemyScaled(template,floor){
+  const block=Math.floor((Math.max(1,Number(floor)||1)-1)/5);
+  const hpScale=1+block*.05;
+  const atkScale=1+block*.04;
+  const rewardScale=1+block*.05;
+  return {
+    ...template,
+    maxHp:Math.max(1,Math.round(template.hp*hpScale)),
+    hpNow:Math.max(1,Math.round(template.hp*hpScale)),
+    attackNow:Math.max(1,Math.round(template.attack*atkScale)),
+    expNow:Math.max(1,Math.round(template.exp*rewardScale)),
+    coinMinNow:Math.max(1,Math.round(template.coinMin*rewardScale)),
+    coinMaxNow:Math.max(1,Math.round(template.coinMax*rewardScale))
+  };
+}
+
+function makeEndlessEncounter(floor){
+  const f=Math.max(1,Math.floor(Number(floor)||1));
+  if(f%5===0){
+    return {type:"boss",enemyId:ENDLESS_BOSSES[randInt(0,ENDLESS_BOSSES.length-1)]};
+  }
+  if(Math.random()<MYSTERY_CHEST_RATE) return {type:"mystery-chest"};
+  const roll=Math.random();
+  if(roll<.10) return {type:"rare-chest"};
+  if(roll<.16) return {type:"mimic"};
+  return {type:"enemy",enemyId:ENDLESS_NORMAL_ENEMIES[randInt(0,ENDLESS_NORMAL_ENEMIES.length-1)]};
+}
+
+function chooseEndlessBackground(previous=""){
+  const choices=ENDLESS_BACKGROUNDS.filter(path=>path!==previous);
+  return (choices.length?choices:ENDLESS_BACKGROUNDS)[randInt(0,(choices.length?choices:ENDLESS_BACKGROUNDS).length-1)];
+}
+
+function beginEndlessRun(startFloor=1){
+  const stats=peepStats();
+  const floor=Math.max(1,Math.floor(Number(startFloor)||1));
+  const progress=endlessProgress();
+  progress.checkpoint=floor;
+  endlessExitReason="";
+  currentRun={
+    mode:"endless",floor,rank:endlessEffectiveRank(floor),area:"endless",index:0,plan:[],
+    endlessEncounter:makeEndlessEncounter(floor),zone:Math.floor((floor-1)/5),zoneBackground:chooseEndlessBackground(),
+    hp:stats.maxHp,maxHp:stats.maxHp,coinsEarned:0,expEarned:0,itemsEarned:[],iconBackgroundsEarned:[],levelBackgroundsEarned:[],levelsGained:[],bossWon:false
+  };
+  persistAll();
+  showScreen("battle");
+  startEncounter();
+}
+
 
 function openEscapeConfirm() {
   if (!currentRun || actionLocked) return;
+  if(currentRun.mode==="endless"){
+    const checkpoint=endlessProgress().checkpoint;
+    ui.escapeConfirmText.textContent=`Leave Endless Run? Floor ${checkpoint} will stay saved as your checkpoint, and your record will not be erased.`;
+    ui.confirmEscapeButton.textContent="Leave Endless";
+  } else {
+    ui.escapeConfirmText.textContent="Are you sure? Your current run will end.";
+    ui.confirmEscapeButton.textContent="Escape Run";
+  }
   ui.escapeConfirm.classList.remove("hidden");
   ui.escapeConfirm.setAttribute("aria-hidden", "false");
 }
@@ -1903,6 +2057,7 @@ function closeEscapeConfirm() {
 
 function confirmEscapeRun() {
   closeEscapeConfirm();
+  if(currentRun?.mode==="endless") endlessExitReason="paused";
   endRun(false);
 }
 
@@ -1911,8 +2066,9 @@ function beginRun() {
   const cfg=getAreaConfig(selectedArea);
   const progress=areaProgress(selectedArea);
   selectedRank=Math.min(Math.max(1,selectedRank),progress.unlockedRank);
+  endlessExitReason="";
   currentRun={
-    area:selectedArea,rank:selectedRank,index:0,plan:makeEncounterPlan(selectedRank,selectedArea),
+    mode:"normal",area:selectedArea,rank:selectedRank,index:0,plan:makeEncounterPlan(selectedRank,selectedArea),
     hp:stats.maxHp,maxHp:stats.maxHp,coinsEarned:0,expEarned:0,itemsEarned:[],iconBackgroundsEarned:[],levelBackgroundsEarned:[],levelsGained:[],bossWon:false
   };
   progress.lastRank=selectedRank; activeHeroProgress().lastArea=selectedArea; persistAll();
@@ -1937,22 +2093,50 @@ function startEncounter() {
   quickHealUses=0;
   skillState={ cooldowns:{}, onceUsed:{}, attackBuffTurns:0, attackBuffMultiplier:1.30, activeBuffSkillId:null, heartRayCount:0, ioRainbowUses:0 };
   ui.chestLayer.classList.add("hidden");
-  ui.continueButton.classList.add("hidden");
+  ui.postFloorActions?.classList.add("hidden");
+  ui.leaveEndlessButton?.classList.add("hidden");
   ui.commandGrid.classList.remove("hidden");
   closeCommandWindow();
   ui.enemyCombatant.classList.remove("hidden");
 
-  const encounter=currentRun.plan[currentRun.index];
-  const cfg=currentAreaConfig();
-  ui.battleBg.src=cfg.backgrounds[currentRun.index];
-  ui.battlefield.classList.toggle("ocean-peep-raised", currentRun.area==="ocean" && (currentRun.index===1 || currentRun.index===2));
-  ui.encounterLabel.textContent=currentRun.area==="ocean"
-    ? `${cfg.stageNames[currentRun.index].toUpperCase()} · ${currentRun.index+1} / 4`
-    : `ENCOUNTER ${currentRun.index+1} / 4`;
-  ui.rankBattleLabel.textContent=`${cfg.name} · Rank ${currentRun.rank}`;
+  const isEndless=currentRun?.mode==="endless";
+  const encounter=isEndless ? currentRun.endlessEncounter : currentRun.plan[currentRun.index];
+
+  if(isEndless){
+    const zone=Math.floor((currentRun.floor-1)/5);
+    if(zone!==currentRun.zone){
+      currentRun.zone=zone;
+      currentRun.zoneBackground=chooseEndlessBackground(currentRun.zoneBackground);
+    }
+    currentRun.rank=endlessEffectiveRank(currentRun.floor);
+    ui.battleBg.src=currentRun.zoneBackground;
+    const oceanish=String(currentRun.zoneBackground).includes('/ocean/');
+    ui.battlefield.classList.toggle("ocean-peep-raised",oceanish && !String(currentRun.zoneBackground).includes('/floor.'));
+    ui.encounterLabel.textContent=`FLOOR ${currentRun.floor}${currentRun.floor%5===0?" · BOSS":""}`;
+    ui.rankBattleLabel.textContent=`Endless · Record ${endlessProgress().record}`;
+  } else {
+    const cfg=currentAreaConfig();
+    ui.battleBg.src=cfg.backgrounds[currentRun.index];
+    ui.battlefield.classList.toggle("ocean-peep-raised", currentRun.area==="ocean" && (currentRun.index===1 || currentRun.index===2));
+    ui.encounterLabel.textContent=currentRun.area==="ocean"
+      ? `${cfg.stageNames[currentRun.index].toUpperCase()} · ${currentRun.index+1} / 4`
+      : `ENCOUNTER ${currentRun.index+1} / 4`;
+    ui.rankBattleLabel.textContent=`${cfg.name} · Rank ${currentRun.rank}`;
+  }
+
   ui.peepLevelCombat.textContent=`Lv. ${activeHeroProgress().level}`;
   renderPeepHp();
   startPeepIdle();
+
+  if(encounter.type==="mystery-chest") {
+    currentEnemy=null;
+    ui.enemyCombatant.classList.add("hidden");
+    ui.commandGrid.classList.add("hidden");
+    closeCommandWindow();
+    showChest({kind:"mystery", mystery:true, revealMimic:false});
+    setMessage("A strange purple chest appeared... Jackpot or trouble?");
+    return;
+  }
 
   if(encounter.type==="rare-chest") {
     currentEnemy=null;
@@ -1989,28 +2173,33 @@ function renderEnemyName(enemy) {
   }
 }
 
-function startEnemy(enemyId) {
+function startEnemy(enemyId, options={}) {
   const baseTemplate=ENEMIES[enemyId];
+  const variantRank=currentRun?.mode==="endless" ? endlessEffectiveRank(currentRun.floor) : currentRun.rank;
   const normalTemplate =
-    enemyId==="mushroom-cat" ? applyMushroomVariant(baseTemplate,currentRun.rank) :
-    enemyId==="bee" ? applyBeeVariant(baseTemplate,currentRun.rank) :
-    enemyId==="cat-slime" ? applyCatSlimeVariant(baseTemplate,currentRun.rank) :
-    enemyId==="flower" ? applyFlowerVariant(baseTemplate,currentRun.rank) :
-    enemyId==="cool-seagull" ? applySeagullVariant(baseTemplate,currentRun.rank) :
-    enemyId==="sea-turtle" ? applyTurtleVariant(baseTemplate,currentRun.rank) :
-    enemyId==="catfish" ? applyCatfishVariant(baseTemplate,currentRun.rank) :
-    enemyId==="vampire-squid" ? applySquidVariant(baseTemplate,currentRun.rank) :
-    enemyId==="mimic" ? applyMimicProfile(baseTemplate,currentRun.rank) : baseTemplate;
-  const template=maybeApplyShinyVariant(enemyId,normalTemplate);
+    enemyId==="mushroom-cat" ? applyMushroomVariant(baseTemplate,variantRank) :
+    enemyId==="bee" ? applyBeeVariant(baseTemplate,variantRank) :
+    enemyId==="cat-slime" ? applyCatSlimeVariant(baseTemplate,variantRank) :
+    enemyId==="flower" ? applyFlowerVariant(baseTemplate,variantRank) :
+    enemyId==="cool-seagull" ? applySeagullVariant(baseTemplate,variantRank) :
+    enemyId==="sea-turtle" ? applyTurtleVariant(baseTemplate,variantRank) :
+    enemyId==="catfish" ? applyCatfishVariant(baseTemplate,variantRank) :
+    enemyId==="vampire-squid" ? applySquidVariant(baseTemplate,variantRank) :
+    enemyId==="mimic" ? applyMimicProfile(baseTemplate,variantRank) : baseTemplate;
+  const template=maybeApplyShinyVariant(enemyId,normalTemplate,Boolean(options.forceShiny));
 
-  currentEnemy=enemyScaled(template,currentRun.rank,currentRun.area);
+  currentEnemy=currentRun?.mode==="endless"
+    ? endlessEnemyScaled(template,currentRun.floor)
+    : enemyScaled(template,currentRun.rank,currentRun.area);
   currentEnemy.id=enemyId;
   currentEnemy.healsUsed=0; currentEnemy.specialUses=0; currentEnemy.shellHitsRemaining=0;
   currentEnemy.zoomiesBoost=false; currentEnemy.lifeDrainsUsed=0;
   ui.enemyCombatant.classList.remove("hidden");
   ui.enemySprite.classList.remove("boss-fighter","gold-boss-fighter","queen-bee-fighter","strawberry-slime-fighter","rainbow-flower-fighter","ocean-elite-fighter","ocean-boss-fighter");
   renderEnemyName(currentEnemy);
-  ui.enemyRank.textContent=currentEnemy.boss?`BOSS · Rank ${currentRun.rank}`:`Rank ${currentRun.rank}`;
+  ui.enemyRank.textContent=currentRun?.mode==="endless"
+    ? `${currentEnemy.boss?"BOSS · ":""}Floor ${currentRun.floor}`
+    : currentEnemy.boss?`BOSS · Rank ${currentRun.rank}`:`Rank ${currentRun.rank}`;
   ui.enemySprite.classList.toggle("boss-fighter",Boolean(currentEnemy.boss));
   ui.enemySprite.classList.toggle("gold-boss-fighter",currentEnemy.mushroomVariant==="gold");
   ui.enemySprite.classList.toggle("queen-bee-fighter",currentEnemy.beeVariant==="queen");
@@ -2021,8 +2210,8 @@ function startEnemy(enemyId) {
   renderEnemyHp(); startEnemyIdle(); renderSkills(); renderBattleItems();
   ui.commandGrid.classList.remove("hidden"); closeCommandWindow(); renderBattleItems(); renderCommandButtons();
   if(currentEnemy.shiny) setMessage(`${currentEnemy.name} ✨ appeared! A super-rare Shiny Buddy!`);
-  else if(enemyId==="vampire-squid") setMessage(`${currentEnemy.name} rises from the Ocean Floor!`);
-  else if(currentEnemy.boss) setMessage("The Big Mushroom Cat blocks the end of the path!");
+  else if(enemyId==="vampire-squid") setMessage(`${currentEnemy.name} rises from the depths!`);
+  else if(currentEnemy.boss) setMessage("The Big Mushroom Cat blocks the path!");
   else setMessage(`${currentEnemy.name} appeared!`);
 }
 
@@ -2639,16 +2828,47 @@ async function enemyDefeated() {
 
 function showChest(data) {
   pendingChest=data;
-  ui.chestSprite.src="assets/items/chests/treasure/closed.webp";
-  ui.chestSprite.classList.remove("opening");
+  ui.chestSprite.src=data.mystery
+    ? "assets/shinies/amethyst-mimic-closed.png"
+    : "assets/items/chests/treasure/closed.webp";
+  ui.chestSprite.classList.remove("opening","mystery-chest-sprite");
+  ui.chestSprite.classList.toggle("mystery-chest-sprite",Boolean(data.mystery));
   ui.openChest.classList.remove("hidden");
   ui.openChest.disabled=false;
   ui.chestLayer.classList.remove("hidden");
-  ui.chestCaption.textContent=data.kind==="rare"
-    ?"A rare treasure chest appeared!"
-    :data.revealMimic
-      ?"A treasure chest appeared!"
-      :"Victory chest!";
+  ui.chestCaption.textContent=data.mystery
+    ? "A strange purple chest appeared..."
+    :data.kind==="rare"
+      ?"A rare treasure chest appeared!"
+      :data.revealMimic
+        ?"A treasure chest appeared!"
+        :"Victory chest!";
+}
+
+function addRewardItem(items,item,qty=1){
+  if(!item) return;
+  const existing=items.find(x=>x.id===item.id);
+  if(existing) existing.qty+=qty;
+  else items.push({...item,qty});
+}
+
+function jackpotItem(){
+  const pool=REWARD_ITEMS.filter(item=>!["buddy-pon","super-buddy-pon","boss-buddy-pon"].includes(item.id));
+  const weighted=pool.map(item=>({item,weight:Math.max(1,16-Math.min(15,Number(item.weight)||1))}));
+  const total=weighted.reduce((sum,x)=>sum+x.weight,0);
+  let roll=Math.random()*total;
+  for(const entry of weighted){ roll-=entry.weight; if(roll<=0) return entry.item; }
+  return pool[0];
+}
+
+function markEndlessFloorComplete(){
+  if(currentRun?.mode!=="endless") return;
+  const progress=endlessProgress();
+  const completed=Math.max(1,Math.floor(Number(currentRun.floor)||1));
+  progress.record=Math.max(progress.record,completed);
+  progress.checkpoint=completed+1;
+  persistAll();
+  renderMeta();
 }
 
 async function openPendingChest() {
@@ -2659,16 +2879,33 @@ async function openPendingChest() {
   ui.chestSprite.classList.add("opening");
   await sleep(260);
 
-  if(pendingChest.revealMimic) {
+  if(pendingChest.mystery){
+    ui.chestSprite.src="assets/shinies/amethyst-mimic-open.png";
+    await sleep(180);
+    const isAmethystMimic=Math.random()<.50;
+    if(isAmethystMimic){
+      ui.chestCaption.textContent="Oh no... it moved!";
+      setMessage("The purple chest was an Amethyst Mimic ✨!");
+      await sleep(420);
+      ui.chestLayer.classList.add("hidden");
+      actionLocked=false;
+      startEnemy("mimic",{forceShiny:true});
+      return;
+    }
+    pendingChest={kind:"hidden-treasure",hiddenTreasure:true,revealMimic:false};
+    ui.chestCaption.textContent="Hidden Treasure! JACKPOT!";
+    setMessage("Hidden Treasure! You found a huge jackpot!");
+  } else if(pendingChest.revealMimic) {
     ui.chestSprite.src="assets/items/chests/treasure/open.webp";
     await sleep(140);
     ui.chestLayer.classList.add("hidden");
     actionLocked=false;
     startEnemy("mimic");
     return;
+  } else {
+    ui.chestSprite.src="assets/items/chests/treasure/open.webp";
   }
 
-  ui.chestSprite.src="assets/items/chests/treasure/open.webp";
   const rewards=generateRewards(pendingChest);
   applyRewards(rewards);
 
@@ -2678,22 +2915,40 @@ async function openPendingChest() {
   if(rewards.unlockedBackgrounds?.length) textParts.push(rewards.unlockedBackgrounds.map(bg=>`${bg.label} Icon`).join(", "));
   if(rewards.items.length) textParts.push(rewards.items.map(x=>`${x.name} ×${x.qty}`).join(", "));
 
-  ui.chestCaption.textContent=textParts.join(" · ");
+  ui.chestCaption.textContent=pendingChest.hiddenTreasure
+    ? `JACKPOT! · ${textParts.join(" · ")}`
+    : textParts.join(" · ");
   ui.openChest.classList.add("hidden");
-  setMessage("Treasure collected!");
+  if(!pendingChest.hiddenTreasure) setMessage("Treasure collected!");
 
   // Fully recover between encounters so every new fight begins at max HP.
   currentRun.hp=currentRun.maxHp;
   renderPeepHp();
+  markEndlessFloorComplete();
 
   await sleep(350);
-  ui.continueButton.classList.remove("hidden");
+  ui.continueButton.textContent=currentRun?.mode==="endless"?"Next Floor":"Continue";
+  ui.postFloorActions?.classList.remove("hidden");
+  ui.leaveEndlessButton?.classList.toggle("hidden",currentRun?.mode!=="endless");
   actionLocked=false;
 }
 
 function generateRewards(chest) {
   const rank=currentRun.rank;
   let coins=0, exp=0, itemRolls=0, itemChance=0;
+  const items=[];
+
+  if(chest.kind==="hidden-treasure") {
+    coins=randInt(300,500);
+    exp=randInt(180,300);
+    // The jackpot always includes a basic Buddy Pon, strongly favors a Super,
+    // can include a Boss Pon, and rolls three extra rare-leaning items.
+    addRewardItem(items,REWARD_ITEMS.find(x=>x.id==="buddy-pon"),1);
+    if(Math.random()<.70) addRewardItem(items,REWARD_ITEMS.find(x=>x.id==="super-buddy-pon"),1);
+    if(Math.random()<.30) addRewardItem(items,REWARD_ITEMS.find(x=>x.id==="boss-buddy-pon"),1);
+    for(let i=0;i<3;i++) addRewardItem(items,jackpotItem(),1);
+    return {coins,exp,items,iconBackground:pickChestIconBackground({kind:"rare"})};
+  }
 
   if(chest.kind==="rare") {
     coins=randInt(28,45)+rank*2;
@@ -2718,21 +2973,13 @@ function generateRewards(chest) {
     itemChance=1;
   }
 
-  const items=[];
   for(let i=0;i<itemRolls;i++) {
     if(Math.random()<=itemChance) {
       let item=weightedItem();
-
-      // Bosses are meant to award two item drops, not one stack of ×2.
       if(chest.kind==="boss" && items.some(x=>x.id===item.id)) {
-        for(let retry=0; retry<5 && items.some(x=>x.id===item.id); retry++) {
-          item=weightedItem();
-        }
+        for(let retry=0; retry<5 && items.some(x=>x.id===item.id); retry++) item=weightedItem();
       }
-
-      const existing=items.find(x=>x.id===item.id);
-      if(existing) existing.qty++;
-      else items.push({...item,qty:1});
+      addRewardItem(items,item,1);
     }
   }
 
@@ -2807,7 +3054,21 @@ function grantExp(amount) {
 
 function nextEncounter() {
   ui.chestLayer.classList.add("hidden");
-  ui.continueButton.classList.add("hidden");
+  ui.postFloorActions?.classList.add("hidden");
+  if(currentRun?.mode==="endless"){
+    const nextFloor=endlessProgress().checkpoint;
+    currentRun.floor=Math.max(1,nextFloor);
+    currentRun.rank=endlessEffectiveRank(currentRun.floor);
+    const nextZone=Math.floor((currentRun.floor-1)/5);
+    if(nextZone!==currentRun.zone){
+      currentRun.zone=nextZone;
+      currentRun.zoneBackground=chooseEndlessBackground(currentRun.zoneBackground);
+    }
+    currentRun.endlessEncounter=makeEndlessEncounter(currentRun.floor);
+    startEncounter();
+    return;
+  }
+
   currentRun.index++;
   if(currentRun.index>=4) {
     endRun(true);
@@ -2816,8 +3077,25 @@ function nextEncounter() {
   startEncounter();
 }
 
+function leaveEndlessAfterFloor(){
+  if(currentRun?.mode!=="endless") return;
+  endlessExitReason="paused";
+  endRun(false);
+}
+
 function endRun(won) {
   clearAnimations();
+  if(currentRun?.mode==="endless"){
+    if(!endlessExitReason) endlessExitReason="defeated";
+    // The checkpoint is updated only when a floor is completed. If the hero
+    // falls or leaves mid-floor, the same floor is waiting next time.
+    persistAll();
+    renderMeta();
+    renderResult(false);
+    showScreen("result");
+    return;
+  }
+
   if(won){
     currentRun.bossWon=true; questSave.completedRuns=(Number(questSave.completedRuns)||0)+1; questSave.bossWins=(Number(questSave.bossWins)||0)+1;
     if(!hubSave.characterProgress[activeCharacterId]) hubSave.characterProgress[activeCharacterId]={happinessTotal:0};
@@ -2829,24 +3107,57 @@ function endRun(won) {
 }
 
 function renderResult(won) {
-  const areaId=currentRun?.area||selectedArea; const cfg=getAreaConfig(areaId); const progress=areaProgress(areaId);
-  ui.resultKicker.textContent=won?"RUN COMPLETE!":"RUN ENDED";
-  ui.resultTitle.textContent=won?cfg.resultTitle:`${heroDisplayName()} needs a little rest.`;
-  const finishedRank=Math.max(1,Number(currentRun?.rank||selectedRank)||1);
-  const nextRank=Math.min(cfg.maxRank,finishedRank+1);
-  const canRunNext=Boolean(won)&&nextRank>finishedRank&&nextRank<=progress.unlockedRank;
-  ui.runNextRank.classList.toggle("hidden",!won);ui.runNextRank.disabled=Boolean(won)&&!canRunNext;
-  ui.runNextRank.textContent=canRunNext?`Run ${cfg.name} Rank ${nextRank}`:"Max Rank Reached";
-  ui.runNextRank.dataset.rank=canRunNext?String(nextRank):"";ui.runNextRank.dataset.area=areaId;
-  ui.resultRank.textContent=`${cfg.name} ${finishedRank}`;ui.resultCoins.textContent=currentRun?.coinsEarned||0;ui.resultExp.textContent=currentRun?.expEarned||0;ui.resultItems.innerHTML="";
-  (currentRun?.itemsEarned||[]).forEach(item=>{const el=document.createElement("div");el.className="result-item";el.innerHTML=`<img src="${item.image}" alt=""><span>${item.name} ×${item.qty}</span>`;ui.resultItems.appendChild(el);});
+  const isEndless=currentRun?.mode==="endless";
+
+  if(isEndless){
+    const progress=endlessProgress();
+    const paused=endlessExitReason==="paused";
+    ui.resultKicker.textContent=paused?"ENDLESS RUN PAUSED!":"ENDLESS RUN ENDED";
+    ui.resultTitle.textContent=paused
+      ? `Checkpoint saved at Floor ${progress.checkpoint}!`
+      : `${heroDisplayName()} made it to Floor ${Math.max(1,currentRun.floor)}!`;
+    if(ui.resultProgressLabel) ui.resultProgressLabel.textContent="Record";
+    ui.resultRank.textContent=`Floor ${progress.record}`;
+    ui.runNextRank.classList.add("hidden");
+    ui.runNextRank.disabled=true;
+    const runAgain=document.querySelector("#runAgain");
+    if(runAgain) runAgain.textContent=`Continue Floor ${progress.checkpoint}`;
+  } else {
+    const areaId=currentRun?.area||selectedArea; const cfg=getAreaConfig(areaId); const progress=areaProgress(areaId);
+    ui.resultKicker.textContent=won?"RUN COMPLETE!":"RUN ENDED";
+    ui.resultTitle.textContent=won?cfg.resultTitle:`${heroDisplayName()} needs a little rest.`;
+    const finishedRank=Math.max(1,Number(currentRun?.rank||selectedRank)||1);
+    const nextRank=Math.min(cfg.maxRank,finishedRank+1);
+    const canRunNext=Boolean(won)&&nextRank>finishedRank&&nextRank<=progress.unlockedRank;
+    ui.runNextRank.classList.toggle("hidden",!won);
+    ui.runNextRank.disabled=Boolean(won)&&!canRunNext;
+    ui.runNextRank.textContent=canRunNext?`Run ${cfg.name} Rank ${nextRank}`:"Max Rank Reached";
+    ui.runNextRank.dataset.rank=canRunNext?String(nextRank):"";
+    ui.runNextRank.dataset.area=areaId;
+    if(ui.resultProgressLabel) ui.resultProgressLabel.textContent="Rank";
+    ui.resultRank.textContent=`${cfg.name} ${finishedRank}`;
+    const runAgain=document.querySelector("#runAgain");
+    if(runAgain) runAgain.textContent="Run Again";
+  }
+
+  ui.resultCoins.textContent=currentRun?.coinsEarned||0;
+  ui.resultExp.textContent=currentRun?.expEarned||0;
+  ui.resultItems.innerHTML="";
+  (currentRun?.itemsEarned||[]).forEach(item=>{
+    const el=document.createElement("div");
+    el.className="result-item";
+    el.innerHTML=`<img src="${item.image}" alt=""><span>${item.name} ×${item.qty}</span>`;
+    ui.resultItems.appendChild(el);
+  });
   (currentRun?.iconBackgroundsEarned||[]).forEach(bg=>{
     const el=document.createElement("div");el.className="result-item";
     const swatch=document.createElement("span");swatch.className="result-icon-bg-swatch";applyIconBackgroundStyle(swatch,bg);
     const label=document.createElement("span");label.textContent=`${bg.label} Icon Background`;
     el.append(swatch,label);ui.resultItems.appendChild(el);
   });
-  if(!(currentRun?.itemsEarned||[]).length && !(currentRun?.iconBackgroundsEarned||[]).length){const el=document.createElement("div");el.className="result-item";el.textContent="No item drops this time — try another run!";ui.resultItems.appendChild(el);}
+  if(!(currentRun?.itemsEarned||[]).length && !(currentRun?.iconBackgroundsEarned||[]).length){
+    const el=document.createElement("div");el.className="result-item";el.textContent="No item drops this time — try another run!";ui.resultItems.appendChild(el);
+  }
   const levels=[...new Set(currentRun?.levelsGained||[])];
   if(levels.length){
     ui.levelUpNotice.classList.remove("hidden");
@@ -2932,6 +3243,17 @@ ui.areaButtons.forEach(btn=>btn.addEventListener("click",()=>{
   selectedArea=areaId;activeHeroProgress().lastArea=areaId;selectedRank=areaProgress(areaId).lastRank||1;persistAll();renderMeta();
 }));
 document.querySelector("#startRun").addEventListener("click",beginRun);
+ui.continueEndless?.addEventListener("click",()=>beginEndlessRun(endlessProgress().checkpoint));
+ui.startNewEndless?.addEventListener("click",()=>{
+  const progress=endlessProgress();
+  if(progress.checkpoint>1){
+    const okay=window.confirm(`Start a new Endless Run from Floor 1?\n\nYour current Floor ${progress.checkpoint} checkpoint will reset, but your Floor ${progress.record} record will NOT be erased.`);
+    if(!okay) return;
+  }
+  progress.checkpoint=1;
+  persistAll();
+  beginEndlessRun(1);
+});
 ui.quickHealButton?.addEventListener("click",quickHealTurn);
 ui.attackMenuButton.addEventListener("click",()=>openCommandWindow("attack"));
 ui.itemMenuButton.addEventListener("click",()=>openCommandWindow("item"));
@@ -2943,7 +3265,11 @@ ui.escapeButton.addEventListener("click",()=>{
 document.querySelector("#openChest").addEventListener("click",openPendingChest);
 ui.skipBefriend?.addEventListener("click",finishBefriendStep);
 document.querySelector("#continueButton").addEventListener("click",nextEncounter);
-document.querySelector("#runAgain").addEventListener("click",()=>{selectedArea=currentRun?.area||selectedArea;selectedRank=currentRun?.rank||selectedRank;beginRun();});
+ui.leaveEndlessButton?.addEventListener("click",leaveEndlessAfterFloor);
+document.querySelector("#runAgain").addEventListener("click",()=>{
+  if(currentRun?.mode==="endless"){ beginEndlessRun(endlessProgress().checkpoint); return; }
+  selectedArea=currentRun?.area||selectedArea;selectedRank=currentRun?.rank||selectedRank;beginRun();
+});
 document.querySelector("#backToQuest").addEventListener("click",returnHome);
 ui.cancelEscapeConfirm.addEventListener("click",closeEscapeConfirm);
 ui.confirmEscapeButton.addEventListener("click",confirmEscapeRun);
