@@ -7,9 +7,9 @@
   <meta name="theme-color" content="#f7dbe5" />
   <title>Duck Habit Hub</title>
   <!-- v24.41 performance update -->
-  <link rel="stylesheet" href="style-v24-83.css" />
+  <link rel="stylesheet" href="style-v24-84.css" />
 
-  <link rel="manifest" href="manifest.webmanifest?v=24-38-icon-v4">
+  <link rel="manifest" href="manifest.webmanifest?v=24-84">
   <link rel="apple-touch-icon" href="apple-touch-icon-v4.png">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32-v4.png">
   <meta name="theme-color" content="#ef9fbd">
@@ -1061,14 +1061,69 @@
       </section>
     </section>
   </main>
-  <script src="script-v24-83.js"></script>
+  <script src="script-v24-84.js"></script>
 
   <script>
+    // v24.84: use a stable service-worker URL and actively check the deployed
+    // build when the installed PWA is opened/resumed. This prevents Android
+    // from keeping an already-open standalone app on an older app shell.
+    const DUCK_HUB_BUILD = "24.84";
+    let duckHubReloadingForUpdate = false;
+
+    function duckHubReloadFresh(version) {
+      if (duckHubReloadingForUpdate) return;
+      const marker = `duck-hub-update-${version}`;
+      if (sessionStorage.getItem("duckHubUpdateReload") === marker) return;
+      duckHubReloadingForUpdate = true;
+      sessionStorage.setItem("duckHubUpdateReload", marker);
+      const target = new URL("./", location.href);
+      target.searchParams.set("appUpdate", version);
+      target.searchParams.set("fresh", Date.now());
+      location.replace(target.href);
+    }
+
+    async function duckHubCheckForUpdate(registration) {
+      try {
+        const response = await fetch(`./version.json?ts=${Date.now()}`, { cache: "no-store" });
+        if (!response.ok) return;
+        const info = await response.json();
+        const latest = String(info.version || "").trim();
+        if (!latest || latest === DUCK_HUB_BUILD) {
+          sessionStorage.removeItem("duckHubUpdateReload");
+          return;
+        }
+        if (registration) {
+          await registration.update();
+          if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
+        }
+        duckHubReloadFresh(latest);
+      } catch (error) {
+        // Offline is fine; the current cached build remains playable.
+      }
+    }
+
     if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw-v24-83.js", { updateViaCache: "none" }).catch(error => {
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if (!duckHubReloadingForUpdate) {
+          duckHubReloadingForUpdate = true;
+          location.reload();
+        }
+      });
+
+      window.addEventListener("load", async () => {
+        try {
+          const registration = await navigator.serviceWorker.register("./sw.js", { updateViaCache: "none" });
+          await registration.update();
+          if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
+          await duckHubCheckForUpdate(registration);
+
+          document.addEventListener("visibilitychange", () => {
+            if (!document.hidden) duckHubCheckForUpdate(registration);
+          });
+          window.addEventListener("pageshow", () => duckHubCheckForUpdate(registration));
+        } catch (error) {
           console.warn("Duck Habit Hub offline setup could not start:", error);
-        });
+        }
       });
     }
   </script>

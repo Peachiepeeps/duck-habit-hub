@@ -60,7 +60,7 @@
 <body>
   <main class="card">
     <h1>Duck Habit Hub Cache Reset ♡</h1>
-    <p>This refreshes the app files so the newest Hub and Duck Quest can load.</p>
+    <p>This refreshes the website and installed app files so the newest Hub and Duck Quest can load.</p>
     <div class="safe">
       Your game save is safe. This page does NOT clear localStorage, IndexedDB, or your Duck Habit Hub save.
     </div>
@@ -112,7 +112,7 @@ btn.addEventListener("click", async () => {
       );
     }
 
-    statusEl.textContent = "Done! Reloading the newest Hub…";
+    statusEl.textContent = "Done! Reloading the newest Hub… If the installed app was already open, close it from Recents once before reopening.";
 
     // Important: we intentionally do NOT touch localStorage.
     setTimeout(() => {
