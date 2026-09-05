@@ -1,0 +1,130 @@
+name: Install Duck Habit Hub v24.85 Icon Background Expansion
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "Duck-Habit-Hub-v24-85-Icon-Backgrounds-UPDATE-ONLY.zip"
+      - "*v24-85*Icon*Background*UPDATE*ONLY*.zip"
+
+permissions:
+  contents: write
+
+jobs:
+  install-update:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+
+      - name: Locate update package
+        id: locate
+        shell: bash
+        run: |
+          set -euo pipefail
+          EXPECTED="Duck-Habit-Hub-v24-85-Icon-Backgrounds-UPDATE-ONLY.zip"
+          ZIP=""
+
+          if [ -f "$EXPECTED" ]; then
+            ZIP="$EXPECTED"
+          else
+            ZIP="$(find . -maxdepth 1 -type f \( -iname '*v24-85*icon*background*update*only*.zip' -o -iname '*v24.85*icon*background*update*only*.zip' \) -printf '%f\n' | head -n 1 || true)"
+          fi
+
+          if [ -z "$ZIP" ]; then
+            if [ -f "version.json" ] && grep -Fq '"version": "24.85"' version.json \
+               && [ -f "script-v24-85.js" ] \
+               && [ -f "duck-quest/js/game-v39.js" ]; then
+              echo "v24.85 already appears to be installed. Nothing else is needed."
+              echo "already_installed=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+
+            echo "::error::The v24.85 UPDATE-ONLY ZIP is not in the repository root."
+            echo "Upload this file beside index.html: $EXPECTED"
+            exit 1
+          fi
+
+          echo "Found update package: $ZIP"
+          echo "zip=$ZIP" >> "$GITHUB_OUTPUT"
+          echo "already_installed=false" >> "$GITHUB_OUTPUT"
+
+      - name: Verify update package
+        if: steps.locate.outputs.already_installed != 'true'
+        shell: bash
+        env:
+          ZIP: ${{ steps.locate.outputs.zip }}
+        run: |
+          set -euo pipefail
+          unzip -t "$ZIP"
+          LISTING="$(unzip -Z1 "$ZIP")"
+          for REQUIRED in \
+            "duckhub_update_v24_85/index.html" \
+            "duckhub_update_v24_85/script-v24-85.js" \
+            "duckhub_update_v24_85/sw.js" \
+            "duckhub_update_v24_85/sw-v24-85.js" \
+            "duckhub_update_v24_85/version.json" \
+            "duckhub_update_v24_85/duck-quest/index.html" \
+            "duckhub_update_v24_85/duck-quest/js/game-v39.js"; do
+            grep -Fqx "$REQUIRED" <<<"$LISTING" || { echo "::error::Update ZIP is missing $REQUIRED"; exit 1; }
+          done
+
+      - name: Install v24.85 update
+        if: steps.locate.outputs.already_installed != 'true'
+        shell: bash
+        env:
+          ZIP: ${{ steps.locate.outputs.zip }}
+        run: |
+          set -euo pipefail
+          TMP=".duckhub-v24-85-update"
+          SRC="$TMP/duckhub_update_v24_85"
+          rm -rf "$TMP"
+          mkdir -p "$TMP"
+          unzip -q "$ZIP" -d "$TMP"
+
+          mkdir -p duck-quest/js
+          cp -f "$SRC/index.html" ./index.html
+          cp -f "$SRC/script-v24-85.js" ./script-v24-85.js
+          cp -f "$SRC/sw.js" ./sw.js
+          cp -f "$SRC/sw-v24-85.js" ./sw-v24-85.js
+          cp -f "$SRC/version.json" ./version.json
+          cp -f "$SRC/README-v24-85.txt" ./README-v24-85.txt
+          cp -f "$SRC/README.md" ./README.md
+          cp -f "$SRC/duck-quest/index.html" ./duck-quest/index.html
+          cp -f "$SRC/duck-quest/js/game-v39.js" ./duck-quest/js/game-v39.js
+
+          grep -Fq 'script-v24-85.js' index.html
+          grep -Fq 'DUCK_HUB_BUILD = "24.85"' index.html
+          grep -Fq 'js/game-v39.js' duck-quest/index.html
+          grep -Fq 'lemon-cream-dots' script-v24-85.js
+          grep -Fq 'midnight-hearts' script-v24-85.js
+          grep -Fq 'lemon-cream-dots' duck-quest/js/game-v39.js
+          grep -Fq 'alreadyDiscovered' duck-quest/js/game-v39.js
+          grep -Fq '"version": "24.85"' version.json
+          node --check script-v24-85.js
+          node --check duck-quest/js/game-v39.js
+          node --check sw.js
+
+          rm -rf "$TMP"
+          rm -f "$ZIP"
+
+      - name: Commit installed update
+        if: steps.locate.outputs.already_installed != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "Nothing new to commit. v24.85 is already current."
+            exit 0
+          fi
+
+          git commit -m "Install Duck Habit Hub v24.85 icon background expansion"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
