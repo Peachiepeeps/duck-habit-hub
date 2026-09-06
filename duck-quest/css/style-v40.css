@@ -2362,3 +2362,37 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
   .command-overlay[data-kind="attack"] .skill-button strong{font-size:.64rem}
   .command-overlay[data-kind="attack"] .skill-button span{font-size:.49rem}
 }
+
+
+/* =========================================================
+   V40 / Hub v24.97 — Eight comfortable Attack slots
+   ========================================================= */
+.command-overlay[data-kind="attack"]{
+  bottom:-208px;
+  min-height:365px;
+  overflow:visible;
+}
+.command-overlay[data-kind="attack"] .skill-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-rows:repeat(4,minmax(0,1fr));
+  gap:8px;
+  align-content:stretch;
+}
+.command-overlay[data-kind="attack"] .skill-button{
+  min-height:76px;
+  padding:7px 9px;
+}
+@media(max-width:600px){
+  .command-overlay[data-kind="attack"]{
+    bottom:-228px;
+    min-height:386px;
+    padding:6px;
+  }
+  .command-overlay[data-kind="attack"] .skill-grid{gap:6px}
+  .command-overlay[data-kind="attack"] .skill-button{
+    min-height:72px;
+    padding:6px 7px;
+  }
+  .command-overlay[data-kind="attack"] .skill-button strong{font-size:.66rem}
+  .command-overlay[data-kind="attack"] .skill-button span{font-size:.50rem;line-height:1.28}
+}

@@ -1,7 +1,10 @@
-Duck Habit Hub v24.96 — Emergency CSS Layering Repair
+Duck Habit Hub v24.97 — Wallpaper Shop + 8 Attacks + Shelf Polish
 
-Fixes:
-- Re-ships the complete main stylesheet under a new filename.
-- Restores room/character/furniture/UI absolute positioning and layering.
-- Keeps v24.95 OC wallpapers and taller Duck Quest attack menu.
-- Bumps the service-worker app shell so installed/mobile versions fetch the repaired CSS.
+Changes:
+- Fixes every wallpaper shop card opening Pink Gingham.
+- Adds Activate Zoomies!, Thoughts of Lovers!, and Magic Hangover!.
+- Attack menu supports 8 slots in 4 rows and sorts moves Attack → Status → Healing.
+- Shelf 6 is now usable by ducks.
+- Lower Six-Shelf ducks sit more naturally.
+- Book moves to the bottom-right when a Six-Shelf is equipped.
+- Mirror is nudged upward with its hotspot.

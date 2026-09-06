@@ -1,4 +1,4 @@
-// Hub v24.95 — extra OC-matching wallpapers + room/shop polish
+// Hub v24.97 — wallpaper shop fix + shelf/book/mirror polish
 const STORAGE_KEY = "duckHabitHubSave_v1";
 const SAVE_VERSION = 36;
 
@@ -6217,8 +6217,8 @@ const SHELF_DUCK_PERCHES = Object.freeze([
   { left: 11.7, top: 27.2, width: 11.5 },
   { left: 11.7, top: 39.4, width: 11.5 },
   { left: 11.7, top: 51.5, width: 11.5 },
-  { left: 11.7, top: 63.6, width: 11.5 },
-  { left: 11.7, top: 75.7, width: 11.5 },
+  { left: 11.7, top: 64.7, width: 11.5 },
+  { left: 11.7, top: 76.6, width: 11.5 },
   { left: 11.7, top: 87.8, width: 11.5 }
 ]);
 
@@ -6294,11 +6294,8 @@ function reserveBookFurniturePerches(roomId = save.room) {
   const displays = ensureFurnitureDuckDisplays(roomId);
   let changed = false;
 
-  if (leftType === "shelf" && displays.shelf?.["6"]) {
-    delete displays.shelf["6"];
-    changed = true;
-  }
-
+  // v24.97: the Book moves to the bottom-right when a Six-Shelf is used,
+  // so Shelf 6 is now a normal duck perch instead of being reserved.
   if (leftType === "dresser" && displays.dresser) {
     displays.dresser = null;
     changed = true;
@@ -6487,7 +6484,7 @@ function renderFurnitureDuckPlacements() {
   const displays = getFurnitureDuckDisplays(save.room);
 
   if (leftType === "shelf" && roomFurniture.left) {
-    SHELF_DUCK_PERCHES.slice(0, 5).forEach((placement, index) => {
+    SHELF_DUCK_PERCHES.slice(0, 6).forEach((placement, index) => {
       const duckId = displays.shelf[String(index + 1)];
       appendFurnitureDuck(duckId, placement, "shelf-perched-duck");
     });
@@ -6629,7 +6626,7 @@ function assignSelectedDuckToCurrentRoomFloor() {
 function assignSelectedDuckToShelf(slotNumber) {
   const duckId = validDisplayDuckId(selectedDuckId);
   const slot = String(Number(slotNumber));
-  if (!duckId || !["1", "2", "3", "4", "5"].includes(slot)) return;
+  if (!duckId || !["1", "2", "3", "4", "5", "6"].includes(slot)) return;
   if (currentLeftFurnitureType(save.room) !== "shelf") return;
 
   const roomDisplays = ensureFurnitureDuckDisplays(save.room);
@@ -6698,17 +6695,11 @@ function renderShelfDuckPicker(selectedDuckId) {
 
     const detail = document.createElement("span");
 
-    if (slot === 6) {
-      detail.textContent = "📖 Book";
-      button.disabled = true;
-      button.classList.add("reserved");
-    } else {
-      detail.textContent = current
-        ? `${duckDisplayName(current)}${current === selectedDuckId ? " ✓" : ""}`
-        : "Empty";
-      button.classList.toggle("active", current === selectedDuckId);
-      button.addEventListener("click", () => assignSelectedDuckToShelf(slot));
-    }
+    detail.textContent = current
+      ? `${duckDisplayName(current)}${current === selectedDuckId ? " ✓" : ""}`
+      : "Empty";
+    button.classList.toggle("active", current === selectedDuckId);
+    button.addEventListener("click", () => assignSelectedDuckToShelf(slot));
 
     button.append(label, detail);
     duckShelfPicker.append(button);
@@ -8702,10 +8693,12 @@ function renderWardrobeShopArtwork(container, wardrobeId, large = false) {
 }
 
 function shopListingKey(listing) {
-  if (listing?.roomId) return listing.roomId;
+  if (listing?.roomId) return `room:${listing.roomId}`;
+  if (listing?.wallpaperId) return `wallpaper:${listing.wallpaperId}`;
   if (listing?.characterId) return `character:${listing.characterId}`;
   if (listing?.wardrobeId) return `wardrobe:${listing.wardrobeId}`;
-  return listing?.itemId || null;
+  if (listing?.itemId) return `item:${listing.itemId}`;
+  return null;
 }
 
 function duckRecipesUsingItem(itemId) {

@@ -1,4 +1,4 @@
-// Duck Quest game-v43 — Wallpaper chest rewards for Hub rooms
+// Duck Quest game-v44 — 8-slot typed attacks + new OC status moves
 const HUB_SAVE_KEY = "duckHabitHubSave_v1";
 const MAX_LEVEL = 100;
 const AREA_CONFIG = Object.freeze({
@@ -182,6 +182,16 @@ const PEEP_SKILLS = [
     description: "Peep has had enough."
   },
   {
+    id: "activate-zoomies",
+    name: "Activate Zoomies!",
+    unlock: 50,
+    type: "buff",
+    attackBoost: 0.50,
+    duration: 3,
+    sprite: "assets/characters/peep/base/final-move.webp",
+    description: "Peep gets the zoomies! Raise Attack by 50% for 3 turns."
+  },
+  {
     id: "just-a-smack",
     name: "Just a smack!",
     unlock: 1,
@@ -242,6 +252,17 @@ const MIKO_SKILLS = [
     description: "Four quick shots for 1.50× total damage."
   },
   {
+    id: "thoughts-of-lovers",
+    name: "Thoughts of Lovers!",
+    unlock: 50,
+    type: "full-heal-buff",
+    attackBoost: 0.50,
+    duration: 4,
+    oncePerBattle: true,
+    sprite: "assets/characters/miko/base/smug.webp",
+    description: "Fully heal Miko and raise Attack by 50% for 4 turns. Once per battle."
+  },
+  {
     id: "just-a-smack",
     name: "Just a smack!",
     unlock: 1,
@@ -278,6 +299,12 @@ const IO_SKILLS = [
     description:"Fully restore Io's HP. Can be used twice per battle."
   },
   {
+    id:"magic-hangover", name:"Magic Hangover!", unlock:50, type:"self-damage-buff",
+    selfDamage:10, attackBoost:0.50, duration:4,
+    sprite:"assets/characters/io/base/magic-juice.webp",
+    description:"Lose up to 10 HP, but raise Io's Attack by 50% for 4 turns. Cannot knock Io out."
+  },
+  {
     id:"just-a-smack", name:"Just a smack!", unlock:1, type:"safe-chip",
     sprite:"assets/characters/io/base/heart-ray.webp",
     description:"Deals normal basic-attack damage, but can never knock an enemy below 1 HP. Perfect for catching!"
@@ -288,6 +315,25 @@ function activeSkills(){
   if(activeCharacterId === "miko") return MIKO_SKILLS;
   if(activeCharacterId === "io") return IO_SKILLS;
   return PEEP_SKILLS;
+}
+
+function skillTypeGroup(skill){
+  if(!skill) return 9;
+  if(["damage","multi-hit","safe-chip"].includes(skill.type)) return 0;
+  if(["buff","full-heal-buff","self-damage-buff"].includes(skill.type)) return 1;
+  if(["heal","full-heal"].includes(skill.type)) return 2;
+  return 1;
+}
+
+function sortedActiveSkills(){
+  return activeSkills()
+    .map((skill,index)=>({skill,index}))
+    .sort((a,b)=>skillTypeGroup(a.skill)-skillTypeGroup(b.skill) || a.index-b.index)
+    .map(entry=>entry.skill);
+}
+
+function isStatusSkill(skill){
+  return Boolean(skill && ["buff","full-heal-buff","self-damage-buff"].includes(skill.type));
 }
 
 const ENEMIES = {
@@ -1700,7 +1746,7 @@ function warmCurrentBattleAssets(enemy=null){
   const sources=new Set();
   heroIdleFrames().forEach(src=>sources.add(src));
   sources.add(heroHurtFrame());
-  try{ activeSkills().forEach(skill=>{ if(skill?.sprite) sources.add(skill.sprite); }); }catch(error){}
+  try{ sortedActiveSkills().forEach(skill=>{ if(skill?.sprite) sources.add(skill.sprite); }); }catch(error){}
   if(enemy){
     (enemy.idle||[]).forEach(src=>sources.add(src));
     if(enemy.hurt) sources.add(enemy.hurt);
@@ -2556,7 +2602,7 @@ function rankDescription(rank,areaId=selectedArea) {
 
 function renderMenuSkills() {
   ui.menuSkills.innerHTML="";
-  activeSkills().forEach(skill=>{
+  sortedActiveSkills().forEach(skill=>{
     const el=document.createElement("div");
     const unlocked=activeHeroProgress().level>=skill.unlock;
     el.className=`skill-summary${unlocked?"":" locked"}`;
@@ -3159,7 +3205,7 @@ function clearAnimations() {
 function renderSkills() {
   ui.skillButtons.innerHTML="";
 
-  activeSkills()
+  sortedActiveSkills()
     .filter(skill => activeHeroProgress().level >= skill.unlock)
     .forEach(skill=>{
       const button=document.createElement("button");
@@ -3174,7 +3220,7 @@ function renderSkills() {
       } else if(skill.oncePerBattle && skillState.onceUsed?.[skill.id]) {
         unavailable=true;
         detail="Already used this battle.";
-      } else if(skill.type==="buff" && skillState.attackBuffTurns>0) {
+      } else if(isStatusSkill(skill) && skill.type!=="full-heal-buff" && skillState.attackBuffTurns>0) {
         unavailable=true;
         const boost=Math.round((skill.attackBoost||0.30)*100);
         detail=`Attack +${boost}% active · ${skillState.attackBuffTurns} turn${skillState.attackBuffTurns===1?"":"s"}`;
@@ -3190,7 +3236,7 @@ function renderSkills() {
         detail=until===1?"Next Heart Ray is boosted!":`Boost in ${until} uses`;
       }
 
-      button.className=`pixel-button skill-button ${(skill.type==="heal"||skill.type==="full-heal")?"heal":skill.type==="buff"?"buff":skill.id==="duck-throw"?"duck":skill.oncePerBattle?"ultimate":""}`;
+      button.className=`pixel-button skill-button ${(skill.type==="heal"||skill.type==="full-heal")?"heal":isStatusSkill(skill)?"buff":skill.id==="duck-throw"?"duck":skill.oncePerBattle?"ultimate":""}`;
       button.disabled=unavailable || actionLocked;
       button.innerHTML=`<strong>${skillDisplayName(skill)}</strong><span${detail.startsWith("Cooldown")?' class="cooldown"':""}>${detail}</span>`;
 
@@ -3461,6 +3507,36 @@ async function useSkill(skill) {
     showFloat(`+${healed}`,"heal","peep");
     renderPeepHp();
     await sleep(700);
+  } else if(skill.type==="full-heal-buff") {
+    if(skill.oncePerBattle && skillState.onceUsed?.[skill.id]){
+      setMessage(`${skillDisplayName(skill)} has already been used this battle!`);
+      actionLocked=false; renderSkills(); renderCommandButtons(); return;
+    }
+    const before=currentRun.hp;
+    currentRun.hp=currentRun.maxHp;
+    const healed=Math.max(0,currentRun.hp-before);
+    skillState.attackBuffTurns=skill.duration||4;
+    skillState.attackBuffMultiplier=1+(skill.attackBoost||0.50);
+    skillState.activeBuffSkillId=skill.id;
+    if(skill.oncePerBattle) skillState.onceUsed[skill.id]=true;
+    const boost=Math.round((skill.attackBoost||0.50)*100);
+    setMessage(`${skillDisplayName(skill)}! ${heroDisplayName()} restored ${healed} HP and Attack rose by ${boost}% for ${skillState.attackBuffTurns} turns.`);
+    if(healed>0) showFloat(`+${healed}`,"heal","peep");
+    renderPeepHp();
+    await sleep(760);
+  } else if(skill.type==="self-damage-buff") {
+    const requested=Math.max(0,Number(skill.selfDamage)||10);
+    const before=currentRun.hp;
+    currentRun.hp=Math.max(1,currentRun.hp-requested);
+    const lost=Math.max(0,before-currentRun.hp);
+    skillState.attackBuffTurns=skill.duration||4;
+    skillState.attackBuffMultiplier=1+(skill.attackBoost||0.50);
+    skillState.activeBuffSkillId=skill.id;
+    const boost=Math.round((skill.attackBoost||0.50)*100);
+    setMessage(`${skillDisplayName(skill)}! ${heroDisplayName()} loses ${lost} HP, but Attack rises by ${boost}% for ${skillState.attackBuffTurns} turns.`);
+    if(lost>0) showFloat(`-${lost}`,"damage","peep");
+    renderPeepHp();
+    await sleep(760);
   } else if(skill.type==="buff") {
     skillState.attackBuffTurns=skill.duration||3;
     skillState.attackBuffMultiplier=1+(skill.attackBoost||0.30);

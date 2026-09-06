@@ -1,5 +1,5 @@
 {
-  "version": "24.96",
+  "version": "24.97",
   "updated": "2026-09-06",
-  "note": "Emergency main CSS repair: re-shipped the full stylesheet under a fresh filename so room, character, furniture, and UI layers render correctly again."
+  "note": "Fixed wallpaper shop selection, added eighth typed OC battle moves, freed Shelf 6 for ducks, moved the Book bottom-right, and raised the mirror slightly."
 }
