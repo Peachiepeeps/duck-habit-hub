@@ -1,4 +1,4 @@
-// Hub v24.97 — wallpaper shop fix + shelf/book/mirror polish
+// Hub v24.98 — shelf/background final positioning polish
 const STORAGE_KEY = "duckHabitHubSave_v1";
 const SAVE_VERSION = 36;
 
@@ -6214,12 +6214,12 @@ const EMPTY_ROOM_FURNITURE = Object.freeze({
 });
 
 const SHELF_DUCK_PERCHES = Object.freeze([
-  { left: 11.7, top: 27.2, width: 11.5 },
-  { left: 11.7, top: 39.4, width: 11.5 },
-  { left: 11.7, top: 51.5, width: 11.5 },
-  { left: 11.7, top: 64.7, width: 11.5 },
-  { left: 11.7, top: 76.6, width: 11.5 },
-  { left: 11.7, top: 87.8, width: 11.5 }
+  { left: 11.7, top: 28.9, width: 11.5 },
+  { left: 11.7, top: 41.1, width: 11.5 },
+  { left: 11.7, top: 53.3, width: 11.5 },
+  { left: 11.7, top: 66.6, width: 11.5 },
+  { left: 11.7, top: 78.5, width: 11.5 },
+  { left: 11.7, top: 89.6, width: 11.5 }
 ]);
 
 const DRESSER_DUCK_PERCH = Object.freeze({
@@ -6294,8 +6294,8 @@ function reserveBookFurniturePerches(roomId = save.room) {
   const displays = ensureFurnitureDuckDisplays(roomId);
   let changed = false;
 
-  // v24.97: the Book moves to the bottom-right when a Six-Shelf is used,
-  // so Shelf 6 is now a normal duck perch instead of being reserved.
+  // v24.98: the Book stays on the floor when a Six-Shelf is used,
+  // so all 6 shelf spots remain available for ducks.
   if (leftType === "dresser" && displays.dresser) {
     displays.dresser = null;
     changed = true;
@@ -6324,6 +6324,7 @@ function renderRoomFurniture() {
 
   const leftType = currentLeftFurnitureType(save.room);
   leftFurnitureDisplay.classList.toggle("dresser-furniture", leftType === "dresser");
+  leftFurnitureDisplay.classList.toggle("shelf-furniture", leftType === "shelf");
 
   renderRoomBookPlacement();
 }
@@ -6757,10 +6758,10 @@ function renderDuckDetailPlacementControls() {
   assignDuckToPetBed.classList.toggle("hidden", !hasPetBed);
 
   if (hasShelf) {
-    const occupied = Object.entries(furnitureDisplays.shelf)
-      .filter(([slot, value]) => slot !== "6" && validDisplayDuckId(value))
+    const occupied = Object.values(furnitureDisplays.shelf)
+      .filter(value => validDisplayDuckId(value))
       .length;
-    assignDuckToShelfNote.textContent = `Choose Shelf 1–5 · Shelf 6 (bottom) holds the Book · ${occupied}/5 filled.`;
+    assignDuckToShelfNote.textContent = `Choose any Shelf 1–6 · ${occupied}/6 filled.`;
     renderShelfDuckPicker(duckId);
   } else {
     duckShelfPicker.classList.add("hidden");

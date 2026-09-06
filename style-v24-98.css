@@ -6959,24 +6959,27 @@ button { color: inherit; }
 
 
 /* =========================================================
-   V24.97 — Six-Shelf seating + Book/Mirror separation
+   V24.98 — Six-Shelf final seating polish
    ========================================================= */
-/* Lower Six-Shelf perch coordinates are adjusted in script-v24-97.js. */
+/* Lower Six-Shelf perch coordinates are adjusted in script-v24-98.js. */
 
-/* When a Six-Shelf is equipped, the Book is no longer stored on Shelf 6.
-   Put it on the bottom-right floor, leaving Shelf 6 open for a duck. */
+/* Lower the six-shelf furniture art just a touch so the ducks sit more naturally. */
+.left-furniture.shelf-furniture{
+  transform:translateY(1.6%);
+}
+
+/* Keep the Book in the lower-right area and move it down with the shelf polish. */
 .book-room-object.on-shelf{
-  transform:translate(70%,-1.2%);
+  transform:translate(70%,1.0%);
 }
 .book-hotspot.on-shelf{
   left:73.2%;
-  top:84.0%;
+  top:86.1%;
   width:20.5%;
   height:11.7%;
 }
 
-/* Nudge the mirror upward and move its tap target with it so the Book and
-   Closet controls have a clean gap between them. */
+/* Keep the mirror slightly raised so it stays separated from the Book hotspot. */
 #roomMirrorImage{
   transform:translateY(-2%);
 }
