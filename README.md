@@ -1,11 +1,7 @@
-Duck Habit Hub v24.88 — Image Performance Pass
-
-Duck Habit Hub v24.87 — Just a smack!
+Duck Habit Hub v24.95 — OC-Matching Wallpapers + Taller Attack Window
 
 Changes:
-- Adds “Just a smack!” to Peep, Miko, and Io from level 1.
-- The move deals exactly 1 HP of damage per use.
-- It can never lower an enemy or boss below 1 HP, so it cannot accidentally KO something you are preparing to catch.
-- If the target is already at 1 HP, the move safely leaves it there.
-- Uses existing OC attack sprites; no new art is required.
-- All v24.86 Item/Pon layout fixes remain intact.
+- Adds 5 more CSS wallpapers to the Shop to better match the current OCs.
+- Adds 2 more special CSS wallpapers that can be discovered in Duck Quest.
+- Makes the Duck Quest attack window taller so all attack buttons fit with less scrunching on mobile.
+- Keeps the v24.94 wallpaper system intact.
