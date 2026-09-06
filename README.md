@@ -1,7 +1,7 @@
-Duck Habit Hub v24.95 — OC-Matching Wallpapers + Taller Attack Window
+Duck Habit Hub v24.96 — Emergency CSS Layering Repair
 
-Changes:
-- Adds 5 more CSS wallpapers to the Shop to better match the current OCs.
-- Adds 2 more special CSS wallpapers that can be discovered in Duck Quest.
-- Makes the Duck Quest attack window taller so all attack buttons fit with less scrunching on mobile.
-- Keeps the v24.94 wallpaper system intact.
+Fixes:
+- Re-ships the complete main stylesheet under a new filename.
+- Restores room/character/furniture/UI absolute positioning and layering.
+- Keeps v24.95 OC wallpapers and taller Duck Quest attack menu.
+- Bumps the service-worker app shell so installed/mobile versions fetch the repaired CSS.

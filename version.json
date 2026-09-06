@@ -1,5 +1,5 @@
 {
-  "version": "24.95",
+  "version": "24.96",
   "updated": "2026-09-06",
-  "note": "Added more CSS wallpapers themed around the current OCs and made the Duck Quest attack window taller so attack buttons fit more comfortably."
+  "note": "Emergency main CSS repair: re-shipped the full stylesheet under a fresh filename so room, character, furniture, and UI layers render correctly again."
 }
