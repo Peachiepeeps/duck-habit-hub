@@ -1,5 +1,5 @@
 {
-  "version": "24.98",
-  "updated": "2026-09-06",
-  "note": "Final six-shelf room polish: lowered the shelf artwork and perched ducks a bit more, moved the Book slightly lower with them, and kept all 6 shelf slots available."
+  "version": "24.100",
+  "updatedAt": "2026-09-06",
+  "notes": "Updated Miho to use her requested default outfit layering/look and replaced her Duck Quest skills with Threaten, Magic, Fluster, and Stab, including burn and fluster miss behavior."
 }
