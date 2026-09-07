@@ -1,5 +1,5 @@
 {
-  "version": "24.103",
+  "version": "24.104",
   "updatedAt": "2026-09-06",
-  "notes": "Corrected Miho's exact default layering so the Body Base is behind Stockings but in front of the Hair Bow and Short Hair."
+  "notes": "Emergency CSS recovery: restores the full main stylesheet under a fresh filename so room, furniture, character, and UI layers stack correctly. Miho exact layering from v24.103 is preserved."
 }
