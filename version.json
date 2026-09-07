@@ -1,5 +1,5 @@
 {
-  "version": "24.104",
+  "version": "24.105",
   "updatedAt": "2026-09-06",
-  "notes": "Emergency CSS recovery: restores the full main stylesheet under a fresh filename so room, furniture, character, and UI layers stack correctly. Miho exact layering from v24.103 is preserved."
+  "notes": "Room positioning polish: lowers the shelf/OC/book/back arrow, extends the visible floor area downward, keeps the stylesheet and script bundled in update installs, makes Miho's belt removable while keeping jacket-over-belt layering, and raises Miho slightly in Duck Quest."
 }

@@ -2413,3 +2413,19 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
     bottom:7% !important;
   }
 }
+
+/* =========================================================
+   V42 / Hub v24.105 — Miho battle raise polish
+   ========================================================= */
+.battlefield.miho-active .peep-combatant .battle-hero-composite,
+.battlefield.miho-active.ocean-peep-raised .peep-combatant .battle-hero-composite{
+  top:auto !important;
+  bottom:8% !important;
+}
+@media(max-width:600px){
+  .battlefield.miho-active .peep-combatant .battle-hero-composite,
+  .battlefield.miho-active.ocean-peep-raised .peep-combatant .battle-hero-composite{
+    top:auto !important;
+    bottom:9% !important;
+  }
+}

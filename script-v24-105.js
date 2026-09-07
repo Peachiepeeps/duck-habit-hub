@@ -1,4 +1,4 @@
-// Hub v24.102 — Miho outfit/profile positioning + room/shelf polish
+// Hub v24.105 — room positioning + Miho belt toggle fix
 const STORAGE_KEY = "duckHabitHubSave_v1";
 const SAVE_VERSION = 39;
 
@@ -2676,8 +2676,7 @@ function normalizeMihoOutfit(rawOutfit = {}) {
   if (![null, "shoes-boots", "shoes-booties"].includes(normalized.shoes)) normalized.shoes = "shoes-boots";
   normalized.extras = Array.isArray(normalized.extras)
     ? normalized.extras.filter(id => ["belt", "neck-bow"].includes(id))
-    : ["belt"];
-  if (!normalized.extras.includes("belt")) normalized.extras.unshift("belt");
+    : [...DEFAULT_MIHO_OUTFIT.extras];
   return normalized;
 }
 
@@ -6446,12 +6445,12 @@ const EMPTY_ROOM_FURNITURE = Object.freeze({
 });
 
 const SHELF_DUCK_PERCHES = Object.freeze([
-  { left: 11.7, top: 28.9, width: 11.5 },
-  { left: 11.7, top: 41.1, width: 11.5 },
-  { left: 11.7, top: 54.5, width: 11.5 },
-  { left: 11.7, top: 66.6, width: 11.5 },
-  { left: 11.7, top: 78.5, width: 11.5 },
-  { left: 11.7, top: 89.6, width: 11.5 }
+  { left: 11.7, top: 30.5, width: 11.5 },
+  { left: 11.7, top: 42.8, width: 11.5 },
+  { left: 11.7, top: 56.2, width: 11.5 },
+  { left: 11.7, top: 68.4, width: 11.5 },
+  { left: 11.7, top: 80.3, width: 11.5 },
+  { left: 11.7, top: 91.0, width: 11.5 }
 ]);
 
 const DRESSER_DUCK_PERCH = Object.freeze({

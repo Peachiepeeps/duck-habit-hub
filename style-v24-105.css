@@ -7008,3 +7008,50 @@ button { color: inherit; }
 .profile-detail-avatar[data-character-id="miho"] .profile-head-duck-layer{
   left:-27%;
 }
+
+/* =========================================================
+   V24.105 — room position polish + bottom floor extension
+   ========================================================= */
+/* Stretch the room art a little farther downward so the stage doesn't leave a
+   large empty gray strip on tall mobile screens. */
+#roomImage{
+  transform: scaleY(1.105);
+  transform-origin: 50% 0%;
+}
+
+/* If any extra space still shows below the room art, fill it with the room's
+   floor color instead of neutral gray. */
+.stage{
+  background: #7a686f;
+}
+
+/* Lower Miho / the active OC slightly in the room, while keeping the same size. */
+#peepWrap{
+  inset: 2.2% 0 -2.2% 0;
+}
+
+/* Nudge the shelf furniture and its perched ducks down to sit closer to the shelf lines. */
+.left-furniture.shelf-furniture{
+  transform: translateY(3.8%);
+}
+
+/* Move the room-to-grow back arrow lower, matching the requested position. */
+.room-wing-button{
+  bottom: 4.0%;
+}
+
+/* Move the room book lower when the six-shelf is in use. */
+.book-room-object.on-shelf{
+  transform: translate(70%, 4.3%);
+}
+.book-hotspot.on-shelf{
+  left: 73.2%;
+  top: 88.8%;
+  width: 20.5%;
+  height: 11.7%;
+}
+
+/* Floor duck sits a touch lower beside the OC. */
+.floor-duck-display{
+  top: 90.2%;
+}
