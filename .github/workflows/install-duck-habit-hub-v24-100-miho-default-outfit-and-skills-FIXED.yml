@@ -1,0 +1,132 @@
+name: Install Duck Habit Hub v24.100 Miho Default Outfit + Skills
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "Duck-Habit-Hub-v24-100-Miho-Default-Outfit-and-Skills-UPDATE-ONLY.zip"
+      - "*v24-100*Miho*Default*Outfit*Skills*UPDATE*ONLY*.zip"
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Locate update package
+        id: locate
+        shell: bash
+        run: |
+          set -euo pipefail
+          EXPECTED="Duck-Habit-Hub-v24-100-Miho-Default-Outfit-and-Skills-UPDATE-ONLY.zip"
+          ZIP=""
+
+          if [ -f "$EXPECTED" ]; then
+            ZIP="$EXPECTED"
+          else
+            ZIP="$(find . -maxdepth 1 -type f \( -iname '*v24-100*miho*default*outfit*skills*update*only*.zip' -o -iname '*v24.100*miho*default*outfit*skills*update*only*.zip' \) -printf '%f\n' | head -n 1 || true)"
+          fi
+
+          if [ -z "$ZIP" ]; then
+            if [ -f "version.json" ] \
+              && grep -Fq '"version": "24.100"' version.json \
+              && [ -f "script-v24-100.js" ] \
+              && [ -f "style-v24-100.css" ] \
+              && [ -f "duck-quest/js/game-v46.js" ] \
+              && grep -Fq 'script-v24-100.js' index.html \
+              && grep -Fq 'js/game-v46.js' duck-quest/index.html; then
+              echo "v24.100 already appears to be installed."
+              echo "already_installed=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+
+            echo "::error::The v24.100 UPDATE-ONLY ZIP is not in the repository root."
+            echo "Upload this file beside index.html: $EXPECTED"
+            exit 1
+          fi
+
+          echo "Found update package: $ZIP"
+          echo "zip=$ZIP" >> "$GITHUB_OUTPUT"
+          echo "already_installed=false" >> "$GITHUB_OUTPUT"
+
+      - name: Verify update package
+        if: steps.locate.outputs.already_installed != 'true'
+        shell: bash
+        env:
+          ZIP: ${{ steps.locate.outputs.zip }}
+        run: |
+          set -euo pipefail
+          unzip -t "$ZIP"
+          LISTING="$(unzip -Z1 "$ZIP")"
+          for REQUIRED in \
+            "index.html" \
+            "script-v24-100.js" \
+            "style-v24-100.css" \
+            "sw.js" \
+            "version.json" \
+            "duck-quest/index.html" \
+            "duck-quest/js/game-v46.js" \
+            "assets/oc-invitations/Miho-invitation.webp" \
+            "assets/ducks/miho-duck.webp" \
+            "duck-quest/assets/characters/miho/base/idle-1.webp"; do
+            grep -Fqx "$REQUIRED" <<<"$LISTING" || { echo "::error::Update ZIP is missing $REQUIRED"; exit 1; }
+          done
+
+      - name: Install v24.100 update
+        if: steps.locate.outputs.already_installed != 'true'
+        shell: bash
+        env:
+          ZIP: ${{ steps.locate.outputs.zip }}
+        run: |
+          set -euo pipefail
+          TMP=".duckhub-v24-100-update"
+          rm -rf "$TMP"
+          mkdir -p "$TMP"
+          unzip -q "$ZIP" -d "$TMP"
+          cp -a "$TMP/." ./
+
+          grep -Fq 'DUCK_HUB_BUILD = "24.100"' index.html
+          grep -Fq 'script-v24-100.js' index.html
+          grep -Fq 'style-v24-100.css' index.html
+          grep -Fq 'js/game-v46.js' duck-quest/index.html
+          grep -Fq 'const MIHO_SKILLS = [' duck-quest/js/game-v46.js
+          grep -Fq 'id:"magic", name:"Magic"' duck-quest/js/game-v46.js
+          grep -Fq 'id:"fluster", name:"Fluster"' duck-quest/js/game-v46.js
+          grep -Fq 'id:"stab", name:"Stab"' duck-quest/js/game-v46.js
+          grep -Fq '"version": "24.100"' version.json
+          test -f assets/miho/Miho-bangs.webp
+          test -f assets/miho/Miho-jacket.webp
+          test -f assets/ducks/miho-duck.webp
+          test -f duck-quest/assets/characters/miho/base/spell.webp
+
+          node --check script-v24-100.js
+          node --check duck-quest/js/game-v46.js
+          node --check sw.js
+
+          rm -rf "$TMP"
+          rm -f "$ZIP"
+
+      - name: Commit installed update
+        if: steps.locate.outputs.already_installed != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "Nothing new to commit. v24.100 is already current."
+            exit 0
+          fi
+
+          git commit -m "Install Duck Habit Hub v24.100 Miho default outfit and skills"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
