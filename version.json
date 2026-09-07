@@ -1,5 +1,5 @@
 {
-  "version": "24.101",
+  "version": "24.103",
   "updatedAt": "2026-09-06",
-  "notes": "Lowered the goose shelf placement, reduced the room floor area by stretching the background downward, corrected Miho default outfit/layer order and labels, nudged Miho right in profile icons, and raised Miho in Duck Quest."
+  "notes": "Corrected Miho's exact default layering so the Body Base is behind Stockings but in front of the Hair Bow and Short Hair."
 }

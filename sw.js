@@ -1,9 +1,9 @@
-const APP_CACHE = 'duck-habit-hub-app-v24-101';
-const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-101';
+const APP_CACHE = 'duck-habit-hub-app-v24-103';
+const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-103';
 const IMAGE_CACHE = 'duck-habit-hub-images-stable-v1';
 
 const APP_SHELL = [
-  './','./index.html','./manifest.webmanifest','./version.json','./style-v24-101.css','./script-v24-101.js','./sw.js',
+  './','./index.html','./manifest.webmanifest','./version.json','./style-v24-102.css','./script-v24-103.js','./sw.js',
   './apple-touch-icon-v4.png','./favicon-32-v4.png','./icon-192-v4.png','./icon-512-v4.png','./icon-maskable-512-v4.png',
   './assets/ui/book-room.webp','./assets/ui/book-icon.webp','./assets/ui/mirror.webp','./assets/ui/pink-coin.webp',
   './assets/gacha/gacha-machine.webp','./assets/gacha/gacha-menu-icon.webp','./assets/gacha/gacha-turn.webp','./assets/gacha/capsule-clear.webp','./assets/gacha/capsule-common.webp','./assets/gacha/capsule-uncommon.webp','./assets/gacha/capsule-rare.webp','./assets/gacha/capsule-super.webp',
@@ -80,41 +80,28 @@ function isPwaIcon(pathname){
   return ['apple-touch-icon-v4.png','favicon-32-v4.png','icon-192-v4.png','icon-512-v4.png','icon-maskable-512-v4.png'].includes(name);
 }
 
-async function cacheFirstImage(request){
-  const cache=await caches.open(IMAGE_CACHE);
-  const cached=await cache.match(request,{ignoreSearch:true});
-  if(cached) return cached;
-  const url=new URL(request.url);
-  const canUseWebp=!isPwaIcon(url.pathname)&&/\.(png|jpe?g)$/i.test(url.pathname);
-  if(canUseWebp){
-    const webpUrl=new URL(url.href);webpUrl.pathname=webpUrl.pathname.replace(/\.(png|jpe?g)$/i,'.webp');
-    try{
-      const response=await fetch(webpUrl.href,{cache:'reload'});
-      if(response&&response.ok){await cache.put(request,response.clone());trimCache(IMAGE_CACHE,1500);return response;}
-    }catch(error){}
-  }
-  try{
-    const response=await fetch(request,{cache:'reload'});
-    if(response&&response.ok){await cache.put(request,response.clone());trimCache(IMAGE_CACHE,1500);}
-    return response;
-  }catch(error){return Response.error();}
-}
-
-self.addEventListener('message',event=>{
-  if(event.data&&event.data.type==='SKIP_WAITING') self.skipWaiting();
-});
-
 self.addEventListener('fetch',event=>{
-  const request=event.request;if(request.method!=='GET')return;
-  const url=new URL(request.url);if(url.origin!==self.location.origin)return;
-  const pathname=url.pathname;const extension=pathname.includes('.')?pathname.split('.').pop().toLowerCase():'';
-  const isNavigation=request.mode==='navigate';
-  const isImage=['png','jpg','jpeg','webp','gif','svg','ico'].includes(extension);
-  const isMedia=['mp3','wav','ogg','mp4','webm'].includes(extension);
-  const isStaticText=['css','js','json','webmanifest','txt'].includes(extension);
-  if(isNavigation){event.respondWith(networkFirst(request));return;}
-  if(pathname.includes('/duck-quest/')&&!isImage&&!isMedia){event.respondWith(networkFirst(request));return;}
-  if(isImage||isMedia){event.respondWith(cacheFirstImage(request));return;}
-  if(isStaticText){event.respondWith(staleWhileRevalidate(request));return;}
-  event.respondWith(networkFirst(request));
+  const request=event.request;
+  if(request.method!=='GET') return;
+  const url=new URL(request.url);
+  const sameOrigin=url.origin===self.location.origin;
+  if(!sameOrigin) return;
+
+  if(request.mode==='navigate'){
+    event.respondWith(networkFirst(request));
+    return;
+  }
+
+  const pathname=url.pathname;
+  if(pathname.endsWith('.png')||pathname.endsWith('.webp')||pathname.endsWith('.jpg')||pathname.endsWith('.jpeg')||pathname.endsWith('.gif')||pathname.endsWith('.svg')||isPwaIcon(pathname)){
+    event.respondWith(staleWhileRevalidate(request,IMAGE_CACHE,1500));
+    return;
+  }
+
+  if(pathname.endsWith('.js')||pathname.endsWith('.css')||pathname.endsWith('.html')||pathname.endsWith('.json')||pathname.endsWith('.webmanifest')){
+    event.respondWith(networkFirst(request));
+    return;
+  }
+
+  event.respondWith(staleWhileRevalidate(request));
 });
