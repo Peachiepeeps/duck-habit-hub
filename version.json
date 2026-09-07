@@ -1,5 +1,5 @@
 {
-  "version": "24.100",
+  "version": "24.101",
   "updatedAt": "2026-09-06",
-  "notes": "Updated Miho to use her requested default outfit layering/look and replaced her Duck Quest skills with Threaten, Magic, Fluster, and Stab, including burn and fluster miss behavior."
+  "notes": "Lowered the goose shelf placement, reduced the room floor area by stretching the background downward, corrected Miho default outfit/layer order and labels, nudged Miho right in profile icons, and raised Miho in Duck Quest."
 }

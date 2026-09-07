@@ -6987,3 +6987,24 @@ button { color: inherit; }
   top:18.3%;
   height:64.9%;
 }
+
+
+/* =========================================================
+   V24.101 — room floor balance + Miho profile crop
+   ========================================================= */
+/* Stretch the room background slightly downward from the top so the wall/floor
+   break sits lower and there is less plain gray floor at the bottom. */
+#roomImage{
+  transform:scaleY(1.075);
+  transform-origin:50% 0%;
+}
+
+/* Miho's profile crop sits a little farther right, matching the Io polish. */
+.profile-avatar[data-character-id="miho"] > img,
+.profile-detail-avatar[data-character-id="miho"] > img{
+  left:-27%;
+}
+.profile-avatar[data-character-id="miho"] .profile-head-duck-layer,
+.profile-detail-avatar[data-character-id="miho"] .profile-head-duck-layer{
+  left:-27%;
+}

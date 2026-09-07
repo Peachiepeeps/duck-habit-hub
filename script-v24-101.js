@@ -1,6 +1,6 @@
-// Hub v24.100 — Miho default outfit + Duck Quest skill update
+// Hub v24.101 — Miho outfit/profile positioning + room/shelf polish
 const STORAGE_KEY = "duckHabitHubSave_v1";
-const SAVE_VERSION = 38;
+const SAVE_VERSION = 39;
 
 const CHARACTERS = {
   peep: {
@@ -2493,7 +2493,7 @@ const IO_CLOSET = [
 ];
 
 const MIHO_ASSETS = {
-  "hair-main": { label: "Bob Hair", file: "Miho-hair.webp", z: 10 },
+  "hair-main": { label: "Short Hair", file: "Miho-hair.webp", z: 10 },
   "hair-long": { label: "Long Hair", file: "Miho-long-hair.webp", z: 10 },
   "base": { label: "Body Base", file: "Miho-base.webp", z: 20 },
   "legwear-stockings": { label: "Stockings", file: "Miho-stockings.webp", z: 30 },
@@ -2501,7 +2501,7 @@ const MIHO_ASSETS = {
   "dress-black": { label: "Black Dress", file: "Miho-dress.webp", z: 33 },
   "top-shirt": { label: "Soft Shirt", file: "Miho-shirt.webp", z: 33 },
   "top-button-shirt": { label: "Button Shirt", file: "Miho-button-shirt.webp", z: 33 },
-  "bottom-skirt": { label: "Skirt", file: "Miho-skirt.webp", z: 32 },
+  "bottom-skirt": { label: "White Skirt", file: "Miho-skirt.webp", z: 32 },
   "bottom-slit-skirt": { label: "Slit Skirt", file: "Miho-slit-skirt.webp", z: 32 },
   "bottom-shorts": { label: "Shorts", file: "Miho-shorts.webp", z: 32 },
   "belt": { label: "Belt", file: "Miho-belt.webp", z: 35 },
@@ -2655,18 +2655,29 @@ const DEFAULT_MIHO_OUTFIT = {
 
 function normalizeMihoOutfit(rawOutfit = {}) {
   const incoming = rawOutfit && typeof rawOutfit === "object" ? rawOutfit : {};
-  const normalized = { ...structuredClone(DEFAULT_MIHO_OUTFIT), ...incoming };
+  const looksLikeLegacyDefault =
+    incoming.hair === "hair-main" &&
+    (incoming.dress === "dress-black" || incoming.dress === undefined) &&
+    (incoming.top == null || incoming.top === undefined) &&
+    (incoming.bottom == null || incoming.bottom === undefined) &&
+    (incoming.outer === "jacket-black" || incoming.outer === undefined);
+
+  const normalized = looksLikeLegacyDefault
+    ? structuredClone(DEFAULT_MIHO_OUTFIT)
+    : { ...structuredClone(DEFAULT_MIHO_OUTFIT), ...incoming };
+
   if (!["hair-main", "hair-long"].includes(normalized.hair)) normalized.hair = "hair-main";
   if (![null, "bow", "bow-low"].includes(normalized.headBow)) normalized.headBow = "bow";
-  if (![null, "top-shirt", "top-button-shirt"].includes(normalized.top)) normalized.top = null;
+  if (![null, "top-shirt", "top-button-shirt"].includes(normalized.top)) normalized.top = "top-shirt";
   if (![null, "jacket-black", "jacket-red"].includes(normalized.outer)) normalized.outer = "jacket-black";
-  if (![null, "bottom-skirt", "bottom-slit-skirt", "bottom-shorts"].includes(normalized.bottom)) normalized.bottom = null;
-  if (![null, "dress-black"].includes(normalized.dress)) normalized.dress = "dress-black";
+  if (![null, "bottom-skirt", "bottom-slit-skirt", "bottom-shorts"].includes(normalized.bottom)) normalized.bottom = "bottom-skirt";
+  if (![null, "dress-black"].includes(normalized.dress)) normalized.dress = null;
   if (![null, "legwear-stockings", "legwear-stockings-laceup"].includes(normalized.legwear)) normalized.legwear = "legwear-stockings";
   if (![null, "shoes-boots", "shoes-booties"].includes(normalized.shoes)) normalized.shoes = "shoes-boots";
   normalized.extras = Array.isArray(normalized.extras)
     ? normalized.extras.filter(id => ["belt", "neck-bow"].includes(id))
     : ["belt"];
+  if (!normalized.extras.includes("belt")) normalized.extras.unshift("belt");
   return normalized;
 }
 
@@ -2922,7 +2933,7 @@ const DEFAULT_SAVE = {
     peep: ["hair-short", "cat-ears", "left-bow", "right-bow", "top-sweater", "bottom-pleated", "sock-left-rainbow", "sock-right-rainbow", "shoes-loafer", "collar", "cheek-bandage", "tail-bunny"],
     miko: ["hair-main", "top-hoodie", "top-button", "bottom-capris", "shoes-loafer"],
     io: ["hair-buns", "back-school-bow", "top-school", "bottom-school", "sock-left-school", "sock-right-school", "shoes-school", "ahoge", "heart-pin"],
-    miho: ["hair-main", "bow", "dress-black", "jacket-black", "legwear-stockings", "shoes-boots", "belt"]
+    miho: ["hair-main", "bow", "top-shirt", "bottom-skirt", "jacket-black", "legwear-stockings", "shoes-boots", "belt"]
   },
   wardrobeResetV1261: true,
   wardrobeResetV1262: false,
@@ -3329,7 +3340,7 @@ function getCharacterStarterWardrobe(characterId = save.selectedCharacter) {
   }
   if (characterId === "miho") {
     return [
-      "hair-main", "bow", "dress-black", "jacket-black",
+      "hair-main", "bow", "top-shirt", "bottom-skirt", "jacket-black",
       "legwear-stockings", "shoes-boots", "belt"
     ];
   }
@@ -4846,6 +4857,31 @@ function getRenderOrderedAssets(characterId = save.selectedCharacter) {
     ];
     const orderMap = new Map(peepOrder.map((id, index) => [id, index]));
 
+    return equipped.sort((a, b) => {
+      const aOrder = orderMap.has(a.id) ? orderMap.get(a.id) : 1000 + (Number(a.z) || 0);
+      const bOrder = orderMap.has(b.id) ? orderMap.get(b.id) : 1000 + (Number(b.z) || 0);
+      if (aOrder !== bOrder) return aOrder - bOrder;
+      return (Number(a.z) || 0) - (Number(b.z) || 0);
+    });
+  }
+
+  if (character.id === "miho") {
+    // User-specified FRONT → BACK order:
+    // Bangs, Expression, Jacket, Belt, Shirt, Skirt, Boots, Stockings, Bow, Hair.
+    // DOM renders back → front, so this list is intentionally reversed.
+    const mihoBackToFront = [
+      "hair-main", "hair-long",
+      "bow", "bow-low",
+      "legwear-stockings", "legwear-stockings-laceup",
+      "shoes-boots", "shoes-booties",
+      "bottom-skirt", "bottom-slit-skirt", "bottom-shorts",
+      "top-shirt", "top-button-shirt",
+      "belt", "neck-bow",
+      "jacket-black", "jacket-red",
+      "expression-neutral", "expression-happy", "expression-sad", "expression-shocked", "expression-mad",
+      "bangs"
+    ];
+    const orderMap = new Map(mihoBackToFront.map((id, index) => [id, index]));
     return equipped.sort((a, b) => {
       const aOrder = orderMap.has(a.id) ? orderMap.get(a.id) : 1000 + (Number(a.z) || 0);
       const bOrder = orderMap.has(b.id) ? orderMap.get(b.id) : 1000 + (Number(b.z) || 0);
@@ -6410,7 +6446,7 @@ const EMPTY_ROOM_FURNITURE = Object.freeze({
 const SHELF_DUCK_PERCHES = Object.freeze([
   { left: 11.7, top: 28.9, width: 11.5 },
   { left: 11.7, top: 41.1, width: 11.5 },
-  { left: 11.7, top: 53.3, width: 11.5 },
+  { left: 11.7, top: 54.5, width: 11.5 },
   { left: 11.7, top: 66.6, width: 11.5 },
   { left: 11.7, top: 78.5, width: 11.5 },
   { left: 11.7, top: 89.6, width: 11.5 }
