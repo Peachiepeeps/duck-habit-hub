@@ -6912,14 +6912,15 @@ button { color: inherit; }
   z-index: 1;
   left: 0;
   right: 0;
-  top: 0;
-  height: 62%;
+  top: 4.1%;
+  bottom: 13.6%;
+  height: auto;
   pointer-events: none;
   opacity: .62;
   background-repeat: repeat;
   background-position: 0 0;
-  clip-path: polygon(0 0,100% 0,100% 82%,0 82%);
-  box-shadow: inset 0 -18px 18px rgba(255,255,255,.12);
+  clip-path: none;
+  box-shadow: inset 0 -18px 18px rgba(255,255,255,.10);
 }
 .room-wallpaper-overlay.hidden { display: none; }
 
@@ -7010,24 +7011,18 @@ button { color: inherit; }
 }
 
 /* =========================================================
-   V24.105 — room position polish + bottom floor extension
+   V24.106 — room alignment polish + wallpaper wall coverage
    ========================================================= */
-/* Stretch the room art a little farther downward so the stage doesn't leave a
-   large empty gray strip on tall mobile screens. */
+/* Keep the room art tall enough that the wall/floor break feels right, but let
+   the extra bottom space on tall phones be filled by the room's own floor tint. */
 #roomImage{
   transform: scaleY(1.105);
   transform-origin: 50% 0%;
 }
 
-/* If any extra space still shows below the room art, fill it with the room's
-   floor color instead of neutral gray. */
-.stage{
-  background: #7a686f;
-}
-
-/* Lower Miho / the active OC slightly in the room, while keeping the same size. */
+/* Lower the active OC slightly more, matching the requested red-arrow position. */
 #peepWrap{
-  inset: 2.2% 0 -2.2% 0;
+  inset: 3.6% 0 -3.6% 0;
 }
 
 /* Nudge the shelf furniture and its perched ducks down to sit closer to the shelf lines. */
@@ -7035,23 +7030,34 @@ button { color: inherit; }
   transform: translateY(3.8%);
 }
 
-/* Move the room-to-grow back arrow lower, matching the requested position. */
+/* Move the room-to-grow back arrow lower. */
 .room-wing-button{
-  bottom: 4.0%;
+  bottom: 0.8%;
 }
 
-/* Move the room book lower when the six-shelf is in use. */
+/* Lower the default room Book. */
+.book-room-object{
+  transform: translateY(4.4%);
+}
+.book-hotspot{
+  left: 4.3%;
+  top: 88.6%;
+  width: 19%;
+  height: 11%;
+}
+
+/* When shelf furniture is present, keep the Book in the lower-right and lower it too. */
 .book-room-object.on-shelf{
-  transform: translate(70%, 4.3%);
+  transform: translate(70%, 7.2%);
 }
 .book-hotspot.on-shelf{
   left: 73.2%;
-  top: 88.8%;
+  top: 91.2%;
   width: 20.5%;
   height: 11.7%;
 }
 
-/* Floor duck sits a touch lower beside the OC. */
+/* Floor duck sits a bit lower beside the OC. */
 .floor-duck-display{
-  top: 90.2%;
+  top: 92.0%;
 }

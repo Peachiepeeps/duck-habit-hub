@@ -1,4 +1,4 @@
-// Hub v24.105 — room positioning + Miho belt toggle fix
+// Hub v24.106 — room alignment, wallpapers, Miho layering, and shiny-rate polish
 const STORAGE_KEY = "duckHabitHubSave_v1";
 const SAVE_VERSION = 39;
 
@@ -4700,6 +4700,23 @@ function openAchievements(){
 function closeAchievementsToBook(){ closeAchievementDetail(); achievementsPanel.classList.add("hidden"); bookPanel.classList.remove("hidden"); }
 function closeAchievementsAll(){ closeAchievementDetail(); achievementsPanel.classList.add("hidden"); bookPanel.classList.add("hidden"); }
 
+const ROOM_STAGE_BACKGROUNDS = Object.freeze({
+  cream: "#c59668",
+  green: "#b08f6a",
+  blue: "#c0a78f",
+  purple: "#c0ada0",
+  peach: "#bf946f",
+  pink: "#c48f79",
+  "dark-purple": "#6a5550",
+  "cotton-candy": "#786569",
+  "chocolate-brown": "#765742"
+});
+
+function applyRoomStageBackground(roomId = currentDisplayedRoomId()) {
+  if (!stage) return;
+  stage.style.background = ROOM_STAGE_BACKGROUNDS[roomId] || "#c0a78f";
+}
+
 function renderRoom() {
   normalizeRoomExpansion();
   normalizeRoomWallpaperState();
@@ -4709,6 +4726,7 @@ function renderRoom() {
   const wallpaper = currentDisplayedWallpaper();
 
   roomImage.src = room.file;
+  applyRoomStageBackground(room.id);
   roomImage.alt = wallpaper
     ? `${room.name} room with ${wallpaper.name} wallpaper`
     : `${room.name} room`;
@@ -4865,9 +4883,9 @@ function getRenderOrderedAssets(characterId = save.selectedCharacter) {
   }
 
   if (character.id === "miho") {
-    // User-specified FRONT → BACK order:
-    // Bangs, Expression, Black Jacket, Belt, White Shirt, White Skirt,
-    // Boots, Stockings, Body Base, Hair Bow, Short Hair.
+    // User-requested FRONT → BACK order:
+    // Bangs, Expression, Jacket, Belt, Shirt/Dress, Skirt/Shorts, Boots,
+    // Stockings, Body Base, Hair Bow, Hair.
     // DOM renders back → front, so this list is intentionally reversed.
     const mihoBackToFront = [
       "hair-main", "hair-long",
@@ -4875,7 +4893,7 @@ function getRenderOrderedAssets(characterId = save.selectedCharacter) {
       "base",
       "legwear-stockings", "legwear-stockings-laceup",
       "shoes-boots", "shoes-booties",
-      "bottom-skirt", "bottom-slit-skirt", "bottom-shorts",
+      "bottom-skirt", "bottom-slit-skirt", "bottom-shorts", "dress-black",
       "top-shirt", "top-button-shirt",
       "belt", "neck-bow",
       "jacket-black", "jacket-red",
@@ -6445,12 +6463,12 @@ const EMPTY_ROOM_FURNITURE = Object.freeze({
 });
 
 const SHELF_DUCK_PERCHES = Object.freeze([
-  { left: 11.7, top: 30.5, width: 11.5 },
-  { left: 11.7, top: 42.8, width: 11.5 },
-  { left: 11.7, top: 56.2, width: 11.5 },
-  { left: 11.7, top: 68.4, width: 11.5 },
-  { left: 11.7, top: 80.3, width: 11.5 },
-  { left: 11.7, top: 91.0, width: 11.5 }
+  { left: 11.7, top: 31.7, width: 11.5 },
+  { left: 11.7, top: 44.0, width: 11.5 },
+  { left: 11.7, top: 57.3, width: 11.5 },
+  { left: 11.7, top: 69.6, width: 11.5 },
+  { left: 11.7, top: 81.4, width: 11.5 },
+  { left: 11.7, top: 92.0, width: 11.5 }
 ]);
 
 const DRESSER_DUCK_PERCH = Object.freeze({

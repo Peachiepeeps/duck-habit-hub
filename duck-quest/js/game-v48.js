@@ -1101,11 +1101,11 @@ const JELLYBUN_VARIANTS=Object.freeze({
 });
 function applyJellybunVariant(t,r){return applyFamilyVariant(t,JELLYBUN_VARIANTS,["base","pink","green","grey","gold"],r,"jellybunVariant",true);}
 
-const SHINY_RATE = 0.01;
+const SHINY_RATE = 1 / 250;
 const MYSTERY_CHEST_RATE = 1 / 50;
 
 // One rare recolor per enemy family. The special family variant replaces any
-// normal recolor at 1/100 and is guaranteed to befriend with any Buddy Pon.
+// normal recolor at 1/250 and is guaranteed to befriend with any Buddy Pon.
 // Amethyst Mimic is intentionally different: it only reveals itself from the
 // purple Mystery Chest so the chest keeps its surprise.
 const SHINY_VARIANTS = Object.freeze({
