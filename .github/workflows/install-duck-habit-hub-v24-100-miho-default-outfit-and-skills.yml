@@ -1,0 +1,61 @@
+name: Install Duck Habit Hub v24.100 Miho Default Outfit + Skills
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Download update package
+        run: |
+          curl -L "https://github.com/Peachiepeeps/oc-images/raw/main/duckhub_update_v24_100.zip" -o duckhub_update_v24_100.zip
+
+      - name: Unzip update package
+        run: |
+          rm -rf duckhub_update_v24_100
+          unzip -o duckhub_update_v24_100.zip -d duckhub_update_v24_100
+
+      - name: Copy updated hub files into repository
+        run: |
+          cp duckhub_update_v24_100/index.html ./index.html
+          cp duckhub_update_v24_100/script-v24-100.js ./script-v24-100.js
+          cp duckhub_update_v24_100/style-v24-100.css ./style-v24-100.css
+          cp duckhub_update_v24_100/sw.js ./sw.js
+          cp duckhub_update_v24_100/version.json ./version.json
+
+          mkdir -p ./assets/miho
+          cp -R duckhub_update_v24_100/assets/miho/. ./assets/miho/
+
+          mkdir -p ./assets/thumbs/characters/miho
+          cp -R duckhub_update_v24_100/assets/thumbs/characters/miho/. ./assets/thumbs/characters/miho/
+
+          mkdir -p ./assets/oc-invitations
+          cp duckhub_update_v24_100/assets/oc-invitations/Miho-invitation.webp ./assets/oc-invitations/Miho-invitation.webp
+
+          mkdir -p ./assets/ducks
+          cp duckhub_update_v24_100/assets/ducks/miho-duck.webp ./assets/ducks/miho-duck.webp
+
+          mkdir -p ./assets/thumbs/ducks
+          cp duckhub_update_v24_100/assets/thumbs/ducks/miho-duck.webp ./assets/thumbs/ducks/miho-duck.webp
+
+          mkdir -p ./duck-quest/js
+          cp duckhub_update_v24_100/duck-quest/index.html ./duck-quest/index.html
+          cp duckhub_update_v24_100/duck-quest/js/game-v46.js ./duck-quest/js/game-v46.js
+
+          mkdir -p ./duck-quest/assets/characters/miho/base
+          cp -R duckhub_update_v24_100/duck-quest/assets/characters/miho/base/. ./duck-quest/assets/characters/miho/base/
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Install Duck Habit Hub v24.100 Miho Default Outfit + Skills" || echo "No changes to commit"
+          git push
