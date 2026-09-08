@@ -1,5 +1,5 @@
 {
-  "version": "24.112",
+  "version": "24.114",
   "updatedAt": "2026-09-07",
   "notes": "Built directly on v24.110. Keeps the exact floor-color and shelf-duck polish, restores current Duck Quest v49/style v43 if an older installer was run, and lifts the bottom-left room arrow plus Book noticeably above phone UI."
 }

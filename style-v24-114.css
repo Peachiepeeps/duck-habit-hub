@@ -7272,3 +7272,67 @@ button { color: inherit; }
     bottom: 12.0%;
   }
 }
+
+
+/* =========================================================
+   V24.113 — BOOK RIGHT-SIDE + LOWER ARROW + SHELF LINEUP
+   ========================================================= */
+/* In the Shelf of Ducks view, align the lower three rows so both placed ducks
+   and empty plus targets sit on each shelf's bottom line. */
+.wing-duck-slot:nth-child(n+13):nth-child(-n+16) img{
+  transform:translateY(-6%);
+}
+.wing-duck-slot:nth-child(n+17):nth-child(-n+20) img{
+  transform:translateY(-18%);
+}
+.wing-duck-slot:nth-child(n+21):nth-child(-n+24) img{
+  transform:translateY(-38%);
+}
+.wing-duck-slot:nth-child(n+13):nth-child(-n+16) > span{
+  transform:translateY(-8%);
+}
+.wing-duck-slot:nth-child(n+17):nth-child(-n+20) > span{
+  transform:translateY(-20%);
+}
+.wing-duck-slot:nth-child(n+21):nth-child(-n+24) > span{
+  transform:translateY(-40%);
+}
+
+@media (max-width: 600px) {
+  /* Keep the room Book on the right side for every home on phone. */
+  #roomBookImage {
+    transform: translate(67%, -6.8%);
+  }
+  #roomBookImage.on-shelf {
+    transform: translate(67%, -7.4%);
+  }
+  #roomBookImage.on-dresser {
+    transform: translate(67%, -6.6%);
+  }
+
+  .book-hotspot {
+    left: 70.2%;
+    right: auto;
+    top: auto;
+    bottom: 11.8%;
+    width: 20.5%;
+    height: 11.7%;
+  }
+  .book-hotspot.on-shelf {
+    left: 70.2%;
+    bottom: 11.8%;
+    width: 20.5%;
+    height: 11.7%;
+  }
+  .book-hotspot.on-dresser {
+    left: 70.2%;
+    bottom: 11.8%;
+    width: 20.5%;
+    height: 11.7%;
+  }
+
+  /* Lower the back arrow from the previous phone-safe lift. */
+  .room-wing-button {
+    bottom: 6.6%;
+  }
+}
