@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f6c6d6" />
   <title>Duck Quest</title>
-  <link rel="stylesheet" href="css/style-v21.css" />
+  <link rel="stylesheet" href="css/style-v43.css" />
 </head>
 <body>
   <main class="quest-shell">
@@ -40,7 +40,8 @@
               <div id="iconBackgroundPicker" class="icon-background-picker hidden" role="menu" aria-label="Icon background colors"></div>
             </div>
           </div>
-          <button id="switchQuestOc" class="switch-quest-oc-button pixel-button" type="button">Switch OC</button>
+          <button id="switchQuestOc" class="switch-quest-oc-button pixel-button" type="button" aria-expanded="false" aria-controls="questOcPicker">Switch OC</button>
+          <div id="questOcPicker" class="quest-oc-picker hidden" role="menu" aria-label="Choose OC"></div>
         </div>
 
         <div class="hero-info">
@@ -70,6 +71,44 @@
         </div>
       </div>
 
+      <section class="buddy-home-card">
+        <div>
+          <span class="mini-label">BUDDY BOOK</span>
+          <strong>Buddy Collection</strong>
+          <small id="buddyHomeCount">0 / 0 befriended</small>
+        </div>
+        <button id="openBuddyCollection" class="pixel-button" type="button">Buddies</button>
+      </section>
+
+      <section class="charm-home-card">
+        <div class="charm-home-copy">
+          <span class="mini-label">QUEST CHARMS</span>
+          <strong>Charm Loadout</strong>
+          <small id="charmHomeSummary">0 / 3 equipped for Peep</small>
+        </div>
+        <div id="charmHomeSlots" class="charm-home-slots" aria-label="Equipped Quest Charms"></div>
+        <button id="openCharmScreen" class="pixel-button" type="button">Charms</button>
+      </section>
+
+      <section class="endless-home-card">
+        <div class="endless-home-heading">
+          <div>
+            <span class="mini-label">ENDLESS QUEST</span>
+            <h2>Endless Run</h2>
+            <small>Random areas, enemies, bosses, Buddies, and Shiny hunting.</small>
+          </div>
+          <span class="endless-symbol" aria-hidden="true">∞</span>
+        </div>
+        <div class="endless-record-grid">
+          <div><span>Record</span><strong id="endlessRecord">Floor 0</strong></div>
+          <div><span>Checkpoint</span><strong id="endlessCheckpoint">Floor 1</strong></div>
+        </div>
+        <div class="endless-home-actions">
+          <button id="continueEndless" class="pixel-button primary" type="button">Continue from Floor 1</button>
+          <button id="startNewEndless" class="pixel-button" type="button">Start New</button>
+        </div>
+        <p class="tiny-note endless-note">Every floor rolls a random background and enemy. Every 5th floor is a boss. Leave whenever you want—your checkpoint and record are saved.</p>
+      </section>
 
       <section class="area-select-card">
         <div class="section-title area-select-title">
@@ -123,6 +162,93 @@
       </section>
     </section>
 
+    <section id="charmScreen" class="screen hidden">
+      <section class="charm-book-card">
+        <div class="charm-book-heading">
+          <button id="backFromCharms" class="pixel-button small" type="button">← Quest Menu</button>
+          <div>
+            <span class="mini-label">QUEST CHARMS</span>
+            <h2>Charm Collection</h2>
+            <small>Permanent unlocks · Equip up to 3 per OC</small>
+          </div>
+          <strong id="charmCoinCount" class="charm-coin-pill">0 Coins</strong>
+        </div>
+
+        <section class="charm-equipped-panel">
+          <div>
+            <span class="mini-label">EQUIPPED</span>
+            <strong id="charmEquippedTitle">Peep's Charms</strong>
+          </div>
+          <div id="charmEquippedSlots" class="charm-equipped-slots"></div>
+          <p id="charmMessage" class="charm-message" aria-live="polite">Choose up to three different charm families.</p>
+        </section>
+
+        <div id="charmCatalog" class="charm-catalog"></div>
+      </section>
+    </section>
+
+    <section id="buddyScreen" class="screen hidden">
+      <section class="buddy-book-card">
+        <div class="buddy-book-heading">
+          <button id="backFromBuddies" class="pixel-button small" type="button">← Quest Menu</button>
+          <div>
+            <span class="mini-label">BUDDY BOOK</span>
+            <h2>Buddy Collection</h2>
+          </div>
+          <strong id="buddyCollectionCount" class="buddy-count-pill">0 / 0</strong>
+        </div>
+        <p class="buddy-book-note">Befriend enemies with Buddy Pons. You can catch multiple copies, then tap a caught Buddy to assign it to an OC without leaving Duck Quest.</p>
+        <div id="buddyFilters" class="buddy-filters" role="group" aria-label="Buddy collection filters">
+          <button class="buddy-filter selected" data-buddy-filter="all" type="button">All</button>
+          <button class="buddy-filter" data-buddy-filter="normal" type="button">Normal</button>
+          <button class="buddy-filter" data-buddy-filter="boss" type="button">Boss</button>
+          <button class="buddy-filter" data-buddy-filter="shiny" type="button">Shiny ✨</button>
+        </div>
+        <div id="buddyCollectionGrid" class="buddy-collection-grid"></div>
+        <p id="buddyCollectionEmpty" class="buddy-collection-empty hidden">No Buddies match this filter yet.</p>
+      </section>
+
+      <section id="buddyDetail" class="buddy-detail hidden" aria-hidden="true">
+        <div class="buddy-detail-card" role="dialog" aria-modal="true" aria-labelledby="buddyDetailName">
+          <button id="closeBuddyDetail" class="buddy-detail-close" type="button" aria-label="Close Buddy details">×</button>
+          <div id="buddyDetailArt" class="buddy-detail-art"></div>
+          <span id="buddyDetailTag" class="mini-label">BUDDY</span>
+          <h2 id="buddyDetailName">Buddy</h2>
+          <p id="buddyDetailStatus">Not befriended yet.</p>
+          <div class="buddy-detail-stats">
+            <div><span>Owned</span><strong id="buddyDetailOwned">×0</strong></div>
+            <div><span>Type</span><strong id="buddyDetailType">Normal</strong></div>
+          </div>
+          <p id="buddyDetailSkill" class="buddy-skill-preview"><strong>Buddy Skill:</strong> Select a Buddy to see its helper skill. ♡</p>
+          <button id="buddyAssignOpen" class="pixel-button primary buddy-assign-open hidden" type="button">Assign to OC</button>
+          <section id="buddyAssignPanel" class="buddy-assign-panel hidden" aria-label="Assign Buddy to OC">
+            <div class="buddy-assign-heading">
+              <strong>Assign Buddy</strong>
+              <small id="buddyAssignAvailability">Choose an OC and Buddy slot.</small>
+            </div>
+            <div id="buddyAssignCharacters" class="buddy-assign-characters" role="group" aria-label="Choose OC"></div>
+            <div id="buddyAssignSlots" class="buddy-assign-slots" aria-label="Choose Buddy slot"></div>
+            <p id="buddyAssignMessage" class="buddy-assign-message" aria-live="polite"></p>
+            <section id="buddyPersonalizePanel" class="buddy-personalize-panel hidden" aria-label="Personalize assigned Buddy">
+              <strong>Personalize this Buddy</strong>
+              <small id="buddyPersonalizeSpecies">Assign a Buddy copy to personalize it.</small>
+              <label class="buddy-name-field">
+                <span>Name</span>
+                <input id="buddyNicknameInput" type="text" maxlength="20" autocomplete="off" placeholder="Buddy name" />
+              </label>
+              <div class="buddy-gender-group" role="group" aria-label="Choose Buddy gender">
+                <button class="buddy-gender-button" type="button" data-buddy-gender="female">Girl ♀</button>
+                <button class="buddy-gender-button" type="button" data-buddy-gender="male">Boy ♂</button>
+                <button class="buddy-gender-button" type="button" data-buddy-gender="nonbinary">Nonbinary ✦</button>
+              </div>
+              <button id="saveBuddyPersonalization" class="pixel-button primary small" type="button">Save Name & Gender</button>
+              <p id="buddyPersonalizeMessage" class="buddy-assign-message" aria-live="polite"></p>
+            </section>
+          </section>
+        </div>
+      </section>
+    </section>
+
     <section id="battleScreen" class="screen hidden">
       <div class="battle-top">
         <div>
@@ -130,6 +256,7 @@
           <strong id="rankBattleLabel">Rank 1</strong>
         </div>
       </div>
+      <div id="battleCharmStrip" class="battle-charm-strip hidden" aria-label="Active Quest Charms"></div>
 
       <div id="battlefield" class="battlefield">
         <img id="battleBg" class="battle-bg pixel-background" src="" alt="" />
@@ -148,14 +275,22 @@
           <div id="battleHeroComposite" class="battle-hero-composite fighter hidden" aria-hidden="true"></div>
         </div>
 
+        <div id="buddyCombatant" class="buddy-combatant hidden" aria-label="Main Buddy helper">
+          <span id="buddyBattleName" class="buddy-battle-name">Buddy</span>
+          <img id="buddyBattleSprite" class="pixel-sprite buddy-battle-sprite" src="" alt="Main Buddy" />
+          <span id="buddyBattleSparkle" class="buddy-battle-sparkle hidden" aria-hidden="true">✨</span>
+        </div>
+
         <div id="enemyCombatant" class="combatant enemy-combatant">
-          <div class="nameplate enemy-nameplate">
-            <strong id="enemyName">Cat Slime</strong>
-            <span id="enemyRank">Rank 1</span>
+          <div class="enemy-status-stack">
+            <div class="nameplate enemy-nameplate">
+              <strong id="enemyName">Cat Slime</strong>
+              <span id="enemyRank">Rank 1</span>
+            </div>
+            <div class="hp-bar enemy-hp"><span id="enemyHpFill"></span></div>
+            <div id="enemyDamageText" class="damage-pop-line hidden" aria-hidden="true"></div>
+            <small id="enemyHpText">20 / 20 HP</small>
           </div>
-          <div class="hp-bar enemy-hp"><span id="enemyHpFill"></span></div>
-          <div id="enemyDamageText" class="damage-pop-line hidden" aria-hidden="true"></div>
-          <small id="enemyHpText">20 / 20 HP</small>
           <img id="enemySprite" class="pixel-sprite fighter enemy-fighter" src="" alt="" />
         </div>
 
@@ -170,33 +305,51 @@
       <div class="battle-ui">
         <div id="battleMessage" class="battle-message" aria-live="polite">Ready!</div>
 
-        <div id="commandGrid" class="command-grid">
-          <button id="attackMenuButton" class="pixel-button command-button attack-command" type="button">
-            <strong>Attack</strong>
-          </button>
-          <button id="itemMenuButton" class="pixel-button command-button item-command" type="button">
-            <strong>Item</strong>
-          </button>
-          <button id="guardButton" class="pixel-button command-button guard-command" type="button">
-            <strong>Guard</strong>
-            <span>50% Less Damage</span>
-          </button>
-          <button id="escapeButton" class="pixel-button command-button escape-command" type="button">
-            <strong>Escape</strong>
-          </button>
+        <div id="commandStage" class="command-stage">
+          <div id="commandGrid" class="command-grid">
+            <button id="attackMenuButton" class="pixel-button command-button attack-command" type="button">
+              <strong>Attack</strong>
+            </button>
+            <button id="itemMenuButton" class="pixel-button command-button item-command" type="button">
+              <strong>Item</strong>
+            </button>
+            <button id="buddyMenuButton" class="pixel-button command-button buddy-command" type="button">
+              <strong>Buddy</strong>
+              <span id="buddyCommandText">No Main Buddy</span>
+            </button>
+            <button id="escapeButton" class="pixel-button command-button escape-command" type="button">
+              <strong>Escape</strong>
+            </button>
+          </div>
+
+          <section id="commandWindow" class="command-window command-overlay hidden" aria-live="polite">
+            <div class="command-window-header">
+              <strong id="commandWindowTitle">Attack</strong>
+              <button id="closeCommandWindow" class="pixel-button small command-back-button" type="button">‹ Back</button>
+            </div>
+            <div id="skillButtons" class="skill-grid hidden"></div>
+            <div id="itemButtons" class="battle-item-grid hidden"></div>
+            <p id="noBattleItems" class="no-battle-items hidden">You don't have any battle items right now.</p>
+            <div id="itemPonShopActions" class="item-pon-shop-actions hidden">
+              <button id="itemBackButton" class="pixel-button item-back-button" type="button">‹ Back</button>
+              <button id="purchasePonButton" class="pixel-button purchase-pon-button" type="button">Purchase Pons</button>
+              <section id="ponPurchasePanel" class="pon-purchase-panel hidden" aria-live="polite">
+                <div class="pon-purchase-heading">
+                  <strong>Buddy Pon Shop</strong>
+                  <span id="ponPurchaseCoins">0 Pink Coins</span>
+                </div>
+                <p id="ponPurchaseMessage">Buy Pons here and use them immediately in this battle.</p>
+                <div id="ponPurchaseChoices" class="pon-purchase-grid"></div>
+                <button id="closePonPurchaseButton" class="pixel-button small" type="button">Back to Items</button>
+              </section>
+            </div>
+          </section>
         </div>
 
-        <section id="commandWindow" class="command-window hidden" aria-live="polite">
-          <div class="command-window-header">
-            <strong id="commandWindowTitle">Attack</strong>
-            <button id="closeCommandWindow" class="pixel-button small" type="button">‹ Back</button>
-          </div>
-          <div id="skillButtons" class="skill-grid hidden"></div>
-          <div id="itemButtons" class="battle-item-grid hidden"></div>
-          <p id="noBattleItems" class="no-battle-items hidden">You don't have any battle items right now.</p>
-        </section>
-
-        <button id="continueButton" class="pixel-button primary large hidden" type="button">Continue</button>
+        <div id="postFloorActions" class="post-floor-actions hidden">
+          <button id="continueButton" class="pixel-button primary large" type="button">Continue</button>
+          <button id="leaveEndlessButton" class="pixel-button large hidden" type="button">Leave Endless</button>
+        </div>
       </div>
     </section>
 
@@ -210,7 +363,7 @@
         </div>
 
         <div class="result-stats">
-          <div><span>Rank</span><strong id="resultRank">1</strong></div>
+          <div><span id="resultProgressLabel">Rank</span><strong id="resultRank">1</strong></div>
           <div><span>Coins Earned</span><strong id="resultCoins">0</strong></div>
           <div><span>EXP Earned</span><strong id="resultExp">0</strong></div>
         </div>
@@ -239,6 +392,6 @@
     </section>
   </main>
 
-  <script src="js/game-v21.js"></script>
+  <script src="js/game-v49.js"></script>
 </body>
 </html>

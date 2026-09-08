@@ -7199,3 +7199,37 @@ button { color: inherit; }
     box-shadow: none;
   }
 }
+
+/* =========================================================
+   V24.111 — PHONE-SAFE BOTTOM CONTROLS
+   =========================================================
+   Keep the v24.110 full-height room/background exactly as-is, but lift the
+   bottom-left Shelf-of-Ducks arrow and Book clear of phone browser/PWA UI. */
+@media (max-width: 600px) {
+  /* Lift the visible Book by about the same amount as its tap target. */
+  #roomBookImage {
+    transform: translateY(-3.0%);
+  }
+  #roomBookImage.on-shelf {
+    transform: translate(70%, -3.8%);
+  }
+  #roomBookImage.on-dresser {
+    transform: translateY(-3.2%);
+  }
+
+  /* Move the Book target noticeably upward while preserving each placement. */
+  .book-hotspot {
+    bottom: 9.0%;
+  }
+  .book-hotspot.on-shelf {
+    bottom: 8.2%;
+  }
+  .book-hotspot.on-dresser {
+    bottom: 9.0%;
+  }
+
+  /* Lift the bottom-left room navigation arrow out of the phone UI area. */
+  .room-wing-button {
+    bottom: 11.5%;
+  }
+}
