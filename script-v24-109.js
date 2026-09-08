@@ -1,4 +1,4 @@
-// Hub v24.108 — Quest Charms + Duckipedia Rose-Gold reward
+// Hub v24.109 — Quest Charms + Duckipedia Rose-Gold reward
 const STORAGE_KEY = "duckHabitHubSave_v1";
 const SAVE_VERSION = 40;
 

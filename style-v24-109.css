@@ -7064,7 +7064,7 @@ button { color: inherit; }
 
 
 /* =========================================================
-   V24.108 — TALL PHONE ROOM ANCHOR + WALLPAPER GEOMETRY
+   V24.109 — MOBILE FULL-HEIGHT ROOM ANCHOR + WALLPAPER GEOMETRY
    ========================================================= */
 /* True wall boundaries for a normal 9:16 stage. */
 .room-wallpaper-overlay {
@@ -7084,7 +7084,7 @@ button { color: inherit; }
 /* Tall phones are taller than the 1080×1920 room artwork. Fill the whole
    visible stage with the room's selected floor tint, but keep the original
    9:16 scene canvases aligned at the top so nothing stretches. */
-@media (max-width: 600px) and (max-aspect-ratio: 9/17) {
+@media (max-width: 600px) {
   .app-shell {
     width: 100vw;
     height: 100dvh;
