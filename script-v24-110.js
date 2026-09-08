@@ -1,4 +1,4 @@
-// Hub v24.109 — Quest Charms + Duckipedia Rose-Gold reward
+// Hub v24.110 — Quest Charms + Duckipedia Rose-Gold reward
 const STORAGE_KEY = "duckHabitHubSave_v1";
 const SAVE_VERSION = 40;
 
@@ -4736,6 +4736,42 @@ function applyRoomStageBackground(roomId = currentDisplayedRoomId()) {
   stage.style.background = ROOM_STAGE_BACKGROUNDS[roomId] || "#c0a78f";
 }
 
+function syncRoomStageBackgroundFromImage(roomId = currentDisplayedRoomId()) {
+  if (!stage || !roomImage) return;
+  applyRoomStageBackground(roomId);
+
+  const sampleFloor = () => {
+    try {
+      const width = roomImage.naturalWidth || 0;
+      const height = roomImage.naturalHeight || 0;
+      if (!width || !height) return;
+
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+      if (!ctx) return;
+
+      // The lower ~8% of every room background is a flat floor color.
+      // Sampling the source artwork itself guarantees the tall-screen extension
+      // is the exact same shade, even for future room colors.
+      const sampleX = Math.max(0, Math.min(width - 1, Math.round(width * 0.50)));
+      const sampleY = Math.max(0, Math.min(height - 1, Math.round(height * 0.96)));
+      ctx.drawImage(roomImage, sampleX, sampleY, 1, 1, 0, 0, 1, 1);
+      const [r, g, b, a] = ctx.getImageData(0, 0, 1, 1).data;
+      if (a > 0) stage.style.background = `rgb(${r}, ${g}, ${b})`;
+    } catch (_) {
+      // Keep the room-specific fallback color if sampling is unavailable.
+    }
+  };
+
+  if (roomImage.complete && roomImage.naturalWidth) {
+    requestAnimationFrame(sampleFloor);
+  } else {
+    roomImage.addEventListener("load", sampleFloor, { once: true });
+  }
+}
+
 function renderRoom() {
   normalizeRoomExpansion();
   normalizeRoomWallpaperState();
@@ -4745,7 +4781,7 @@ function renderRoom() {
   const wallpaper = currentDisplayedWallpaper();
 
   roomImage.src = room.file;
-  applyRoomStageBackground(room.id);
+  syncRoomStageBackgroundFromImage(room.id);
   roomImage.alt = wallpaper
     ? `${room.name} room with ${wallpaper.name} wallpaper`
     : `${room.name} room`;
@@ -6482,12 +6518,12 @@ const EMPTY_ROOM_FURNITURE = Object.freeze({
 });
 
 const SHELF_DUCK_PERCHES = Object.freeze([
-  { left: 11.7, top: 31.7, width: 11.5 },
-  { left: 11.7, top: 44.0, width: 11.5 },
-  { left: 11.7, top: 57.3, width: 11.5 },
-  { left: 11.7, top: 69.6, width: 11.5 },
-  { left: 11.7, top: 81.4, width: 11.5 },
-  { left: 11.7, top: 92.0, width: 11.5 }
+  { left: 11.7, top: 31.35, width: 11.5 },
+  { left: 11.7, top: 43.65, width: 11.5 },
+  { left: 11.7, top: 56.95, width: 11.5 },
+  { left: 11.7, top: 69.25, width: 11.5 },
+  { left: 11.7, top: 81.05, width: 11.5 },
+  { left: 11.7, top: 91.65, width: 11.5 }
 ]);
 
 const DRESSER_DUCK_PERCH = Object.freeze({

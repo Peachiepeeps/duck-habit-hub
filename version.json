@@ -1,5 +1,5 @@
 {
-  "version": "24.109",
+  "version": "24.110",
   "updatedAt": "2026-09-07",
-  "notes": "Main hub mobile layout recovery: applies the full-height room layout to mobile screens regardless of browser-reported aspect ratio, so the room/floor fills the usable screen and the OC, Book, floor duck, and shelf-wing arrow anchor to the bottom as intended. Keeps Quest Charms and the 1/500 base shiny rate unchanged."
+  "notes": "Main hub polish: the extra tall-screen floor fill now samples the exact floor shade from the active room artwork, and shelf ducks are nudged upward a tiny amount while preserving Goose's special perch adjustment."
 }

@@ -7064,7 +7064,7 @@ button { color: inherit; }
 
 
 /* =========================================================
-   V24.109 — MOBILE FULL-HEIGHT ROOM ANCHOR + WALLPAPER GEOMETRY
+   V24.110 — MOBILE FULL-HEIGHT ROOM + EXACT FLOOR COLOR POLISH
    ========================================================= */
 /* True wall boundaries for a normal 9:16 stage. */
 .room-wallpaper-overlay {
@@ -7078,7 +7078,7 @@ button { color: inherit; }
 /* The Goose has longer little legs than the ducks; lift ONLY Goose a hair so
    its feet sit naturally on the shelf line without moving the other ducks. */
 .shelf-perched-duck.goose-shelf-perch {
-  transform: translate(-50%, -54%);
+  transform: translate(-50%, -55%);
 }
 
 /* Tall phones are taller than the 1080×1920 room artwork. Fill the whole
