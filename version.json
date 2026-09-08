@@ -1,5 +1,5 @@
 {
-  "version": "24.114",
-  "updatedAt": "2026-09-07",
-  "notes": "Built directly on v24.110. Keeps the exact floor-color and shelf-duck polish, restores current Duck Quest v49/style v43 if an older installer was run, and lifts the bottom-left room arrow plus Book noticeably above phone UI."
+  "version": "24.116",
+  "updatedAt": "2026-09-08",
+  "notes": "Cloud Garden + expanded ranks + Catterpillar/Sea Star + all new Endless enemies/bosses + one-shot Shiny arrival sparkle. Area-clear closet rewards are now universal: Daisy Crown at Meadow 40, Sunglasses at Ocean 100, Halo at Cloud Garden 150."
 }
