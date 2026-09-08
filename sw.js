@@ -1,16 +1,17 @@
-const APP_CACHE = 'duck-habit-hub-app-v24-107';
-const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-107';
+const APP_CACHE = 'duck-habit-hub-app-v24-108';
+const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-108';
 const IMAGE_CACHE = 'duck-habit-hub-images-stable-v1';
 
 const APP_SHELL = [
-  './','./index.html','./manifest.webmanifest','./version.json','./style-v24-107.css','./script-v24-107.js','./sw.js',
+  './','./index.html','./manifest.webmanifest','./version.json','./style-v24-108.css','./script-v24-108.js','./sw.js',
   './apple-touch-icon-v4.png','./favicon-32-v4.png','./icon-192-v4.png','./icon-512-v4.png','./icon-maskable-512-v4.png',
   './assets/ui/book-room.webp','./assets/ui/book-icon.webp','./assets/ui/mirror.webp','./assets/ui/pink-coin.webp',
   './assets/gacha/gacha-machine.webp','./assets/gacha/gacha-menu-icon.webp','./assets/gacha/gacha-turn.webp','./assets/gacha/capsule-clear.webp','./assets/gacha/capsule-common.webp','./assets/gacha/capsule-uncommon.webp','./assets/gacha/capsule-rare.webp','./assets/gacha/capsule-super.webp',
   './assets/ui/icons/tasks.webp','./assets/ui/icons/dailies.webp','./assets/ui/icons/inventory.webp','./assets/ui/icons/shop.webp','./assets/ui/icons/duckipedia.webp','./assets/ui/icons/status.webp','./assets/ui/icons/profiles.webp','./assets/ui/icons/save-data.webp',
   './assets/items/buddy-pons/buddy-pon.webp','./assets/items/buddy-pons/super-buddy-pon.webp','./assets/items/buddy-pons/boss-buddy-pon.webp',
   './assets/ducks/Standard-duck.webp','./assets/gifts/Gaming-controller.webp','./assets/achievements/trophies/trophy-gold.webp','./assets/paint/Pink-paint.webp','./assets/gifts/Heart-locket.webp',
-  './assets/oc-invitations/Io-invitation.webp','./assets/ducks/io-duck.webp','./assets/oc-invitations/Miho-invitation.webp','./assets/ducks/miho-duck.webp','./duck-quest/index.html','./duck-quest/js/game-v48.js','./duck-quest/css/style-v42.css'
+  './assets/oc-invitations/Io-invitation.webp','./assets/ducks/io-duck.webp','./assets/oc-invitations/Miho-invitation.webp','./assets/ducks/miho-duck.webp','./duck-quest/index.html','./duck-quest/js/game-v49.js','./duck-quest/css/style-v43.css',
+  './duck-quest/assets/charms/Charm-metal.png','./duck-quest/assets/charms/Charm-sparkle.png','./duck-quest/assets/charms/Charm-heart.png','./duck-quest/assets/charms/Charm-duck.png','./duck-quest/assets/charms/Charm-beak.png','./duck-quest/assets/charms/Charm-outline.png'
 ];
 
 self.addEventListener('install',event=>{

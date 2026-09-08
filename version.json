@@ -1,5 +1,5 @@
 {
-  "version": "24.107",
+  "version": "24.108",
   "updatedAt": "2026-09-07",
-  "notes": "Tall-phone room layout fix: fills the full visible height with the room/floor instead of gray, anchors the OC, Book, and Shelf-of-Ducks arrow near the bottom, fixes CSS wallpaper masking to the actual wall boundaries, and lifts only Goose slightly on the shelf. Shiny odds remain 1/250."
+  "notes": "Quest Charms: permanent Bronze/Silver/Gold charm tiers, three equipped slots per OC, CSS-recolored charm art, 1/500 base Shiny odds with Shimmer tiers, Fortune/Best Friend/Training/Vitality/Treasure effects, and a Rose-Gold 1/100 Shimmer Charm rewarded for completing the Duckipedia."
 }

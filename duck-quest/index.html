@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f6c6d6" />
   <title>Duck Quest</title>
-  <link rel="stylesheet" href="css/style-v42.css" />
+  <link rel="stylesheet" href="css/style-v43.css" />
 </head>
 <body>
   <main class="quest-shell">
@@ -80,6 +80,16 @@
         <button id="openBuddyCollection" class="pixel-button" type="button">Buddies</button>
       </section>
 
+      <section class="charm-home-card">
+        <div class="charm-home-copy">
+          <span class="mini-label">QUEST CHARMS</span>
+          <strong>Charm Loadout</strong>
+          <small id="charmHomeSummary">0 / 3 equipped for Peep</small>
+        </div>
+        <div id="charmHomeSlots" class="charm-home-slots" aria-label="Equipped Quest Charms"></div>
+        <button id="openCharmScreen" class="pixel-button" type="button">Charms</button>
+      </section>
+
       <section class="endless-home-card">
         <div class="endless-home-heading">
           <div>
@@ -152,6 +162,31 @@
       </section>
     </section>
 
+    <section id="charmScreen" class="screen hidden">
+      <section class="charm-book-card">
+        <div class="charm-book-heading">
+          <button id="backFromCharms" class="pixel-button small" type="button">← Quest Menu</button>
+          <div>
+            <span class="mini-label">QUEST CHARMS</span>
+            <h2>Charm Collection</h2>
+            <small>Permanent unlocks · Equip up to 3 per OC</small>
+          </div>
+          <strong id="charmCoinCount" class="charm-coin-pill">0 Coins</strong>
+        </div>
+
+        <section class="charm-equipped-panel">
+          <div>
+            <span class="mini-label">EQUIPPED</span>
+            <strong id="charmEquippedTitle">Peep's Charms</strong>
+          </div>
+          <div id="charmEquippedSlots" class="charm-equipped-slots"></div>
+          <p id="charmMessage" class="charm-message" aria-live="polite">Choose up to three different charm families.</p>
+        </section>
+
+        <div id="charmCatalog" class="charm-catalog"></div>
+      </section>
+    </section>
+
     <section id="buddyScreen" class="screen hidden">
       <section class="buddy-book-card">
         <div class="buddy-book-heading">
@@ -221,6 +256,7 @@
           <strong id="rankBattleLabel">Rank 1</strong>
         </div>
       </div>
+      <div id="battleCharmStrip" class="battle-charm-strip hidden" aria-label="Active Quest Charms"></div>
 
       <div id="battlefield" class="battlefield">
         <img id="battleBg" class="battle-bg pixel-background" src="" alt="" />
@@ -356,6 +392,6 @@
     </section>
   </main>
 
-  <script src="js/game-v48.js"></script>
+  <script src="js/game-v49.js"></script>
 </body>
 </html>

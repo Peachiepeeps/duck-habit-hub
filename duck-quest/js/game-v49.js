@@ -1,4 +1,4 @@
-// Duck Quest game-v47 — Miho positioning polish
+// Duck Quest game-v49 — permanent tiered Quest Charms
 const HUB_SAVE_KEY = "duckHabitHubSave_v1";
 const MAX_LEVEL = 100;
 const AREA_CONFIG = Object.freeze({
@@ -1101,11 +1101,67 @@ const JELLYBUN_VARIANTS=Object.freeze({
 });
 function applyJellybunVariant(t,r){return applyFamilyVariant(t,JELLYBUN_VARIANTS,["base","pink","green","grey","gold"],r,"jellybunVariant",true);}
 
-const SHINY_RATE = 1 / 250;
+const BASE_SHINY_RATE = 1 / 500;
 const MYSTERY_CHEST_RATE = 1 / 50;
 
+const CHARM_SLOT_LIMIT = 3;
+const CURRENT_DUCKIPEDIA_TOTAL = 74;
+const CHARM_FAMILY_ORDER = Object.freeze(["shimmer","fortune","best-friend","training","vitality","treasure"]);
+const CHARM_FAMILIES = Object.freeze({
+  shimmer:{name:"Shimmer Charm",description:"Raises Shiny odds above the normal 1 / 500 rate.",family:"shimmer"},
+  fortune:{name:"Fortune Charm",description:"Earn more Pink Coins and improve ordinary item quality.",family:"fortune"},
+  "best-friend":{name:"Best Friend Charm",description:"Adds percentage points to compatible Buddy Pon catch chances.",family:"best-friend"},
+  training:{name:"Training Charm",description:"Earn more EXP from Duck Quest rewards.",family:"training"},
+  vitality:{name:"Vitality Charm",description:"Raises this OC's maximum HP for the entire run.",family:"vitality"},
+  treasure:{name:"Treasure Charm",description:"Sometimes adds an extra rare-leaning item to a treasure chest.",family:"treasure"}
+});
+const CHARM_DEFS = Object.freeze({
+  "shimmer-bronze":{id:"shimmer-bronze",family:"shimmer",tier:"bronze",name:"Bronze Shimmer Charm",price:350,shinyRate:1/400,effect:"Shiny chance: 1 / 400"},
+  "shimmer-silver":{id:"shimmer-silver",family:"shimmer",tier:"silver",name:"Silver Shimmer Charm",price:1100,shinyRate:1/300,effect:"Shiny chance: 1 / 300"},
+  "shimmer-gold":{id:"shimmer-gold",family:"shimmer",tier:"gold",name:"Gold Shimmer Charm",price:3500,shinyRate:1/200,effect:"Shiny chance: 1 / 200"},
+  "shimmer-rose-gold":{id:"shimmer-rose-gold",family:"shimmer",tier:"rose-gold",name:"Rose-Gold Shimmer Charm",price:null,shinyRate:1/100,effect:"Shiny chance: 1 / 100",special:true},
+  "fortune-bronze":{id:"fortune-bronze",family:"fortune",tier:"bronze",name:"Bronze Fortune Charm",price:250,coinBonus:.10,itemLuck:.10,effect:"+10% coins · Small rare-item luck boost"},
+  "fortune-silver":{id:"fortune-silver",family:"fortune",tier:"silver",name:"Silver Fortune Charm",price:750,coinBonus:.20,itemLuck:.20,effect:"+20% coins · Medium rare-item luck boost"},
+  "fortune-gold":{id:"fortune-gold",family:"fortune",tier:"gold",name:"Gold Fortune Charm",price:2500,coinBonus:.35,itemLuck:.35,effect:"+35% coins · Strong rare-item luck boost"},
+  "best-friend-bronze":{id:"best-friend-bronze",family:"best-friend",tier:"bronze",name:"Bronze Best Friend Charm",price:175,catchBonus:.05,effect:"+5 percentage points to compatible catches"},
+  "best-friend-silver":{id:"best-friend-silver",family:"best-friend",tier:"silver",name:"Silver Best Friend Charm",price:600,catchBonus:.10,effect:"+10 percentage points to compatible catches"},
+  "best-friend-gold":{id:"best-friend-gold",family:"best-friend",tier:"gold",name:"Gold Best Friend Charm",price:2000,catchBonus:.20,effect:"+20 percentage points to compatible catches"},
+  "training-bronze":{id:"training-bronze",family:"training",tier:"bronze",name:"Bronze Training Charm",price:200,expBonus:.15,effect:"+15% EXP"},
+  "training-silver":{id:"training-silver",family:"training",tier:"silver",name:"Silver Training Charm",price:600,expBonus:.30,effect:"+30% EXP"},
+  "training-gold":{id:"training-gold",family:"training",tier:"gold",name:"Gold Training Charm",price:1800,expBonus:.50,effect:"+50% EXP"},
+  "vitality-bronze":{id:"vitality-bronze",family:"vitality",tier:"bronze",name:"Bronze Vitality Charm",price:225,hpBonus:.10,effect:"+10% Max HP"},
+  "vitality-silver":{id:"vitality-silver",family:"vitality",tier:"silver",name:"Silver Vitality Charm",price:700,hpBonus:.20,effect:"+20% Max HP"},
+  "vitality-gold":{id:"vitality-gold",family:"vitality",tier:"gold",name:"Gold Vitality Charm",price:2200,hpBonus:.35,effect:"+35% Max HP"},
+  "treasure-bronze":{id:"treasure-bronze",family:"treasure",tier:"bronze",name:"Bronze Treasure Charm",price:275,treasureChance:.15,effect:"15% chance for a bonus rare-leaning chest item"},
+  "treasure-silver":{id:"treasure-silver",family:"treasure",tier:"silver",name:"Silver Treasure Charm",price:850,treasureChance:.30,effect:"30% chance for a bonus rare-leaning chest item"},
+  "treasure-gold":{id:"treasure-gold",family:"treasure",tier:"gold",name:"Gold Treasure Charm",price:2750,treasureChance:.50,effect:"50% chance for a bonus rare-leaning chest item"}
+});
+
+function defaultCharmSave(){
+  return {owned:{},equippedByCharacter:{peep:[],miko:[],io:[],miho:[]}};
+}
+function normalizeCharmSave(raw){
+  const source=raw&&typeof raw==="object"?raw:{};
+  const owned={};
+  for(const id of Object.keys(CHARM_DEFS)) if(source.owned?.[id]) owned[id]=true;
+  const equippedByCharacter={};
+  for(const characterId of ["peep","miko","io","miho"]){
+    const incoming=Array.isArray(source.equippedByCharacter?.[characterId])?source.equippedByCharacter[characterId]:[];
+    const seenFamilies=new Set();
+    equippedByCharacter[characterId]=[];
+    for(const id of incoming){
+      const def=CHARM_DEFS[id];
+      if(!def||!owned[id]||seenFamilies.has(def.family)) continue;
+      seenFamilies.add(def.family);
+      equippedByCharacter[characterId].push(id);
+      if(equippedByCharacter[characterId].length>=CHARM_SLOT_LIMIT) break;
+    }
+  }
+  return {owned,equippedByCharacter};
+}
+
 // One rare recolor per enemy family. The special family variant replaces any
-// normal recolor at 1/250 and is guaranteed to befriend with any Buddy Pon.
+// normal recolor at a charm-adjusted rate (base 1/500) and is guaranteed to befriend with any Buddy Pon.
 // Amethyst Mimic is intentionally different: it only reveals itself from the
 // purple Mystery Chest so the chest keeps its surprise.
 const SHINY_VARIANTS = Object.freeze({
@@ -1390,7 +1446,7 @@ function maybeApplyShinyVariant(enemyId, template, forceShiny=false) {
   const shiny=SHINY_VARIANTS[enemyId];
   if(!shiny) return template;
   // The Mimic's shiny is only revealed by the purple Mystery Chest.
-  if(!forceShiny && (enemyId==="mimic" || Math.random()>=SHINY_RATE)) return template;
+  if(!forceShiny && (enemyId==="mimic" || Math.random()>=currentShinyRate())) return template;
   return {
     ...template,
     name:String(shiny.name || template.name),
@@ -1549,6 +1605,17 @@ const ui = {
   questOcPicker: document.querySelector("#questOcPicker"),
   buddyHomeCount: document.querySelector("#buddyHomeCount"),
   openBuddyCollection: document.querySelector("#openBuddyCollection"),
+  charm: document.querySelector("#charmScreen"),
+  openCharmScreen: document.querySelector("#openCharmScreen"),
+  backFromCharms: document.querySelector("#backFromCharms"),
+  charmHomeSummary: document.querySelector("#charmHomeSummary"),
+  charmHomeSlots: document.querySelector("#charmHomeSlots"),
+  charmCoinCount: document.querySelector("#charmCoinCount"),
+  charmEquippedTitle: document.querySelector("#charmEquippedTitle"),
+  charmEquippedSlots: document.querySelector("#charmEquippedSlots"),
+  charmCatalog: document.querySelector("#charmCatalog"),
+  charmMessage: document.querySelector("#charmMessage"),
+  battleCharmStrip: document.querySelector("#battleCharmStrip"),
   backFromBuddies: document.querySelector("#backFromBuddies"),
   buddyCollectionCount: document.querySelector("#buddyCollectionCount"),
   buddyCollectionGrid: document.querySelector("#buddyCollectionGrid"),
@@ -1610,6 +1677,117 @@ questSave.activeCharacter = activeCharacterId;
 
 function heroDisplayName(){ return ({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho"})[activeCharacterId] || "Peep"; }
 
+function charmState(){
+  questSave.charms=normalizeCharmSave(questSave.charms);
+  return questSave.charms;
+}
+function equippedCharmIds(characterId=activeCharacterId){
+  const state=charmState();
+  if(!Array.isArray(state.equippedByCharacter[characterId])) state.equippedByCharacter[characterId]=[];
+  return state.equippedByCharacter[characterId];
+}
+function equippedCharmDefs(characterId=activeCharacterId){ return equippedCharmIds(characterId).map(id=>CHARM_DEFS[id]).filter(Boolean); }
+function activeCharmByFamily(family,characterId=activeCharacterId){ return equippedCharmDefs(characterId).find(def=>def.family===family)||null; }
+function currentShinyRate(){ return activeCharmByFamily("shimmer")?.shinyRate || BASE_SHINY_RATE; }
+function charmArtMarkup(def,size=""){
+  if(!def) return '<span class="charm-art-empty">♡</span>';
+  const sizeClass=size?` ${size}`:"";
+  return `<span class="charm-art family-${def.family} tier-${def.tier}${sizeClass}" aria-hidden="true"><span class="charm-layer charm-metal"></span><span class="charm-layer charm-sparkle"></span><span class="charm-layer charm-heart"></span><span class="charm-layer charm-duck"></span><span class="charm-layer charm-beak"></span><img class="charm-outline" src="assets/charms/Charm-outline.png" alt=""></span>`;
+}
+function charmTierLabel(tier){ return tier==="rose-gold"?"Rose Gold":tier.charAt(0).toUpperCase()+tier.slice(1); }
+function charmOwned(id){ return Boolean(charmState().owned[id]); }
+function setCharmMessage(message){ if(ui.charmMessage) ui.charmMessage.textContent=message; }
+function purchaseCharm(id){
+  const def=CHARM_DEFS[id];
+  if(!def||def.special||charmOwned(id)) return;
+  const price=Math.max(0,Number(def.price)||0);
+  const coins=Math.max(0,Number(hubSave.coins)||0);
+  if(coins<price){ setCharmMessage(`You need ${(price-coins).toLocaleString()} more Pink Coins for ${def.name}.`); return; }
+  hubSave.coins=coins-price;
+  charmState().owned[id]=true;
+  persistAll();
+  setCharmMessage(`${def.name} unlocked permanently!`);
+  renderCharmScreen(); renderCharmHome(); renderMeta();
+}
+function toggleCharmEquip(id){
+  const def=CHARM_DEFS[id];
+  if(!def||!charmOwned(id)) return;
+  const equipped=equippedCharmIds();
+  const exactIndex=equipped.indexOf(id);
+  if(exactIndex>=0){
+    equipped.splice(exactIndex,1); persistAll();
+    setCharmMessage(`${def.name} unequipped from ${heroDisplayName()}.`);
+    renderCharmScreen(); renderCharmHome(); renderBattleCharmStrip(); renderMeta(); return;
+  }
+  const familyIndex=equipped.findIndex(otherId=>CHARM_DEFS[otherId]?.family===def.family);
+  if(familyIndex>=0){
+    equipped.splice(familyIndex,1,id); persistAll();
+    setCharmMessage(`${def.name} replaced the other ${CHARM_FAMILIES[def.family]?.name || "charm"} tier.`);
+    renderCharmScreen(); renderCharmHome(); renderBattleCharmStrip(); renderMeta(); return;
+  }
+  if(equipped.length>=CHARM_SLOT_LIMIT){ setCharmMessage(`${heroDisplayName()} already has 3 charms equipped. Unequip one first.`); return; }
+  equipped.push(id); persistAll();
+  setCharmMessage(`${def.name} equipped to ${heroDisplayName()}!`);
+  renderCharmScreen(); renderCharmHome(); renderBattleCharmStrip(); renderMeta();
+}
+function renderCharmHome(){
+  if(!ui.charmHomeSlots||!ui.charmHomeSummary) return;
+  const defs=equippedCharmDefs();
+  ui.charmHomeSummary.textContent=`${defs.length} / ${CHARM_SLOT_LIMIT} equipped for ${heroDisplayName()}`;
+  ui.charmHomeSlots.innerHTML="";
+  for(let i=0;i<CHARM_SLOT_LIMIT;i++){
+    const def=defs[i];
+    const slot=document.createElement("div");
+    slot.className=`charm-home-slot${def?" filled":""}`;
+    slot.innerHTML=def?`${charmArtMarkup(def,"small")}<span class="charm-mini-label">${charmTierLabel(def.tier)} ${CHARM_FAMILIES[def.family]?.name.replace(" Charm","")||"Charm"}</span>`:"<span>♡</span>";
+    ui.charmHomeSlots.appendChild(slot);
+  }
+}
+function renderBattleCharmStrip(){
+  if(!ui.battleCharmStrip) return;
+  const defs=equippedCharmDefs();
+  ui.battleCharmStrip.classList.toggle("hidden",defs.length===0);
+  ui.battleCharmStrip.innerHTML=defs.map(def=>`<span class="battle-charm-pill" title="${def.name}: ${def.effect}">${charmArtMarkup(def,"tiny")}<span>${CHARM_FAMILIES[def.family]?.name.replace(" Charm","")||"Charm"}</span></span>`).join("");
+}
+function renderCharmScreen(){
+  if(!ui.charmCatalog) return;
+  const state=charmState();
+  const equipped=equippedCharmIds();
+  if(ui.charmCoinCount) ui.charmCoinCount.textContent=`${Math.max(0,Number(hubSave.coins)||0).toLocaleString()} Coins`;
+  if(ui.charmEquippedTitle) ui.charmEquippedTitle.textContent=`${heroDisplayName()}'s Charms`;
+  if(ui.charmEquippedSlots){
+    ui.charmEquippedSlots.innerHTML="";
+    for(let i=0;i<CHARM_SLOT_LIMIT;i++){
+      const def=CHARM_DEFS[equipped[i]];
+      const button=document.createElement("button");
+      button.type="button"; button.className=`charm-equip-slot${def?" filled":""}`;
+      if(def){ button.innerHTML=`${charmArtMarkup(def,"small")}<small>${def.name}<br>Tap to unequip</small>`; button.addEventListener("click",()=>toggleCharmEquip(def.id)); }
+      else{ button.innerHTML="<span>♡</span><small>Empty slot</small>"; button.disabled=true; }
+      ui.charmEquippedSlots.appendChild(button);
+    }
+  }
+  ui.charmCatalog.innerHTML="";
+  for(const familyId of CHARM_FAMILY_ORDER){
+    const family=CHARM_FAMILIES[familyId];
+    const card=document.createElement("section"); card.className=`charm-family-card family-${familyId}`;
+    const sample=Object.values(CHARM_DEFS).find(def=>def.family===familyId&&def.tier==="gold")||Object.values(CHARM_DEFS).find(def=>def.family===familyId);
+    card.innerHTML=`<div class="charm-family-heading">${charmArtMarkup(sample,"small")}<div><h3>${family.name}</h3><p>${family.description}</p></div></div><div class="charm-tier-list"></div>`;
+    const list=card.querySelector(".charm-tier-list");
+    for(const def of Object.values(CHARM_DEFS).filter(def=>def.family===familyId)){
+      const owned=Boolean(state.owned[def.id]); const isEquipped=equipped.includes(def.id);
+      const row=document.createElement("div");
+      row.className=`charm-tier-row${owned?" owned":""}${isEquipped?" equipped":""}${def.special?" special":""}${def.special&&!owned?" locked":""}`;
+      let actionLabel,disabled=false;
+      if(def.special&&!owned){actionLabel="Locked";disabled=true;} else if(isEquipped) actionLabel="Unequip"; else if(owned) actionLabel="Equip"; else actionLabel=`Buy ${def.price.toLocaleString()}`;
+      const note=def.special&&!owned?`Complete the Duckipedia (${Math.min(CURRENT_DUCKIPEDIA_TOTAL,hubSave.unlockedDucks?.length||0)} / ${CURRENT_DUCKIPEDIA_TOTAL}) to unlock permanently.`:def.effect;
+      row.innerHTML=`${charmArtMarkup(def,"small")}<div class="charm-tier-copy"><strong>${def.name}</strong><small>${note}${!def.special&&!owned?` · ${def.price.toLocaleString()} Pink Coins`:""}</small></div><button class="pixel-button small charm-tier-action" type="button" ${disabled?"disabled":""}>${actionLabel}</button>`;
+      const button=row.querySelector("button"); if(!disabled) button.addEventListener("click",()=>owned?toggleCharmEquip(def.id):purchaseCharm(def.id));
+      list.appendChild(row);
+    }
+    ui.charmCatalog.appendChild(card);
+  }
+}
+
 function defaultCharacterQuestProgress(){
   return {
     level:1,
@@ -1655,6 +1833,7 @@ function defaultQuestSave() {
     peep:defaultCharacterQuestProgress(),
     activeCharacter:"peep",
     iconBackgroundsUnlocked:["white"],
+    charms:defaultCharmSave(),
     completedRuns:0,bossWins:0,totalBattlesWon:0,totalCoinsEarned:0,totalExpEarned:0
   };
 }
@@ -1674,6 +1853,7 @@ function normalizeQuestSave(raw) {
     activeCharacter:["peep","miko","io","miho"].includes(q.activeCharacter)?q.activeCharacter:null,
     iconBackgroundsUnlocked:[...new Set(["white",...(Array.isArray(q.iconBackgroundsUnlocked)?q.iconBackgroundsUnlocked:[])])]
       .filter(id=>ICON_BACKGROUND_COLORS.some(color=>color.id===id)),
+    charms:normalizeCharmSave(q.charms),
     bossWins:Math.max(0,Number(q.bossWins ?? q.completedRuns)||0)
   };
   if(q.miko&&typeof q.miko==="object") normalized.miko=normalizeCharacterQuestProgress(q.miko);
@@ -1843,8 +2023,10 @@ function expNeeded(level) {
 }
 
 function peepStats(level = activeHeroProgress().level) {
+  const vitality=activeCharmByFamily("vitality");
+  const hpBonus=Math.max(0,Number(vitality?.hpBonus)||0);
   return {
-    maxHp: Math.round(42 + (level - 1) * 4.2),
+    maxHp: Math.round((42 + (level - 1) * 4.2) * (1 + hpBonus)),
     attack: Math.round(8 + (level - 1) * 1.15),
     defense: Math.round(2 + (level - 1) * 0.48)
   };
@@ -2610,6 +2792,7 @@ function renderMeta() {
   }
 
   renderBuddyHomeCount();
+  renderCharmHome();
   renderMenuSkills();
 }
 
@@ -2784,10 +2967,12 @@ function beginRun() {
 
 function showScreen(which) {
   ui.home.classList.toggle("hidden", which!=="home");
+  ui.charm?.classList.toggle("hidden", which!=="charm");
   ui.buddy?.classList.toggle("hidden", which!=="buddy");
   ui.battle.classList.toggle("hidden", which!=="battle");
   ui.result.classList.toggle("hidden", which!=="result");
   if(which==="buddy") renderBuddyCollection();
+  if(which==="charm") renderCharmScreen();
 }
 
 function startEncounter() {
@@ -2813,6 +2998,7 @@ function startEncounter() {
     enemyNextAttackMultiplier:1, enemyStunned:false
   };
   buddyUsedThisHeroTurn=false;
+  renderBattleCharmStrip();
   ui.chestLayer.classList.add("hidden");
   ui.postFloorActions?.classList.add("hidden");
   ui.leaveEndlessButton?.classList.add("hidden");
@@ -3959,7 +4145,8 @@ function buddyPonCatchRate(pon, enemy) {
     ? Math.max(0,Math.min(1,Number(pon.bossRate)||0))
     : Math.max(0,Math.min(1,Number(pon.normalRate)||0));
   if(base<=0) return 0;
-  return Math.max(0,Math.min(1,base+buddyLowHpCatchBonus(enemy)));
+  const friendBonus=Math.max(0,Number(activeCharmByFamily("best-friend")?.catchBonus)||0);
+  return Math.max(0,Math.min(1,base+buddyLowHpCatchBonus(enemy)+friendBonus));
 }
 
 function hasCompatibleBuddyPon(enemy) {
@@ -4277,6 +4464,7 @@ async function openPendingChest() {
   if(rewards.exp) textParts.push(`+${rewards.exp} EXP`);
   if(rewards.unlockedBackgrounds?.length) textParts.push(rewards.unlockedBackgrounds.map(bg=>`${bg.label} Icon`).join(", "));
   if(rewards.items.length) textParts.push(rewards.items.map(x=>`${x.name} ×${x.qty}`).join(", "));
+  if(rewards.charmTreasureBonus) textParts.push("Treasure Charm bonus!");
 
   ui.chestCaption.textContent=pendingChest.hiddenTreasure
     ? `JACKPOT! · ${textParts.join(" · ")}`
@@ -4296,6 +4484,22 @@ async function openPendingChest() {
   actionLocked=false;
 }
 
+function weightedItemWithCharm(){
+  const fortune=activeCharmByFamily("fortune");
+  const luck=Math.max(0,Math.min(1,Number(fortune?.itemLuck)||0));
+  return luck>0&&Math.random()<luck?jackpotItem():weightedItem();
+}
+function finalizeCharmRewards(reward,chest){
+  const fortune=activeCharmByFamily("fortune");
+  const training=activeCharmByFamily("training");
+  const treasure=activeCharmByFamily("treasure");
+  reward.coins=Math.max(0,Math.round((Number(reward.coins)||0)*(1+Math.max(0,Number(fortune?.coinBonus)||0))));
+  reward.exp=Math.max(0,Math.round((Number(reward.exp)||0)*(1+Math.max(0,Number(training?.expBonus)||0))));
+  const treasureChance=Math.max(0,Math.min(1,Number(treasure?.treasureChance)||0));
+  if(treasureChance>0&&Math.random()<treasureChance){ addRewardItem(reward.items,jackpotItem(),1); reward.charmTreasureBonus=true; }
+  return reward;
+}
+
 function generateRewards(chest) {
   const rank=currentRun.rank;
   let coins=0, exp=0, itemRolls=0, itemChance=0;
@@ -4310,7 +4514,7 @@ function generateRewards(chest) {
     if(Math.random()<.70) addRewardItem(items,REWARD_ITEMS.find(x=>x.id==="super-buddy-pon"),1);
     if(Math.random()<.30) addRewardItem(items,REWARD_ITEMS.find(x=>x.id==="boss-buddy-pon"),1);
     for(let i=0;i<3;i++) addRewardItem(items,jackpotItem(),1);
-    return {coins,exp,items,iconBackground:pickChestIconBackground({kind:"rare"}),wallpaper:pickChestWallpaper({kind:"hidden-treasure"})};
+    return finalizeCharmRewards({coins,exp,items,iconBackground:pickChestIconBackground({kind:"rare"}),wallpaper:pickChestWallpaper({kind:"hidden-treasure"})},chest);
   }
 
   if(chest.kind==="rare") {
@@ -4338,9 +4542,9 @@ function generateRewards(chest) {
 
   for(let i=0;i<itemRolls;i++) {
     if(Math.random()<=itemChance) {
-      let item=weightedItem();
+      let item=weightedItemWithCharm();
       if(chest.kind==="boss" && items.some(x=>x.id===item.id)) {
-        for(let retry=0; retry<5 && items.some(x=>x.id===item.id); retry++) item=weightedItem();
+        for(let retry=0; retry<5 && items.some(x=>x.id===item.id); retry++) item=weightedItemWithCharm();
       }
       addRewardItem(items,item,1);
     }
@@ -4348,7 +4552,7 @@ function generateRewards(chest) {
 
   const iconBackground=pickChestIconBackground(chest);
   const wallpaper=pickChestWallpaper(chest);
-  return {coins,exp,items,iconBackground,wallpaper};
+  return finalizeCharmRewards({coins,exp,items,iconBackground,wallpaper},chest);
 }
 
 function weightedItem() {
@@ -4596,6 +4800,8 @@ function returnHome() {
 document.querySelector("#backGames").addEventListener("click",()=>window.location.href="../#games");
 ui.openBuddyCollection?.addEventListener("click",()=>{ closeBuddyDetail(); setBuddyScreenUrl(true); showScreen("buddy"); });
 ui.backFromBuddies?.addEventListener("click",()=>{ closeBuddyDetail(); setBuddyScreenUrl(false); showScreen("home"); renderMeta(); });
+ui.openCharmScreen?.addEventListener("click",()=>{ setCharmMessage("Choose up to three different charm families."); showScreen("charm"); });
+ui.backFromCharms?.addEventListener("click",()=>{ showScreen("home"); renderMeta(); });
 ui.buddyFilters.forEach(button=>button.addEventListener("click",()=>{
   buddyCollectionFilter=button.dataset.buddyFilter || "all";
   renderBuddyCollection();
@@ -4687,7 +4893,7 @@ persistAll();
 renderMeta();
 renderMenuSkills();
 const initialQuestScreen=new URLSearchParams(window.location.search).get("screen");
-showScreen(initialQuestScreen==="buddies"?"buddy":"home");
+showScreen(initialQuestScreen==="buddies"?"buddy":initialQuestScreen==="charms"?"charm":"home");
 warmQuestMenuAssets();
 
 // Menu idle bounce.

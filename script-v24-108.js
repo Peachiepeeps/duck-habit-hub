@@ -1,6 +1,6 @@
-// Hub v24.107 — tall-phone room anchor + CSS wallpaper geometry fix
+// Hub v24.108 — Quest Charms + Duckipedia Rose-Gold reward
 const STORAGE_KEY = "duckHabitHubSave_v1";
-const SAVE_VERSION = 39;
+const SAVE_VERSION = 40;
 
 const CHARACTERS = {
   peep: {
@@ -3217,7 +3217,26 @@ function loadSave() {
     return structuredClone(DEFAULT_SAVE);
   }
 }
+function ensureDuckipediaRoseGoldShimmerCharm(options = {}) {
+  if (!Array.isArray(save?.unlockedDucks)) return false;
+  const discovered = new Set(save.unlockedDucks.map(normalizeDuckId).filter(id => id && DUCKS[id]));
+  if (discovered.size < DUCK_TOTAL) return false;
+  if (!save.duckQuest || typeof save.duckQuest !== "object" || Array.isArray(save.duckQuest)) save.duckQuest = {};
+  if (!save.duckQuest.charms || typeof save.duckQuest.charms !== "object" || Array.isArray(save.duckQuest.charms)) {
+    save.duckQuest.charms = { owned: {}, equippedByCharacter: {} };
+  }
+  if (!save.duckQuest.charms.owned || typeof save.duckQuest.charms.owned !== "object" || Array.isArray(save.duckQuest.charms.owned)) {
+    save.duckQuest.charms.owned = {};
+  }
+  if (save.duckQuest.charms.owned["shimmer-rose-gold"]) return false;
+  save.duckQuest.charms.owned["shimmer-rose-gold"] = true;
+  if (options.persistNow !== false) persist();
+  if (options.notify !== false) showToast("Duckipedia complete! Rose-Gold Shimmer Charm unlocked! ✨");
+  return true;
+}
+
 let save = loadSave();
+ensureDuckipediaRoseGoldShimmerCharm({ notify: false });
 
 const GACHA_PULL_COST = 100;
 const GACHA_TEN_PULL_COST = 900;
@@ -8546,6 +8565,7 @@ function unlockDuck(duckId, options = {}) {
     incrementDuckCollection(id, 1, { persistNow: false });
   }
 
+  ensureDuckipediaRoseGoldShimmerCharm({ notify: options.notify !== false, persistNow: false });
   if (options.persistNow !== false) persist();
 
   if (!duckipediaPanel.classList.contains("hidden")) {
@@ -8658,6 +8678,7 @@ function renderDuckCard(duckId, duck) {
 
 function renderDuckipedia() {
   sanitizeUnlockedDucks();
+  ensureDuckipediaRoseGoldShimmerCharm({ notify: true });
 
   const unlockedCount = save.unlockedDucks.length;
   const percent = DUCK_TOTAL > 0

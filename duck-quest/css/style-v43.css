@@ -2429,3 +2429,106 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
     bottom:9% !important;
   }
 }
+
+/* =========================================================
+   v43 — Quest Charms
+   ========================================================= */
+.charm-home-card{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:12px 14px;
+  align-items:center;
+  padding:16px;
+  border:3px solid #9b6f68;
+  border-radius:18px;
+  background:#fff8e7;
+  box-shadow:0 7px 0 rgba(125,84,81,.18);
+}
+.charm-home-copy{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.charm-home-copy strong{font-size:1.05rem;}
+.charm-home-copy small{opacity:.76;}
+.charm-home-slots{grid-column:1/-1;display:flex;gap:8px;align-items:center;min-height:44px;}
+.charm-home-slot,.charm-equip-slot{
+  display:flex;align-items:center;justify-content:center;
+  min-width:52px;min-height:52px;padding:5px;
+  border:2px dashed #c59b9d;border-radius:13px;background:#fffdf7;
+}
+.charm-home-slot.filled,.charm-equip-slot.filled{border-style:solid;background:#fff8fb;}
+.charm-mini-label{font-size:.68rem;line-height:1.05;text-align:center;max-width:86px;}
+
+.charm-book-card{
+  padding:16px;
+  border:3px solid #9b6f68;
+  border-radius:20px;
+  background:#fff9ec;
+  box-shadow:0 8px 0 rgba(125,84,81,.18);
+}
+.charm-book-heading{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;margin-bottom:14px;}
+.charm-book-heading h2{margin:2px 0 0;}
+.charm-book-heading small{display:block;margin-top:3px;opacity:.72;}
+.charm-coin-pill{padding:8px 10px;border:2px solid #c98e9e;border-radius:999px;background:#fff2d6;white-space:nowrap;}
+.charm-equipped-panel{padding:13px;border:2px solid #c89aac;border-radius:16px;background:#fff2f7;margin-bottom:16px;}
+.charm-equipped-panel>div:first-child{display:flex;justify-content:space-between;gap:10px;align-items:baseline;}
+.charm-equipped-slots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:10px;}
+.charm-equip-slot{min-height:88px;flex-direction:column;gap:4px;cursor:pointer;}
+.charm-equip-slot small{font-size:.67rem;text-align:center;line-height:1.15;}
+.charm-message{min-height:1.25em;margin:9px 0 0;font-size:.78rem;opacity:.78;}
+
+.charm-catalog{display:grid;gap:14px;}
+.charm-family-card{border:2px solid #c39aa4;border-radius:18px;background:#fffdf7;overflow:hidden;}
+.charm-family-heading{display:grid;grid-template-columns:auto minmax(0,1fr);gap:11px;align-items:center;padding:12px 13px;background:#fff2f5;border-bottom:2px solid #ead0d7;}
+.charm-family-heading h3{margin:0;font-size:1rem;}
+.charm-family-heading p{margin:3px 0 0;font-size:.73rem;line-height:1.25;opacity:.76;}
+.charm-tier-list{display:grid;gap:0;}
+.charm-tier-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 12px;border-top:1px dashed #e0c4c9;}
+.charm-tier-row:first-child{border-top:0;}
+.charm-tier-copy{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.charm-tier-copy strong{font-size:.86rem;}
+.charm-tier-copy small{font-size:.69rem;line-height:1.2;opacity:.72;}
+.charm-tier-action{min-width:78px;padding:8px 9px!important;font-size:.72rem!important;}
+.charm-tier-row.equipped{background:#fff0f6;}
+.charm-tier-row.owned .charm-tier-copy strong::after{content:"  ✓";color:#a8687c;}
+.charm-tier-row.special{background:linear-gradient(135deg,#fff4f2,#f8e5eb);}
+.charm-tier-row.locked{opacity:.68;}
+
+.charm-art{
+  --metal:#c8ced8;--duck:#f6d86a;--beak:#f3ad70;--heart:#ef91b0;--sparkle:#ffe598;
+  position:relative;display:inline-block;width:62px;height:68px;flex:0 0 auto;
+}
+.charm-art.small{width:42px;height:46px;}
+.charm-art.tiny{width:30px;height:33px;}
+.charm-layer,.charm-outline{
+  position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;
+}
+.charm-layer{background:var(--fill);-webkit-mask-position:center;mask-position:center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-size:contain;mask-size:contain;}
+.charm-metal{--fill:var(--metal);-webkit-mask-image:url("../assets/charms/Charm-metal.png");mask-image:url("../assets/charms/Charm-metal.png");}
+.charm-sparkle{--fill:var(--sparkle);-webkit-mask-image:url("../assets/charms/Charm-sparkle.png");mask-image:url("../assets/charms/Charm-sparkle.png");}
+.charm-heart{--fill:var(--heart);-webkit-mask-image:url("../assets/charms/Charm-heart.png");mask-image:url("../assets/charms/Charm-heart.png");}
+.charm-duck{--fill:var(--duck);-webkit-mask-image:url("../assets/charms/Charm-duck.png");mask-image:url("../assets/charms/Charm-duck.png");}
+.charm-beak{--fill:var(--beak);-webkit-mask-image:url("../assets/charms/Charm-beak.png");mask-image:url("../assets/charms/Charm-beak.png");}
+.charm-outline{object-fit:contain;}
+.charm-art.tier-bronze{--metal:#b97942;}
+.charm-art.tier-silver{--metal:#cbd2dc;}
+.charm-art.tier-gold{--metal:#e8bc49;}
+.charm-art.tier-rose-gold{--metal:#c9858f;}
+.charm-art.family-shimmer{--duck:#d7c6f7;--beak:#f2b881;--heart:#f0a0bc;--sparkle:#fff0a5;}
+.charm-art.family-fortune{--duck:#92cf8c;--beak:#edb36f;--heart:#dfb844;--sparkle:#f8d86a;}
+.charm-art.family-best-friend{--duck:#f5b1c9;--beak:#f2b27d;--heart:#ec6e9a;--sparkle:#ffe7ad;}
+.charm-art.family-training{--duck:#a8c9ef;--beak:#f1b27c;--heart:#b5a3e6;--sparkle:#ddecff;}
+.charm-art.family-vitality{--duck:#f2aaa5;--beak:#efb078;--heart:#e55f6c;--sparkle:#ffd3a3;}
+.charm-art.family-treasure{--duck:#c5ace5;--beak:#f0b17a;--heart:#e5bf61;--sparkle:#ffd866;}
+.charm-art.family-shimmer.tier-rose-gold{--duck:#e8d9f4;--heart:#efabc0;--sparkle:#f8dc9a;}
+
+.battle-charm-strip{display:flex;justify-content:flex-end;gap:5px;margin:-3px 2px 7px;min-height:32px;}
+.battle-charm-pill{display:flex;align-items:center;gap:4px;padding:3px 6px;border:2px solid #9e777d;border-radius:999px;background:#fff8eb;font-size:.65rem;line-height:1;}
+.battle-charm-pill .charm-art{flex:none;}
+
+@media(max-width:600px){
+  .charm-book-heading{grid-template-columns:auto minmax(0,1fr);}
+  .charm-coin-pill{grid-column:1/-1;justify-self:end;margin-top:-4px;}
+  .charm-tier-row{grid-template-columns:auto minmax(0,1fr);}
+  .charm-tier-action{grid-column:2;justify-self:start;}
+  .charm-art{width:54px;height:59px;}
+  .charm-art.small{width:38px;height:42px;}
+  .battle-charm-pill span:last-child{display:none;}
+}
