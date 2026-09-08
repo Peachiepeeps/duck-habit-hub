@@ -2708,6 +2708,32 @@ function normalizeIoOutfit(rawOutfit = {}) {
   return normalized;
 }
 
+function sameIoOutfit(a = {}, b = {}) {
+  return JSON.stringify(normalizeIoOutfit(a)) === JSON.stringify(normalizeIoOutfit(b));
+}
+
+function isDefaultIoOutfit(outfit = {}) {
+  return sameIoOutfit(outfit, DEFAULT_IO_OUTFIT);
+}
+
+function refreshIoOutfitBackup() {
+  if (!save || typeof save !== "object") return;
+  if (!save.ioOutfitBackup || typeof save.ioOutfitBackup !== "object") {
+    save.ioOutfitBackup = structuredClone(DEFAULT_IO_OUTFIT);
+  }
+  const current = normalizeIoOutfit(save.characterOutfits?.io || {});
+  const backup = normalizeIoOutfit(save.ioOutfitBackup || {});
+
+  if (isDefaultIoOutfit(current) && !isDefaultIoOutfit(backup)) {
+    save.characterOutfits.io = structuredClone(backup);
+    return;
+  }
+
+  if (!isDefaultIoOutfit(current)) {
+    save.ioOutfitBackup = structuredClone(current);
+  }
+}
+
 
 function normalizeMikoOutfit(rawOutfit = {}) {
   const incoming = rawOutfit && typeof rawOutfit === "object" ? rawOutfit : {};
@@ -2939,6 +2965,7 @@ const DEFAULT_SAVE = {
   mikoNewOutfitShopMigrationV2413: false,
   paintablePetBedMigrationV2418: false,
   ioAhogeClosetMigrationV2483: false,
+  ioOutfitBackup: structuredClone(DEFAULT_IO_OUTFIT),
   progressRecoveryV1431: true,
   ocShopGateRepairV242: false,
   peepPokes: 0,
@@ -3088,6 +3115,7 @@ function loadSave() {
         io: normalizeIoOutfit(saved.characterOutfits?.io || {}),
         miho: normalizeMihoOutfit(saved.characterOutfits?.miho || {})
       },
+      ioOutfitBackup: normalizeIoOutfit(saved.ioOutfitBackup || saved.characterOutfits?.io || {}),
       characterProgress: {
         peep: normalizeLoadedCharacterProgress(
           saved.characterProgress?.peep,
@@ -3429,6 +3457,8 @@ function normalizeCharacterState() {
     if (!save.characterOutfits.io.extras.includes("ahoge")) save.characterOutfits.io.extras.unshift("ahoge");
     save.ioAhogeClosetMigrationV2483 = true;
   }
+
+  refreshIoOutfitBackup();
 
   save.characterProgress.peep = normalizeLoadedCharacterProgress(
     save.characterProgress.peep,
@@ -3880,6 +3910,7 @@ const closetOptions = document.querySelector("#closetOptions");
 const toast = document.querySelector("#toast");
 
 function persist() {
+  refreshIoOutfitBackup();
   localStorage.setItem(STORAGE_KEY, JSON.stringify(save));
 }
 
@@ -6518,12 +6549,12 @@ const EMPTY_ROOM_FURNITURE = Object.freeze({
 });
 
 const SHELF_DUCK_PERCHES = Object.freeze([
-  { left: 11.7, top: 31.35, width: 11.5 },
-  { left: 11.7, top: 43.65, width: 11.5 },
-  { left: 11.7, top: 56.95, width: 11.5 },
-  { left: 11.7, top: 69.25, width: 11.5 },
-  { left: 11.7, top: 81.05, width: 11.5 },
-  { left: 11.7, top: 91.65, width: 11.5 }
+  { left: 11.7, top: 30.7, width: 11.5 },
+  { left: 11.7, top: 43.0, width: 11.5 },
+  { left: 11.7, top: 56.3, width: 11.5 },
+  { left: 11.7, top: 68.6, width: 11.5 },
+  { left: 11.7, top: 80.4, width: 11.5 },
+  { left: 11.7, top: 91.0, width: 11.5 }
 ]);
 
 const DRESSER_DUCK_PERCH = Object.freeze({

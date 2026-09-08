@@ -7233,3 +7233,42 @@ button { color: inherit; }
     bottom: 11.5%;
   }
 }
+
+
+/* =========================================================
+   V24.112 — IO OUTFIT SAFETY + SHELF / BOOK POSITION FIXES
+   ========================================================= */
+/* Lift the lower Shelf of Ducks rows so both empty slots and placed ducks sit
+   on the shelf ledges instead of drifting too low on tall phones. */
+.wing-duck-slot:nth-child(n+17):nth-child(-n+20) img{
+  transform:translateY(-10%);
+}
+.wing-duck-slot:nth-child(n+21):nth-child(-n+24) img{
+  transform:translateY(-34%);
+}
+.wing-duck-slot:nth-child(n+17):nth-child(-n+20) > span{
+  transform:translateY(-12%);
+}
+.wing-duck-slot:nth-child(n+21):nth-child(-n+24) > span{
+  transform:translateY(-34%);
+}
+
+@media (max-width: 600px) {
+  /* Keep non-Io room Books in the intended lower-right floor area, but move
+     them higher so they sit above the phone UI. */
+  #roomBookImage.on-shelf {
+    transform: translate(67%, -7.2%);
+  }
+  #roomBookImage.on-dresser {
+    transform: translateY(-6.0%);
+  }
+  .book-hotspot.on-shelf {
+    left: 70.2%;
+    bottom: 11.8%;
+    width: 20.5%;
+    height: 11.7%;
+  }
+  .book-hotspot.on-dresser {
+    bottom: 12.0%;
+  }
+}
