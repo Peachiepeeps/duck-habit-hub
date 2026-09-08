@@ -1,5 +1,5 @@
 {
-  "version": "24.106",
+  "version": "24.107",
   "updatedAt": "2026-09-07",
-  "notes": "Room positioning polish: lowers the shelf ducks so they sit on the shelf lines, nudges the OC, back arrow, and Book lower, extends the room floor fill downward on tall mobile screens, fixes CSS wallpapers so they cover the full wall area, updates Miho's layer order so the body base sits after stockings and before the hair bow, and makes Duck Quest Shinies 1/250 instead of 1/100."
+  "notes": "Tall-phone room layout fix: fills the full visible height with the room/floor instead of gray, anchors the OC, Book, and Shelf-of-Ducks arrow near the bottom, fixes CSS wallpaper masking to the actual wall boundaries, and lifts only Goose slightly on the shelf. Shiny odds remain 1/250."
 }

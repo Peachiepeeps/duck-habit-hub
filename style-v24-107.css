@@ -7061,3 +7061,141 @@ button { color: inherit; }
 .floor-duck-display{
   top: 92.0%;
 }
+
+
+/* =========================================================
+   V24.107 — TALL PHONE ROOM ANCHOR + WALLPAPER GEOMETRY
+   ========================================================= */
+/* True wall boundaries for a normal 9:16 stage. */
+.room-wallpaper-overlay {
+  top: 6.72%;
+  bottom: 14.48%;
+  height: auto;
+  clip-path: none;
+  box-shadow: none;
+}
+
+/* The Goose has longer little legs than the ducks; lift ONLY Goose a hair so
+   its feet sit naturally on the shelf line without moving the other ducks. */
+.shelf-perched-duck.goose-shelf-perch {
+  transform: translate(-50%, -54%);
+}
+
+/* Tall phones are taller than the 1080×1920 room artwork. Fill the whole
+   visible stage with the room's selected floor tint, but keep the original
+   9:16 scene canvases aligned at the top so nothing stretches. */
+@media (max-width: 600px) and (max-aspect-ratio: 9/17) {
+  .app-shell {
+    width: 100vw;
+    height: 100dvh;
+    place-items: start center;
+    overflow: hidden;
+  }
+
+  .stage {
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    aspect-ratio: auto;
+    overflow: hidden;
+  }
+
+  /* 1080:1920 = 177.7778vw when the scene spans the phone width. */
+  #roomImage,
+  #roomMirrorImage,
+  .room-furniture-overlay {
+    top: 0;
+    bottom: auto;
+    width: 100%;
+    height: 177.7778vw;
+    object-fit: contain;
+    object-position: 50% 0%;
+  }
+
+  #roomImage {
+    transform: none !important;
+  }
+
+  /* Keep furniture duck positions tied to the original 9:16 scene height. */
+  #furnitureDuckLayer {
+    top: 0;
+    bottom: auto;
+    height: 177.7778vw;
+  }
+
+  /* Anchor the OC near the bottom of the visible phone, matching the red-arrow
+     reference instead of stopping at the old 9:16 boundary. */
+  #peepWrap {
+    inset: auto 0 3% 0 !important;
+    width: 100%;
+    height: 177.7778vw;
+  }
+
+  #peepLayers,
+  #peepLayers .peep-layer {
+    object-position: 50% 0%;
+  }
+
+  /* Bottom-anchor only the Book canvas. The mirror intentionally stays where
+     it was. */
+  #roomBookImage {
+    top: auto;
+    bottom: 0;
+    width: 100%;
+    height: 177.7778vw;
+    object-fit: contain;
+    object-position: 50% 0%;
+    transform: translateY(4.0%);
+  }
+  #roomBookImage.on-shelf {
+    transform: translate(70%, 3.6%);
+  }
+  #roomBookImage.on-dresser {
+    transform: translateY(3.8%);
+  }
+
+  /* Keep the invisible Book target aligned with the visible Book. */
+  .book-hotspot {
+    left: 4.3%;
+    top: auto;
+    bottom: 2.0%;
+    width: 19%;
+    height: 11%;
+  }
+  .book-hotspot.on-shelf {
+    left: 73.2%;
+    top: auto;
+    bottom: 1.2%;
+    width: 20.5%;
+    height: 11.7%;
+  }
+  .book-hotspot.on-dresser {
+    top: auto;
+    bottom: 2.0%;
+  }
+
+  /* Put the Shelf-of-Ducks arrow into the lower floor area. */
+  .room-wing-button {
+    top: auto;
+    bottom: 4.6%;
+  }
+
+  .floor-duck-display {
+    top: auto;
+    bottom: 4.5%;
+    transform: translate(-50%, 0);
+  }
+
+  /* Source wall y=129..1641 on a 1920px scene. At 100vw scene width this is
+     top ≈11.95vw and height =140vw. This keeps the CSS wallpaper off both the
+     ceiling trim and the floor/baseboard. */
+  .room-wallpaper-overlay {
+    top: 11.95vw;
+    bottom: auto;
+    height: 140vw;
+    left: 0;
+    right: 0;
+    clip-path: none;
+    box-shadow: none;
+  }
+}

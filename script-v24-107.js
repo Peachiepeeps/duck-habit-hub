@@ -1,4 +1,4 @@
-// Hub v24.106 — room alignment, wallpapers, Miho layering, and shiny-rate polish
+// Hub v24.107 — tall-phone room anchor + CSS wallpaper geometry fix
 const STORAGE_KEY = "duckHabitHubSave_v1";
 const SAVE_VERSION = 39;
 
@@ -6720,6 +6720,9 @@ function appendFurnitureDuck(duckId, placement, extraClass = "") {
   img.src = duck.file;
   img.alt = "";
   img.className = `furniture-perched-duck${extraClass ? ` ${extraClass}` : ""}`;
+  if (id === "goose" && extraClass === "shelf-perched-duck") {
+    img.classList.add("goose-shelf-perch");
+  }
   img.style.left = `${placement.left}%`;
   img.style.top = `${placement.top}%`;
   img.style.width = `${placement.width}%`;
