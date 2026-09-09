@@ -1,6 +1,6 @@
-// Hub v24.116 — Quest Charms + Duckipedia Rose-Gold reward
+// Hub v24.117 — Io wardrobe recovery + shelf seating polish
 const STORAGE_KEY = "duckHabitHubSave_v1";
-const SAVE_VERSION = 40;
+const SAVE_VERSION = 41;
 
 const CHARACTERS = {
   peep: {
@@ -2989,6 +2989,7 @@ const DEFAULT_SAVE = {
   mikoNewOutfitShopMigrationV2413: false,
   paintablePetBedMigrationV2418: false,
   ioAhogeClosetMigrationV2483: false,
+  ioWardrobePurchaseRecoveryV24117: false,
   ioOutfitBackup: structuredClone(DEFAULT_IO_OUTFIT),
   progressRecoveryV1431: true,
   ocShopGateRepairV242: false,
@@ -5730,6 +5731,28 @@ function unlockWardrobeShopItem(wardrobeId) {
   return true;
 }
 
+// v24.117 — Repair Io wardrobe ownership lost during the earlier rollback/OC-shop
+// migration issue. This app had already purchased Io's full Shop wardrobe, so
+// restore every Io Shop unlock exactly once without charging coins again.
+function recoverIoPurchasedWardrobeOnce() {
+  if (save.ioWardrobePurchaseRecoveryV24117) return false;
+  if (!Array.isArray(save.unlockedCharacters) || !save.unlockedCharacters.includes("io")) return false;
+
+  const unlocks = new Set(getCharacterUnlockedItems("io"));
+  let restored = false;
+  for (const meta of Object.values(WARDROBE_SHOP_META)) {
+    if (meta?.characterId !== "io") continue;
+    for (const id of Array.isArray(meta.unlockIds) ? meta.unlockIds : []) {
+      if (!unlocks.has(id)) restored = true;
+      unlocks.add(id);
+    }
+  }
+
+  save.characterUnlockedItems.io = [...unlocks];
+  save.ioWardrobePurchaseRecoveryV24117 = true;
+  return restored;
+}
+
 const PEEP_STARTER_WARDROBE = Object.freeze([
   "hair-short",
   "cat-ears",
@@ -6583,12 +6606,14 @@ const EMPTY_ROOM_FURNITURE = Object.freeze({
 });
 
 const SHELF_DUCK_PERCHES = Object.freeze([
-  { left: 11.7, top: 30.7, width: 11.5 },
-  { left: 11.7, top: 43.0, width: 11.5 },
-  { left: 11.7, top: 56.3, width: 11.5 },
-  { left: 11.7, top: 68.6, width: 11.5 },
-  { left: 11.7, top: 80.4, width: 11.5 },
-  { left: 11.7, top: 91.0, width: 11.5 }
+  // v24.117: these centers are calibrated to the actual six shelf ledges.
+  // The visible bottom of a 500×500 duck sprite now lands on each black shelf line.
+  { left: 11.7, top: 31.3, width: 11.5 },
+  { left: 11.7, top: 43.8, width: 11.5 },
+  { left: 11.7, top: 56.8, width: 11.5 },
+  { left: 11.7, top: 69.3, width: 11.5 },
+  { left: 11.7, top: 81.2, width: 11.5 },
+  { left: 11.7, top: 94.4, width: 11.5 }
 ]);
 
 const DRESSER_DUCK_PERCH = Object.freeze({
@@ -12892,6 +12917,7 @@ resetAccidentalWardrobeUnlocksOnce();
 migrateMikoNewOutfitToShopOnce();
 ensureStarterWardrobeUnlocked();
 const ocShopGateRepair = repairLockedOcPurchasesOnce();
+const ioWardrobeRecoveredOnLoad = recoverIoPurchasedWardrobeOnce();
 syncSelectedCharacterRoom();
 normalizeRoomExpansion();
 migrateLegacyPetBedsOnce();
@@ -12940,7 +12966,9 @@ setTimeout(() => {
   }
 }, 300);
 
-if (ocShopGateRepair.refunded > 0) {
+if (ioWardrobeRecoveredOnLoad) {
+  setTimeout(() => showToast("Restored Io's purchased outfits and hairstyles! ♡"), 250);
+} else if (ocShopGateRepair.refunded > 0) {
   setTimeout(() => {
     showToast(`Fixed locked-OC Shop items and refunded ${ocShopGateRepair.refunded} Pink Coins.`);
   }, 250);

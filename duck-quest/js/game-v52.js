@@ -1,4 +1,4 @@
-// Duck Quest game-v51 — Cloud Garden, universal area-clear rewards, expanded ranks, new Buddies, and Shiny arrival sparkle
+// Duck Quest game-v52 — universal Just a Smack + Cloud Garden and Shiny arrival sparkle
 const HUB_SAVE_KEY = "duckHabitHubSave_v1";
 const MAX_LEVEL = 100;
 const AREA_CONFIG = Object.freeze({
@@ -345,6 +345,11 @@ const MIHO_SKILLS = [
     id:"stab", name:"Stab", unlock:40, type:"multi-hit", multiplier:3.0, hits:3,
     sprite:"assets/characters/miho/base/stab.webp",
     description:"Miho stabs 3 times, causing normal damage 3 times in a row."
+  },
+  {
+    id:"just-a-smack", name:"Just a smack!", unlock:1, type:"safe-chip",
+    sprite:"assets/characters/miho/base/threaten.webp",
+    description:"Deals normal basic-attack damage, but can never knock an enemy below 1 HP. Perfect for catching!"
   }
 ];
 

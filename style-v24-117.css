@@ -7336,3 +7336,49 @@ button { color: inherit; }
     bottom: 6.6%;
   }
 }
+
+/* =========================================================
+   V24.117 — EXACT DUCK SHELF SEATING
+   ========================================================= */
+/* Main-room six-shelf display: Goose uses the same baseline rule as ducks.
+   Its alpha padding is only ~1 px different, so the old special lift made it float. */
+.shelf-perched-duck.goose-shelf-perch {
+  transform: translate(-50%, -50.8%);
+}
+
+/* Shelf of Ducks: use the real shelf-opening geometry instead of six equal rows.
+   The row bottoms correspond to the actual black ledges in the 1080×1920 art. */
+.wing-duck-slots {
+  top: 17.9167%;
+  bottom: 7.8125%;
+  grid-template-rows: 211fr 242fr 248fr 242fr 229fr 254fr;
+}
+
+/* Every sprite is bottom-seated. +5% compensates for the small transparent
+   padding at the bottom of the 500×500 duck canvases. */
+.wing-duck-slot img,
+.wing-duck-slot:nth-child(n+13):nth-child(-n+16) img,
+.wing-duck-slot:nth-child(n+17):nth-child(-n+20) img,
+.wing-duck-slot:nth-child(n+21):nth-child(-n+24) img {
+  transform: translateY(5%);
+}
+
+/* Empty targets touch the shelf line too instead of floating above it. */
+.wing-duck-slot > span,
+.wing-duck-slot:nth-child(n+13):nth-child(-n+16) > span,
+.wing-duck-slot:nth-child(n+17):nth-child(-n+20) > span,
+.wing-duck-slot:nth-child(n+21):nth-child(-n+24) > span {
+  margin-bottom: 0;
+  transform: none;
+}
+
+@media (max-width: 600px) and (max-aspect-ratio: 9/16) {
+  /* On tall phones, object-fit:contain centers the 9:16 shelf art vertically.
+     Tie the slot grid to that same centered 9:16 canvas so every row stays on
+     its shelf line regardless of the phone's extra vertical space. */
+  .wing-duck-slots {
+    top: calc(50% - 88.8889vw + 31.8519vw);
+    bottom: auto;
+    height: 132.0371vw;
+  }
+}
