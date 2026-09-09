@@ -7351,7 +7351,7 @@ button { color: inherit; }
 .wing-duck-slots {
   top: 17.9167%;
   bottom: 7.8125%;
-  grid-template-rows: 211fr 242fr 248fr 242fr 229fr 254fr;
+  grid-template-rows: 211fr 242fr 248fr 242fr 229fr 210fr;
 }
 
 /* Every sprite is bottom-seated. +5% compensates for the small transparent
@@ -7379,6 +7379,14 @@ button { color: inherit; }
   .wing-duck-slots {
     top: calc(50% - 88.8889vw + 31.8519vw);
     bottom: auto;
-    height: 132.0371vw;
+    height: 127.9630vw;
   }
 }
+
+
+/* =========================================================
+   V24.118 — IO ANNOYED POKE + FINAL SHELF LEDGE
+   ========================================================= */
+/* The sixth Shelf of Ducks row ends on the thin inner ledge at y≈1726
+   instead of the thick outer frame at y≈1770. The first five shelf rows
+   keep their calibrated baselines unchanged. */

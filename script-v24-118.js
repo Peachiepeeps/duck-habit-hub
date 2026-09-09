@@ -2489,6 +2489,7 @@ const IO_ASSETS = {
   "mew-collar": { label: "Mew Collar", file: "Io-mew-collar.webp", z: 33 },
   "expression-neutral": { label: "Neutral", file: "Io-neutral.webp", z: 40 },
   "expression-happy": { label: "Happy", file: "Io-happy.webp", z: 40 },
+  "expression-annoyed": { label: "Annoyed", file: "Io-annoyed.webp", z: 40 },
   "expression-mad": { label: "Angry", file: "Io-angry.webp", z: 40 },
   "expression-sad": { label: "Neutral", file: "Io-neutral.webp", z: 40 },
   "expression-shocked": { label: "Neutral", file: "Io-neutral.webp", z: 40 },
@@ -5160,7 +5161,8 @@ function pokePeep() {
   save.peepPokes = (save.peepPokes || 0) + 1;
   persist();
 
-  // Same quick-poke rhythm as the prior hub: normal poke = happy for 1.5 s;
+  // Same quick-poke rhythm as the prior hub. Io has her own annoyed poke
+  // expression; the other OCs still react happily to a normal poke.
   // 5 quick accepted pokes = mad for 3 s and extra pokes are ignored until done.
   if (pokeTimes.length >= 5) {
     pokeTimes = [];
@@ -5169,7 +5171,10 @@ function pokePeep() {
     return;
   }
 
-  setExpression("expression-happy", 1500);
+  const pokeExpression = getCurrentCharacter().id === "io"
+    ? "expression-annoyed"
+    : "expression-happy";
+  setExpression(pokeExpression, 1500);
 }
 
 function renderRoomPicker() {
