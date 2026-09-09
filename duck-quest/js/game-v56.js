@@ -1,4 +1,4 @@
-// Duck Quest game-v55 — Annika move behavior corrections
+// Duck Quest game-v56 — Annika move behavior corrections
 const HUB_SAVE_KEY = "duckHabitHubSave_v1";
 const MAX_LEVEL = 100;
 const AREA_CONFIG = Object.freeze({
@@ -1321,7 +1321,7 @@ const CHERUB_DUCK_VARIANTS=Object.freeze({
 });
 function applyCherubDuckVariant(t,r){return applyProgressVariant(t,CHERUB_DUCK_VARIANTS,["base","aqua","mint","pink","purple"],r,"cherubDuckVariant",150);}
 
-const BASE_SHINY_RATE = 1 / 500;
+const BASE_SHINY_RATE = 1 / 500; // audited v56: exactly one normal shiny roll per encountered enemy
 const MYSTERY_CHEST_RATE = 1 / 50;
 
 const CHARM_SLOT_LIMIT = 3;
@@ -1542,8 +1542,14 @@ function mainBuddyRecord(){
   if(!base) return null;
   const personal=buddySlotPersonalization(activeCharacterId,0);
   const nickname=String(personal?.nickname||"").trim();
+  const catalog=BUDDY_CATALOG_BY_KEY.get(key);
+  const idleFrames=Array.isArray(base.idle) && base.idle.length
+    ? base.idle
+    : (Array.isArray(catalog?.idle) && catalog.idle.length ? catalog.idle : [base.image].filter(Boolean));
   return {
+    ...catalog,
     ...base,
+    idle:idleFrames,
     speciesName:base.name,
     name:nickname || base.name,
     nickname,
@@ -1554,12 +1560,16 @@ function mainBuddyRecord(){
 
 
 function catalogEntry(enemyId, variantId, variant, boss=false, shiny=false) {
+  const idleFrames=Array.isArray(variant?.idle) && variant.idle.length
+    ? variant.idle.map(String)
+    : (Array.isArray(ENEMIES[enemyId]?.idle) ? ENEMIES[enemyId].idle.map(String) : []);
   return {
     key:`${enemyId}:${shiny ? "shiny" : variantId}`,
     enemyId,
     variantId:shiny ? "shiny" : variantId,
     name:String(variant?.name || ENEMIES[enemyId]?.name || "Buddy"),
-    image:String(variant?.idle?.[0] || ENEMIES[enemyId]?.idle?.[0] || ""),
+    image:String(idleFrames[0] || ""),
+    idle:idleFrames,
     boss:Boolean(boss),
     shiny:Boolean(shiny)
   };
@@ -1616,6 +1626,7 @@ function normalizeBuddyCollection(raw) {
         variantId:String(value.variantId || "base"),
         name:String(value.name || "Buddy"),
         image:String(value.image || ""),
+        idle:Array.isArray(value.idle) ? value.idle.map(String).filter(Boolean) : [],
         shiny:Boolean(value.shiny),
         boss:Boolean(value.boss),
         quantity:Math.max(1,Math.floor(Number(value.quantity)||1)),
@@ -1671,6 +1682,7 @@ function buddyRecordFromEnemy(enemy) {
     variantId:enemy?.shiny ? "shiny" : enemyVariantId(enemy),
     name:String(enemy?.name || "Buddy"),
     image:String(enemy?.idle?.[0] || enemy?.hurt || ""),
+    idle:Array.isArray(enemy?.idle) ? enemy.idle.map(String).filter(Boolean) : [String(enemy?.idle?.[0] || enemy?.hurt || "")].filter(Boolean),
     shiny:Boolean(enemy?.shiny),
     boss:Boolean(enemy?.boss),
     quantity:1,
@@ -1686,6 +1698,7 @@ function captureBuddy(enemy) {
     existing.quantity=Math.max(1,Number(existing.quantity)||1)+1;
     existing.name=incoming.name;
     existing.image=incoming.image;
+    existing.idle=incoming.idle;
     existing.shiny=incoming.shiny;
     existing.boss=incoming.boss;
   } else {
@@ -2144,8 +2157,10 @@ let currentRun = null;
 let currentEnemy = null;
 let idleTimer = null;
 let peepIdleTimer = null;
+let buddyIdleTimer = null;
 let enemyIdleIndex = 0;
 let peepIdleIndex = 0;
+let buddyIdleIndex = 0;
 let actionLocked = false;
 let pendingChest = null;
 let pendingDefeatedEnemy = null;
@@ -2637,9 +2652,11 @@ function renderHeroVisuals(){
   const isMiko=activeCharacterId==="miko";
   const isIo=activeCharacterId==="io";
   const isMiho=activeCharacterId==="miho";
+  const isAnnika=activeCharacterId==="annika";
   ui.battlefield?.classList.toggle("miko-active",isMiko);
   ui.battlefield?.classList.toggle("io-active",isIo);
   ui.battlefield?.classList.toggle("miho-active",isMiho);
+  ui.battlefield?.classList.toggle("annika-active",isAnnika);
   const name=heroDisplayName();
   if(ui.heroNameHome) ui.heroNameHome.textContent=name;
   if(ui.heroNameCombat) ui.heroNameCombat.textContent=name;
@@ -3490,20 +3507,37 @@ function startEnemy(enemyId, options={}) {
   else setMessage(`${currentEnemy.name} appeared!`);
 }
 
+function startBuddyIdle(buddy){
+  clearInterval(buddyIdleTimer);
+  buddyIdleTimer=null;
+  buddyIdleIndex=0;
+  const frames=Array.isArray(buddy?.idle) && buddy.idle.length ? buddy.idle : [buddy?.image].filter(Boolean);
+  if(!frames.length || !ui.buddyBattleSprite) return;
+  ui.buddyBattleSprite.src=frames[0];
+  if(frames.length < 2) return;
+  buddyIdleTimer=setInterval(()=>{
+    if(actionLocked || !ui.buddyCombatant || ui.buddyCombatant.classList.contains("hidden")) return;
+    buddyIdleIndex=(buddyIdleIndex+1)%frames.length;
+    ui.buddyBattleSprite.src=frames[buddyIdleIndex];
+  },380);
+}
+
 function renderBattleBuddy(){
   const buddy=mainBuddyRecord();
   if(!ui.buddyCombatant || !ui.buddyBattleSprite) return;
   if(!buddy || !buddySkillForEnemyId(buddy.enemyId) || !currentEnemy){
+    clearInterval(buddyIdleTimer);
+    buddyIdleTimer=null;
     ui.buddyCombatant.classList.add("hidden");
     return;
   }
   const buddyLabel=`${buddy.name || "Buddy"}${buddy.genderSymbol?` ${buddy.genderSymbol}`:""}`;
   ui.buddyBattleName.textContent=buddyLabel;
-  ui.buddyBattleSprite.src=String(buddy.image||"");
   ui.buddyBattleSprite.alt=buddyLabel;
   ui.buddyCombatant.classList.toggle("boss-buddy",Boolean(buddy.boss));
   ui.buddyBattleSparkle?.classList.toggle("hidden",!buddy.shiny);
   ui.buddyCombatant.classList.remove("hidden");
+  startBuddyIdle(buddy);
 }
 
 function buddyDamageBase(multiplier=1,critChance=.08,critMultiplier=1.5){
@@ -3782,6 +3816,7 @@ function startEnemyIdle() {
 function clearAnimations() {
   clearInterval(idleTimer); idleTimer=null;
   clearInterval(peepIdleTimer); peepIdleTimer=null;
+  clearInterval(buddyIdleTimer); buddyIdleTimer=null;
 }
 
 function renderSkills() {

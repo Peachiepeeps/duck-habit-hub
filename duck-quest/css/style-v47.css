@@ -2568,3 +2568,80 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
   .shiny-arrival-star{font-size:.9rem}
   .buddy-combatant .shiny-arrival-star{font-size:.68rem}
 }
+
+/* =========================================================
+   V46 / Hub v24.119 — BIG Shiny arrival sparkle
+   ========================================================= */
+.shiny-arrival-burst{
+  inset:4% -10% -8% -10%;
+  z-index:18;
+}
+.shiny-arrival-burst::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:72%;
+  aspect-ratio:1;
+  border-radius:50%;
+  background:radial-gradient(circle,
+    rgba(255,255,255,.96) 0 5%,
+    rgba(255,240,155,.82) 12%,
+    rgba(255,197,228,.50) 28%,
+    rgba(255,255,255,0) 68%);
+  transform:translate(-50%,-50%) scale(.18);
+  opacity:0;
+  filter:blur(.5px);
+  animation:shinyArrivalFlash 1.05s ease-out forwards;
+}
+.shiny-arrival-star{
+  font-size:1.75rem;
+  font-weight:900;
+  color:#ffe56f;
+  text-shadow:
+    0 0 2px #fff,
+    0 0 7px #fff,
+    0 0 13px rgba(255,220,100,.98),
+    0 0 20px rgba(244,146,210,.92),
+    2px 2px 0 rgba(97,67,71,.28);
+  filter:drop-shadow(0 0 4px rgba(255,255,255,.95));
+  animation-duration:1.35s;
+}
+.shiny-arrival-star:nth-child(3n+1){color:#fff8b8}
+.shiny-arrival-star:nth-child(3n+2){color:#fff}
+.shiny-arrival-star:nth-child(3n){color:#ffc7eb}
+@keyframes shinyArrivalFlash{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.12)}
+  18%{opacity:1;transform:translate(-50%,-50%) scale(.72)}
+  42%{opacity:.88;transform:translate(-50%,-50%) scale(1.15)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(1.42)}
+}
+@keyframes shinyArrivalPop{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.05) rotate(var(--sparkle-rotate,0deg))}
+  18%{opacity:1;transform:translate(-50%,-50%) scale(1.65) rotate(0deg)}
+  52%{opacity:1;transform:translate(-50%,-60%) scale(1.10) rotate(0deg)}
+  78%{opacity:.95;transform:translate(-50%,-72%) scale(.92) rotate(8deg)}
+  100%{opacity:0;transform:translate(-50%,-95%) scale(.28) rotate(18deg)}
+}
+.buddy-combatant .shiny-arrival-burst{inset:-42% -58% -34% -58%}
+@media(max-width:600px){
+  .shiny-arrival-star{font-size:1.32rem}
+  .buddy-combatant .shiny-arrival-star{font-size:1.02rem}
+}
+
+
+/* =========================================================
+   V47 / Hub v24.122 — Annika raise + Buddy idle polish
+   ========================================================= */
+.battlefield.annika-active .peep-combatant .battle-hero-composite,
+.battlefield.annika-active.ocean-peep-raised .peep-combatant .battle-hero-composite{
+  top:auto !important;
+  bottom:12% !important;
+}
+@media(max-width:600px){
+  .battlefield.annika-active .peep-combatant .battle-hero-composite,
+  .battlefield.annika-active.ocean-peep-raised .peep-combatant .battle-hero-composite{
+    top:auto !important;
+    bottom:13% !important;
+  }
+}
