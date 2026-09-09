@@ -1,10 +1,5 @@
-Duck Habit Hub v24.97 — Wallpaper Shop + 8 Attacks + Shelf Polish
+Duckie Days v24.126
 
-Changes:
-- Fixes every wallpaper shop card opening Pink Gingham.
-- Adds Activate Zoomies!, Thoughts of Lovers!, and Magic Hangover!.
-- Attack menu supports 8 slots in 4 rows and sorts moves Attack → Status → Healing.
-- Shelf 6 is now usable by ducks.
-- Lower Six-Shelf ducks sit more naturally.
-- Book moves to the bottom-right when a Six-Shelf is equipped.
-- Mirror is nudged upward with its hotspot.
+A cozy duck game/habit hub with OCs, collecting, decorating, Duck Quest, and minigames.
+
+This build preserves the user-edited Duckie Days app name and description, adds editable profile/gift placeholders for Io, Miho, and Annika, and installs the refreshed Duckie Days app icon.

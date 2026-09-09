@@ -1,13 +1,13 @@
-const APP_CACHE = 'duck-habit-hub-app-v24-125';
-const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-125';
+const APP_CACHE = 'duck-habit-hub-app-v24-126';
+const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-126';
 const IMAGE_CACHE = 'duck-habit-hub-images-stable-v1';
 
-// v24.125: keep the install shell intentionally small. Character art, enemy
+// v24.126: keep the install shell intentionally small. Character art, enemy
 // variants and backgrounds are cached only when viewed instead of blocking the
 // initial service-worker install with hundreds of image requests.
 const APP_SHELL = [
-  './','./index.html','./manifest.webmanifest','./version.json','./style-v24-125.css','./script-v24-125.js','./sw.js',
-  './apple-touch-icon-v4.png','./favicon-32-v4.png','./icon-192-v4.png','./icon-512-v4.png','./icon-maskable-512-v4.png',
+  './','./index.html','./manifest.webmanifest','./version.json','./style-v24-126.css','./script-v24-126.js','./sw.js',
+  './apple-touch-icon-v5.png','./favicon-32-v5.png','./icon-192-v5.png','./icon-512-v5.png','./icon-maskable-512-v5.png',
   './assets/ui/pink-coin.webp','./assets/ducks/Standard-duck.webp',
   './duck-quest/index.html','./duck-quest/js/game-v58.js','./duck-quest/css/style-v49.css',
   './bakery/index.html'
@@ -77,7 +77,7 @@ async function staleWhileRevalidate(request,cacheName=RUNTIME_CACHE,maxEntries=1
 
 function isPwaIcon(pathname){
   const name=pathname.split('/').pop()||'';
-  return ['apple-touch-icon-v4.png','favicon-32-v4.png','icon-192-v4.png','icon-512-v4.png','icon-maskable-512-v4.png'].includes(name);
+  return ['apple-touch-icon-v5.png','favicon-32-v5.png','icon-192-v5.png','icon-512-v5.png','icon-maskable-512-v5.png'].includes(name);
 }
 
 self.addEventListener('fetch',event=>{

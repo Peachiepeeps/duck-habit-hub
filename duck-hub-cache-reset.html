@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>Duck Habit Hub Cache Reset</title>
+  <title>Duckie Days Cache Reset</title>
   <style>
     *{box-sizing:border-box}
     body{
@@ -59,10 +59,10 @@
 </head>
 <body>
   <main class="card">
-    <h1>Duck Habit Hub Cache Reset ♡</h1>
+    <h1>Duckie Days Cache Reset ♡</h1>
     <p>This refreshes the website and installed app files so the newest Hub and Duck Quest can load. v24.92 also makes missing image files re-check the network instead of trusting an old browser image cache.</p>
     <div class="safe">
-      Your game save is safe. This page does NOT clear localStorage, IndexedDB, or your Duck Habit Hub save.
+      Your game save is safe. This page does NOT clear localStorage, IndexedDB, or your Duckie Days save.
     </div>
     <button id="resetBtn" type="button">Clear Old App Cache & Reload</button>
     <div id="status">Ready!</div>
@@ -82,7 +82,7 @@ btn.addEventListener("click", async () => {
   btn.disabled = true;
 
   try{
-    statusEl.textContent = "Removing old Duck Habit Hub caches…";
+    statusEl.textContent = "Removing old Duckie Days caches…";
 
     if ("caches" in window){
       const keys = await caches.keys();

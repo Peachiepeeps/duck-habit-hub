@@ -1,4 +1,4 @@
-// Hub v24.125 — Duck Quest menu polish, route popups, and skill book
+// Hub v24.126 — profile placeholders + Duckie Days icon refresh
 const STORAGE_KEY = "duckHabitHubSave_v1";
 const SAVE_VERSION = 41;
 
@@ -93,7 +93,50 @@ const CHARACTERS = {
       width: 17.2
     },
     invitationImage: "assets/oc-invitations/Io-invitation.webp",
-    profile: {}
+    profile: {
+      height: "Add height here",
+      favoriteItem: "Add favorite item(s) here",
+      likes: "Add likes here",
+      dislikes: "Add dislikes here",
+      description: "Add character description here"
+    },
+    giftPreferences: {
+      // Change any "okay" below to "favorite", "like", or "not-her-thing" when you are ready.
+      "bread-loaf": "okay",
+      "apple": "okay",
+      "burger": "okay",
+      "cake-slice": "okay",
+      "cake": "okay",
+      "champagne": "okay",
+      "chocolate-brioche": "okay",
+      "concha": "okay",
+      "cookie": "okay",
+      "croissant": "okay",
+      "cupcake": "okay",
+      "fancy-milk-tea": "okay",
+      "fruit-cup": "okay",
+      "fruit-tart": "okay",
+      "gummy-bear": "okay",
+      "lemon": "okay",
+      "lime": "okay",
+      "lollipop": "okay",
+      "milk-tea": "okay",
+      "milk": "okay",
+      "mushroom": "okay",
+      "parfait": "okay",
+      "pizza": "okay",
+      "pudding": "okay",
+      "strawberry-shortcake": "okay",
+      "strawberry": "okay",
+      "water": "okay",
+      "watermelon": "okay",
+      "wedding-cake": "okay",
+      "bouquet": "okay",
+      "heart-locket": "okay",
+      "love-letter": "okay",
+      "rings": "okay",
+      "teddy-bear": "okay"
+    }
   },
   miho: {
     id: "miho",
@@ -106,7 +149,50 @@ const CHARACTERS = {
       width: 17.4
     },
     invitationImage: "assets/oc-invitations/Miho-invitation.webp",
-    profile: {}
+    profile: {
+      height: "Add height here",
+      favoriteItem: "Add favorite item(s) here",
+      likes: "Add likes here",
+      dislikes: "Add dislikes here",
+      description: "Add character description here"
+    },
+    giftPreferences: {
+      // Change any "okay" below to "favorite", "like", or "not-her-thing" when you are ready.
+      "bread-loaf": "okay",
+      "apple": "okay",
+      "burger": "okay",
+      "cake-slice": "okay",
+      "cake": "okay",
+      "champagne": "okay",
+      "chocolate-brioche": "okay",
+      "concha": "okay",
+      "cookie": "okay",
+      "croissant": "okay",
+      "cupcake": "okay",
+      "fancy-milk-tea": "okay",
+      "fruit-cup": "okay",
+      "fruit-tart": "okay",
+      "gummy-bear": "okay",
+      "lemon": "okay",
+      "lime": "okay",
+      "lollipop": "okay",
+      "milk-tea": "okay",
+      "milk": "okay",
+      "mushroom": "okay",
+      "parfait": "okay",
+      "pizza": "okay",
+      "pudding": "okay",
+      "strawberry-shortcake": "okay",
+      "strawberry": "okay",
+      "water": "okay",
+      "watermelon": "okay",
+      "wedding-cake": "okay",
+      "bouquet": "okay",
+      "heart-locket": "okay",
+      "love-letter": "okay",
+      "rings": "okay",
+      "teddy-bear": "okay"
+    }
   },
   annika: {
     id: "annika",
@@ -119,7 +205,50 @@ const CHARACTERS = {
       width: 17.0
     },
     invitationImage: "assets/oc-invitations/Annika-invitation.png",
-    profile: {}
+    profile: {
+      height: "Add height here",
+      favoriteItem: "Add favorite item(s) here",
+      likes: "Add likes here",
+      dislikes: "Add dislikes here",
+      description: "Add character description here"
+    },
+    giftPreferences: {
+      // Change any "okay" below to "favorite", "like", or "not-her-thing" when you are ready.
+      "bread-loaf": "okay",
+      "apple": "okay",
+      "burger": "okay",
+      "cake-slice": "okay",
+      "cake": "okay",
+      "champagne": "okay",
+      "chocolate-brioche": "okay",
+      "concha": "okay",
+      "cookie": "okay",
+      "croissant": "okay",
+      "cupcake": "okay",
+      "fancy-milk-tea": "okay",
+      "fruit-cup": "okay",
+      "fruit-tart": "okay",
+      "gummy-bear": "okay",
+      "lemon": "okay",
+      "lime": "okay",
+      "lollipop": "okay",
+      "milk-tea": "okay",
+      "milk": "okay",
+      "mushroom": "okay",
+      "parfait": "okay",
+      "pizza": "okay",
+      "pudding": "okay",
+      "strawberry-shortcake": "okay",
+      "strawberry": "okay",
+      "water": "okay",
+      "watermelon": "okay",
+      "wedding-cake": "okay",
+      "bouquet": "okay",
+      "heart-locket": "okay",
+      "love-letter": "okay",
+      "rings": "okay",
+      "teddy-bear": "okay"
+    }
   }
 };
 
@@ -12990,7 +13119,7 @@ async function handleSaveBackupFile(file) {
     }
 
     const confirmed = window.confirm(
-      `Restore Duck Habit Hub progress from ${exportedLabel}?\n\n` +
+      `Restore Duckie Days progress from ${exportedLabel}?\n\n` +
       "Your CURRENT save will be downloaded as an emergency backup first, then replaced."
     );
 
@@ -13004,7 +13133,7 @@ async function handleSaveBackupFile(file) {
 
 function resetAllSaveData() {
   const firstConfirm = window.confirm(
-    "Reset ALL Duck Habit Hub progress, including Bakery?\n\n" +
+    "Reset ALL Duckie Days progress, including Bakery?\n\n" +
     "This erases your current browser save."
   );
   if (!firstConfirm) return;
