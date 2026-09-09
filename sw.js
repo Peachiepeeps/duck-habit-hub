@@ -1,15 +1,15 @@
-const APP_CACHE = 'duck-habit-hub-app-v24-124';
-const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-124';
+const APP_CACHE = 'duck-habit-hub-app-v24-125';
+const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-125';
 const IMAGE_CACHE = 'duck-habit-hub-images-stable-v1';
 
-// v24.124: keep the install shell intentionally small. Character art, enemy
+// v24.125: keep the install shell intentionally small. Character art, enemy
 // variants and backgrounds are cached only when viewed instead of blocking the
 // initial service-worker install with hundreds of image requests.
 const APP_SHELL = [
-  './','./index.html','./manifest.webmanifest','./version.json','./style-v24-124.css','./script-v24-124.js','./sw.js',
+  './','./index.html','./manifest.webmanifest','./version.json','./style-v24-125.css','./script-v24-125.js','./sw.js',
   './apple-touch-icon-v4.png','./favicon-32-v4.png','./icon-192-v4.png','./icon-512-v4.png','./icon-maskable-512-v4.png',
   './assets/ui/pink-coin.webp','./assets/ducks/Standard-duck.webp',
-  './duck-quest/index.html','./duck-quest/js/game-v57.js','./duck-quest/css/style-v48.css',
+  './duck-quest/index.html','./duck-quest/js/game-v58.js','./duck-quest/css/style-v49.css',
   './bakery/index.html'
 ];
 

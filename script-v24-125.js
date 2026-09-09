@@ -1,4 +1,4 @@
-// Hub v24.124 — Annika bow layering, sheer-shirt ownership migration, and stocking placement popover
+// Hub v24.125 — Duck Quest menu polish, route popups, and skill book
 const STORAGE_KEY = "duckHabitHubSave_v1";
 const SAVE_VERSION = 41;
 

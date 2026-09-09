@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f6c6d6" />
   <title>Duck Quest</title>
-  <link rel="stylesheet" href="css/style-v48.css" />
+  <link rel="stylesheet" href="css/style-v49.css" />
 </head>
 <body>
   <main class="quest-shell">
@@ -53,6 +53,11 @@
             <strong id="levelBadge" class="level-badge">Lv. 1</strong>
           </div>
 
+          <div class="hero-quick-actions" aria-label="Hero information">
+            <button id="openSkillBook" class="pixel-button hero-info-button" type="button">OC Skills</button>
+            <button id="openBuddyCollection" class="pixel-button hero-info-button" type="button">Buddy Book</button>
+          </div>
+
           <div class="meter-group">
             <div class="meter-label">
               <span>Battle Level</span>
@@ -65,21 +70,11 @@
             <div>
               <span class="mini-label">HAPPINESS</span>
               <div id="happinessHearts" class="hearts" aria-label="Happiness hearts"></div>
-              <small id="affectionBonus" class="affection-bonus">5 Hearts unlocks a Coins & EXP bonus</small>
             </div>
             <strong id="happinessLevel">Lv. 1</strong>
           </div>
         </div>
       </div>
-
-      <section class="buddy-home-card">
-        <div>
-          <span class="mini-label">BUDDY BOOK</span>
-          <strong>Buddy Collection</strong>
-          <small id="buddyHomeCount">0 / 0 befriended</small>
-        </div>
-        <button id="openBuddyCollection" class="pixel-button" type="button">Buddies</button>
-      </section>
 
       <section class="charm-home-card">
         <div class="charm-home-copy">
@@ -150,32 +145,40 @@
         </div>
       </section>
 
-      <section class="run-card route-window">
-        <div class="run-card-top route-window-top">
-          <div>
-            <span class="mini-label">SELECTED ROUTE</span>
-            <h2 id="areaRunLabel">Meadow Route</h2>
-          </div>
-          <div class="rank-picker" aria-label="Run rank">
-            <button id="rankDown" type="button" class="pixel-button icon" aria-label="Lower rank">−</button>
-            <strong id="rankValue">1</strong>
-            <button id="rankUp" type="button" class="pixel-button icon" aria-label="Raise rank">+</button>
-          </div>
-        </div>
-
-        <p id="rankDescription" class="start-rank-prompt">Start Rank One?</p>
-        <button id="startRun" class="pixel-button primary large" type="button">Start Run</button>
-        <p id="bestRunText" class="tiny-note">Highest unlocked Meadow rank: 1 / 40</p>
-      </section>
-
-      <section class="skills-card">
-        <div class="section-title">
-          <span id="skillsKicker" class="mini-label">PEEP'S SKILLS</span>
-          <h2>Special Attacks</h2>
-        </div>
-        <div id="menuSkills" class="menu-skills"></div>
-      </section>
     </section>
+
+    <section id="routePickerModal" class="quest-modal hidden" aria-hidden="true">
+      <div class="quest-modal-card route-picker-modal-card" role="dialog" aria-modal="true" aria-labelledby="routeModalTitle">
+        <button id="closeRoutePicker" class="quest-modal-close" type="button" aria-label="Close area window">×</button>
+        <img id="routeModalImage" class="route-modal-image pixel-background" src="assets/backgrounds/meadow/stage-1-tree.webp" alt="" />
+        <span class="mini-label">AREA ROUTE</span>
+        <h2 id="routeModalTitle">Meadow</h2>
+        <strong id="routeModalRange" class="route-modal-range">1–40</strong>
+        <div class="route-current-rank">
+          <span>Current Rank</span>
+          <strong id="routeModalCurrentRank">1</strong>
+        </div>
+        <div class="route-modal-actions">
+          <button id="startCurrentRoute" class="pixel-button primary" type="button">Start from Current</button>
+          <button id="startBeginningRoute" class="pixel-button" type="button">Start from Beginning</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="skillBookModal" class="quest-modal hidden" aria-hidden="true">
+      <div class="quest-modal-card skill-book-modal-card" role="dialog" aria-modal="true" aria-labelledby="skillBookTitle">
+        <button id="closeSkillBook" class="quest-modal-close" type="button" aria-label="Close skills">×</button>
+        <span class="mini-label">OC SKILLS</span>
+        <h2 id="skillBookTitle">Peep's Skills</h2>
+        <p class="skill-book-note">All possible moves are shown here. Locked moves reveal the level needed to learn them.</p>
+        <div id="menuSkills" class="menu-skills skill-book-list"></div>
+      </div>
+    </section>
+
+    <div id="affectionUnlockToast" class="affection-unlock-toast hidden" role="status" aria-live="polite">
+      <strong id="affectionUnlockTitle">5 Hearts!</strong>
+      <span id="affectionUnlockText">+10% Pink Coins & EXP</span>
+    </div>
 
     <section id="charmScreen" class="screen hidden">
       <section class="charm-book-card">
@@ -408,6 +411,6 @@
     </section>
   </main>
 
-  <script src="js/game-v57.js"></script>
+  <script src="js/game-v58.js"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-// Duck Quest game-v57 — Candyland, per-OC area rewards, 10-heart affection buffs, and compact Buddy Book
+// Duck Quest game-v58 — compact route popups, hero quick actions, skill book, and Cream Fox facing fix
 const HUB_SAVE_KEY = "duckHabitHubSave_v1";
 const MAX_LEVEL = 100;
 const AREA_CONFIG = Object.freeze({
@@ -1931,12 +1931,22 @@ const ui = {
   xpFill: document.querySelector("#xpFill"),
   happinessHearts: document.querySelector("#happinessHearts"),
   happinessLevel: document.querySelector("#happinessLevel"),
-  affectionBonus: document.querySelector("#affectionBonus"),
   areaButtons: Array.from(document.querySelectorAll("[data-area]")),
-  areaRunLabel: document.querySelector("#areaRunLabel"),
-  rankValue: document.querySelector("#rankValue"),
-  rankDescription: document.querySelector("#rankDescription"),
-  bestRunText: document.querySelector("#bestRunText"),
+  routePickerModal: document.querySelector("#routePickerModal"),
+  closeRoutePicker: document.querySelector("#closeRoutePicker"),
+  routeModalImage: document.querySelector("#routeModalImage"),
+  routeModalTitle: document.querySelector("#routeModalTitle"),
+  routeModalRange: document.querySelector("#routeModalRange"),
+  routeModalCurrentRank: document.querySelector("#routeModalCurrentRank"),
+  startCurrentRoute: document.querySelector("#startCurrentRoute"),
+  startBeginningRoute: document.querySelector("#startBeginningRoute"),
+  skillBookModal: document.querySelector("#skillBookModal"),
+  openSkillBook: document.querySelector("#openSkillBook"),
+  closeSkillBook: document.querySelector("#closeSkillBook"),
+  skillBookTitle: document.querySelector("#skillBookTitle"),
+  affectionUnlockToast: document.querySelector("#affectionUnlockToast"),
+  affectionUnlockTitle: document.querySelector("#affectionUnlockTitle"),
+  affectionUnlockText: document.querySelector("#affectionUnlockText"),
   endlessRecord: document.querySelector("#endlessRecord"),
   endlessCheckpoint: document.querySelector("#endlessCheckpoint"),
   continueEndless: document.querySelector("#continueEndless"),
@@ -2211,6 +2221,7 @@ function defaultCharacterQuestProgress(){
       cloud:{unlockedRank:1,lastRank:1}
     },
     clearedAreas:{meadow:false,ocean:false,candy:false,cloud:false},
+    affectionMilestonesSeen:{five:false,ten:false},
     endless:{record:0,checkpoint:1}
   };
 }
@@ -2251,6 +2262,10 @@ function normalizeCharacterQuestProgress(raw, legacy={}){
       ocean:Boolean(q.clearedAreas?.ocean || rawOceanLast>=100 || rawOceanUnlocked>=100),
       candy:Boolean(q.clearedAreas?.candy),
       cloud:Boolean(q.clearedAreas?.cloud || rawCloudLast>=150 || rawCloudUnlocked>=150)
+    },
+    affectionMilestonesSeen:{
+      five:Boolean(q.affectionMilestonesSeen?.five),
+      ten:Boolean(q.affectionMilestonesSeen?.ten)
     },
     endless:{
       record:Math.max(0,Math.floor(Number(q.endless?.record)||0)),
@@ -2868,6 +2883,7 @@ function renderHeroVisuals(){
   if(ui.heroNameCombat) ui.heroNameCombat.textContent=name;
   if(ui.exploreHeading) ui.exploreHeading.textContent=`Where should ${name} Explore?`;
   if(ui.skillsKicker) ui.skillsKicker.textContent=`${name.toUpperCase()}'S SKILLS`;
+  if(ui.skillBookTitle) ui.skillBookTitle.textContent=`${name}'s Skills`;
 
   ui.menuPeep?.classList.toggle("hidden",usesComposite);
   ui.menuHeroComposite?.classList.toggle("hidden",!usesComposite);
@@ -3330,6 +3346,67 @@ function renderBuddyCollection() {
   if(empty && ui.buddyCollectionEmpty) ui.buddyCollectionEmpty.textContent="No Buddy families are available in this tab yet.";
 }
 
+function closeRoutePicker(){
+  ui.routePickerModal?.classList.add("hidden");
+  ui.routePickerModal?.setAttribute("aria-hidden","true");
+}
+
+function openRoutePicker(areaId){
+  if(!AREA_CONFIG[areaId] || currentRun) return;
+  selectedArea=areaId;
+  activeHeroProgress().lastArea=areaId;
+  const cfg=getAreaConfig(areaId);
+  const progress=areaProgress(areaId);
+  selectedRank=Math.max(1,Math.min(cfg.maxRank,progress.unlockedRank||1));
+  if(ui.routeModalImage){ ui.routeModalImage.src=cfg.backgrounds[0]; ui.routeModalImage.alt=`${cfg.name} preview`; }
+  if(ui.routeModalTitle) ui.routeModalTitle.textContent=cfg.name;
+  if(ui.routeModalRange) ui.routeModalRange.textContent=`1–${cfg.maxRank}`;
+  if(ui.routeModalCurrentRank) ui.routeModalCurrentRank.textContent=String(progress.unlockedRank||1);
+  persistAll();
+  renderMeta();
+  ui.routePickerModal?.classList.remove("hidden");
+  ui.routePickerModal?.setAttribute("aria-hidden","false");
+}
+
+function openSkillBook(){
+  if(currentRun) return;
+  renderMenuSkills();
+  ui.skillBookModal?.classList.remove("hidden");
+  ui.skillBookModal?.setAttribute("aria-hidden","false");
+}
+
+function closeSkillBook(){
+  ui.skillBookModal?.classList.add("hidden");
+  ui.skillBookModal?.setAttribute("aria-hidden","true");
+}
+
+let affectionToastTimer=null;
+function showAffectionUnlockToast(title,text){
+  if(!ui.affectionUnlockToast) return;
+  clearTimeout(affectionToastTimer);
+  if(ui.affectionUnlockTitle) ui.affectionUnlockTitle.textContent=title;
+  if(ui.affectionUnlockText) ui.affectionUnlockText.textContent=text;
+  ui.affectionUnlockToast.classList.remove("hidden");
+  affectionToastTimer=setTimeout(()=>ui.affectionUnlockToast?.classList.add("hidden"),3200);
+}
+
+function maybeShowAffectionMilestone(hLevel){
+  const hero=activeHeroProgress();
+  if(!hero.affectionMilestonesSeen || typeof hero.affectionMilestonesSeen!=="object") hero.affectionMilestonesSeen={five:false,ten:false};
+  if(hLevel>=100 && !hero.affectionMilestonesSeen.ten){
+    hero.affectionMilestonesSeen.five=true;
+    hero.affectionMilestonesSeen.ten=true;
+    persistAll();
+    showAffectionUnlockToast("10 Hearts!","+25% Pink Coins & EXP from battles!");
+    return;
+  }
+  if(hLevel>=50 && !hero.affectionMilestonesSeen.five){
+    hero.affectionMilestonesSeen.five=true;
+    persistAll();
+    showAffectionUnlockToast("5 Hearts!","+10% Pink Coins & EXP from battles!");
+  }
+}
+
 function renderMeta() {
   renderSwitchOcButton();
   renderIconBackgroundPicker();
@@ -3341,20 +3418,13 @@ function renderMeta() {
   ui.xpFill.style.width=hero.level>=MAX_LEVEL?"100%":`${Math.min(100,(hero.exp/need)*100)}%`;
   const hLevel=happinessLevelFromTotal(hubSave.characterProgress?.[activeCharacterId]?.happinessTotal);
   ui.happinessLevel.textContent=`Lv. ${hLevel}`; ui.happinessHearts.innerHTML="";
-  const filled=Math.max(1,Math.ceil(hLevel/10));
+  const filled=Math.max(0,Math.min(10,Math.floor(hLevel/10)));
   for(let i=1;i<=10;i++){const heart=document.createElement("span");heart.textContent="♥";heart.className=i<=filled?"heart-full":"heart-empty";ui.happinessHearts.appendChild(heart);}
-  const affectionBonus=affectionRewardBonus();
-  if(ui.affectionBonus) ui.affectionBonus.textContent=affectionBonus>=.25?"10 Hearts · +25% Coins & EXP":affectionBonus>=.10?"5 Hearts · +10% Coins & EXP":"5 Hearts unlocks a Coins & EXP bonus";
+  maybeShowAffectionMilestone(hLevel);
 
   const cfg=getAreaConfig(selectedArea);
   const progress=areaProgress(selectedArea);
   selectedRank=Math.min(Math.max(1,selectedRank),progress.unlockedRank);
-  ui.rankValue.textContent=selectedRank;
-  ui.areaRunLabel.textContent=`${cfg.name} Route`;
-  ui.bestRunText.textContent=`Highest unlocked ${cfg.name} rank: ${progress.unlockedRank} / ${cfg.maxRank}`;
-  ui.rankDescription.textContent=`Start Rank ${rankWord(selectedRank)}?`;
-  document.querySelector("#rankDown").disabled=selectedRank<=1;
-  document.querySelector("#rankUp").disabled=selectedRank>=progress.unlockedRank;
   ui.areaButtons.forEach(btn=>btn.classList.toggle("selected",btn.dataset.area===selectedArea));
 
   const endless=hero.endless || {record:0,checkpoint:1};
@@ -3414,12 +3484,14 @@ function rankDescription(rank,areaId=selectedArea) {
 }
 
 function renderMenuSkills() {
+  if(!ui.menuSkills) return;
   ui.menuSkills.innerHTML="";
   sortedActiveSkills().forEach(skill=>{
     const el=document.createElement("div");
     const unlocked=activeHeroProgress().level>=skill.unlock;
     el.className=`skill-summary${unlocked?"":" locked"}`;
-    el.innerHTML=`<strong>${skillDisplayName(skill)}</strong><span>${unlocked?skillDisplayDescription(skill):`Unlocks at Lv. ${skill.unlock}`}</span>`;
+    const status=unlocked?"Unlocked":`Unlocks at Lv. ${skill.unlock}`;
+    el.innerHTML=`<div class="skill-summary-title"><strong>${skillDisplayName(skill)}</strong><small>${status}</small></div><span>${skillDisplayDescription(skill)}</span>`;
     ui.menuSkills.appendChild(el);
   });
 }
@@ -3580,6 +3652,7 @@ function beginRun() {
 }
 
 function showScreen(which) {
+  if(which!=="home"){ closeRoutePicker(); closeSkillBook(); }
   ui.home.classList.toggle("hidden", which!=="home");
   ui.charm?.classList.toggle("hidden", which!=="charm");
   ui.buddy?.classList.toggle("hidden", which!=="buddy");
@@ -3766,7 +3839,7 @@ function startEnemy(enemyId, options={}) {
   currentEnemy.zoomiesBoost=false; currentEnemy.lifeDrainsUsed=0;
   warmCurrentBattleAssets(currentEnemy);
   ui.enemyCombatant.classList.remove("hidden");
-  ui.enemySprite.classList.remove("boss-fighter","gold-boss-fighter","queen-bee-fighter","strawberry-slime-fighter","rainbow-flower-fighter","ocean-elite-fighter","ocean-boss-fighter");
+  ui.enemySprite.classList.remove("boss-fighter","gold-boss-fighter","queen-bee-fighter","strawberry-slime-fighter","rainbow-flower-fighter","ocean-elite-fighter","ocean-boss-fighter","cream-fox-fighter");
   renderEnemyName(currentEnemy);
   ui.enemyRank.textContent=currentRun?.mode==="endless"
     ? `${currentEnemy.boss?"BOSS · ":""}Floor ${currentRun.floor}`
@@ -3778,6 +3851,7 @@ function startEnemy(enemyId, options={}) {
   ui.enemySprite.classList.toggle("rainbow-flower-fighter",currentEnemy.flowerVariant==="rainbow");
   ui.enemySprite.classList.toggle("ocean-elite-fighter",Boolean(currentEnemy.eliteVariant));
   ui.enemySprite.classList.toggle("ocean-boss-fighter",enemyId==="vampire-squid");
+  ui.enemySprite.classList.toggle("cream-fox-fighter",enemyId==="cream-fox");
   renderEnemyHp(); startEnemyIdle(); renderBattleBuddy(); renderSkills(); renderBattleItems();
   if(currentEnemy.shiny) requestAnimationFrame(()=>playShinyArrivalSparkle(ui.enemyCombatant));
   const openingBuddy=mainBuddyRecord();
@@ -5548,13 +5622,26 @@ ui.runNextRank.addEventListener("click",()=>{
   if(!nextRank||nextRank>progress.unlockedRank||nextRank>maxRank)return;
   selectedArea=areaId;selectedRank=nextRank;beginRun();
 });
-document.querySelector("#rankDown").addEventListener("click",()=>{selectedRank=Math.max(1,selectedRank-1);renderMeta();});
-document.querySelector("#rankUp").addEventListener("click",()=>{selectedRank=Math.min(areaProgress(selectedArea).unlockedRank,selectedRank+1);renderMeta();});
 ui.areaButtons.forEach(btn=>btn.addEventListener("click",()=>{
   const areaId=btn.dataset.area;if(!AREA_CONFIG[areaId])return;
-  selectedArea=areaId;activeHeroProgress().lastArea=areaId;selectedRank=areaProgress(areaId).lastRank||1;persistAll();renderMeta();
+  openRoutePicker(areaId);
 }));
-document.querySelector("#startRun").addEventListener("click",beginRun);
+ui.closeRoutePicker?.addEventListener("click",closeRoutePicker);
+ui.routePickerModal?.addEventListener("click",event=>{ if(event.target===ui.routePickerModal) closeRoutePicker(); });
+ui.startCurrentRoute?.addEventListener("click",()=>{
+  const progress=areaProgress(selectedArea);
+  selectedRank=Math.max(1,Math.min(getAreaConfig(selectedArea).maxRank,progress.unlockedRank||1));
+  closeRoutePicker();
+  beginRun();
+});
+ui.startBeginningRoute?.addEventListener("click",()=>{
+  selectedRank=1;
+  closeRoutePicker();
+  beginRun();
+});
+ui.openSkillBook?.addEventListener("click",openSkillBook);
+ui.closeSkillBook?.addEventListener("click",closeSkillBook);
+ui.skillBookModal?.addEventListener("click",event=>{ if(event.target===ui.skillBookModal) closeSkillBook(); });
 ui.continueEndless?.addEventListener("click",()=>beginEndlessRun(endlessProgress().checkpoint));
 ui.startNewEndless?.addEventListener("click",()=>{
   const progress=endlessProgress();
@@ -5600,6 +5687,11 @@ ui.iconBackgroundButton?.addEventListener("click",()=>{
   const opening=ui.iconBackgroundPicker.classList.contains("hidden");
   ui.iconBackgroundPicker.classList.toggle("hidden",!opening);
   ui.iconBackgroundButton.setAttribute("aria-expanded",String(opening));
+});
+document.addEventListener("keydown",event=>{
+  if(event.key!=="Escape") return;
+  if(ui.routePickerModal && !ui.routePickerModal.classList.contains("hidden")){ closeRoutePicker(); return; }
+  if(ui.skillBookModal && !ui.skillBookModal.classList.contains("hidden")){ closeSkillBook(); }
 });
 syncPastLevelIconBackgrounds();
 persistAll();

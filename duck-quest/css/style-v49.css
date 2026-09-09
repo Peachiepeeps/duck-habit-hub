@@ -2668,3 +2668,165 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
 }
 .area-option.candy-area-option{grid-column:1/-1}
 .area-option.candy-area-option .area-option-image{object-position:center}
+
+
+/* =========================================================
+   v24.125 — compact Quest menu, route popups, hero skill book
+   ========================================================= */
+.hero-quick-actions{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:7px;
+  margin-top:-2px;
+}
+.hero-info-button{
+  min-height:34px;
+  padding:6px 8px;
+  font-size:.68rem;
+}
+
+/* Keep all four main areas in the same compact two-column grid. */
+.area-picker{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.area-option.candy-area-option,
+.area-option.cloud-area-option{grid-column:auto!important}
+.area-option{min-width:0}
+
+.quest-modal{
+  position:fixed;
+  inset:0;
+  z-index:120;
+  display:grid;
+  place-items:center;
+  padding:18px;
+  background:rgba(72,48,52,.50);
+}
+.quest-modal-card{
+  position:relative;
+  width:min(430px,100%);
+  max-height:min(720px,90dvh);
+  overflow:auto;
+  padding:18px;
+  border:4px solid var(--border);
+  border-radius:14px;
+  background:#fff7e5;
+  box-shadow:0 9px 0 rgba(102,67,61,.30);
+  text-align:center;
+}
+.quest-modal-close{
+  position:absolute;
+  top:7px;
+  right:7px;
+  z-index:3;
+  width:38px;
+  height:38px;
+  display:grid;
+  place-items:center;
+  padding:0;
+  border:3px solid var(--border);
+  border-radius:999px;
+  background:#fffaf3;
+  color:var(--brown);
+  font:900 1.2rem/1 monospace;
+  cursor:pointer;
+}
+.route-picker-modal-card{display:grid;justify-items:center;gap:8px}
+.route-modal-image{
+  width:min(260px,82%);
+  aspect-ratio:16/9;
+  object-fit:cover;
+  border:4px solid #b77e91;
+  border-radius:10px;
+  background:#f6dce5;
+}
+.route-picker-modal-card h2{margin:0;font-size:1.45rem}
+.route-modal-range{
+  display:inline-grid;
+  place-items:center;
+  min-width:88px;
+  padding:5px 11px;
+  border:2px solid #c793a5;
+  border-radius:999px;
+  background:#f8dce7;
+  font-size:.76rem;
+}
+.route-current-rank{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 12px;
+  margin-top:2px;
+  border:3px solid #c99aaa;
+  border-radius:9px;
+  background:#fffaf0;
+  font-size:.76rem;
+  font-weight:900;
+}
+.route-current-rank strong{font-size:1rem}
+.route-modal-actions{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:3px}
+.route-modal-actions .pixel-button{min-height:48px}
+
+.skill-book-modal-card{text-align:left}
+.skill-book-modal-card>.mini-label,
+.skill-book-modal-card>h2,
+.skill-book-modal-card>.skill-book-note{text-align:center;display:block}
+.skill-book-modal-card>h2{margin:3px 0 5px}
+.skill-book-note{margin:0 auto 12px;max-width:330px;color:#8f7470;font-size:.68rem;font-weight:800;line-height:1.35}
+.skill-book-list{grid-template-columns:1fr;margin-top:0}
+.skill-book-list .skill-summary{opacity:1}
+.skill-book-list .skill-summary.locked{opacity:.58;filter:grayscale(.25)}
+.skill-summary-title{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.skill-summary-title small{font-size:.53rem;font-weight:900;color:#a15f79;text-align:right}
+.skill-summary.locked .skill-summary-title small{color:#8d7771}
+
+.affection-unlock-toast{
+  position:fixed;
+  left:50%;
+  top:max(18px,env(safe-area-inset-top));
+  z-index:160;
+  width:min(360px,calc(100vw - 28px));
+  transform:translateX(-50%);
+  display:grid;
+  justify-items:center;
+  gap:3px;
+  padding:11px 14px;
+  border:3px solid #a8657f;
+  border-radius:12px;
+  background:#fff7d7;
+  box-shadow:0 6px 0 rgba(86,55,58,.24);
+  text-align:center;
+  animation:affectionToastIn .28s steps(3,end);
+}
+.affection-unlock-toast strong{font-size:.9rem;color:#a65073}
+.affection-unlock-toast span{font-size:.66rem;font-weight:900;color:#755e59}
+@keyframes affectionToastIn{from{transform:translate(-50%,-18px);opacity:0}to{transform:translate(-50%,0);opacity:1}}
+
+/* Cream Fox art faces away from the hero in the source files. */
+.enemy-fighter.cream-fox-fighter{
+  transform:scaleX(-1);
+  transform-origin:center center;
+}
+.enemy-fighter.cream-fox-fighter.attack-pop{animation:creamFoxAttackPop .34s steps(2,end)}
+.enemy-fighter.cream-fox-fighter.hurt-pop{animation:creamFoxHurtPop .3s steps(2,end)}
+@keyframes creamFoxAttackPop{50%{transform:translateX(-12px) scaleX(-1) scale(1.05)}}
+@keyframes creamFoxHurtPop{25%{transform:translateX(5px) scaleX(-1)}50%{transform:translateX(-5px) scaleX(-1)}75%{transform:translateX(3px) scaleX(-1)}}
+
+@media(max-width:600px){
+  .hero-info{gap:6px}
+  .hero-quick-actions{gap:5px}
+  .hero-info-button{min-height:29px;padding:4px 5px;font-size:.54rem}
+  .area-picker{gap:6px!important}
+  .area-option{min-height:66px!important;padding:6px!important;grid-template-columns:58px minmax(0,1fr)!important}
+  .area-option-image{width:58px!important;height:48px!important}
+  .area-option-copy strong{font-size:.72rem!important}
+  .area-option-copy small{font-size:.47rem!important;line-height:1.18}
+  .quest-modal{padding:12px}
+  .quest-modal-card{padding:15px 12px 13px}
+  .route-modal-image{width:min(230px,78%)}
+  .route-modal-actions{gap:6px}
+  .route-modal-actions .pixel-button{min-height:44px;font-size:.58rem;padding:6px}
+  .skill-book-note{font-size:.58rem}
+  .skill-book-list .skill-summary{padding:7px}
+  .skill-summary-title small{font-size:.46rem}
+}
