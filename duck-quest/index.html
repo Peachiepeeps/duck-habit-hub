@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f6c6d6" />
   <title>Duck Quest</title>
-  <link rel="stylesheet" href="css/style-v47.css" />
+  <link rel="stylesheet" href="css/style-v48.css" />
 </head>
 <body>
   <main class="quest-shell">
@@ -65,6 +65,7 @@
             <div>
               <span class="mini-label">HAPPINESS</span>
               <div id="happinessHearts" class="hearts" aria-label="Happiness hearts"></div>
+              <small id="affectionBonus" class="affection-bonus">5 Hearts unlocks a Coins & EXP bonus</small>
             </div>
             <strong id="happinessLevel">Lv. 1</strong>
           </div>
@@ -119,24 +120,31 @@
         </div>
         <div class="area-picker" role="group" aria-label="Duck Quest area">
           <button class="area-option selected" data-area="meadow" type="button">
-            <img class="area-option-image pixel-background" src="assets/backgrounds/meadow/stage-1-tree.webp" alt="Meadow preview" />
+            <img class="area-option-image pixel-background" src="assets/backgrounds/meadow/stage-1-tree.webp" alt="Meadow preview" loading="lazy" decoding="async" />
             <span class="area-option-copy">
               <strong>Meadow</strong>
-              <small>Ranks 1–40 · Daisy Crown reward</small>
+              <small>Ranks 1–40 · Daisy Crown for this OC</small>
             </span>
           </button>
           <button class="area-option" data-area="ocean" type="button">
-            <img class="area-option-image pixel-background" src="assets/backgrounds/ocean/shore.webp" alt="Ocean preview" />
+            <img class="area-option-image pixel-background" src="assets/backgrounds/ocean/shore.webp" alt="Ocean preview" loading="lazy" decoding="async" />
             <span class="area-option-copy">
               <strong>Ocean</strong>
-              <small>Ranks 1–100 · Sunglasses reward</small>
+              <small>Ranks 1–80 · Sunglasses for this OC</small>
+            </span>
+          </button>
+          <button class="area-option candy-area-option" data-area="candy" type="button">
+            <img class="area-option-image pixel-background" src="assets/backgrounds/candyland/lollipop-lane.webp" alt="Candyland preview" loading="lazy" decoding="async" />
+            <span class="area-option-copy">
+              <strong>Candyland</strong>
+              <small>Ranks 1–120 · Candy Hairclip for this OC</small>
             </span>
           </button>
           <button class="area-option cloud-area-option" data-area="cloud" type="button">
-            <img class="area-option-image pixel-background" src="assets/backgrounds/cloud/stage-1-stairs.png" alt="Cloud Garden preview" />
+            <img class="area-option-image pixel-background" src="assets/backgrounds/cloud/stage-1-stairs.png" alt="Cloud Garden preview" loading="lazy" decoding="async" />
             <span class="area-option-copy">
               <strong>Cloud Garden</strong>
-              <small>Ranks 1–150 · Halo reward</small>
+              <small>Ranks 1–160 · Halo for this OC</small>
             </span>
           </button>
         </div>
@@ -204,11 +212,11 @@
           </div>
           <strong id="buddyCollectionCount" class="buddy-count-pill">0 / 0</strong>
         </div>
-        <p class="buddy-book-note">Befriend enemies with Buddy Pons. You can catch multiple copies, then tap a caught Buddy to assign it to an OC without leaving Duck Quest.</p>
-        <div id="buddyFilters" class="buddy-filters" role="group" aria-label="Buddy collection filters">
-          <button class="buddy-filter selected" data-buddy-filter="all" type="button">All</button>
-          <button class="buddy-filter" data-buddy-filter="normal" type="button">Normal</button>
-          <button class="buddy-filter" data-buddy-filter="boss" type="button">Boss</button>
+        <div id="buddyFilters" class="buddy-filters" role="group" aria-label="Buddy collection areas">
+          <button class="buddy-filter selected" data-buddy-filter="meadow" type="button">Meadow</button>
+          <button class="buddy-filter" data-buddy-filter="ocean" type="button">Ocean</button>
+          <button class="buddy-filter" data-buddy-filter="candy" type="button">Candyland</button>
+          <button class="buddy-filter" data-buddy-filter="cloud" type="button">Cloud Garden</button>
           <button class="buddy-filter" data-buddy-filter="shiny" type="button">Shiny ✨</button>
         </div>
         <div id="buddyCollectionGrid" class="buddy-collection-grid"></div>
@@ -219,6 +227,7 @@
         <div class="buddy-detail-card" role="dialog" aria-modal="true" aria-labelledby="buddyDetailName">
           <button id="closeBuddyDetail" class="buddy-detail-close" type="button" aria-label="Close Buddy details">×</button>
           <div id="buddyDetailArt" class="buddy-detail-art"></div>
+          <div id="buddyDetailVariants" class="buddy-detail-variants" aria-label="Buddy forms"></div>
           <span id="buddyDetailTag" class="mini-label">BUDDY</span>
           <h2 id="buddyDetailName">Buddy</h2>
           <p id="buddyDetailStatus">Not befriended yet.</p>
@@ -399,6 +408,6 @@
     </section>
   </main>
 
-  <script src="js/game-v56.js"></script>
+  <script src="js/game-v57.js"></script>
 </body>
 </html>

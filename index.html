@@ -1,15 +1,15 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="duck-habit-build" content="24.123" />
+  <meta name="duck-habit-build" content="24.124" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f7dbe5" />
   <title>Duck Habit Hub</title>
   <!-- v24.107 tall-phone room anchor + CSS wallpaper geometry fix -->
-  <link rel="stylesheet" href="style-v24-123.css" />
+  <link rel="stylesheet" href="style-v24-124.css" />
 
-  <link rel="manifest" href="manifest.webmanifest?v=24-123">
+  <link rel="manifest" href="manifest.webmanifest?v=24-124">
   <link rel="apple-touch-icon" href="apple-touch-icon-v4.png">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32-v4.png">
   <meta name="theme-color" content="#ef9fbd">
@@ -603,11 +603,19 @@
           <section class="status-rank-card" aria-label="Duck Quest ranks">
             <div class="status-rank-row">
               <img src="duck-quest/assets/backgrounds/meadow/stage-1-tree.webp" alt="" loading="lazy" decoding="async" />
-              <div><span>Meadow</span><strong>Current Highest Rank: <b id="statusMeadowRank">1</b> / 20</strong></div>
+              <div><span>Meadow</span><strong>Current Highest Rank: <b id="statusMeadowRank">1</b> / 40</strong></div>
             </div>
             <div class="status-rank-row">
               <img src="duck-quest/assets/backgrounds/ocean/shore.webp" alt="" loading="lazy" decoding="async" />
-              <div><span>Ocean</span><strong>Current Highest Rank: <b id="statusOceanRank">1</b> / 50</strong></div>
+              <div><span>Ocean</span><strong>Current Highest Rank: <b id="statusOceanRank">1</b> / 80</strong></div>
+            </div>
+            <div class="status-rank-row">
+              <img src="duck-quest/assets/backgrounds/candyland/lollipop-lane.webp" alt="" loading="lazy" decoding="async" />
+              <div><span>Candyland</span><strong>Current Highest Rank: <b id="statusCandyRank">1</b> / 120</strong></div>
+            </div>
+            <div class="status-rank-row">
+              <img src="duck-quest/assets/backgrounds/cloud/stage-1-stairs.png" alt="" loading="lazy" decoding="async" />
+              <div><span>Cloud Garden</span><strong>Current Highest Rank: <b id="statusCloudRank">1</b> / 160</strong></div>
             </div>
           </section>
         </div>
@@ -1063,13 +1071,13 @@
       </section>
     </section>
   </main>
-  <script src="script-v24-123.js"></script>
+  <script src="script-v24-124.js"></script>
 
   <script>
     // v24.84: use a stable service-worker URL and actively check the deployed
     // build when the installed PWA is opened/resumed. This prevents Android
     // from keeping an already-open standalone app on an older app shell.
-    const DUCK_HUB_BUILD = "24.123";
+    const DUCK_HUB_BUILD = "24.124";
     let duckHubReloadingForUpdate = false;
 
     function duckHubReloadFresh(version) {

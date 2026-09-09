@@ -930,6 +930,16 @@ button.sort-button{
 .title{transform:translateX(-12px)}
 @media(max-width:420px){.title{transform:translateX(-8px)}}
 
+
+.tiny-duck-board-item{
+  width:92% !important;
+  height:92% !important;
+  object-fit:contain;
+  image-rendering:pixelated;
+  filter:drop-shadow(0 0 5px rgba(255,255,255,.95)) drop-shadow(0 0 7px rgba(255,214,94,.9));
+  animation:tinyDuckBoardPop .8s ease-in-out infinite alternate;
+}
+@keyframes tinyDuckBoardPop{from{transform:scale(.92) rotate(-2deg)}to{transform:scale(1.08) rotate(2deg)}}
 </style>
 </head>
 
@@ -1135,6 +1145,9 @@ const ENERGY_BUY_AMOUNT = 5;
 const COIN_DROP_CHANCE = 0.0125;
 /* Chance for a Gold Coin to appear after pressing Bake.
    0.01 = 1% chance. Tap it to collect +5 Pink Coins. */
+
+const TINY_DUCK_BOARD_CHANCE = 0.005;
+/* 0.5% (1 in 200) per Bake. Tap it to count a Tiny Duck sighting. */
 
 const RING_FREE_BAKES = 5;
 /* Number of free Bake presses earned by completing a Ring. */
@@ -1413,7 +1426,8 @@ function load(){
           value==="refill" ||
           value==="golden-heart" ||
           value==="coin" ||
-          value==="rose-gold-coin"
+          value==="rose-gold-coin" ||
+          value==="tiny-duck-win"
         ) return value;
 
         /* Migrate desserts saved by the older one-chain version. */
@@ -1492,6 +1506,10 @@ function render(){
         img.src="../assets/bakery/drops/Rose-gold-coin.PNG";
         img.className="item rose-gold-coin-item";
         img.alt="Rose-gold Coin";
+      }else if(item==="tiny-duck-win"){
+        img.src="../assets/ducks/Standard-duck.webp";
+        img.className="item tiny-duck-board-item";
+        img.alt="Tiny Duck win";
       }else{
         const info=itemInfo(item);
         if(info){
@@ -1614,6 +1632,12 @@ function beginDrag(e,index){
   if(celebrating) return;
   if(state.board[index]===null) return;
 
+  if(state.board[index]==="tiny-duck-win"){
+    messageEl.textContent="🦆 Tiny Duck! Tap it to collect the sighting!";
+    e.preventDefault();
+    return;
+  }
+
   if(state.board[index]==="refill"){
     messageEl.textContent="💗 Tap for a small refill, or drag two Hearts together!";
   }else if(state.board[index]==="coin"){
@@ -1728,6 +1752,15 @@ function handleTap(e,index){
   }
 
   const current=state.board[index];
+
+  if(current==="tiny-duck-win"){
+    state.board[index]=null;
+    recordBakeryTinyDuckSighting();
+    messageEl.textContent="🦆 Tiny Duck collected! Another sighting toward the pile!";
+    save();
+    render();
+    return;
+  }
 
   if(current==="golden-heart" || current==="rose-gold-coin"){
     const now=Date.now();
@@ -2078,7 +2111,8 @@ function isBonusItem(value){
   return value==="refill" ||
     value==="golden-heart" ||
     value==="coin" ||
-    value==="rose-gold-coin";
+    value==="rose-gold-coin" ||
+    value==="tiny-duck-win";
 }
 
 function moveOrMerge(from,to){
@@ -2293,6 +2327,15 @@ function maybeSpawnCoin(){
   return true;
 }
 
+function maybeSpawnTinyDuckWin(){
+  if(Math.random()>=TINY_DUCK_BOARD_CHANCE) return false;
+  const empties=[];
+  for(let i=0;i<SIZE;i++) if(state.board[i]===null) empties.push(i);
+  if(!empties.length) return false;
+  state.board[empties[0]]="tiny-duck-win";
+  return true;
+}
+
 function bake(){
   if(celebrating) return;
   if(state.bakesLeft<=0 && state.freeBakes<=0) return;
@@ -2327,8 +2370,11 @@ function bake(){
 
   const refillAppeared=maybeSpawnHeartRefill();
   const coinAppeared=maybeSpawnCoin();
+  const tinyDuckAppeared=maybeSpawnTinyDuckWin();
 
-  if(refillAppeared && coinAppeared){
+  if(tinyDuckAppeared){
+    messageEl.textContent="🦆✨ A Tiny Duck appeared! Tap it before you forget it!";
+  }else if(refillAppeared && coinAppeared){
     messageEl.textContent="Lucky! a Pink Heart Refill and Gold Coin appeared!";
   }else if(refillAppeared){
     messageEl.textContent="Lucky! a Pink Heart Refill appeared!";
@@ -2394,6 +2440,7 @@ function sortBoard(){
   const goldenHearts=state.board.filter(value=>value==="golden-heart");
   const coins=state.board.filter(value=>value==="coin");
   const roseCoins=state.board.filter(value=>value==="rose-gold-coin");
+  const tinyDucks=state.board.filter(value=>value==="tiny-duck-win");
 
   state.board=[
     ...items,
@@ -2401,8 +2448,9 @@ function sortBoard(){
     ...goldenHearts,
     ...coins,
     ...roseCoins,
+    ...tinyDucks,
     ...Array(
-      SIZE-items.length-refills.length-goldenHearts.length-coins.length-roseCoins.length
+      SIZE-items.length-refills.length-goldenHearts.length-coins.length-roseCoins.length-tinyDucks.length
     ).fill(null)
   ];
 
@@ -2444,7 +2492,8 @@ function checkRoundEnd(force=false){
   const hasEmpty=state.board.some(x=>x===null);
   const hasEnergyRescue=
     state.board.includes("refill") ||
-    state.board.includes("golden-heart");
+    state.board.includes("golden-heart") ||
+    state.board.includes("tiny-duck-win");
 
   if(
     (
@@ -2661,9 +2710,7 @@ function showBakeryTinyToast(message){
   },2300);
 }
 
-function collectBakeryTinyDuck(){
-  if(!bakeryTinyDuck) return;
-
+function recordBakeryTinyDuckSighting(){
   let tinyWasNew=false;
   let stackWasNew=false;
   let pileWasNew=false;
@@ -2671,56 +2718,37 @@ function collectBakeryTinyDuck(){
 
   updateHubSave(hub=>{
     if(!Array.isArray(hub.unlockedDucks)) hub.unlockedDucks=[];
-
-    hub.tinyDuckSightings=
-      Math.max(0,Number(hub.tinyDuckSightings)||0)+1;
+    hub.tinyDuckSightings=Math.max(0,Number(hub.tinyDuckSightings)||0)+1;
     sightings=hub.tinyDuckSightings;
-
     if(!hub.unlockedDucks.includes("tiny-duck")){
-      hub.unlockedDucks.push("tiny-duck");
-      tinyWasNew=true;
+      hub.unlockedDucks.push("tiny-duck"); tinyWasNew=true;
     }
-
-    if(
-      sightings>=TINY_DUCK_STACK_SIGHTINGS &&
-      !hub.unlockedDucks.includes("tiny-duck-stack")
-    ){
-      hub.unlockedDucks.push("tiny-duck-stack");
-      stackWasNew=true;
+    if(sightings>=TINY_DUCK_STACK_SIGHTINGS && !hub.unlockedDucks.includes("tiny-duck-stack")){
+      hub.unlockedDucks.push("tiny-duck-stack"); stackWasNew=true;
     }
-
-    if(
-      sightings>=TINY_DUCK_PILE_SIGHTINGS &&
-      !hub.unlockedDucks.includes("pile-of-tiny-ducks")
-    ){
-      hub.unlockedDucks.push("pile-of-tiny-ducks");
-      pileWasNew=true;
+    if(sightings>=TINY_DUCK_PILE_SIGHTINGS && !hub.unlockedDucks.includes("pile-of-tiny-ducks")){
+      hub.unlockedDucks.push("pile-of-tiny-ducks"); pileWasNew=true;
     }
   });
 
-  hideBakeryTinyDuck();
-
   if(pileWasNew){
-    showBakeryTinyToast(
-      `Tiny Duck sighting #${sightings}! Pile of Tiny Ducks unlocked! 🦆✨`
-    );
+    showBakeryTinyToast(`Tiny Duck sighting #${sightings}! Pile of Tiny Ducks unlocked! 🦆✨`);
   }else if(stackWasNew){
-    showBakeryTinyToast(
-      "Tiny Duck sighting #4! Tiny Duck Stack unlocked! 🦆🦆🦆🦆"
-    );
+    showBakeryTinyToast("Tiny Duck sighting #4! Tiny Duck Stack unlocked! 🦆🦆🦆🦆");
   }else if(tinyWasNew){
-    showBakeryTinyToast(
-      "You found Tiny Duck! Added to Duckipedia! 🦆✨"
-    );
+    showBakeryTinyToast("You found Tiny Duck! Added to Duckipedia! 🦆✨");
   }else if(sightings>TINY_DUCK_STACK_SIGHTINGS){
-    showBakeryTinyToast(
-      `Tiny Duck spotted again! ${sightings} Sightings! ♡`
-    );
+    showBakeryTinyToast(`Tiny Duck spotted again! ${sightings} Sightings! ♡`);
   }else{
-    showBakeryTinyToast(
-      `Tiny Duck spotted again! ${sightings}/${TINY_DUCK_STACK_SIGHTINGS} sightings ♡`
-    );
+    showBakeryTinyToast(`Tiny Duck spotted again! ${sightings}/${TINY_DUCK_STACK_SIGHTINGS} sightings ♡`);
   }
+  return sightings;
+}
+
+function collectBakeryTinyDuck(){
+  if(!bakeryTinyDuck) return;
+  hideBakeryTinyDuck();
+  recordBakeryTinyDuckSighting();
 }
 
 document.addEventListener("visibilitychange",()=>{
