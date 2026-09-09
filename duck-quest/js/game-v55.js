@@ -1,4 +1,4 @@
-// Duck Quest game-v54 — adds Annika as a playable OC
+// Duck Quest game-v55 — Annika move behavior corrections
 const HUB_SAVE_KEY = "duckHabitHubSave_v1";
 const MAX_LEVEL = 100;
 const AREA_CONFIG = Object.freeze({
@@ -360,23 +360,23 @@ const ANNIKA_SKILLS = [
     description:"A sharp scolding that deals normal damage."
   },
   {
-    id:"stop", name:"Stop!", unlock:10, type:"buff", attackBoost:0.35, duration:3,
+    id:"stop", name:"Stop!", unlock:10, type:"stun", duration:2, cooldown:4,
     sprite:"assets/characters/annika/base/stop.webp",
-    description:"Annika steels herself. Raise Attack by 35% for 3 turns."
+    description:"Freeze the enemy so it cannot act for 2 turns."
   },
   {
-    id:"flustered", name:"Flustered", unlock:25, type:"heal", healPercent:0.35, cooldown:3,
+    id:"flustered", name:"Flustered", unlock:25, type:"buff", attackBoost:0.65, duration:4, missChance:0.10,
     sprite:"assets/characters/annika/base/flustered.webp",
-    description:"Recover 35% of Annika's max HP."
+    description:"Annika gets flustered! Attack spikes by 65% for 4 turns, with a small 10% chance to miss."
   },
   {
-    id:"high-kick", name:"High Kick!", unlock:50, type:"multi-hit", multiplier:2.4, hits:2, cooldown:2,
+    id:"high-kick", name:"High Kick!", unlock:50, type:"damage", multiplier:1.75, cooldown:2,
     sprite:"assets/characters/annika/base/high-kick.webp",
-    description:"Two strong kicks for 2.4× total damage."
+    description:"A powerful kick that deals much more damage than Scold."
   },
   {
     id:"just-a-smack", name:"Just a smack!", unlock:1, type:"safe-chip",
-    sprite:"assets/characters/annika/base/scold.webp",
+    sprite:"assets/characters/annika/base/stop.webp",
     description:"Deals normal basic-attack damage, but can never knock an enemy below 1 HP. Perfect for catching!"
   }
 ];
@@ -392,7 +392,7 @@ function activeSkills(){
 function skillTypeGroup(skill){
   if(!skill) return 9;
   if(["damage","damage-burn","multi-hit","safe-chip"].includes(skill.type)) return 0;
-  if(["buff","full-heal-buff","self-damage-buff"].includes(skill.type)) return 1;
+  if(["buff","full-heal-buff","self-damage-buff","stun"].includes(skill.type)) return 1;
   if(["heal","full-heal"].includes(skill.type)) return 2;
   return 1;
 }
@@ -405,7 +405,7 @@ function sortedActiveSkills(){
 }
 
 function isStatusSkill(skill){
-  return Boolean(skill && ["buff","full-heal-buff","self-damage-buff"].includes(skill.type));
+  return Boolean(skill && ["buff","full-heal-buff","self-damage-buff","stun"].includes(skill.type));
 }
 
 const ENEMIES = {
@@ -3313,7 +3313,7 @@ function startEncounter() {
     enemyAccuracyDownTurns:0, enemyMissChance:0,
     enemyBurnTurns:0, enemyBurnDamagePercent:0,
     heroMissTurns:0, heroMissChance:0,
-    enemyNextAttackMultiplier:1, enemyStunned:false
+    enemyNextAttackMultiplier:1, enemyStunned:false, enemyStunTurns:0
   };
   buddyUsedThisHeroTurn=false;
   renderBattleCharmStrip();
@@ -3802,7 +3802,7 @@ function renderSkills() {
       } else if(skill.oncePerBattle && skillState.onceUsed?.[skill.id]) {
         unavailable=true;
         detail="Already used this battle.";
-      } else if(isStatusSkill(skill) && skill.type!=="full-heal-buff" && skillState.attackBuffTurns>0) {
+      } else if(["buff","full-heal-buff","self-damage-buff"].includes(skill.type) && skill.type!=="full-heal-buff" && skillState.attackBuffTurns>0) {
         unavailable=true;
         const boost=Math.round((skill.attackBoost||0.30)*100);
         detail=`Attack +${boost}% active · ${skillState.attackBuffTurns} turn${skillState.attackBuffTurns===1?"":"s"}`;
@@ -4167,6 +4167,12 @@ async function useSkill(skill) {
       setMessage(`${skillDisplayName(skill)}! ${heroDisplayName()}'s Attack rose by ${boost}% for ${skillState.attackBuffTurns} turns.`);
     }
     await sleep(700);
+  } else if(skill.type==="stun") {
+    if(skill.cooldown) skillState.cooldowns[skill.id]=skill.cooldown;
+    skillState.enemyStunTurns=Math.max(Number(skillState.enemyStunTurns||0), Math.max(1,Number(skill.duration)||2));
+    const turns=skillState.enemyStunTurns;
+    setMessage(`${skillDisplayName(skill)}! ${currentEnemy.name} froze for ${turns} turn${turns===1?"":"s"}!`);
+    await sleep(700);
   } else if(skill.type==="safe-chip") {
     if(heroCanMissFromFluster(skill)) {
       setMessage(`${heroDisplayName()} got too flustered and missed!`);
@@ -4388,6 +4394,16 @@ async function performEnemyAttack(multiplier=1,label="",lifeDrainHeal=0){
 
 async function enemyTurn() {
   if(!currentEnemy || currentEnemy.hpNow<=0) return;
+
+  if(Number(skillState.enemyStunTurns||0)>0){
+    skillState.enemyStunTurns=Math.max(0,Number(skillState.enemyStunTurns||0)-1);
+    const remaining=skillState.enemyStunTurns;
+    setMessage(`${currentEnemy.name} is frozen and couldn't move!${remaining>0?` ${remaining} frozen turn${remaining===1?"":"s"} left.`:""}`);
+    await sleep(650);
+    tickEnemyBuddyEffects();
+    setMessage(`${heroDisplayName()} is ready!`);
+    return;
+  }
 
   if(skillState.enemyStunned){
     skillState.enemyStunned=false;

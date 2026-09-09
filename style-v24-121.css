@@ -7390,3 +7390,12 @@ button { color: inherit; }
 /* The sixth Shelf of Ducks row ends on the thin inner ledge at y≈1726
    instead of the thick outer frame at y≈1770. The first five shelf rows
    keep their calibrated baselines unchanged. */
+
+
+/* V24.121 — Annika profile crop nudge */
+.profile-avatar[data-character-id="annika"] > img,
+.profile-detail-avatar[data-character-id="annika"] > img,
+.profile-avatar[data-character-id="annika"] > .profile-head-duck-layer,
+.profile-detail-avatar[data-character-id="annika"] > .profile-head-duck-layer {
+  left: -28%;
+}

@@ -1,4 +1,4 @@
-// Hub v24.120 — Annika invitation, wardrobe, profile, duck, and Duck Quest support
+// Hub v24.121 — Annika invitation/shop fix, profile nudge, and setup corrections
 const STORAGE_KEY = "duckHabitHubSave_v1";
 const SAVE_VERSION = 41;
 
@@ -209,6 +209,11 @@ const CHARACTER_UNLOCKS = {
     name: "Miho Invitation",
     image: "assets/oc-invitations/Miho-invitation.webp",
     priceText: "Invite Miho to the hub and unlock her default wardrobe."
+  },
+  annika: {
+    name: "Annika Invitation",
+    image: "assets/oc-invitations/Annika-invitation.png",
+    priceText: "Invite Annika to the hub and unlock her default wardrobe."
   }
 };
 
@@ -1440,11 +1445,10 @@ const SHOP_STOCK = {
     { wardrobeId: "miho-bottom-slit-skirt", price: 150 },
     { wardrobeId: "miho-bottom-shorts", price: 150 },
     { wardrobeId: "miho-legwear-laceup", price: 150 },
-    { wardrobeId: "annika-collared-shirt", price: 150 },
     { wardrobeId: "annika-sheer-shirt", price: 150 },
     { wardrobeId: "annika-bow-sweater", price: 150 },
     { wardrobeId: "annika-leotard", price: 150 },
-    { wardrobeId: "annika-bow-stockings", price: 150 },
+    { wardrobeId: "annika-black-stockings", price: 150 },
     { wardrobeId: "annika-circus-stockings", price: 150 }
   ],
   shoes: [
@@ -1476,9 +1480,8 @@ const SHOP_STOCK = {
     { wardrobeId: "miko-hairpins-black", price: 150 },
     { wardrobeId: "miho-bow-low", price: 150 },
     { wardrobeId: "miho-neck-bow", price: 150 },
-    { wardrobeId: "annika-hair-ribbon", price: 150 },
+    { wardrobeId: "annika-hair-bow-high", price: 150 },
     { wardrobeId: "annika-circus-back-bow", price: 150 },
-    { wardrobeId: "annika-neck-bow", price: 150 },
     { wardrobeId: "annika-scarf", price: 150 }
   ]
 };
@@ -2630,6 +2633,7 @@ const ANNIKA_THUMB_BOUNDS = {
 };
 
 const ANNIKA_ASSETS = {
+  "back-hair-ribbon": { label: "Back Hair Bow", file: "Annika-hair-ribbon.png", z: 8 },
   "hair-long": { label: "Long Hair", file: "Annika-long-hair.png", z: 10 },
   "hair-ponytail": { label: "Ponytail", file: "Annika-ponytail.png", z: 10 },
   "back-bow-circus": { label: "Circus Back Bow", file: "Annika-circus-back-bow.png", z: 11 },
@@ -2654,8 +2658,7 @@ const ANNIKA_ASSETS = {
   "expression-shocked": { label: "Happy", file: "Annika-happy.png", z: 45 },
   "expression-mad": { label: "Angry", file: "Annika-angry.png", z: 45 },
   "bangs": { label: "Bangs", file: "Annika-bangs.png", z: 46 },
-  "headbow-small": { label: "Head Bow", file: "Annika-hair-bow-high.png", z: 47 },
-  "headbow-ribbon": { label: "Ribbon Bow", file: "Annika-hair-ribbon.png", z: 47 },
+  "headbow-small": { label: "High Hair Bow", file: "Annika-hair-bow-high.png", z: 47 },
   "daisy-crown": { label: "Daisy Crown", file: "Daisy-Crown.png", z: 53 },
   "ocean-sunglasses": { label: "Sunglasses", file: "Sunglasses.png", z: 54 },
   "halo": { label: "Halo", file: "Halo.png", z: 55 }
@@ -2663,8 +2666,8 @@ const ANNIKA_ASSETS = {
 
 const ANNIKA_CLOSET = [
   { id: "hair", label: "Hair", type: "hair", options: ["hair-long", "hair-ponytail"] },
-  { id: "back", label: "Back Pieces", type: "single", allowNone: true, options: ["back-bow-circus"] },
-  { id: "headBow", label: "Head Bows", type: "single", allowNone: true, options: ["headbow-small", "headbow-ribbon"] },
+  { id: "back", label: "Back Pieces", type: "single", allowNone: true, options: ["back-hair-ribbon", "back-bow-circus"] },
+  { id: "headBow", label: "Head Bows", type: "single", allowNone: true, options: ["headbow-small"] },
   { id: "shirt", label: "Shirts", type: "single", allowNone: true, options: ["shirt-collared"] },
   { id: "outer", label: "Outerwear", type: "single", allowNone: true, options: ["outer-sheer", "outer-sweater", "outer-bow-sweater"] },
   { id: "bottom", label: "Bottoms", type: "single", allowNone: true, options: ["bottom-shorts"] },
@@ -2797,15 +2800,15 @@ const DEFAULT_MIHO_OUTFIT = {
 
 const DEFAULT_ANNIKA_OUTFIT = {
   hair: "hair-long",
-  back: null,
-  headBow: "headbow-small",
-  shirt: null,
+  back: "back-hair-ribbon",
+  headBow: null,
+  shirt: "shirt-collared",
   outer: "outer-sweater",
   bottom: "bottom-shorts",
   dress: null,
-  legwear: "legwear-black",
+  legwear: "legwear-bow",
   shoes: "shoes-sneakers",
-  extras: []
+  extras: ["neck-bow"]
 };
 
 function normalizeMihoOutfit(rawOutfit = {}) {
@@ -2839,17 +2842,17 @@ function normalizeAnnikaOutfit(rawOutfit = {}) {
   const incoming = rawOutfit && typeof rawOutfit === "object" ? rawOutfit : {};
   const normalized = { ...structuredClone(DEFAULT_ANNIKA_OUTFIT), ...incoming };
   if (!["hair-long", "hair-ponytail"].includes(normalized.hair)) normalized.hair = "hair-long";
-  if (![null, "back-bow-circus"].includes(normalized.back)) normalized.back = null;
-  if (![null, "headbow-small", "headbow-ribbon"].includes(normalized.headBow)) normalized.headBow = "headbow-small";
-  if (![null, "shirt-collared"].includes(normalized.shirt)) normalized.shirt = null;
+  if (![null, "back-hair-ribbon", "back-bow-circus"].includes(normalized.back)) normalized.back = "back-hair-ribbon";
+  if (![null, "headbow-small"].includes(normalized.headBow)) normalized.headBow = null;
+  if (![null, "shirt-collared"].includes(normalized.shirt)) normalized.shirt = "shirt-collared";
   if (![null, "outer-sheer", "outer-sweater", "outer-bow-sweater"].includes(normalized.outer)) normalized.outer = "outer-sweater";
   if (![null, "bottom-shorts"].includes(normalized.bottom)) normalized.bottom = "bottom-shorts";
   if (![null, "dress-leotard"].includes(normalized.dress)) normalized.dress = null;
-  if (![null, "legwear-black", "legwear-bow", "legwear-circus"].includes(normalized.legwear)) normalized.legwear = "legwear-black";
+  if (![null, "legwear-black", "legwear-bow", "legwear-circus"].includes(normalized.legwear)) normalized.legwear = "legwear-bow";
   if (![null, "shoes-sneakers", "shoes-booties", "shoes-folded-booties"].includes(normalized.shoes)) normalized.shoes = "shoes-sneakers";
   normalized.extras = Array.isArray(normalized.extras)
     ? normalized.extras.filter(id => ["neck-bow", "scarf", "daisy-crown", "ocean-sunglasses", "halo"].includes(id))
-    : [];
+    : [...DEFAULT_ANNIKA_OUTFIT.extras];
   return normalized;
 }
 
@@ -3134,7 +3137,7 @@ const DEFAULT_SAVE = {
     miko: ["hair-main", "top-hoodie", "top-button", "bottom-capris", "shoes-loafer"],
     io: ["hair-buns", "back-school-bow", "top-school", "bottom-school", "sock-left-school", "sock-right-school", "shoes-school", "ahoge", "heart-pin"],
     miho: ["hair-main", "bow", "top-shirt", "bottom-skirt", "jacket-black", "legwear-stockings", "shoes-boots", "belt"],
-    annika: ["hair-long", "headbow-small", "outer-sweater", "bottom-shorts", "legwear-black", "shoes-sneakers"]
+    annika: ["hair-long", "back-hair-ribbon", "shirt-collared", "outer-sweater", "bottom-shorts", "legwear-bow", "shoes-sneakers", "neck-bow"]
   },
   wardrobeResetV1261: true,
   wardrobeResetV1262: false,
@@ -3585,8 +3588,8 @@ function getCharacterStarterWardrobe(characterId = save.selectedCharacter) {
   }
   if (characterId === "annika") {
     return [
-      "hair-long", "headbow-small", "outer-sweater", "bottom-shorts",
-      "legwear-black", "shoes-sneakers"
+      "hair-long", "back-hair-ribbon", "shirt-collared", "outer-sweater", "bottom-shorts",
+      "legwear-bow", "shoes-sneakers", "neck-bow"
     ];
   }
 
@@ -3627,6 +3630,15 @@ function normalizeCharacterState() {
   save.characterOutfits.io = normalizeIoOutfit(save.characterOutfits.io || {});
   save.characterOutfits.miho = normalizeMihoOutfit(save.characterOutfits.miho || {});
   save.characterOutfits.annika = normalizeAnnikaOutfit(save.characterOutfits.annika || {});
+  if (!save.annikaDefaultFixV24121) {
+    const annika = save.characterOutfits.annika || {};
+    const looksLikeV120Default = annika.hair === "hair-long" &&
+      annika.headBow === "headbow-small" && annika.outer === "outer-sweater" &&
+      annika.bottom === "bottom-shorts" && annika.legwear === "legwear-black" &&
+      annika.shoes === "shoes-sneakers" && !annika.shirt && !annika.back;
+    if (looksLikeV120Default) save.characterOutfits.annika = structuredClone(DEFAULT_ANNIKA_OUTFIT);
+    save.annikaDefaultFixV24121 = true;
+  }
 
   const peepUnlocks = new Set([
     ...(Array.isArray(save.characterUnlockedItems.peep) ? save.characterUnlockedItems.peep : []),
@@ -5124,9 +5136,9 @@ function getMihoEquippedAssetIds() {
 
 function getAnnikaEquippedAssetIds() {
   const outfit = getCharacterOutfit("annika");
-  const ids = [outfit.hair];
+  const ids = [];
   if (outfit.back) ids.push(outfit.back);
-  ids.push("base");
+  ids.push(outfit.hair, "base");
   if (outfit.legwear) ids.push(outfit.legwear);
   if (outfit.shoes) ids.push(outfit.shoes);
   if (outfit.dress) ids.push(outfit.dress);
@@ -5219,8 +5231,8 @@ function getRenderOrderedAssets(characterId = save.selectedCharacter) {
 
   if (character.id === "annika") {
     const annikaBackToFront = [
+      "back-hair-ribbon", "back-bow-circus",
       "hair-long", "hair-ponytail",
-      "back-bow-circus",
       "base",
       "legwear-black", "legwear-bow", "legwear-circus",
       "shoes-sneakers", "shoes-booties", "shoes-folded-booties",
@@ -5230,7 +5242,7 @@ function getRenderOrderedAssets(characterId = save.selectedCharacter) {
       "scarf", "neck-bow",
       "expression-neutral", "expression-happy", "expression-sad", "expression-shocked", "expression-mad",
       "bangs",
-      "headbow-small", "headbow-ribbon"
+      "headbow-small"
     ];
     const orderMap = new Map(annikaBackToFront.map((id, index) => [id, index]));
     return equipped.sort((a, b) => {
@@ -5924,10 +5936,11 @@ const WARDROBE_SHOP_META = {
   "annika-bow-sweater": { characterId: "annika", label: "Annika · Bow Sweater", assetIds: ["outer-bow-sweater"], unlockIds: ["outer-bow-sweater"] },
   "annika-leotard": { characterId: "annika", label: "Annika · Leotard", assetIds: ["dress-leotard"], unlockIds: ["dress-leotard"] },
   "annika-bow-stockings": { characterId: "annika", label: "Annika · Bow Stockings", assetIds: ["legwear-bow"], unlockIds: ["legwear-bow"] },
+  "annika-black-stockings": { characterId: "annika", label: "Annika · Black Stockings", assetIds: ["legwear-black"], unlockIds: ["legwear-black"] },
   "annika-circus-stockings": { characterId: "annika", label: "Annika · Circus Stockings", assetIds: ["legwear-circus"], unlockIds: ["legwear-circus"] },
   "annika-shoes-booties": { characterId: "annika", label: "Annika · Booties", assetIds: ["shoes-booties"], unlockIds: ["shoes-booties"] },
   "annika-shoes-folded-booties": { characterId: "annika", label: "Annika · Folded Booties", assetIds: ["shoes-folded-booties"], unlockIds: ["shoes-folded-booties"] },
-  "annika-hair-ribbon": { characterId: "annika", label: "Annika · Ribbon Bow", assetIds: ["headbow-ribbon"], unlockIds: ["headbow-ribbon"] },
+  "annika-hair-bow-high": { characterId: "annika", label: "Annika · High Hair Bow", assetIds: ["headbow-small"], unlockIds: ["headbow-small"] },
   "annika-circus-back-bow": { characterId: "annika", label: "Annika · Circus Back Bow", assetIds: ["back-bow-circus"], unlockIds: ["back-bow-circus"] },
   "annika-neck-bow": { characterId: "annika", label: "Annika · Neck Bow", assetIds: ["neck-bow"], unlockIds: ["neck-bow"] },
   "annika-scarf": { characterId: "annika", label: "Annika · Scarf", assetIds: ["scarf"], unlockIds: ["scarf"] }
@@ -13187,7 +13200,7 @@ scheduleNonCriticalWarmup(warmStartupAssets, 150);
 // Miko or Peep from appearing during app startup.
 setTimeout(() => {
   try {
-    const unlockedOnLoad = ["peep", "miko", "io", "miho"]
+    const unlockedOnLoad = ["peep", "miko", "io", "miho", "annika"]
       .filter(characterId => isCharacterUnlocked(characterId))
       .filter(characterId => evaluateCharacterHappinessDuckReward(characterId, { notify: false, persistNow: false }));
 
