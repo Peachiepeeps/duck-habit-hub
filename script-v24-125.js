@@ -198,7 +198,7 @@ const CHARACTER_UNLOCKS = {
   miko: {
     name: "Miko Invitation",
     image: "assets/oc-invitations/Miko-invitation.webp",
-    priceText: "Invite Miko to the hub and unlock his free wardrobe."
+    priceText: "Invite Miko to the hub and unlock his default wardrobe."
   },
   io: {
     name: "Io Invitation",
