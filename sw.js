@@ -1,16 +1,16 @@
-const APP_CACHE = 'duck-habit-hub-app-v24-118';
-const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-118';
+const APP_CACHE = 'duck-habit-hub-app-v24-120';
+const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-119';
 const IMAGE_CACHE = 'duck-habit-hub-images-stable-v1';
 
 const APP_SHELL = [
-  './','./index.html','./manifest.webmanifest','./version.json','./style-v24-118.css','./script-v24-118.js','./sw.js',
+  './','./index.html','./manifest.webmanifest','./version.json','./style-v24-120.css','./script-v24-120.js','./sw.js',
   './apple-touch-icon-v4.png','./favicon-32-v4.png','./icon-192-v4.png','./icon-512-v4.png','./icon-maskable-512-v4.png',
   './assets/ui/book-room.webp','./assets/ui/book-icon.webp','./assets/ui/mirror.webp','./assets/ui/pink-coin.webp',
   './assets/gacha/gacha-machine.webp','./assets/gacha/gacha-menu-icon.webp','./assets/gacha/gacha-turn.webp','./assets/gacha/capsule-clear.webp','./assets/gacha/capsule-common.webp','./assets/gacha/capsule-uncommon.webp','./assets/gacha/capsule-rare.webp','./assets/gacha/capsule-super.webp',
   './assets/ui/icons/tasks.webp','./assets/ui/icons/dailies.webp','./assets/ui/icons/inventory.webp','./assets/ui/icons/shop.webp','./assets/ui/icons/duckipedia.webp','./assets/ui/icons/status.webp','./assets/ui/icons/profiles.webp','./assets/ui/icons/save-data.webp',
   './assets/items/buddy-pons/buddy-pon.webp','./assets/items/buddy-pons/super-buddy-pon.webp','./assets/items/buddy-pons/boss-buddy-pon.webp',
   './assets/ducks/Standard-duck.webp','./assets/gifts/Gaming-controller.webp','./assets/achievements/trophies/trophy-gold.webp','./assets/paint/Pink-paint.webp','./assets/gifts/Heart-locket.webp',
-  './assets/oc-invitations/Io-invitation.webp','./assets/ducks/io-duck.webp','./assets/io/Io-annoyed.webp','./assets/oc-invitations/Miho-invitation.webp','./assets/ducks/miho-duck.webp','./duck-quest/index.html','./duck-quest/js/game-v52.js','./duck-quest/css/style-v45.css',
+  './assets/oc-invitations/Io-invitation.webp','./assets/ducks/io-duck.webp','./assets/io/Io-annoyed.webp','./assets/oc-invitations/Miho-invitation.webp','./assets/ducks/miho-duck.webp','./assets/oc-invitations/Annika-invitation.png','./assets/ducks/annika-duck.png','./assets/thumbs/ducks/annika-duck.webp','./assets/annika/Annika-base-body.png','./assets/annika/Annika-long-hair.png','./assets/annika/Annika-ponytail.png','./assets/annika/Annika-bangs.png','./assets/annika/Annika-neutral.png','./assets/annika/Annika-happy.png','./assets/annika/Annika-angry.png','./assets/annika/Annika-sad.png','./assets/annika/Annika-collared-shirt.png','./assets/annika/Annika-sheer-shirt.png','./assets/annika/Annika-sweater.png','./assets/annika/Annika-bow-sweater.png','./assets/annika/Annika-leotard.png','./assets/annika/Annika-shorts.png','./assets/annika/Annika-black-stockings.png','./assets/annika/Annika-circus-stockings.png','./assets/annika/Annika-bow-stockings.png','./assets/annika/Annika-bow-stockings-shop.png','./assets/annika/Annika-booties.png','./assets/annika/Annika-folded-booties.png','./assets/annika/Annika-sneakers.png','./assets/annika/Annika-hair-ribbon.png','./assets/annika/Annika-hair-bow-high.png','./assets/annika/Annika-neck-bow.png','./assets/annika/Annika-scarf.png','./assets/annika/Annika-circus-back-bow.png','./duck-quest/index.html','./duck-quest/js/game-v54.js','./duck-quest/css/style-v46.css','./duck-quest/assets/characters/annika/base/idle-1.webp','./duck-quest/assets/characters/annika/base/idle-2.webp','./duck-quest/assets/characters/annika/base/hurt.webp','./duck-quest/assets/characters/annika/base/scold.webp','./duck-quest/assets/characters/annika/base/stop.webp','./duck-quest/assets/characters/annika/base/flustered.webp','./duck-quest/assets/characters/annika/base/high-kick.webp',
   './duck-quest/assets/charms/Charm-metal.png','./duck-quest/assets/charms/Charm-sparkle.png','./duck-quest/assets/charms/Charm-heart.png','./duck-quest/assets/charms/Charm-duck.png','./duck-quest/assets/charms/Charm-beak.png','./duck-quest/assets/charms/Charm-outline.png'
 ];
 
