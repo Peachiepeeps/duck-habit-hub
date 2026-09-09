@@ -1,4 +1,4 @@
-// Hub v24.122 — Annika layering controls + bow stocking variants
+// Hub v24.123 — Annika bow layering, sheer-shirt ownership migration, and stocking placement popover
 const STORAGE_KEY = "duckHabitHubSave_v1";
 const SAVE_VERSION = 41;
 
@@ -2675,7 +2675,7 @@ const ANNIKA_CLOSET = [
   { id: "outer", label: "Outerwear", type: "single", allowNone: true, options: ["outer-sweater", "outer-bow-sweater"] },
   { id: "bottom", label: "Bottoms", type: "single", allowNone: true, options: ["bottom-shorts"] },
   { id: "dress", label: "Dresses", type: "single", allowNone: true, options: ["dress-leotard"] },
-  { id: "legwear", label: "Legwear", type: "single", allowNone: true, options: ["legwear-bow-left", "legwear-bow-right", "legwear-bow-both", "legwear-black", "legwear-circus"] },
+  { id: "legwear", label: "Legwear", type: "annika-legwear", allowNone: true, options: ["legwear-black", "legwear-circus"] },
   { id: "shoes", label: "Shoes", type: "single", allowNone: true, options: ["shoes-sneakers", "shoes-booties", "shoes-folded-booties"] },
   { id: "extras", label: "Extras", type: "multi", options: ["neck-bow", "scarf", "daisy-crown", "ocean-sunglasses", "halo"] }
 ];
@@ -3683,6 +3683,9 @@ function normalizeCharacterState() {
     ...(Array.isArray(save.characterUnlockedItems.annika) ? save.characterUnlockedItems.annika : []),
     ...getCharacterStarterWardrobe("annika")
   ]);
+  // v24.123: v24.121 sold the Sheer Shirt under the old asset id "outer-sheer".
+  // Preserve that paid ownership when the item moved into the Shirts section as "shirt-sheer".
+  if (annikaUnlocks.has("outer-sheer")) annikaUnlocks.add("shirt-sheer");
   save.characterUnlockedItems.peep = [...peepUnlocks];
   save.characterUnlockedItems.miko = [...mikoUnlocks];
   save.characterUnlockedItems.io = [...ioUnlocks];
@@ -5260,10 +5263,11 @@ function getRenderOrderedAssets(characterId = save.selectedCharacter) {
 
   if (character.id === "annika") {
     const annikaBackToFront = [
-      // Both back bows may be equipped together; the circus bow always sits furthest back.
-      "back-bow-circus",
+      // Both back bows may be equipped together. Back Hair Bow stays furthest back,
+      // while Circus Back Bow is drawn IN FRONT of Long Hair/Ponytail so it stays visible.
       "back-hair-ribbon",
       "hair-long", "hair-ponytail",
+      "back-bow-circus",
       // High Hair Bow sits behind Annika's body/expression/bangs as requested.
       "headbow-small",
       "base",
@@ -6334,6 +6338,188 @@ function renderSockOptions() {
 }
 
 
+
+const ANNIKA_BOW_STOCKING_STYLE = Object.freeze({
+  id: "annika-bow-stockings",
+  label: "Bow Stockings",
+  left: "legwear-bow-left",
+  right: "legwear-bow-right",
+  both: "legwear-bow-both",
+  previewAssetId: "legwear-bow-both"
+});
+
+function annikaBowStockingsUnlocked() {
+  const style = ANNIKA_BOW_STOCKING_STYLE;
+  return [style.left, style.right, style.both].every(id => isClosetAssetUnlocked(id, "annika"));
+}
+
+function applyAnnikaBowStockingPlacement(placement) {
+  const outfit = getCurrentOutfit();
+  const style = ANNIKA_BOW_STOCKING_STYLE;
+  if (placement === "left") outfit.legwear = style.left;
+  else if (placement === "right") outfit.legwear = style.right;
+  else if (placement === "both") outfit.legwear = style.both;
+  else if (placement === "clear" && [style.left, style.right, style.both].includes(outfit.legwear)) outfit.legwear = null;
+  persist();
+  renderPeep();
+  renderClosetOptions();
+}
+
+function showAnnikaBowStockingPopover(card) {
+  removeSockPopover();
+  const style = ANNIKA_BOW_STOCKING_STYLE;
+  const outfit = getCurrentOutfit();
+
+  const popover = document.createElement("div");
+  popover.className = "sock-popover";
+  popover.setAttribute("role", "dialog");
+  popover.setAttribute("aria-label", "Bow Stockings placement");
+
+  const topRow = document.createElement("div");
+  topRow.className = "sock-popover-top";
+  const title = document.createElement("span");
+  title.textContent = "Placement";
+  topRow.append(title);
+
+  const close = document.createElement("button");
+  close.type = "button";
+  close.className = "sock-popover-close";
+  close.textContent = "×";
+  close.setAttribute("aria-label", "Close stocking placement");
+  close.addEventListener("click", event => {
+    event.stopPropagation();
+    openSockStyleId = null;
+    removeSockPopover();
+    renderClosetOptions();
+  });
+  topRow.append(close);
+  popover.append(topRow);
+
+  const buttons = document.createElement("div");
+  buttons.className = "sock-popover-buttons";
+  buttons.append(makeSockPlacementButton("L", outfit.legwear === style.left, event => {
+    event.stopPropagation();
+    applyAnnikaBowStockingPlacement("left");
+  }, "Bow stocking on left leg"));
+  buttons.append(makeSockPlacementButton("R", outfit.legwear === style.right, event => {
+    event.stopPropagation();
+    applyAnnikaBowStockingPlacement("right");
+  }, "Bow stocking on right leg"));
+  buttons.append(makeSockPlacementButton("LR", outfit.legwear === style.both, event => {
+    event.stopPropagation();
+    applyAnnikaBowStockingPlacement("both");
+  }, "Bow stockings on both legs"));
+  popover.append(buttons);
+
+  const remove = document.createElement("button");
+  remove.type = "button";
+  remove.className = "sock-popover-remove";
+  remove.textContent = "Remove";
+  remove.disabled = ![style.left, style.right, style.both].includes(outfit.legwear);
+  remove.addEventListener("click", event => {
+    event.stopPropagation();
+    applyAnnikaBowStockingPlacement("clear");
+  });
+  popover.append(remove);
+
+  closetPanel.append(popover);
+  const panelRect = closetPanel.getBoundingClientRect();
+  const cardRect = card.getBoundingClientRect();
+  const popHeight = popover.offsetHeight || 128;
+  const desiredTop = cardRect.top - panelRect.top + (cardRect.height / 2) - (popHeight / 2);
+  const top = Math.max(58, Math.min(closetPanel.clientHeight - popHeight - 14, desiredTop));
+  popover.style.top = `${top}px`;
+}
+
+function renderAnnikaBowStockingsCard() {
+  const style = ANNIKA_BOW_STOCKING_STYLE;
+  const outfit = getCurrentOutfit();
+  const unlocked = annikaBowStockingsUnlocked();
+  const active = [style.left, style.right, style.both].includes(outfit.legwear);
+
+  const card = document.createElement("button");
+  card.type = "button";
+  card.className = "sock-style-card";
+  if (active) card.classList.add("equipped");
+  if (!unlocked) card.classList.add("locked");
+  if (openSockStyleId === style.id) card.classList.add("open");
+  card.setAttribute("aria-expanded", String(openSockStyleId === style.id));
+  card.setAttribute("aria-label", "Bow Stockings. Choose left, right, or both.");
+  card.append(makeThumb(style.previewAssetId, { boxW: 94, boxH: 82, targetW: 58, targetH: 62 }));
+
+  const name = document.createElement("span");
+  name.className = "sock-style-name";
+  name.textContent = style.label;
+  card.append(name);
+
+  if (!unlocked) {
+    const lock = document.createElement("span");
+    lock.className = "closet-lock";
+    lock.textContent = "🔒";
+    lock.setAttribute("aria-hidden", "true");
+    card.append(lock);
+  }
+
+  const placement = document.createElement("span");
+  placement.className = "sock-style-current";
+  placement.textContent = outfit.legwear === style.left ? "Left"
+    : outfit.legwear === style.right ? "Right"
+    : outfit.legwear === style.both ? "Both"
+    : "Tap to place";
+  card.append(placement);
+
+  card.addEventListener("click", () => {
+    if (!unlocked) {
+      showToast("Bow Stockings are locked — unlock them from the Shop!");
+      return;
+    }
+    openSockStyleId = openSockStyleId === style.id ? null : style.id;
+    renderClosetOptions();
+  });
+  closetOptions.append(card);
+
+  if (openSockStyleId === style.id) {
+    requestAnimationFrame(() => showAnnikaBowStockingPopover(card));
+  }
+}
+
+function renderAnnikaLegwearOptions(group) {
+  const helper = document.createElement("p");
+  helper.className = "sock-helper";
+  helper.textContent = "Tap Bow Stockings, then choose left, right, or both.";
+  closetOptions.append(helper);
+
+  if (group.allowNone) {
+    closetOptions.append(makeOptionCard({
+      label: "None",
+      none: true,
+      selected: getCurrentOutfit().legwear == null,
+      onClick: () => chooseSingle(group, null)
+    }));
+  }
+
+  renderAnnikaBowStockingsCard();
+
+  for (const id of group.options) {
+    const asset = ANNIKA_ASSETS[id];
+    if (!asset) continue;
+    const unlocked = isClosetAssetUnlocked(id, "annika");
+    closetOptions.append(makeOptionCard({
+      assetId: id,
+      label: asset.label,
+      selected: getCurrentOutfit().legwear === id,
+      locked: !unlocked,
+      onClick: () => {
+        if (!unlocked) {
+          showToast(closetLockedMessage(id, asset));
+          return;
+        }
+        chooseSingle(group, id);
+      }
+    }));
+  }
+}
+
 function closetLockedMessage(id, asset) {
   const questRewardHints = {
     "daisy-crown": "Daisy Crown is locked — complete Meadow Rank 40 in Duck Quest!",
@@ -6357,6 +6543,11 @@ function renderClosetOptions() {
 
   if (group.type === "socks") {
     renderSockOptions();
+    return;
+  }
+
+  if (group.type === "annika-legwear") {
+    renderAnnikaLegwearOptions(group);
     return;
   }
 
