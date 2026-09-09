@@ -1,0 +1,147 @@
+name: Install Duck Habit Hub v24.124 Candyland + Buddy Affection
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - "duck-habit-hub-v24-124*.zip"
+
+permissions:
+  contents: write
+
+jobs:
+  install-update:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Find and verify v24.124 update ZIP
+        id: package
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP=""
+          shopt -s nullglob
+          for candidate in ./*.zip; do
+            LISTING="$(unzip -Z1 "$candidate" 2>/dev/null || true)"
+            if grep -Fqx 'script-v24-124.js' <<<"$LISTING" \
+              && grep -Fqx 'duck-quest/js/game-v57.js' <<<"$LISTING" \
+              && grep -Fqx 'duck-quest/assets/backgrounds/candyland/lollipop-lane.webp' <<<"$LISTING" \
+              && grep -Fqx 'bakery/index.html' <<<"$LISTING"; then
+              ZIP="$candidate"
+              break
+            fi
+          done
+          if [ -z "$ZIP" ]; then
+            echo "ERROR: Could not find the v24.124 Candyland update ZIP in the repository root."
+            exit 1
+          fi
+          unzip -tq "$ZIP"
+          LISTING="$(unzip -Z1 "$ZIP")"
+          for REQUIRED in \
+            index.html \
+            script-v24-124.js \
+            style-v24-124.css \
+            sw.js \
+            version.json \
+            README-v24.124-CANDYLAND.txt \
+            bakery/index.html \
+            duck-quest/index.html \
+            duck-quest/js/game-v57.js \
+            duck-quest/css/style-v48.css \
+            duck-quest/assets/backgrounds/candyland/lollipop-lane.webp \
+            duck-quest/assets/backgrounds/candyland/gumdrop-path.webp \
+            duck-quest/assets/backgrounds/candyland/candycane-bridge.webp \
+            duck-quest/assets/backgrounds/candyland/chocolate-lake.webp \
+            assets/ui/candy-hairclip-reward.webp \
+            assets/peep/Candy-Hairclip.webp \
+            assets/miko/Candy-Hairclip.webp \
+            assets/io/Candy-Hairclip.webp \
+            assets/miho/Candy-Hairclip.webp \
+            assets/annika/Candy-Hairclip.webp; do
+            grep -Fqx "$REQUIRED" <<<"$LISTING" || { echo "ERROR: ZIP is missing $REQUIRED"; exit 1; }
+          done
+          echo "zip=$ZIP" >> "$GITHUB_OUTPUT"
+          echo "Using $ZIP"
+
+      - name: Install v24.124
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP='${{ steps.package.outputs.zip }}'
+          TMP=".duckhub-v24-124-update"
+          rm -rf "$TMP"
+          mkdir -p "$TMP"
+          unzip -q "$ZIP" -d "$TMP"
+          cp -a "$TMP/." ./
+          rm -rf "$TMP"
+
+      - name: Verify installed build
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq 'DUCK_HUB_BUILD = "24.124"' index.html
+          grep -Fq 'script-v24-124.js' index.html
+          grep -Fq 'style-v24-124.css' index.html
+          grep -Fq 'duck-habit-hub-app-v24-124' sw.js
+          grep -Fq '"version": "24.124"' version.json
+          grep -Fq 'maxRank:120' duck-quest/js/game-v57.js
+          grep -Fq 'maxRank:160' duck-quest/js/game-v57.js
+          grep -Fq 'areaRewardMigrationV24124' duck-quest/js/game-v57.js
+          grep -Fq 'BUDDY_AREA_FAMILIES' duck-quest/js/game-v57.js
+          grep -Fq 'affectionRewardBonus' duck-quest/js/game-v57.js
+          grep -Fq 'gummy-shark' duck-quest/js/game-v57.js
+          grep -Fq 'statusCandyRank' script-v24-124.js
+          grep -Fq 'Math.min(120' script-v24-124.js
+          grep -Fq 'Math.min(160' script-v24-124.js
+          grep -Fq 'cream-fox' duck-quest/js/game-v57.js
+          grep -Fq 'TINY_DUCK_BOARD_CHANCE = 0.005' bakery/index.html
+          grep -Fq 'tiny-duck-win' bakery/index.html
+          test -f assets/annika/Daisy-Crown.png
+          test -f assets/annika/Sunglasses.png
+          test -f assets/annika/Halo.png
+          test "$(find duck-quest/assets/enemies/apple-baby duck-quest/assets/enemies/candycane-deer duck-quest/assets/enemies/gingerlolly duck-quest/assets/enemies/gummy-worm duck-quest/assets/enemies/pudding-pig duck-quest/assets/bosses/gummy-shark duck-quest/assets/bosses/cream-fox -type f -name '*.webp' | wc -l)" -ge 126
+          node --check script-v24-124.js
+          node --check duck-quest/js/game-v57.js
+          node --check sw.js
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('bakery/index.html').read_text()
+          scripts=re.findall(r'<script[^>]*>(.*?)</script>',html,re.S)
+          if not scripts: raise SystemExit('Bakery script was not found')
+          Path('/tmp/bakery-v24-124.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/bakery-v24-124.js
+
+      - name: Clean superseded installer and version files
+        shell: bash
+        run: |
+          set -euo pipefail
+          find . -maxdepth 1 -type f -name 'script-v24-*.js' ! -name 'script-v24-124.js' -delete
+          find . -maxdepth 1 -type f -name 'style-v24-*.css' ! -name 'style-v24-124.css' -delete
+          find . -maxdepth 1 -type f -name 'README-v24*.txt' ! -name 'README-v24.124-CANDYLAND.txt' -delete
+          find ./duck-quest/js -maxdepth 1 -type f -name 'game-v*.js' ! -name 'game-v57.js' -delete
+          find ./duck-quest/css -maxdepth 1 -type f -name 'style-v*.css' ! -name 'style-v48.css' -delete
+          find . -maxdepth 1 -type f -name 'install-duck-habit-hub-*.yml' -delete
+          find . -maxdepth 1 -type f -iname 'duck-habit-hub-v*.zip' -delete
+          rm -f annika-circus-layer-preview.png
+          find ./.github/workflows -maxdepth 1 -type f -name 'install-duck-habit-hub-*.yml' ! -name 'install-duck-habit-hub-v24-124-candyland-buddy-affection.yml' -delete
+
+      - name: Commit installed update
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "Install Duck Habit Hub v24.124 Candyland update"
+          git push
