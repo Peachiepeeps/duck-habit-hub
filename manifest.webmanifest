@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "Duck Habit Hub",
-  "short_name": "Duck Habit Hub",
-  "description": "A cozy duck habit hub with OCs, tasks, collecting, decorating, and minigames.",
+  "name": "Duckie Days",
+  "short_name": "Duckie Days",
+  "description": "A cozy duck game that encourages habit forming, as well as creativity!.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
