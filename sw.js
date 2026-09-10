@@ -1,15 +1,18 @@
-const APP_CACHE = 'duck-habit-hub-app-v24-130';
-const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-130';
+const APP_CACHE = 'duck-habit-hub-app-v24-132';
+const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-132';
 const IMAGE_CACHE = 'duck-habit-hub-images-stable-v1';
 
-// v24.130: keep the install shell intentionally small. Character art, enemy
+// v24.132: keep the install shell intentionally small. Character art, enemy
 // variants and backgrounds are cached only when viewed instead of blocking the
 // initial service-worker install with hundreds of image requests.
 const APP_SHELL = [
-  './','./index.html','./manifest.webmanifest','./version.json','./style-v24-130.css','./script-v24-130.js','./sw.js',
+  './','./index.html','./manifest.webmanifest','./version.json','./style-v24-132.css','./script-v24-132.js','./sw.js',
   './apple-touch-icon-v5.png','./favicon-32-v5.png','./icon-192-v5.png','./icon-512-v5.png','./icon-maskable-512-v5.png',
   './assets/ui/pink-coin.webp','./assets/ducks/Standard-duck.webp',
-  './duck-quest/index.html','./duck-quest/js/game-v60.js','./duck-quest/css/style-v52.css',
+  './assets/ui/profile-borders/Sparkle-border.png','./assets/ui/profile-borders/Stitched-border.png','./assets/ui/profile-borders/Sakura-border.png',
+  './shared-ui-theme-v24-131.css','./shared-ui-theme-v24-131.js',
+  './memory-game/index.html','./sort-game/index.html','./crane-game/index.html','./crane-game/play-v24-40.html',
+  './duck-quest/index.html','./duck-quest/js/game-v62.js','./duck-quest/css/style-v54.css',
   './bakery/index.html'
 ];
 

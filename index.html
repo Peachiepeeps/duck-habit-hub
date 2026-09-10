@@ -1,15 +1,15 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="duck-habit-build" content="24.130" />
+  <meta name="duck-habit-build" content="24.132" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta id="appThemeColor" name="theme-color" content="#f7dbe5" />
   <title>Duckie Days</title>
   <!-- v24.107 tall-phone room anchor + CSS wallpaper geometry fix -->
-  <link rel="stylesheet" href="style-v24-130.css" />
+  <link rel="stylesheet" href="style-v24-132.css" />
 
-  <link rel="manifest" href="manifest.webmanifest?v=24-130">
+  <link rel="manifest" href="manifest.webmanifest?v=24-132">
   <link rel="apple-touch-icon" href="apple-touch-icon-v5.png">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32-v5.png">
   <meta name="theme-color" content="#ef9fbd">
@@ -838,6 +838,31 @@
               </div>
             </div>
 
+            <div class="profile-icon-color-card profile-icon-border-card">
+              <div class="profile-icon-border-heading">
+                <span class="profile-icon-color-label">Profile Icon Border</span>
+                <small>Unlock new styles and colors as random treasure pulls in Duck Quest.</small>
+              </div>
+              <div class="profile-border-picker-grid">
+                <div class="profile-icon-picker-wrap">
+                  <button id="profileBorderStyleButton" class="profile-icon-picker-button" type="button" aria-expanded="false">
+                    <span id="profileBorderStylePreview" class="profile-border-style-preview" aria-hidden="true"></span>
+                    <span id="profileBorderStyleText">No Border</span>
+                    <span class="profile-icon-picker-arrow" aria-hidden="true">▾</span>
+                  </button>
+                  <div id="profileBorderStylePicker" class="profile-border-style-picker hidden" role="menu" aria-label="Icon border styles"></div>
+                </div>
+                <div class="profile-icon-picker-wrap">
+                  <button id="profileBorderColorButton" class="profile-icon-picker-button" type="button" aria-expanded="false">
+                    <span id="profileBorderColorSwatch" class="profile-icon-current-swatch" aria-hidden="true"></span>
+                    <span id="profileBorderColorText">White</span>
+                    <span class="profile-icon-picker-arrow" aria-hidden="true">▾</span>
+                  </button>
+                  <div id="profileBorderColorPicker" class="profile-icon-picker profile-border-color-picker hidden" role="menu" aria-label="Icon border colors"></div>
+                </div>
+              </div>
+            </div>
+
             <button id="switchProfileCharacter" class="profile-switch-button" type="button">
               Switch to Character
             </button>
@@ -1071,13 +1096,13 @@
       </section>
     </section>
   </main>
-  <script src="script-v24-130.js"></script>
+  <script src="script-v24-132.js"></script>
 
   <script>
     // v24.84: use a stable service-worker URL and actively check the deployed
     // build when the installed PWA is opened/resumed. This prevents Android
     // from keeping an already-open standalone app on an older app shell.
-    const DUCK_HUB_BUILD = "24.130";
+    const DUCK_HUB_BUILD = "24.132";
     let duckHubReloadingForUpdate = false;
 
     function duckHubReloadFresh(version) {

@@ -1,6 +1,6 @@
-// Hub v24.130 — text-edit repair + cache refresh
+// Hub v24.132 — profile icon borders + treasure pulls
 const STORAGE_KEY = "duckHabitHubSave_v1";
-const SAVE_VERSION = 41;
+const SAVE_VERSION = 42;
 
 const CHARACTERS = {
   peep: {
@@ -321,6 +321,39 @@ const PROFILE_ICON_BACKGROUNDS = Object.freeze([
 
 function profileIconBackgroundById(id) {
   return PROFILE_ICON_BACKGROUNDS.find(background => background.id === id) || PROFILE_ICON_BACKGROUNDS[0];
+}
+
+const PROFILE_ICON_BORDER_STYLES = Object.freeze([
+  { id: "none", label: "No Border", source: "starter", rarity: "starter", file: "" },
+  { id: "stitched", label: "Stitched Border", source: "chest", rarity: "common", weight: 10, file: "assets/ui/profile-borders/Stitched-border.png" },
+  { id: "sparkle", label: "Sparkle Border", source: "chest", rarity: "uncommon", weight: 6, file: "assets/ui/profile-borders/Sparkle-border.png" },
+  { id: "sakura", label: "Sakura Border", source: "chest", rarity: "rare", weight: 3.2, file: "assets/ui/profile-borders/Sakura-border.png" }
+]);
+
+const PROFILE_ICON_BORDER_COLORS = Object.freeze([
+  { id: "white", label: "White", value: "#fffaf3", source: "starter", rarity: "starter" },
+  { id: "cream", label: "Cream", value: "#f7ead2", source: "chest", rarity: "common", weight: 10 },
+  { id: "blush", label: "Blush", value: "#f4c8d5", source: "chest", rarity: "common", weight: 10 },
+  { id: "baby-blue", label: "Baby Blue", value: "#c8e1f6", source: "chest", rarity: "common", weight: 9 },
+  { id: "mint", label: "Mint", value: "#bde3cf", source: "chest", rarity: "common", weight: 9 },
+  { id: "peach", label: "Peach", value: "#f3c3ae", source: "chest", rarity: "common", weight: 8.5 },
+  { id: "lavender", label: "Lavender", value: "#d6c5ef", source: "chest", rarity: "common", weight: 8.5 },
+  { id: "rose", label: "Rose", value: "#e5a5bb", source: "chest", rarity: "uncommon", weight: 6 },
+  { id: "sage", label: "Sage", value: "#c8d7b7", source: "chest", rarity: "uncommon", weight: 5.5 },
+  { id: "periwinkle", label: "Periwinkle", value: "#b8c1ef", source: "chest", rarity: "uncommon", weight: 5.5 },
+  { id: "berry", label: "Berry", value: "#bf7797", source: "chest", rarity: "uncommon", weight: 4.2 },
+  { id: "gold", label: "Gold", value: "#d7ba65", source: "chest", rarity: "rare", weight: 2.4 },
+  { id: "crimson", label: "Crimson", value: "#bb5c74", source: "chest", rarity: "rare", weight: 1.9 },
+  { id: "black", label: "Black", value: "#43343b", source: "chest", rarity: "rare", weight: 1.4 },
+  { id: "rose-gold", label: "Rose Gold", value: "#c98d89", source: "chest", rarity: "rare", weight: 1.15 }
+]);
+
+function profileIconBorderStyleById(id) {
+  return PROFILE_ICON_BORDER_STYLES.find(style => style.id === id) || PROFILE_ICON_BORDER_STYLES[0];
+}
+
+function profileIconBorderColorById(id) {
+  return PROFILE_ICON_BORDER_COLORS.find(color => color.id === id) || PROFILE_ICON_BORDER_COLORS[0];
 }
 
 const CHARACTER_UNLOCKS = {
@@ -3629,7 +3662,12 @@ const DUCK_QUEST_UI_THEME_META = Object.freeze({
   "meadow-bloom": { themeColor: "#d8e7c3" },
   "ocean-breeze": { themeColor: "#c9e5ef" },
   "candy-pop": { themeColor: "#f4c8e1" },
-  "cloud-dream": { themeColor: "#d9e8f5" }
+  "cloud-dream": { themeColor: "#d9e8f5" },
+  "rose-arcade": { themeColor: "#eaa2bd" },
+  "mint-circuit": { themeColor: "#a8ded2" },
+  "midnight-pixel": { themeColor: "#262b52" },
+  "peach-sunset": { themeColor: "#eead98" },
+  "rose-gold-royale": { themeColor: "#b56b78" }
 });
 const DUCK_QUEST_UI_THEME_IDS = new Set(Object.keys(DUCK_QUEST_UI_THEME_META));
 
@@ -4181,6 +4219,14 @@ const profileIconPickerButton = document.querySelector("#profileIconPickerButton
 const profileIconPickerSwatch = document.querySelector("#profileIconPickerSwatch");
 const profileIconPickerText = document.querySelector("#profileIconPickerText");
 const profileIconPicker = document.querySelector("#profileIconPicker");
+const profileBorderStyleButton = document.querySelector("#profileBorderStyleButton");
+const profileBorderStylePreview = document.querySelector("#profileBorderStylePreview");
+const profileBorderStyleText = document.querySelector("#profileBorderStyleText");
+const profileBorderStylePicker = document.querySelector("#profileBorderStylePicker");
+const profileBorderColorButton = document.querySelector("#profileBorderColorButton");
+const profileBorderColorSwatch = document.querySelector("#profileBorderColorSwatch");
+const profileBorderColorText = document.querySelector("#profileBorderColorText");
+const profileBorderColorPicker = document.querySelector("#profileBorderColorPicker");
 const switchProfileCharacter = document.querySelector("#switchProfileCharacter");
 const tasksPanel = document.querySelector("#tasksPanel");
 const taskFormPanel = document.querySelector("#taskFormPanel");
@@ -11374,9 +11420,230 @@ function applyProfileIconBackground(element, characterId) {
   element.style.backgroundPosition = "0 0";
 }
 
+function unlockedProfileIconBorderStyleIds() {
+  if (!save.duckQuest || typeof save.duckQuest !== "object") save.duckQuest = {};
+  const unlocked = Array.isArray(save.duckQuest.iconBorderStylesUnlocked)
+    ? save.duckQuest.iconBorderStylesUnlocked
+    : ["none"];
+  save.duckQuest.iconBorderStylesUnlocked = [...new Set(["none", ...unlocked])]
+    .filter(id => PROFILE_ICON_BORDER_STYLES.some(style => style.id === id));
+  return save.duckQuest.iconBorderStylesUnlocked;
+}
+
+function unlockedProfileIconBorderColorIds() {
+  if (!save.duckQuest || typeof save.duckQuest !== "object") save.duckQuest = {};
+  const unlocked = Array.isArray(save.duckQuest.iconBorderColorsUnlocked)
+    ? save.duckQuest.iconBorderColorsUnlocked
+    : ["white"];
+  save.duckQuest.iconBorderColorsUnlocked = [...new Set(["white", ...unlocked])]
+    .filter(id => PROFILE_ICON_BORDER_COLORS.some(color => color.id === id));
+  return save.duckQuest.iconBorderColorsUnlocked;
+}
+
+function normalizeProfileIconBorderSelections() {
+  if (!save.profileIconBorders || typeof save.profileIconBorders !== "object") {
+    save.profileIconBorders = {};
+  }
+
+  const unlockedStyles = unlockedProfileIconBorderStyleIds();
+  const unlockedColors = unlockedProfileIconBorderColorIds();
+
+  for (const characterId of Object.keys(CHARACTERS)) {
+    const existing = save.profileIconBorders[characterId] && typeof save.profileIconBorders[characterId] === "object"
+      ? save.profileIconBorders[characterId]
+      : {};
+
+    let style = existing.style || existing.styleId || "none";
+    let color = existing.color || existing.colorId || "white";
+
+    if (!PROFILE_ICON_BORDER_STYLES.some(option => option.id === style)) style = "none";
+    if (!PROFILE_ICON_BORDER_COLORS.some(option => option.id === color)) color = "white";
+    if (!unlockedStyles.includes(style)) style = "none";
+    if (!unlockedColors.includes(color)) color = "white";
+
+    save.profileIconBorders[characterId] = { style, color };
+  }
+
+  return save.profileIconBorders;
+}
+
+function profileIconBorderSelectionForCharacter(characterId) {
+  const selections = normalizeProfileIconBorderSelections();
+  const current = selections[characterId] || { style: "none", color: "white" };
+  return {
+    styleId: current.style || "none",
+    colorId: current.color || "white"
+  };
+}
+
+function setProfileBorderPreviewStyle(element, styleId, colorId) {
+  if (!element) return;
+  const style = profileIconBorderStyleById(styleId);
+  const color = profileIconBorderColorById(colorId);
+  element.classList.toggle("none", style.id === "none");
+  element.style.setProperty("--profile-border-preview-color", color.value);
+  element.style.setProperty("--profile-border-preview-mask", style.id === "none" ? "none" : `url("${style.file}")`);
+}
+
+function applyProfileIconBorder(element, characterId) {
+  if (!element) return;
+  const selection = profileIconBorderSelectionForCharacter(characterId);
+  const style = profileIconBorderStyleById(selection.styleId);
+  const color = profileIconBorderColorById(selection.colorId);
+  const existing = element.querySelector(".profile-icon-border-layer");
+
+  if (style.id === "none") {
+    existing?.remove();
+    return;
+  }
+
+  const layer = existing || document.createElement("div");
+  layer.className = "profile-icon-border-layer";
+  layer.setAttribute("aria-hidden", "true");
+  layer.style.setProperty("--profile-border-color", color.value);
+  layer.style.setProperty("--profile-border-mask", `url("${style.file}")`);
+  if (!layer.parentElement) element.append(layer);
+  else if (layer.parentElement === element) element.append(layer);
+}
+
 function closeProfileIconPicker() {
   profileIconPicker?.classList.add("hidden");
   profileIconPickerButton?.setAttribute("aria-expanded", "false");
+}
+
+function closeProfileBorderStylePicker() {
+  profileBorderStylePicker?.classList.add("hidden");
+  profileBorderStyleButton?.setAttribute("aria-expanded", "false");
+}
+
+function closeProfileBorderColorPicker() {
+  profileBorderColorPicker?.classList.add("hidden");
+  profileBorderColorButton?.setAttribute("aria-expanded", "false");
+}
+
+function closeProfileBorderPickers() {
+  closeProfileBorderStylePicker();
+  closeProfileBorderColorPicker();
+}
+
+function renderProfileBorderStylePicker(characterId = selectedProfileCharacterId) {
+  if (!characterId || !profileBorderStylePicker || !profileBorderStyleButton) return;
+  const selections = normalizeProfileIconBorderSelections();
+  const currentSelection = profileIconBorderSelectionForCharacter(characterId);
+  const unlocked = new Set(unlockedProfileIconBorderStyleIds());
+  const currentStyle = profileIconBorderStyleById(currentSelection.styleId);
+
+  if (profileBorderStylePreview) {
+    setProfileBorderPreviewStyle(profileBorderStylePreview, currentSelection.styleId, currentSelection.colorId);
+  }
+  if (profileBorderStyleText) profileBorderStyleText.textContent = currentStyle.label;
+
+  profileBorderStylePicker.innerHTML = "";
+  for (const style of PROFILE_ICON_BORDER_STYLES) {
+    const isUnlocked = unlocked.has(style.id);
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `profile-border-style-choice${isUnlocked ? "" : " locked"}`;
+    button.setAttribute("aria-current", String(currentSelection.styleId === style.id));
+    button.setAttribute("aria-label", `${style.label}${isUnlocked ? "" : ", locked"}`);
+    button.title = style.label;
+
+    const preview = document.createElement("span");
+    preview.className = "profile-border-style-choice-preview";
+    setProfileBorderPreviewStyle(preview, style.id, currentSelection.colorId);
+    button.append(preview);
+
+    const label = document.createElement("span");
+    label.className = "profile-border-style-choice-label";
+    label.textContent = style.label;
+    button.append(label);
+
+    if (!isUnlocked) {
+      const lock = document.createElement("span");
+      lock.className = "profile-icon-lock";
+      lock.textContent = "🔒";
+      button.append(lock);
+    }
+
+    button.addEventListener("click", () => {
+      if (!isUnlocked) {
+        showToast("That Icon Border is still locked. Find it in Duck Quest!");
+        return;
+      }
+      selections[characterId] = {
+        ...(selections[characterId] || {}),
+        style: style.id,
+        color: (selections[characterId] || {}).color || currentSelection.colorId || "white"
+      };
+      save.profileIconBorders = selections;
+      persist();
+      applyProfileIconBorder(profileDetailAvatar, characterId);
+      renderProfileBorderStylePicker(characterId);
+      renderProfileBorderColorPicker(characterId);
+      renderProfiles();
+      closeProfileBorderStylePicker();
+    });
+
+    profileBorderStylePicker.append(button);
+  }
+}
+
+function renderProfileBorderColorPicker(characterId = selectedProfileCharacterId) {
+  if (!characterId || !profileBorderColorPicker || !profileBorderColorButton) return;
+  const selections = normalizeProfileIconBorderSelections();
+  const currentSelection = profileIconBorderSelectionForCharacter(characterId);
+  const currentColor = profileIconBorderColorById(currentSelection.colorId);
+  const unlocked = new Set(unlockedProfileIconBorderColorIds());
+
+  if (profileBorderColorSwatch) {
+    profileBorderColorSwatch.style.background = currentColor.value;
+    profileBorderColorSwatch.style.backgroundSize = "auto";
+  }
+  if (profileBorderColorText) profileBorderColorText.textContent = currentColor.label;
+
+  profileBorderColorPicker.innerHTML = "";
+  for (const color of PROFILE_ICON_BORDER_COLORS) {
+    const isUnlocked = unlocked.has(color.id);
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `profile-icon-choice${isUnlocked ? "" : " locked"}`;
+    button.setAttribute("aria-current", String(currentSelection.colorId === color.id));
+    button.setAttribute("aria-label", `${color.label}${isUnlocked ? "" : ", locked"}`);
+    button.title = color.label;
+
+    const swatch = document.createElement("span");
+    swatch.className = "profile-icon-dot";
+    swatch.style.background = color.value;
+    button.append(swatch);
+
+    if (!isUnlocked) {
+      const lock = document.createElement("span");
+      lock.className = "profile-icon-lock";
+      lock.textContent = "🔒";
+      button.append(lock);
+    }
+
+    button.addEventListener("click", () => {
+      if (!isUnlocked) {
+        showToast("That Border Color is still locked. Find it in Duck Quest!");
+        return;
+      }
+      selections[characterId] = {
+        ...(selections[characterId] || {}),
+        style: (selections[characterId] || {}).style || currentSelection.styleId || "none",
+        color: color.id
+      };
+      save.profileIconBorders = selections;
+      persist();
+      applyProfileIconBorder(profileDetailAvatar, characterId);
+      renderProfileBorderStylePicker(characterId);
+      renderProfileBorderColorPicker(characterId);
+      renderProfiles();
+      closeProfileBorderColorPicker();
+    });
+
+    profileBorderColorPicker.append(button);
+  }
 }
 
 function renderProfileIconPicker(characterId = selectedProfileCharacterId) {
@@ -11745,8 +12012,12 @@ function openProfileDetail(characterId) {
   renderCharacterInto(profileDetailAvatar, character.id);
   renderProfileHeadDuck(profileDetailAvatar, character.id);
   applyProfileIconBackground(profileDetailAvatar, character.id);
+  applyProfileIconBorder(profileDetailAvatar, character.id);
   renderProfileIconPicker(character.id);
+  renderProfileBorderStylePicker(character.id);
+  renderProfileBorderColorPicker(character.id);
   closeProfileIconPicker();
+  closeProfileBorderPickers();
   closeProfileBuddyPicker();
   renderProfileBuddies(character.id);
 
@@ -11759,6 +12030,7 @@ function openProfileDetail(characterId) {
 
 function closeProfileDetail() {
   closeProfileIconPicker();
+  closeProfileBorderPickers();
   closeProfileBuddyPicker();
   selectedProfileCharacterId = null;
   profileDetailAvatar.innerHTML = "";
@@ -11799,6 +12071,7 @@ function renderProfiles() {
       renderCharacterInto(avatar, character.id);
       if (unlocked) renderProfileHeadDuck(avatar, character.id);
     }
+    if (unlocked) applyProfileIconBorder(avatar, character.id);
 
     if (!avatar.children.length) {
       const silhouette = document.createElement("div");
@@ -13421,9 +13694,26 @@ document.querySelector("#viewBuddyCollection")?.addEventListener("click", () => 
 closeProfileBuddyPickerButton?.addEventListener("click", closeProfileBuddyPicker);
 profileIconPickerButton?.addEventListener("click", () => {
   if (!selectedProfileCharacterId) return;
+  closeProfileBorderPickers();
   const opening = profileIconPicker.classList.contains("hidden");
   profileIconPicker.classList.toggle("hidden", !opening);
   profileIconPickerButton.setAttribute("aria-expanded", String(opening));
+});
+profileBorderStyleButton?.addEventListener("click", () => {
+  if (!selectedProfileCharacterId) return;
+  closeProfileIconPicker();
+  closeProfileBorderColorPicker();
+  const opening = profileBorderStylePicker.classList.contains("hidden");
+  profileBorderStylePicker.classList.toggle("hidden", !opening);
+  profileBorderStyleButton.setAttribute("aria-expanded", String(opening));
+});
+profileBorderColorButton?.addEventListener("click", () => {
+  if (!selectedProfileCharacterId) return;
+  closeProfileIconPicker();
+  closeProfileBorderStylePicker();
+  const opening = profileBorderColorPicker.classList.contains("hidden");
+  profileBorderColorPicker.classList.toggle("hidden", !opening);
+  profileBorderColorButton.setAttribute("aria-expanded", String(opening));
 });
 switchProfileCharacter.addEventListener("click", () => {
   if (selectedProfileCharacterId) switchToProfileCharacter(selectedProfileCharacterId);

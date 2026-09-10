@@ -533,6 +533,42 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.55);
 }
 
+.result-icon-border-preview{
+  position:relative;
+  width:28px;
+  height:28px;
+  flex:0 0 28px;
+  display:inline-block;
+  border:2px solid #caa1aa;
+  border-radius:7px;
+  background:linear-gradient(145deg,#fff9fc,#f4ebf2);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.55);
+}
+.result-icon-border-preview::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:var(--icon-border-preview-color,#fffaf3);
+  -webkit-mask-image:var(--icon-border-preview-mask);
+  -webkit-mask-repeat:no-repeat;
+  -webkit-mask-position:center;
+  -webkit-mask-size:100% 100%;
+  mask-image:var(--icon-border-preview-mask);
+  mask-repeat:no-repeat;
+  mask-position:center;
+  mask-size:100% 100%;
+}
+.result-icon-border-preview.none::after{display:none}
+.result-icon-border-preview.none::before{
+  content:"—";
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  color:#99808a;
+  font-weight:900;
+}
+
 
 /* =========================================================
    V18 — PER-OC QUEST PROGRESS + DOT ICON BACKGROUND PICKER
@@ -1399,8 +1435,8 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
 }
 .endless-record-grid{
   display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:8px;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:6px;
 }
 .endless-record-grid>div{
   padding:8px 10px;
@@ -2971,7 +3007,7 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
 
 
 /* =========================================================
-   V52 / Hub v24.129 — Theme polish + hub consistency
+   V53 / Hub v24.131 — Treasure happiness + Endless themes + cross-game themes
    ========================================================= */
 :root{
   --quest-bg-a:#efbfd0;
@@ -3124,3 +3160,33 @@ body[data-quest-theme="miho-tea-room"] .quest-modal-close{color:#fff7f8}
 body[data-quest-theme="miho-tea-room"] .level-badge,
 body[data-quest-theme="miho-tea-room"] .buddy-count-pill,
 body[data-quest-theme="miho-tea-room"] .ui-theme-current-row{color:#f8eef1}
+
+
+/* V24.131 — Endless Run theme rewards */
+body[data-quest-theme="rose-arcade"]{
+  --cream:#fff8fb;--pink:#eda9c3;--deep-pink:#c85b86;--brown:#5b3b49;--brown-2:#836370;
+  --panel:rgba(255,248,251,.97);--border:#7e5366;--shadow:0 6px 0 rgba(60,42,48,.22);
+  --quest-bg-a:#f2cad9;--quest-bg-b:#f8dce6;--quest-surface:#fff8fb;--quest-surface-2:#f5e4eb;--quest-soft:#f5e4eb;--quest-button:#fff8fb;--quest-selected:#efadca;--quest-accent:#d95f91;--quest-accent-2:#efadca;--quest-muted:#8d6678;
+}
+body[data-quest-theme="mint-circuit"]{
+  --cream:#f5fffb;--pink:#a8ded2;--deep-pink:#4faaa0;--brown:#344e4a;--brown-2:#627d77;
+  --panel:rgba(247,255,252,.97);--border:#52746e;--shadow:0 6px 0 rgba(60,42,48,.22);
+  --quest-bg-a:#d8eee7;--quest-bg-b:#e4f4ef;--quest-surface:#f6fffb;--quest-surface-2:#e5f5f0;--quest-soft:#e5f5f0;--quest-button:#f6fffb;--quest-selected:#9bd4ca;--quest-accent:#4faaa0;--quest-accent-2:#9bd4ca;--quest-muted:#69847f;
+}
+body[data-quest-theme="midnight-pixel"]{
+  --cream:#292e55;--pink:#555d9e;--deep-pink:#d9dbff;--brown:#f2f2ff;--brown-2:#c9cbea;
+  --panel:rgba(39,44,81,.97);--border:#747cb4;--shadow:0 6px 0 rgba(60,42,48,.22);
+  --quest-bg-a:#1c203d;--quest-bg-b:#252a4d;--quest-surface:#292e55;--quest-surface-2:#353b68;--quest-soft:#353b68;--quest-button:#292e55;--quest-selected:#555d9e;--quest-accent:#7d83d6;--quest-accent-2:#555d9e;--quest-muted:#c9cbea;
+}
+body[data-quest-theme="peach-sunset"]{
+  --cream:#fff8f3;--pink:#efb6ad;--deep-pink:#c96f62;--brown:#68443f;--brown-2:#936e68;
+  --panel:rgba(255,248,243,.97);--border:#9a6259;--shadow:0 6px 0 rgba(60,42,48,.22);
+  --quest-bg-a:#f7d5c8;--quest-bg-b:#f8e4dd;--quest-surface:#fff8f3;--quest-surface-2:#f8e8e0;--quest-soft:#f8e8e0;--quest-button:#fff8f3;--quest-selected:#efb6ad;--quest-accent:#df826f;--quest-accent-2:#efb6ad;--quest-muted:#936e68;
+}
+body[data-quest-theme="rose-gold-royale"]{
+  --cream:#fff8f2;--pink:#e2b7aa;--deep-pink:#a85e68;--brown:#52383a;--brown-2:#80615f;
+  --panel:rgba(255,249,244,.97);--border:#7e5355;--shadow:0 6px 0 rgba(60,42,48,.22);
+  --quest-bg-a:#ead6cf;--quest-bg-b:#f2ddd5;--quest-surface:#fff8f2;--quest-surface-2:#f3e3dd;--quest-soft:#f3e3dd;--quest-button:#fff8f2;--quest-selected:#e2b7aa;--quest-accent:#b96e77;--quest-accent-2:#e2b7aa;--quest-muted:#866b68;
+}
+body[data-quest-theme="midnight-pixel"] .pixel-button,body[data-quest-theme="midnight-pixel"] .buddy-filter,body[data-quest-theme="midnight-pixel"] .quest-modal-close{color:#f7f6ff}
+body[data-quest-theme="midnight-pixel"] .area-option,body[data-quest-theme="midnight-pixel"] .buddy-tile,body[data-quest-theme="midnight-pixel"] .quest-modal-card,body[data-quest-theme="midnight-pixel"] .charm-home-card,body[data-quest-theme="midnight-pixel"] .charm-book-card{color:#f2f2ff}

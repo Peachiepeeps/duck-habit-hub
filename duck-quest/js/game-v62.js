@@ -1,4 +1,4 @@
-// Duck Quest game-v58 — compact route popups, hero quick actions, skill book, and Cream Fox facing fix
+// Duck Quest game-v62 — profile icon border treasure rewards
 const HUB_SAVE_KEY = "duckHabitHubSave_v1";
 const MAX_LEVEL = 100;
 const AREA_CONFIG = Object.freeze({
@@ -65,7 +65,7 @@ function getAreaConfig(areaId){
 }
 
 
-// v24.129 — unlockable Duck Quest UI themes with improved palettes and hub consistency.
+// v24.132 — treasure happiness + Endless Run UI themes + profile icon border rewards.
 // Internal save keys still use the legacy area/rank names so existing player progress remains compatible.
 const QUEST_CHARACTER_IDS = Object.freeze(["peep","miko","io","miho","annika"]);
 const QUEST_CHARACTER_NAMES = Object.freeze({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika"});
@@ -128,6 +128,36 @@ const QUEST_UI_THEMES = Object.freeze([
     description:"Sky blue, lilac, and starlight gold.",
     swatches:["#f7fbff","#a9c9ee","#c6b4e8"], themeColor:"#d9e8f5",
     requirement:{stage:"cloud",level:80}
+  },
+  {
+    id:"rose-arcade", name:"Rose Arcade",
+    description:"Retro rosy pink, cream, and berry accents.",
+    swatches:["#fff6fa","#d95f91","#7d5266"], themeColor:"#eaa2bd",
+    requirement:{endlessRuns:20}
+  },
+  {
+    id:"mint-circuit", name:"Mint Circuit",
+    description:"Cool mint, aqua, and clean graphite details.",
+    swatches:["#f5fffb","#4faaa0","#344e4a"], themeColor:"#a8ded2",
+    requirement:{endlessRuns:40}
+  },
+  {
+    id:"midnight-pixel", name:"Midnight Pixel",
+    description:"Deep navy, soft indigo, and moonlit white.",
+    swatches:["#1c203d","#7d83d6","#f2f2ff"], themeColor:"#262b52",
+    requirement:{endlessRuns:60}
+  },
+  {
+    id:"peach-sunset", name:"Peach Sunset",
+    description:"Warm peach, dusty coral, and soft mauve cream.",
+    swatches:["#fff8f3","#df826f","#efb6ad"], themeColor:"#eead98",
+    requirement:{endlessRuns:80}
+  },
+  {
+    id:"rose-gold-royale", name:"Rose-Gold Royale",
+    description:"Ivory, rose gold, and elegant wine accents.",
+    swatches:["#fff8f2","#b96e77","#e2b7aa"], themeColor:"#b56b78",
+    requirement:{endlessRuns:100}
   }
 ]);
 const QUEST_UI_THEME_IDS = new Set(QUEST_UI_THEMES.map(theme=>theme.id));
@@ -137,6 +167,10 @@ function questCharacterName(id){ return QUEST_CHARACTER_NAMES[id] || "OC"; }
 function questThemeRequirementText(theme){
   const req=theme?.requirement;
   if(!req) return "Always available";
+  if(req.endlessRuns){
+    const current=Math.max(0,Math.floor(Number(questSave?.endlessRunsCompleted)||0));
+    return `Finish ${req.endlessRuns} Endless Runs (${Math.min(current,req.endlessRuns)}/${req.endlessRuns})`;
+  }
   const stage=getAreaConfig(req.stage).name;
   return req.character
     ? `Clear ${stage} Level ${req.level} with ${questCharacterName(req.character)}`
@@ -222,6 +256,34 @@ const LEVEL_ICON_BACKGROUND_REWARDS = Object.freeze({
 });
 
 function iconBackgroundById(id){ return ICON_BACKGROUND_COLORS.find(color=>color.id===id) || ICON_BACKGROUND_COLORS[0]; }
+
+const ICON_BORDER_STYLES = Object.freeze([
+  {id:"none",label:"No Border",source:"starter",rarity:"starter",file:""},
+  {id:"stitched",label:"Stitched Border",source:"chest",rarity:"common",weight:10,file:"../assets/ui/profile-borders/Stitched-border.png"},
+  {id:"sparkle",label:"Sparkle Border",source:"chest",rarity:"uncommon",weight:6,file:"../assets/ui/profile-borders/Sparkle-border.png"},
+  {id:"sakura",label:"Sakura Border",source:"chest",rarity:"rare",weight:3.2,file:"../assets/ui/profile-borders/Sakura-border.png"}
+]);
+
+const ICON_BORDER_COLORS = Object.freeze([
+  {id:"white",label:"White",value:"#fffaf3",source:"starter",rarity:"starter"},
+  {id:"cream",label:"Cream",value:"#f7ead2",source:"chest",rarity:"common",weight:10},
+  {id:"blush",label:"Blush",value:"#f4c8d5",source:"chest",rarity:"common",weight:10},
+  {id:"baby-blue",label:"Baby Blue",value:"#c8e1f6",source:"chest",rarity:"common",weight:9},
+  {id:"mint",label:"Mint",value:"#bde3cf",source:"chest",rarity:"common",weight:9},
+  {id:"peach",label:"Peach",value:"#f3c3ae",source:"chest",rarity:"common",weight:8.5},
+  {id:"lavender",label:"Lavender",value:"#d6c5ef",source:"chest",rarity:"common",weight:8.5},
+  {id:"rose",label:"Rose",value:"#e5a5bb",source:"chest",rarity:"uncommon",weight:6},
+  {id:"sage",label:"Sage",value:"#c8d7b7",source:"chest",rarity:"uncommon",weight:5.5},
+  {id:"periwinkle",label:"Periwinkle",value:"#b8c1ef",source:"chest",rarity:"uncommon",weight:5.5},
+  {id:"berry",label:"Berry",value:"#bf7797",source:"chest",rarity:"uncommon",weight:4.2},
+  {id:"gold",label:"Gold",value:"#d7ba65",source:"chest",rarity:"rare",weight:2.4},
+  {id:"crimson",label:"Crimson",value:"#bb5c74",source:"chest",rarity:"rare",weight:1.9},
+  {id:"black",label:"Black",value:"#43343b",source:"chest",rarity:"rare",weight:1.4},
+  {id:"rose-gold",label:"Rose Gold",value:"#c98d89",source:"chest",rarity:"rare",weight:1.15}
+]);
+
+function iconBorderStyleById(id){ return ICON_BORDER_STYLES.find(style=>style.id===id) || ICON_BORDER_STYLES[0]; }
+function iconBorderColorById(id){ return ICON_BORDER_COLORS.find(color=>color.id===id) || ICON_BORDER_COLORS[0]; }
 
 const QUEST_WALLPAPERS = Object.freeze([
   {id:"starry-night-wallpaper",label:"Starry Night",rarity:"rare",weight:1.8,value:"radial-gradient(circle at 18% 22%,#fff6bf 0 2px,transparent 2.6px),radial-gradient(circle at 72% 34%,#fff 0 1.5px,transparent 2px),radial-gradient(circle at 48% 78%,#fff6bf 0 1.5px,transparent 2px),linear-gradient(160deg,#8d97d7,#b9b1ea)",size:"30px 30px,26px 26px,34px 34px,auto"},
@@ -2034,6 +2096,7 @@ const ui = {
   affectionUnlockText: document.querySelector("#affectionUnlockText"),
   endlessRecord: document.querySelector("#endlessRecord"),
   endlessCheckpoint: document.querySelector("#endlessCheckpoint"),
+  endlessRuns: document.querySelector("#endlessRuns"),
   continueEndless: document.querySelector("#continueEndless"),
   startNewEndless: document.querySelector("#startNewEndless"),
   menuSkills: document.querySelector("#menuSkills"),
@@ -2367,8 +2430,11 @@ function defaultQuestSave() {
     peep:defaultCharacterQuestProgress(),
     activeCharacter:"peep",
     iconBackgroundsUnlocked:["white"],
+    iconBorderStylesUnlocked:["none"],
+    iconBorderColorsUnlocked:["white"],
     uiThemesUnlocked:["classic-cream"],
     uiTheme:"classic-cream",
+    endlessRunsCompleted:0,
     buddyFamilyIcons:{},
     charms:defaultCharmSave(),
     areaRewardMigrationV24124:false,
@@ -2391,8 +2457,13 @@ function normalizeQuestSave(raw) {
     activeCharacter:["peep","miko","io","miho","annika"].includes(q.activeCharacter)?q.activeCharacter:null,
     iconBackgroundsUnlocked:[...new Set(["white",...(Array.isArray(q.iconBackgroundsUnlocked)?q.iconBackgroundsUnlocked:[])])]
       .filter(id=>ICON_BACKGROUND_COLORS.some(color=>color.id===id)),
+    iconBorderStylesUnlocked:[...new Set(["none",...(Array.isArray(q.iconBorderStylesUnlocked)?q.iconBorderStylesUnlocked:[])])]
+      .filter(id=>ICON_BORDER_STYLES.some(style=>style.id===id)),
+    iconBorderColorsUnlocked:[...new Set(["white",...(Array.isArray(q.iconBorderColorsUnlocked)?q.iconBorderColorsUnlocked:[])])]
+      .filter(id=>ICON_BORDER_COLORS.some(color=>color.id===id)),
     uiThemesUnlocked:[...new Set(["classic-cream",...(Array.isArray(q.uiThemesUnlocked)?q.uiThemesUnlocked:[])])].filter(id=>QUEST_UI_THEME_IDS.has(id)),
     uiTheme:QUEST_UI_THEME_IDS.has(q.uiTheme)?q.uiTheme:"classic-cream",
+    endlessRunsCompleted:Math.max(0,Math.floor(Number(q.endlessRunsCompleted)||0)),
     buddyFamilyIcons:(q.buddyFamilyIcons&&typeof q.buddyFamilyIcons==="object")?{...q.buddyFamilyIcons}:{},
     charms:normalizeCharmSave(q.charms),
     bossWins:Math.max(0,Number(q.bossWins ?? q.completedRuns)||0)
@@ -2430,6 +2501,7 @@ function stageLevelAlreadyCleared(characterId,stageId,level){
 function questThemeRequirementMet(theme){
   const req=theme?.requirement;
   if(!req) return true;
+  if(req.endlessRuns) return Math.max(0,Math.floor(Number(questSave.endlessRunsCompleted)||0))>=req.endlessRuns;
   if(req.character) return stageLevelAlreadyCleared(req.character,req.stage,req.level);
   return QUEST_CHARACTER_IDS.some(characterId=>stageLevelAlreadyCleared(characterId,req.stage,req.level));
 }
@@ -2531,6 +2603,18 @@ function awardQuestThemesForClearedLevel(stageId,level,characterId){
     const req=theme.requirement;
     if(!req || req.stage!==stageId || clearedLevel<req.level) continue;
     if(req.character && req.character!==characterId) continue;
+    const unlocked=unlockQuestUiTheme(theme.id);
+    if(unlocked) earned.push(unlocked);
+  }
+  return earned;
+}
+
+function awardQuestThemesForEndlessRuns(){
+  const earned=[];
+  const completed=Math.max(0,Math.floor(Number(questSave.endlessRunsCompleted)||0));
+  for(const theme of QUEST_UI_THEMES){
+    const req=theme.requirement;
+    if(!req?.endlessRuns || completed<req.endlessRuns) continue;
     const unlocked=unlockQuestUiTheme(theme.id);
     if(unlocked) earned.push(unlocked);
   }
@@ -2812,6 +2896,25 @@ function happinessLevelFromTotal(total) {
   return level;
 }
 
+function grantQuestHappiness(amount,characterId=activeCharacterId){
+  const gain=Math.max(0,Math.floor(Number(amount)||0));
+  if(!gain) return 0;
+  if(!hubSave.characterProgress || typeof hubSave.characterProgress!=="object") hubSave.characterProgress={};
+  if(!hubSave.characterProgress[characterId] || typeof hubSave.characterProgress[characterId]!=="object") hubSave.characterProgress[characterId]={happinessTotal:0};
+  const maxTotal=totalHappinessRequiredForLevel(100);
+  const before=Math.max(0,Math.min(maxTotal,Number(hubSave.characterProgress[characterId].happinessTotal)||0));
+  const after=Math.min(maxTotal,before+gain);
+  hubSave.characterProgress[characterId].happinessTotal=after;
+  return Math.max(0,after-before);
+}
+
+function chestHappinessReward(chest){
+  if(chest?.kind==="hidden-treasure") return 5;
+  if(chest?.kind==="boss") return 3;
+  if(chest?.kind==="rare") return 2;
+  return 1;
+}
+
 function affectionRewardBonus(characterId=activeCharacterId){
   const hLevel=happinessLevelFromTotal(hubSave.characterProgress?.[characterId]?.happinessTotal);
   if(hLevel>=100) return .25;
@@ -2895,6 +2998,107 @@ function applyIconBackgroundStyle(element,bg){
   element.style.background=bg.value;
   element.style.backgroundSize=bg.size||"auto";
   element.style.backgroundPosition="0 0";
+}
+
+function normalizeIconBorderStyleUnlocks(){
+  const validIds=new Set(ICON_BORDER_STYLES.map(style=>style.id));
+  const unlocked=new Set(Array.isArray(questSave.iconBorderStylesUnlocked)?questSave.iconBorderStylesUnlocked:["none"]);
+  unlocked.add("none");
+  questSave.iconBorderStylesUnlocked=[...unlocked].filter(id=>validIds.has(id));
+}
+
+function normalizeIconBorderColorUnlocks(){
+  const validIds=new Set(ICON_BORDER_COLORS.map(color=>color.id));
+  const unlocked=new Set(Array.isArray(questSave.iconBorderColorsUnlocked)?questSave.iconBorderColorsUnlocked:["white"]);
+  unlocked.add("white");
+  questSave.iconBorderColorsUnlocked=[...unlocked].filter(id=>validIds.has(id));
+}
+
+function unlockIconBorderStyle(id){
+  const style=ICON_BORDER_STYLES.find(x=>x.id===id);
+  if(!style) return null;
+  normalizeIconBorderStyleUnlocks();
+  if(questSave.iconBorderStylesUnlocked.includes(id)) return null;
+  questSave.iconBorderStylesUnlocked.push(id);
+  return style;
+}
+
+function unlockIconBorderColor(id){
+  const color=ICON_BORDER_COLORS.find(x=>x.id===id);
+  if(!color) return null;
+  normalizeIconBorderColorUnlocks();
+  if(questSave.iconBorderColorsUnlocked.includes(id)) return null;
+  questSave.iconBorderColorsUnlocked.push(id);
+  return color;
+}
+
+function pickChestIconBorderStyle(chest){
+  normalizeIconBorderStyleUnlocks();
+  const alreadyDiscovered=new Set([
+    ...questSave.iconBorderStylesUnlocked,
+    ...((currentRun?.iconBorderStylesEarned||[]).map(style=>style?.id).filter(Boolean))
+  ]);
+  const locked=ICON_BORDER_STYLES.filter(style=>style.source==="chest" && !alreadyDiscovered.has(style.id));
+  if(!locked.length) return null;
+
+  const isMimic=chest?.enemy?.id==="mimic";
+  const chance=chest?.kind==="hidden-treasure" ? .65 : isMimic ? .28 : chest?.kind==="rare" ? .24 : chest?.kind==="boss" ? .18 : .05;
+  if(Math.random()>chance) return null;
+
+  const rarityBoost=chest?.kind==="hidden-treasure"
+    ? {common:1,uncommon:1.55,rare:2.5}
+    : (chest?.kind==="rare" || isMimic)
+      ? {common:1,uncommon:1.35,rare:2.15}
+      : chest?.kind==="boss"
+        ? {common:1,uncommon:1.2,rare:1.8}
+        : {common:1,uncommon:.8,rare:.45};
+
+  const weighted=locked.map(style=>({style,weight:(Number(style.weight)||1)*(rarityBoost[style.rarity]||1)}));
+  let roll=Math.random()*weighted.reduce((sum,entry)=>sum+entry.weight,0);
+  for(const entry of weighted){
+    roll-=entry.weight;
+    if(roll<=0) return entry.style;
+  }
+  return weighted[0]?.style||null;
+}
+
+function pickChestIconBorderColor(chest){
+  normalizeIconBorderColorUnlocks();
+  const alreadyDiscovered=new Set([
+    ...questSave.iconBorderColorsUnlocked,
+    ...((currentRun?.iconBorderColorsEarned||[]).map(color=>color?.id).filter(Boolean))
+  ]);
+  const locked=ICON_BORDER_COLORS.filter(color=>color.source==="chest" && !alreadyDiscovered.has(color.id));
+  if(!locked.length) return null;
+
+  const isMimic=chest?.enemy?.id==="mimic";
+  const chance=chest?.kind==="hidden-treasure" ? .88 : isMimic ? .34 : chest?.kind==="rare" ? .32 : chest?.kind==="boss" ? .24 : .07;
+  if(Math.random()>chance) return null;
+
+  const rarityBoost=chest?.kind==="hidden-treasure"
+    ? {common:1,uncommon:1.45,rare:2.35}
+    : (chest?.kind==="rare" || isMimic)
+      ? {common:1,uncommon:1.28,rare:1.95}
+      : chest?.kind==="boss"
+        ? {common:1,uncommon:1.15,rare:1.65}
+        : {common:1,uncommon:.82,rare:.48};
+
+  const weighted=locked.map(color=>({color,weight:(Number(color.weight)||1)*(rarityBoost[color.rarity]||1)}));
+  let roll=Math.random()*weighted.reduce((sum,entry)=>sum+entry.weight,0);
+  for(const entry of weighted){
+    roll-=entry.weight;
+    if(roll<=0) return entry.color;
+  }
+  return weighted[0]?.color||null;
+}
+
+function applyIconBorderPreviewStyle(element,style,color){
+  if(!element) return;
+  const safeStyle=style || iconBorderStyleById("none");
+  const safeColor=color || iconBorderColorById("white");
+  element.classList.toggle("none",safeStyle.id==="none");
+  element.style.setProperty("--icon-border-preview-color",safeColor.value||"#fffaf3");
+  element.style.setProperty("--icon-border-preview-mask",safeStyle.id==="none"?"none":`url("${safeStyle.file}")`);
 }
 
 function normalizeWallpaperUnlocks(){
@@ -3683,6 +3887,7 @@ function renderMeta() {
   const endless=hero.endless || {record:0,checkpoint:1};
   if(ui.endlessRecord) ui.endlessRecord.textContent=`Floor ${Math.max(0,Number(endless.record)||0)}`;
   if(ui.endlessCheckpoint) ui.endlessCheckpoint.textContent=`Floor ${Math.max(1,Number(endless.checkpoint)||1)}`;
+  if(ui.endlessRuns) ui.endlessRuns.textContent=String(Math.max(0,Math.floor(Number(questSave.endlessRunsCompleted)||0)));
   if(ui.continueEndless){
     const checkpoint=Math.max(1,Number(endless.checkpoint)||1);
     ui.continueEndless.textContent=`Continue from Floor ${checkpoint}`;
@@ -3857,7 +4062,8 @@ function beginEndlessRun(startFloor=1){
   currentRun={
     mode:"endless",floor,rank:endlessEffectiveRank(floor),area:"endless",index:0,plan:[],
     endlessEncounter:makeEndlessEncounter(floor),floorBackground:chooseEndlessBackground(),
-    hp:stats.maxHp,maxHp:stats.maxHp,coinsEarned:0,expEarned:0,itemsEarned:[],iconBackgroundsEarned:[],wallpapersEarned:[],closetRewardsEarned:[],uiThemesEarned:[],levelBackgroundsEarned:[],levelsGained:[],bossWon:false
+    hp:stats.maxHp,maxHp:stats.maxHp,coinsEarned:0,expEarned:0,happinessEarned:0,itemsEarned:[],iconBackgroundsEarned:[],iconBorderStylesEarned:[],iconBorderColorsEarned:[],wallpapersEarned:[],closetRewardsEarned:[],uiThemesEarned:[],levelBackgroundsEarned:[],levelsGained:[],bossWon:false,
+    endlessFloorsCompleted:0,endlessRunCounted:false
   };
   persistAll();
   showScreen("battle");
@@ -3898,7 +4104,7 @@ function beginRun() {
   endlessExitReason="";
   currentRun={
     mode:"normal",area:selectedArea,rank:selectedRank,index:0,plan:makeEncounterPlan(selectedRank,selectedArea),
-    hp:stats.maxHp,maxHp:stats.maxHp,coinsEarned:0,expEarned:0,itemsEarned:[],iconBackgroundsEarned:[],wallpapersEarned:[],closetRewardsEarned:[],uiThemesEarned:[],levelBackgroundsEarned:[],levelsGained:[],bossWon:false
+    hp:stats.maxHp,maxHp:stats.maxHp,coinsEarned:0,expEarned:0,happinessEarned:0,itemsEarned:[],iconBackgroundsEarned:[],wallpapersEarned:[],closetRewardsEarned:[],uiThemesEarned:[],levelBackgroundsEarned:[],levelsGained:[],bossWon:false
   };
   progress.lastRank=selectedRank; activeHeroProgress().lastArea=selectedArea; persistAll();
   showScreen("battle"); startEncounter();
@@ -5439,6 +5645,7 @@ function markEndlessFloorComplete(){
   const completed=Math.max(1,Math.floor(Number(currentRun.floor)||1));
   progress.record=Math.max(progress.record,completed);
   progress.checkpoint=completed+1;
+  currentRun.endlessFloorsCompleted=Math.max(0,Math.floor(Number(currentRun.endlessFloorsCompleted)||0))+1;
   persistAll();
   renderMeta();
 }
@@ -5484,7 +5691,11 @@ async function openPendingChest() {
   const textParts=[];
   if(rewards.coins) textParts.push(`+${rewards.coins} Pink Coins`);
   if(rewards.exp) textParts.push(`+${rewards.exp} EXP`);
+  if(rewards.happiness) textParts.push(`♡ +${rewards.happiness} Happiness`);
+  else if(rewards.happinessMaxed) textParts.push("♡ Happiness MAX");
   if(rewards.unlockedBackgrounds?.length) textParts.push(rewards.unlockedBackgrounds.map(bg=>`${bg.label} Icon`).join(", "));
+  if(rewards.iconBorderStyle) textParts.push(`${rewards.iconBorderStyle.label}`);
+  if(rewards.iconBorderColor) textParts.push(`${rewards.iconBorderColor.label} Border Color`);
   if(rewards.items.length) textParts.push(rewards.items.map(x=>`${x.name} ×${x.qty}`).join(", "));
   if(rewards.charmTreasureBonus) textParts.push("Treasure Charm bonus!");
 
@@ -5536,7 +5747,13 @@ function generateRewards(chest) {
     if(Math.random()<.70) addRewardItem(items,REWARD_ITEMS.find(x=>x.id==="super-buddy-pon"),1);
     if(Math.random()<.30) addRewardItem(items,REWARD_ITEMS.find(x=>x.id==="boss-buddy-pon"),1);
     for(let i=0;i<3;i++) addRewardItem(items,jackpotItem(),1);
-    return finalizeCharmRewards({coins,exp,items,iconBackground:pickChestIconBackground({kind:"rare"}),wallpaper:pickChestWallpaper({kind:"hidden-treasure"})},chest);
+    return finalizeCharmRewards({
+      coins,exp,happiness:chestHappinessReward(chest),items,
+      iconBackground:pickChestIconBackground({kind:"rare"}),
+      iconBorderStyle:pickChestIconBorderStyle({kind:"hidden-treasure"}),
+      iconBorderColor:pickChestIconBorderColor({kind:"hidden-treasure"}),
+      wallpaper:pickChestWallpaper({kind:"hidden-treasure"})
+    },chest);
   }
 
   if(chest.kind==="rare") {
@@ -5573,8 +5790,10 @@ function generateRewards(chest) {
   }
 
   const iconBackground=pickChestIconBackground(chest);
+  const iconBorderStyle=pickChestIconBorderStyle(chest);
+  const iconBorderColor=pickChestIconBorderColor(chest);
   const wallpaper=pickChestWallpaper(chest);
-  return finalizeCharmRewards({coins,exp,items,iconBackground,wallpaper},chest);
+  return finalizeCharmRewards({coins,exp,happiness:chestHappinessReward(chest),items,iconBackground,iconBorderStyle,iconBorderColor,wallpaper},chest);
 }
 
 function weightedItem() {
@@ -5598,6 +5817,8 @@ function applyRewards(rewards) {
   questSave.totalCoinsEarned=(Number(questSave.totalCoinsEarned)||0)+rewards.coins;
 
   const chestBackground=rewards.iconBackground ? unlockIconBackground(rewards.iconBackground.id) : null;
+  const unlockedBorderStyle=rewards.iconBorderStyle ? unlockIconBorderStyle(rewards.iconBorderStyle.id) : null;
+  const unlockedBorderColor=rewards.iconBorderColor ? unlockIconBorderColor(rewards.iconBorderColor.id) : null;
   const unlockedWallpaper=rewards.wallpaper ? unlockWallpaper(rewards.wallpaper.id) : null;
 
   const levelResult=grantExp(rewards.exp);
@@ -5606,8 +5827,14 @@ function applyRewards(rewards) {
 
   currentRun.expEarned+=rewards.exp;
   questSave.totalExpEarned=(Number(questSave.totalExpEarned)||0)+rewards.exp;
+  const requestedHappiness=Math.max(0,Math.floor(Number(rewards.happiness)||0));
+  rewards.happiness=grantQuestHappiness(requestedHappiness);
+  rewards.happinessMaxed=requestedHappiness>0 && rewards.happiness===0;
+  currentRun.happinessEarned=Math.max(0,Math.floor(Number(currentRun.happinessEarned)||0))+rewards.happiness;
   if(levelResult.length) currentRun.levelsGained.push(...levelResult);
   if(chestBackground) currentRun.iconBackgroundsEarned.push(chestBackground);
+  if(unlockedBorderStyle) currentRun.iconBorderStylesEarned.push(unlockedBorderStyle);
+  if(unlockedBorderColor) currentRun.iconBorderColorsEarned.push(unlockedBorderColor);
   if(unlockedWallpaper) currentRun.wallpapersEarned.push(unlockedWallpaper);
   if(levelBackgrounds.length){
     currentRun.iconBackgroundsEarned.push(...levelBackgrounds);
@@ -5625,6 +5852,8 @@ function applyRewards(rewards) {
   questSave.totalBattlesWon=(Number(questSave.totalBattlesWon)||0)+(pendingChest?.enemy?1:0);
   const newRewardMessages=[];
   if(chestBackground) newRewardMessages.push(`${chestBackground.label} Icon Background`);
+  if(unlockedBorderStyle) newRewardMessages.push(`${unlockedBorderStyle.label}`);
+  if(unlockedBorderColor) newRewardMessages.push(`${unlockedBorderColor.label} Border Color`);
   if(unlockedWallpaper) newRewardMessages.push(`${unlockedWallpaper.label} Wallpaper`);
   if(newRewardMessages.length) setMessage(`Treasure collected! New reward: ${newRewardMessages.join(" · ")}`);
 
@@ -5683,6 +5912,15 @@ function endRun(won) {
   clearAnimations();
   if(currentRun?.mode==="endless"){
     if(!endlessExitReason) endlessExitReason="defeated";
+    // Count one Endless Run when the player finishes or pauses a session after
+    // completing at least one floor. Simply opening and immediately leaving
+    // does not advance the theme milestone counter.
+    if(!currentRun.endlessRunCounted && Math.max(0,Number(currentRun.endlessFloorsCompleted)||0)>0){
+      currentRun.endlessRunCounted=true;
+      questSave.endlessRunsCompleted=Math.max(0,Math.floor(Number(questSave.endlessRunsCompleted)||0))+1;
+      const newThemes=awardQuestThemesForEndlessRuns();
+      if(newThemes.length) currentRun.uiThemesEarned.push(...newThemes);
+    }
     // The checkpoint is updated only when a floor is completed. If the hero
     // falls or leaves mid-floor, the same floor is waiting next time.
     persistAll();
@@ -5694,8 +5932,7 @@ function endRun(won) {
 
   if(won){
     currentRun.bossWon=true; questSave.completedRuns=(Number(questSave.completedRuns)||0)+1; questSave.bossWins=(Number(questSave.bossWins)||0)+1;
-    if(!hubSave.characterProgress[activeCharacterId]) hubSave.characterProgress[activeCharacterId]={happinessTotal:0};
-    hubSave.characterProgress[activeCharacterId].happinessTotal=Math.max(0,Number(hubSave.characterProgress[activeCharacterId].happinessTotal)||0)+2;
+    grantQuestHappiness(2);
     const progress=areaProgress(currentRun.area); const maxRank=getAreaConfig(currentRun.area).maxRank;
     if(currentRun.rank===progress.unlockedRank && progress.unlockedRank<maxRank) progress.unlockedRank++;
     const newThemes=awardQuestThemesForClearedLevel(currentRun.area,currentRun.rank,activeCharacterId);
@@ -5766,6 +6003,18 @@ function renderResult(won) {
     const label=document.createElement("span");label.textContent=`${bg.label} Icon Background`;
     el.append(swatch,label);ui.resultItems.appendChild(el);
   });
+  (currentRun?.iconBorderStylesEarned||[]).forEach(style=>{
+    const el=document.createElement("div");el.className="result-item border-reward";
+    const preview=document.createElement("span");preview.className="result-icon-border-preview";applyIconBorderPreviewStyle(preview,style,iconBorderColorById("white"));
+    const label=document.createElement("span");label.textContent=`NEW BORDER STYLE! ${style.label}`;
+    el.append(preview,label);ui.resultItems.appendChild(el);
+  });
+  (currentRun?.iconBorderColorsEarned||[]).forEach(color=>{
+    const el=document.createElement("div");el.className="result-item border-reward";
+    const preview=document.createElement("span");preview.className="result-icon-border-preview";applyIconBorderPreviewStyle(preview,iconBorderStyleById("stitched"),color);
+    const label=document.createElement("span");label.textContent=`NEW BORDER COLOR! ${color.label}`;
+    el.append(preview,label);ui.resultItems.appendChild(el);
+  });
   (currentRun?.wallpapersEarned||[]).forEach(wallpaper=>{
     const el=document.createElement("div");el.className="result-item wallpaper-reward";
     const swatch=document.createElement("span");swatch.className="result-wallpaper-swatch";applyWallpaperStyle(swatch,wallpaper);
@@ -5783,7 +6032,7 @@ function renderResult(won) {
     const label=document.createElement("span");label.textContent=`NEW UI THEME! ${theme.name}`;
     el.appendChild(label); ui.resultItems.appendChild(el);
   });
-  if(!(currentRun?.itemsEarned||[]).length && !(currentRun?.iconBackgroundsEarned||[]).length && !(currentRun?.wallpapersEarned||[]).length && !(currentRun?.closetRewardsEarned||[]).length && !(currentRun?.uiThemesEarned||[]).length){
+  if(!(currentRun?.itemsEarned||[]).length && !(currentRun?.iconBackgroundsEarned||[]).length && !(currentRun?.iconBorderStylesEarned||[]).length && !(currentRun?.iconBorderColorsEarned||[]).length && !(currentRun?.wallpapersEarned||[]).length && !(currentRun?.closetRewardsEarned||[]).length && !(currentRun?.uiThemesEarned||[]).length){
     const el=document.createElement("div");el.className="result-item";el.textContent="No item drops this time — try another run!";ui.resultItems.appendChild(el);
   }
   const levels=[...new Set(currentRun?.levelsGained||[])];
