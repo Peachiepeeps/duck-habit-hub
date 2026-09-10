@@ -64,6 +64,85 @@ function getAreaConfig(areaId){
   return AREA_CONFIG[areaId] || AREA_CONFIG.meadow;
 }
 
+
+// v24.128 — unlockable Duck Quest UI themes. Internal save keys still use
+// the legacy area/rank names so existing player progress remains compatible.
+const QUEST_CHARACTER_IDS = Object.freeze(["peep","miko","io","miho","annika"]);
+const QUEST_CHARACTER_NAMES = Object.freeze({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika"});
+const QUEST_UI_THEMES = Object.freeze([
+  {
+    id:"classic-cream", name:"Classic Cream",
+    description:"The original cozy cream-and-pink Duck Quest look.",
+    swatches:["#fff7e5","#f4a7c1","#8c625d"], themeColor:"#f6c6d6", requirement:null
+  },
+  {
+    id:"peep-picnic", name:"Peep Picnic",
+    description:"Blush pink, mint, and strawberry cream.",
+    swatches:["#fff9f4","#e991b2","#9ed8cb"], themeColor:"#f4c6d6",
+    requirement:{stage:"meadow",level:10,character:"peep"}
+  },
+  {
+    id:"miko-moonlight", name:"Miko Moonlight",
+    description:"Buttercream, charcoal, and a little warm gold.",
+    swatches:["#fff8df","#43423e","#d7b96f"], themeColor:"#ded5bd",
+    requirement:{stage:"meadow",level:10,character:"miko"}
+  },
+  {
+    id:"io-sweetheart", name:"Io Sweetheart",
+    description:"Rose pink, berry accents, and soft candy cream.",
+    swatches:["#fff7fb","#e9619b","#f4b5c9"], themeColor:"#f4bfd1",
+    requirement:{stage:"meadow",level:10,character:"io"}
+  },
+  {
+    id:"miho-tea-room", name:"Miho Tea Room",
+    description:"Ivory, soft sage, and elegant ink.",
+    swatches:["#fffceb","#91b6a0","#4f514b"], themeColor:"#e7e1c9",
+    requirement:{stage:"meadow",level:10,character:"miho"}
+  },
+  {
+    id:"annika-crimson", name:"Annika Crimson",
+    description:"Deep cherry red, blush, and warm cocoa.",
+    swatches:["#fff6f1","#a94355","#5b3433"], themeColor:"#e7bec4",
+    requirement:{stage:"meadow",level:10,character:"annika"}
+  },
+  {
+    id:"meadow-bloom", name:"Meadow Bloom",
+    description:"Fresh clover, petal pink, and sunny cream.",
+    swatches:["#f8f5d9","#89bd7e","#e6a9be"], themeColor:"#d8e7c3",
+    requirement:{stage:"meadow",level:20}
+  },
+  {
+    id:"ocean-breeze", name:"Ocean Breeze",
+    description:"Sea-glass blue, foam, and a soft coral accent.",
+    swatches:["#f3fbff","#83bfd9","#e8a9af"], themeColor:"#c9e5ef",
+    requirement:{stage:"ocean",level:40}
+  },
+  {
+    id:"candy-pop", name:"Candy Pop",
+    description:"Bubblegum pink, lavender, and sherbet yellow.",
+    swatches:["#fff7fc","#ed8fbc","#c9a9ec"], themeColor:"#f4c8e1",
+    requirement:{stage:"candy",level:60}
+  },
+  {
+    id:"cloud-dream", name:"Cloud Dream",
+    description:"Sky blue, lilac, and starlight gold.",
+    swatches:["#f7fbff","#a9c9ee","#c6b4e8"], themeColor:"#d9e8f5",
+    requirement:{stage:"cloud",level:80}
+  }
+]);
+const QUEST_UI_THEME_IDS = new Set(QUEST_UI_THEMES.map(theme=>theme.id));
+
+function questUiThemeById(id){ return QUEST_UI_THEMES.find(theme=>theme.id===id) || QUEST_UI_THEMES[0]; }
+function questCharacterName(id){ return QUEST_CHARACTER_NAMES[id] || "OC"; }
+function questThemeRequirementText(theme){
+  const req=theme?.requirement;
+  if(!req) return "Always available";
+  const stage=getAreaConfig(req.stage).name;
+  return req.character
+    ? `Clear ${stage} Level ${req.level} with ${questCharacterName(req.character)}`
+    : `Clear ${stage} Level ${req.level}`;
+}
+
 const ICON_BACKGROUND_COLORS = Object.freeze([
   // Starter
   {id:"white",label:"White",value:"#fffaf3",rarity:"starter",source:"starter"},
@@ -1944,6 +2023,12 @@ const ui = {
   openSkillBook: document.querySelector("#openSkillBook"),
   closeSkillBook: document.querySelector("#closeSkillBook"),
   skillBookTitle: document.querySelector("#skillBookTitle"),
+  uiThemeModal: document.querySelector("#uiThemeModal"),
+  openUiThemes: document.querySelector("#openUiThemes"),
+  closeUiThemes: document.querySelector("#closeUiThemes"),
+  uiThemeGrid: document.querySelector("#uiThemeGrid"),
+  uiThemeCurrent: document.querySelector("#uiThemeCurrent"),
+  questThemeColor: document.querySelector("#questThemeColor"),
   affectionUnlockToast: document.querySelector("#affectionUnlockToast"),
   affectionUnlockTitle: document.querySelector("#affectionUnlockTitle"),
   affectionUnlockText: document.querySelector("#affectionUnlockText"),
@@ -2049,6 +2134,9 @@ const ui = {
   buddyDetailOwned: document.querySelector("#buddyDetailOwned"),
   buddyDetailType: document.querySelector("#buddyDetailType"),
   buddyDetailSkill: document.querySelector("#buddyDetailSkill"),
+  buddyFamilyIconActions: document.querySelector("#buddyFamilyIconActions"),
+  setBuddyFamilyIcon: document.querySelector("#setBuddyFamilyIcon"),
+  buddyFamilyIconStatus: document.querySelector("#buddyFamilyIconStatus"),
   buddyAssignOpen: document.querySelector("#buddyAssignOpen"),
   buddyAssignPanel: document.querySelector("#buddyAssignPanel"),
   buddyAssignAvailability: document.querySelector("#buddyAssignAvailability"),
@@ -2279,6 +2367,9 @@ function defaultQuestSave() {
     peep:defaultCharacterQuestProgress(),
     activeCharacter:"peep",
     iconBackgroundsUnlocked:["white"],
+    uiThemesUnlocked:["classic-cream"],
+    uiTheme:"classic-cream",
+    buddyFamilyIcons:{},
     charms:defaultCharmSave(),
     areaRewardMigrationV24124:false,
     completedRuns:0,bossWins:0,totalBattlesWon:0,totalCoinsEarned:0,totalExpEarned:0
@@ -2300,6 +2391,9 @@ function normalizeQuestSave(raw) {
     activeCharacter:["peep","miko","io","miho","annika"].includes(q.activeCharacter)?q.activeCharacter:null,
     iconBackgroundsUnlocked:[...new Set(["white",...(Array.isArray(q.iconBackgroundsUnlocked)?q.iconBackgroundsUnlocked:[])])]
       .filter(id=>ICON_BACKGROUND_COLORS.some(color=>color.id===id)),
+    uiThemesUnlocked:[...new Set(["classic-cream",...(Array.isArray(q.uiThemesUnlocked)?q.uiThemesUnlocked:[])])].filter(id=>QUEST_UI_THEME_IDS.has(id)),
+    uiTheme:QUEST_UI_THEME_IDS.has(q.uiTheme)?q.uiTheme:"classic-cream",
+    buddyFamilyIcons:(q.buddyFamilyIcons&&typeof q.buddyFamilyIcons==="object")?{...q.buddyFamilyIcons}:{},
     charms:normalizeCharmSave(q.charms),
     bossWins:Math.max(0,Number(q.bossWins ?? q.completedRuns)||0)
   };
@@ -2317,6 +2411,124 @@ function activeHeroProgress(){
     questSave[activeCharacterId]=normalizeCharacterQuestProgress(questSave[activeCharacterId]);
   }
   return questSave[activeCharacterId];
+}
+
+
+function stageLevelAlreadyCleared(characterId,stageId,level){
+  const raw=questSave[characterId];
+  if(!raw || typeof raw!=="object") return false;
+  const hero=normalizeCharacterQuestProgress(raw);
+  questSave[characterId]=hero;
+  const cfg=getAreaConfig(stageId);
+  const stage=hero.areas?.[stageId];
+  if(!stage) return false;
+  const target=Math.max(1,Number(level)||1);
+  if(target>=cfg.maxRank) return Boolean(hero.clearedAreas?.[stageId]);
+  return Math.max(1,Number(stage.unlockedRank)||1)>target || Boolean(hero.clearedAreas?.[stageId]);
+}
+
+function questThemeRequirementMet(theme){
+  const req=theme?.requirement;
+  if(!req) return true;
+  if(req.character) return stageLevelAlreadyCleared(req.character,req.stage,req.level);
+  return QUEST_CHARACTER_IDS.some(characterId=>stageLevelAlreadyCleared(characterId,req.stage,req.level));
+}
+
+function normalizeQuestUiThemeState(){
+  if(!Array.isArray(questSave.uiThemesUnlocked)) questSave.uiThemesUnlocked=["classic-cream"];
+  questSave.uiThemesUnlocked=[...new Set(["classic-cream",...questSave.uiThemesUnlocked])].filter(id=>QUEST_UI_THEME_IDS.has(id));
+  for(const theme of QUEST_UI_THEMES){
+    if(questThemeRequirementMet(theme) && !questSave.uiThemesUnlocked.includes(theme.id)) questSave.uiThemesUnlocked.push(theme.id);
+  }
+  if(!questSave.uiThemesUnlocked.includes(questSave.uiTheme)) questSave.uiTheme="classic-cream";
+}
+
+function isQuestUiThemeUnlocked(themeId){
+  normalizeQuestUiThemeState();
+  return questSave.uiThemesUnlocked.includes(themeId);
+}
+
+function unlockQuestUiTheme(themeId){
+  const theme=questUiThemeById(themeId);
+  if(!Array.isArray(questSave.uiThemesUnlocked)) questSave.uiThemesUnlocked=["classic-cream"];
+  questSave.uiThemesUnlocked=[...new Set(["classic-cream",...questSave.uiThemesUnlocked])].filter(id=>QUEST_UI_THEME_IDS.has(id));
+  if(questSave.uiThemesUnlocked.includes(theme.id)) return null;
+  questSave.uiThemesUnlocked.push(theme.id);
+  return theme;
+}
+
+function applyQuestUiTheme(){
+  normalizeQuestUiThemeState();
+  const theme=questUiThemeById(questSave.uiTheme);
+  document.body.dataset.questTheme=theme.id;
+  if(ui.questThemeColor) ui.questThemeColor.setAttribute("content",theme.themeColor || "#f6c6d6");
+  if(ui.uiThemeCurrent) ui.uiThemeCurrent.textContent=theme.name;
+}
+
+function makeQuestThemeSwatch(theme,className="ui-theme-swatch"){
+  const swatch=document.createElement("span");
+  swatch.className=className;
+  for(const color of theme.swatches||[]){
+    const dot=document.createElement("i");
+    dot.style.background=color;
+    swatch.appendChild(dot);
+  }
+  return swatch;
+}
+
+function renderUiThemePicker(){
+  if(!ui.uiThemeGrid) return;
+  normalizeQuestUiThemeState();
+  ui.uiThemeGrid.innerHTML="";
+  const current=questUiThemeById(questSave.uiTheme);
+  if(ui.uiThemeCurrent) ui.uiThemeCurrent.textContent=current.name;
+  for(const theme of QUEST_UI_THEMES){
+    const unlocked=isQuestUiThemeUnlocked(theme.id);
+    const selected=theme.id===questSave.uiTheme;
+    const button=document.createElement("button");
+    button.type="button";
+    button.className=`ui-theme-card${unlocked?" unlocked":" locked"}${selected?" selected":""}`;
+    button.disabled=!unlocked;
+    button.setAttribute("aria-pressed",String(selected));
+    button.appendChild(makeQuestThemeSwatch(theme));
+    const copy=document.createElement("span");
+    copy.className="ui-theme-card-copy";
+    const title=document.createElement("strong"); title.textContent=theme.name;
+    const desc=document.createElement("small"); desc.textContent=theme.description;
+    const status=document.createElement("em"); status.textContent=unlocked?(selected?"✓ Equipped":"Tap to equip"):`🔒 ${questThemeRequirementText(theme)}`;
+    copy.append(title,desc,status); button.appendChild(copy);
+    if(unlocked) button.addEventListener("click",()=>{
+      questSave.uiTheme=theme.id;
+      applyQuestUiTheme();
+      persistAll();
+      renderUiThemePicker();
+    });
+    ui.uiThemeGrid.appendChild(button);
+  }
+}
+
+function openUiThemePicker(){
+  if(currentRun) return;
+  renderUiThemePicker();
+  ui.uiThemeModal?.classList.remove("hidden");
+  ui.uiThemeModal?.setAttribute("aria-hidden","false");
+}
+function closeUiThemePicker(){
+  ui.uiThemeModal?.classList.add("hidden");
+  ui.uiThemeModal?.setAttribute("aria-hidden","true");
+}
+
+function awardQuestThemesForClearedLevel(stageId,level,characterId){
+  const earned=[];
+  const clearedLevel=Math.max(1,Number(level)||1);
+  for(const theme of QUEST_UI_THEMES){
+    const req=theme.requirement;
+    if(!req || req.stage!==stageId || clearedLevel<req.level) continue;
+    if(req.character && req.character!==characterId) continue;
+    const unlocked=unlockQuestUiTheme(theme.id);
+    if(unlocked) earned.push(unlocked);
+  }
+  return earned;
 }
 
 let heroProgress = activeHeroProgress();
@@ -2378,7 +2590,7 @@ function loadHubSave() {
   }
 }
 
-const QUEST_CHARACTER_IDS = Object.freeze(["peep","miko","io","miho","annika"]);
+// Character IDs are declared near the top with the UI-theme definitions.
 const AREA_CLEAR_CLOSET_REWARDS = Object.freeze({
   meadow:{id:"daisy-crown",name:"Daisy Crown",image:"../assets/ui/daisy-crown-reward.png"},
   ocean:{id:"ocean-sunglasses",name:"Sunglasses",image:"../assets/ui/sunglasses-reward.png"},
@@ -3221,10 +3433,29 @@ function buddyFamilyEntries(enemyId){
   });
 }
 
+function buddyFamilyIconKey(enemyId,preferShiny=false){ return `${enemyId}::${preferShiny?"shiny":"normal"}`; }
+function selectedBuddyFamilyIconKey(enemyId,preferShiny=false){
+  if(!questSave.buddyFamilyIcons || typeof questSave.buddyFamilyIcons!=="object") questSave.buddyFamilyIcons={};
+  return String(questSave.buddyFamilyIcons[buddyFamilyIconKey(enemyId,preferShiny)] || "");
+}
+function setSelectedBuddyFamilyIcon(entry){
+  if(!entry || buddyOwnedQuantity(entry.key)<=0) return false;
+  if(!questSave.buddyFamilyIcons || typeof questSave.buddyFamilyIcons!=="object") questSave.buddyFamilyIcons={};
+  questSave.buddyFamilyIcons[buddyFamilyIconKey(entry.enemyId,Boolean(entry.shiny))]=entry.key;
+  persistAll();
+  return true;
+}
 function buddyFamilyRepresentative(enemyId,preferShiny=false){
   const entries=buddyFamilyEntries(enemyId);
-  if(preferShiny) return entries.find(entry=>entry.shiny) || entries[0] || null;
-  return entries.find(entry=>!entry.shiny && entry.variantId==="base") || entries.find(entry=>!entry.shiny) || entries[0] || null;
+  const relevant=entries.filter(entry=>Boolean(entry.shiny)===Boolean(preferShiny));
+  const chosenKey=selectedBuddyFamilyIconKey(enemyId,preferShiny);
+  const chosen=relevant.find(entry=>entry.key===chosenKey && buddyOwnedQuantity(entry.key)>0);
+  if(chosen) return chosen;
+  if(preferShiny) return relevant.find(entry=>buddyOwnedQuantity(entry.key)>0) || relevant[0] || entries[0] || null;
+  return relevant.find(entry=>entry.variantId==="base" && buddyOwnedQuantity(entry.key)>0)
+    || relevant.find(entry=>buddyOwnedQuantity(entry.key)>0)
+    || relevant.find(entry=>entry.variantId==="base")
+    || relevant[0] || entries[0] || null;
 }
 
 function openBuddyDetail(entry) {
@@ -3262,13 +3493,28 @@ function openBuddyDetail(entry) {
     ? `<strong>Buddy Skill: ${buddySkill.name}</strong><br>${buddySkill.description}`
     : `<strong>Buddy Skill:</strong> No skill assigned yet.`;
 
+  if(ui.buddyFamilyIconActions){
+    ui.buddyFamilyIconActions.classList.toggle("hidden",!caught);
+    if(caught){
+      const isMain=selectedBuddyFamilyIconKey(entry.enemyId,Boolean(entry.shiny))===entry.key;
+      if(ui.setBuddyFamilyIcon){
+        ui.setBuddyFamilyIcon.disabled=isMain;
+        ui.setBuddyFamilyIcon.textContent=isMain?(entry.shiny?"✓ Shiny Book Icon":"✓ Book Icon"):(entry.shiny?"Use as Shiny Icon":"Use as Book Icon");
+      }
+      if(ui.buddyFamilyIconStatus) ui.buddyFamilyIconStatus.textContent=isMain
+        ? "This form currently represents the family in your Buddy Book."
+        : "Use this befriended form as the family portrait in your Buddy Book.";
+    }
+  }
+
   if(ui.buddyDetailVariants){
     ui.buddyDetailVariants.innerHTML="";
     buddyFamilyEntries(entry.enemyId).forEach(variant=>{
       const variantOwned=buddyOwnedQuantity(variant.key)>0;
       const button=document.createElement("button");
       button.type="button";
-      button.className=`buddy-variant-button${variant.key===entry.key?" selected":""}${variantOwned?" caught":" unknown"}${variant.shiny?" shiny":""}`;
+      const isBookIcon=selectedBuddyFamilyIconKey(variant.enemyId,Boolean(variant.shiny))===variant.key;
+      button.className=`buddy-variant-button${variant.key===entry.key?" selected":""}${variantOwned?" caught":" unknown"}${variant.shiny?" shiny":""}${isBookIcon?" book-icon":""}`;
       button.setAttribute("aria-label",variantOwned?variant.name:"Undiscovered form");
       button.title=variantOwned?variant.name:"???";
       if(variant.image){
@@ -3360,7 +3606,7 @@ function openRoutePicker(areaId){
   selectedRank=Math.max(1,Math.min(cfg.maxRank,progress.unlockedRank||1));
   if(ui.routeModalImage){ ui.routeModalImage.src=cfg.backgrounds[0]; ui.routeModalImage.alt=`${cfg.name} preview`; }
   if(ui.routeModalTitle) ui.routeModalTitle.textContent=cfg.name;
-  if(ui.routeModalRange) ui.routeModalRange.textContent=`1–${cfg.maxRank}`;
+  if(ui.routeModalRange) ui.routeModalRange.textContent=`Levels 1–${cfg.maxRank}`;
   if(ui.routeModalCurrentRank) ui.routeModalCurrentRank.textContent=String(progress.unlockedRank||1);
   persistAll();
   renderMeta();
@@ -3408,6 +3654,7 @@ function maybeShowAffectionMilestone(hLevel){
 }
 
 function renderMeta() {
+  applyQuestUiTheme();
   renderSwitchOcButton();
   renderIconBackgroundPicker();
   ui.coinCount.textContent=hubSave.coins.toLocaleString();
@@ -3453,34 +3700,34 @@ function rankWord(rank) {
 
 function rankDescription(rank,areaId=selectedArea) {
   if(areaId==="cloud"){
-    if(rank<=1) return "Cloud Garden Rank 1 · The stairs are soft and sparkly.";
-    if(rank<=35) return `Cloud Garden Rank ${rank} · New celestial colors are drifting in.`;
-    if(rank<=75) return `Cloud Garden Rank ${rank} · The garden is growing stronger.`;
-    if(rank<=120) return `Cloud Garden Rank ${rank} · Elite sky creatures are appearing.`;
-    if(rank<160) return `Cloud Garden Rank ${rank} · The Star Sanctuary is close.`;
-    return `Cloud Garden Rank 160 · Clear the sanctuary to earn the Halo for ${heroDisplayName()}!`;
+    if(rank<=1) return "Cloud Garden Level 1 · The stairs are soft and sparkly.";
+    if(rank<=35) return `Cloud Garden Level ${rank} · New celestial colors are drifting in.`;
+    if(rank<=75) return `Cloud Garden Level ${rank} · The garden is growing stronger.`;
+    if(rank<=120) return `Cloud Garden Level ${rank} · Elite sky creatures are appearing.`;
+    if(rank<160) return `Cloud Garden Level ${rank} · The Star Sanctuary is close.`;
+    return `Cloud Garden Level 160 · The Star Sanctuary is waiting. Give it everything you have!`;
   }
   if(areaId==="candy"){
-    if(rank<=1) return "Candyland Rank 1 · Lollipop Lane is sweet and deceptively calm.";
-    if(rank<=30) return `Candyland Rank ${rank} · New candy colors are appearing.`;
-    if(rank<=65) return `Candyland Rank ${rank} · The gumdrop creatures are getting tougher.`;
-    if(rank<=95) return `Candyland Rank ${rank} · Candycane Bridge is getting dangerous.`;
-    if(rank<120) return `Candyland Rank ${rank} · The Chocolate Lake is getting close.`;
-    return `Candyland Rank 120 · Clear the Chocolate Lake to earn the Candy Hairclip for ${heroDisplayName()}!`;
+    if(rank<=1) return "Candyland Level 1 · Lollipop Lane is sweet and deceptively calm.";
+    if(rank<=30) return `Candyland Level ${rank} · New candy colors are appearing.`;
+    if(rank<=65) return `Candyland Level ${rank} · The gumdrop creatures are getting tougher.`;
+    if(rank<=95) return `Candyland Level ${rank} · Candycane Bridge is getting dangerous.`;
+    if(rank<120) return `Candyland Level ${rank} · The Chocolate Lake is getting close.`;
+    return `Candyland Level 120 · The Chocolate Lake finale is here. Something special may be waiting!`;
   }
   if(areaId==="ocean"){
-    if(rank<=1) return "Ocean Rank 1 · The shore is calm... for now.";
-    if(rank<=18) return `Ocean Rank ${rank} · New colors are beginning to appear.`;
-    if(rank<=38) return `Ocean Rank ${rank} · Special enemy moves are joining the tide.`;
-    if(rank<=58) return `Ocean Rank ${rank} · Deep-water enemies are much tougher.`;
-    if(rank<80) return `Ocean Rank ${rank} · Elite colors are beginning to surface.`;
-    return `Ocean Rank 80 · Clear the route to earn Sunglasses for ${heroDisplayName()}!`;
+    if(rank<=1) return "Ocean Level 1 · The shore is calm... for now.";
+    if(rank<=18) return `Ocean Level ${rank} · New colors are beginning to appear.`;
+    if(rank<=38) return `Ocean Level ${rank} · Special enemy moves are joining the tide.`;
+    if(rank<=58) return `Ocean Level ${rank} · Deep-water enemies are much tougher.`;
+    if(rank<80) return `Ocean Level ${rank} · Elite colors are beginning to surface.`;
+    return `Ocean Level 80 · The deepest route is here. A surprise waits beyond the clear!`;
   }
-  if(rank<=1) return "Rank 1 · A gentle place to begin.";
-  if(rank<=6) return `Rank ${rank} · Enemies are starting to toughen up.`;
-  if(rank<=12) return `Rank ${rank} · A proper challenge. Better loot too!`;
-  if(rank<=20) return `Rank ${rank} · The meadow is getting dangerous.`;
-  return rank>=40 ? `Rank 40 · Clear the meadow to earn the Daisy Crown for ${heroDisplayName()}!` : `Rank ${rank} · High-risk, high-reward territory.`;
+  if(rank<=1) return "Level 1 · A gentle place to begin.";
+  if(rank<=6) return `Level ${rank} · Enemies are starting to toughen up.`;
+  if(rank<=12) return `Level ${rank} · A proper challenge. Better loot too!`;
+  if(rank<=20) return `Level ${rank} · The meadow is getting dangerous.`;
+  return rank>=40 ? `Level 40 · The final clearing is here. Something special may be waiting!` : `Level ${rank} · High-risk, high-reward territory.`;
 }
 
 function renderMenuSkills() {
@@ -3604,7 +3851,7 @@ function beginEndlessRun(startFloor=1){
   currentRun={
     mode:"endless",floor,rank:endlessEffectiveRank(floor),area:"endless",index:0,plan:[],
     endlessEncounter:makeEndlessEncounter(floor),floorBackground:chooseEndlessBackground(),
-    hp:stats.maxHp,maxHp:stats.maxHp,coinsEarned:0,expEarned:0,itemsEarned:[],iconBackgroundsEarned:[],wallpapersEarned:[],closetRewardsEarned:[],levelBackgroundsEarned:[],levelsGained:[],bossWon:false
+    hp:stats.maxHp,maxHp:stats.maxHp,coinsEarned:0,expEarned:0,itemsEarned:[],iconBackgroundsEarned:[],wallpapersEarned:[],closetRewardsEarned:[],uiThemesEarned:[],levelBackgroundsEarned:[],levelsGained:[],bossWon:false
   };
   persistAll();
   showScreen("battle");
@@ -3645,7 +3892,7 @@ function beginRun() {
   endlessExitReason="";
   currentRun={
     mode:"normal",area:selectedArea,rank:selectedRank,index:0,plan:makeEncounterPlan(selectedRank,selectedArea),
-    hp:stats.maxHp,maxHp:stats.maxHp,coinsEarned:0,expEarned:0,itemsEarned:[],iconBackgroundsEarned:[],wallpapersEarned:[],closetRewardsEarned:[],levelBackgroundsEarned:[],levelsGained:[],bossWon:false
+    hp:stats.maxHp,maxHp:stats.maxHp,coinsEarned:0,expEarned:0,itemsEarned:[],iconBackgroundsEarned:[],wallpapersEarned:[],closetRewardsEarned:[],uiThemesEarned:[],levelBackgroundsEarned:[],levelsGained:[],bossWon:false
   };
   progress.lastRank=selectedRank; activeHeroProgress().lastArea=selectedArea; persistAll();
   showScreen("battle"); startEncounter();
@@ -3710,7 +3957,7 @@ function startEncounter() {
     ui.battleBg.src=cfg.backgrounds[currentRun.index];
     ui.battlefield.classList.toggle("ocean-peep-raised", currentRun.area==="ocean" && (currentRun.index===1 || currentRun.index===2));
     ui.encounterLabel.textContent=`${cfg.stageNames[currentRun.index].toUpperCase()} · ${currentRun.index+1} / 4`;
-    ui.rankBattleLabel.textContent=`${cfg.name} · Rank ${currentRun.rank}`;
+    ui.rankBattleLabel.textContent=`${cfg.name} · Level ${currentRun.rank}`;
   }
 
   ui.peepLevelCombat.textContent=`Lv. ${activeHeroProgress().level}`;
@@ -3843,7 +4090,7 @@ function startEnemy(enemyId, options={}) {
   renderEnemyName(currentEnemy);
   ui.enemyRank.textContent=currentRun?.mode==="endless"
     ? `${currentEnemy.boss?"BOSS · ":""}Floor ${currentRun.floor}`
-    : currentEnemy.boss?`BOSS · Rank ${currentRun.rank}`:`Rank ${currentRun.rank}`;
+    : currentEnemy.boss?`BOSS · Level ${currentRun.rank}`:`Level ${currentRun.rank}`;
   ui.enemySprite.classList.toggle("boss-fighter",Boolean(currentEnemy.boss));
   ui.enemySprite.classList.toggle("gold-boss-fighter",currentEnemy.mushroomVariant==="gold");
   ui.enemySprite.classList.toggle("queen-bee-fighter",currentEnemy.beeVariant==="queen");
@@ -5445,6 +5692,11 @@ function endRun(won) {
     hubSave.characterProgress[activeCharacterId].happinessTotal=Math.max(0,Number(hubSave.characterProgress[activeCharacterId].happinessTotal)||0)+2;
     const progress=areaProgress(currentRun.area); const maxRank=getAreaConfig(currentRun.area).maxRank;
     if(currentRun.rank===progress.unlockedRank && progress.unlockedRank<maxRank) progress.unlockedRank++;
+    const newThemes=awardQuestThemesForClearedLevel(currentRun.area,currentRun.rank,activeCharacterId);
+    if(newThemes.length){
+      if(!Array.isArray(currentRun.uiThemesEarned)) currentRun.uiThemesEarned=[];
+      currentRun.uiThemesEarned.push(...newThemes);
+    }
     const areaReward=AREA_CLEAR_CLOSET_REWARDS[currentRun.area];
     if(areaReward && currentRun.rank>=maxRank){
       const hero=activeHeroProgress();
@@ -5484,11 +5736,11 @@ function renderResult(won) {
     const canRunNext=Boolean(won)&&nextRank>finishedRank&&nextRank<=progress.unlockedRank;
     ui.runNextRank.classList.toggle("hidden",!won);
     ui.runNextRank.disabled=Boolean(won)&&!canRunNext;
-    ui.runNextRank.textContent=canRunNext?`Run ${cfg.name} Rank ${nextRank}`:"Max Rank Reached";
+    ui.runNextRank.textContent=canRunNext?`Run ${cfg.name} Level ${nextRank}`:"Max Level Reached";
     ui.runNextRank.dataset.rank=canRunNext?String(nextRank):"";
     ui.runNextRank.dataset.area=areaId;
-    if(ui.resultProgressLabel) ui.resultProgressLabel.textContent="Rank";
-    ui.resultRank.textContent=`${cfg.name} ${finishedRank}`;
+    if(ui.resultProgressLabel) ui.resultProgressLabel.textContent="Level";
+    ui.resultRank.textContent=`${cfg.name} Level ${finishedRank}`;
     const runAgain=document.querySelector("#runAgain");
     if(runAgain) runAgain.textContent="Run Again";
   }
@@ -5519,7 +5771,13 @@ function renderResult(won) {
     el.innerHTML=`<img src="${reward.image}" alt=""><span>${reward.name}</span>`;
     ui.resultItems.appendChild(el);
   });
-  if(!(currentRun?.itemsEarned||[]).length && !(currentRun?.iconBackgroundsEarned||[]).length && !(currentRun?.wallpapersEarned||[]).length && !(currentRun?.closetRewardsEarned||[]).length){
+  (currentRun?.uiThemesEarned||[]).forEach(theme=>{
+    const el=document.createElement("div");el.className="result-item theme-reward";
+    el.appendChild(makeQuestThemeSwatch(theme,"result-theme-swatch"));
+    const label=document.createElement("span");label.textContent=`NEW UI THEME! ${theme.name}`;
+    el.appendChild(label); ui.resultItems.appendChild(el);
+  });
+  if(!(currentRun?.itemsEarned||[]).length && !(currentRun?.iconBackgroundsEarned||[]).length && !(currentRun?.wallpapersEarned||[]).length && !(currentRun?.closetRewardsEarned||[]).length && !(currentRun?.uiThemesEarned||[]).length){
     const el=document.createElement("div");el.className="result-item";el.textContent="No item drops this time — try another run!";ui.resultItems.appendChild(el);
   }
   const levels=[...new Set(currentRun?.levelsGained||[])];
@@ -5586,6 +5844,9 @@ function returnHome() {
 
 document.querySelector("#backGames").addEventListener("click",()=>window.location.href="../#games");
 ui.openBuddyCollection?.addEventListener("click",()=>{ closeBuddyDetail(); setBuddyScreenUrl(true); showScreen("buddy"); });
+ui.openUiThemes?.addEventListener("click",openUiThemePicker);
+ui.closeUiThemes?.addEventListener("click",closeUiThemePicker);
+ui.uiThemeModal?.addEventListener("click",event=>{ if(event.target===ui.uiThemeModal) closeUiThemePicker(); });
 ui.backFromBuddies?.addEventListener("click",()=>{ closeBuddyDetail(); setBuddyScreenUrl(false); showScreen("home"); renderMeta(); });
 ui.openCharmScreen?.addEventListener("click",()=>{ setCharmMessage("Choose up to three different charm families."); showScreen("charm"); });
 ui.backFromCharms?.addEventListener("click",()=>{ showScreen("home"); renderMeta(); });
@@ -5600,6 +5861,14 @@ ui.buddyGenderButtons?.forEach(button=>button.addEventListener("click",()=>{
   ui.buddyGenderButtons.forEach(item=>item.classList.toggle("selected",item.dataset.buddyGender===buddyPersonalizeGender));
 }));
 ui.saveBuddyPersonalization?.addEventListener("click",saveBuddyPersonalization);
+ui.setBuddyFamilyIcon?.addEventListener("click",()=>{
+  const entry=buddyDisplayCatalog().find(candidate=>candidate.key===buddyDetailEntryKey);
+  if(!entry || buddyOwnedQuantity(entry.key)<=0) return;
+  if(setSelectedBuddyFamilyIcon(entry)){
+    renderBuddyCollection();
+    openBuddyDetail(entry);
+  }
+});
 
 ui.buddyAssignOpen?.addEventListener("click",()=>{
   const entry=buddyDisplayCatalog().find(candidate=>candidate.key===buddyDetailEntryKey);
@@ -5691,9 +5960,12 @@ ui.iconBackgroundButton?.addEventListener("click",()=>{
 document.addEventListener("keydown",event=>{
   if(event.key!=="Escape") return;
   if(ui.routePickerModal && !ui.routePickerModal.classList.contains("hidden")){ closeRoutePicker(); return; }
+  if(ui.uiThemeModal && !ui.uiThemeModal.classList.contains("hidden")){ closeUiThemePicker(); return; }
   if(ui.skillBookModal && !ui.skillBookModal.classList.contains("hidden")){ closeSkillBook(); }
 });
 syncPastLevelIconBackgrounds();
+normalizeQuestUiThemeState();
+applyQuestUiTheme();
 persistAll();
 renderMeta();
 renderMenuSkills();

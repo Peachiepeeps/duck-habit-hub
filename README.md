@@ -1,8 +1,5 @@
-Duckie Days v24.127
+Duckie Days v24.128
 
 A cozy duck game/habit hub with OCs, collecting, decorating, Duck Quest, and minigames.
 
-This build preserves the user-edited Duckie Days app name and description, adds editable profile/gift placeholders for Io, Miho, and Annika, and installs the refreshed Duckie Days app icon.
-
-
-v24.127 adds Buddy Book mobile polish: a phone-safe title/header, all five area tabs visible at once, and smaller centered Buddy portraits with more consistent framing.
+v24.128 adds unlockable Duck Quest UI Themes, selectable Buddy family portraits, and RPG terminology polish. Duck Quest now uses Stage + Level wording, “Equip Charm,” and keeps full-Stage completion prizes hidden until they are actually earned.

@@ -2968,3 +2968,149 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
     max-height:68px;
   }
 }
+
+
+/* =========================================================
+   V51 / Hub v24.128 — UI Themes + RPG terminology polish
+   ========================================================= */
+:root{
+  --quest-bg-a:#efbfd0;
+  --quest-bg-b:#f4cbda;
+  --quest-surface:#fffaf0;
+  --quest-surface-2:#fffaf3;
+  --quest-soft:#f5dce2;
+  --quest-button:#fff6df;
+  --quest-selected:#f8dce7;
+  --quest-accent:#ef8fb3;
+  --quest-accent-2:#f5c7d7;
+  --quest-muted:#8f7470;
+}
+
+body[data-quest-theme="classic-cream"]{
+  --cream:#fff7e5;--pink:#f4a7c1;--deep-pink:#ca6c91;--brown:#6f4a45;--brown-2:#98716a;
+  --panel:rgba(255,247,229,.96);--border:#8c625d;--shadow:0 6px 0 rgba(102,67,61,.24);
+  --quest-bg-a:#efbfd0;--quest-bg-b:#f4cbda;--quest-surface:#fffaf0;--quest-surface-2:#fffaf3;--quest-soft:#f5dce2;--quest-button:#fff6df;--quest-selected:#f8dce7;--quest-accent:#ef8fb3;--quest-accent-2:#f5c7d7;--quest-muted:#8f7470;
+}
+body[data-quest-theme="peep-picnic"]{
+  --cream:#fff9f2;--pink:#eca8bd;--deep-pink:#d36f98;--brown:#6d4d49;--brown-2:#92716d;
+  --panel:rgba(255,250,244,.97);--border:#8d655f;--shadow:0 6px 0 rgba(110,75,68,.20);
+  --quest-bg-a:#f4c7d5;--quest-bg-b:#f8dbe3;--quest-surface:#fffaf6;--quest-surface-2:#fff4f7;--quest-soft:#dff1ec;--quest-button:#fff7f2;--quest-selected:#dff1ec;--quest-accent:#e98bae;--quest-accent-2:#f4c2d2;--quest-muted:#866f6b;
+}
+body[data-quest-theme="miko-moonlight"]{
+  --cream:#fff8df;--pink:#d8c68f;--deep-pink:#9a8050;--brown:#3f3d38;--brown-2:#706b5f;
+  --panel:rgba(255,250,232,.97);--border:#57534a;--shadow:0 6px 0 rgba(60,57,51,.22);
+  --quest-bg-a:#d8d0be;--quest-bg-b:#ebe4d2;--quest-surface:#fbf6e8;--quest-surface-2:#fffaf0;--quest-soft:#e8e0c8;--quest-button:#fffaf0;--quest-selected:#eee1b7;--quest-accent:#c8a966;--quest-accent-2:#eadcae;--quest-muted:#746f63;
+}
+body[data-quest-theme="io-sweetheart"]{
+  --cream:#fff7fb;--pink:#f09abd;--deep-pink:#c74780;--brown:#684253;--brown-2:#936b7c;
+  --panel:rgba(255,248,251,.97);--border:#82566a;--shadow:0 6px 0 rgba(101,61,78,.21);
+  --quest-bg-a:#f2bdd0;--quest-bg-b:#f8d6e2;--quest-surface:#fff1f6;--quest-surface-2:#fff7fa;--quest-soft:#efc2d2;--quest-button:#fff7fa;--quest-selected:#f6c3d7;--quest-accent:#e65d99;--quest-accent-2:#f3b8cd;--quest-muted:#8d6878;
+}
+body[data-quest-theme="miho-tea-room"]{
+  --cream:#fffceb;--pink:#b6cdb8;--deep-pink:#718f7e;--brown:#41443d;--brown-2:#6c7167;
+  --panel:rgba(255,253,239,.97);--border:#55584f;--shadow:0 6px 0 rgba(65,68,61,.20);
+  --quest-bg-a:#ded8c2;--quest-bg-b:#eee9d4;--quest-surface:#f8f4e8;--quest-surface-2:#fffdf3;--quest-soft:#dce9dc;--quest-button:#fffdf5;--quest-selected:#dce8dc;--quest-accent:#8db19a;--quest-accent-2:#c9d9c8;--quest-muted:#70756b;
+}
+body[data-quest-theme="annika-crimson"]{
+  --cream:#fff6f1;--pink:#d88691;--deep-pink:#9f3b4d;--brown:#512f31;--brown-2:#78504f;
+  --panel:rgba(255,247,242,.97);--border:#63383a;--shadow:0 6px 0 rgba(77,43,44,.23);
+  --quest-bg-a:#dfb4bc;--quest-bg-b:#edd0d3;--quest-surface:#fff0ec;--quest-surface-2:#fff7f3;--quest-soft:#e8cecb;--quest-button:#fff7f1;--quest-selected:#e8bfc6;--quest-accent:#a94355;--quest-accent-2:#ddb0b6;--quest-muted:#7c5e5c;
+}
+body[data-quest-theme="meadow-bloom"]{
+  --cream:#fffbe8;--pink:#d7a7b2;--deep-pink:#6f9f6e;--brown:#4f5542;--brown-2:#788068;
+  --panel:rgba(255,252,235,.97);--border:#68735b;--shadow:0 6px 0 rgba(74,82,62,.20);
+  --quest-bg-a:#cfe2bd;--quest-bg-b:#e5edc9;--quest-surface:#f8f4d9;--quest-surface-2:#fffbe8;--quest-soft:#dcebc8;--quest-button:#fff9e2;--quest-selected:#d4e9c8;--quest-accent:#83b578;--quest-accent-2:#c6deaf;--quest-muted:#747a67;
+}
+body[data-quest-theme="ocean-breeze"]{
+  --cream:#f5fbff;--pink:#b8dbe7;--deep-pink:#5e9fbd;--brown:#425963;--brown-2:#6a7d85;
+  --panel:rgba(246,252,255,.97);--border:#5e7d89;--shadow:0 6px 0 rgba(61,85,95,.20);
+  --quest-bg-a:#b9dce9;--quest-bg-b:#d4ebf1;--quest-surface:#eef9fc;--quest-surface-2:#f9fdff;--quest-soft:#cfe9ee;--quest-button:#f7fcff;--quest-selected:#c8e7ef;--quest-accent:#79b8d2;--quest-accent-2:#c1e0ea;--quest-muted:#657a83;
+}
+body[data-quest-theme="candy-pop"]{
+  --cream:#fff8fd;--pink:#f0a4cb;--deep-pink:#c75b9a;--brown:#664763;--brown-2:#8c6c8a;
+  --panel:rgba(255,248,253,.97);--border:#805b80;--shadow:0 6px 0 rgba(91,61,91,.20);
+  --quest-bg-a:#f1bddc;--quest-bg-b:#e7cff1;--quest-surface:#fff0f9;--quest-surface-2:#fff9fd;--quest-soft:#ead5f3;--quest-button:#fff7fc;--quest-selected:#efd0ee;--quest-accent:#e77eb4;--quest-accent-2:#f3c1dd;--quest-muted:#866a84;
+}
+body[data-quest-theme="cloud-dream"]{
+  --cream:#f8fbff;--pink:#c5c5ea;--deep-pink:#7d8fc5;--brown:#4e536a;--brown-2:#777b91;
+  --panel:rgba(249,251,255,.97);--border:#687391;--shadow:0 6px 0 rgba(70,78,105,.20);
+  --quest-bg-a:#c9dff0;--quest-bg-b:#e0dcf2;--quest-surface:#f4f4ff;--quest-surface-2:#fbfbff;--quest-soft:#dce5f5;--quest-button:#f8f9ff;--quest-selected:#ddd9f0;--quest-accent:#9aaee0;--quest-accent-2:#d3d9f3;--quest-muted:#72778c;
+}
+
+/* Make the selected theme affect the actual menus rather than only the page background. */
+body{
+  background:
+    linear-gradient(rgba(255,255,255,.14),rgba(255,255,255,.14)),
+    repeating-linear-gradient(0deg,var(--quest-bg-a) 0 18px,var(--quest-bg-b) 18px 36px);
+}
+.pixel-button{background:var(--quest-button);color:var(--brown);border-color:var(--border);box-shadow:var(--shadow)}
+.pixel-button.primary{background:var(--quest-accent);border-color:var(--border);color:#fff}
+.level-badge,.buddy-count-pill{background:var(--quest-accent-2);border-color:var(--border)}
+.hero-sprite-wrap,.buddy-detail-art{background:var(--quest-soft);border-color:color-mix(in srgb,var(--border) 58%,white)}
+.area-option,.skill-summary,.result-stats>div,.result-item,.route-current-rank,.buddy-tile,.buddy-detail-stats>div,.befriend-pon-button{background:var(--quest-surface);border-color:color-mix(in srgb,var(--border) 62%,white)}
+.area-option.selected,.buddy-filter.selected{background:var(--quest-accent);border-color:var(--border);color:#fff}
+.buddy-filter,.quest-modal-close{background:var(--quest-button);border-color:color-mix(in srgb,var(--border) 68%,white);color:var(--brown)}
+.quest-modal-card,.buddy-detail-card,.charm-home-card,.charm-book-card{background:var(--panel);border-color:var(--border);box-shadow:var(--shadow)}
+.charm-home-slot,.charm-equip-slot,.charm-family-card,.charm-tier-row{background:var(--quest-surface)}
+.charm-family-heading,.charm-equipped-panel{background:var(--quest-surface-2)}
+.battle-ui,.nameplate,.combatant small{background:var(--panel);border-color:var(--border)}
+.battle-message,.buddy-skill-preview,.buddy-book-note{background:var(--quest-surface-2);border-color:color-mix(in srgb,var(--border) 48%,white)}
+.mini-label,.area-option-copy small{color:var(--deep-pink)}
+.tiny-note,.buddy-tile small,.ui-theme-note{color:var(--quest-muted)}
+
+/* Three compact hero buttons still fit cleanly on phones. */
+.hero-quick-actions{grid-template-columns:repeat(3,minmax(0,1fr))}
+.hero-theme-button{min-width:0}
+
+/* UI Theme picker */
+.ui-theme-modal-card{text-align:center;display:grid;gap:9px}
+.ui-theme-modal-card h2{margin:2px 0 0}
+.ui-theme-note{margin:0 auto 2px;max-width:350px;font-size:.68rem;font-weight:800;line-height:1.38}
+.ui-theme-current-row{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:9px 11px;border:2px solid color-mix(in srgb,var(--border) 55%,white);border-radius:9px;
+  background:var(--quest-surface);font-size:.7rem;font-weight:900;
+}
+.ui-theme-current-row strong{font-size:.78rem;color:var(--deep-pink)}
+.ui-theme-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:2px}
+.ui-theme-card{
+  min-width:0;min-height:118px;display:grid;grid-template-rows:auto 1fr;justify-items:center;gap:7px;
+  padding:9px 8px;border:3px solid color-mix(in srgb,var(--border) 58%,white);border-radius:11px;
+  background:var(--quest-surface);color:var(--brown);font:inherit;text-align:center;cursor:pointer;
+}
+.ui-theme-card.selected{border-color:var(--deep-pink);box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--quest-accent) 28%,white)}
+.ui-theme-card.locked{opacity:.58;filter:saturate(.55);cursor:not-allowed}
+.ui-theme-swatch,.result-theme-swatch{display:flex;align-items:center;justify-content:center;gap:4px}
+.ui-theme-swatch i,.result-theme-swatch i{display:block;width:22px;height:22px;border:2px solid rgba(78,58,60,.24);border-radius:50%;box-shadow:inset 0 0 0 2px rgba(255,255,255,.4)}
+.ui-theme-card-copy{min-width:0;display:grid;gap:3px;justify-items:center}
+.ui-theme-card-copy strong{font-size:.7rem;line-height:1.08}
+.ui-theme-card-copy small{font-size:.5rem;line-height:1.25;color:var(--quest-muted);font-weight:800}
+.ui-theme-card-copy em{font-style:normal;font-size:.48rem;line-height:1.2;color:var(--deep-pink);font-weight:900}
+.result-theme-swatch i{width:15px;height:15px;border-width:1px}
+.theme-reward{background:var(--quest-surface-2)}
+
+/* Buddy family portrait choice */
+.buddy-family-icon-actions{
+  width:100%;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:8px;
+  padding:8px;border:2px solid color-mix(in srgb,var(--border) 48%,white);border-radius:9px;background:var(--quest-surface-2);text-align:left;
+}
+.buddy-family-icon-actions small{font-size:.55rem;line-height:1.3;color:var(--quest-muted);font-weight:800}
+.buddy-family-icon-actions .pixel-button{min-height:36px;white-space:nowrap}
+.buddy-variant-button.book-icon::before{
+  content:"★";position:absolute;right:-1px;bottom:-1px;z-index:2;width:16px;height:16px;display:grid;place-items:center;
+  border:2px solid #fff;border-radius:50%;background:var(--deep-pink);color:#fff;font-size:.48rem;line-height:1;box-shadow:0 1px 0 rgba(70,45,52,.22);
+}
+.buddy-variant-button{position:relative}
+
+@media(max-width:600px){
+  .hero-info-button{font-size:.50rem;padding:4px 3px}
+  .ui-theme-modal-card{padding:14px 10px 12px}
+  .ui-theme-grid{gap:6px}
+  .ui-theme-card{min-height:108px;padding:7px 5px}
+  .ui-theme-swatch i{width:19px;height:19px}
+  .ui-theme-card-copy strong{font-size:.62rem}
+  .ui-theme-card-copy small{font-size:.45rem}
+  .ui-theme-card-copy em{font-size:.43rem}
+  .buddy-family-icon-actions{grid-template-columns:1fr;text-align:center;justify-items:center}
+  .buddy-family-icon-actions small{font-size:.50rem}
+}

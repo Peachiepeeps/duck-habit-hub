@@ -1,4 +1,4 @@
-// Hub v24.126 — profile placeholders + Duckie Days icon refresh
+// Hub v24.128 — Duck Quest UI themes + RPG terminology
 const STORAGE_KEY = "duckHabitHubSave_v1";
 const SAVE_VERSION = 41;
 

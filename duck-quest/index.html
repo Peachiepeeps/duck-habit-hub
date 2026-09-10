@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#f6c6d6" />
+  <meta id="questThemeColor" name="theme-color" content="#f6c6d6" />
   <title>Duck Quest</title>
-  <link rel="stylesheet" href="css/style-v50.css" />
+  <link rel="stylesheet" href="css/style-v51.css" />
 </head>
 <body>
   <main class="quest-shell">
@@ -56,6 +56,7 @@
           <div class="hero-quick-actions" aria-label="Hero information">
             <button id="openSkillBook" class="pixel-button hero-info-button" type="button">OC Skills</button>
             <button id="openBuddyCollection" class="pixel-button hero-info-button" type="button">Buddy Book</button>
+            <button id="openUiThemes" class="pixel-button hero-info-button hero-theme-button" type="button">UI Themes</button>
           </div>
 
           <div class="meter-group">
@@ -79,7 +80,7 @@
       <section class="charm-home-card">
         <div class="charm-home-copy">
           <span class="mini-label">QUEST CHARMS</span>
-          <strong>Charm Loadout</strong>
+          <strong>Equip Charm</strong>
           <small id="charmHomeSummary">0 / 3 equipped for Peep</small>
         </div>
         <div id="charmHomeSlots" class="charm-home-slots" aria-label="Equipped Quest Charms"></div>
@@ -91,7 +92,7 @@
           <div>
             <span class="mini-label">ENDLESS QUEST</span>
             <h2>Endless Run</h2>
-            <small>Random areas, enemies, bosses, Buddies, and Shiny hunting.</small>
+            <small>Random stages, enemies, bosses, Buddies, and Shiny hunting.</small>
           </div>
           <span class="endless-symbol" aria-hidden="true">∞</span>
         </div>
@@ -109,37 +110,37 @@
       <section class="area-select-card">
         <div class="section-title area-select-title">
           <div>
-            <span class="mini-label">CHOOSE AREA</span>
+            <span class="mini-label">CHOOSE STAGE</span>
             <h2 id="exploreHeading">Where should Peep Explore?</h2>
           </div>
         </div>
-        <div class="area-picker" role="group" aria-label="Duck Quest area">
+        <div class="area-picker" role="group" aria-label="Duck Quest stage">
           <button class="area-option selected" data-area="meadow" type="button">
             <img class="area-option-image pixel-background" src="assets/backgrounds/meadow/stage-1-tree.webp" alt="Meadow preview" loading="lazy" decoding="async" />
             <span class="area-option-copy">
               <strong>Meadow</strong>
-              <small>Ranks 1–40 · Daisy Crown for this OC</small>
+              <small>Levels 1–40</small>
             </span>
           </button>
           <button class="area-option" data-area="ocean" type="button">
             <img class="area-option-image pixel-background" src="assets/backgrounds/ocean/shore.webp" alt="Ocean preview" loading="lazy" decoding="async" />
             <span class="area-option-copy">
               <strong>Ocean</strong>
-              <small>Ranks 1–80 · Sunglasses for this OC</small>
+              <small>Levels 1–80</small>
             </span>
           </button>
           <button class="area-option candy-area-option" data-area="candy" type="button">
             <img class="area-option-image pixel-background" src="assets/backgrounds/candyland/lollipop-lane.webp" alt="Candyland preview" loading="lazy" decoding="async" />
             <span class="area-option-copy">
               <strong>Candyland</strong>
-              <small>Ranks 1–120 · Candy Hairclip for this OC</small>
+              <small>Levels 1–120</small>
             </span>
           </button>
           <button class="area-option cloud-area-option" data-area="cloud" type="button">
             <img class="area-option-image pixel-background" src="assets/backgrounds/cloud/stage-1-stairs.png" alt="Cloud Garden preview" loading="lazy" decoding="async" />
             <span class="area-option-copy">
               <strong>Cloud Garden</strong>
-              <small>Ranks 1–160 · Halo for this OC</small>
+              <small>Levels 1–160</small>
             </span>
           </button>
         </div>
@@ -149,13 +150,13 @@
 
     <section id="routePickerModal" class="quest-modal hidden" aria-hidden="true">
       <div class="quest-modal-card route-picker-modal-card" role="dialog" aria-modal="true" aria-labelledby="routeModalTitle">
-        <button id="closeRoutePicker" class="quest-modal-close" type="button" aria-label="Close area window">×</button>
+        <button id="closeRoutePicker" class="quest-modal-close" type="button" aria-label="Close stage window">×</button>
         <img id="routeModalImage" class="route-modal-image pixel-background" src="assets/backgrounds/meadow/stage-1-tree.webp" alt="" />
-        <span class="mini-label">AREA ROUTE</span>
+        <span class="mini-label">STAGE ROUTE</span>
         <h2 id="routeModalTitle">Meadow</h2>
-        <strong id="routeModalRange" class="route-modal-range">1–40</strong>
+        <strong id="routeModalRange" class="route-modal-range">Levels 1–40</strong>
         <div class="route-current-rank">
-          <span>Current Rank</span>
+          <span>Current Level</span>
           <strong id="routeModalCurrentRank">1</strong>
         </div>
         <div class="route-modal-actions">
@@ -172,6 +173,17 @@
         <h2 id="skillBookTitle">Peep's Skills</h2>
         <p class="skill-book-note">All possible moves are shown here. Locked moves reveal the level needed to learn them.</p>
         <div id="menuSkills" class="menu-skills skill-book-list"></div>
+      </div>
+    </section>
+
+    <section id="uiThemeModal" class="quest-modal hidden" aria-hidden="true">
+      <div class="quest-modal-card ui-theme-modal-card" role="dialog" aria-modal="true" aria-labelledby="uiThemeTitle">
+        <button id="closeUiThemes" class="quest-modal-close" type="button" aria-label="Close UI Themes">×</button>
+        <span class="mini-label">CUSTOMIZE QUEST</span>
+        <h2 id="uiThemeTitle">UI Themes</h2>
+        <p class="ui-theme-note">Earn new menu styles by clearing certain Stage Levels. OC themes are earned by adventuring with that OC.</p>
+        <div class="ui-theme-current-row"><span>Current Theme</span><strong id="uiThemeCurrent">Classic Cream</strong></div>
+        <div id="uiThemeGrid" class="ui-theme-grid"></div>
       </div>
     </section>
 
@@ -215,7 +227,7 @@
           </div>
           <strong id="buddyCollectionCount" class="buddy-count-pill">0 / 0</strong>
         </div>
-        <div id="buddyFilters" class="buddy-filters" role="group" aria-label="Buddy collection areas">
+        <div id="buddyFilters" class="buddy-filters" role="group" aria-label="Buddy collection stages">
           <button class="buddy-filter selected" data-buddy-filter="meadow" type="button">Meadow</button>
           <button class="buddy-filter" data-buddy-filter="ocean" type="button">Ocean</button>
           <button class="buddy-filter" data-buddy-filter="candy" type="button">Candyland</button>
@@ -239,6 +251,10 @@
             <div><span>Type</span><strong id="buddyDetailType">Normal</strong></div>
           </div>
           <p id="buddyDetailSkill" class="buddy-skill-preview"><strong>Buddy Skill:</strong> Select a Buddy to see its helper skill. ♡</p>
+          <div id="buddyFamilyIconActions" class="buddy-family-icon-actions hidden">
+            <button id="setBuddyFamilyIcon" class="pixel-button small" type="button">Use as Book Icon</button>
+            <small id="buddyFamilyIconStatus">Choose which befriended form represents this Buddy family in the Book.</small>
+          </div>
           <button id="buddyAssignOpen" class="pixel-button primary buddy-assign-open hidden" type="button">Assign to OC</button>
           <section id="buddyAssignPanel" class="buddy-assign-panel hidden" aria-label="Assign Buddy to OC">
             <div class="buddy-assign-heading">
@@ -272,7 +288,7 @@
       <div class="battle-top">
         <div>
           <span id="encounterLabel" class="mini-label">ENCOUNTER 1 / 4</span>
-          <strong id="rankBattleLabel">Rank 1</strong>
+          <strong id="rankBattleLabel">Level 1</strong>
         </div>
       </div>
       <div id="battleCharmStrip" class="battle-charm-strip hidden" aria-label="Active Quest Charms"></div>
@@ -304,7 +320,7 @@
           <div class="enemy-status-stack">
             <div class="nameplate enemy-nameplate">
               <strong id="enemyName">Cat Slime</strong>
-              <span id="enemyRank">Rank 1</span>
+              <span id="enemyRank">Level 1</span>
             </div>
             <div class="hp-bar enemy-hp"><span id="enemyHpFill"></span></div>
             <div id="enemyDamageText" class="damage-pop-line hidden" aria-hidden="true"></div>
@@ -382,7 +398,7 @@
         </div>
 
         <div class="result-stats">
-          <div><span id="resultProgressLabel">Rank</span><strong id="resultRank">1</strong></div>
+          <div><span id="resultProgressLabel">Level</span><strong id="resultRank">1</strong></div>
           <div><span>Coins Earned</span><strong id="resultCoins">0</strong></div>
           <div><span>EXP Earned</span><strong id="resultExp">0</strong></div>
         </div>
@@ -393,7 +409,7 @@
         <div class="result-actions">
           <button id="runAgain" class="pixel-button primary large" type="button">Run Again</button>
           <button id="backToQuest" class="pixel-button" type="button">Duck Quest Menu</button>
-          <button id="runNextRank" class="pixel-button" type="button">Run Next Rank</button>
+          <button id="runNextRank" class="pixel-button" type="button">Run Next Level</button>
         </div>
       </div>
     </section>
@@ -411,6 +427,6 @@
     </section>
   </main>
 
-  <script src="js/game-v58.js"></script>
+  <script src="js/game-v59.js"></script>
 </body>
 </html>
