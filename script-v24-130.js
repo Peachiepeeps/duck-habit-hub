@@ -1,4 +1,4 @@
-// Hub v24.129 — Quest theme consistency + UI palette tune-up
+// Hub v24.130 — text-edit repair + cache refresh
 const STORAGE_KEY = "duckHabitHubSave_v1";
 const SAVE_VERSION = 41;
 
@@ -154,7 +154,7 @@ const CHARACTERS = {
       favoriteItem: "Teddy bear, gummy bear, and water!",
       likes: "Studying biology, fashion, quiet areas.",
       dislikes: "Being flustered, being annoyed, her twin brother, her father bothering her.",
-      description: "Miko's twin sister, nicknamed "Majo" by some other characters due to her attitude and style. She's cold, cruel, and very tough to get her sweeter side out. She has a PHD in Biology."
+      description: "Miko's twin sister, nicknamed \"Majo\" by some other characters due to her attitude and style. She's cold, cruel, and very tough to get her sweeter side out. She has a PHD in Biology."
     },
     giftPreferences: {
       // Change any "okay" below to "favorite", "like", or "not-her-thing" when you are ready.
