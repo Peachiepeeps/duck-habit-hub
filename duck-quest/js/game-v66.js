@@ -1,4 +1,4 @@
-// Duck Quest game-v65 — independent Quest icon border picker
+// Duck Quest game-v66 — independent Quest icon border picker
 const HUB_SAVE_KEY = "duckHabitHubSave_v1";
 const MAX_LEVEL = 100;
 const AREA_CONFIG = Object.freeze({
@@ -4316,7 +4316,7 @@ function beginRun() {
   endlessExitReason="";
   currentRun={
     mode:"normal",area:selectedArea,rank:selectedRank,index:0,plan:makeEncounterPlan(selectedRank,selectedArea),
-    hp:stats.maxHp,maxHp:stats.maxHp,coinsEarned:0,expEarned:0,happinessEarned:0,itemsEarned:[],iconBackgroundsEarned:[],wallpapersEarned:[],closetRewardsEarned:[],uiThemesEarned:[],levelBackgroundsEarned:[],levelsGained:[],bossWon:false
+    hp:stats.maxHp,maxHp:stats.maxHp,coinsEarned:0,expEarned:0,happinessEarned:0,itemsEarned:[],iconBackgroundsEarned:[],iconBorderStylesEarned:[],iconBorderColorsEarned:[],wallpapersEarned:[],closetRewardsEarned:[],uiThemesEarned:[],levelBackgroundsEarned:[],levelsGained:[],bossWon:false
   };
   progress.lastRank=selectedRank; activeHeroProgress().lastArea=selectedArea; persistAll();
   showScreen("battle"); startEncounter();
@@ -6018,7 +6018,26 @@ function weightedItem() {
   return REWARD_ITEMS[0];
 }
 
+function ensureCurrentRunRewardCollections(){
+  if(!currentRun || typeof currentRun!=="object") return;
+  const collectionKeys=[
+    "itemsEarned",
+    "iconBackgroundsEarned",
+    "iconBorderStylesEarned",
+    "iconBorderColorsEarned",
+    "wallpapersEarned",
+    "closetRewardsEarned",
+    "uiThemesEarned",
+    "levelBackgroundsEarned",
+    "levelsGained"
+  ];
+  for(const key of collectionKeys){
+    if(!Array.isArray(currentRun[key])) currentRun[key]=[];
+  }
+}
+
 function applyRewards(rewards) {
+  ensureCurrentRunRewardCollections();
   const affectionMultiplier=affectionRewardMultiplier();
   rewards.coins=Math.max(0,Math.round((Number(rewards.coins)||0)*affectionMultiplier));
   rewards.exp=Math.max(0,Math.round((Number(rewards.exp)||0)*affectionMultiplier));
@@ -6167,6 +6186,7 @@ function endRun(won) {
 }
 
 function renderResult(won) {
+  ensureCurrentRunRewardCollections();
   const isEndless=currentRun?.mode==="endless";
 
   if(isEndless){

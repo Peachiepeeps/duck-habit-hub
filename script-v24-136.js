@@ -1,4 +1,4 @@
-// Hub v24.135 — independent Duck Quest icon borders
+// Hub v24.136 — independent Duck Quest icon borders
 const STORAGE_KEY = "duckHabitHubSave_v1";
 const SAVE_VERSION = 42;
 
