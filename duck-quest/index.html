@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta id="questThemeColor" name="theme-color" content="#f6c6d6" />
   <title>Duck Quest</title>
-  <link rel="stylesheet" href="css/style-v55.css" />
+  <link rel="stylesheet" href="css/style-v56.css" />
 </head>
 <body>
   <main class="quest-shell">
@@ -38,6 +38,28 @@
                 <span class="icon-background-arrow" aria-hidden="true">▾</span>
               </button>
               <div id="iconBackgroundPicker" class="icon-background-picker hidden" role="menu" aria-label="Icon background colors"></div>
+            </div>
+          </div>
+          <div class="icon-background-control quest-icon-border-control">
+            <span>Icon Border</span>
+            <div class="icon-background-picker-wrap">
+              <button id="iconBorderButton" class="icon-background-button" type="button" aria-expanded="false">
+                <span id="iconBorderCurrent" class="quest-border-current-preview" aria-hidden="true"></span>
+                <span id="iconBorderLabel">No Border</span>
+                <span class="icon-background-arrow" aria-hidden="true">▾</span>
+              </button>
+              <div id="iconBorderPicker" class="quest-border-style-picker hidden" role="menu" aria-label="Icon border styles"></div>
+            </div>
+          </div>
+          <div class="icon-background-control quest-icon-border-color-control">
+            <span>Border Color</span>
+            <div class="icon-background-picker-wrap">
+              <button id="iconBorderColorButton" class="icon-background-button" type="button" aria-expanded="false">
+                <span id="iconBorderColorCurrent" class="icon-background-current" aria-hidden="true"></span>
+                <span id="iconBorderColorLabel">White</span>
+                <span class="icon-background-arrow" aria-hidden="true">▾</span>
+              </button>
+              <div id="iconBorderColorPicker" class="icon-background-picker quest-border-color-picker hidden" role="menu" aria-label="Icon border colors"></div>
             </div>
           </div>
           <button id="switchQuestOc" class="switch-quest-oc-button pixel-button" type="button" aria-expanded="false" aria-controls="questOcPicker">Switch OC</button>
@@ -428,6 +450,6 @@
     </section>
   </main>
 
-  <script src="js/game-v63.js"></script>
+  <script src="js/game-v64.js"></script>
 </body>
 </html>

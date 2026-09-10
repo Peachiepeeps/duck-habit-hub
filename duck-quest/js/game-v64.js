@@ -1,4 +1,4 @@
-// Duck Quest game-v63 — profile icon borders on Duck Quest icons
+// Duck Quest game-v64 — independent Quest icon border picker
 const HUB_SAVE_KEY = "duckHabitHubSave_v1";
 const MAX_LEVEL = 100;
 const AREA_CONFIG = Object.freeze({
@@ -65,7 +65,7 @@ function getAreaConfig(areaId){
 }
 
 
-// v24.133 — treasure happiness + Endless Run UI themes + quest icon border sync.
+// v24.134 — Duck Quest icon borders can be customized separately from Hub profile borders.
 // Internal save keys still use the legacy area/rank names so existing player progress remains compatible.
 const QUEST_CHARACTER_IDS = Object.freeze(["peep","miko","io","miho","annika"]);
 const QUEST_CHARACTER_NAMES = Object.freeze({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika"});
@@ -285,25 +285,16 @@ const ICON_BORDER_COLORS = Object.freeze([
 function iconBorderStyleById(id){ return ICON_BORDER_STYLES.find(style=>style.id===id) || ICON_BORDER_STYLES[0]; }
 function iconBorderColorById(id){ return ICON_BORDER_COLORS.find(color=>color.id===id) || ICON_BORDER_COLORS[0]; }
 
-function hubProfileBorderSelectionForCharacter(characterId){
-  const selections = hubSave?.profileIconBorders && typeof hubSave.profileIconBorders === "object"
-    ? hubSave.profileIconBorders
-    : {};
-  const current = selections?.[characterId] && typeof selections[characterId] === "object"
-    ? selections[characterId]
-    : {};
-  const styleId = ICON_BORDER_STYLES.some(style=>style.id===(current.style||current.styleId))
-    ? (current.style||current.styleId)
-    : "none";
-  const colorId = ICON_BORDER_COLORS.some(color=>color.id===(current.color||current.colorId))
-    ? (current.color||current.colorId)
-    : "white";
-  return { styleId, colorId };
+function questIconBorderSelectionForCharacter(characterId){
+  const raw=questSave?.[characterId] && typeof questSave[characterId]==="object" ? questSave[characterId] : {};
+  const styleId=ICON_BORDER_STYLES.some(style=>style.id===raw.iconBorderStyle) ? raw.iconBorderStyle : "none";
+  const colorId=ICON_BORDER_COLORS.some(color=>color.id===raw.iconBorderColor) ? raw.iconBorderColor : "white";
+  return {styleId,colorId};
 }
 
 function applyQuestIconBorder(element, characterId){
   if(!element) return;
-  const selection = hubProfileBorderSelectionForCharacter(characterId);
+  const selection = questIconBorderSelectionForCharacter(characterId);
   const style = iconBorderStyleById(selection.styleId);
   const color = iconBorderColorById(selection.colorId);
   let layer = element.querySelector(":scope > .quest-icon-border-layer");
@@ -2211,6 +2202,14 @@ const ui = {
   iconBackgroundCurrent: document.querySelector("#iconBackgroundCurrent"),
   iconBackgroundLabel: document.querySelector("#iconBackgroundLabel"),
   iconBackgroundPicker: document.querySelector("#iconBackgroundPicker"),
+  iconBorderButton: document.querySelector("#iconBorderButton"),
+  iconBorderCurrent: document.querySelector("#iconBorderCurrent"),
+  iconBorderLabel: document.querySelector("#iconBorderLabel"),
+  iconBorderPicker: document.querySelector("#iconBorderPicker"),
+  iconBorderColorButton: document.querySelector("#iconBorderColorButton"),
+  iconBorderColorCurrent: document.querySelector("#iconBorderColorCurrent"),
+  iconBorderColorLabel: document.querySelector("#iconBorderColorLabel"),
+  iconBorderColorPicker: document.querySelector("#iconBorderColorPicker"),
   switchQuestOc: document.querySelector("#switchQuestOc"),
   questOcPicker: document.querySelector("#questOcPicker"),
   buddyHomeCount: document.querySelector("#buddyHomeCount"),
@@ -2408,6 +2407,8 @@ function defaultCharacterQuestProgress(){
     level:1,
     exp:0,
     iconBackground:"white",
+    iconBorderStyle:"none",
+    iconBorderColor:"white",
     lastArea:"meadow",
     areas:{
       meadow:{unlockedRank:1,lastRank:1},
@@ -2445,6 +2446,8 @@ function normalizeCharacterQuestProgress(raw, legacy={}){
     level:clampInt(q.level,1,MAX_LEVEL,1),
     exp:Math.max(0,Number(q.exp)||0),
     iconBackground:ICON_BACKGROUND_COLORS.some(color=>color.id===incomingIcon)?incomingIcon:"white",
+    iconBorderStyle:ICON_BORDER_STYLES.some(style=>style.id===q.iconBorderStyle)?q.iconBorderStyle:"none",
+    iconBorderColor:ICON_BORDER_COLORS.some(color=>color.id===q.iconBorderColor)?q.iconBorderColor:"white",
     lastArea:AREA_CONFIG[q.lastArea ?? legacy.lastArea] ? (q.lastArea ?? legacy.lastArea) : "meadow",
     areas:{
       meadow:{unlockedRank:meadowUnlocked,lastRank:Math.min(meadowLast,meadowUnlocked)},
@@ -3201,6 +3204,22 @@ function closeIconBackgroundPicker(){
   ui.iconBackgroundButton?.setAttribute("aria-expanded","false");
 }
 
+function closeIconBorderPicker(){
+  ui.iconBorderPicker?.classList.add("hidden");
+  ui.iconBorderButton?.setAttribute("aria-expanded","false");
+}
+
+function closeIconBorderColorPicker(){
+  ui.iconBorderColorPicker?.classList.add("hidden");
+  ui.iconBorderColorButton?.setAttribute("aria-expanded","false");
+}
+
+function closeAllIconAppearancePickers(){
+  closeIconBackgroundPicker();
+  closeIconBorderPicker();
+  closeIconBorderColorPicker();
+}
+
 function renderIconBackgroundPicker(){
   normalizeIconBackgroundUnlocks();
   if(!ui.iconBackgroundPicker || !ui.heroSpriteWrap) return;
@@ -3250,6 +3269,125 @@ function setIconBackground(colorId){
   persistAll();
   renderIconBackgroundPicker();
   renderHeroVisuals();
+  renderQuestOcPicker();
+}
+
+function renderIconBorderPicker(){
+  normalizeIconBorderStyleUnlocks();
+  if(!ui.iconBorderPicker || !ui.heroSpriteWrap) return;
+  const hero=activeHeroProgress();
+  const unlocked=new Set(questSave.iconBorderStylesUnlocked);
+  if(!unlocked.has(hero.iconBorderStyle)) hero.iconBorderStyle="none";
+  const selected=iconBorderStyleById(hero.iconBorderStyle);
+  const selectedColor=iconBorderColorById(hero.iconBorderColor);
+
+  if(ui.iconBorderCurrent) applyIconBorderPreviewStyle(ui.iconBorderCurrent,selected,selectedColor);
+  if(ui.iconBorderLabel) ui.iconBorderLabel.textContent=selected.label;
+  applyQuestIconBorder(ui.heroSpriteWrap,activeCharacterId);
+
+  ui.iconBorderPicker.innerHTML="";
+  for(const style of ICON_BORDER_STYLES){
+    const isUnlocked=unlocked.has(style.id);
+    const button=document.createElement("button");
+    button.type="button";
+    button.className=`quest-border-style-choice${isUnlocked?"":" locked"}`;
+    button.setAttribute("aria-current",String(hero.iconBorderStyle===style.id));
+    button.setAttribute("aria-label",`${style.label}${isUnlocked?"":", locked"}`);
+    button.title=style.label;
+
+    const preview=document.createElement("span");
+    preview.className="quest-border-style-preview";
+    applyIconBorderPreviewStyle(preview,style,selectedColor);
+    button.append(preview);
+
+    const label=document.createElement("span");
+    label.textContent=style.label;
+    button.append(label);
+
+    if(!isUnlocked){
+      const lock=document.createElement("span");
+      lock.className="icon-background-lock";
+      lock.textContent="🔒";
+      button.append(lock);
+    }
+
+    button.addEventListener("click",()=>{
+      if(!isUnlocked) return;
+      setIconBorderStyle(style.id);
+      closeIconBorderPicker();
+    });
+    ui.iconBorderPicker.append(button);
+  }
+}
+
+function setIconBorderStyle(styleId){
+  normalizeIconBorderStyleUnlocks();
+  if(!questSave.iconBorderStylesUnlocked.includes(styleId)) return;
+  activeHeroProgress().iconBorderStyle=styleId;
+  persistAll();
+  renderIconBorderPicker();
+  renderIconBorderColorPicker();
+  renderHeroVisuals();
+  renderQuestOcPicker();
+}
+
+function renderIconBorderColorPicker(){
+  normalizeIconBorderColorUnlocks();
+  if(!ui.iconBorderColorPicker || !ui.heroSpriteWrap) return;
+  const hero=activeHeroProgress();
+  const unlocked=new Set(questSave.iconBorderColorsUnlocked);
+  if(!unlocked.has(hero.iconBorderColor)) hero.iconBorderColor="white";
+  const selected=iconBorderColorById(hero.iconBorderColor);
+  const selectedStyle=iconBorderStyleById(hero.iconBorderStyle);
+
+  if(ui.iconBorderColorCurrent){
+    ui.iconBorderColorCurrent.style.background=selected.value;
+    ui.iconBorderColorCurrent.style.backgroundSize="auto";
+  }
+  if(ui.iconBorderColorLabel) ui.iconBorderColorLabel.textContent=selected.label;
+  if(ui.iconBorderCurrent) applyIconBorderPreviewStyle(ui.iconBorderCurrent,selectedStyle,selected);
+  applyQuestIconBorder(ui.heroSpriteWrap,activeCharacterId);
+
+  ui.iconBorderColorPicker.innerHTML="";
+  for(const color of ICON_BORDER_COLORS){
+    const isUnlocked=unlocked.has(color.id);
+    const button=document.createElement("button");
+    button.type="button";
+    button.className=`icon-background-choice${isUnlocked?"":" locked"}`;
+    button.setAttribute("aria-current",String(hero.iconBorderColor===color.id));
+    button.setAttribute("aria-label",`${color.label}${isUnlocked?"":", locked"}`);
+    button.title=color.label;
+
+    const swatch=document.createElement("span");
+    swatch.className="icon-background-dot";
+    swatch.style.background=color.value;
+    button.append(swatch);
+
+    if(!isUnlocked){
+      const lock=document.createElement("span");
+      lock.className="icon-background-lock";
+      lock.textContent="🔒";
+      button.append(lock);
+    }
+
+    button.addEventListener("click",()=>{
+      if(!isUnlocked) return;
+      setIconBorderColor(color.id);
+      closeIconBorderColorPicker();
+    });
+    ui.iconBorderColorPicker.append(button);
+  }
+}
+
+function setIconBorderColor(colorId){
+  normalizeIconBorderColorUnlocks();
+  if(!questSave.iconBorderColorsUnlocked.includes(colorId)) return;
+  activeHeroProgress().iconBorderColor=colorId;
+  persistAll();
+  renderIconBorderPicker();
+  renderIconBorderColorPicker();
+  renderHeroVisuals();
+  renderQuestOcPicker();
 }
 
 
@@ -3452,7 +3590,7 @@ function switchQuestCharacter(characterId){
   const progress=activeHeroProgress();
   selectedArea=AREA_CONFIG[progress.lastArea]?progress.lastArea:"meadow";
   selectedRank=Math.min(areaProgress(selectedArea).unlockedRank,Math.max(1,areaProgress(selectedArea).lastRank||1));
-  closeIconBackgroundPicker();
+  closeAllIconAppearancePickers();
   closeQuestOcPicker();
   persistAll();
   renderMeta();
@@ -3938,6 +4076,8 @@ function renderMeta() {
   applyQuestUiTheme();
   renderSwitchOcButton();
   renderIconBackgroundPicker();
+  renderIconBorderPicker();
+  renderIconBorderColorPicker();
   ui.coinCount.textContent=hubSave.coins.toLocaleString();
   const hero=activeHeroProgress(); renderHeroVisuals();
   ui.levelBadge.textContent=`Lv. ${hero.level}`;
@@ -6279,9 +6419,25 @@ ui.switchQuestOc?.addEventListener("click",()=>{
   ui.switchQuestOc?.setAttribute("aria-expanded",String(Boolean(opening)));
 });
 ui.iconBackgroundButton?.addEventListener("click",()=>{
+  closeIconBorderPicker();
+  closeIconBorderColorPicker();
   const opening=ui.iconBackgroundPicker.classList.contains("hidden");
   ui.iconBackgroundPicker.classList.toggle("hidden",!opening);
   ui.iconBackgroundButton.setAttribute("aria-expanded",String(opening));
+});
+ui.iconBorderButton?.addEventListener("click",()=>{
+  closeIconBackgroundPicker();
+  closeIconBorderColorPicker();
+  const opening=ui.iconBorderPicker.classList.contains("hidden");
+  ui.iconBorderPicker.classList.toggle("hidden",!opening);
+  ui.iconBorderButton.setAttribute("aria-expanded",String(opening));
+});
+ui.iconBorderColorButton?.addEventListener("click",()=>{
+  closeIconBackgroundPicker();
+  closeIconBorderPicker();
+  const opening=ui.iconBorderColorPicker.classList.contains("hidden");
+  ui.iconBorderColorPicker.classList.toggle("hidden",!opening);
+  ui.iconBorderColorButton.setAttribute("aria-expanded",String(opening));
 });
 document.addEventListener("keydown",event=>{
   if(event.key!=="Escape") return;
