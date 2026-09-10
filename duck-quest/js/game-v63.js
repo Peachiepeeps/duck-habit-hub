@@ -1,4 +1,4 @@
-// Duck Quest game-v62 — profile icon border treasure rewards
+// Duck Quest game-v63 — profile icon borders on Duck Quest icons
 const HUB_SAVE_KEY = "duckHabitHubSave_v1";
 const MAX_LEVEL = 100;
 const AREA_CONFIG = Object.freeze({
@@ -65,7 +65,7 @@ function getAreaConfig(areaId){
 }
 
 
-// v24.132 — treasure happiness + Endless Run UI themes + profile icon border rewards.
+// v24.133 — treasure happiness + Endless Run UI themes + quest icon border sync.
 // Internal save keys still use the legacy area/rank names so existing player progress remains compatible.
 const QUEST_CHARACTER_IDS = Object.freeze(["peep","miko","io","miho","annika"]);
 const QUEST_CHARACTER_NAMES = Object.freeze({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika"});
@@ -284,6 +284,50 @@ const ICON_BORDER_COLORS = Object.freeze([
 
 function iconBorderStyleById(id){ return ICON_BORDER_STYLES.find(style=>style.id===id) || ICON_BORDER_STYLES[0]; }
 function iconBorderColorById(id){ return ICON_BORDER_COLORS.find(color=>color.id===id) || ICON_BORDER_COLORS[0]; }
+
+function hubProfileBorderSelectionForCharacter(characterId){
+  const selections = hubSave?.profileIconBorders && typeof hubSave.profileIconBorders === "object"
+    ? hubSave.profileIconBorders
+    : {};
+  const current = selections?.[characterId] && typeof selections[characterId] === "object"
+    ? selections[characterId]
+    : {};
+  const styleId = ICON_BORDER_STYLES.some(style=>style.id===(current.style||current.styleId))
+    ? (current.style||current.styleId)
+    : "none";
+  const colorId = ICON_BORDER_COLORS.some(color=>color.id===(current.color||current.colorId))
+    ? (current.color||current.colorId)
+    : "white";
+  return { styleId, colorId };
+}
+
+function applyQuestIconBorder(element, characterId){
+  if(!element) return;
+  const selection = hubProfileBorderSelectionForCharacter(characterId);
+  const style = iconBorderStyleById(selection.styleId);
+  const color = iconBorderColorById(selection.colorId);
+  let layer = element.querySelector(":scope > .quest-icon-border-layer");
+  if(style.id === "none"){
+    if(layer) layer.remove();
+    return;
+  }
+  if(!layer){
+    layer = document.createElement("div");
+    layer.className = "quest-icon-border-layer";
+    layer.setAttribute("aria-hidden","true");
+    element.appendChild(layer);
+  }
+  layer.style.setProperty("--quest-icon-border-color", color.value);
+  layer.style.setProperty("--quest-icon-border-mask", `url("${style.file}")`);
+}
+
+function questCharacterIconPreviewSrc(characterId){
+  if(characterId === "miko") return MikoIdle?.[0] || "../assets/characters/miko/Miko-base.webp";
+  if(characterId === "io") return IoIdle?.[0] || "../assets/characters/io/Io-base.webp";
+  if(characterId === "miho") return MihoIdle?.[0] || "../assets/characters/miho/base/hurt.webp";
+  if(characterId === "annika") return AnnikaIdle?.[0] || "../assets/characters/annika/base/hurt.webp";
+  return "assets/characters/peep/base/idle-1.webp";
+}
 
 const QUEST_WALLPAPERS = Object.freeze([
   {id:"starry-night-wallpaper",label:"Starry Night",rarity:"rare",weight:1.8,value:"radial-gradient(circle at 18% 22%,#fff6bf 0 2px,transparent 2.6px),radial-gradient(circle at 72% 34%,#fff 0 1.5px,transparent 2px),radial-gradient(circle at 48% 78%,#fff6bf 0 1.5px,transparent 2px),linear-gradient(160deg,#8d97d7,#b9b1ea)",size:"30px 30px,26px 26px,34px 34px,auto"},
@@ -3165,6 +3209,7 @@ function renderIconBackgroundPicker(){
   const selected=iconBackgroundById(hero.iconBackground);
 
   applyIconBackgroundStyle(ui.heroSpriteWrap,selected);
+  applyQuestIconBorder(ui.heroSpriteWrap, activeCharacterId);
   if(ui.iconBackgroundCurrent) applyIconBackgroundStyle(ui.iconBackgroundCurrent,selected);
   if(ui.iconBackgroundLabel) ui.iconBackgroundLabel.textContent=selected.label;
 
@@ -3320,6 +3365,7 @@ function renderHeroVisuals(){
     renderHeroComposite(ui.battleHeroComposite,idle);
     renderHeroComposite(ui.resultHeroComposite,idle);
   }
+  applyQuestIconBorder(ui.heroSpriteWrap, activeCharacterId);
 }
 
 function skillDisplayName(skill){ return skill.name; }
@@ -3346,9 +3392,34 @@ function renderQuestOcPicker(){
     const button=document.createElement("button");
     button.type="button";
     button.className=`quest-oc-choice${id===activeCharacterId?" current":""}`;
-    button.textContent=names[id]||id;
     button.setAttribute("role","menuitem");
     if(id===activeCharacterId) button.setAttribute("aria-current","true");
+
+    const preview=document.createElement("span");
+    preview.className="quest-oc-choice-preview";
+    const progress = questSave?.[id] && typeof questSave[id] === "object" ? questSave[id] : defaultCharacterQuestProgress();
+    const background = iconBackgroundById(progress.iconBackground || "white");
+    applyIconBackgroundStyle(preview, background);
+
+    const sprite=document.createElement("img");
+    sprite.className=`quest-oc-choice-sprite pixel-sprite${id==='peep'?' peep':''}`;
+    sprite.alt="";
+    sprite.src=questCharacterIconPreviewSrc(id);
+    preview.append(sprite);
+    applyQuestIconBorder(preview, id);
+
+    const labelWrap=document.createElement("span");
+    labelWrap.className="quest-oc-choice-copy";
+    const label=document.createElement("strong");
+    label.textContent=names[id]||id;
+    labelWrap.append(label);
+    if(id===activeCharacterId){
+      const current=document.createElement("small");
+      current.textContent="Current";
+      labelWrap.append(current);
+    }
+
+    button.append(preview,labelWrap);
     button.addEventListener("click",()=>switchQuestCharacter(id));
     ui.questOcPicker.append(button);
   });

@@ -1,4 +1,4 @@
-// Hub v24.132 — profile icon borders + treasure pulls
+// Hub v24.133 — Duck Quest icon border sync
 const STORAGE_KEY = "duckHabitHubSave_v1";
 const SAVE_VERSION = 42;
 
