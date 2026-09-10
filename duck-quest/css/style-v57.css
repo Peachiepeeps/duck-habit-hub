@@ -3363,3 +3363,92 @@ body[data-quest-theme="midnight-pixel"] .area-option,body[data-quest-theme="midn
   .quest-border-style-choice{min-height:42px;font-size:.52rem;grid-template-columns:32px minmax(0,1fr);gap:7px}
   .quest-border-style-preview{width:30px;height:30px}
 }
+
+/* =========================================================
+   v24.135 — compact Duck Quest Icon Border style picker
+   ========================================================= */
+.quest-icon-border-control .icon-background-picker-wrap{
+  position:relative;
+}
+
+.quest-border-style-picker{
+  left:0;
+  right:auto;
+  top:calc(100% + 5px);
+  transform:none;
+  width:100%;
+  max-width:100%;
+  max-height:none;
+  overflow:visible;
+  box-sizing:border-box;
+  padding:6px;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:5px;
+  border-width:2px;
+  border-radius:9px;
+  box-shadow:3px 4px 0 rgba(93,64,71,.15);
+}
+
+.quest-border-style-choice{
+  min-width:0;
+  min-height:50px;
+  padding:5px 3px 4px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  border-width:2px;
+  border-radius:7px;
+  text-align:center;
+  line-height:1.05;
+}
+
+.quest-border-style-preview{
+  width:26px;
+  height:26px;
+  flex:0 0 26px;
+  border-radius:6px;
+}
+
+.quest-border-style-label{
+  width:100%;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:.47rem;
+  line-height:1.05;
+}
+
+.quest-border-style-choice .icon-background-lock{
+  right:1px;
+  bottom:1px;
+  width:14px;
+  height:14px;
+  font-size:.4rem;
+}
+
+@media(max-width:520px){
+  .quest-border-style-picker{
+    left:0;
+    transform:none;
+    width:100%;
+    max-width:100%;
+    padding:5px;
+    gap:4px;
+  }
+  .quest-border-style-choice{
+    min-height:46px;
+    padding:4px 2px;
+    gap:2px;
+  }
+  .quest-border-style-preview{
+    width:24px;
+    height:24px;
+    flex-basis:24px;
+  }
+  .quest-border-style-label{
+    font-size:.43rem;
+  }
+}

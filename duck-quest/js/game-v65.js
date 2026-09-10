@@ -1,4 +1,4 @@
-// Duck Quest game-v64 — independent Quest icon border picker
+// Duck Quest game-v65 — independent Quest icon border picker
 const HUB_SAVE_KEY = "duckHabitHubSave_v1";
 const MAX_LEVEL = 100;
 const AREA_CONFIG = Object.freeze({
@@ -3301,7 +3301,8 @@ function renderIconBorderPicker(){
     button.append(preview);
 
     const label=document.createElement("span");
-    label.textContent=style.label;
+    label.className="quest-border-style-label";
+    label.textContent=style.id==="none" ? "None" : style.label.replace(/\s+Border$/i,"");
     button.append(label);
 
     if(!isUnlocked){
