@@ -2830,3 +2830,141 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
   .skill-book-list .skill-summary{padding:7px}
   .skill-summary-title small{font-size:.46rem}
 }
+
+
+/* =========================================================
+   V50 / Hub v24.127 — Buddy Book mobile framing polish
+   ========================================================= */
+/* Keep the Buddy Book comfortably inside narrow phone viewports. */
+@media(max-width:560px){
+  #buddyScreen{
+    min-width:0;
+    max-width:100%;
+    overflow-x:hidden;
+  }
+
+  .buddy-book-card{
+    width:100%;
+    min-width:0;
+    padding:10px;
+    overflow:hidden;
+  }
+
+  /* On phones, give the title its own full-width row so it never runs off-screen. */
+  .buddy-book-heading{
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:7px 8px;
+    align-items:center;
+  }
+  .buddy-book-heading>.pixel-button{
+    grid-column:1;
+    grid-row:1;
+    justify-self:start;
+    white-space:nowrap;
+  }
+  .buddy-book-heading>div{
+    grid-column:1/-1;
+    grid-row:2;
+    min-width:0;
+    text-align:center;
+  }
+  .buddy-book-heading h2{
+    margin:2px 0 0;
+    font-size:1.18rem;
+    line-height:1.08;
+    white-space:normal;
+  }
+  .buddy-count-pill{
+    grid-column:2;
+    grid-row:1;
+    min-width:70px;
+    justify-self:end;
+    padding:5px 7px;
+    font-size:.68rem;
+  }
+
+  /* Fit all five area tabs on the phone instead of cutting the last one off. */
+  .buddy-filters{
+    display:grid;
+    grid-template-columns:repeat(5,minmax(0,1fr));
+    gap:4px;
+    margin:10px 0 8px;
+    padding-bottom:0;
+    overflow:visible;
+  }
+  .buddy-filter{
+    min-width:0;
+    min-height:36px;
+    padding:5px 2px;
+    font-size:.49rem;
+    line-height:1.08;
+    white-space:normal;
+  }
+
+  /* Two roomy columns on phones, with smaller, centered portrait art. */
+  .buddy-collection-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:7px;
+  }
+  .buddy-tile{
+    min-height:126px;
+    grid-template-rows:82px auto auto;
+    gap:2px;
+    padding:5px 4px 6px;
+  }
+  .buddy-tile-art{
+    width:100%;
+    height:82px;
+    display:grid;
+    place-items:center;
+    overflow:hidden;
+    padding:3px 5px 0;
+  }
+  .buddy-family-tile .buddy-tile-art img{
+    width:88% !important;
+    height:84% !important;
+    max-width:124px;
+    max-height:72px;
+    display:block;
+    justify-self:center;
+    align-self:center;
+    margin:0 auto;
+    object-fit:contain;
+    object-position:center center;
+    transform:translateY(5px);
+    transform-origin:center center;
+    image-rendering:pixelated;
+  }
+  .buddy-tile strong{
+    font-size:.58rem;
+    line-height:1.08;
+    text-align:center;
+  }
+  .buddy-tile small{
+    font-size:.47rem;
+    line-height:1.08;
+    text-align:center;
+  }
+  .buddy-tile-badge{
+    top:4px;
+    right:4px;
+    min-width:23px;
+    min-height:23px;
+    padding:1px 4px;
+    font-size:.5rem;
+  }
+}
+
+@media(max-width:360px){
+  .buddy-book-card{padding:8px}
+  .buddy-book-heading h2{font-size:1.08rem}
+  .buddy-filter{font-size:.45rem;padding-inline:1px}
+  .buddy-collection-grid{gap:6px}
+  .buddy-tile{min-height:122px;grid-template-rows:78px auto auto}
+  .buddy-tile-art{height:78px}
+  .buddy-family-tile .buddy-tile-art img{
+    width:86% !important;
+    height:82% !important;
+    max-height:68px;
+  }
+}
