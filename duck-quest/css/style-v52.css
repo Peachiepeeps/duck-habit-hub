@@ -2971,7 +2971,7 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
 
 
 /* =========================================================
-   V51 / Hub v24.128 — UI Themes + RPG terminology polish
+   V52 / Hub v24.129 — Theme polish + hub consistency
    ========================================================= */
 :root{
   --quest-bg-a:#efbfd0;
@@ -3007,14 +3007,14 @@ body[data-quest-theme="io-sweetheart"]{
   --quest-bg-a:#f2bdd0;--quest-bg-b:#f8d6e2;--quest-surface:#fff1f6;--quest-surface-2:#fff7fa;--quest-soft:#efc2d2;--quest-button:#fff7fa;--quest-selected:#f6c3d7;--quest-accent:#e65d99;--quest-accent-2:#f3b8cd;--quest-muted:#8d6878;
 }
 body[data-quest-theme="miho-tea-room"]{
-  --cream:#fffceb;--pink:#b6cdb8;--deep-pink:#718f7e;--brown:#41443d;--brown-2:#6c7167;
-  --panel:rgba(255,253,239,.97);--border:#55584f;--shadow:0 6px 0 rgba(65,68,61,.20);
-  --quest-bg-a:#ded8c2;--quest-bg-b:#eee9d4;--quest-surface:#f8f4e8;--quest-surface-2:#fffdf3;--quest-soft:#dce9dc;--quest-button:#fffdf5;--quest-selected:#dce8dc;--quest-accent:#8db19a;--quest-accent-2:#c9d9c8;--quest-muted:#70756b;
+  --cream:#362930;--pink:#7f4250;--deep-pink:#f8eef1;--brown:#f6f0f2;--brown-2:#dbc8cd;
+  --panel:rgba(47,35,43,.95);--border:#9f6673;--shadow:0 6px 0 rgba(22,14,19,.28);
+  --quest-bg-a:#241b21;--quest-bg-b:#33242c;--quest-surface:#392b33;--quest-surface-2:#46323d;--quest-soft:#4f3943;--quest-button:#5b313d;--quest-selected:#71404d;--quest-accent:#8b4352;--quest-accent-2:#6b3946;--quest-muted:#decace;
 }
 body[data-quest-theme="annika-crimson"]{
-  --cream:#fff6f1;--pink:#d88691;--deep-pink:#9f3b4d;--brown:#512f31;--brown-2:#78504f;
-  --panel:rgba(255,247,242,.97);--border:#63383a;--shadow:0 6px 0 rgba(77,43,44,.23);
-  --quest-bg-a:#dfb4bc;--quest-bg-b:#edd0d3;--quest-surface:#fff0ec;--quest-surface-2:#fff7f3;--quest-soft:#e8cecb;--quest-button:#fff7f1;--quest-selected:#e8bfc6;--quest-accent:#a94355;--quest-accent-2:#ddb0b6;--quest-muted:#7c5e5c;
+  --cream:#fff7f4;--pink:#e19aaa;--deep-pink:#fff3f5;--brown:#572f35;--brown-2:#83565e;
+  --panel:rgba(255,247,244,.97);--border:#79454e;--shadow:0 6px 0 rgba(86,45,53,.23);
+  --quest-bg-a:#e0b9c2;--quest-bg-b:#f0d6dc;--quest-surface:#fff2ef;--quest-surface-2:#fff8f5;--quest-soft:#f0d7db;--quest-button:#fff7f3;--quest-selected:#efcad1;--quest-accent:#b14b60;--quest-accent-2:#ebc4cd;--quest-muted:#775b60;
 }
 body[data-quest-theme="meadow-bloom"]{
   --cream:#fffbe8;--pink:#d7a7b2;--deep-pink:#6f9f6e;--brown:#4f5542;--brown-2:#788068;
@@ -3114,3 +3114,13 @@ body{
   .buddy-family-icon-actions{grid-template-columns:1fr;text-align:center;justify-items:center}
   .buddy-family-icon-actions small{font-size:.50rem}
 }
+
+body[data-quest-theme="annika-crimson"] .mini-label,
+body[data-quest-theme="annika-crimson"] .ui-theme-current-row strong,
+body[data-quest-theme="annika-crimson"] .ui-theme-card-copy em{color:#fff3f5}
+body[data-quest-theme="miho-tea-room"] .pixel-button,
+body[data-quest-theme="miho-tea-room"] .buddy-filter,
+body[data-quest-theme="miho-tea-room"] .quest-modal-close{color:#fff7f8}
+body[data-quest-theme="miho-tea-room"] .level-badge,
+body[data-quest-theme="miho-tea-room"] .buddy-count-pill,
+body[data-quest-theme="miho-tea-room"] .ui-theme-current-row{color:#f8eef1}

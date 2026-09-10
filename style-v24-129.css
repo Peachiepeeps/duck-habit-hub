@@ -1,4 +1,4 @@
-/* Hub v24.128 — Duck Quest UI themes + RPG terminology */
+/* Hub v24.129 — Quest theme consistency + UI palette tune-up */
 :root {
   --ink: #51323c;
   --paper: #fff8f3;
@@ -7399,3 +7399,147 @@ button { color: inherit; }
 .profile-detail-avatar[data-character-id="annika"] > .profile-head-duck-layer {
   left: -28%;
 }
+
+
+/* =========================================================
+   V24.129 — Duck Quest UI theme carries into the main hub
+   ========================================================= */
+:root{
+  --hub-bg-a:#eadde1;
+  --hub-bg-b:#f3e6eb;
+  --hub-stage:#f7efe9;
+  --hub-panel:rgba(250,253,255,.95);
+  --hub-panel-soft:rgba(255,255,255,.85);
+  --hub-panel-accent:rgba(237,246,251,.95);
+  --hub-border:rgba(117,134,147,.38);
+  --hub-border-strong:rgba(132,176,206,.62);
+  --hub-button:#f3bfd1;
+  --hub-button-secondary:#eee8e9;
+  --hub-button-text:#744858;
+  --hub-button-secondary-text:#8d777e;
+  --hub-muted:#91a7b5;
+  --hub-chip:#dff2fb;
+}
+body[data-quest-theme="classic-cream"]{
+  --ink:#51323c;--paper:#fff8f3;--pink:#ef9eb9;--pink-dark:#cb6f91;--shadow:0 12px 36px rgba(55,32,40,.22);
+  --hub-bg-a:#eadde1;--hub-bg-b:#f4e7eb;--hub-stage:#f7efe9;--hub-panel:rgba(255,250,245,.96);--hub-panel-soft:rgba(255,255,255,.82);--hub-panel-accent:rgba(255,246,250,.95);--hub-border:rgba(162,126,139,.36);--hub-border-strong:rgba(203,111,145,.42);--hub-button:#f3bfd1;--hub-button-secondary:#f4eceb;--hub-button-text:#744858;--hub-button-secondary-text:#8d777e;--hub-muted:#8e7a83;--hub-chip:#f7d9e5;
+}
+body[data-quest-theme="peep-picnic"]{
+  --ink:#5b4343;--paper:#fffaf7;--pink:#ebacc2;--pink-dark:#d36f98;--shadow:0 12px 36px rgba(79,51,58,.20);
+  --hub-bg-a:#f4d4dd;--hub-bg-b:#fae8ed;--hub-stage:#fff7f7;--hub-panel:rgba(255,250,247,.96);--hub-panel-soft:rgba(255,255,255,.86);--hub-panel-accent:rgba(228,245,240,.96);--hub-border:rgba(165,125,136,.34);--hub-border-strong:rgba(211,111,152,.42);--hub-button:#efbed0;--hub-button-secondary:#edf6f1;--hub-button-text:#7a4f60;--hub-button-secondary-text:#6a7d76;--hub-muted:#8c7276;--hub-chip:#def0eb;
+}
+body[data-quest-theme="miko-moonlight"]{
+  --ink:#3f3d38;--paper:#fff8e9;--pink:#d8c68f;--pink-dark:#9a8050;--shadow:0 12px 36px rgba(60,57,51,.21);
+  --hub-bg-a:#ddd6c8;--hub-bg-b:#f1eadc;--hub-stage:#fbf5e7;--hub-panel:rgba(255,250,240,.96);--hub-panel-soft:rgba(255,255,255,.86);--hub-panel-accent:rgba(244,235,204,.95);--hub-border:rgba(130,119,96,.36);--hub-border-strong:rgba(154,128,80,.38);--hub-button:#eadcaf;--hub-button-secondary:#f5efe0;--hub-button-text:#6d5731;--hub-button-secondary-text:#776a5a;--hub-muted:#827869;--hub-chip:#f0e4be;
+}
+body[data-quest-theme="io-sweetheart"]{
+  --ink:#5c3d4b;--paper:#fff7fb;--pink:#ef9abd;--pink-dark:#c74780;--shadow:0 12px 36px rgba(95,58,75,.21);
+  --hub-bg-a:#f4cade;--hub-bg-b:#fbe5ed;--hub-stage:#fff6fa;--hub-panel:rgba(255,247,252,.97);--hub-panel-soft:rgba(255,255,255,.88);--hub-panel-accent:rgba(248,218,230,.95);--hub-border:rgba(146,104,123,.34);--hub-border-strong:rgba(199,71,128,.40);--hub-button:#f2bdd3;--hub-button-secondary:#fff2f8;--hub-button-text:#8e4567;--hub-button-secondary-text:#966f80;--hub-muted:#8f7080;--hub-chip:#f7cadc;
+}
+body[data-quest-theme="miho-tea-room"]{
+  --ink:#f6f1f2;--paper:#251d24;--pink:#7c3c4a;--pink-dark:#f5e8ea;--shadow:0 16px 42px rgba(15,10,13,.35);
+  --hub-bg-a:#231b21;--hub-bg-b:#34252d;--hub-stage:#2c2128;--hub-panel:rgba(49,37,44,.94);--hub-panel-soft:rgba(66,48,58,.84);--hub-panel-accent:rgba(73,44,52,.92);--hub-border:rgba(183,118,132,.42);--hub-border-strong:rgba(220,166,178,.55);--hub-button:#6b313f;--hub-button-secondary:#463640;--hub-button-text:#fff5f6;--hub-button-secondary-text:#f0d9de;--hub-muted:#d7bdc2;--hub-chip:#5f2e39;
+}
+body[data-quest-theme="annika-crimson"]{
+  --ink:#5b3438;--paper:#fff6f2;--pink:#d78496;--pink-dark:#fff2f4;--shadow:0 12px 36px rgba(84,43,51,.24);
+  --hub-bg-a:#e1bbc3;--hub-bg-b:#f2d6dc;--hub-stage:#fff3ef;--hub-panel:rgba(255,245,241,.97);--hub-panel-soft:rgba(255,255,255,.88);--hub-panel-accent:rgba(250,227,231,.95);--hub-border:rgba(128,73,84,.34);--hub-border-strong:rgba(169,67,85,.40);--hub-button:#b14b60;--hub-button-secondary:#fff0f3;--hub-button-text:#fff7f8;--hub-button-secondary-text:#7f5460;--hub-muted:#7e6265;--hub-chip:#eac6ce;
+}
+body[data-quest-theme="meadow-bloom"]{
+  --ink:#4b563e;--paper:#fffbe9;--pink:#d8aab8;--pink-dark:#6f9f6e;--shadow:0 12px 36px rgba(74,82,62,.20);
+  --hub-bg-a:#d8e7c9;--hub-bg-b:#edf5dd;--hub-stage:#faf8e7;--hub-panel:rgba(255,251,236,.96);--hub-panel-soft:rgba(255,255,255,.87);--hub-panel-accent:rgba(225,240,208,.96);--hub-border:rgba(110,129,94,.35);--hub-border-strong:rgba(111,159,110,.42);--hub-button:#c8dfb0;--hub-button-secondary:#fff8e8;--hub-button-text:#55734f;--hub-button-secondary-text:#7a7c68;--hub-muted:#737966;--hub-chip:#dcebc7;
+}
+body[data-quest-theme="ocean-breeze"]{
+  --ink:#425963;--paper:#f5fbff;--pink:#b8dbe7;--pink-dark:#5e9fbd;--shadow:0 12px 36px rgba(61,85,95,.20);
+  --hub-bg-a:#c6e0ea;--hub-bg-b:#e3f0f4;--hub-stage:#f3fbfe;--hub-panel:rgba(247,252,255,.97);--hub-panel-soft:rgba(255,255,255,.88);--hub-panel-accent:rgba(224,243,248,.96);--hub-border:rgba(101,131,142,.35);--hub-border-strong:rgba(94,159,189,.42);--hub-button:#c7e2ee;--hub-button-secondary:#f8fdff;--hub-button-text:#4b7c94;--hub-button-secondary-text:#6e8188;--hub-muted:#6b8089;--hub-chip:#d8edf4;
+}
+body[data-quest-theme="candy-pop"]{
+  --ink:#664763;--paper:#fff8fd;--pink:#f0a4cb;--pink-dark:#c75b9a;--shadow:0 12px 36px rgba(91,61,91,.20);
+  --hub-bg-a:#f3c9df;--hub-bg-b:#efe0f6;--hub-stage:#fff7fd;--hub-panel:rgba(255,248,254,.97);--hub-panel-soft:rgba(255,255,255,.90);--hub-panel-accent:rgba(243,223,248,.96);--hub-border:rgba(131,95,130,.34);--hub-border-strong:rgba(199,91,154,.41);--hub-button:#efbedb;--hub-button-secondary:#fbf3ff;--hub-button-text:#a24b82;--hub-button-secondary-text:#8c6c8a;--hub-muted:#8c7288;--hub-chip:#eed6f5;
+}
+body[data-quest-theme="cloud-dream"]{
+  --ink:#4e536a;--paper:#f8fbff;--pink:#c5c5ea;--pink-dark:#7d8fc5;--shadow:0 12px 36px rgba(70,78,105,.20);
+  --hub-bg-a:#d6e3f2;--hub-bg-b:#ece8f8;--hub-stage:#f9fbff;--hub-panel:rgba(250,251,255,.97);--hub-panel-soft:rgba(255,255,255,.90);--hub-panel-accent:rgba(228,235,250,.96);--hub-border:rgba(108,115,145,.35);--hub-border-strong:rgba(125,143,197,.42);--hub-button:#dae0f5;--hub-button-secondary:#fbfbff;--hub-button-text:#6f81b4;--hub-button-secondary-text:#787d90;--hub-muted:#747a8d;--hub-chip:#e2e6f7;
+}
+body[data-quest-theme]{
+  background:linear-gradient(rgba(255,255,255,.10),rgba(255,255,255,.10)),repeating-linear-gradient(0deg,var(--hub-bg-a) 0 18px,var(--hub-bg-b) 18px 36px);
+}
+body[data-quest-theme] .stage{background:var(--hub-stage);box-shadow:var(--shadow)}
+body[data-quest-theme] .room-swatch-button,
+body[data-quest-theme] .coin-pill,
+body[data-quest-theme] .room-picker,
+body[data-quest-theme] .panel,
+body[data-quest-theme] .tasks-panel,
+body[data-quest-theme] .status-panel,
+body[data-quest-theme] .dailies-panel,
+body[data-quest-theme] .inventory-panel,
+body[data-quest-theme] .shop-panel,
+body[data-quest-theme] .closet-panel,
+body[data-quest-theme] .save-data-panel{
+  background:var(--hub-panel) !important;
+  border-color:var(--hub-border) !important;
+  color:var(--ink);
+}
+body[data-quest-theme] .book-grid button,
+body[data-quest-theme] .closet-category-menu button,
+body[data-quest-theme] .closet-option-card,
+body[data-quest-theme] .sock-placement-button,
+body[data-quest-theme] .round-icon-button,
+body[data-quest-theme] .add-task-button,
+body[data-quest-theme] .daily-main-button,
+body[data-quest-theme] .daily-mini-button,
+body[data-quest-theme] .complete-task-button,
+body[data-quest-theme] .template-add-button,
+body[data-quest-theme] .shop-buy-button,
+body[data-quest-theme] .close-button,
+body[data-quest-theme] .primary-button,
+body[data-quest-theme] .secondary-button{
+  border-color:var(--hub-border) !important;
+  color:var(--hub-button-text) !important;
+  box-shadow:0 6px 16px rgba(55,32,40,.12);
+}
+body[data-quest-theme] .round-icon-button,
+body[data-quest-theme] .add-task-button,
+body[data-quest-theme] .daily-main-button,
+body[data-quest-theme] .complete-task-button,
+body[data-quest-theme] .template-add-button,
+body[data-quest-theme] .shop-buy-button,
+body[data-quest-theme] .close-button,
+body[data-quest-theme] .primary-button{
+  background:var(--hub-button) !important;
+  color:var(--hub-button-text) !important;
+}
+body[data-quest-theme] .secondary-button,
+body[data-quest-theme] .daily-mini-button,
+body[data-quest-theme] .sock-placement-button,
+body[data-quest-theme] .closet-category-menu button,
+body[data-quest-theme] .book-grid button,
+body[data-quest-theme] .closet-option-card{
+  background:var(--hub-panel-soft) !important;
+  color:var(--ink) !important;
+}
+body[data-quest-theme] .closet-category-menu button.active,
+body[data-quest-theme] .sock-placement-button.selected,
+body[data-quest-theme] .closet-option-card.toggle-equipped{
+  background:var(--hub-panel-accent) !important;
+  border-color:var(--hub-border-strong) !important;
+}
+body[data-quest-theme] .room-picker-arrow,
+body[data-quest-theme] .closet-category-button,
+body[data-quest-theme] .closet-color-row label,
+body[data-quest-theme] .closet-option-note,
+body[data-quest-theme] .daily-empty,
+body[data-quest-theme] .inventory-empty,
+body[data-quest-theme] .status-subtle,
+body[data-quest-theme] .panel-subtitle{color:var(--hub-muted) !important;}
+body[data-quest-theme] .shop-coin-pill,
+body[data-quest-theme] .inventory-count-pill{background:var(--hub-chip) !important;border-color:var(--hub-border) !important;color:var(--ink) !important;}
+body[data-quest-theme="miho-tea-room"] .panel,
+body[data-quest-theme="miho-tea-room"] .tasks-panel,
+body[data-quest-theme="miho-tea-room"] .status-panel,
+body[data-quest-theme="miho-tea-room"] .dailies-panel,
+body[data-quest-theme="miho-tea-room"] .inventory-panel,
+body[data-quest-theme="miho-tea-room"] .shop-panel,
+body[data-quest-theme="miho-tea-room"] .closet-panel,
+body[data-quest-theme="miho-tea-room"] .room-picker,
+body[data-quest-theme="miho-tea-room"] .room-swatch-button,
+body[data-quest-theme="miho-tea-room"] .coin-pill{color:var(--ink) !important;}

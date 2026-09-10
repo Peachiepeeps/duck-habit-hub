@@ -1,4 +1,4 @@
-// Hub v24.128 — Duck Quest UI themes + RPG terminology
+// Hub v24.129 — Quest theme consistency + UI palette tune-up
 const STORAGE_KEY = "duckHabitHubSave_v1";
 const SAVE_VERSION = 41;
 
@@ -3619,6 +3619,48 @@ function ensureDuckipediaRoseGoldShimmerCharm(options = {}) {
 let save = loadSave();
 ensureDuckipediaRoseGoldShimmerCharm({ notify: false });
 
+const DUCK_QUEST_UI_THEME_META = Object.freeze({
+  "classic-cream": { themeColor: "#f6c6d6" },
+  "peep-picnic": { themeColor: "#f4c6d6" },
+  "miko-moonlight": { themeColor: "#ded5bd" },
+  "io-sweetheart": { themeColor: "#f4bfd1" },
+  "miho-tea-room": { themeColor: "#5a2b34" },
+  "annika-crimson": { themeColor: "#b14b60" },
+  "meadow-bloom": { themeColor: "#d8e7c3" },
+  "ocean-breeze": { themeColor: "#c9e5ef" },
+  "candy-pop": { themeColor: "#f4c8e1" },
+  "cloud-dream": { themeColor: "#d9e8f5" }
+});
+const DUCK_QUEST_UI_THEME_IDS = new Set(Object.keys(DUCK_QUEST_UI_THEME_META));
+
+function currentQuestUiThemeIdFromSave(source = save) {
+  const id = source?.duckQuest?.uiTheme;
+  return DUCK_QUEST_UI_THEME_IDS.has(id) ? id : "classic-cream";
+}
+
+function applyQuestThemeToHub(source = save) {
+  const themeId = currentQuestUiThemeIdFromSave(source);
+  const meta = DUCK_QUEST_UI_THEME_META[themeId] || DUCK_QUEST_UI_THEME_META["classic-cream"];
+  document.body.dataset.questTheme = themeId;
+  document.querySelectorAll('meta[name="theme-color"]').forEach(node => node.setAttribute('content', meta.themeColor));
+}
+
+applyQuestThemeToHub();
+window.addEventListener("pageshow", () => {
+  save = loadSave();
+  applyQuestThemeToHub();
+});
+window.addEventListener("storage", event => {
+  if (event.key && event.key !== STORAGE_KEY) return;
+  save = loadSave();
+  applyQuestThemeToHub();
+});
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) return;
+  save = loadSave();
+  applyQuestThemeToHub();
+});
+
 const GACHA_PULL_COST = 100;
 const GACHA_TEN_PULL_COST = 900;
 const GACHA_RARITY_ORDER = Object.freeze(["common", "uncommon", "rare", "super"]);
@@ -6673,10 +6715,10 @@ function renderAnnikaLegwearOptions(group) {
 
 function closetLockedMessage(id, asset) {
   const questRewardHints = {
-    "daisy-crown": "Daisy Crown is locked — complete Meadow Rank 40 with this OC in Duck Quest!",
-    "ocean-sunglasses": "Sunglasses are locked — complete Ocean Rank 80 with this OC in Duck Quest!",
-    "candy-hairclip": "Candy Hairclip is locked — complete Candyland Rank 120 with this OC in Duck Quest!",
-    "halo": "Halo is locked — complete Cloud Garden Rank 160 with this OC in Duck Quest!"
+    "daisy-crown": "Daisy Crown is locked — complete Meadow Level 40 with this OC in Duck Quest!",
+    "ocean-sunglasses": "Sunglasses are locked — complete Ocean Level 80 with this OC in Duck Quest!",
+    "candy-hairclip": "Candy Hairclip is locked — complete Candyland Level 120 with this OC in Duck Quest!",
+    "halo": "Halo is locked — complete Cloud Garden Level 160 with this OC in Duck Quest!"
   };
   return questRewardHints[id] || `${asset.label} is locked — unlock it from the Shop!`;
 }

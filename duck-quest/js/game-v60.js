@@ -65,8 +65,8 @@ function getAreaConfig(areaId){
 }
 
 
-// v24.128 — unlockable Duck Quest UI themes. Internal save keys still use
-// the legacy area/rank names so existing player progress remains compatible.
+// v24.129 — unlockable Duck Quest UI themes with improved palettes and hub consistency.
+// Internal save keys still use the legacy area/rank names so existing player progress remains compatible.
 const QUEST_CHARACTER_IDS = Object.freeze(["peep","miko","io","miho","annika"]);
 const QUEST_CHARACTER_NAMES = Object.freeze({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika"});
 const QUEST_UI_THEMES = Object.freeze([
@@ -94,15 +94,15 @@ const QUEST_UI_THEMES = Object.freeze([
     requirement:{stage:"meadow",level:10,character:"io"}
   },
   {
-    id:"miho-tea-room", name:"Miho Tea Room",
-    description:"Ivory, soft sage, and elegant ink.",
-    swatches:["#fffceb","#91b6a0","#4f514b"], themeColor:"#e7e1c9",
+    id:"miho-tea-room", name:"Miho Silent Space",
+    description:"Dark charcoal, muted crimson, and a cold white glow.",
+    swatches:["#2b2027","#7b3c49","#f4ecef"], themeColor:"#5a2b34",
     requirement:{stage:"meadow",level:10,character:"miho"}
   },
   {
     id:"annika-crimson", name:"Annika Crimson",
-    description:"Deep cherry red, blush, and warm cocoa.",
-    swatches:["#fff6f1","#a94355","#5b3433"], themeColor:"#e7bec4",
+    description:"Cherry red with softer cream highlights for easier reading.",
+    swatches:["#fff7f4","#b14b60","#f4d6dc"], themeColor:"#b14b60",
     requirement:{stage:"meadow",level:10,character:"annika"}
   },
   {
@@ -2465,6 +2465,11 @@ function applyQuestUiTheme(){
   if(ui.uiThemeCurrent) ui.uiThemeCurrent.textContent=theme.name;
 }
 
+function syncQuestThemeIntoHubSave(){
+  hubSave.duckQuest = questSave;
+  try{ localStorage.setItem(HUB_SAVE_KEY, JSON.stringify(hubSave)); }catch(error){}
+}
+
 function makeQuestThemeSwatch(theme,className="ui-theme-swatch"){
   const swatch=document.createElement("span");
   swatch.className=className;
@@ -2500,6 +2505,7 @@ function renderUiThemePicker(){
     if(unlocked) button.addEventListener("click",()=>{
       questSave.uiTheme=theme.id;
       applyQuestUiTheme();
+      syncQuestThemeIntoHubSave();
       persistAll();
       renderUiThemePicker();
     });
