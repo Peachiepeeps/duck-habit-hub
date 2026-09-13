@@ -1,6 +1,6 @@
-// Hub v24.141 — layering fixes + closet polish + image warmup
+// Hub v24.142 — beret + Annika duck + pet bed placement polish
 const STORAGE_KEY = "duckHabitHubSave_v1";
-const SAVE_VERSION = 43;
+const SAVE_VERSION = 44;
 
 const CHARACTERS = {
   peep: {
@@ -201,7 +201,7 @@ const CHARACTERS = {
     assetFolder: "assets/annika/",
     duckHeadPlacement: {
       left: 50.4,
-      top: 36.9,
+      top: 38.0,
       width: 17.0
     },
     invitationImage: "assets/oc-invitations/Annika-invitation.png",
@@ -5452,9 +5452,9 @@ function getRenderOrderedAssets(characterId = save.selectedCharacter) {
     const peepOrder = [
       "tail-cow", "tail-bunny",
       "large-back-bow", "bow-white",
-      "hair-short", "hair-low-pigtails", "hair-ponytail", "hair-long-pigtails", "hair-jellyfish",
-      // Beret should sit behind Peep instead of in front of her face/hair.
+      // Beret should sit behind all of Peep's hair.
       "beret",
+      "hair-short", "hair-low-pigtails", "hair-ponytail", "hair-long-pigtails", "hair-jellyfish",
       "base",
       "sock-left-blue", "sock-right-blue", "sock-left-rainbow", "sock-right-rainbow", "legwear-white-lace",
       "leg-bandage",
@@ -7362,8 +7362,8 @@ const DRESSER_DUCK_PERCH = Object.freeze({
 
 const PETBED_DUCK_PERCH = Object.freeze({
   left: 25.0,
-  top: 87.0,
-  width: 12.5
+  top: 90.4,
+  width: 11.7
 });
 
 function normalizeRoomFurniture() {

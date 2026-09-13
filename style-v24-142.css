@@ -7738,7 +7738,7 @@ body[data-quest-theme="midnight-pixel"] .secondary-button,body[data-quest-theme=
   left:27%;
 }
 .petbed-furniture{
-  transform:translateX(-62.8%);
+  transform:translate(-62.8%, 4.6%);
 }
 
 /* When the closet opens, keep the dressing area clean: the OC stays visible
