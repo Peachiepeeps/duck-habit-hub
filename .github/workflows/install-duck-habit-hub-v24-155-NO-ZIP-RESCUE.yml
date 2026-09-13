@@ -1,0 +1,235 @@
+name: Rescue Duckie Days v24.155 Without ZIP
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/install-duck-habit-hub-v24-155-NO-ZIP-RESCUE.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-155-no-zip-rescue
+  cancel-in-progress: false
+
+jobs:
+  rescue-install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build v24.155 directly from v24.154
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ -f version.json ] && grep -Fq '"version": "24.155"' version.json; then
+            echo "v24.155 is already installed."
+            exit 0
+          fi
+
+          for REQUIRED in \
+            index.html \
+            manifest.webmanifest \
+            version.json \
+            sw.js \
+            script-v24-154.js \
+            style-v24-154.css \
+            sw-v24-154.js \
+            duck-hub-cache-reset.html \
+            duck-quest/index.html \
+            duck-quest/js/game-v71.js \
+            duck-quest/css/style-v63.css
+          do
+            if [ ! -f "$REQUIRED" ]; then
+              echo "::error::Cannot build v24.155 because $REQUIRED is missing."
+              exit 1
+            fi
+          done
+
+          cp script-v24-154.js script-v24-155.js
+          cp style-v24-154.css style-v24-155.css
+          cp sw-v24-154.js sw-v24-155.js
+          cp duck-quest/js/game-v71.js duck-quest/js/game-v72.js
+          cp duck-quest/css/style-v63.css duck-quest/css/style-v64.css
+
+          python3 <<'PY'
+          from pathlib import Path
+          import json
+          import re
+
+          # Root hub script metadata.
+          p = Path("script-v24-155.js")
+          text = p.read_text()
+          text = text.replace(
+              "// Hub v24.154 — stitched border outline polish + clean Sakura/Sparkle rendering",
+              "// Hub v24.155 — remove stitched dark halo; light stitches get same-color thickness only"
+          )
+          text = text.replace("const SAVE_VERSION = 55;", "const SAVE_VERSION = 56;")
+          p.write_text(text)
+
+          # Duck Quest JS: remove darker assist color and use same-color thickening only.
+          p = Path("duck-quest/js/game-v72.js")
+          text = p.read_text()
+
+          text, count = re.subn(
+              r'\nfunction makeQuestBorderAssistColor\(hex\)\{\n'
+              r'  const \{r,g,b\}=questBorderHexToRgb\(hex\);\n'
+              r'  return questBorderRgbToHex\(r\*0\.66,g\*0\.66,b\*0\.66\);\n'
+              r'\}\n',
+              "\n",
+              text,
+              count=1
+          )
+          if count != 1:
+              raise SystemExit("Could not remove the old darker Stitched assist-color helper.")
+
+          pattern = (
+              r'        const wantsAssist=safeStyleId==="stitched" && isLightQuestBorderColor\(colorValue\|\|"#fffaf3"\);\n'
+              r'        if\(wantsAssist\)\{\n'
+              r'          const assist=tintQuestBorderSource\(source,makeQuestBorderAssistColor\(colorValue\|\|"#fffaf3"\)\);\n'
+              r'          if\(assist\)\{\n'
+              r'            for\(const \[dx,dy\] of \[\[-1,0\],\[1,0\],\[0,-1\],\[0,1\],\[-1,-1\],\[1,-1\],\[-1,1\],\[1,1\]\]\)\{\n'
+              r'              outCtx\.drawImage\(assist,dx,dy,assist\.width,assist\.height\);\n'
+              r'            \}\n'
+              r'          \}\n'
+              r'        \}\n'
+          )
+          replacement = (
+              '        const wantsLightStitchBoost=safeStyleId==="stitched" && isLightQuestBorderColor(colorValue||"#fffaf3");\n'
+              '        if(wantsLightStitchBoost){\n'
+              '          // v24.155: light Stitched borders get only same-color thickness.\n'
+              '          // No dark halo/shadow. Sakura and Sparkle get no assist at all.\n'
+              '          for(const [dx,dy] of [[-1,0],[1,0],[0,-1],[0,1]]){\n'
+              '            outCtx.drawImage(base,dx,dy,base.width,base.height);\n'
+              '          }\n'
+              '        }\n'
+          )
+          text, count = re.subn(pattern, replacement, text, count=1)
+          if count != 1:
+              raise SystemExit("Could not replace the old Stitched assist block.")
+
+          text = text.replace(
+              "// v24.153: use a real transparent PNG overlay instead of a CSS mask.",
+              "// v24.155: real PNG overlay; light Stitched gets same-color thickness only."
+          )
+          p.write_text(text)
+
+          # Duck Quest CSS: explicitly remove all generic icon-border shadows.
+          p = Path("duck-quest/css/style-v64.css")
+          text = p.read_text()
+
+          text, count = re.subn(
+              r'(\.quest-icon-border-layer\{\n(?:.*\n)*?  display:block;\n)(\})',
+              r'\1  filter:none;\n\2',
+              text,
+              count=1
+          )
+          if count != 1:
+              raise SystemExit("Could not add filter:none to the quest icon border layer.")
+
+          text, count = re.subn(
+              r'\.hero-sprite-wrap\.has-quest-icon-border\{\n  box-shadow:inset 0 0 0 1px rgba\(86,60,70,\.22\);\n\}\n',
+              '',
+              text,
+              count=1
+          )
+          if count != 1:
+              raise SystemExit("Could not remove the leftover hero icon inset shadow.")
+          p.write_text(text)
+
+          # Duck Quest HTML cache-busting.
+          p = Path("duck-quest/index.html")
+          text = p.read_text()
+          text = text.replace("css/style-v63.css?v=24-154", "css/style-v64.css?v=24-155")
+          text = text.replace("js/game-v71.js?v=24-154", "js/game-v72.js?v=24-155")
+          p.write_text(text)
+
+          # Root HTML cache-busting.
+          p = Path("index.html")
+          text = p.read_text()
+          for old_value, new_value in [
+              ('content="24.154"', 'content="24.155"'),
+              ('style-v24-154.css?v=24-154', 'style-v24-155.css?v=24-155'),
+              ('manifest.webmanifest?v=24-154', 'manifest.webmanifest?v=24-155'),
+              ('script-v24-154.js?v=24-154', 'script-v24-155.js?v=24-155'),
+              ('const DUCK_HUB_BUILD = "24.154";', 'const DUCK_HUB_BUILD = "24.155";'),
+              ('sw-v24-154.js?v=24-154', 'sw-v24-155.js?v=24-155'),
+          ]:
+              text = text.replace(old_value, new_value)
+          p.write_text(text)
+
+          # Manifest.
+          p = Path("manifest.webmanifest")
+          data = json.loads(p.read_text())
+          data["start_url"] = "./?appVersion=24.155"
+          p.write_text(json.dumps(data, indent=2) + "\n")
+
+          # Service worker.
+          p = Path("sw-v24-155.js")
+          text = p.read_text()
+          for old_value, new_value in [
+              ("duck-habit-hub-app-v24-154", "duck-habit-hub-app-v24-155"),
+              ("duck-habit-hub-runtime-v24-154", "duck-habit-hub-runtime-v24-155"),
+              ("manifest.webmanifest?v=24-154", "manifest.webmanifest?v=24-155"),
+              ("style-v24-154.css", "style-v24-155.css"),
+              ("script-v24-154.js", "script-v24-155.js"),
+              ("sw-v24-154.js", "sw-v24-155.js"),
+              ("duck-quest/js/game-v71.js?v=24-154", "duck-quest/js/game-v72.js?v=24-155"),
+              ("duck-quest/css/style-v63.css?v=24-154", "duck-quest/css/style-v64.css?v=24-155"),
+          ]:
+              text = text.replace(old_value, new_value)
+          p.write_text(text)
+
+          Path("sw.js").write_text("importScripts('./sw-v24-155.js?v=24-155');\n")
+          Path("version.json").write_text('{\n  "version": "24.155"\n}\n')
+
+          p = Path("duck-hub-cache-reset.html")
+          p.write_text(p.read_text().replace("v24.154", "v24.155"))
+
+          Path("README-v24.155-STITCHED-NO-SHADOW.txt").write_text(
+              "Duckie Days v24.155\n\n"
+              "- Removes the dark halo/shadow from Duck Quest icon borders.\n"
+              "- Very light Stitched colors get a tiny same-color thickness boost only.\n"
+              "- Sakura and Sparkle receive no shadow or outline assistance.\n"
+              "- Keeps the replacement Stitched-border.png already in the repository.\n"
+          )
+          PY
+
+      - name: Verify v24.155
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq '"version": "24.155"' version.json
+          grep -Fq 'content="24.155"' index.html
+          grep -Fq 'script-v24-155.js?v=24-155' index.html
+          grep -Fq 'style-v24-155.css?v=24-155' index.html
+          grep -Fq 'css/style-v64.css?v=24-155' duck-quest/index.html
+          grep -Fq 'js/game-v72.js?v=24-155' duck-quest/index.html
+          grep -Fq 'wantsLightStitchBoost' duck-quest/js/game-v72.js
+          grep -Fq 'filter:none' duck-quest/css/style-v64.css
+          node --check script-v24-155.js
+          node --check sw-v24-155.js
+          node --check duck-quest/js/game-v72.js
+
+      - name: Commit v24.155
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "Nothing new to commit."
+            exit 0
+          fi
+
+          git commit -m "Rescue install Duckie Days v24.155 without ZIP"
+          git push origin HEAD:${GITHUB_REF_NAME}
