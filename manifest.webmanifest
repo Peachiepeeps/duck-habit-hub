@@ -3,7 +3,7 @@
   "name": "Duckie Days",
   "short_name": "Duckie Days",
   "description": "A cozy duck game that encourages habit forming, as well as creativity!.",
-  "start_url": "./?appVersion=24.168",
+  "start_url": "./?appVersion=24.169",
   "scope": "./",
   "display": "standalone",
   "background_color": "#e7b7dc",
