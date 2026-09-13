@@ -1,6 +1,6 @@
-// Hub v24.149 — pet-bed duck bigger and lower on cushion
+// Hub v24.150 — pet-bed duck final micro-position polish
 const STORAGE_KEY = "duckHabitHubSave_v1";
-const SAVE_VERSION = 51;
+const SAVE_VERSION = 52;
 
 const CHARACTERS = {
   peep: {
@@ -7361,8 +7361,8 @@ const DRESSER_DUCK_PERCH = Object.freeze({
 });
 
 const PETBED_DUCK_PERCH = Object.freeze({
-  left: 25.0,
-  top: 90.1,
+  left: 24.4,
+  top: 91.0,
   width: 16.0
 });
 
