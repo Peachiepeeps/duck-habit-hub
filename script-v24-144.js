@@ -1,6 +1,6 @@
-// Hub v24.143 — pet bed duck height polish
+// Hub v24.144 — pet bed duck raised again
 const STORAGE_KEY = "duckHabitHubSave_v1";
-const SAVE_VERSION = 45;
+const SAVE_VERSION = 46;
 
 const CHARACTERS = {
   peep: {
@@ -7362,7 +7362,7 @@ const DRESSER_DUCK_PERCH = Object.freeze({
 
 const PETBED_DUCK_PERCH = Object.freeze({
   left: 25.0,
-  top: 88.7,
+  top: 87.2,
   width: 11.7
 });
 
