@@ -1,4 +1,4 @@
-// Hub v24.137 — hub polish + six-Buddy battle switching
+// Hub v24.138 — Daisy Crown alignment + closet Book cleanup
 const STORAGE_KEY = "duckHabitHubSave_v1";
 const SAVE_VERSION = 42;
 
