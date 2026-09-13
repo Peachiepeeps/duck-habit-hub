@@ -3608,7 +3608,7 @@ button { color: inherit; }
 .furniture-duck-layer {
   position: absolute;
   inset: 0;
-  z-index: 9;
+  z-index: 24;
   pointer-events: none;
 }
 
@@ -7762,4 +7762,9 @@ body[data-quest-theme="midnight-pixel"] .secondary-button,body[data-quest-theme=
 
 @media(max-width:420px){
   .stage.closet-open .peep-wrap{transform:translateX(15.2%) scale(.91)}
+}
+
+
+.petbed-perched-duck {
+  z-index: 3;
 }

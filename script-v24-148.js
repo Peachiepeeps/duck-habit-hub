@@ -1,6 +1,6 @@
-// Hub v24.147 — floor duck rests in pet bed + order-proof updater
+// Hub v24.148 — pet-bed duck size/height polish + front layering
 const STORAGE_KEY = "duckHabitHubSave_v1";
-const SAVE_VERSION = 49;
+const SAVE_VERSION = 50;
 
 const CHARACTERS = {
   peep: {
@@ -7362,8 +7362,8 @@ const DRESSER_DUCK_PERCH = Object.freeze({
 
 const PETBED_DUCK_PERCH = Object.freeze({
   left: 25.0,
-  top: 82.8,
-  width: 11.9
+  top: 88.2,
+  width: 14.2
 });
 
 function normalizeRoomFurniture() {
