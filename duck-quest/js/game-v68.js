@@ -65,7 +65,7 @@ function getAreaConfig(areaId){
 }
 
 
-// v24.134 — Duck Quest icon borders can be customized separately from Hub profile borders.
+// v24.151 — Duck Quest icon borders remain customizable and now get improved visibility for lighter colors.
 // Internal save keys still use the legacy area/rank names so existing player progress remains compatible.
 const QUEST_CHARACTER_IDS = Object.freeze(["peep","miko","io","miho","annika"]);
 const QUEST_CHARACTER_NAMES = Object.freeze({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika"});

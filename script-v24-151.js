@@ -1,6 +1,6 @@
-// Hub v24.150 — pet-bed duck final micro-position polish
+// Hub v24.151 — pet-bed duck tiny left nudge and quest icon border visibility polish
 const STORAGE_KEY = "duckHabitHubSave_v1";
-const SAVE_VERSION = 52;
+const SAVE_VERSION = 53;
 
 const CHARACTERS = {
   peep: {
@@ -7361,7 +7361,7 @@ const DRESSER_DUCK_PERCH = Object.freeze({
 });
 
 const PETBED_DUCK_PERCH = Object.freeze({
-  left: 24.4,
+  left: 24.0,
   top: 91.0,
   width: 16.0
 });
