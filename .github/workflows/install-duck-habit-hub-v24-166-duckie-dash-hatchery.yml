@@ -1,0 +1,86 @@
+name: Install Duckie Days v24.166 Duckie Dash Hatchery
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - "*v24-166*update-only*.zip"
+      - "*v24.166*update-only*.zip"
+      - ".github/workflows/install-duck-habit-hub-v24-166-duckie-dash-hatchery.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  install-update:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Locate ZIP
+        id: package
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP=$(find . -maxdepth 1 -type f \( -iname '*v24-166*update-only*.zip' -o -iname '*v24.166*update-only*.zip' \) | sort | head -n 1 || true)
+          if [ -z "$ZIP" ]; then
+            echo "package_found=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "package_found=true" >> "$GITHUB_OUTPUT"
+          echo "zip=$ZIP" >> "$GITHUB_OUTPUT"
+
+      - name: Install update
+        if: steps.package.outputs.package_found == 'true'
+        env:
+          ZIP: ${{ steps.package.outputs.zip }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          unzip -tq "$ZIP"
+          TMP=.duckhub-v24-166-update
+          rm -rf "$TMP"
+          mkdir -p "$TMP"
+          unzip -q "$ZIP" -d "$TMP"
+          cp -a "$TMP"/. ./
+          rm -rf "$TMP"
+          rm -f "$ZIP"
+
+      - name: Verify build
+        if: steps.package.outputs.package_found == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq '24.166' version.json
+          grep -Fq 'script-v24-166.js?v=24-166' index.html
+          grep -Fq 'style-v24-166.css?v=24-166' index.html
+          grep -Fq 'js/game-v82.js?v=24-166' duck-quest/index.html
+          grep -Fq 'css/style-v73.css?v=24-166' duck-quest/index.html
+          grep -Fq "const DASH_COST=3" duck-quest/js/game-v82.js
+          grep -Fq "Miko-angry.png" duck-quest/js/game-v82.js
+          test -f duck-quest/assets/characters/miko/base/Miko-angry.png
+          test -f duck-quest/assets/dash/Jump-Token.png
+          test -f duck-quest/assets/dash/carts/Duck-car-default.png
+          test -f duck-quest/assets/eggs/Common-egg.png
+          test -f duck-quest/assets/eggs/Rare-egg.png
+          test -f duck-quest/assets/events/Fountain.png
+          test -f duck-quest/assets/events/Picnic.png
+          node --check script-v24-166.js
+          node --check sw-v24-166.js
+          node --check duck-quest/js/game-v82.js
+
+      - name: Commit changes
+        if: steps.package.outputs.package_found == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Install Duckie Days v24.166 Duckie Dash Hatchery"
+          git push
