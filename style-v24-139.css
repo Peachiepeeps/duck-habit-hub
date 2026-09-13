@@ -7715,13 +7715,13 @@ body[data-quest-theme="midnight-pixel"]{--hub-button-text:#f7f6ff;--hub-button-s
 body[data-quest-theme="midnight-pixel"] .secondary-button,body[data-quest-theme="midnight-pixel"] .book-grid button,body[data-quest-theme="midnight-pixel"] .closet-option-card{color:#f2f2ff!important;}
 
 /* =========================================================
-   V24.137 — HUB POLISH: CROWN + CLOSET ROOM COMPOSITION
+   V24.139 — HUB POLISH: CROWN + CLOSET SCALE TWEAK
    ========================================================= */
 
 /* Peep's Meadow-clear Daisy Crown needed one more tiny nudge to the right.
    Keep this Peep-only so every OC can still receive their own positioning later. */
 .stage[data-character-id="peep"] .peep-layer[data-asset="daisy-crown"]{
-  transform:translateX(3.4%);
+  transform:translateX(4.9%);
 }
 
 /* Keep floor companions on the left side of the OC. This also lets the closet
@@ -7737,7 +7737,7 @@ body[data-quest-theme="midnight-pixel"] .secondary-button,body[data-quest-theme=
    and shifts right, while the room Book disappears completely. Floor companions
    stay tucked under the drawer on the left. */
 .stage.closet-open .peep-wrap{
-  transform:translateX(16%) scale(.82);
+  transform:translateX(15.5%) scale(.88);
 }
 .stage.closet-open .book-room-object,
 .stage.closet-open .book-room-object.on-shelf,
@@ -7753,5 +7753,5 @@ body[data-quest-theme="midnight-pixel"] .secondary-button,body[data-quest-theme=
 }
 
 @media(max-width:420px){
-  .stage.closet-open .peep-wrap{transform:translateX(17%) scale(.81)}
+  .stage.closet-open .peep-wrap{transform:translateX(16.5%) scale(.87)}
 }

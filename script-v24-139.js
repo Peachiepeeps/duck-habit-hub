@@ -1,4 +1,4 @@
-// Hub v24.138 — Daisy Crown alignment + closet Book cleanup
+// Hub v24.139 — Daisy Crown nudge + larger closet OC
 const STORAGE_KEY = "duckHabitHubSave_v1";
 const SAVE_VERSION = 42;
 
