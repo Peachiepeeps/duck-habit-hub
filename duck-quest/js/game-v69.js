@@ -300,6 +300,7 @@ function applyQuestIconBorder(element, characterId){
   let layer = element.querySelector(":scope > .quest-icon-border-layer");
   if(style.id === "none"){
     if(layer) layer.remove();
+    element.classList.remove("has-quest-icon-border");
     return;
   }
   if(!layer){
@@ -308,6 +309,7 @@ function applyQuestIconBorder(element, characterId){
     layer.setAttribute("aria-hidden","true");
     element.appendChild(layer);
   }
+  element.classList.add("has-quest-icon-border");
   layer.style.setProperty("--quest-icon-border-color", color.value);
   layer.style.setProperty("--quest-icon-border-mask", `url("${style.file}")`);
 }
