@@ -516,18 +516,15 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
 .quest-icon-border-layer{
   position:absolute;
   inset:0;
+  width:100%;
+  height:100%;
   z-index:20;
   pointer-events:none;
-  background:var(--quest-icon-border-color,#fffaf3);
-  -webkit-mask-image:var(--quest-icon-border-mask);
-  -webkit-mask-repeat:no-repeat;
-  -webkit-mask-position:center;
-  -webkit-mask-size:100% 100%;
-  mask-image:var(--quest-icon-border-mask);
-  mask-repeat:no-repeat;
-  mask-position:center;
-  mask-size:100% 100%;
-  filter:drop-shadow(0 0 0.75px rgba(86,60,70,.98)) drop-shadow(0 0 1.35px rgba(86,60,70,.62)) drop-shadow(0 0 2px rgba(255,255,255,.55));
+  object-fit:fill;
+  display:block;
+  filter:drop-shadow(0 0 0.8px rgba(73,49,59,.98))
+         drop-shadow(0 0 1.45px rgba(73,49,59,.66))
+         drop-shadow(0 0 2.15px rgba(255,255,255,.52));
 }
 .hero-sprite-wrap.has-quest-icon-border{
   box-shadow:inset 0 0 0 1px rgba(86,60,70,.22);
@@ -567,16 +564,14 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
   content:"";
   position:absolute;
   inset:0;
-  background:var(--icon-border-preview-color,#fffaf3);
-  -webkit-mask-image:var(--icon-border-preview-mask);
-  -webkit-mask-repeat:no-repeat;
-  -webkit-mask-position:center;
-  -webkit-mask-size:100% 100%;
-  mask-image:var(--icon-border-preview-mask);
-  mask-repeat:no-repeat;
-  mask-position:center;
-  mask-size:100% 100%;
-  filter:drop-shadow(0 0 0.72px rgba(86,60,70,.98)) drop-shadow(0 0 1.2px rgba(86,60,70,.58)) drop-shadow(0 0 1.9px rgba(255,255,255,.5));
+  background-color:transparent;
+  background-image:var(--icon-border-preview-image);
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:100% 100%;
+  filter:drop-shadow(0 0 0.65px rgba(73,49,59,.98))
+         drop-shadow(0 0 1.05px rgba(73,49,59,.58))
+         drop-shadow(0 0 1.7px rgba(255,255,255,.5));
 }
 .result-icon-border-preview.none::after{display:none}
 .result-icon-border-preview.none::before{
@@ -647,16 +642,14 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
   content:"";
   position:absolute;
   inset:0;
-  background:var(--icon-border-preview-color,#fffaf3);
-  -webkit-mask-image:var(--icon-border-preview-mask);
-  -webkit-mask-repeat:no-repeat;
-  -webkit-mask-position:center;
-  -webkit-mask-size:100% 100%;
-  mask-image:var(--icon-border-preview-mask);
-  mask-repeat:no-repeat;
-  mask-position:center;
-  mask-size:100% 100%;
-  filter:drop-shadow(0 0 0.72px rgba(86,60,70,.98)) drop-shadow(0 0 1.2px rgba(86,60,70,.58)) drop-shadow(0 0 1.9px rgba(255,255,255,.5));
+  background-color:transparent;
+  background-image:var(--icon-border-preview-image);
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:100% 100%;
+  filter:drop-shadow(0 0 0.65px rgba(73,49,59,.98))
+         drop-shadow(0 0 1.05px rgba(73,49,59,.58))
+         drop-shadow(0 0 1.7px rgba(255,255,255,.5));
 }
 .quest-border-current-preview.none::after{display:none}
 .quest-border-current-preview.none::before{
@@ -755,16 +748,14 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
   content:"";
   position:absolute;
   inset:0;
-  background:var(--icon-border-preview-color,#fffaf3);
-  -webkit-mask-image:var(--icon-border-preview-mask);
-  -webkit-mask-repeat:no-repeat;
-  -webkit-mask-position:center;
-  -webkit-mask-size:100% 100%;
-  mask-image:var(--icon-border-preview-mask);
-  mask-repeat:no-repeat;
-  mask-position:center;
-  mask-size:100% 100%;
-  filter:drop-shadow(0 0 0.72px rgba(86,60,70,.98)) drop-shadow(0 0 1.2px rgba(86,60,70,.58)) drop-shadow(0 0 1.9px rgba(255,255,255,.5));
+  background-color:transparent;
+  background-image:var(--icon-border-preview-image);
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:100% 100%;
+  filter:drop-shadow(0 0 0.65px rgba(73,49,59,.98))
+         drop-shadow(0 0 1.05px rgba(73,49,59,.58))
+         drop-shadow(0 0 1.7px rgba(255,255,255,.5));
 }
 .quest-border-style-preview.none::after{display:none}
 .quest-border-style-preview.none::before{

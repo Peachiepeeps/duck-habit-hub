@@ -292,26 +292,81 @@ function questIconBorderSelectionForCharacter(characterId){
   return {styleId,colorId};
 }
 
+const QUEST_ICON_BORDER_TINT_CACHE = new Map();
+
+function questIconBorderTintedSrc(file,colorValue){
+  if(!file) return Promise.resolve("");
+  const key=`${file}|${colorValue}`;
+  if(QUEST_ICON_BORDER_TINT_CACHE.has(key)) return QUEST_ICON_BORDER_TINT_CACHE.get(key);
+
+  const promise=new Promise(resolve=>{
+    const source=new Image();
+    source.decoding="async";
+    source.onload=()=>{
+      try{
+        const canvas=document.createElement("canvas");
+        canvas.width=source.naturalWidth||512;
+        canvas.height=source.naturalHeight||512;
+        const ctx=canvas.getContext("2d");
+        if(!ctx){ resolve(file); return; }
+
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.drawImage(source,0,0,canvas.width,canvas.height);
+        ctx.globalCompositeOperation="source-in";
+        ctx.fillStyle=colorValue||"#fffaf3";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.globalCompositeOperation="source-over";
+        resolve(canvas.toDataURL("image/png"));
+      }catch(error){
+        console.warn("Duck Quest icon border tint fallback:",error);
+        resolve(file);
+      }
+    };
+    source.onerror=()=>resolve(file);
+    source.src=file;
+  });
+
+  QUEST_ICON_BORDER_TINT_CACHE.set(key,promise);
+  return promise;
+}
+
 function applyQuestIconBorder(element, characterId){
   if(!element) return;
-  const selection = questIconBorderSelectionForCharacter(characterId);
-  const style = iconBorderStyleById(selection.styleId);
-  const color = iconBorderColorById(selection.colorId);
-  let layer = element.querySelector(":scope > .quest-icon-border-layer");
-  if(style.id === "none"){
+  const selection=questIconBorderSelectionForCharacter(characterId);
+  const style=iconBorderStyleById(selection.styleId);
+  const color=iconBorderColorById(selection.colorId);
+
+  let layer=element.querySelector(":scope > .quest-icon-border-layer");
+  if(style.id==="none"){
     if(layer) layer.remove();
     element.classList.remove("has-quest-icon-border");
     return;
   }
-  if(!layer){
-    layer = document.createElement("div");
-    layer.className = "quest-icon-border-layer";
+
+  // v24.153: use a real transparent PNG overlay instead of a CSS mask.
+  // This is much more reliable on Android Chrome/PWA while still allowing
+  // each border to be recolored to the selected border color.
+  if(!layer || layer.tagName!=="IMG"){
+    if(layer) layer.remove();
+    layer=document.createElement("img");
+    layer.className="quest-icon-border-layer";
+    layer.alt="";
     layer.setAttribute("aria-hidden","true");
+    layer.decoding="async";
     element.appendChild(layer);
   }
+
   element.classList.add("has-quest-icon-border");
-  layer.style.setProperty("--quest-icon-border-color", color.value);
-  layer.style.setProperty("--quest-icon-border-mask", `url("${style.file}")`);
+  const renderToken=`${style.id}|${color.id}`;
+  layer.dataset.borderToken=renderToken;
+
+  // Show the source art immediately, then swap to the tinted PNG as soon as it is ready.
+  layer.src=style.file;
+  questIconBorderTintedSrc(style.file,color.value).then(src=>{
+    if(layer.isConnected && layer.dataset.borderToken===renderToken && src){
+      layer.src=src;
+    }
+  });
 }
 
 function questCharacterIconPreviewSrc(characterId){
@@ -3174,8 +3229,21 @@ function applyIconBorderPreviewStyle(element,style,color){
   const safeStyle=style || iconBorderStyleById("none");
   const safeColor=color || iconBorderColorById("white");
   element.classList.toggle("none",safeStyle.id==="none");
-  element.style.setProperty("--icon-border-preview-color",safeColor.value||"#fffaf3");
-  element.style.setProperty("--icon-border-preview-mask",safeStyle.id==="none"?"none":`url("${safeStyle.file}")`);
+
+  if(safeStyle.id==="none"){
+    element.style.setProperty("--icon-border-preview-image","none");
+    return;
+  }
+
+  const token=`${safeStyle.id}|${safeColor.id}`;
+  element.dataset.borderPreviewToken=token;
+  element.style.setProperty("--icon-border-preview-image",`url("${safeStyle.file}")`);
+
+  questIconBorderTintedSrc(safeStyle.file,safeColor.value).then(src=>{
+    if(element.isConnected && element.dataset.borderPreviewToken===token && src){
+      element.style.setProperty("--icon-border-preview-image",`url("${src}")`);
+    }
+  });
 }
 
 function normalizeWallpaperUnlocks(){

@@ -1,6 +1,6 @@
-// Hub v24.152 — pet-bed duck micro left nudge + stronger Duck Quest icon border visibility
+// Hub v24.153 — final pet-bed duck nudge + robust Duck Quest icon border rendering
 const STORAGE_KEY = "duckHabitHubSave_v1";
-const SAVE_VERSION = 53;
+const SAVE_VERSION = 54;
 
 const CHARACTERS = {
   peep: {
@@ -7361,7 +7361,7 @@ const DRESSER_DUCK_PERCH = Object.freeze({
 });
 
 const PETBED_DUCK_PERCH = Object.freeze({
-  left: 23.6,
+  left: 23.2,
   top: 91.0,
   width: 16.0
 });
