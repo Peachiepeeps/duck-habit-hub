@@ -1,0 +1,149 @@
+name: Install Duckie Days v24.153 Robust Quest Icon Borders
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - "*v24-153*update-only*.zip"
+      - "*v24.153*update-only*.zip"
+      - ".github/workflows/install-duck-habit-hub-v24-153-robust-quest-icon-borders.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-153-install
+  cancel-in-progress: false
+
+jobs:
+  install-update:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Locate v24.153 update ZIP
+        id: package
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ -f version.json ] \
+            && grep -Fq '"version": "24.153"' version.json \
+            && [ -f script-v24-153.js ] \
+            && [ -f style-v24-153.css ] \
+            && [ -f sw-v24-153.js ] \
+            && [ -f duck-quest/js/game-v70.js ] \
+            && [ -f duck-quest/css/style-v62.css ]; then
+            echo "already_installed=true" >> "$GITHUB_OUTPUT"
+            echo "package_found=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          ZIP="$(find . -maxdepth 1 -type f \
+            \( -iname '*v24-153*update-only*.zip' -o -iname '*v24.153*update-only*.zip' \) \
+            -printf '%f\n' | sort | head -n 1 || true)"
+
+          if [ -z "$ZIP" ]; then
+            echo "The workflow is ready. Upload the v24.153 update ZIP and commit it."
+            echo "already_installed=false" >> "$GITHUB_OUTPUT"
+            echo "package_found=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "zip=$ZIP" >> "$GITHUB_OUTPUT"
+          echo "already_installed=false" >> "$GITHUB_OUTPUT"
+          echo "package_found=true" >> "$GITHUB_OUTPUT"
+
+      - name: Verify package
+        if: steps.package.outputs.package_found == 'true'
+        env:
+          ZIP: ${{ steps.package.outputs.zip }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          unzip -tq "$ZIP"
+          LISTING="$(unzip -Z1 "$ZIP")"
+          for REQUIRED in \
+            index.html \
+            script-v24-153.js \
+            style-v24-153.css \
+            sw.js \
+            sw-v24-153.js \
+            manifest.webmanifest \
+            version.json \
+            duck-hub-cache-reset.html \
+            duck-quest/index.html \
+            duck-quest/js/game-v70.js \
+            duck-quest/css/style-v62.css \
+            README-v24.153-ROBUST-QUEST-ICON-BORDERS.txt
+          do
+            grep -Fqx "$REQUIRED" <<< "$LISTING" || {
+              echo "::error::Update ZIP is missing $REQUIRED"
+              exit 1
+            }
+          done
+
+      - name: Install v24.153
+        if: steps.package.outputs.package_found == 'true'
+        env:
+          ZIP: ${{ steps.package.outputs.zip }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          TMP=".duckhub-v24-153-update"
+          rm -rf "$TMP"
+          mkdir -p "$TMP"
+          unzip -q "$ZIP" -d "$TMP"
+          cp -a "$TMP/." ./
+          rm -rf "$TMP"
+
+      - name: Verify installed build
+        if: steps.package.outputs.package_found == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq 'content="24.153"' index.html
+          grep -Fq '"version": "24.153"' version.json
+          grep -Fq 'left: 23.2' script-v24-153.js
+          grep -Fq 'css/style-v62.css?v=24-153' duck-quest/index.html
+          grep -Fq 'js/game-v70.js?v=24-153' duck-quest/index.html
+          grep -Fq 'QUEST_ICON_BORDER_TINT_CACHE' duck-quest/js/game-v70.js
+          grep -Fq 'layer=document.createElement("img")' duck-quest/js/game-v70.js
+          node --check script-v24-153.js
+          node --check sw-v24-153.js
+          node --check duck-quest/js/game-v70.js
+
+      - name: Clean superseded active files
+        if: steps.package.outputs.package_found == 'true'
+        env:
+          ZIP: ${{ steps.package.outputs.zip }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          find . -maxdepth 1 -type f -name 'script-v24-*.js' ! -name 'script-v24-153.js' ! -name 'shared-ui-theme-v24-131.js' -delete
+          find . -maxdepth 1 -type f -name 'style-v24-*.css' ! -name 'style-v24-153.css' ! -name 'shared-ui-theme-v24-131.css' -delete
+          find . -maxdepth 1 -type f -name 'sw-v24-*.js' ! -name 'sw-v24-153.js' -delete
+          find duck-quest/js -maxdepth 1 -type f -name 'game-v*.js' ! -name 'game-v70.js' -delete
+          find duck-quest/css -maxdepth 1 -type f -name 'style-v*.css' ! -name 'style-v62.css' -delete
+          find . -maxdepth 1 -type f -name 'README-v24*.txt' ! -name 'README-v24.153-ROBUST-QUEST-ICON-BORDERS.txt' -delete
+          find .github/workflows -maxdepth 1 -type f -name 'install-duck-habit-hub-*.yml' ! -name 'install-duck-habit-hub-v24-153-robust-quest-icon-borders.yml' -delete || true
+          rm -f "$ZIP"
+
+      - name: Commit installed update
+        if: steps.package.outputs.package_found == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "Install Duckie Days v24.153 robust quest icon borders"
+          git push
