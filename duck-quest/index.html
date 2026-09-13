@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta id="questThemeColor" name="theme-color" content="#f6c6d6" />
   <title>Duck Quest</title>
-  <link rel="stylesheet" href="css/style-v69.css?v=24-160" />
+  <link rel="stylesheet" href="css/style-v70.css?v=24-161" />
 </head>
 <body>
   <main class="quest-shell">
@@ -352,6 +352,19 @@
           <img id="enemySprite" class="pixel-sprite fighter enemy-fighter" src="" alt="" />
         </div>
 
+        <div id="enemyCombatant2" class="combatant enemy-combatant secondary-enemy-combatant hidden" aria-label="Second enemy">
+          <div class="enemy-status-stack">
+            <div class="nameplate enemy-nameplate">
+              <strong id="enemyName2">Enemy 2</strong>
+              <span id="enemyRank2">Level 1</span>
+            </div>
+            <div class="hp-bar enemy-hp"><span id="enemyHpFill2"></span></div>
+            <div id="enemyDamageText2" class="damage-pop-line hidden" aria-hidden="true"></div>
+            <small id="enemyHpText2">20 / 20 HP</small>
+          </div>
+          <img id="enemySprite2" class="pixel-sprite fighter enemy-fighter" src="" alt="" />
+        </div>
+
 
         <section id="chestLayer" class="chest-layer hidden">
           <p id="chestCaption">A treasure chest appeared!</p>
@@ -369,6 +382,14 @@
         </div>
 
         <div id="commandStage" class="command-stage">
+          <section id="targetPicker" class="target-picker hidden" aria-label="Choose an enemy target">
+            <div class="target-picker-heading">
+              <strong id="targetPickerTitle">Choose a Target</strong>
+              <button id="closeTargetPicker" class="pixel-button small" type="button">Back</button>
+            </div>
+            <div id="targetPickerGrid" class="target-picker-grid"></div>
+          </section>
+
           <div id="commandGrid" class="command-grid">
             <button id="attackMenuButton" class="pixel-button command-button attack-command" type="button">
               <strong>Attack</strong>
@@ -462,6 +483,6 @@
     </section>
   </main>
 
-  <script src="js/game-v77.js?v=24-160"></script>
+  <script src="js/game-v78.js?v=24-161"></script>
 </body>
 </html>
