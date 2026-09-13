@@ -7713,3 +7713,48 @@ body[data-quest-theme="rose-gold-royale"]{
 }
 body[data-quest-theme="midnight-pixel"]{--hub-button-text:#f7f6ff;--hub-button-secondary-text:#f2f2ff;}
 body[data-quest-theme="midnight-pixel"] .secondary-button,body[data-quest-theme="midnight-pixel"] .book-grid button,body[data-quest-theme="midnight-pixel"] .closet-option-card{color:#f2f2ff!important;}
+
+/* =========================================================
+   V24.137 — HUB POLISH: CROWN + CLOSET ROOM COMPOSITION
+   ========================================================= */
+
+/* Peep's Meadow-clear Daisy Crown sits just a touch too far left. Keep this
+   Peep-only so every OC can still receive their own positioning later. */
+.stage[data-character-id="peep"] .peep-layer[data-asset="daisy-crown"]{
+  transform:translateX(1.8%);
+}
+
+/* Keep floor companions on the left side of the OC. This also lets the closet
+   drawer naturally cover them when it opens instead of Peep stepping on them. */
+.floor-duck-display{
+  left:27%;
+}
+.petbed-furniture{
+  transform:translateX(-62.8%);
+}
+
+/* When the closet opens, leave a clean little dressing area: the OC and Book
+   stay visible, both shrink slightly, while floor companions stay tucked under
+   the drawer on the left. */
+.stage.closet-open .peep-wrap{
+  transform:translateX(16%) scale(.82);
+}
+.stage.closet-open .book-room-object{
+  transform:translate(35%,4.4%) scale(.82);
+  transform-origin:12% 92%;
+}
+.stage.closet-open .book-room-object.on-shelf{
+  transform:translate(76%,7.2%) scale(.82);
+}
+.stage.closet-open .book-room-object.on-dresser{
+  transform:translate(18%,-27%) scale(.82);
+}
+.stage.closet-open .floor-duck-display,
+.stage.closet-open .petbed-furniture,
+.stage.closet-open .petbed-perched-duck{
+  pointer-events:none;
+}
+
+@media(max-width:420px){
+  .stage.closet-open .peep-wrap{transform:translateX(17%) scale(.81)}
+}

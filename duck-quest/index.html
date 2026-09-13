@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta id="questThemeColor" name="theme-color" content="#f6c6d6" />
   <title>Duck Quest</title>
-  <link rel="stylesheet" href="css/style-v58.css" />
+  <link rel="stylesheet" href="css/style-v59.css" />
 </head>
 <body>
   <main class="quest-shell">
@@ -368,12 +368,16 @@
             <button id="attackMenuButton" class="pixel-button command-button attack-command" type="button">
               <strong>Attack</strong>
             </button>
-            <button id="itemMenuButton" class="pixel-button command-button item-command" type="button">
-              <strong>Item</strong>
-            </button>
             <button id="buddyMenuButton" class="pixel-button command-button buddy-command" type="button">
               <strong>Buddy</strong>
               <span id="buddyCommandText">No Main Buddy</span>
+            </button>
+            <button id="itemMenuButton" class="pixel-button command-button item-command" type="button">
+              <strong>Item</strong>
+            </button>
+            <button id="switchBuddyMenuButton" class="pixel-button command-button switch-buddy-command" type="button">
+              <strong>Switch Buddy</strong>
+              <span id="switchBuddyCommandText">6-slot battle team</span>
             </button>
             <button id="escapeButton" class="pixel-button command-button escape-command" type="button">
               <strong>Escape</strong>
@@ -387,6 +391,13 @@
             </div>
             <div id="skillButtons" class="skill-grid hidden"></div>
             <div id="itemButtons" class="battle-item-grid hidden"></div>
+            <section id="buddySwitchPanel" class="buddy-switch-panel hidden" aria-label="Switch active Buddy">
+              <div class="buddy-switch-heading">
+                <strong>Choose Buddy!</strong>
+                <small>Switching Buddies uses your turn. One switch per encounter.</small>
+              </div>
+              <div id="buddySwitchGrid" class="buddy-switch-grid"></div>
+            </section>
             <p id="noBattleItems" class="no-battle-items hidden">You don't have any battle items right now.</p>
             <div id="itemPonShopActions" class="item-pon-shop-actions hidden">
               <button id="itemBackButton" class="pixel-button item-back-button" type="button">‹ Back</button>
@@ -450,6 +461,6 @@
     </section>
   </main>
 
-  <script src="js/game-v66.js"></script>
+  <script src="js/game-v67.js"></script>
 </body>
 </html>

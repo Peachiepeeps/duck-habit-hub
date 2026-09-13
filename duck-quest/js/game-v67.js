@@ -1,4 +1,4 @@
-// Duck Quest game-v66 — independent Quest icon border picker
+// Duck Quest game-v67 — polished battle UI + six-Buddy battle switching
 const HUB_SAVE_KEY = "duckHabitHubSave_v1";
 const MAX_LEVEL = 100;
 const AREA_CONFIG = Object.freeze({
@@ -1837,13 +1837,14 @@ function buddySlotPersonalization(characterId,slotIndex){
   return hubSave.buddies?.personalizationByCharacter?.[characterId]?.[slotIndex] || null;
 }
 
-function mainBuddyRecord(){
+function buddyRecordForSlot(slotIndex=0){
   ensureBuddySave();
+  const safeSlot=Math.max(0,Math.min(5,Math.floor(Number(slotIndex)||0)));
   const slots=hubSave.buddies?.equippedByCharacter?.[activeCharacterId];
-  const key=Array.isArray(slots) && typeof slots[0]==="string" ? slots[0] : null;
+  const key=Array.isArray(slots) && typeof slots[safeSlot]==="string" ? slots[safeSlot] : null;
   const base=key ? hubSave.buddies?.collection?.[key] || null : null;
   if(!base) return null;
-  const personal=buddySlotPersonalization(activeCharacterId,0);
+  const personal=buddySlotPersonalization(activeCharacterId,safeSlot);
   const nickname=String(personal?.nickname||"").trim();
   const catalog=BUDDY_CATALOG_BY_KEY.get(key);
   const idleFrames=Array.isArray(base.idle) && base.idle.length
@@ -1857,8 +1858,27 @@ function mainBuddyRecord(){
     name:nickname || base.name,
     nickname,
     gender:String(personal?.gender||""),
-    genderSymbol:buddyGenderSymbol(personal?.gender)
+    genderSymbol:buddyGenderSymbol(personal?.gender),
+    slotIndex:safeSlot
   };
+}
+
+function battleBuddySlotRecords(){
+  return Array.from({length:6},(_,slotIndex)=>buddyRecordForSlot(slotIndex));
+}
+
+function firstAssignedBattleBuddySlot(){
+  const records=battleBuddySlotRecords();
+  const index=records.findIndex(Boolean);
+  return index>=0?index:0;
+}
+
+function activeBattleBuddyRecord(){
+  return buddyRecordForSlot(activeBattleBuddySlot);
+}
+
+function mainBuddyRecord(){
+  return buddyRecordForSlot(0);
 }
 
 
@@ -2159,6 +2179,8 @@ const ui = {
   commandGrid: document.querySelector("#commandGrid"),
   attackMenuButton: document.querySelector("#attackMenuButton"),
   itemMenuButton: document.querySelector("#itemMenuButton"),
+  switchBuddyMenuButton: document.querySelector("#switchBuddyMenuButton"),
+  switchBuddyCommandText: document.querySelector("#switchBuddyCommandText"),
   escapeButton: document.querySelector("#escapeButton"),
   commandWindow: document.querySelector("#commandWindow"),
   commandWindowTitle: document.querySelector("#commandWindowTitle"),
@@ -2168,6 +2190,8 @@ const ui = {
   noBattleItems: document.querySelector("#noBattleItems"),
   buddyMenuButton: document.querySelector("#buddyMenuButton"),
   buddyCommandText: document.querySelector("#buddyCommandText"),
+  buddySwitchPanel: document.querySelector("#buddySwitchPanel"),
+  buddySwitchGrid: document.querySelector("#buddySwitchGrid"),
   buddyCombatant: document.querySelector("#buddyCombatant"),
   buddyBattleName: document.querySelector("#buddyBattleName"),
   buddyBattleSprite: document.querySelector("#buddyBattleSprite"),
@@ -2695,6 +2719,8 @@ const QUICK_HEAL_MAX_USES = 4;
 let quickHealUses = 0;
 let skillState = {};
 let buddyUsedThisHeroTurn = false;
+let activeBattleBuddySlot = 0;
+let buddySwitchUsedThisEncounter = false;
 
 function loadHubSave() {
   try {
@@ -2833,8 +2859,10 @@ function warmCurrentBattleAssets(enemy=null){
     (enemy.idle||[]).forEach(src=>sources.add(src));
     if(enemy.hurt) sources.add(enemy.hurt);
   }
-  const buddy=mainBuddyRecord();
-  if(buddy?.image) sources.add(buddy.image);
+  battleBuddySlotRecords().forEach(buddy=>{
+    if(buddy?.image) sources.add(buddy.image);
+    (buddy?.idle||[]).forEach(src=>sources.add(src));
+  });
   const bg=currentRun?.mode==="endless"
     ? currentRun?.floorBackground
     : currentRun ? currentAreaConfig()?.backgrounds?.[currentRun.index] : null;
@@ -4356,6 +4384,8 @@ function startEncounter() {
     enemyNextAttackMultiplier:1, enemyStunned:false, enemyStunTurns:0
   };
   buddyUsedThisHeroTurn=false;
+  activeBattleBuddySlot=firstAssignedBattleBuddySlot();
+  buddySwitchUsedThisEncounter=false;
   renderBattleCharmStrip();
   ui.chestLayer.classList.add("hidden");
   ui.postFloorActions?.classList.add("hidden");
@@ -4525,7 +4555,7 @@ function startEnemy(enemyId, options={}) {
   ui.enemySprite.classList.toggle("cream-fox-fighter",enemyId==="cream-fox");
   renderEnemyHp(); startEnemyIdle(); renderBattleBuddy(); renderSkills(); renderBattleItems();
   if(currentEnemy.shiny) requestAnimationFrame(()=>playShinyArrivalSparkle(ui.enemyCombatant));
-  const openingBuddy=mainBuddyRecord();
+  const openingBuddy=activeBattleBuddyRecord();
   if(openingBuddy?.shiny) requestAnimationFrame(()=>playShinyArrivalSparkle(ui.buddyCombatant));
   ui.commandGrid.classList.remove("hidden"); closeCommandWindow(); renderBattleItems(); renderCommandButtons();
   if(currentEnemy.shiny) setMessage(`${currentEnemy.name} ✨ appeared! A super-rare Shiny Buddy!`);
@@ -4556,7 +4586,7 @@ function startBuddyIdle(buddy){
 }
 
 function renderBattleBuddy(){
-  const buddy=mainBuddyRecord();
+  const buddy=activeBattleBuddyRecord();
   if(!ui.buddyCombatant || !ui.buddyBattleSprite) return;
   if(!buddy || !buddySkillForEnemyId(buddy.enemyId) || !currentEnemy){
     clearInterval(buddyIdleTimer);
@@ -4622,7 +4652,7 @@ function tickEnemyBuddyEffects(){
 }
 
 async function useBuddySkill(){
-  const buddy=mainBuddyRecord();
+  const buddy=activeBattleBuddyRecord();
   const skill=buddySkillForEnemyId(buddy?.enemyId);
   if(actionLocked || !currentEnemy || !buddy || !skill || Number(skillState.buddyCooldown||0)>0) return;
   closeCommandWindow();
@@ -4918,7 +4948,7 @@ function renderCommandButtons() {
   if (ui.attackMenuButton) ui.attackMenuButton.disabled = disabled;
   if (ui.itemMenuButton) ui.itemMenuButton.disabled = disabled;
 
-  const buddy=mainBuddyRecord();
+  const buddy=activeBattleBuddyRecord();
   const buddySkill=buddySkillForEnemyId(buddy?.enemyId);
   const buddyCooldown=Math.max(0,Number(skillState.buddyCooldown)||0);
   if(ui.buddyMenuButton){
@@ -4936,6 +4966,19 @@ function renderCommandButtons() {
     }
   }
 
+  const assignedBuddyCount=battleBuddySlotRecords().filter(Boolean).length;
+  if(ui.switchBuddyMenuButton){
+    const canSwitch=!disabled && !buddySwitchUsedThisEncounter && assignedBuddyCount>1;
+    ui.switchBuddyMenuButton.disabled=!canSwitch;
+    if(ui.switchBuddyCommandText){
+      ui.switchBuddyCommandText.textContent=buddySwitchUsedThisEncounter
+        ? "Switch used this encounter"
+        : assignedBuddyCount<=1
+          ? "Assign 2+ Buddies in Profiles"
+          : `${assignedBuddyCount} Buddies ready`;
+    }
+  }
+
   if (ui.escapeButton) ui.escapeButton.disabled = actionLocked || !currentRun;
 }
 
@@ -4946,7 +4989,7 @@ function escapeHtml(value){
 function renderBuddySkillMenu(){
   if(!ui.skillButtons) return;
   ui.skillButtons.innerHTML="";
-  const buddy=mainBuddyRecord();
+  const buddy=activeBattleBuddyRecord();
   const skill=buddySkillForEnemyId(buddy?.enemyId);
   if(!buddy || !skill){
     const empty=document.createElement("p");
@@ -4966,6 +5009,61 @@ function renderBuddySkillMenu(){
   ui.skillButtons.appendChild(button);
 }
 
+function renderBattleBuddySwitchMenu(){
+  if(!ui.buddySwitchGrid) return;
+  ui.buddySwitchGrid.innerHTML="";
+  const records=battleBuddySlotRecords();
+  records.forEach((buddy,slotIndex)=>{
+    const card=document.createElement("button");
+    card.type="button";
+    const isCurrent=Boolean(buddy) && slotIndex===activeBattleBuddySlot;
+    card.className=`buddy-switch-card${isCurrent?" current":""}${buddy?.shiny?" shiny":""}${!buddy?" empty":""}`;
+    card.dataset.slot=String(slotIndex);
+
+    if(!buddy){
+      card.disabled=true;
+      card.innerHTML=`<span class="buddy-switch-empty-art">${slotIndex+1}</span><span class="buddy-switch-copy"><strong>Empty Slot ${slotIndex+1}</strong><small>Assign a Buddy in Profiles.</small></span>`;
+      ui.buddySwitchGrid.appendChild(card);
+      return;
+    }
+
+    const skill=buddySkillForEnemyId(buddy.enemyId);
+    const displayName=`${buddy.shiny?"✨ ":""}${escapeHtml(buddy.name)}${buddy.genderSymbol?` ${buddy.genderSymbol}`:""}`;
+    const species=buddy.nickname && buddy.speciesName && buddy.speciesName!==buddy.name ? ` · ${escapeHtml(buddy.speciesName)}` : "";
+    const detail=skill?.description || "This Buddy does not have a helper move yet.";
+    card.innerHTML=`<span class="buddy-switch-portrait"><img src="${escapeHtml(buddy.image)}" alt=""></span><span class="buddy-switch-copy"><strong>${displayName}${species}</strong><em>${escapeHtml(skill?.name||"Buddy")}</em><small>${escapeHtml(detail)}</small></span>${isCurrent?'<span class="buddy-switch-current">CURRENT</span>':''}`;
+    card.disabled=isCurrent || buddySwitchUsedThisEncounter || actionLocked || !currentEnemy;
+    if(!card.disabled) card.addEventListener("click",()=>switchBattleBuddy(slotIndex));
+    ui.buddySwitchGrid.appendChild(card);
+  });
+}
+
+async function switchBattleBuddy(slotIndex){
+  if(actionLocked || !currentEnemy || buddySwitchUsedThisEncounter) return;
+  const nextSlot=Math.max(0,Math.min(5,Math.floor(Number(slotIndex)||0)));
+  if(nextSlot===activeBattleBuddySlot) return;
+  const buddy=buddyRecordForSlot(nextSlot);
+  if(!buddy) return;
+
+  closeCommandWindow();
+  actionLocked=true;
+  activeBattleBuddySlot=nextSlot;
+  buddySwitchUsedThisEncounter=true;
+  skillState.buddyCooldown=0;
+  buddyUsedThisHeroTurn=false;
+  renderBattleBuddy();
+  renderCommandButtons();
+  setMessage(`${heroDisplayName()} switched to ${buddy.name}${buddy.shiny?" ✨":""}! Switching used the turn.`);
+  if(buddy.shiny) requestAnimationFrame(()=>playShinyArrivalSparkle(ui.buddyCombatant));
+  await sleep(520);
+
+  decrementCooldowns("buddy-switch");
+  await enemyTurn();
+  actionLocked=false;
+  renderCommandButtons();
+  renderSkills();
+}
+
 function openCommandWindow(kind) {
   if (actionLocked || !currentEnemy) return;
 
@@ -4973,6 +5071,7 @@ function openCommandWindow(kind) {
   ui.commandWindow.classList.remove("hidden");
   ui.skillButtons.classList.add("hidden");
   ui.itemButtons.classList.add("hidden");
+  ui.buddySwitchPanel?.classList.add("hidden");
   ui.noBattleItems.classList.add("hidden");
   ui.itemPonShopActions?.classList.add("hidden");
   ui.ponPurchasePanel?.classList.add("hidden");
@@ -4985,6 +5084,10 @@ function openCommandWindow(kind) {
     ui.commandWindowTitle.textContent = "Buddy";
     renderBuddySkillMenu();
     ui.skillButtons.classList.remove("hidden");
+  } else if(kind === "switch-buddy") {
+    ui.commandWindowTitle.textContent = "Switch Buddy";
+    renderBattleBuddySwitchMenu();
+    ui.buddySwitchPanel?.classList.remove("hidden");
   } else {
     ui.commandWindowTitle.textContent = "Item";
     renderBattleItems();
@@ -4999,6 +5102,7 @@ function closeCommandWindow() {
   ui.commandWindow.classList.add("hidden");
   ui.skillButtons.classList.add("hidden");
   ui.itemButtons.classList.add("hidden");
+  ui.buddySwitchPanel?.classList.add("hidden");
   ui.noBattleItems.classList.add("hidden");
   ui.itemPonShopActions?.classList.add("hidden");
   ui.ponPurchasePanel?.classList.add("hidden");
@@ -6410,6 +6514,7 @@ ui.startNewEndless?.addEventListener("click",()=>{
   beginEndlessRun(1);
 });
 ui.buddyMenuButton?.addEventListener("click",()=>openCommandWindow("buddy"));
+ui.switchBuddyMenuButton?.addEventListener("click",()=>openCommandWindow("switch-buddy"));
 ui.attackMenuButton.addEventListener("click",()=>openCommandWindow("attack"));
 ui.itemMenuButton.addEventListener("click",()=>openCommandWindow("item"));
 ui.closeCommandWindow.addEventListener("click",closeCommandWindow);

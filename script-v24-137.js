@@ -1,4 +1,4 @@
-// Hub v24.136 — independent Duck Quest icon borders
+// Hub v24.137 — hub polish + six-Buddy battle switching
 const STORAGE_KEY = "duckHabitHubSave_v1";
 const SAVE_VERSION = 42;
 
@@ -5558,6 +5558,7 @@ function renderCurrentCharacterInto(container) {
 }
 
 function renderPeep() {
+  if (stage) stage.dataset.characterId = save.selectedCharacter;
   renderCurrentCharacterInto(peepLayers);
   peepLayers.querySelectorAll("img").forEach(img => img.classList.add("peep-layer"));
   renderDuckPlacements();
@@ -7338,7 +7339,7 @@ const DRESSER_DUCK_PERCH = Object.freeze({
 });
 
 const PETBED_DUCK_PERCH = Object.freeze({
-  left: 88.2,
+  left: 25.0,
   top: 87.0,
   width: 12.5
 });
