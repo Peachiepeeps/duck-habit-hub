@@ -315,9 +315,13 @@ function questBorderRelativeLuminance(hex){
 }
 
 function isLightQuestBorderColor(hex){
-  return questBorderRelativeLuminance(hex) >= 0.79;
+  return questBorderRelativeLuminance(hex) >= 0.75;
 }
 
+function makeQuestBorderAssistColor(hex){
+  const {r,g,b}=questBorderHexToRgb(hex);
+  return questBorderRgbToHex(r*0.74,g*0.74,b*0.74);
+}
 
 function tintQuestBorderSource(source, fillColor){
   const canvas=document.createElement("canvas");
@@ -354,10 +358,16 @@ function questIconBorderTintedSrc(file,colorValue,styleId){
         const outCtx=output.getContext("2d");
         if(!outCtx){ resolve(file); return; }
 
-        const wantsLightStitchBoost=safeStyleId==="stitched" && isLightQuestBorderColor(colorValue||"#fffaf3");
-        if(wantsLightStitchBoost){
-          // v24.155: light Stitched borders get only same-color thickness.
-          // No dark halo/shadow. Sakura and Sparkle get no assist at all.
+        const wantsLightStitchOutline=safeStyleId==="stitched" && isLightQuestBorderColor(colorValue||"#fffaf3");
+        if(wantsLightStitchOutline){
+          // v24.156: give very light Stitched colors a clearer CRISP outline.
+          // This is a slightly darker same-family edge, not a blurred shadow.
+          const outline=tintQuestBorderSource(source,makeQuestBorderAssistColor(colorValue||"#fffaf3"));
+          if(outline){
+            for(const [dx,dy] of [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[1,-1],[-1,1],[1,1]]){
+              outCtx.drawImage(outline,dx,dy,outline.width,outline.height);
+            }
+          }
           for(const [dx,dy] of [[-1,0],[1,0],[0,-1],[0,1]]){
             outCtx.drawImage(base,dx,dy,base.width,base.height);
           }
@@ -391,7 +401,7 @@ function applyQuestIconBorder(element, characterId){
     return;
   }
 
-  // v24.155: real PNG overlay; light Stitched gets same-color thickness only.
+  // v24.155: use a real transparent PNG overlay; light Stitched gets same-color thickness only.
   // This is much more reliable on Android Chrome/PWA while still allowing
   // each border to be recolored to the selected border color.
   if(!layer || layer.tagName!=="IMG"){

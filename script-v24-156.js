@@ -1,6 +1,6 @@
-// Hub v24.154 — stitched border outline polish + clean Sakura/Sparkle rendering
+// Hub v24.156 — stronger stitched light-color outline for Duck Quest visibility
 const STORAGE_KEY = "duckHabitHubSave_v1";
-const SAVE_VERSION = 55;
+const SAVE_VERSION = 57;
 
 const CHARACTERS = {
   peep: {
