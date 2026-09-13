@@ -1,0 +1,123 @@
+name: Install Duckie Days v24.161 True Double Battles
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - "*v24-161*update-only*.zip"
+      - "*v24.161*update-only*.zip"
+      - ".github/workflows/install-duck-habit-hub-v24-161-true-double-battles.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-161-install
+  cancel-in-progress: false
+
+jobs:
+  install-update:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Locate ZIP
+        id: package
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -f version.json ] \
+            && grep -Fq '"version": "24.161"' version.json \
+            && [ -f script-v24-161.js ] \
+            && [ -f style-v24-161.css ] \
+            && [ -f sw-v24-161.js ] \
+            && [ -f duck-quest/js/game-v78.js ] \
+            && [ -f duck-quest/css/style-v70.css ]; then
+            echo "package_found=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          ZIP=$(find . -maxdepth 1 -type f \( -iname '*v24-161*update-only*.zip' -o -iname '*v24.161*update-only*.zip' \) | sort | head -n 1 || true)
+          if [ -z "$ZIP" ]; then
+            echo "Workflow ready; upload the v24.161 update-only ZIP."
+            echo "package_found=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "package_found=true" >> "$GITHUB_OUTPUT"
+          echo "zip=$ZIP" >> "$GITHUB_OUTPUT"
+
+      - name: Verify update package
+        if: steps.package.outputs.package_found == 'true'
+        env:
+          ZIP: ${{ steps.package.outputs.zip }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          unzip -tq "$ZIP"
+          LISTING="$(unzip -Z1 "$ZIP")"
+          for REQUIRED in \
+            index.html \
+            script-v24-161.js \
+            style-v24-161.css \
+            sw.js \
+            sw-v24-161.js \
+            manifest.webmanifest \
+            version.json \
+            duck-hub-cache-reset.html \
+            duck-quest/index.html \
+            duck-quest/js/game-v78.js \
+            duck-quest/css/style-v70.css \
+            README-v24.161-TRUE-DOUBLE-BATTLES.txt
+          do
+            grep -Fqx "$REQUIRED" <<< "$LISTING" || { echo "::error::Missing $REQUIRED"; exit 1; }
+          done
+
+      - name: Install update
+        if: steps.package.outputs.package_found == 'true'
+        env:
+          ZIP: ${{ steps.package.outputs.zip }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          TMP=.duckhub-v24-161-update
+          rm -rf "$TMP"
+          mkdir -p "$TMP"
+          unzip -q "$ZIP" -d "$TMP"
+          cp -a "$TMP"/. ./
+          rm -rf "$TMP"
+          rm -f "$ZIP"
+
+      - name: Verify installed build
+        if: steps.package.outputs.package_found == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq '"version": "24.161"' version.json
+          grep -Fq 'script-v24-161.js?v=24-161' index.html
+          grep -Fq 'style-v24-161.css?v=24-161' index.html
+          grep -Fq 'js/game-v78.js?v=24-161' duck-quest/index.html
+          grep -Fq 'css/style-v70.css?v=24-161' duck-quest/index.html
+          grep -Fq 'id="enemyCombatant2"' duck-quest/index.html
+          grep -Fq 'id="targetPicker"' duck-quest/index.html
+          grep -Fq 'function startDoubleBattle' duck-quest/js/game-v78.js
+          grep -Fq 'async function enemyTurnSequence' duck-quest/js/game-v78.js
+          grep -Fq 'openDoubleTargetPicker("attack")' duck-quest/js/game-v78.js
+          node --check script-v24-161.js
+          node --check sw-v24-161.js
+          node --check duck-quest/js/game-v78.js
+
+      - name: Commit changes
+        if: steps.package.outputs.package_found == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Install Duckie Days v24.161 true double battles"
+          git push
