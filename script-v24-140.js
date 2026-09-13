@@ -1,4 +1,4 @@
-// Hub v24.139 — Daisy Crown nudge + larger closet OC
+// Hub v24.140 — Daisy Crown nudge + closet OC bigger and slightly left
 const STORAGE_KEY = "duckHabitHubSave_v1";
 const SAVE_VERSION = 42;
 
