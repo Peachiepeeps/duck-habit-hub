@@ -1,0 +1,131 @@
+name: Rescue Install Duckie Days v24.155
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/install-duck-habit-hub-v24-155-RESCUE.yml"
+      - "*v24.155*update-only*.zip"
+      - "*v24-155*update-only*.zip"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-155-rescue
+  cancel-in-progress: false
+
+jobs:
+  rescue-install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Find v24.155 update ZIP
+        id: package
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ -f "version.json" ] && grep -Fq '"version": "24.155"' version.json; then
+            echo "v24.155 is already installed."
+            echo "already_installed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          ZIP="$(find . -maxdepth 1 -type f \( -iname '*v24.155*update-only*.zip' -o -iname '*v24-155*update-only*.zip' \) -printf '%f\n' | sort | head -n 1 || true)"
+
+          if [ -z "$ZIP" ]; then
+            echo "::error::The v24.155 update-only ZIP was not found in the repository root."
+            echo "Upload duckie-days-v24.155-stitched-no-shadow-update-only.zip to the repo root, then run this workflow again."
+            exit 1
+          fi
+
+          echo "already_installed=false" >> "$GITHUB_OUTPUT"
+          echo "zip=$ZIP" >> "$GITHUB_OUTPUT"
+          echo "Found: $ZIP"
+
+      - name: Check ZIP integrity
+        if: steps.package.outputs.already_installed != 'true'
+        shell: bash
+        env:
+          ZIP: ${{ steps.package.outputs.zip }}
+        run: |
+          set -euo pipefail
+          unzip -tq "$ZIP"
+
+      - name: Install v24.155 files
+        if: steps.package.outputs.already_installed != 'true'
+        shell: bash
+        env:
+          ZIP: ${{ steps.package.outputs.zip }}
+        run: |
+          set -euo pipefail
+          TMP="$(mktemp -d)"
+          unzip -q "$ZIP" -d "$TMP"
+
+          for REQUIRED in \
+            index.html \
+            version.json \
+            script-v24-155.js \
+            style-v24-155.css \
+            sw.js \
+            sw-v24-155.js \
+            duck-quest/index.html \
+            duck-quest/js/game-v72.js \
+            duck-quest/css/style-v64.css
+          do
+            if [ ! -e "$TMP/$REQUIRED" ]; then
+              echo "::error::Update package is missing $REQUIRED"
+              exit 1
+            fi
+          done
+
+          cp -a "$TMP/." ./
+          rm -rf "$TMP"
+
+      - name: Verify v24.155 installed
+        if: steps.package.outputs.already_installed != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq '"version": "24.155"' version.json
+          grep -Fq 'content="24.155"' index.html
+          grep -Fq 'script-v24-155.js?v=24-155' index.html
+          grep -Fq 'style-v24-155.css?v=24-155' index.html
+          grep -Fq 'css/style-v64.css?v=24-155' duck-quest/index.html
+          grep -Fq 'js/game-v72.js?v=24-155' duck-quest/index.html
+          node --check script-v24-155.js
+          node --check sw-v24-155.js
+          node --check duck-quest/js/game-v72.js
+
+      - name: Remove uploaded update ZIP
+        if: steps.package.outputs.already_installed != 'true'
+        shell: bash
+        env:
+          ZIP: ${{ steps.package.outputs.zip }}
+        run: |
+          set -euo pipefail
+          rm -f "$ZIP"
+
+      - name: Commit rescue install
+        if: steps.package.outputs.already_installed != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "Nothing new to commit."
+            exit 0
+          fi
+
+          git commit -m "Rescue install Duckie Days v24.155"
+          git push origin HEAD:${GITHUB_REF_NAME}
