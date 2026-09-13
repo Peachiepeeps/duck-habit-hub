@@ -1,6 +1,6 @@
-// Hub v24.153 — final pet-bed duck nudge + robust Duck Quest icon border rendering
+// Hub v24.154 — stitched border outline polish + clean Sakura/Sparkle rendering
 const STORAGE_KEY = "duckHabitHubSave_v1";
-const SAVE_VERSION = 54;
+const SAVE_VERSION = 55;
 
 const CHARACTERS = {
   peep: {

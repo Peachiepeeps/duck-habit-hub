@@ -65,7 +65,7 @@ function getAreaConfig(areaId){
 }
 
 
-// v24.151 — Duck Quest icon borders remain customizable and now get improved visibility for lighter colors.
+// v24.154 — Stitched borders use a crisp assist outline only for light colors; Sakura/Sparkle stay clean.
 // Internal save keys still use the legacy area/rank names so existing player progress remains compatible.
 const QUEST_CHARACTER_IDS = Object.freeze(["peep","miko","io","miho","annika"]);
 const QUEST_CHARACTER_NAMES = Object.freeze({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika"});
@@ -294,9 +294,54 @@ function questIconBorderSelectionForCharacter(characterId){
 
 const QUEST_ICON_BORDER_TINT_CACHE = new Map();
 
-function questIconBorderTintedSrc(file,colorValue){
+function questBorderHexToRgb(hex){
+  const safe=String(hex||"").trim().replace(/^#/,"");
+  if(safe.length!==6) return {r:255,g:250,b:243};
+  return {
+    r:parseInt(safe.slice(0,2),16),
+    g:parseInt(safe.slice(2,4),16),
+    b:parseInt(safe.slice(4,6),16)
+  };
+}
+
+function questBorderRgbToHex(r,g,b){
+  const clamp=value=>Math.max(0,Math.min(255,Math.round(value||0)));
+  return `#${[clamp(r),clamp(g),clamp(b)].map(value=>value.toString(16).padStart(2,"0")).join("")}`;
+}
+
+function questBorderRelativeLuminance(hex){
+  const {r,g,b}=questBorderHexToRgb(hex);
+  return ((0.2126*r)+(0.7152*g)+(0.0722*b))/255;
+}
+
+function isLightQuestBorderColor(hex){
+  return questBorderRelativeLuminance(hex) >= 0.79;
+}
+
+function makeQuestBorderAssistColor(hex){
+  const {r,g,b}=questBorderHexToRgb(hex);
+  return questBorderRgbToHex(r*0.66,g*0.66,b*0.66);
+}
+
+function tintQuestBorderSource(source, fillColor){
+  const canvas=document.createElement("canvas");
+  canvas.width=source.naturalWidth||512;
+  canvas.height=source.naturalHeight||512;
+  const ctx=canvas.getContext("2d");
+  if(!ctx) return null;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.drawImage(source,0,0,canvas.width,canvas.height);
+  ctx.globalCompositeOperation="source-in";
+  ctx.fillStyle=fillColor||"#fffaf3";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.globalCompositeOperation="source-over";
+  return canvas;
+}
+
+function questIconBorderTintedSrc(file,colorValue,styleId){
   if(!file) return Promise.resolve("");
-  const key=`${file}|${colorValue}`;
+  const safeStyleId=styleId||"none";
+  const key=`${file}|${colorValue}|${safeStyleId}`;
   if(QUEST_ICON_BORDER_TINT_CACHE.has(key)) return QUEST_ICON_BORDER_TINT_CACHE.get(key);
 
   const promise=new Promise(resolve=>{
@@ -304,19 +349,27 @@ function questIconBorderTintedSrc(file,colorValue){
     source.decoding="async";
     source.onload=()=>{
       try{
-        const canvas=document.createElement("canvas");
-        canvas.width=source.naturalWidth||512;
-        canvas.height=source.naturalHeight||512;
-        const ctx=canvas.getContext("2d");
-        if(!ctx){ resolve(file); return; }
+        const base=tintQuestBorderSource(source,colorValue||"#fffaf3");
+        if(!base){ resolve(file); return; }
 
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        ctx.drawImage(source,0,0,canvas.width,canvas.height);
-        ctx.globalCompositeOperation="source-in";
-        ctx.fillStyle=colorValue||"#fffaf3";
-        ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.globalCompositeOperation="source-over";
-        resolve(canvas.toDataURL("image/png"));
+        const output=document.createElement("canvas");
+        output.width=base.width;
+        output.height=base.height;
+        const outCtx=output.getContext("2d");
+        if(!outCtx){ resolve(file); return; }
+
+        const wantsAssist=safeStyleId==="stitched" && isLightQuestBorderColor(colorValue||"#fffaf3");
+        if(wantsAssist){
+          const assist=tintQuestBorderSource(source,makeQuestBorderAssistColor(colorValue||"#fffaf3"));
+          if(assist){
+            for(const [dx,dy] of [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[1,-1],[-1,1],[1,1]]){
+              outCtx.drawImage(assist,dx,dy,assist.width,assist.height);
+            }
+          }
+        }
+
+        outCtx.drawImage(base,0,0,base.width,base.height);
+        resolve(output.toDataURL("image/png"));
       }catch(error){
         console.warn("Duck Quest icon border tint fallback:",error);
         resolve(file);
@@ -362,7 +415,7 @@ function applyQuestIconBorder(element, characterId){
 
   // Show the source art immediately, then swap to the tinted PNG as soon as it is ready.
   layer.src=style.file;
-  questIconBorderTintedSrc(style.file,color.value).then(src=>{
+  questIconBorderTintedSrc(style.file,color.value,style.id).then(src=>{
     if(layer.isConnected && layer.dataset.borderToken===renderToken && src){
       layer.src=src;
     }
@@ -3239,7 +3292,7 @@ function applyIconBorderPreviewStyle(element,style,color){
   element.dataset.borderPreviewToken=token;
   element.style.setProperty("--icon-border-preview-image",`url("${safeStyle.file}")`);
 
-  questIconBorderTintedSrc(safeStyle.file,safeColor.value).then(src=>{
+  questIconBorderTintedSrc(safeStyle.file,safeColor.value,safeStyle.id).then(src=>{
     if(element.isConnected && element.dataset.borderPreviewToken===token && src){
       element.style.setProperty("--icon-border-preview-image",`url("${src}")`);
     }
