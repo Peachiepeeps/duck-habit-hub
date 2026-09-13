@@ -1,10 +1,10 @@
-const APP_CACHE = 'duck-habit-hub-app-v24-146';
-const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-146';
+const APP_CACHE = 'duck-habit-hub-app-v24-147';
+const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-147';
 const IMAGE_CACHE = 'duck-habit-hub-images-stable-v1';
 
 const APP_SHELL = [
-  './','./index.html','./manifest.webmanifest?v=24-146','./version.json',
-  './style-v24-146.css','./script-v24-146.js','./sw-v24-146.js','./sw.js',
+  './','./index.html','./manifest.webmanifest?v=24-147','./version.json',
+  './style-v24-147.css','./script-v24-147.js','./sw-v24-147.js','./sw.js',
   './apple-touch-icon-v5.png','./favicon-32-v5.png','./icon-192-v5.png','./icon-512-v5.png','./icon-maskable-512-v5.png',
   './assets/ui/pink-coin.webp','./assets/ducks/Standard-duck.webp',
   './assets/ui/profile-borders/Sparkle-border.png','./assets/ui/profile-borders/Stitched-border.png','./assets/ui/profile-borders/Sakura-border.png',

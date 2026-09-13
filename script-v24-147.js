@@ -1,6 +1,6 @@
-// Hub v24.146 — PWA refresh hardening + pet bed duck polish
+// Hub v24.147 — floor duck rests in pet bed + order-proof updater
 const STORAGE_KEY = "duckHabitHubSave_v1";
-const SAVE_VERSION = 48;
+const SAVE_VERSION = 49;
 
 const CHARACTERS = {
   peep: {
@@ -7612,7 +7612,7 @@ function appendFurnitureDuck(duckId, placement, extraClass = "") {
   furnitureDuckLayer.append(img);
 }
 
-function renderFurnitureDuckPlacements() {
+function renderFurnitureDuckPlacements(floorDuckFallbackId = null) {
   furnitureDuckLayer.innerHTML = "";
 
   const leftType = currentLeftFurnitureType(save.room);
@@ -7627,8 +7627,13 @@ function renderFurnitureDuckPlacements() {
   }
 
   // Dresser top is reserved for the Book.
+  // v24.147: If the room has a pet bed but no separate pet-bed duck assigned,
+  // let the room-floor duck rest in the bed automatically. This is the duck
+  // visible in the user's room screenshots, so its position now follows the
+  // pet-bed coordinate system instead of the viewport-bottom floor position.
   if (roomFurniture.petBed) {
-    appendFurnitureDuck(displays.petBed, PETBED_DUCK_PERCH, "petbed-perched-duck");
+    const petBedDuckId = validDisplayDuckId(displays.petBed) || validDisplayDuckId(floorDuckFallbackId);
+    appendFurnitureDuck(petBedDuckId, PETBED_DUCK_PERCH, "petbed-perched-duck");
   }
 }
 
@@ -7697,7 +7702,16 @@ function renderDuckPlacements() {
 
   layerPeepHeadDuckBehindBangs();
 
-  if (floorId) {
+  const roomFurniture = getRoomFurniture(save.room);
+  const furnitureDisplays = getFurnitureDuckDisplays(save.room);
+  const explicitPetBedDuckId = validDisplayDuckId(furnitureDisplays.petBed);
+  const floorDuckRestsInPetBed = Boolean(
+    floorId &&
+    roomFurniture.petBed &&
+    (!explicitPetBedDuckId || explicitPetBedDuckId === floorId)
+  );
+
+  if (floorId && !floorDuckRestsInPetBed) {
     const duck = DUCKS[floorId];
     floorDuckDisplay.decoding = "async";
     floorDuckDisplay.fetchPriority = "auto";
@@ -7710,7 +7724,9 @@ function renderDuckPlacements() {
     floorDuckDisplay.classList.add("hidden");
   }
 
-  renderFurnitureDuckPlacements();
+  renderFurnitureDuckPlacements(
+    floorDuckRestsInPetBed && !explicitPetBedDuckId ? floorId : null
+  );
 }
 
 function assignSelectedDuckToCurrentOc() {
