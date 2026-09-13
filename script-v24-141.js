@@ -1,6 +1,6 @@
-// Hub v24.140 — Daisy Crown nudge + closet OC bigger and slightly left
+// Hub v24.141 — layering fixes + closet polish + image warmup
 const STORAGE_KEY = "duckHabitHubSave_v1";
-const SAVE_VERSION = 42;
+const SAVE_VERSION = 43;
 
 const CHARACTERS = {
   peep: {
@@ -201,7 +201,7 @@ const CHARACTERS = {
     assetFolder: "assets/annika/",
     duckHeadPlacement: {
       left: 50.4,
-      top: 35.9,
+      top: 36.9,
       width: 17.0
     },
     invitationImage: "assets/oc-invitations/Annika-invitation.png",
@@ -2574,7 +2574,7 @@ const MIKO_ASSETS = {
   "hoodie-back": { label: "Hoodie Back", file: "Miko-hoodie-back.webp", z: 18 },
   "top-sweater": { label: "Sweater", file: "Miko-sweater.webp", previewFile: "Miko-sweater-closet.webp", z: 34 },
   "top-sweater-sleeve": { label: "Sweater Sleeve", file: "Miko-sweater-sleeve.webp", z: 37 },
-  "top-big-shirt": { label: "Big Shirt", file: "Miko-big-shirt.webp", z: 36.5 },
+  "top-big-shirt": { label: "Big Shirt", file: "Miko-big-shirt.webp", z: 34.6 },
   "shirt-blouse": { label: "Blouse", file: "blouse.webp", z: 32 },
   "outer-black-blazer": { label: "Black Blazer", file: "black-blazer.webp", previewFile: "black-blazer-shop.webp", z: 34 },
   "outer-black-blazer-arm": { label: "Black Blazer Arm", file: "black-blazer-arm-piece.webp", z: 37 },
@@ -2868,7 +2868,7 @@ const MIKO_CLOSET = [
     id: "extras",
     label: "Extras",
     type: "multi",
-    options: ["headband", "hairpins-black", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip"]
+    options: ["belt", "headband", "hairpins-black", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip"]
   }
 ];
 
@@ -3135,6 +3135,10 @@ function normalizeMikoOutfit(rawOutfit = {}) {
     ? incoming.shoes
     : "shoes-loafer";
 
+  const extras = Array.isArray(incoming.extras)
+    ? incoming.extras.filter(id => ["belt", "headband", "hairpins-black", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip"].includes(id))
+    : [];
+
   const normalized = {
     ...structuredClone(DEFAULT_MIKO_OUTFIT),
     ...incoming,
@@ -3143,7 +3147,8 @@ function normalizeMikoOutfit(rawOutfit = {}) {
     outer,
     bottom,
     socks,
-    shoes
+    shoes,
+    extras
   };
   delete normalized.top;
   return normalized;
@@ -3810,7 +3815,8 @@ function getCharacterStarterWardrobe(characterId = save.selectedCharacter) {
     return [
       "hair-main", "bangs",
       "top-hoodie", "top-button",
-      "bottom-capris", "shoes-loafer"
+      "bottom-capris", "shoes-loafer",
+      "belt"
     ];
   }
   if (characterId === "io") {
@@ -4729,7 +4735,8 @@ function renderWingDuckPicker() {
 
     const img = document.createElement("img");
     img.decoding = "async";
-    img.loading = "lazy";
+    img.loading = "eager";
+    img.fetchPriority = index < 4 ? "high" : "auto";
     img.src = duckThumbFile(duck);
     img.alt = "";
     img.loading = "lazy";
@@ -5348,9 +5355,9 @@ function getMikoEquippedAssetIds() {
   if (outfit.shirt === "top-button") ids.push("top-button");
   else if (outfit.shirt === "shirt-blouse") ids.push("shirt-blouse");
 
-  // Jeans use the belt automatically. Its z-order keeps it above pants and
-  // the optional Button Shirt, but below Hoodie/Sweater outer layers.
-  if (outfit.bottom === "bottom-jeans") ids.push("belt");
+  // Special Extras (like Belt) sit over shirts and bottoms, but stay under any
+  // outer Layers like the Hoodie, Big Shirt, Sweater, or Black Blazer.
+  if (Array.isArray(outfit.extras) && outfit.extras.includes("belt")) ids.push("belt");
 
   if (outfit.outer) ids.push(outfit.outer);
 
@@ -5362,11 +5369,11 @@ function getMikoEquippedAssetIds() {
   else if (outfit.outer === "top-sweater") ids.push("top-sweater-sleeve");
   else if (outfit.outer === "outer-black-blazer") ids.push("outer-black-blazer-arm");
 
-  // Socks sit below any equipped shoes. Big Shirt is an outer layer and its
-  // z-order keeps it over Boxers while still respecting the rest of Miko's stack.
+  // Socks sit below any equipped shoes. Belt is already inserted earlier so it
+  // stays under outer Layers but still above shirts and bottoms.
   if (outfit.socks) ids.push(outfit.socks);
   if (outfit.shoes) ids.push(outfit.shoes);
-  ids.push(...(Array.isArray(outfit.extras) ? outfit.extras : []));
+  ids.push(...(Array.isArray(outfit.extras) ? outfit.extras.filter(id => id !== "belt") : []));
   ids.push(currentExpression, outfit.bangsStyle || "bangs");
 
   return ids.filter(Boolean);
@@ -5408,12 +5415,10 @@ function getAnnikaEquippedAssetIds() {
   ids.push("base");
   if (outfit.legwear) ids.push(outfit.legwear);
   if (outfit.shoes) ids.push(outfit.shoes);
+  if (outfit.bottom) ids.push(outfit.bottom);
+  ids.push(...(Array.isArray(outfit.shirts) ? outfit.shirts : []));
   if (outfit.dress) ids.push(outfit.dress);
-  else {
-    ids.push(outfit.bottom);
-    ids.push(...(Array.isArray(outfit.shirts) ? outfit.shirts : []));
-    if (outfit.outer) ids.push(outfit.outer);
-  }
+  if (outfit.outer) ids.push(outfit.outer);
   ids.push(...(Array.isArray(outfit.extras) ? outfit.extras : []));
   ids.push(currentExpression, "bangs");
   return ids.filter(Boolean);
@@ -5448,6 +5453,8 @@ function getRenderOrderedAssets(characterId = save.selectedCharacter) {
       "tail-cow", "tail-bunny",
       "large-back-bow", "bow-white",
       "hair-short", "hair-low-pigtails", "hair-ponytail", "hair-long-pigtails", "hair-jellyfish",
+      // Beret should sit behind Peep instead of in front of her face/hair.
+      "beret",
       "base",
       "sock-left-blue", "sock-right-blue", "sock-left-rainbow", "sock-right-rainbow", "legwear-white-lace",
       "leg-bandage",
@@ -5460,8 +5467,7 @@ function getRenderOrderedAssets(characterId = save.selectedCharacter) {
       "cow-ears", "cat-ears", "horns",
       "bangs",
       "cheek-bandage",
-      "left-bow", "right-bow", "hair-side-ribbon",
-      "beret"
+      "left-bow", "right-bow", "hair-side-ribbon"
     ];
     const orderMap = new Map(peepOrder.map((id, index) => [id, index]));
 
@@ -5512,9 +5518,11 @@ function getRenderOrderedAssets(characterId = save.selectedCharacter) {
       "base",
       "legwear-black", "legwear-bow-left", "legwear-bow-right", "legwear-bow-both", "legwear-circus",
       "shoes-sneakers", "shoes-booties", "shoes-folded-booties",
-      "bottom-shorts", "dress-leotard",
-      // Sheer is an under-shirt; collared shirt is drawn above it.
+      "bottom-shorts",
+      // Shirts can sit under Annika's leotard. Sheer stays furthest back,
+      // then Collared Shirt, then the leotard, then any outer layers.
       "shirt-sheer", "shirt-collared",
+      "dress-leotard",
       "outer-sweater", "outer-bow-sweater",
       "scarf", "neck-bow",
       "expression-neutral", "expression-happy", "expression-sad", "expression-shocked", "expression-mad",
@@ -5541,7 +5549,8 @@ function renderCharacterInto(container, characterId = save.selectedCharacter) {
   for (const [index, asset] of equipped.entries()) {
     const img = document.createElement("img");
     img.decoding = "async";
-    img.loading = "lazy";
+    img.loading = "eager";
+    img.fetchPriority = index < 4 ? "high" : "auto";
     img.src = `${character.assetFolder}${asset.file}`;
     img.alt = "";
     img.style.setProperty("--z", asset.z);
@@ -5588,22 +5597,32 @@ function warmCharacterAssets(characterId) {
   const character = CHARACTERS[characterId];
   if (!character) return;
   const assetMap = getCharacterAssetMap(characterId);
-  const state = save.characterStates?.[characterId];
   const filenames = new Set();
 
-  if (state?.equipped) {
-    for (const assetId of Object.values(state.equipped)) {
+  // Warm the character's current visible look so swapping tabs/poses feels faster.
+  for (const assetId of getCharacterAssetIds(characterId)) {
+    const asset = assetMap[assetId];
+    if (asset?.file) filenames.add(`${character.assetFolder}${asset.file}`);
+  }
+
+  // Pre-warm all hair choices for the active character so style swaps feel snappy.
+  for (const group of getCharacterCloset(characterId)) {
+    if (group?.type !== "hair") continue;
+    for (const assetId of group.options || []) {
       const asset = assetMap[assetId];
       if (asset?.file) filenames.add(`${character.assetFolder}${asset.file}`);
     }
   }
 
-  // Keep expressions feeling snappy without warming every single clothing item.
+  // Keep reactions feeling snappy without warming the full closet.
   for (const [assetId, asset] of Object.entries(assetMap)) {
     if (assetId.startsWith("expression-") && asset?.file) {
       filenames.add(`${character.assetFolder}${asset.file}`);
     }
   }
+
+  const headDuckId = currentHeadDuckId(characterId);
+  if (headDuckId && DUCKS[headDuckId]?.file) filenames.add(DUCKS[headDuckId].file);
 
   filenames.forEach(warmImage);
 }
@@ -5620,6 +5639,9 @@ function warmStartupAssets() {
   if (roomStyle?.file) warmImage(`./assets/rooms/${roomStyle.file}`);
 
   warmCharacterAssets(save.selectedCharacter);
+
+  const floorDuckId = currentFloorDuckId(save.room);
+  if (floorDuckId && DUCKS[floorDuckId]?.file) warmImage(DUCKS[floorDuckId].file);
 }
 
 function updateExpressionLayer(assetId) {
@@ -7611,7 +7633,7 @@ function renderFurnitureDuckPlacements() {
 }
 
 function headDuckBangLayerAssetId(characterId) {
-  return characterId === "peep" || characterId === "miho" ? "bangs" : "";
+  return characterId === "peep" || characterId === "miho" || characterId === "annika" ? "bangs" : "";
 }
 
 function placeHeadDuckBehindFrontHair(container, layer, characterId) {
@@ -7659,6 +7681,8 @@ function renderDuckPlacements() {
       width: 18
     };
 
+    headDuckDisplay.decoding = "async";
+    headDuckDisplay.fetchPriority = "high";
     headDuckDisplay.src = duck.file;
     headDuckDisplay.alt = `${duck.name} sitting on ${character.name}'s head`;
     headDuckDisplay.style.left = `${placement.left}%`;
@@ -7675,6 +7699,8 @@ function renderDuckPlacements() {
 
   if (floorId) {
     const duck = DUCKS[floorId];
+    floorDuckDisplay.decoding = "async";
+    floorDuckDisplay.fetchPriority = "auto";
     floorDuckDisplay.src = duck.file;
     floorDuckDisplay.alt = `${duck.name} displayed on the room floor`;
     floorDuckDisplay.classList.remove("hidden");
@@ -11721,7 +11747,8 @@ function renderProfileHeadDuck(container, characterId) {
 
   const img = document.createElement("img");
     img.decoding = "async";
-    img.loading = "lazy";
+    img.loading = "eager";
+    img.fetchPriority = "high";
   img.className = "profile-head-duck";
   img.src = duck.file;
   img.alt = "";
@@ -12170,7 +12197,8 @@ function renderStatusHeadDuck() {
 
   const img = document.createElement("img");
     img.decoding = "async";
-    img.loading = "lazy";
+    img.loading = "eager";
+    img.fetchPriority = "high";
   img.className = "status-head-duck";
   img.src = duck.file;
   img.alt = "";

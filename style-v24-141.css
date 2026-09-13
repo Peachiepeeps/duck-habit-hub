@@ -261,6 +261,8 @@ button { color: inherit; }
   background: transparent;
   text-align: left;
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   font-size: .78rem;
 }
 .closet-category-menu button.active { background: #edf6fb; font-weight: 800; }
@@ -304,6 +306,8 @@ button { color: inherit; }
   gap: 3px;
   background: rgba(255,255,255,.62);
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 .closet-option-card.equipped,
 .closet-option-card.toggle-equipped { border-color: rgba(132, 176, 206, .62); background: rgba(228, 244, 252, .75); }
@@ -371,6 +375,8 @@ button { color: inherit; }
   background: rgba(255,255,255,.62);
   color: inherit;
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 .sock-style-card.equipped {
   border-color: rgba(132, 176, 206, .55);
@@ -464,6 +470,8 @@ button { color: inherit; }
   font-size: .68rem;
   font-weight: 900;
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 .sock-placement-button.selected {
   border-color: rgba(103, 156, 190, .9);
