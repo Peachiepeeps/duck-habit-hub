@@ -1,6 +1,6 @@
-// Hub v24.142 — beret + Annika duck + pet bed placement polish
+// Hub v24.143 — pet bed duck height polish
 const STORAGE_KEY = "duckHabitHubSave_v1";
-const SAVE_VERSION = 44;
+const SAVE_VERSION = 45;
 
 const CHARACTERS = {
   peep: {
@@ -7362,7 +7362,7 @@ const DRESSER_DUCK_PERCH = Object.freeze({
 
 const PETBED_DUCK_PERCH = Object.freeze({
   left: 25.0,
-  top: 90.4,
+  top: 88.7,
   width: 11.7
 });
 
