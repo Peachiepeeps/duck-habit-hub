@@ -1,6 +1,6 @@
-// Hub v24.144 — pet bed duck raised again
+// Hub v24.145 — pet bed duck raised more visibly
 const STORAGE_KEY = "duckHabitHubSave_v1";
-const SAVE_VERSION = 46;
+const SAVE_VERSION = 47;
 
 const CHARACTERS = {
   peep: {
@@ -7362,8 +7362,8 @@ const DRESSER_DUCK_PERCH = Object.freeze({
 
 const PETBED_DUCK_PERCH = Object.freeze({
   left: 25.0,
-  top: 87.2,
-  width: 11.7
+  top: 84.6,
+  width: 11.9
 });
 
 function normalizeRoomFurniture() {
