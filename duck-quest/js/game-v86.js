@@ -8029,144 +8029,538 @@ setInterval(()=>{
 })();
 
 
-// v24.170 — move home tools into the open hero column + fix collapsed Hatching Area
+// v24.171 — mimic chest variants + condensed icon border picker + Duckie Dash polish
 (function(){
-  const fix=document.createElement('style');
-  fix.textContent=`
-    /* Keep the left customization column tall while using the open space beside it. */
-    #homeScreen.dq-home-polished .hero-card{
-      grid-template-rows:auto 1fr;
-      align-items:start;
-    }
-    #homeScreen.dq-home-polished .hero-sprite-column{
-      grid-column:1;
-      grid-row:1 / span 2;
-    }
-    #homeScreen.dq-home-polished .hero-info{
-      grid-column:2;
-      grid-row:1;
-      min-width:0;
-    }
-    .dq-hero-tools{
-      grid-column:2!important;
-      grid-row:2!important;
-      grid-template-columns:minmax(0,1fr)!important;
-      align-self:start;
-      gap:10px;
-      margin-top:10px;
-      min-width:0;
-    }
-    .dq-hero-tools .charm-home-card{
-      min-height:58px;
-    }
-    .dq-hero-tools #openCharmScreen,
-    .dq-hero-tools #openHatchery{
-      width:100%;
-      min-height:58px;
-      padding:8px 10px;
-      background:var(--quest-button)!important;
-      color:var(--brown)!important;
-      border-color:var(--border)!important;
-      text-shadow:none!important;
-      box-shadow:var(--shadow)!important;
-    }
-    .dq-hero-tools #openCharmScreen::before{content:none!important;}
-    .dq-hero-tools #openCharmScreen .home-charm-icon{
-      flex:0 0 auto;
-      display:grid;
-      place-items:center;
-      width:34px;
-      height:38px;
-    }
-    .dq-hero-tools #openCharmScreen .home-charm-label,
-    .dq-hero-tools #openHatchery .home-hatch-label{
-      font-size:.82rem;
-      letter-spacing:.01em;
-      color:inherit;
-    }
-    .dq-hero-tools #openHatchery{
-      min-height:66px;
-    }
-    .dq-hero-tools #openHatchery .home-hatch-icon{
-      width:32px;
-      height:32px;
-      filter:drop-shadow(0 2px 0 rgba(97,61,73,.12));
-    }
-    .dq-hero-tools #hatchReadyBadge:not(:empty){
-      background:#fff5c8;
-      color:#8c6328;
-    }
+  const JUMP_TOKEN_ITEM={id:'jump-token',name:'Jump Token',image:'assets/dash/Jump-Token.png'};
+  const MIMIC_CHEST_VARIANTS=Object.freeze({
+    regular:{id:'regular',label:'Regular Chest',accent:'Pink',description:'Won after battles.',disguiseClosed:'assets/items/chests/treasure/closed.webp',disguiseOpen:'assets/items/chests/treasure/open.webp',mimicIdle:['assets/enemies/mimic/base/open-1.webp','assets/enemies/mimic/base/open-2.webp'],mimicHurt:'assets/items/chests/treasure/closed.webp',mimicName:'Mimic',revealChance:0.25},
+    lucky:{id:'lucky',label:'Lucky Chest',accent:'Gold',description:'Random chest with better coin luck.',disguiseClosed:'assets/enemies/mimic/lucky/closed.webp',disguiseOpen:'assets/enemies/mimic/lucky/open.webp',mimicIdle:['assets/enemies/mimic/lucky/idle-1.webp','assets/enemies/mimic/lucky/idle-2.webp'],mimicHurt:'assets/enemies/mimic/lucky/closed.webp',mimicName:'Lucky Mimic',revealChance:0.25},
+    healthy:{id:'healthy',label:'Healthy Chest',accent:'Green',description:'Random rare chest that can reward multiple Jump Tokens.',disguiseClosed:'assets/enemies/mimic/healthy/closed.webp',disguiseOpen:'assets/enemies/mimic/healthy/open.webp',mimicIdle:['assets/enemies/mimic/healthy/idle-1.webp','assets/enemies/mimic/healthy/idle-2.webp'],mimicHurt:'assets/enemies/mimic/healthy/closed.webp',mimicName:'Healthy Mimic',revealChance:0.20},
+    amethyst:{id:'amethyst',label:'Amethyst Chest',accent:'Purple',description:'Shiny mystery chest. Very rare!',disguiseClosed:'assets/shinies/amethyst-mimic-closed.webp',disguiseOpen:'assets/shinies/amethyst-mimic-open.webp',mimicIdle:['assets/shinies/amethyst-mimic-idle-1.webp','assets/shinies/amethyst-mimic-idle-2.webp'],mimicHurt:'assets/shinies/amethyst-mimic-closed.webp',mimicName:'Amethyst Mimic',revealChance:1}
+  });
+  window.DUCKIE_DAYS_MIMIC_VARIANT_LIST=[
+    'Regular — Pink — won after battles.',
+    'Lucky — Gold — random chest.',
+    'Healthy — Green — random rare chest with extra Jump Tokens.',
+    'Amethyst — Purple — shiny and very rare.'
+  ];
 
-    /* v24.169's grid row could collapse the 100%-height hatch world to its border.
-       Use a definite block container so the portrait scene always fills the viewport. */
-    #hatcheryScreen.hatchery-fit-screen{
-      display:block!important;
-      position:relative;
-      box-sizing:border-box;
-    }
-    #hatcheryScreen.hatchery-fit-screen .hatch-world-shell{
-      display:block!important;
-      height:100%!important;
-      min-height:0!important;
-      box-sizing:border-box;
-    }
-    #hatcheryScreen.hatchery-fit-screen .hatch-world{
-      display:block!important;
-      height:100%!important;
-      min-height:0!important;
-      box-sizing:border-box;
-    }
+  function mimicVariantById(id){ return MIMIC_CHEST_VARIANTS[id] || MIMIC_CHEST_VARIANTS.regular; }
+  function chestVariantFor(data={}){
+    const explicit=data.mimicChestStyle || data.enemy?.mimicChestStyle;
+    if(explicit && MIMIC_CHEST_VARIANTS[explicit]) return MIMIC_CHEST_VARIANTS[explicit];
+    if(data.mystery) return MIMIC_CHEST_VARIANTS.amethyst;
+    if(data.kind==='healthy') return MIMIC_CHEST_VARIANTS.healthy;
+    if(data.kind==='rare') return MIMIC_CHEST_VARIANTS.lucky;
+    return MIMIC_CHEST_VARIANTS.regular;
+  }
 
-    @media(max-width:600px){
-      .dq-hero-tools{gap:8px;margin-top:8px;}
-      .dq-hero-tools #openCharmScreen{min-height:54px;padding:6px 7px;}
-      .dq-hero-tools #openHatchery{min-height:62px;padding:6px 7px;}
-      .dq-hero-tools #openCharmScreen .home-charm-icon{width:29px;height:32px;}
-      .dq-hero-tools #openCharmScreen .home-charm-label,
-      .dq-hero-tools #openHatchery .home-hatch-label{font-size:.70rem;}
-      .dq-hero-tools #openHatchery .home-hatch-icon{width:27px;height:27px;}
-    }
-    @media(max-width:390px){
-      .dq-hero-tools #openCharmScreen .home-charm-label,
-      .dq-hero-tools #openHatchery .home-hatch-label{font-size:.64rem;}
+  const patchCss=document.createElement('style');
+  patchCss.textContent=`
+    #homeScreen .quest-icon-border-color-control{display:none!important;}
+    #homeScreen .quest-icon-border-control .icon-background-picker-wrap{position:relative;}
+    .quest-border-combo-picker{width:min(100%,284px);padding:10px;display:grid;gap:10px;border-radius:14px;border:2px solid rgba(140,98,93,.18);box-shadow:0 12px 28px rgba(84,58,70,.12);}
+    .quest-border-combo-section{display:grid;gap:7px;}
+    .quest-border-combo-label{font-size:.63rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#8a6b77;}
+    .quest-border-style-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;}
+    .quest-border-color-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;}
+    .quest-border-color-grid .icon-background-choice{justify-content:center;min-height:42px;}
+    .quest-border-color-grid .icon-background-dot{width:18px;height:18px;}
+    .quest-border-style-choice{min-height:48px;}
+    .quest-border-style-choice[aria-current="true"], .quest-border-color-grid .icon-background-choice[aria-current="true"]{box-shadow:inset 0 0 0 2px rgba(207,103,136,.28);background:#fff1f6;}
+
+    #charmScreen .charm-book-heading{grid-template-columns:minmax(0,1fr)!important;align-items:start;}
+    #charmScreen #backFromCharms,#charmScreen #charmCoinCount{display:none!important;}
+
+    #dashScreen .dq-feature-shell{gap:12px;padding:16px;border-radius:24px;}
+    #dashScreen .dq-feature-top{display:grid;gap:10px;align-items:start;}
+    #dashScreen .dq-feature-top > div{display:grid;gap:8px;}
+    #dashScreen .dq-feature-top small{display:none!important;}
+    #dashScreen .dq-feature-top .pixel-button{justify-self:start;}
+    .dash-title-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+    .dash-title-actions .pixel-button{min-height:42px;}
+    .dash-title-actions .dash-title-cost{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border-radius:999px;border:2px solid rgba(140,98,93,.18);background:#fffaf7;font-size:.73rem;font-weight:900;color:#6e4e5a;}
+    .dash-title-actions .dash-title-cost img{width:20px;height:20px;object-fit:contain;image-rendering:pixelated;}
+    #dashScreen .dq-mini-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+    #dashScreen .dq-mini-grid>div{padding:10px;border-radius:14px;background:#fffdfb;}
+    #dashScreen .dq-mini-grid>div:last-child{grid-column:1 / -1;}
+    .dash-selected-summary{display:grid;gap:8px;grid-template-columns:repeat(2,minmax(0,1fr));}
+    .dash-selected-card{padding:11px 12px;border:2px solid rgba(140,98,93,.14);border-radius:16px;background:#fffdfb;display:grid;gap:4px;}
+    .dash-selected-card span{font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:#8a6d79;}
+    .dash-selected-card strong{font-size:1rem;color:#644953;}
+    #dashScreen .dash-stage-button{min-height:62px;border-radius:16px;font-size:.92rem;background:#fffdfb;}
+    #dashScreen .dash-stage-button.selected{background:#fff0f7;}
+    #dashScreen .dash-hud>span{padding:7px 5px;border-radius:12px;background:#fffdfb;}
+    #dashScreen .dash-garage-wrap{gap:9px;}
+    #dashScreen .dash-garage{gap:9px;}
+    #dashScreen .dash-cart-card{border-radius:16px;background:#fffdfb;}
+    #dashScreen .dash-overlay-card small{line-height:1.45;}
+    .dash-playbox{gap:10px;}
+    .dash-compact-note{margin:0;text-align:center;color:#7d6571;font-size:.73rem;line-height:1.35;}
+    @media(max-width:560px){
+      .quest-border-color-grid{grid-template-columns:repeat(4,minmax(0,1fr));}
+      .dash-title-actions{display:grid;grid-template-columns:1fr;align-items:stretch;}
+      .dash-selected-summary{grid-template-columns:1fr;}
+      #dashScreen .dq-mini-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+      #dashScreen .dq-mini-grid>div:last-child{grid-column:1 / -1;}
     }
   `;
-  document.head.appendChild(fix);
+  document.head.appendChild(patchCss);
 
-  function polishHomeToolButtons(){
-    const charmButton=document.querySelector('#openCharmScreen');
-    const hatchButton=document.querySelector('#openHatchery');
-    if(charmButton){
-      const icon=(typeof charmArtMarkup==='function' && typeof CHARM_DEFS==='object' && CHARM_DEFS['fortune-gold'])
-        ? charmArtMarkup(CHARM_DEFS['fortune-gold'],'tiny')
-        : '<img class="home-charm-fallback" src="assets/charms/Charm-outline.png" alt="">';
-      charmButton.innerHTML=`<span class="home-charm-icon">${icon}</span><span class="home-charm-label">Equip Charm</span>`;
+  function renderCombinedBorderPicker(){
+    normalizeIconBorderStyleUnlocks();
+    normalizeIconBorderColorUnlocks();
+    if(!ui.iconBorderPicker || !ui.heroSpriteWrap) return;
+    const hero=activeHeroProgress();
+    const unlockedStyles=new Set(questSave.iconBorderStylesUnlocked);
+    const unlockedColors=new Set(questSave.iconBorderColorsUnlocked);
+    if(!unlockedStyles.has(hero.iconBorderStyle)) hero.iconBorderStyle='none';
+    if(!unlockedColors.has(hero.iconBorderColor)) hero.iconBorderColor='white';
+    const selectedStyle=iconBorderStyleById(hero.iconBorderStyle);
+    const selectedColor=iconBorderColorById(hero.iconBorderColor);
+    if(ui.iconBorderCurrent) applyIconBorderPreviewStyle(ui.iconBorderCurrent,selectedStyle,selectedColor);
+    if(ui.iconBorderLabel) ui.iconBorderLabel.textContent=`${selectedStyle.label} · ${selectedColor.label}`;
+    applyQuestIconBorder(ui.heroSpriteWrap,activeCharacterId);
+
+    ui.iconBorderPicker.classList.add('quest-border-combo-picker');
+    ui.iconBorderPicker.innerHTML='';
+
+    const styleSection=document.createElement('div');
+    styleSection.className='quest-border-combo-section';
+    styleSection.innerHTML='<span class="quest-border-combo-label">Border</span>';
+    const styleGrid=document.createElement('div');
+    styleGrid.className='quest-border-style-grid';
+    for(const style of ICON_BORDER_STYLES){
+      const isUnlocked=unlockedStyles.has(style.id);
+      const button=document.createElement('button');
+      button.type='button';
+      button.className=`quest-border-style-choice${isUnlocked?'':' locked'}`;
+      button.setAttribute('aria-current',String(hero.iconBorderStyle===style.id));
+      button.setAttribute('aria-label',`${style.label}${isUnlocked?'':', locked'}`);
+      const preview=document.createElement('span');
+      preview.className='quest-border-style-preview';
+      applyIconBorderPreviewStyle(preview,style,selectedColor);
+      const label=document.createElement('span');
+      label.className='quest-border-style-label';
+      label.textContent=style.id==='none'?'None':style.label.replace(/\s+Border$/i,'');
+      button.append(preview,label);
+      if(!isUnlocked){
+        const lock=document.createElement('span');
+        lock.className='icon-background-lock';
+        lock.textContent='🔒';
+        button.append(lock);
+      }
+      button.addEventListener('click',()=>{
+        if(!isUnlocked) return;
+        setIconBorderStyle(style.id);
+      });
+      styleGrid.append(button);
     }
-    if(hatchButton && !hatchButton.querySelector('.home-hatch-icon')){
-      hatchButton.innerHTML=`<img class="home-hatch-icon" src="assets/eggs/Common-egg.png" alt=""><span class="home-hatch-label">Hatching Area</span><span id="hatchReadyBadge"></span>`;
+    styleSection.append(styleGrid);
+
+    const colorSection=document.createElement('div');
+    colorSection.className='quest-border-combo-section';
+    colorSection.innerHTML='<span class="quest-border-combo-label">Color</span>';
+    const colorGrid=document.createElement('div');
+    colorGrid.className='quest-border-color-grid';
+    for(const color of ICON_BORDER_COLORS){
+      const isUnlocked=unlockedColors.has(color.id);
+      const button=document.createElement('button');
+      button.type='button';
+      button.className=`icon-background-choice${isUnlocked?'':' locked'}`;
+      button.setAttribute('aria-current',String(hero.iconBorderColor===color.id));
+      button.setAttribute('aria-label',`${color.label}${isUnlocked?'':', locked'}`);
+      button.title=color.label;
+      const dot=document.createElement('span');
+      dot.className='icon-background-dot';
+      dot.style.background=color.value;
+      button.append(dot);
+      if(!isUnlocked){
+        const lock=document.createElement('span');
+        lock.className='icon-background-lock';
+        lock.textContent='🔒';
+        button.append(lock);
+      }
+      button.addEventListener('click',()=>{
+        if(!isUnlocked) return;
+        setIconBorderColor(color.id);
+      });
+      colorGrid.append(button);
     }
-    if(typeof refreshFeatureBadges==='function') refreshFeatureBadges();
+    colorSection.append(colorGrid);
+    ui.iconBorderPicker.append(styleSection,colorSection);
+  }
+  renderIconBorderPicker=renderCombinedBorderPicker;
+  renderIconBorderColorPicker=function(){ renderCombinedBorderPicker(); };
+
+  const originalSetIconBorderStyle=setIconBorderStyle;
+  setIconBorderStyle=function(styleId){ originalSetIconBorderStyle(styleId); renderCombinedBorderPicker(); };
+  const originalSetIconBorderColor=setIconBorderColor;
+  setIconBorderColor=function(colorId){ originalSetIconBorderColor(colorId); renderCombinedBorderPicker(); };
+  requestAnimationFrame(renderCombinedBorderPicker);
+
+  function hideCharmHeadingExtras(){
+    document.querySelector('#backFromCharms')?.remove();
+    document.querySelector('#charmCoinCount')?.remove();
+  }
+  hideCharmHeadingExtras();
+
+  function activeScreenId(){
+    const screens=['homeScreen','charmScreen','buddyScreen','dashScreen','hatcheryScreen','battleScreen','resultScreen'];
+    return screens.find(id=>{const el=document.getElementById(id);return el && !el.classList.contains('hidden');}) || 'homeScreen';
+  }
+  function installContextBackButton(){
+    const oldButton=document.querySelector('#backGames');
+    if(!oldButton) return;
+    const fresh=oldButton.cloneNode(true);
+    oldButton.replaceWith(fresh);
+    fresh.addEventListener('click',()=>{
+      const current=activeScreenId();
+      if(current==='homeScreen'){
+        window.location.href='../#games';
+        return;
+      }
+      if(['dashScreen','hatcheryScreen','charmScreen','buddyScreen'].includes(current)){
+        showScreen('home');
+        renderMeta();
+        return;
+      }
+      if(current==='resultScreen' || current==='battleScreen'){
+        returnHome();
+        return;
+      }
+      showScreen('home');
+    });
+  }
+  installContextBackButton();
+
+  function prepareChestEncounter(kind, styleId, introText){
+    currentEnemy=null;
+    ui.enemyCombatant.classList.add('hidden');
+    ui.enemyCombatant2?.classList.add('hidden');
+    ui.commandGrid.classList.add('hidden');
+    closeCommandWindow();
+    const variant=mimicVariantById(styleId);
+    showChest({kind, revealMimic:Math.random()<variant.revealChance, mimicChestStyle:styleId});
+    setMessage(introText);
   }
 
-  function refitHatchery(){
-    const screen=document.querySelector('#hatcheryScreen');
-    if(!screen || screen.classList.contains('hidden')) return;
-    screen.classList.add('hatchery-fit-screen');
-    const top=Math.max(0,screen.getBoundingClientRect().top);
-    const viewport=window.visualViewport?.height || window.innerHeight;
-    const available=Math.max(420,Math.floor(viewport-top-4));
-    screen.style.setProperty('--hatch-screen-height',`${available}px`);
-  }
+  const originalBuildEncounterFromPool=buildEncounterFromPool;
+  buildEncounterFromPool=function(enemyPool,mode='stage'){
+    if(Math.random()<MYSTERY_CHEST_RATE) return {type:'mystery-chest'};
+    const roll=Math.random();
+    if(mode==='endless'){
+      if(roll<.05) return {type:'healthy-chest'};
+      if(roll<.13) return {type:'rare-chest'};
+      if(roll<.18) return {type:'mimic'};
+      if(roll<.28) return {type:'double-enemy',enemyIds:pickEncounterEnemies(ENDLESS_NORMAL_ENEMIES,2),waveIndex:0,defeatedEnemies:[]};
+      if(roll<.36) return {type:pickSituationType('endless')};
+      return {type:'enemy',enemyId:pickEncounterEnemy(ENDLESS_NORMAL_ENEMIES)};
+    }
+    if(roll<.04) return {type:'healthy-chest'};
+    if(roll<.12) return {type:'rare-chest'};
+    if(roll<.17) return {type:'mimic'};
+    if(roll<.25) return {type:'double-enemy',enemyIds:pickEncounterEnemies(enemyPool,2),waveIndex:0,defeatedEnemies:[]};
+    if(roll<.33) return {type:pickSituationType('stage')};
+    return {type:'enemy',enemyId:pickEncounterEnemy(enemyPool)};
+  };
 
-  polishHomeToolButtons();
-  const before170ShowScreen=showScreen;
-  showScreen=function(which){
-    before170ShowScreen(which);
-    if(which==='home') polishHomeToolButtons();
-    if(which==='hatchery'){
-      requestAnimationFrame(()=>requestAnimationFrame(refitHatchery));
+  const originalStartEncounter=startEncounter;
+  startEncounter=function(){
+    const isEndless=currentRun?.mode==='endless';
+    const encounter=isEndless ? currentRun?.endlessEncounter : currentRun?.plan?.[currentRun?.index];
+    if(encounter?.type==='healthy-chest'){
+      // mirror the same prep steps the normal encounter loader uses.
+      buddyUsedThisHeroTurn=false;
+      activeBattleBuddySlot=firstAssignedBattleBuddySlot();
+      buddySwitchUsedThisEncounter=false;
+      renderBattleCharmStrip();
+      resetDoubleBattleUi();
+      hideEventChoices();
+      ui.enemyCombatant2?.classList.add('hidden');
+      ui.chestLayer.classList.add('hidden');
+      ui.postFloorActions?.classList.add('hidden');
+      ui.leaveEndlessButton?.classList.add('hidden');
+      setPostFloorLayout(false);
+      ui.commandGrid.classList.remove('hidden');
+      closeCommandWindow();
+      ui.enemyCombatant.classList.remove('hidden');
+      ui.buddyCombatant?.classList.add('hidden');
+      if(isEndless){
+        currentRun.rank=endlessEffectiveRank(currentRun.floor);
+        if(!currentRun.floorBackground) currentRun.floorBackground=chooseEndlessBackground();
+        ui.battleBg.src=currentRun.floorBackground;
+        const oceanish=String(currentRun.floorBackground).includes('/ocean/');
+        ui.battlefield.classList.toggle('ocean-peep-raised',oceanish && !String(currentRun.floorBackground).includes('/floor.'));
+      }else{
+        const cfg=currentAreaConfig();
+        ui.battleBg.src=cfg.backgrounds[currentRun.index];
+        ui.battlefield.classList.toggle('ocean-peep-raised', currentRun.area==='ocean' && (currentRun.index===1 || currentRun.index===2));
+      }
+      updateEncounterHeader(encounter);
+      ui.peepLevelCombat.textContent=`Lv. ${activeHeroProgress().level}`;
+      renderPeepHp();
+      startPeepIdle();
+      prepareChestEncounter('healthy','healthy','A healthy green chest appeared! It may hide extra Jump Tokens.');
+      return;
+    }
+    if(encounter?.type==='rare-chest'){
+      buddyUsedThisHeroTurn=false;
+      activeBattleBuddySlot=firstAssignedBattleBuddySlot();
+      buddySwitchUsedThisEncounter=false;
+      renderBattleCharmStrip();
+      resetDoubleBattleUi();
+      hideEventChoices();
+      ui.enemyCombatant2?.classList.add('hidden');
+      ui.chestLayer.classList.add('hidden');
+      ui.postFloorActions?.classList.add('hidden');
+      ui.leaveEndlessButton?.classList.add('hidden');
+      setPostFloorLayout(false);
+      ui.commandGrid.classList.remove('hidden');
+      closeCommandWindow();
+      ui.enemyCombatant.classList.remove('hidden');
+      ui.buddyCombatant?.classList.add('hidden');
+      if(isEndless){
+        currentRun.rank=endlessEffectiveRank(currentRun.floor);
+        if(!currentRun.floorBackground) currentRun.floorBackground=chooseEndlessBackground();
+        ui.battleBg.src=currentRun.floorBackground;
+        const oceanish=String(currentRun.floorBackground).includes('/ocean/');
+        ui.battlefield.classList.toggle('ocean-peep-raised',oceanish && !String(currentRun.floorBackground).includes('/floor.'));
+      }else{
+        const cfg=currentAreaConfig();
+        ui.battleBg.src=cfg.backgrounds[currentRun.index];
+        ui.battlefield.classList.toggle('ocean-peep-raised', currentRun.area==='ocean' && (currentRun.index===1 || currentRun.index===2));
+      }
+      updateEncounterHeader(encounter);
+      ui.peepLevelCombat.textContent=`Lv. ${activeHeroProgress().level}`;
+      renderPeepHp();
+      startPeepIdle();
+      prepareChestEncounter('rare','lucky','A lucky gold chest appeared instead of an enemy!');
+      return;
+    }
+    return originalStartEncounter();
+  };
+
+  const originalShowChest=showChest;
+  showChest=function(data){
+    originalShowChest(data);
+    const variant=chestVariantFor(data||{});
+    if(!ui?.chestSprite) return;
+    if(!(data?.eventType)){
+      ui.chestSprite.src=variant.disguiseClosed;
+      ui.chestSprite.alt=variant.label;
+    }
+    if(data?.mystery){
+      ui.chestCaption.textContent='A strange purple chest appeared...';
+    }else if(data?.kind==='healthy'){
+      ui.chestCaption.textContent=data.captionText || 'A healthy chest appeared!';
+    }else if(data?.kind==='rare'){
+      ui.chestCaption.textContent=data.captionText || 'A lucky gold chest appeared!';
     }
   };
-  window.addEventListener('resize',()=>requestAnimationFrame(refitHatchery),{passive:true});
-  window.visualViewport?.addEventListener('resize',()=>requestAnimationFrame(refitHatchery),{passive:true});
+
+  const originalStartEnemy=startEnemy;
+  startEnemy=function(enemyId,options={}){
+    originalStartEnemy(enemyId,options);
+    if(enemyId!=='mimic' || !currentEnemy || options.forceShiny) return;
+    const variant=mimicVariantById(options.mimicChestStyle || currentEnemy.mimicChestStyle || 'regular');
+    currentEnemy.name=variant.mimicName || currentEnemy.name;
+    currentEnemy.idle=[...variant.mimicIdle];
+    currentEnemy.hurt=variant.mimicHurt;
+    currentEnemy.mimicChestStyle=variant.id;
+    if(variant.id==='lucky'){
+      currentEnemy.coinMinNow+=8;
+      currentEnemy.coinMaxNow+=14;
+      currentEnemy.expNow+=4;
+    }else if(variant.id==='healthy'){
+      currentEnemy.coinMinNow+=5;
+      currentEnemy.coinMaxNow+=8;
+      currentEnemy.expNow+=6;
+    }
+    renderEnemyCombatant(currentEnemy,currentEnemy._doubleSlot||0);
+    startEnemyIdle();
+    renderEnemyName(currentEnemy);
+    setMessage(`${currentEnemy.name} sprang out of the ${variant.accent.toLowerCase()} chest!`);
+  };
+
+  const originalGenerateRewards=generateRewards;
+  generateRewards=function(chest){
+    if(chest?.kind==='healthy'){
+      const rank=Math.max(1,Number(currentRun?.rank)||1);
+      const items=[];
+      addRewardItem(items,JUMP_TOKEN_ITEM,randInt(2,4));
+      if(Math.random()<.55) addRewardItem(items,weightedRewardItemByIds(['apple','flower','glitter','mint-paint','aqua-paint']),1);
+      const rewards=finalizeCharmRewards({
+        coins:randInt(16,28)+Math.max(1,Math.round(rank*0.85)),
+        exp:randInt(8,14)+Math.max(1,Math.round(rank*0.6)),
+        happiness:3,
+        items,
+        iconBackground:Math.random()<.12?pickChestIconBackground({kind:'rare'}):null,
+        iconBorderStyle:null,
+        iconBorderColor:Math.random()<.16?pickChestIconBorderColor({kind:'rare'}):null,
+        wallpaper:null
+      },chest);
+      return rewards;
+    }
+    const rewards=originalGenerateRewards(chest);
+    if(chest?.enemy?.id==='mimic' && chest.enemy.mimicChestStyle==='healthy'){
+      addRewardItem(rewards.items,JUMP_TOKEN_ITEM,randInt(1,2));
+    }
+    if(chest?.enemy?.id==='mimic' && chest.enemy.mimicChestStyle==='lucky'){
+      rewards.coins=Math.max(0,Number(rewards.coins)||0)+randInt(10,16);
+    }
+    return rewards;
+  };
+
+  openPendingChest=async function(){
+    if(!pendingChest || ui.chestLayer.classList.contains('hidden')) return;
+    if(ui.openChest.disabled) return;
+    actionLocked=true;
+    ui.openChest.disabled=true;
+    ui.chestSprite.classList.add('opening');
+    await sleep(260);
+    const chestVariant=chestVariantFor(pendingChest);
+
+    if(pendingChest.eventType){
+      if(pendingChest.eventType==='lucky-picnic') ui.chestSprite.src='assets/events/Picnic.png';
+      else if(pendingChest.eventType==='wishing-fountain') ui.chestSprite.src='assets/events/Fountain.png';
+      await sleep(140);
+      const choiceName=eventChoiceLabel(pendingChest.eventType,pendingChest.eventChoice);
+      setMessage(pendingChest.eventType==='lucky-picnic'
+        ? `${choiceName}! The picnic turned into a lovely little break.`
+        : `${choiceName}! The Wishing Fountain sparkles...`);
+    } else if(pendingChest.mystery){
+      ui.chestSprite.src=MIMIC_CHEST_VARIANTS.amethyst.disguiseOpen;
+      await sleep(180);
+      const isAmethystMimic=Math.random()<AMETHYST_MIMIC_RATE;
+      if(isAmethystMimic){
+        ui.chestCaption.textContent='Oh no... it moved!';
+        setMessage('The purple chest was an Amethyst Mimic ✨!');
+        await sleep(420);
+        ui.chestLayer.classList.add('hidden');
+        actionLocked=false;
+        startEnemy('mimic',{forceShiny:true,mimicChestStyle:'amethyst'});
+        return;
+      }
+      pendingChest={kind:'hidden-treasure',hiddenTreasure:true,revealMimic:false,mimicChestStyle:'amethyst'};
+      ui.chestCaption.textContent='Hidden Treasure! JACKPOT!';
+      setMessage('Hidden Treasure! You found a huge jackpot!');
+    } else if(pendingChest.revealMimic){
+      ui.chestSprite.src=chestVariant.disguiseOpen;
+      await sleep(140);
+      ui.chestLayer.classList.add('hidden');
+      actionLocked=false;
+      startEnemy('mimic',{mimicChestStyle:pendingChest.mimicChestStyle || chestVariant.id});
+      return;
+    } else {
+      ui.chestSprite.src=chestVariant.disguiseOpen;
+    }
+
+    const rewards=generateRewards(pendingChest);
+    applyRewards(rewards);
+
+    const textParts=[];
+    if(rewards.coins) textParts.push(`+${rewards.coins} Pink Coins`);
+    if(rewards.exp) textParts.push(`+${rewards.exp} EXP`);
+    if(rewards.happiness) textParts.push(`♡ +${rewards.happiness} Happiness`);
+    else if(rewards.happinessMaxed) textParts.push('♡ Happiness MAX');
+    if(rewards.unlockedBackgrounds?.length) textParts.push(rewards.unlockedBackgrounds.map(bg=>`${bg.label} Icon`).join(', '));
+    if(rewards.iconBorderStyle) textParts.push(`${rewards.iconBorderStyle.label}`);
+    if(rewards.iconBorderColor) textParts.push(`${rewards.iconBorderColor.label} Border Color`);
+    if(rewards.items.length) textParts.push(rewards.items.map(x=>`${x.name} ×${x.qty}`).join(', '));
+    if(rewards.charmTreasureBonus) textParts.push('Treasure Charm bonus!');
+    if(rewards.unlockedWallpapers?.length) textParts.push(rewards.unlockedWallpapers.map(x=>`${x.label} Wallpaper`).join(', '));
+    if(rewards.unlockedClosetRewards?.length) textParts.push(rewards.unlockedClosetRewards.map(x=>x.name).join(', '));
+    if(rewards.unlockedUiThemes?.length) textParts.push(rewards.unlockedUiThemes.map(x=>`${x.label} Theme`).join(', '));
+    setMessage(textParts.length ? `Rewards: ${textParts.join(' · ')}` : 'The chest was empty.');
+    ui.openChest.textContent='Continue';
+    ui.openChest.disabled=false;
+    pendingChest.opened=true;
+    actionLocked=false;
+  };
+
+  function rebindOpenChestButton(){
+    const oldButton=document.querySelector('#openChest');
+    if(!oldButton) return;
+    const fresh=oldButton.cloneNode(true);
+    oldButton.replaceWith(fresh);
+    if(ui) ui.openChest=fresh;
+    fresh.addEventListener('click',openPendingChest);
+  }
+  rebindOpenChestButton();
+
+  function updateDashSelectedSummary(){
+    const cartLabel=document.querySelector('#dashCartLabel');
+    const compactCart=document.querySelector('#dashSelectedCartName');
+    if(compactCart && cartLabel) compactCart.textContent=cartLabel.textContent || 'Default Cart';
+    const oc=document.querySelector('#dashSelectedOcName');
+    if(oc) oc.textContent=heroDisplayName();
+    const titleCart=document.querySelector('#dashStartInline');
+    if(titleCart) titleCart.textContent='Play Duckie Dash';
+  }
+
+  function polishDashScreen(){
+    const screen=document.querySelector('#dashScreen');
+    if(!screen) return;
+    const top=screen.querySelector('.dq-feature-top');
+    const titleCol=top?.querySelector('div');
+    const small=titleCol?.querySelector('small');
+    if(small) small.remove();
+    if(titleCol && !screen.querySelector('#dashTitleActions')){
+      const actions=document.createElement('div');
+      actions.id='dashTitleActions';
+      actions.className='dash-title-actions';
+      actions.innerHTML=`<span class="dash-title-cost">Cost 3 Tokens <img src="assets/dash/Jump-Token.png" alt=""></span><button id="dashStartInline" class="pixel-button primary" type="button">Play Duckie Dash</button>`;
+      titleCol.append(actions);
+      actions.querySelector('#dashStartInline')?.addEventListener('click',startDash);
+    }
+    const mini=screen.querySelector('.dq-mini-grid');
+    const cartTile=mini?.querySelector('div:last-child');
+    if(cartTile){
+      const strong=cartTile.querySelector('strong');
+      const span=cartTile.querySelector('span');
+      if(span) span.textContent='Selected Cart';
+      if(strong) strong.id='dashCartLabel';
+    }
+    if(mini && !screen.querySelector('#dashSelectedSummary')){
+      const summary=document.createElement('div');
+      summary.id='dashSelectedSummary';
+      summary.className='dash-selected-summary';
+      summary.innerHTML=`<div class="dash-selected-card"><span>Selected Cart</span><strong id="dashSelectedCartName">Default Cart</strong></div><div class="dash-selected-card"><span>Selected OC</span><strong id="dashSelectedOcName">Peep</strong></div>`;
+      mini.after(summary);
+    }
+    const playbox=screen.querySelector('.dash-playbox');
+    const note=screen.querySelector('.dash-tap-note');
+    if(note){
+      note.classList.add('dash-compact-note');
+      note.textContent='Tap anywhere on the course to jump.';
+    }
+    const overlaySmall=screen.querySelector('#dashOverlay small');
+    if(overlaySmall) overlaySmall.textContent='Use 3 Jump Tokens to run. Free Runs are spent first if you have one.';
+    updateDashSelectedSummary();
+  }
+  polishDashScreen();
+
+  const originalRefreshFeatureBadges=refreshFeatureBadges;
+  refreshFeatureBadges=function(){
+    originalRefreshFeatureBadges();
+    updateDashSelectedSummary();
+  };
+
+  const originalRenderDashSelectors=renderDashSelectors;
+  renderDashSelectors=function(){
+    originalRenderDashSelectors();
+    updateDashSelectedSummary();
+  };
+
+  const originalShowScreen2=showScreen;
+  showScreen=function(which){
+    originalShowScreen2(which);
+    hideCharmHeadingExtras();
+    if(which==='dash'){
+      polishDashScreen();
+      updateDashSelectedSummary();
+    }
+    if(which==='home') requestAnimationFrame(renderCombinedBorderPicker);
+  };
 })();

@@ -1,1 +1,0 @@
-Duckie Days v24.160\n\n- Moves the Duck Quest post-chest Continue button directly under the message box.\n- Hides the empty command area while post-floor actions are showing.\n- In Endless, Continue and Leave Endless stay together under the message.\n
