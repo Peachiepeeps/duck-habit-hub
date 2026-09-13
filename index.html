@@ -1,15 +1,15 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="duck-habit-build" content="24.145" />
+  <meta name="duck-habit-build" content="24.146" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta id="appThemeColor" name="theme-color" content="#f7dbe5" />
   <title>Duckie Days</title>
   <!-- v24.107 tall-phone room anchor + CSS wallpaper geometry fix -->
-  <link rel="stylesheet" href="style-v24-145.css" />
+  <link rel="stylesheet" href="style-v24-146.css?v=24-146" />
 
-  <link rel="manifest" href="manifest.webmanifest?v=24-140">
+  <link rel="manifest" href="manifest.webmanifest?v=24-146">
   <link rel="apple-touch-icon" href="apple-touch-icon-v5.png">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32-v5.png">
   <meta name="theme-color" content="#ef9fbd">
@@ -1096,13 +1096,13 @@
       </section>
     </section>
   </main>
-  <script src="script-v24-145.js"></script>
+  <script src="script-v24-146.js?v=24-146"></script>
 
   <script>
     // v24.84: use a stable service-worker URL and actively check the deployed
     // build when the installed PWA is opened/resumed. This prevents Android
     // from keeping an already-open standalone app on an older app shell.
-    const DUCK_HUB_BUILD = "24.145";
+    const DUCK_HUB_BUILD = "24.146";
     let duckHubReloadingForUpdate = false;
 
     function duckHubReloadFresh(version) {
@@ -1137,6 +1137,24 @@
       }
     }
 
+    async function duckHubClearOldCodeCaches() {
+      try {
+        if (!("caches" in window)) return;
+        const marker = `duckHubCodeCacheReset-${DUCK_HUB_BUILD}`;
+        if (localStorage.getItem(marker) === "1") return;
+        const keys = await caches.keys();
+        await Promise.all(keys
+          .filter(key =>
+            (key.startsWith("duck-habit-hub-app-") || key.startsWith("duck-habit-hub-runtime-")) &&
+            !key.endsWith(`v${DUCK_HUB_BUILD}`)
+          )
+          .map(key => caches.delete(key)));
+        localStorage.setItem(marker, "1");
+      } catch (error) {
+        console.warn("Duckie Days cache cleanup skipped:", error);
+      }
+    }
+
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.addEventListener("controllerchange", () => {
         if (!duckHubReloadingForUpdate) {
@@ -1147,7 +1165,8 @@
 
       window.addEventListener("load", async () => {
         try {
-          const registration = await navigator.serviceWorker.register("./sw.js", { updateViaCache: "none" });
+          await duckHubClearOldCodeCaches();
+          const registration = await navigator.serviceWorker.register("./sw-v24-146.js?v=24-146", { updateViaCache: "none" });
           await registration.update();
           if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
           await duckHubCheckForUpdate(registration);

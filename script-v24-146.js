@@ -1,6 +1,6 @@
-// Hub v24.145 — pet bed duck raised more visibly
+// Hub v24.146 — PWA refresh hardening + pet bed duck polish
 const STORAGE_KEY = "duckHabitHubSave_v1";
-const SAVE_VERSION = 47;
+const SAVE_VERSION = 48;
 
 const CHARACTERS = {
   peep: {
@@ -7362,7 +7362,7 @@ const DRESSER_DUCK_PERCH = Object.freeze({
 
 const PETBED_DUCK_PERCH = Object.freeze({
   left: 25.0,
-  top: 84.6,
+  top: 82.8,
   width: 11.9
 });
 
