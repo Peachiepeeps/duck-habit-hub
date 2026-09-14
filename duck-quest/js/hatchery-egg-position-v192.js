@@ -10,11 +10,11 @@
   style.textContent=`
     /* Top slot: keep the current working position */
     #hatcheryScreenV179 .hatch-nest-slot:nth-child(1) .hatch-main-egg{
-      top:33.2%!important;
+      top:32.4%!important;
     }
     /* Middle slot: keep the current working position */
     #hatcheryScreenV179 .hatch-nest-slot:nth-child(2) .hatch-main-egg{
-      top:29.9%!important;
+      top:28.6%!important;
     }
     /* Bottom slot: keep the current perfect position */
     #hatcheryScreenV179 .hatch-nest-slot:nth-child(3) .hatch-main-egg{
@@ -22,7 +22,7 @@
     }
     /* Egg detail window: bring the egg back up slightly from v24.191. */
     #hatcheryScreenV179 .hatch-window-egg{
-      top:46px!important;
+      top:44px!important;
     }
   `;
   document.head.appendChild(style);
