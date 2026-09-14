@@ -1,4 +1,0 @@
-Duckie Days v24.190
-- Hatchery middle egg nudged slightly higher again.
-- Hatchery popup egg lowered noticeably more.
-- Top and bottom hatchery eggs kept at the existing working positions.
