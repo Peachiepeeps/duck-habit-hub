@@ -1,5 +1,0 @@
-Duckie Days v24.187
-- Fine-tunes Hatching Area egg positions.
-- Top and bottom eggs move up slightly.
-- Middle egg moves up a little more.
-- Keeps the proven v24.179 hatchery surface intact.

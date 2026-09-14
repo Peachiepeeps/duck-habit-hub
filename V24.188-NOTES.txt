@@ -1,0 +1,6 @@
+Duckie Days v24.188
+- Fine-tunes Hatching Area egg positions again.
+- Keeps the bottom egg where it is.
+- Nudges the top egg up a bit more.
+- Nudges the middle egg up a bit more than the top egg.
+- Leaves the proven hatchery logic, Dash layout, and chest fix intact.
