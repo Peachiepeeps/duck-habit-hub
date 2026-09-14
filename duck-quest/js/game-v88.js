@@ -8564,3 +8564,199 @@ setInterval(()=>{
     if(which==='home') requestAnimationFrame(renderCombinedBorderPicker);
   };
 })();
+
+
+// v24.172 — robust Hatching Area viewport sizing (mobile/PWA safe)
+(function(){
+  const hatchFixStyle=document.createElement('style');
+  hatchFixStyle.textContent=`
+    #hatcheryScreen.hatchery-fit-screen{
+      display:block!important;
+      box-sizing:border-box!important;
+      height:var(--hatch-screen-height,calc(100dvh - 64px))!important;
+      min-height:var(--hatch-screen-height,calc(100dvh - 64px))!important;
+      max-height:var(--hatch-screen-height,calc(100dvh - 64px))!important;
+      overflow:hidden!important;
+      padding:0!important;
+    }
+    #hatcheryScreen.hatchery-fit-screen .hatch-world-shell{
+      display:block!important;
+      box-sizing:border-box!important;
+      width:100%!important;
+      height:var(--hatch-world-height,calc(100dvh - 64px))!important;
+      min-height:var(--hatch-world-height,calc(100dvh - 64px))!important;
+      max-height:var(--hatch-world-height,calc(100dvh - 64px))!important;
+      padding:0!important;
+      margin:0!important;
+    }
+    #hatcheryScreen.hatchery-fit-screen .hatch-world{
+      display:block!important;
+      box-sizing:border-box!important;
+      width:100%!important;
+      max-width:none!important;
+      height:var(--hatch-world-height,calc(100dvh - 64px))!important;
+      min-height:var(--hatch-world-height,calc(100dvh - 64px))!important;
+      max-height:var(--hatch-world-height,calc(100dvh - 64px))!important;
+      aspect-ratio:auto!important;
+      margin:0!important;
+      background:#9ee78f!important;
+    }
+    @media(max-width:600px){
+      #hatcheryScreen.hatchery-fit-screen .hatch-world{
+        border-left:0!important;
+        border-right:0!important;
+        border-radius:0!important;
+      }
+    }
+  `;
+  document.head.appendChild(hatchFixStyle);
+
+  function fitHatcheryRobustly(){
+    const screen=document.querySelector('#hatcheryScreen');
+    if(!screen || screen.classList.contains('hidden')) return;
+    screen.classList.add('hatchery-fit-screen');
+
+    const vv=window.visualViewport;
+    const viewportHeight=Math.max(1,Math.floor(vv?.height || document.documentElement.clientHeight || window.innerHeight || 0));
+    const rect=screen.getBoundingClientRect();
+    const visualTop=Math.max(0,Number(vv?.offsetTop)||0);
+    const screenTop=Math.max(0,Math.floor(rect.top-visualTop));
+    let available=Math.floor(viewportHeight-screenTop);
+    if(!Number.isFinite(available) || available<320) available=viewportHeight;
+    available=Math.max(320,available);
+
+    const px=`${available}px`;
+    screen.style.setProperty('--hatch-screen-height',px);
+    screen.style.setProperty('--hatch-world-height',px);
+    const shell=screen.querySelector('.hatch-world-shell');
+    const world=screen.querySelector('.hatch-world');
+    if(shell){shell.style.height=px;shell.style.minHeight=px;shell.style.maxHeight=px;}
+    if(world){world.style.height=px;world.style.minHeight=px;world.style.maxHeight=px;}
+  }
+
+  function scheduleHatchFit(){
+    requestAnimationFrame(()=>requestAnimationFrame(fitHatcheryRobustly));
+    setTimeout(fitHatcheryRobustly,80);
+    setTimeout(fitHatcheryRobustly,220);
+  }
+
+  const previousShowScreenV172=showScreen;
+  showScreen=function(which){
+    previousShowScreenV172(which);
+    if(which==='hatchery') scheduleHatchFit();
+  };
+
+  window.addEventListener('resize',scheduleHatchFit,{passive:true});
+  window.addEventListener('orientationchange',()=>setTimeout(scheduleHatchFit,120),{passive:true});
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize',scheduleHatchFit,{passive:true});
+    window.visualViewport.addEventListener('scroll',scheduleHatchFit,{passive:true});
+  }
+})();
+
+
+// v24.173 — final Duck Quest home layout + hatchery hard recovery
+(function(){
+  function makeHomeCharmIcon(){
+    try{
+      const def=CHARM_DEFS?.['fortune-gold'];
+      if(def) return charmArtMarkup(def,'tiny').replace('charm-art family-','charm-art home-charm-icon family-');
+    }catch(error){}
+    return '<img class="home-charm-icon" src="assets/charms/Charm-outline.png" alt="">';
+  }
+
+  function finalizeQuestHomeLayout(){
+    const home=document.querySelector('#homeScreen');
+    const heroInfo=home?.querySelector('.hero-info');
+    const charmCard=home?.querySelector('.charm-home-card');
+    const charmButton=document.querySelector('#openCharmScreen');
+    const hatchButton=document.querySelector('#openHatchery');
+    if(!home||!heroInfo||!charmCard||!charmButton||!hatchButton) return;
+    home.classList.add('dq-home-polished');
+
+    let tools=heroInfo.querySelector(':scope > .dq-hero-tools');
+    if(!tools){
+      tools=document.querySelector('.dq-hero-tools') || document.createElement('div');
+      tools.className='dq-hero-tools';
+      heroInfo.appendChild(tools);
+    }else if(tools.parentElement!==heroInfo){
+      heroInfo.appendChild(tools);
+    }
+
+    if(charmCard.parentElement!==tools) tools.appendChild(charmCard);
+    if(hatchButton.parentElement!==tools) tools.appendChild(hatchButton);
+
+    charmButton.innerHTML=`${makeHomeCharmIcon()}<span>Equip Charm</span>`;
+    hatchButton.classList.remove('primary');
+    hatchButton.innerHTML=`<img class="home-hatch-icon" src="assets/eggs/Common-egg.png" alt=""><span class="home-hatch-label">Hatching Area</span><span id="hatchReadyBadge"></span>`;
+
+    // Rebuild the condensed Duckie Dash home line requested earlier.
+    const dash=document.querySelector('#duckieDashHomeCard');
+    const headCopy=dash?.querySelector('.dq-expand-head > div');
+    const play=document.querySelector('#openDuckieDash');
+    let cost=dash?.querySelector('.dash-home-cost');
+    if(dash&&headCopy&&play){
+      dash.querySelector('.dq-expand-head small')?.remove();
+      if(!cost){
+        cost=document.createElement('span');
+        cost.className='dash-home-cost';
+        cost.innerHTML=`Cost: 3 Tokens <img src="assets/dash/Jump-Token.png" alt="">`;
+      }
+      let inline=headCopy.querySelector('.dash-home-inline-actions');
+      if(!inline){
+        inline=document.createElement('div');
+        inline.className='dash-home-inline-actions';
+        headCopy.appendChild(inline);
+      }
+      if(cost.parentElement!==inline) inline.appendChild(cost);
+      if(play.parentElement!==inline) inline.appendChild(play);
+      const leftover=dash.querySelector('.dq-expand-actions');
+      if(leftover && !leftover.children.length) leftover.remove();
+    }
+  }
+
+  function positionHatcherySolidly(){
+    const screen=document.querySelector('#hatcheryScreen');
+    if(!screen || screen.classList.contains('hidden')) return;
+    screen.classList.add('hatchery-solid-screen');
+    const header=document.querySelector('.quest-header');
+    const headerRect=header?.getBoundingClientRect();
+    const top=Math.max(0,Math.round(headerRect?.bottom || 78));
+    screen.style.setProperty('--hatch-fixed-top',`${top}px`);
+    // Strip old explicit height values; fixed top+bottom now owns the geometry.
+    screen.style.removeProperty('--hatch-screen-height');
+    screen.style.removeProperty('--hatch-world-height');
+    const shell=screen.querySelector('.hatch-world-shell');
+    const world=screen.querySelector('.hatch-world');
+    for(const el of [screen,shell,world]){
+      if(!el) continue;
+      el.style.removeProperty('height');
+      el.style.removeProperty('min-height');
+      el.style.removeProperty('max-height');
+    }
+    // Ensure the actual repo background is restored if a stale DOM instance lost it.
+    const bg=screen.querySelector('.hatch-world-bg');
+    if(bg && !String(bg.getAttribute('src')||'').includes('Hatching-background-new.png')){
+      bg.src='assets/eggs/Hatching-background-new.png';
+    }
+  }
+
+  function scheduleSolidHatch(){
+    requestAnimationFrame(()=>requestAnimationFrame(positionHatcherySolidly));
+    setTimeout(positionHatcherySolidly,80);
+  }
+
+  finalizeQuestHomeLayout();
+
+  const previousShowScreenV173=showScreen;
+  showScreen=function(which){
+    previousShowScreenV173(which);
+    if(which==='home') requestAnimationFrame(finalizeQuestHomeLayout);
+    if(which==='hatchery') scheduleSolidHatch();
+  };
+
+  window.addEventListener('resize',()=>{
+    if(!document.querySelector('#hatcheryScreen')?.classList.contains('hidden')) scheduleSolidHatch();
+  },{passive:true});
+  window.addEventListener('orientationchange',()=>setTimeout(scheduleSolidHatch,120),{passive:true});
+})();

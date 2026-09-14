@@ -1,0 +1,16 @@
+Duckie Days v24.173 — Quest Home + Hatchery Recovery + Repo Cleanup
+
+Fixes
+- Equip Charm and Hatching Area are stacked vertically in the right-side hero panel.
+- Both tool buttons use the same cream button styling.
+- Equip Charm uses the in-game green Fortune Charm artwork instead of a heart symbol.
+- Combined Icon Border picker is widened so border styles and colors are easy to select on phones.
+- Hatching Area uses a fixed viewport panel beneath the Duck Quest header to prevent the old collapsed/blank blue-pink screen.
+- Duckie Dash home card stays compact: description removed and cost/play sit under the title.
+- Mimic naming remains: Mimic / Lucky Mimic / Healthy Mimic / Amethyst Mimic.
+
+Cleanup behavior
+- Removes older Duckie Days installer workflows, keeping only the v24.173 workflow.
+- Removes old update-only ZIPs and old version-note clutter.
+- Keeps the current v24.173 runtime plus v24.172 as one cache-safe fallback.
+- Does not delete game assets or unrelated project files/workflows.
