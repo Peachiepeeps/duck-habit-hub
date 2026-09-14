@@ -1,0 +1,9 @@
+Duckie Days v24.209 — Event Recovery + Dash Rider Seat Polish
+
+- Picnic and Wishing Fountain now finish cleanly after a choice and reveal Continue / Next Floor.
+- Event mode is explicitly cleared before the post-floor reward controls appear.
+- Picnic basket and fountain art are reduced substantially on mobile.
+- Gentleman Duck is reduced even further so event captions stay visible.
+- Event captions are shortened to Lucky Picnic, Wishing Fountain, and Mysterious Merchant.
+- Duckie Dash OC rider is layered behind the duck cart, lowered, and no longer hard-clipped at the waist.
+- v24.207 chest/Mimic behavior and v24.208 Dash spawning/coin safety remain untouched.
