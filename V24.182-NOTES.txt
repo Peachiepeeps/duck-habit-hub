@@ -1,6 +1,0 @@
-Duckie Days v24.182
-- Fixes the freeze after tapping Play Duckie Dash.
-- Root cause: v24.181 observed the Dash subtree while rewriting it, creating a self-triggering mutation loop on mobile/PWA browsers.
-- Removes the MutationObserver and makes the compact Dash layout idempotent.
-- Keeps the v24.181 compact layout design.
-- Leaves the working v24.179 external hatchery and v24.180 Dash home simplification untouched.
