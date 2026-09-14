@@ -1,8 +1,0 @@
-Duckie Days v24.183
-- Duckie Dash Ready card now sits over a clearly visible chosen-stage background.
-- Cost: 3 Tokens appears below the Ready card inside the stage window.
-- Removed the visible hearts and Tiny Duck counters from the pre-run layout.
-- Added compact High Score (best coins) and Time (30 Seconds) cards.
-- Added a Selected OC dropdown that changes the OC for this Dash visit/run only and does not change Duck Quest's main OC.
-- Keeps the v24.182 freeze-safe approach: no MutationObserver.
-- Leaves the working external hatchery untouched.
