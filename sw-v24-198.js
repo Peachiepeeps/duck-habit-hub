@@ -1,10 +1,10 @@
-const APP_CACHE = 'duck-habit-hub-app-v24-196';
-const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-196';
+const APP_CACHE = 'duck-habit-hub-app-v24-198';
+const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-198';
 const IMAGE_CACHE = 'duck-habit-hub-images-stable-v1';
 
 const APP_SHELL = [
-  './','./index.html','./manifest.webmanifest?v=24-196','./version.json',
-  './style-v24-196.css','./script-v24-196.js','./sw-v24-196.js','./sw.js',
+  './','./index.html','./manifest.webmanifest?v=24-198','./version.json',
+  './style-v24-198.css','./script-v24-198.js','./sw-v24-198.js','./sw.js',
   './apple-touch-icon-v5.png','./favicon-32-v5.png','./icon-192-v5.png','./icon-512-v5.png','./icon-maskable-512-v5.png',
   './assets/ui/pink-coin.webp','./assets/ducks/Standard-duck.webp','./assets/ducks/Top-hat-duck.webp',
   './duck-quest/assets/dash/Jump-Token.png','./duck-quest/assets/eggs/Common-egg.png','./duck-quest/assets/eggs/Rare-egg.png',
@@ -15,7 +15,7 @@ const APP_SHELL = [
   './assets/ui/profile-borders/Sparkle-border.png','./assets/ui/profile-borders/Stitched-border.png','./assets/ui/profile-borders/Sakura-border.png',
   './shared-ui-theme-v24-131.css','./shared-ui-theme-v24-131.js',
   './memory-game/index.html','./sort-game/index.html','./crane-game/index.html','./crane-game/play-v24-40.html',
-  './duck-quest/index.html','./duck-quest/js/game-v96.js?v=24-196','./duck-quest/js/hatchery-v179.js?v=24-196','./duck-quest/js/hatchery-egg-position-v192.js?v=24-196','./duck-quest/js/hatchery-ui-v193.js?v=24-196','./duck-quest/js/dash-home-v180.js?v=24-196','./duck-quest/js/dash-screen-v184.js?v=24-196','./duck-quest/js/dash-screen-v193.js?v=24-196','./duck-quest/css/style-v82.css?v=24-196',
+  './duck-quest/index.html','./duck-quest/js/game-v96.js?v=24-198','./duck-quest/js/hatchery-v179.js?v=24-198','./duck-quest/js/hatchery-egg-position-v192.js?v=24-198','./duck-quest/js/hatchery-ui-v193.js?v=24-198','./duck-quest/js/dash-home-v180.js?v=24-198','./duck-quest/js/dash-screen-v184.js?v=24-198','./duck-quest/js/dash-screen-v193.js?v=24-198','./duck-quest/css/style-v82.css?v=24-198',
   './bakery/index.html'
 ];
 

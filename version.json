@@ -1,5 +1,5 @@
 {
-  "version": "24.197",
+  "version": "24.198",
   "updated": "2026-09-14",
-  "notes": "Fixes Mysterious Merchant controls so purchase/decline choices are visible and changes ready egg detail text to \u201cOh?\u201d."
+  "notes": "Emergency battle UI recovery: restores sibling-event state variables accidentally removed in v24.197 while preserving Merchant and hatch text fixes."
 }
