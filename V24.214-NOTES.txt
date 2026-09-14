@@ -1,9 +1,0 @@
-Duckie Days v24.214 — EXP Candy Use Button
-
-- EXP Candy Small and Large can now be used directly from the Main Hub Inventory.
-- The inventory action reads "Use on <OC name>" and targets the currently active Duck Quest OC.
-- EXP Candy Small grants 20% of that OC's current EXP bar.
-- EXP Candy Large grants 50% of that OC's current EXP bar.
-- Candy carries EXP through level-ups and cannot be wasted on a max-level OC.
-- Token Shop candy buttons now also read "Use on <OC name>" for clarity.
-- Existing Warm Blanket and Duckie Dash heart-refill behavior is unchanged.

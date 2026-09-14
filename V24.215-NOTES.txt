@@ -1,0 +1,7 @@
+Duckie Days v24.215 — EXP Candy recovery + Duck Quest freeze fix
+
+- Removes the v24.214 recursive MutationObserver that could freeze Duck Quest after interacting with buttons.
+- Replaces it with safe non-recursive "Use on (OC)" Token Shop labels.
+- Keeps EXP Candy use in the Main Hub Inventory.
+- Ensures EXP Candy and Warm Blanket item definitions remain visible in the Inventory.
+- One-time recovery: if EXP Candy Large is completely missing, restores the player's purchased stack of 7.
