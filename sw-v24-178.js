@@ -1,10 +1,10 @@
-const APP_CACHE = 'duck-habit-hub-app-v24-176';
-const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-176';
+const APP_CACHE = 'duck-habit-hub-app-v24-178';
+const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-178';
 const IMAGE_CACHE = 'duck-habit-hub-images-stable-v1';
 
 const APP_SHELL = [
-  './','./index.html','./manifest.webmanifest?v=24-176','./version.json',
-  './style-v24-176.css','./script-v24-176.js','./sw-v24-176.js','./sw.js',
+  './','./index.html','./manifest.webmanifest?v=24-178','./version.json',
+  './style-v24-178.css','./script-v24-178.js','./sw-v24-178.js','./sw.js',
   './apple-touch-icon-v5.png','./favicon-32-v5.png','./icon-192-v5.png','./icon-512-v5.png','./icon-maskable-512-v5.png',
   './assets/ui/pink-coin.webp','./assets/ducks/Standard-duck.webp','./assets/ducks/Top-hat-duck.webp',
   './duck-quest/assets/dash/Jump-Token.png','./duck-quest/assets/eggs/Common-egg.png','./duck-quest/assets/eggs/Rare-egg.png',
@@ -15,7 +15,7 @@ const APP_SHELL = [
   './assets/ui/profile-borders/Sparkle-border.png','./assets/ui/profile-borders/Stitched-border.png','./assets/ui/profile-borders/Sakura-border.png',
   './shared-ui-theme-v24-131.css','./shared-ui-theme-v24-131.js',
   './memory-game/index.html','./sort-game/index.html','./crane-game/index.html','./crane-game/play-v24-40.html',
-  './duck-quest/index.html','./duck-quest/js/game-v91.js?v=24-176','./duck-quest/css/style-v79.css?v=24-176',
+  './duck-quest/index.html','./duck-quest/js/game-v93.js?v=24-178','./duck-quest/css/style-v81.css?v=24-178',
   './bakery/index.html'
 ];
 
