@@ -1,0 +1,10 @@
+Duckie Days v24.208
+
+Duckie Dash fixes:
+- Moves the OC rider into the real Duckie Dash core instead of an external patch that could not access Dash's private state.
+- The OC now rides in the same moving wrapper as the selected duck cart and uses the active OC's idle sprite.
+- The hurt sprite briefly appears when the cart hits an obstacle.
+- Ordinary coins now maintain a hard horizontal safety gap from obstacles.
+- Obstacle spawning also avoids existing ordinary coin lanes, so coins cannot drift into dangerous mushroom spacing later in the run.
+- Sometimes two coins spawn vertically above an obstacle: the lower coin is jump-safe and the upper coin rewards a double-jump.
+- Removes the ineffective external dash-runner-v203 loader while keeping the built-in Time / Coins / Hearts / Tiny Ducks HUD.

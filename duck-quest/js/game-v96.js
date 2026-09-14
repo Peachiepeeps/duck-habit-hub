@@ -7511,6 +7511,7 @@ setInterval(()=>{
 // v24.166 — Duckie Dash, Buddy Eggs, Mysterious Merchant, and Sibling Spat
 (function(){
   const DASH_COST=3;
+  window.DUCKIE_DASH_CORE='24.208-driver-safe-coins';
   const COMMON_EGG_MS=60*60*1000;
   const RARE_EGG_MS=24*60*60*1000;
   const RARE_EGG_SHINY_RATE=1/100;
@@ -7626,6 +7627,56 @@ setInterval(()=>{
   `;
   document.head.appendChild(extraCss);
 
+  const dashV208Style=document.createElement('style');
+  dashV208Style.id='duckieDashCoreV208Style';
+  dashV208Style.textContent=`
+    #dashRunner.dash-runner-v208{
+      position:absolute!important;
+      width:20%!important;
+      max-width:92px!important;
+      aspect-ratio:1 / 1!important;
+      height:auto!important;
+      left:12%!important;
+      bottom:10%!important;
+      z-index:5!important;
+      overflow:visible!important;
+      pointer-events:none!important;
+      image-rendering:pixelated!important;
+      will-change:transform;
+    }
+    #dashRunner.dash-runner-v208 .dash-cart-v208,
+    #dashRunner.dash-runner-v208 .dash-driver-v208{
+      position:absolute!important;
+      display:block!important;
+      object-fit:contain!important;
+      image-rendering:pixelated!important;
+      pointer-events:none!important;
+      user-select:none!important;
+      -webkit-user-drag:none!important;
+    }
+    #dashRunner.dash-runner-v208 .dash-cart-v208{
+      inset:0!important;
+      width:100%!important;
+      height:100%!important;
+      z-index:5!important;
+    }
+    /* Show the upper body clearly above the duck while hiding the legs so the OC reads as riding. */
+    #dashRunner.dash-runner-v208 .dash-driver-v208{
+      width:70%!important;
+      height:112%!important;
+      left:2%!important;
+      top:-31%!important;
+      z-index:6!important;
+      object-position:center top!important;
+      clip-path:inset(0 0 29% 0);
+      filter:drop-shadow(0 1px 0 rgba(0,0,0,.12));
+    }
+    #dashRunner.dash-runner-v208.hit .dash-driver-v208{
+      filter:brightness(1.15) saturate(1.08) drop-shadow(0 1px 0 rgba(0,0,0,.12));
+    }
+  `;
+  document.head.appendChild(dashV208Style);
+
   function injectFeatureMarkup(){
     if(!document.querySelector('#duckieDashHomeCard')){
       const anchor=document.querySelector('.endless-home-card');
@@ -7646,7 +7697,7 @@ setInterval(()=>{
             <div><span class="mini-label">COURSE</span><div id="dashStageButtons" class="dash-stage-buttons"></div></div>
             <div class="dash-playbox">
               <div class="dash-hud"><span>♥ <strong id="dashHearts">3</strong></span><span>Time <strong id="dashTime">30.0</strong></span><span>Coins <strong id="dashCoins">0</strong></span><span>Tiny Ducks <strong id="dashTiny">0</strong></span></div>
-              <div id="dashTrack" class="dash-track"><img id="dashBg" class="dash-bg" src="${AREA_CONFIG.meadow.backgrounds[0]}" alt=""><img id="dashRunner" class="dash-runner" src="${DASH_CARTS[0].image}" alt="Duck cart"><div id="dashOverlay" class="dash-overlay"><div class="dash-overlay-card"><strong>Ready?</strong><small>Use 3 Jump Tokens to run. A rare Free Run is used first if you have one.</small><button id="dashStart" class="pixel-button primary" type="button">Start Duckie Dash</button></div></div></div>
+              <div id="dashTrack" class="dash-track"><img id="dashBg" class="dash-bg" src="${AREA_CONFIG.meadow.backgrounds[0]}" alt=""><div id="dashRunner" class="dash-runner dash-runner-v208" aria-label="OC riding a duck cart"><img id="dashRunnerDriverV208" class="dash-driver-v208" src="assets/characters/peep/base/idle-1.webp" alt=""><img id="dashRunnerCartV208" class="dash-cart-v208" src="${DASH_CARTS[0].image}" alt="Duck cart"></div><div id="dashOverlay" class="dash-overlay"><div class="dash-overlay-card"><strong>Ready?</strong><small>Use 3 Jump Tokens to run. A rare Free Run is used first if you have one.</small><button id="dashStart" class="pixel-button primary" type="button">Start Duckie Dash</button></div></div></div>
               <div class="dash-tap-note">Tap anywhere on the course to jump! ♡</div>
             </div>
             <div class="dash-garage-wrap"><span class="mini-label">CART GARAGE</span><div id="dashGarage" class="dash-garage"></div></div>
@@ -7726,6 +7777,25 @@ setInterval(()=>{
   }
   function selectedCart(){ensureExpansionSave();let c=DASH_CARTS.find(x=>x.id===questSave.dash.selectedCart);if(!c||!cartUnlocked(c)){questSave.dash.selectedCart='default';c=DASH_CARTS[0];}return c;}
   function readyEggs(){ensureExpansionSave();const now=Date.now();return questSave.eggs.incubators.filter(x=>x&&now>=x.endAt).length;}
+  function dashDriverIdleSrcV208(){
+    try{const frames=heroIdleFrames();return Array.isArray(frames)&&frames[0]?frames[0]:'assets/characters/peep/base/idle-1.webp';}
+    catch(error){return 'assets/characters/peep/base/idle-1.webp';}
+  }
+  function dashDriverHurtSrcV208(){
+    try{return heroHurtFrame()||dashDriverIdleSrcV208();}
+    catch(error){return dashDriverIdleSrcV208();}
+  }
+  function syncDashDriverV208(hurt=false){
+    const driver=document.querySelector('#dashRunnerDriverV208');
+    const cart=document.querySelector('#dashRunnerCartV208');
+    if(cart){const selected=selectedCart();if(selected?.image&&cart.getAttribute('src')!==selected.image)cart.src=selected.image;}
+    if(driver){
+      const src=hurt?dashDriverHurtSrcV208():dashDriverIdleSrcV208();
+      if(driver.getAttribute('src')!==src)driver.src=src;
+      driver.onerror=()=>{driver.onerror=null;driver.src='assets/characters/peep/base/idle-1.webp';};
+    }
+  }
+
   function refreshFeatureBadges(){
     ensureExpansionSave();
     const token=specialQty('jump-token'),free=questSave.dash.freeRuns,ready=readyEggs(),cart=selectedCart();
@@ -7733,7 +7803,9 @@ setInterval(()=>{
     map.forEach(([sel,v])=>{const el=document.querySelector(sel);if(el)el.textContent=String(v);});
     const badge=document.querySelector('#hatchReadyBadge');if(badge)badge.textContent=ready?`(${ready} Ready!)`:'';
     const cartLabel=document.querySelector('#dashCartLabel');if(cartLabel)cartLabel.textContent=cart.name;
-    const runner=document.querySelector('#dashRunner');if(runner)runner.src=cart.image;
+    const cartImage=document.querySelector('#dashRunnerCartV208');if(cartImage)cartImage.src=cart.image;
+    else {const runner=document.querySelector('#dashRunner');if(runner&&runner.tagName==='IMG')runner.src=cart.image;}
+    syncDashDriverV208(false);
   }
 
   function renderDashSelectors(){
@@ -7767,18 +7839,74 @@ setInterval(()=>{
   function dashTrack(){return document.querySelector('#dashTrack');}
   function clearDashObjects(){dash.obstacles.forEach(o=>o.el.remove());dash.pickups.forEach(o=>o.el.remove());dash.obstacles=[];dash.pickups=[];}
   function dashHud(){const set=(id,v)=>{const e=document.querySelector(id);if(e)e.textContent=String(v)};set('#dashHearts',dash.hearts);set('#dashCoins',dash.coins);set('#dashTiny',dash.tiny);set('#dashTime',Math.max(0,30-dash.elapsed).toFixed(1));}
-  function resetDashPreview(){ensureExpansionSave();const cfg=DASH_STAGE[questSave.dash.selectedStage];const bg=document.querySelector('#dashBg');if(bg)bg.src=cfg.backgrounds[0];const runner=document.querySelector('#dashRunner');if(runner){runner.src=selectedCart().image;runner.style.transform='translateY(0px)';}dashHud();}
+  function resetDashPreview(){ensureExpansionSave();const cfg=DASH_STAGE[questSave.dash.selectedStage];const bg=document.querySelector('#dashBg');if(bg)bg.src=cfg.backgrounds[0];const runner=document.querySelector('#dashRunner');if(runner)runner.style.transform='translateY(0px)';syncDashDriverV208(false);dashHud();}
   function renderDashReadyOverlay(){const ov=document.querySelector('#dashOverlay');if(!ov)return;ov.classList.remove('hidden');ov.innerHTML=`<div class="dash-overlay-card"><strong>Ready?</strong><small>Use 3 Jump Tokens to run. A rare Free Run is used first if you have one.</small><button id="dashStart" class="pixel-button primary" type="button">Start Duckie Dash</button></div>`;ov.querySelector('#dashStart')?.addEventListener('click',e=>{e.stopPropagation();startDash()});}
   function leaveDashRunStage(){dash.running=false;cancelAnimationFrame(dash.raf);clearDashObjects();document.querySelector('#dashScreen')?.classList.remove('dash-run-stage-v193');document.body.classList.remove('dash-run-stage-v193-active');resetDashPreview();renderDashReadyOverlay();try{renderDashSelectors?.();}catch(error){}}
   function dashJump(){if(!dash.running)return;if(dash.jumpCount<=0){dash.jumpCount=1;dash.jumpV=560;return;}if(dash.jumpCount===1){dash.jumpCount=2;dash.jumpV=Math.min(650,Math.max(360,dash.jumpV)+180);}}
-  function spawnDashThing(kind){const track=dashTrack();if(!track)return;const cfg=DASH_STAGE[questSave.dash.selectedStage];const el=document.createElement('img');el.className=`dash-thing ${kind==='obstacle'?'dash-obstacle':kind==='tiny'?'dash-tiny-duck':'dash-coin'}`;el.src=kind==='obstacle'?cfg.obstacle:kind==='tiny'?'../assets/ducks/Tiny-duck.webp':'../assets/ui/pink-coin.webp';el.alt='';track.appendChild(el);const spawnX=track.clientWidth+40,groundRaise=4;let x=spawnX,raise=groundRaise;if(kind==='coin'){const support=dash.obstacles.find(o=>Math.abs(o.x-spawnX)<90)||dash.obstacles.find(o=>o.x>track.clientWidth-150&&o.x<track.clientWidth+140);if(support){x=support.x+6;raise=88;}else if(dash.pickups.some(o=>Math.abs(o.x-spawnX)<56)){x=spawnX+86;}}else if(kind==='tiny'){if(dash.obstacles.some(o=>Math.abs(o.x-spawnX)<70))x=spawnX+92;}const obj={kind,x,raise,el,hit:false};(kind==='obstacle'?dash.obstacles:dash.pickups).push(obj);}
+  function spawnDashThing(kind){
+    const track=dashTrack();if(!track)return;
+    const cfg=DASH_STAGE[questSave.dash.selectedStage];
+    const W=track.clientWidth,spawnX=W+40,groundRaise=4;
+    const safeObstacleGap=Math.max(112,Math.min(140,W*.28));
+    const pickupGap=Math.max(52,Math.min(66,W*.14));
+    const obstacleNear=(x,gap=safeObstacleGap)=>dash.obstacles.some(o=>Math.abs(o.x-x)<gap);
+    const pickupNear=(x,gap=pickupGap)=>dash.pickups.some(o=>Math.abs(o.x-x)<gap);
+    const add=(thing,x,raise,extra={})=>{
+      const el=document.createElement('img');
+      el.className=`dash-thing ${thing==='obstacle'?'dash-obstacle':thing==='tiny'?'dash-tiny-duck':'dash-coin'}`;
+      el.src=thing==='obstacle'?cfg.obstacle:thing==='tiny'?'../assets/ducks/Tiny-duck.webp':'../assets/ui/pink-coin.webp';
+      el.alt='';track.appendChild(el);
+      const obj={kind:thing,x,raise,el,hit:false,...extra};
+      (thing==='obstacle'?dash.obstacles:dash.pickups).push(obj);
+      return obj;
+    };
+
+    if(kind==='obstacle'){
+      let x=spawnX,tries=0;
+      // Never introduce a mushroom/obstacle beside an existing coin lane.
+      while((obstacleNear(x,96)||dash.pickups.some(o=>o.kind==='coin'&&!o.overObstacleStack&&Math.abs(o.x-x)<safeObstacleGap))&&tries<10){x+=70;tries++;}
+      add('obstacle',x,groundRaise);
+      return;
+    }
+
+    if(kind==='tiny'){
+      let x=spawnX,tries=0;
+      while((obstacleNear(x,94)||pickupNear(x,48))&&tries<8){x+=54;tries++;}
+      add('tiny',x,groundRaise);
+      return;
+    }
+
+    if(kind==='coin'){
+      // Sometimes reward a double-jump with two coins stacked safely above an obstacle.
+      const support=dash.obstacles
+        .filter(o=>o.x>W-105&&o.x<W+190)
+        .sort((a,b)=>Math.abs(a.x-spawnX)-Math.abs(b.x-spawnX))[0]||null;
+      if(support&&Math.random()<0.46){
+        const obstacleW=Math.min(W*.155,74),coinW=Math.min(W*.098,42);
+        const stackX=support.x+Math.max(7,(obstacleW-coinW)/2);
+        // Lower coin clears the obstacle on a normal jump; upper coin rewards the second jump.
+        add('coin',stackX,96,{overObstacleStack:true});
+        add('coin',stackX,148,{overObstacleStack:true});
+        return;
+      }
+
+      // All ordinary coins must stay well away from every obstacle horizontally.
+      let x=spawnX+Math.floor(Math.random()*68),tries=0;
+      while((obstacleNear(x,safeObstacleGap)||pickupNear(x,pickupGap))&&tries<12){x+=48;tries++;}
+      // One final hard guarantee in case a crowded spawn lane exhausted the normal tries.
+      while(obstacleNear(x,safeObstacleGap)){x+=safeObstacleGap;}
+      const heights=[28,52,76,102,128];
+      const raise=heights[Math.floor(Math.random()*heights.length)];
+      add('coin',x,raise);
+    }
+  }
   function recordTinyDuck(){hubSave.tinyDuckSightings=Math.max(0,Number(hubSave.tinyDuckSightings)||0)+1;if(!Array.isArray(hubSave.unlockedDucks))hubSave.unlockedDucks=[];const add=id=>{if(!hubSave.unlockedDucks.includes(id))hubSave.unlockedDucks.push(id)};add('tiny-duck');if(hubSave.tinyDuckSightings>=4)add('tiny-duck-stack');if(hubSave.tinyDuckSightings>=100)add('pile-of-tiny-ducks');}
   function overlap(ax,ay,aw,ah,bx,by,bw,bh){return ax<bx+bw&&ax+aw>bx&&ay<by+bh&&ay+ah>by;}
   function changeDashSegment(){const cfg=DASH_STAGE[questSave.dash.selectedStage],bg=document.querySelector('#dashBg');if(!bg)return;const segment=Math.floor(dash.elapsed/5);if(segment===dash.segment)return;dash.segment=segment;if(segment>=5){bg.src=cfg.backgrounds[3];return;}let choices=[0,1,2];const current=Number(bg.dataset.segmentIndex);if(Number.isFinite(current)&&choices.length>1)choices=choices.filter(x=>x!==current);const idx=choices[Math.floor(Math.random()*choices.length)];bg.dataset.segmentIndex=String(idx);bg.src=cfg.backgrounds[idx];if(segment>0&&Math.random()<.25)setTimeout(()=>{if(dash.running)spawnDashThing('tiny')},900);}
   function finishDash(success){if(!dash.running)return;dash.running=false;cancelAnimationFrame(dash.raf);const base=success?20:5;const award=base+dash.coins;hubSave.coins=Math.max(0,Number(hubSave.coins)||0)+award;questSave.dash.runs=Math.max(0,Number(questSave.dash.runs)||0)+1;const score=Math.max(0,Math.floor(dash.elapsed*4+dash.coins*8+dash.tiny*60+(success?100:0)));questSave.dash.highScore=Math.max(questSave.dash.highScore,score);persistAll();refreshFeatureBadges();const ov=document.querySelector('#dashOverlay');if(ov){ov.classList.remove('hidden');ov.innerHTML=`<div class="dash-overlay-card"><strong>${success?'Finish Line!':'Run Ended!'}</strong><small>${success?'You reached the boss-stage finish!':'Your cart ran out of hearts.'}<br>Pink Coins +${award}<br>Tiny Ducks ${dash.tiny}<br>Score ${score}</small><div class="dash-result-actions-v193"><button id="dashAgain" class="pixel-button primary" type="button">Run Again</button><button id="dashRunMenuV193" class="pixel-button" type="button">Dash Menu</button></div></div>`;ov.querySelector('#dashAgain')?.addEventListener('click',startDash);ov.querySelector('#dashRunMenuV193')?.addEventListener('click',leaveDashRunStage);}}
   function dashFrame(ts){if(!dash.running)return;if(!dash.last)dash.last=ts;const dt=Math.min(.04,(ts-dash.last)/1000);dash.last=ts;dash.elapsed+=dt;dash.invuln=Math.max(0,dash.invuln-dt);dash.obstacleClock+=dt;dash.coinClock+=dt;changeDashSegment();if(dash.elapsed>=30){finishDash(true);return;}if(dash.obstacleClock>1.75){dash.obstacleClock=0;spawnDashThing('obstacle')}if(dash.coinClock>.9){dash.coinClock=0;spawnDashThing('coin')}
     dash.jumpV-=1380*dt;dash.jumpY=Math.max(0,dash.jumpY+dash.jumpV*dt);if(dash.jumpY<=0&&dash.jumpV<0){dash.jumpY=0;dash.jumpV=0;dash.jumpCount=0}const runner=document.querySelector('#dashRunner');if(runner)runner.style.transform=`translateY(${-dash.jumpY}px)`;const track=dashTrack();if(!track){finishDash(false);return;}const W=track.clientWidth,H=track.clientHeight,playerX=W*.12,playerW=Math.min(W*.20,92),playerH=playerW*.75,ground=H*.10,playerY=H-ground-playerH-dash.jumpY;const speed=W*.43;
-    dash.obstacles=dash.obstacles.filter(o=>{o.x-=speed*dt;o.el.style.left=`${o.x}px`;o.el.style.bottom=`${ground+o.raise}px`;const ow=Math.min(W*.155,74),oh=ow,hitW=ow*.44,hitH=oh*.27,hitX=o.x+ow*.28,hitY=H-ground-hitH-o.raise;if(!o.hit&&dash.invuln<=0&&overlap(playerX,playerY,playerW*.72,playerH*.75,hitX,hitY,hitW,hitH)){o.hit=true;dash.hearts--;dash.invuln=1.0;runner?.classList.add('hit');setTimeout(()=>runner?.classList.remove('hit'),350);dashHud();if(dash.hearts<=0){finishDash(false);return false}}if(o.x<-80){o.el.remove();return false}return true});
+    dash.obstacles=dash.obstacles.filter(o=>{o.x-=speed*dt;o.el.style.left=`${o.x}px`;o.el.style.bottom=`${ground+o.raise}px`;const ow=Math.min(W*.155,74),oh=ow,hitW=ow*.44,hitH=oh*.27,hitX=o.x+ow*.28,hitY=H-ground-hitH-o.raise;if(!o.hit&&dash.invuln<=0&&overlap(playerX,playerY,playerW*.72,playerH*.75,hitX,hitY,hitW,hitH)){o.hit=true;dash.hearts--;dash.invuln=1.0;runner?.classList.add('hit');syncDashDriverV208(true);setTimeout(()=>{runner?.classList.remove('hit');syncDashDriverV208(false)},420);dashHud();if(dash.hearts<=0){finishDash(false);return false}}if(o.x<-80){o.el.remove();return false}return true});
     dash.pickups=dash.pickups.filter(o=>{o.x-=speed*dt;o.el.style.left=`${o.x}px`;o.el.style.bottom=`${ground+o.raise}px`;const iw=o.kind==='tiny'?Math.min(W*.108,48):Math.min(W*.098,42),ih=iw,pickW=iw*.74,pickH=ih*.74,pickX=o.x+iw*.13,pickY=H-ground-pickH-o.raise;if(overlap(playerX,playerY,playerW*.72,playerH*.75,pickX,pickY,pickW,pickH)){if(o.kind==='tiny'){dash.tiny++;recordTinyDuck()}else dash.coins++;o.el.remove();dashHud();return false}if(o.x<-60){o.el.remove();return false}return true});dashHud();dash.raf=requestAnimationFrame(dashFrame)}
   function startDash(){if(dash.running)return;ensureExpansionSave();if(questSave.dash.freeRuns>0)questSave.dash.freeRuns--;else if(!useInventory('jump-token',DASH_COST)){setMessage('Duckie Dash costs 3 Jump Tokens.');refreshFeatureBadges();return;}clearDashObjects();Object.assign(dash,{running:true,last:0,elapsed:0,hearts:3,coins:0,tiny:0,jumpY:0,jumpV:0,jumpCount:0,obstacleClock:0,coinClock:0,segment:-1,invuln:0});document.querySelector('#dashScreen')?.classList.add('dash-run-stage-v193');document.body.classList.add('dash-run-stage-v193-active');const ov=document.querySelector('#dashOverlay');ov?.classList.add('hidden');persistAll();refreshFeatureBadges();resetDashPreview();dash.raf=requestAnimationFrame(dashFrame)}
   document.querySelector('#dashTrack')?.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;dashJump()});
