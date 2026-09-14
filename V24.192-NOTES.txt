@@ -1,5 +1,0 @@
-Duckie Days v24.192
-- Keeps the top hatchery egg where it is.
-- Keeps the middle hatchery egg where it is.
-- Keeps the bottom hatchery egg where it is.
-- Moves the popup egg back up slightly so it is not quite so low.
