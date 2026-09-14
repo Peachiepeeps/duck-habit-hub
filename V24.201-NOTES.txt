@@ -1,0 +1,6 @@
+Duckie Days v24.201
+- Duckie Dash now shows the active OC riding inside the selected cart.
+- On collision, the driver briefly switches to the hurt sprite.
+- Coin spawns avoid sitting too close to mushrooms.
+- Added higher jump-coin patterns and occasional bonus coin groupings.
+- Kept the forgiving double jump and slightly softened mushroom hitboxes.

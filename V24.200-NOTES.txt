@@ -1,7 +1,0 @@
-Duckie Days v24.200
-- Adds Token Shop to the Duck Quest home screen.
-- Equip Charm sits left, Token Shop sits right, and Hatching Area is a larger button underneath.
-- Common Egg costs 3 Jump Tokens.
-- Jump Token costs 10 Pink Coins, limited to 4 coin purchases per local calendar day.
-- Duckie Dash now supports a second mid-air tap for a forgiving double jump.
-- Mushroom collision is softened slightly more while preserving the v24.199 victory recovery.
