@@ -1,8 +1,0 @@
-Duckie Days v24.181
-- Reworked the Duckie Dash screen into a more compact layout.
-- Added a simple "3 Tokens to Start" note under the Duckie Dash title.
-- Removed the top inline cost/play/button clutter from the Dash screen.
-- Moved the course buttons toward the top and condensed the status area.
-- Replaced the long always-open cart garage flow with a compact Selected Cart row that expands the garage when tapped.
-- Added a simple Selected OC row for the current hero.
-- Kept the working v24.179/v24.180 hatchery fixes intact.

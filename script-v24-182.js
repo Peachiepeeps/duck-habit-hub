@@ -14058,4 +14058,4 @@ if (window.location.hash === "#games") {
   history.replaceState(null, "", window.location.pathname + window.location.search);
 }
 
-// v24.180 cache-bust build.
+// v24.182 Duckie Dash freeze hotfix build.
