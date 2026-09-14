@@ -4224,3 +4224,5 @@ body.hatchery-active{overflow:hidden!important;}
   #homeScreen .quest-border-color-grid .icon-background-choice{width:40px!important;height:40px!important;min-height:40px!important;}
   #homeScreen .quest-border-color-grid .icon-background-dot{width:29px!important;height:29px!important;}
 }
+
+/* v24.175 active stylesheet; critical runtime overrides are appended by game-v90.js after legacy style patches. */

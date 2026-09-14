@@ -7622,7 +7622,7 @@ setInterval(()=>{
         <section id="duckieDashHomeCard" class="dq-expand-card">
           <div class="dq-expand-head"><div><span class="mini-label">DUCKIE DASH</span><h2>Duckie Dash</h2><small>A 30-second tap-to-jump run for Pink Coins and rare Tiny Ducks!</small></div><span class="dq-token-pill"><img src="assets/dash/Jump-Token.png" alt=""><strong id="dashTokenHome">0</strong></span></div>
           <div class="dq-mini-grid"><div><span>Entry</span><strong>3 Tokens</strong></div><div><span>Free Runs</span><strong id="dashFreeHome">0</strong></div><div><span>High Score</span><strong id="dashHighHome">0</strong></div></div>
-          <div class="dq-expand-actions"><button id="openDuckieDash" class="pixel-button primary" type="button">Play Duckie Dash</button><button id="openHatchery" class="pixel-button" type="button">Hatching Area <span id="hatchReadyBadge"></span></button></div>
+          <div class="dq-expand-actions"><button id="openDuckieDash" class="pixel-button primary" type="button">Play Duckie Dash</button></div>
         </section>`);
     }
     const battle=document.querySelector('#battleScreen');
@@ -8759,4 +8759,205 @@ setInterval(()=>{
     if(!document.querySelector('#hatcheryScreen')?.classList.contains('hidden')) scheduleSolidHatch();
   },{passive:true});
   window.addEventListener('orientationchange',()=>setTimeout(scheduleSolidHatch,120),{passive:true});
+})();
+
+// v24.174 — verified recovery installer build marker
+window.DUCKIE_DAYS_BUILD='24.175';
+
+
+// v24.175 — authoritative Duck Quest home tools + hatchery recovery
+(function(){
+  const finalStyle=document.createElement('style');
+  finalStyle.id='duckie-v24-175-final-style';
+  finalStyle.textContent=`
+    /* Home tools are intentionally a single vertical stack. */
+    #homeScreen.dq-home-polished .hero-info > .quest-home-tools,
+    #homeScreen .hero-info > .quest-home-tools{
+      width:100%!important;
+      display:grid!important;
+      grid-template-columns:minmax(0,1fr)!important;
+      gap:8px!important;
+      margin:2px 0 0!important;
+      padding:0!important;
+      order:10!important;
+    }
+    #homeScreen .quest-home-tools .quest-home-tool-button{
+      width:100%!important;
+      min-width:0!important;
+      min-height:52px!important;
+      margin:0!important;
+      padding:7px 12px!important;
+      display:flex!important;
+      align-items:center!important;
+      justify-content:center!important;
+      gap:9px!important;
+      border:3px solid var(--border,#8c625d)!important;
+      border-radius:13px!important;
+      background:#fff6df!important;
+      color:var(--brown,#6f4a45)!important;
+      box-shadow:var(--shadow)!important;
+      text-shadow:none!important;
+      font-size:.76rem!important;
+    }
+    #homeScreen .quest-home-tools #openHatchery.primary,
+    #homeScreen .quest-home-tools #openCharmScreen.primary{background:#fff6df!important;color:var(--brown,#6f4a45)!important;}
+    #homeScreen .quest-home-tools .home-charm-icon{
+      width:31px!important;height:34px!important;object-fit:contain!important;image-rendering:pixelated!important;flex:0 0 31px!important;
+    }
+    #homeScreen .quest-home-tools .home-hatch-icon{
+      width:30px!important;height:30px!important;object-fit:contain!important;image-rendering:pixelated!important;flex:0 0 30px!important;
+    }
+    #homeScreen .quest-home-tools .home-hatch-label{color:inherit!important;font-size:inherit!important;}
+    #homeScreen > .charm-home-card,#homeScreen .dq-hero-tools{display:none!important;}
+
+    /* Duckie Dash home: no summary; cost and play sit directly below title. */
+    #homeScreen.dq-home-polished #duckieDashHomeCard .dq-expand-head{align-items:flex-start!important;}
+    #homeScreen.dq-home-polished #duckieDashHomeCard .dq-expand-head>div{padding-left:0!important;width:100%!important;}
+    #homeScreen.dq-home-polished #duckieDashHomeCard .dq-expand-head small{display:none!important;}
+    #homeScreen.dq-home-polished #duckieDashHomeCard .dq-expand-head>.dq-token-pill{align-self:start!important;}
+    #homeScreen.dq-home-polished #duckieDashHomeCard .dash-home-inline-actions{
+      margin-top:7px!important;display:grid!important;grid-template-columns:auto minmax(145px,1fr)!important;gap:9px!important;align-items:center!important;
+    }
+    #homeScreen.dq-home-polished #duckieDashHomeCard .dash-home-inline-actions .dash-home-cost{margin:0!important;}
+    #homeScreen.dq-home-polished #duckieDashHomeCard .dash-home-inline-actions #openDuckieDash{
+      width:100%!important;min-height:42px!important;padding:7px 12px!important;flex:none!important;
+    }
+    #dashScreen #dashBack{display:none!important;}
+
+    /* Hatchery: last-wins rules override all older viewport experiments. */
+    body.hatchery-active{overflow:hidden!important;}
+    #hatcheryScreen.hatchery-v175:not(.hidden){
+      position:fixed!important;
+      z-index:1000!important;
+      top:var(--hatch-v175-top,70px)!important;
+      right:0!important;
+      bottom:0!important;
+      left:0!important;
+      width:100vw!important;
+      height:auto!important;
+      min-height:0!important;
+      max-height:none!important;
+      margin:0!important;
+      padding:0!important;
+      display:block!important;
+      overflow:hidden!important;
+      transform:none!important;
+      background:#d9eef9!important;
+    }
+    #hatcheryScreen.hatchery-v175 .hatch-world-shell{
+      position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;
+      margin:0!important;padding:0!important;display:block!important;overflow:hidden!important;
+    }
+    #hatcheryScreen.hatchery-v175 .hatch-world{
+      position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;max-width:none!important;
+      margin:0!important;padding:0!important;display:block!important;overflow:hidden!important;aspect-ratio:auto!important;
+      border:4px solid var(--border,#8c625d)!important;border-radius:0!important;box-shadow:none!important;
+      background-color:#9ee78f!important;
+      background-image:url('assets/eggs/Hatching-background-new.png')!important;
+      background-position:center center!important;
+      background-repeat:no-repeat!important;
+      background-size:100% 100%!important;
+      isolation:isolate!important;
+    }
+    #hatcheryScreen.hatchery-v175 .hatch-world-bg{display:none!important;}
+    #hatcheryScreen.hatchery-v175 .hatch-world-topbar{z-index:12!important;padding-top:9px!important;}
+    #hatcheryScreen.hatchery-v175 .hatch-nest-slots{position:absolute!important;inset:0!important;z-index:4!important;}
+    #hatcheryScreen.hatchery-v175 .hatch-nest-slot{width:44%!important;height:18%!important;}
+    #hatcheryScreen.hatchery-v175 .hatch-nest-slot:nth-child(1){top:37%!important;}
+    #hatcheryScreen.hatchery-v175 .hatch-nest-slot:nth-child(2){top:63%!important;}
+    #hatcheryScreen.hatchery-v175 .hatch-nest-slot:nth-child(3){top:88%!important;}
+    #hatcheryScreen.hatchery-v175 .hatch-main-egg{width:70%!important;height:70%!important;}
+    #hatcheryScreen.hatchery-v175 .hatch-slot-status{top:80%!important;}
+    #hatcheryScreen.hatchery-v175 .hatch-world-tip{display:none!important;}
+
+    #charmScreen .charm-book-heading{grid-template-columns:minmax(0,1fr)!important;}
+    #charmScreen #backFromCharms,#charmScreen #charmCoinCount{display:none!important;}
+
+    @media(max-width:600px){
+      #homeScreen .quest-home-tools{gap:7px!important;}
+      #homeScreen .quest-home-tools .quest-home-tool-button{min-height:48px!important;padding:5px 8px!important;font-size:.62rem!important;}
+      #homeScreen .quest-home-tools .home-charm-icon{width:28px!important;height:31px!important;flex-basis:28px!important;}
+      #homeScreen .quest-home-tools .home-hatch-icon{width:26px!important;height:26px!important;flex-basis:26px!important;}
+      #homeScreen.dq-home-polished #duckieDashHomeCard .dash-home-inline-actions{grid-template-columns:1fr!important;gap:6px!important;}
+      #homeScreen.dq-home-polished #duckieDashHomeCard .dash-home-inline-actions .dash-home-cost{justify-self:start!important;}
+    }
+  `;
+  document.head.appendChild(finalStyle);
+
+  function enforceQuestHomeV175(){
+    const home=document.querySelector('#homeScreen');
+    const heroInfo=home?.querySelector('.hero-info');
+    const tools=document.querySelector('#questHomeTools');
+    const charmButton=document.querySelector('#openCharmScreen');
+    const hatchButton=document.querySelector('#openHatchery');
+    if(home) home.classList.add('dq-home-polished');
+    if(heroInfo&&tools&&tools.parentElement!==heroInfo) heroInfo.appendChild(tools);
+    if(tools&&charmButton&&charmButton.parentElement!==tools) tools.appendChild(charmButton);
+    if(tools&&hatchButton&&hatchButton.parentElement!==tools) tools.appendChild(hatchButton);
+    if(charmButton){
+      charmButton.classList.remove('primary');
+      charmButton.innerHTML='<img class="home-charm-icon" src="assets/charms/Fortune-green-charm.png" alt=""><span>Equip Charm</span>';
+    }
+    if(hatchButton){
+      hatchButton.classList.remove('primary');
+      hatchButton.innerHTML='<img class="home-hatch-icon" src="assets/eggs/Common-egg.png" alt=""><span class="home-hatch-label">Hatching Area</span><span id="hatchReadyBadge"></span>';
+    }
+
+    const dash=document.querySelector('#duckieDashHomeCard');
+    const titleCol=dash?.querySelector('.dq-expand-head > div');
+    const play=document.querySelector('#openDuckieDash');
+    if(dash&&titleCol&&play){
+      dash.querySelector('.dq-expand-head small')?.remove();
+      let cost=dash.querySelector('.dash-home-cost');
+      if(!cost){
+        cost=document.createElement('span');
+        cost.className='dash-home-cost';
+        cost.innerHTML='Cost: 3 Tokens <img src="assets/dash/Jump-Token.png" alt="">';
+      }
+      let row=titleCol.querySelector('.dash-home-inline-actions');
+      if(!row){row=document.createElement('div');row.className='dash-home-inline-actions';titleCol.appendChild(row);}
+      if(cost.parentElement!==row) row.appendChild(cost);
+      if(play.parentElement!==row) row.appendChild(play);
+      dash.querySelector('.dq-expand-actions')?.remove();
+    }
+  }
+
+  function enforceHatcheryV175(){
+    const screen=document.querySelector('#hatcheryScreen');
+    if(!screen || screen.classList.contains('hidden')) return;
+    document.body.classList.add('hatchery-active');
+    screen.classList.add('hatchery-v175');
+    const header=document.querySelector('.quest-header');
+    const bottom=Math.max(0,Math.round(header?.getBoundingClientRect().bottom || 70));
+    screen.style.setProperty('--hatch-v175-top',`${bottom}px`);
+    screen.style.removeProperty('--hatch-screen-height');
+    screen.style.removeProperty('--hatch-world-height');
+    for(const el of [screen,screen.querySelector('.hatch-world-shell'),screen.querySelector('.hatch-world')]){
+      if(!el) continue;
+      el.style.removeProperty('height');
+      el.style.removeProperty('min-height');
+      el.style.removeProperty('max-height');
+    }
+    const world=screen.querySelector('.hatch-world');
+    if(world) world.style.setProperty('background-image',"url('assets/eggs/Hatching-background-new.png')",'important');
+    renderHatchery?.();
+  }
+
+  function scheduleV175Hatch(){
+    requestAnimationFrame(()=>requestAnimationFrame(enforceHatcheryV175));
+    setTimeout(enforceHatcheryV175,60);
+    setTimeout(enforceHatcheryV175,180);
+  }
+
+  enforceQuestHomeV175();
+  const previousShowScreenV175=showScreen;
+  showScreen=function(which){
+    previousShowScreenV175(which);
+    document.body.classList.toggle('hatchery-active',which==='hatchery');
+    if(which==='home') requestAnimationFrame(enforceQuestHomeV175);
+    if(which==='hatchery') scheduleV175Hatch();
+  };
+  window.addEventListener('resize',()=>{
+    if(!document.querySelector('#hatcheryScreen')?.classList.contains('hidden')) scheduleV175Hatch();
+  },{passive:true});
 })();
