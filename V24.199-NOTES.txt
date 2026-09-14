@@ -1,0 +1,4 @@
+Duckie Days v24.199
+- Emergency recovery for battles freezing on “___ was defeated!”.
+- Fixes an out-of-scope Merchant cleanup call that stopped normal victory chests from appearing.
+- Preserves the v24.198 battle UI recovery, Merchant controls, “Oh?” hatch text, and Duckie Dash fixes.

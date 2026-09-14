@@ -1,6 +1,0 @@
-Duckie Days v24.198
-- Emergency battle UI recovery.
-- Restores the Sibling Spat dialogue state variables accidentally removed in v24.197.
-- Prevents the event from hiding the enemy/attack UI and then crashing.
-- Preserves the v24.197 Mysterious Merchant controls.
-- Preserves the ready egg text change to “Oh?”.

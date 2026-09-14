@@ -1,5 +1,5 @@
 {
-  "version": "24.198",
+  "version": "24.199",
   "updated": "2026-09-14",
   "notes": "Emergency battle UI recovery: restores sibling-event state variables accidentally removed in v24.197 while preserving Merchant and hatch text fixes."
 }

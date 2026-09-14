@@ -8394,7 +8394,14 @@ setInterval(()=>{
 
   const originalShowChest=showChest;
   showChest=function(data){
-    if(data?.eventType!=='mysterious-merchant')clearMerchantUi();
+    // v24.199: clear stale Merchant markup directly here. The merchant helper
+    // lives in an earlier IIFE and is not in scope in this enhancement block.
+    // Calling it here caused a ReferenceError after ordinary enemy defeats,
+    // leaving the game stuck on “___ was defeated!” before the chest appeared.
+    if(data?.eventType!=='mysterious-merchant'){
+      ui.chestLayer?.classList.remove('merchant-active-v197');
+      ui.chestLayer?.querySelector('#merchantShopV197')?.remove();
+    }
     originalShowChest(data);
     const variant=chestVariantFor(data||{});
     if(!ui?.chestSprite) return;
