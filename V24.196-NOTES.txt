@@ -1,5 +1,0 @@
-Duckie Days v24.196
-- Duckie Dash jumps are more forgiving.
-- Mushroom hitboxes reduced so clean jumps feel fairer.
-- Coins no longer spawn on the same ground spot as mushrooms.
-- When a coin lines up with a mushroom, it now appears high above it so a jump-over can collect the coin.

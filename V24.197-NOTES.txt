@@ -1,0 +1,4 @@
+Duckie Days v24.197
+- Mysterious Merchant purchase buttons now render directly inside the visible merchant scene.
+- Adds a clear “No Thanks” option so the merchant event can always be declined and continued.
+- Ready egg detail text now says “Oh?” instead of “Ready to hatch!”.

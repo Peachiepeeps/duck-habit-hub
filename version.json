@@ -1,5 +1,5 @@
 {
-  "version": "24.196",
-  "updated": "2026-09-13",
-  "notes": "Centered/simplified hatch popup headings and Duckie Dash now expands into a dedicated battle-like run stage."
+  "version": "24.197",
+  "updated": "2026-09-14",
+  "notes": "Fixes Mysterious Merchant controls so purchase/decline choices are visible and changes ready egg detail text to \u201cOh?\u201d."
 }
