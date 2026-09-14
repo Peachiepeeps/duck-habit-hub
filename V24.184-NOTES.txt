@@ -1,6 +1,0 @@
-Duckie Days v24.184
-- Duckie Dash layout polish.
-- Pulled the Ready window lower inside the stage preview so more stage background shows around it.
-- Moved the Cost: 3 Tokens pill below the background preview window.
-- Kept High Score / Time cards and Selected Cart / Selected OC dropdowns.
-- Preserved the working v24.179 hatchery and the v24.182 freeze-safe Dash behavior.
