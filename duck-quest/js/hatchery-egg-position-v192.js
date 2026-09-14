@@ -14,15 +14,15 @@
     }
     /* Middle slot: keep the current working position */
     #hatcheryScreenV179 .hatch-nest-slot:nth-child(2) .hatch-main-egg{
-      top:28.1%!important;
+      top:27.1%!important;
     }
     /* Bottom slot: keep the current perfect position */
     #hatcheryScreenV179 .hatch-nest-slot:nth-child(3) .hatch-main-egg{
-      top:35.5%!important;
+      top:34.5%!important;
     }
     /* Egg detail window: bring the egg back up slightly from v24.191. */
     #hatcheryScreenV179 .hatch-window-egg{
-      top:43px!important;
+      top:42px!important;
     }
   `;
   document.head.appendChild(style);
