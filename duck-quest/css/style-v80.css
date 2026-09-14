@@ -4225,4 +4225,48 @@ body.hatchery-active{overflow:hidden!important;}
   #homeScreen .quest-border-color-grid .icon-background-dot{width:29px!important;height:29px!important;}
 }
 
-/* v24.175 active stylesheet; critical runtime overrides are appended by game-v90.js after legacy style patches. */
+/* v24.176 active stylesheet; critical runtime overrides are appended by game-v91.js after legacy style patches. */
+
+/* v24.176 — compact equal home tools + hatchery backup geometry */
+#homeScreen .hero-info>.quest-home-tools{width:min(100%,180px)!important;max-width:180px!important;justify-self:center!important;display:grid!important;grid-template-columns:1fr!important;gap:6px!important;margin:3px auto 0!important}
+#homeScreen .quest-home-tools .quest-home-tool-button{width:180px!important;max-width:100%!important;height:48px!important;min-height:48px!important;max-height:48px!important;padding:4px 9px!important;font-size:.61rem!important;gap:7px!important;background:#fff6df!important;color:var(--brown,#6f4a45)!important;border-radius:11px!important}
+#homeScreen .quest-home-tools .home-charm-icon,#homeScreen .quest-home-tools .home-hatch-icon{width:22px!important;height:22px!important;min-width:22px!important;max-width:22px!important;max-height:22px!important;flex:0 0 22px!important;object-fit:contain!important}
+#hatcheryScreen.hatchery-v176 .hatch-world-bg{display:block!important;visibility:visible!important;opacity:1!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:cover!important;z-index:0!important}
+#hatcheryScreen.hatchery-v176 .hatch-world-topbar{display:grid!important;visibility:visible!important;opacity:1!important;z-index:30!important}
+#hatcheryScreen.hatchery-v176 .hatch-nest-slots{display:block!important;visibility:visible!important;opacity:1!important;z-index:10!important}
+@media(max-width:600px){#homeScreen .hero-info>.quest-home-tools{width:min(100%,170px)!important;max-width:170px!important}#homeScreen .quest-home-tools .quest-home-tool-button{width:170px!important;height:46px!important;min-height:46px!important;max-height:46px!important;font-size:.58rem!important}#homeScreen .quest-home-tools .home-charm-icon,#homeScreen .quest-home-tools .home-hatch-icon{width:21px!important;height:21px!important;min-width:21px!important;max-width:21px!important;max-height:21px!important;flex-basis:21px!important}}
+
+
+/* v24.177 — final clean hatchery surface.
+   The actual scene is painted on #hatcheryScreen itself so legacy inner
+   world sizing can never expose the blue/pink fallback again. */
+#hatcheryScreen.hatchery-v177:not(.hidden){
+  background-color:#d9eef9!important;
+  background-position:center center!important;
+  background-repeat:no-repeat!important;
+  background-size:cover!important;
+}
+#hatcheryScreen.hatchery-v177 .hatch-world-shell,
+#hatcheryScreen.hatchery-v177 .hatch-world{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  display:block!important;
+  overflow:hidden!important;
+  aspect-ratio:auto!important;
+  background:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+#hatcheryScreen.hatchery-v177 .hatch-world-bg{display:none!important;}
+#hatcheryScreen.hatchery-v177 .hatch-world-topbar{display:grid!important;visibility:visible!important;opacity:1!important;z-index:30!important;}
+#hatcheryScreen.hatchery-v177 .hatch-nest-slots{display:block!important;visibility:visible!important;opacity:1!important;position:absolute!important;inset:0!important;z-index:10!important;}
+#hatcheryScreen.hatchery-v177 .hatch-world-tip{display:none!important;}
