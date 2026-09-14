@@ -8653,3 +8653,113 @@ setInterval(()=>{
     window.visualViewport.addEventListener('scroll',scheduleHatchFit,{passive:true});
   }
 })();
+
+
+// v24.173 — final Duck Quest home layout + hatchery hard recovery
+(function(){
+  function makeHomeCharmIcon(){
+    try{
+      const def=CHARM_DEFS?.['fortune-gold'];
+      if(def) return charmArtMarkup(def,'tiny').replace('charm-art family-','charm-art home-charm-icon family-');
+    }catch(error){}
+    return '<img class="home-charm-icon" src="assets/charms/Charm-outline.png" alt="">';
+  }
+
+  function finalizeQuestHomeLayout(){
+    const home=document.querySelector('#homeScreen');
+    const heroInfo=home?.querySelector('.hero-info');
+    const charmCard=home?.querySelector('.charm-home-card');
+    const charmButton=document.querySelector('#openCharmScreen');
+    const hatchButton=document.querySelector('#openHatchery');
+    if(!home||!heroInfo||!charmCard||!charmButton||!hatchButton) return;
+    home.classList.add('dq-home-polished');
+
+    let tools=heroInfo.querySelector(':scope > .dq-hero-tools');
+    if(!tools){
+      tools=document.querySelector('.dq-hero-tools') || document.createElement('div');
+      tools.className='dq-hero-tools';
+      heroInfo.appendChild(tools);
+    }else if(tools.parentElement!==heroInfo){
+      heroInfo.appendChild(tools);
+    }
+
+    if(charmCard.parentElement!==tools) tools.appendChild(charmCard);
+    if(hatchButton.parentElement!==tools) tools.appendChild(hatchButton);
+
+    charmButton.innerHTML=`${makeHomeCharmIcon()}<span>Equip Charm</span>`;
+    hatchButton.classList.remove('primary');
+    hatchButton.innerHTML=`<img class="home-hatch-icon" src="assets/eggs/Common-egg.png" alt=""><span class="home-hatch-label">Hatching Area</span><span id="hatchReadyBadge"></span>`;
+
+    // Rebuild the condensed Duckie Dash home line requested earlier.
+    const dash=document.querySelector('#duckieDashHomeCard');
+    const headCopy=dash?.querySelector('.dq-expand-head > div');
+    const play=document.querySelector('#openDuckieDash');
+    let cost=dash?.querySelector('.dash-home-cost');
+    if(dash&&headCopy&&play){
+      dash.querySelector('.dq-expand-head small')?.remove();
+      if(!cost){
+        cost=document.createElement('span');
+        cost.className='dash-home-cost';
+        cost.innerHTML=`Cost: 3 Tokens <img src="assets/dash/Jump-Token.png" alt="">`;
+      }
+      let inline=headCopy.querySelector('.dash-home-inline-actions');
+      if(!inline){
+        inline=document.createElement('div');
+        inline.className='dash-home-inline-actions';
+        headCopy.appendChild(inline);
+      }
+      if(cost.parentElement!==inline) inline.appendChild(cost);
+      if(play.parentElement!==inline) inline.appendChild(play);
+      const leftover=dash.querySelector('.dq-expand-actions');
+      if(leftover && !leftover.children.length) leftover.remove();
+    }
+  }
+
+  function positionHatcherySolidly(){
+    const screen=document.querySelector('#hatcheryScreen');
+    if(!screen || screen.classList.contains('hidden')) return;
+    screen.classList.add('hatchery-solid-screen');
+    const header=document.querySelector('.quest-header');
+    const headerRect=header?.getBoundingClientRect();
+    const top=Math.max(0,Math.round(headerRect?.bottom || 78));
+    screen.style.setProperty('--hatch-fixed-top',`${top}px`);
+    // Strip old explicit height values; fixed top+bottom now owns the geometry.
+    screen.style.removeProperty('--hatch-screen-height');
+    screen.style.removeProperty('--hatch-world-height');
+    const shell=screen.querySelector('.hatch-world-shell');
+    const world=screen.querySelector('.hatch-world');
+    for(const el of [screen,shell,world]){
+      if(!el) continue;
+      el.style.removeProperty('height');
+      el.style.removeProperty('min-height');
+      el.style.removeProperty('max-height');
+    }
+    // Ensure the actual repo background is restored if a stale DOM instance lost it.
+    const bg=screen.querySelector('.hatch-world-bg');
+    if(bg && !String(bg.getAttribute('src')||'').includes('Hatching-background-new.png')){
+      bg.src='assets/eggs/Hatching-background-new.png';
+    }
+  }
+
+  function scheduleSolidHatch(){
+    requestAnimationFrame(()=>requestAnimationFrame(positionHatcherySolidly));
+    setTimeout(positionHatcherySolidly,80);
+  }
+
+  finalizeQuestHomeLayout();
+
+  const previousShowScreenV173=showScreen;
+  showScreen=function(which){
+    previousShowScreenV173(which);
+    if(which==='home') requestAnimationFrame(finalizeQuestHomeLayout);
+    if(which==='hatchery') scheduleSolidHatch();
+  };
+
+  window.addEventListener('resize',()=>{
+    if(!document.querySelector('#hatcheryScreen')?.classList.contains('hidden')) scheduleSolidHatch();
+  },{passive:true});
+  window.addEventListener('orientationchange',()=>setTimeout(scheduleSolidHatch,120),{passive:true});
+})();
+
+// v24.174 — verified recovery installer build marker
+window.DUCKIE_DAYS_BUILD='24.174';
