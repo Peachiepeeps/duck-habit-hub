@@ -1,5 +1,5 @@
 {
-  "version": "24.191",
+  "version": "24.192",
   "updated": "2026-09-13",
-  "notes": "Hatchery top and middle eggs nudged up equally; egg popup lowered further."
+  "notes": "Hatchery popup egg moved back up slightly while keeping the nest egg positions from v24.191."
 }
