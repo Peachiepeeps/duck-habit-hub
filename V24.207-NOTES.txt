@@ -1,0 +1,9 @@
+Duckie Days v24.207
+- Removes the v24.205/v24.206 chest wrapper chain from the loaded page.
+- Installs one direct chest handler that reads the real game state directly.
+- Rebinds the final Open/Continue button after older delayed listeners finish.
+- Normal chest flow: Closed -> Open button -> normal opened chest.
+- Mimic chest flow: Closed -> Open button -> Mimic reveal -> battle.
+- Correct Lucky mapping: closed.webp = closed chest, idle-1.webp = opened chest, open.webp = Mimic idle-1, idle-2.webp = Mimic idle-2.
+- Correct Healthy mapping: idle-1.webp = closed chest, closed.webp = opened chest, open.webp = Mimic idle-1, idle-2.webp = Mimic idle-2.
+- Keeps v24.204 Merchant and Duckie Dash fixes loaded.
