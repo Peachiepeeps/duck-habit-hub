@@ -3,6 +3,7 @@
   'use strict';
 
   window.DUCKIE_DAYS_V207_FIXES='24.207-direct-chest-handler';
+  window.DUCKIE_DAYS_V210_CHEST_HP='24.210-normal-chest-refill';
 
   const CHESTS={
     regular:{
@@ -157,6 +158,7 @@
         ui.chestLayer.classList.add('hidden');
         pendingChest=null;
         actionLocked=false;
+        if(typeof refillActiveHeroHpV210==='function') refillActiveHeroHpV210();
         startEnemy('mimic',{forceShiny:true,mimicChestStyle:'amethyst'});
         return;
       }
@@ -175,6 +177,7 @@
         ui.chestLayer.classList.add('hidden');
         pendingChest=null;
         actionLocked=false;
+        if(typeof refillActiveHeroHpV210==='function') refillActiveHeroHpV210();
         startEnemy('mimic',{mimicChestStyle:id});
         return;
       }
@@ -184,6 +187,10 @@
 
     const rewards=generateRewards(pendingChest);
     applyRewards(rewards);
+    if(currentRun){
+      if(typeof refillActiveHeroHpV210==='function') refillActiveHeroHpV210();
+      else { currentRun.hp=currentRun.maxHp; renderPeepHp(); }
+    }
     const parts=rewardParts(rewards);
     setMessage(parts.length ? `Rewards: ${parts.join(' · ')}` : 'The chest was empty.');
     ui.openChest.textContent='Continue';

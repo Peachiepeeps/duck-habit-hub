@@ -7122,7 +7122,18 @@ function grantExp(amount) {
   return gained;
 }
 
+function refillActiveHeroHpV210(){
+  if(!currentRun) return;
+  const stats=peepStats(activeHeroProgress().level);
+  const maxHp=Math.max(1,Math.round(Number(stats?.maxHp)||Number(currentRun.maxHp)||1));
+  currentRun.maxHp=maxHp;
+  currentRun.hp=maxHp;
+  renderPeepHp();
+}
+window.DUCKIE_HP_REFILL_CORE='24.210-all-oc-between-encounters';
+
 function nextEncounter() {
+  refillActiveHeroHpV210();
   resetDoubleBattleUi();
   ui.chestLayer.classList.add("hidden");
   ui.postFloorActions?.classList.add("hidden");
@@ -7915,7 +7926,7 @@ setInterval(()=>{
 
   // ----- Mysterious Merchant -----
   function clearMerchantUi(){const layer=ui.chestLayer;layer?.classList.remove('merchant-active-v197');layer?.querySelector('#merchantShopV197')?.remove();}
-  function finishNonBattleEvent(message){clearMerchantUi();hideEventChoices();ui.openChest?.classList.add('hidden');ui.chestLayer?.classList.add('hidden');setMessage(message);if(currentRun){currentRun.hp=currentRun.maxHp;renderPeepHp();markEndlessFloorComplete();}ui.continueButton.textContent=currentRun?.mode==='endless'?'Next Floor':'Continue';ui.postFloorActions?.classList.remove('hidden');ui.leaveEndlessButton?.classList.toggle('hidden',currentRun?.mode!=='endless');setPostFloorLayout(true);actionLocked=false;persistAll();refreshFeatureBadges();}
+  function finishNonBattleEvent(message){clearMerchantUi();hideEventChoices();ui.openChest?.classList.add('hidden');ui.chestLayer?.classList.add('hidden');setMessage(message);if(currentRun){refillActiveHeroHpV210();markEndlessFloorComplete();}ui.continueButton.textContent=currentRun?.mode==='endless'?'Next Floor':'Continue';ui.postFloorActions?.classList.remove('hidden');ui.leaveEndlessButton?.classList.toggle('hidden',currentRun?.mode!=='endless');setPostFloorLayout(true);actionLocked=false;persistAll();refreshFeatureBadges();}
   function merchantStock(){
     const options=[
       {kind:'item',id:'buddy-pon',name:'Buddy Pon',image:'../assets/items/buddy-pons/buddy-pon.webp',price:50,detail:'A basic Buddy Pon.'},

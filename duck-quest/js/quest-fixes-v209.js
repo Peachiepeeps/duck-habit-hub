@@ -3,6 +3,7 @@
   'use strict';
 
   window.DUCKIE_DAYS_V209_FIXES='24.209-event-recovery-dash-seat';
+  window.DUCKIE_DAYS_V210_EVENT_HP='24.210-choice-event-refill';
 
   // ---------- Visual polish ----------
   const style=document.createElement('style');
@@ -125,8 +126,8 @@
     setMessage(parts.length ? `Rewards: ${parts.join(' · ')}` : `${choiceName} complete!`);
 
     if(currentRun){
-      currentRun.hp=currentRun.maxHp;
-      renderPeepHp();
+      if(typeof refillActiveHeroHpV210==='function') refillActiveHeroHpV210();
+      else { currentRun.hp=currentRun.maxHp; renderPeepHp(); }
       markEndlessFloorComplete();
     }
 

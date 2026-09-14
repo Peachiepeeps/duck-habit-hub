@@ -1,0 +1,10 @@
+Duckie Days v24.210 — All-OC Between-Battle HP Refill
+
+- Fixes normal chest flow introduced by the v24.207 direct chest handler, which could advance to the next battle without restoring HP.
+- Peep, Miko, Io, Miho, and Annika now all begin every new Duck Quest battle at full HP.
+- Max HP is recalculated from the active OC's current level and Vitality charm before the next encounter, so a level-up reward also uses the new maximum.
+- Normal treasure chests refill HP immediately when rewards are collected.
+- Surprise Mimic battles also refill the active OC before the Mimic battlefield begins.
+- Lucky Picnic / Wishing Fountain rewards use the same active-OC refill helper.
+- Mysterious Merchant completion also refills immediately.
+- v24.207 Mimic/chest visuals, v24.208 Duckie Dash logic, and v24.209 event/Dash seating fixes are preserved.
