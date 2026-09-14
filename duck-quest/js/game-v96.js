@@ -69,6 +69,7 @@ function getAreaConfig(areaId){
 // Internal save keys still use the legacy area/rank names so existing player progress remains compatible.
 const QUEST_CHARACTER_IDS = Object.freeze(["peep","miko","io","miho","annika"]);
 const QUEST_CHARACTER_NAMES = Object.freeze({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika"});
+window.DUCKIE_UI_THEME_CORE='24.211-expanded-theme-catalog';
 const QUEST_UI_THEMES = Object.freeze([
   {
     id:"classic-cream", name:"Classic Cream",
@@ -82,9 +83,9 @@ const QUEST_UI_THEMES = Object.freeze([
     requirement:{stage:"meadow",level:10,character:"peep"}
   },
   {
-    id:"miko-moonlight", name:"Miko Moonlight",
-    description:"Buttercream, charcoal, and a little warm gold.",
-    swatches:["#fff8df","#43423e","#d7b96f"], themeColor:"#ded5bd",
+    id:"miko-moonlight", name:"Miko Teal Moonlight",
+    description:"Deep teal, ink black, ivory cream, and warm gold.",
+    swatches:["#f8f3e3","#3f958e","#20292a","#d6bd72"], themeColor:"#4b9e97",
     requirement:{stage:"meadow",level:10,character:"miko"}
   },
   {
@@ -95,8 +96,8 @@ const QUEST_UI_THEMES = Object.freeze([
   },
   {
     id:"miho-tea-room", name:"Miho Silent Space",
-    description:"Dark charcoal, muted crimson, and a cold white glow.",
-    swatches:["#2b2027","#7b3c49","#f4ecef"], themeColor:"#5a2b34",
+    description:"Charcoal, wine red, dusty rose, and moonlit cream.",
+    swatches:["#20191e","#99495d","#f7eef0","#d7c0c7"], themeColor:"#6f3948",
     requirement:{stage:"meadow",level:10,character:"miho"}
   },
   {
@@ -128,6 +129,30 @@ const QUEST_UI_THEMES = Object.freeze([
     description:"Sky blue, lilac, and starlight gold.",
     swatches:["#f7fbff","#a9c9ee","#c6b4e8"], themeColor:"#d9e8f5",
     requirement:{stage:"cloud",level:80}
+  },
+  {
+    id:"matcha-cream", name:"Matcha Cream",
+    description:"Soft sage, matcha green, warm cream, and a touch of gold.",
+    swatches:["#fbf7e8","#88aa78","#465044","#c9dbae"], themeColor:"#a8c59c",
+    requirement:{stage:"meadow",level:30}
+  },
+  {
+    id:"seafoam-pearl", name:"Seafoam Pearl",
+    description:"Seafoam teal, pearl white, and a tiny champagne-gold accent.",
+    swatches:["#f8fffc","#61b5ad","#385653","#eadbb1"], themeColor:"#a9d8d1",
+    requirement:{stage:"ocean",level:60}
+  },
+  {
+    id:"strawberry-milk", name:"Strawberry Milk",
+    description:"Strawberry pink, milk cream, and a soft berry outline.",
+    swatches:["#fff8f4","#df788d","#cc6279","#f3c2ca"], themeColor:"#efb0bc",
+    requirement:{stage:"candy",level:90}
+  },
+  {
+    id:"lavender-starlight", name:"Lavender Starlight",
+    description:"Dreamy lavender, soft plum, moon cream, and pale starlight gold.",
+    swatches:["#fbf9ff","#a38bd3","#504862","#ead7a9"], themeColor:"#cdbce8",
+    requirement:{stage:"cloud",level:140}
   },
   {
     id:"rose-arcade", name:"Rose Arcade",
