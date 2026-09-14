@@ -1,0 +1,7 @@
+Duckie Days v24.216 — Duckie Dash Safe Mushroom Patterns
+
+- Removes the awkward mushroom spacing range that could create unavoidable hits.
+- Normal single mushrooms now leave a larger recovery window before the next obstacle.
+- Sometimes two mushrooms spawn intentionally as one tight cluster that can be cleared in a single well-timed jump / double-jump.
+- Tight clusters are followed by a longer recovery gap.
+- Existing safe coin spacing, two-coin mushroom rewards, time-heart pickups, OC rider, and Dash rewards are preserved.

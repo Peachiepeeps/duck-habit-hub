@@ -7547,7 +7547,7 @@ setInterval(()=>{
 // v24.166 — Duckie Dash, Buddy Eggs, Mysterious Merchant, and Sibling Spat
 (function(){
   const DASH_COST=3;
-  window.DUCKIE_DASH_CORE='24.208-driver-safe-coins';
+  window.DUCKIE_DASH_CORE='24.216-safe-mushroom-patterns';
   window.DUCKIE_BOOST_CORE='24.213-candy-blanket-time-hearts';
   const COMMON_EGG_MS=60*60*1000;
   const RARE_EGG_MS=24*60*60*1000;
@@ -7905,7 +7905,7 @@ setInterval(()=>{
   setInterval(()=>{refreshFeatureBadges();if(!document.querySelector('#hatcheryScreen')?.classList.contains('hidden'))renderHatchery();},1000);
 
   // ----- Duckie Dash -----
-  const dash={running:false,raf:0,last:0,elapsed:0,duration:30,hearts:3,coins:0,tiny:0,jumpY:0,jumpV:0,jumpCount:0,obstacles:[],pickups:[],obstacleClock:0,coinClock:0,segment:-1,invuln:0};
+  const dash={running:false,raf:0,last:0,elapsed:0,duration:30,hearts:3,coins:0,tiny:0,jumpY:0,jumpV:0,jumpCount:0,obstacles:[],pickups:[],obstacleClock:0,nextObstacleDelay:2.10,coinClock:0,segment:-1,invuln:0};
   function dashTrack(){return document.querySelector('#dashTrack');}
   function clearDashObjects(){dash.obstacles.forEach(o=>o.el.remove());dash.pickups.forEach(o=>o.el.remove());dash.obstacles=[];dash.pickups=[];}
   function dashHud(){const set=(id,v)=>{const e=document.querySelector(id);if(e)e.textContent=String(v)};set('#dashHearts',dash.hearts);set('#dashCoins',dash.coins);set('#dashTiny',dash.tiny);set('#dashTime',Math.max(0,(Number(dash.duration)||30)-dash.elapsed).toFixed(1));}
@@ -7933,10 +7933,25 @@ setInterval(()=>{
     };
 
     if(kind==='obstacle'){
+      // v24.216: Mushrooms use only two intentionally safe patterns:
+      // 1) a single obstacle with enough time to land and jump again, or
+      // 2) a tight two-mushroom cluster that behaves like one wider obstacle.
+      // This avoids the awkward middle-distance pair that could be impossible to clear.
+      const cluster=Math.random()<0.20;
+      const clusterGap=Math.max(64,Math.min(78,W*.18));
+      const conflictsPickup=px=>dash.pickups.some(o=>o.kind!=='tiny'&&!o.overObstacleStack&&Math.abs(o.x-px)<safeObstacleGap);
       let x=spawnX,tries=0;
-      // Do not let a new obstacle appear beside an ordinary coin OR a time-heart pickup.
-      while((obstacleNear(x,96)||dash.pickups.some(o=>o.kind!=='tiny'&&!o.overObstacleStack&&Math.abs(o.x-x)<safeObstacleGap))&&tries<10){x+=70;tries++;}
-      add('obstacle',x,groundRaise);return;
+      while((obstacleNear(x,96)||conflictsPickup(x)||(cluster&&(obstacleNear(x+clusterGap,96)||conflictsPickup(x+clusterGap))))&&tries<12){x+=70;tries++;}
+      add('obstacle',x,groundRaise,{dashPattern:cluster?'cluster':'single'});
+      if(cluster){
+        add('obstacle',x+clusterGap,groundRaise,{dashPattern:'cluster'});
+        // Give the player extra recovery room after the wider cluster.
+        dash.nextObstacleDelay=2.55+Math.random()*.25;
+      }else{
+        // A normal single gets a larger landing/reaction window than the old 1.75s cadence.
+        dash.nextObstacleDelay=2.05+Math.random()*.28;
+      }
+      return;
     }
     if(kind==='tiny'){
       let x=spawnX,tries=0;while((obstacleNear(x,94)||pickupNear(x,48))&&tries<8){x+=54;tries++;}add('tiny',x,groundRaise);return;
@@ -7968,11 +7983,11 @@ setInterval(()=>{
   function overlap(ax,ay,aw,ah,bx,by,bw,bh){return ax<bx+bw&&ax+aw>bx&&ay<by+bh&&ay+ah>by;}
   function changeDashSegment(){const cfg=DASH_STAGE[questSave.dash.selectedStage],bg=document.querySelector('#dashBg');if(!bg)return;const segment=Math.floor(dash.elapsed/5);if(segment===dash.segment)return;dash.segment=segment;if(segment>=5){bg.src=cfg.backgrounds[3];return;}let choices=[0,1,2];const current=Number(bg.dataset.segmentIndex);if(Number.isFinite(current)&&choices.length>1)choices=choices.filter(x=>x!==current);const idx=choices[Math.floor(Math.random()*choices.length)];bg.dataset.segmentIndex=String(idx);bg.src=cfg.backgrounds[idx];if(segment>0&&Math.random()<.25)setTimeout(()=>{if(dash.running)spawnDashThing('tiny')},900);}
   function finishDash(success){if(!dash.running)return;dash.running=false;cancelAnimationFrame(dash.raf);const base=success?20:5;const award=base+dash.coins;hubSave.coins=Math.max(0,Number(hubSave.coins)||0)+award;questSave.dash.runs=Math.max(0,Number(questSave.dash.runs)||0)+1;const score=Math.max(0,Math.floor(dash.elapsed*4+dash.coins*8+dash.tiny*60+(success?100:0)));questSave.dash.highScore=Math.max(questSave.dash.highScore,score);persistAll();refreshFeatureBadges();const ov=document.querySelector('#dashOverlay');if(ov){ov.classList.remove('hidden');ov.innerHTML=`<div class="dash-overlay-card"><strong>${success?'Finish Line!':'Run Ended!'}</strong><small>${success?'You reached the boss-stage finish!':'Your cart ran out of hearts.'}<br>Pink Coins +${award}<br>Tiny Ducks ${dash.tiny}<br>Score ${score}</small><div class="dash-result-actions-v193"><button id="dashAgain" class="pixel-button primary" type="button">Run Again</button><button id="dashRunMenuV193" class="pixel-button" type="button">Dash Menu</button></div></div>`;ov.querySelector('#dashAgain')?.addEventListener('click',startDash);ov.querySelector('#dashRunMenuV193')?.addEventListener('click',leaveDashRunStage);}}
-  function dashFrame(ts){if(!dash.running)return;if(!dash.last)dash.last=ts;const dt=Math.min(.04,(ts-dash.last)/1000);dash.last=ts;dash.elapsed+=dt;dash.invuln=Math.max(0,dash.invuln-dt);dash.obstacleClock+=dt;dash.coinClock+=dt;changeDashSegment();if(dash.elapsed>=(Number(dash.duration)||30)){finishDash(true);return;}if(dash.obstacleClock>1.75){dash.obstacleClock=0;spawnDashThing('obstacle')}if(dash.coinClock>.9){dash.coinClock=0;spawnDashThing('coin')}
+  function dashFrame(ts){if(!dash.running)return;if(!dash.last)dash.last=ts;const dt=Math.min(.04,(ts-dash.last)/1000);dash.last=ts;dash.elapsed+=dt;dash.invuln=Math.max(0,dash.invuln-dt);dash.obstacleClock+=dt;dash.coinClock+=dt;changeDashSegment();if(dash.elapsed>=(Number(dash.duration)||30)){finishDash(true);return;}if(dash.obstacleClock>(Number(dash.nextObstacleDelay)||2.10)){dash.obstacleClock=0;spawnDashThing('obstacle')}if(dash.coinClock>.9){dash.coinClock=0;spawnDashThing('coin')}
     dash.jumpV-=1380*dt;dash.jumpY=Math.max(0,dash.jumpY+dash.jumpV*dt);if(dash.jumpY<=0&&dash.jumpV<0){dash.jumpY=0;dash.jumpV=0;dash.jumpCount=0}const runner=document.querySelector('#dashRunner');if(runner)runner.style.transform=`translateY(${-dash.jumpY}px)`;const track=dashTrack();if(!track){finishDash(false);return;}const W=track.clientWidth,H=track.clientHeight,playerX=W*.12,playerW=Math.min(W*.20,92),playerH=playerW*.75,ground=H*.10,playerY=H-ground-playerH-dash.jumpY;const speed=W*.43;
     dash.obstacles=dash.obstacles.filter(o=>{o.x-=speed*dt;o.el.style.left=`${o.x}px`;o.el.style.bottom=`${ground+o.raise}px`;const ow=Math.min(W*.155,74),oh=ow,hitW=ow*.44,hitH=oh*.27,hitX=o.x+ow*.28,hitY=H-ground-hitH-o.raise;if(!o.hit&&dash.invuln<=0&&overlap(playerX,playerY,playerW*.72,playerH*.75,hitX,hitY,hitW,hitH)){o.hit=true;dash.hearts--;dash.invuln=1.0;runner?.classList.add('hit');syncDashDriverV208(true);setTimeout(()=>{runner?.classList.remove('hit');syncDashDriverV208(false)},420);dashHud();if(dash.hearts<=0){finishDash(false);return false}}if(o.x<-80){o.el.remove();return false}return true});
     dash.pickups=dash.pickups.filter(o=>{o.x-=speed*dt;o.el.style.left=`${o.x}px`;o.el.style.bottom=`${ground+o.raise}px`;const isTime=o.kind==='time-pink'||o.kind==='time-gold';const iw=o.kind==='tiny'?Math.min(W*.108,48):isTime?Math.min(W*.108,46):Math.min(W*.098,42),ih=iw,pickW=iw*.74,pickH=ih*.74,pickX=o.x+iw*.13,pickY=H-ground-pickH-o.raise;if(overlap(playerX,playerY,playerW*.72,playerH*.75,pickX,pickY,pickW,pickH)){if(o.kind==='tiny'){dash.tiny++;recordTinyDuck()}else if(isTime){const bonus=Math.max(0,Number(o.timeBonus)||0);dash.duration=(Number(dash.duration)||30)+bonus;const pop=document.createElement('div');pop.className='dash-time-pop-v213';pop.textContent=`+${bonus}s`;track.appendChild(pop);setTimeout(()=>pop.remove(),950)}else dash.coins++;o.el.remove();dashHud();return false}if(o.x<-60){o.el.remove();return false}return true});dashHud();dash.raf=requestAnimationFrame(dashFrame)}
-  function startDash(){if(dash.running)return;ensureExpansionSave();if(questSave.dash.freeRuns>0)questSave.dash.freeRuns--;else if(!useInventory('jump-token',DASH_COST)){setMessage('Duckie Dash costs 3 Jump Tokens.');refreshFeatureBadges();return;}clearDashObjects();Object.assign(dash,{running:true,last:0,elapsed:0,duration:30,hearts:3,coins:0,tiny:0,jumpY:0,jumpV:0,jumpCount:0,obstacleClock:0,coinClock:0,segment:-1,invuln:0});document.querySelector('#dashScreen')?.classList.add('dash-run-stage-v193');document.body.classList.add('dash-run-stage-v193-active');const ov=document.querySelector('#dashOverlay');ov?.classList.add('hidden');persistAll();refreshFeatureBadges();resetDashPreview();dash.raf=requestAnimationFrame(dashFrame)}
+  function startDash(){if(dash.running)return;ensureExpansionSave();if(questSave.dash.freeRuns>0)questSave.dash.freeRuns--;else if(!useInventory('jump-token',DASH_COST)){setMessage('Duckie Dash costs 3 Jump Tokens.');refreshFeatureBadges();return;}clearDashObjects();Object.assign(dash,{running:true,last:0,elapsed:0,duration:30,hearts:3,coins:0,tiny:0,jumpY:0,jumpV:0,jumpCount:0,obstacleClock:0,nextObstacleDelay:2.10,coinClock:0,segment:-1,invuln:0});document.querySelector('#dashScreen')?.classList.add('dash-run-stage-v193');document.body.classList.add('dash-run-stage-v193-active');const ov=document.querySelector('#dashOverlay');ov?.classList.add('hidden');persistAll();refreshFeatureBadges();resetDashPreview();dash.raf=requestAnimationFrame(dashFrame)}
   document.querySelector('#dashTrack')?.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;dashJump()});
   document.addEventListener('keydown',e=>{if(document.querySelector('#dashScreen')?.classList.contains('hidden'))return;if(e.key===' '||e.key==='ArrowUp'){e.preventDefault();dashJump()}});
   document.querySelector('#dashStart')?.addEventListener('click',e=>{e.stopPropagation();startDash()});
