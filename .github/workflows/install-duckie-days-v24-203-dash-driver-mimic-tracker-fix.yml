@@ -1,0 +1,125 @@
+name: Install Duckie Days v24.203 Dash Driver + Mimic + Tracker Fix
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - "Duckie-Days-v24.203-dash-driver-mimic-tracker-fix-update-only.zip"
+      - ".github/workflows/install-duckie-days-v24-203-dash-driver-mimic-tracker-fix.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  install-update:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Require exact v24.203 ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.203-dash-driver-mimic-tracker-fix-update-only.zip"
+          test -f "$ZIP" || { echo "ERROR: $ZIP is missing."; ls -1; exit 1; }
+          unzip -tq "$ZIP"
+
+      - name: Install v24.203
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.203-dash-driver-mimic-tracker-fix-update-only.zip"
+          TMP=.duckie-days-v24-203-install
+          rm -rf "$TMP" && mkdir -p "$TMP"
+          unzip -q "$ZIP" -d "$TMP"
+          cp -a "$TMP"/. ./
+          rm -rf "$TMP"
+
+      - name: Verify v24.203
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq '"version": "24.203"' version.json
+          grep -Fq 'duck-habit-build" content="24.203"' index.html
+          grep -Fq 'sw-v24-203.js?v=24-203' index.html
+          grep -Fq "importScripts('./sw-v24-203.js');" sw.js
+          grep -Fq "duck-habit-hub-app-v24-203" sw-v24-203.js
+          grep -Fq './duck-quest/js/game-v96.js?v=24-203' sw-v24-203.js
+          grep -Fq './duck-quest/js/dash-runner-v203.js?v=24-203' sw-v24-203.js
+
+          grep -Fq 'js/game-v96.js?v=24-203' duck-quest/index.html
+          grep -Fq 'js/dash-runner-v203.js?v=24-203' duck-quest/index.html
+          if grep -Fq 'js/dash-runner-v201.js?v=24-203' duck-quest/index.html; then
+            echo 'ERROR: old Dash runner still referenced.'
+            exit 1
+          fi
+
+          grep -Fq "window.DUCKIE_DAYS_BUILD='24.203'" duck-quest/js/game-v96.js
+          grep -Fq 'enemy.id==="mimic" && enemy.mimicChestStyle' duck-quest/js/game-v96.js
+          grep -Fq 'entries.push(catalogEntry("mimic","lucky"' duck-quest/js/game-v96.js
+          grep -Fq 'entries.push(catalogEntry("mimic","healthy"' duck-quest/js/game-v96.js
+          grep -Fq 'v24.203 — Mimic buddy key recovery.' duck-quest/js/game-v96.js
+          grep -Fq "const variantKey=\`mimic:\${variantId}\`;" duck-quest/js/game-v96.js
+
+          grep -Fq 'visible OC driver + Dash tracker + safe coin patterns' duck-quest/js/dash-runner-v203.js
+          grep -Fq 'z-index:3;' duck-quest/js/dash-runner-v203.js
+          grep -Fq 'dash-run-tracker-v203' duck-quest/js/dash-runner-v203.js
+          grep -Fq 'dashTrackTimeV203' duck-quest/js/dash-runner-v203.js
+          grep -Fq 'dashTrackCoinsV203' duck-quest/js/dash-runner-v203.js
+          grep -Fq 'runner.dataset.hurtUntil' duck-quest/js/dash-runner-v203.js
+
+          # Preserve the liked chest reveal flow.
+          grep -Fq 'ui.chestSprite.src=chestVariant.disguiseOpen;' duck-quest/js/game-v96.js
+          grep -Fq "startEnemy('mimic',{mimicChestStyle:pendingChest.mimicChestStyle || chestVariant.id});" duck-quest/js/game-v96.js
+
+          node --check sw-v24-203.js
+          node --check duck-quest/js/game-v96.js
+          node --check duck-quest/js/dash-runner-v203.js
+          echo "VERIFIED: v24.203 Dash driver, tracker, and Mimic buddy fix are valid."
+
+      - name: Clean old Duckie Days update clutter
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -d .github/workflows ]; then
+            find .github/workflows -maxdepth 1 -type f \( -name 'install-duck-habit-hub-v*.yml' -o -name 'install-duckie-days-v*.yml' \) ! -name 'install-duckie-days-v24-203-dash-driver-mimic-tracker-fix.yml' -delete
+          fi
+          find . -maxdepth 1 -type f -iname '*update-only*.zip' ! -name 'Duckie-Days-v24.203-dash-driver-mimic-tracker-fix-update-only.zip' -delete
+          find . -maxdepth 1 -type f -name 'V24.*-NOTES.txt' ! -name 'V24.203-NOTES.txt' -delete
+          find . -maxdepth 1 -type f -name 'sw-v24-*.js' ! -name 'sw-v24-203.js' -delete
+          find duck-quest/js -maxdepth 1 -type f -name 'dash-runner-v*.js' ! -name 'dash-runner-v203.js' -delete
+          rm -f "Duckie-Days-v24.203-dash-driver-mimic-tracker-fix-update-only.zip"
+
+      - name: Final verification after cleanup
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f sw-v24-203.js
+          test -f style-v24-201.css
+          test -f script-v24-201.js
+          test -f duck-quest/js/game-v96.js
+          test -f duck-quest/js/dash-runner-v203.js
+          test -f duck-quest/js/token-shop-v200.js
+          test -f duck-quest/js/hatchery-v179.js
+          grep -Fq 'js/dash-runner-v203.js?v=24-203' duck-quest/index.html
+          COUNT=$(find .github/workflows -maxdepth 1 -type f -name 'install-duckie-days-v*.yml' | wc -l | tr -d ' ')
+          test "$COUNT" = "1"
+          echo "VERIFIED: v24.203 installed cleanly."
+
+      - name: Commit v24.203 and cleanup
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && { echo "ERROR: No changes were staged."; exit 1; }
+          git commit -m "Install Duckie Days v24.203 Dash driver Mimic and tracker fixes"
+          git push
+
+      - name: Success
+        shell: bash
+        run: |
+          echo "SUCCESS: v24.203 installed, verified, cleaned, committed, and pushed."
