@@ -22,7 +22,7 @@
     }
     /* Egg detail window: bring the egg back up slightly from v24.191. */
     #hatcheryScreenV179 .hatch-window-egg{
-      top:41px!important;
+      top:39px!important;
     }
   `;
   document.head.appendChild(style);
