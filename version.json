@@ -1,5 +1,5 @@
 {
-  "version": "24.199",
+  "version": "24.200",
   "updated": "2026-09-14",
-  "notes": "Emergency battle UI recovery: restores sibling-event state variables accidentally removed in v24.197 while preserving Merchant and hatch text fixes."
+  "notes": "Adds the Duck Quest Token Shop with 3-token Common Eggs and up to four daily 10-coin Jump Token purchases, plus a more forgiving Duckie Dash double jump."
 }
