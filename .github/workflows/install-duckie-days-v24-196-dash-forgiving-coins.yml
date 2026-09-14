@@ -1,0 +1,88 @@
+name: Install Duckie Days v24.196 Dash Forgiving Coins
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - "Duckie-Days-v24.196-dash-forgiving-coins-update-only.zip"
+      - ".github/workflows/install-duckie-days-v24-196-dash-forgiving-coins.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  install-update:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Require exact v24.196 ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.196-dash-forgiving-coins-update-only.zip"
+          test -f "$ZIP" || { echo "ERROR: $ZIP is missing."; ls -1; exit 1; }
+          unzip -tq "$ZIP"
+
+      - name: Install v24.196
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.196-dash-forgiving-coins-update-only.zip"
+          TMP=.duckie-days-v24-196-install
+          rm -rf "$TMP" && mkdir -p "$TMP"
+          unzip -q "$ZIP" -d "$TMP"
+          cp -a "$TMP"/. ./
+          rm -rf "$TMP"
+
+      - name: Verify v24.196
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq '"version": "24.196"' version.json
+          grep -Fq 'duck-habit-build" content="24.196"' index.html
+          grep -Fq 'style-v24-196.css?v=24-196' index.html
+          grep -Fq 'script-v24-196.js?v=24-196' index.html
+          grep -Fq 'sw-v24-196.js?v=24-196' index.html
+          grep -Fq "importScripts('./sw-v24-196.js');" sw.js
+          grep -Fq './duck-quest/js/game-v96.js?v=24-196' sw-v24-196.js
+          grep -Fq 'function dashJump(){if(!dash.running)return;if(dash.jumpY<=1)dash.jumpV=560;}' duck-quest/js/game-v96.js
+          grep -Fq 'dash.jumpV-=1380*dt;' duck-quest/js/game-v96.js
+          grep -Fq 'if(kind==='"'"'coin'"'"'){const support=dash.obstacles.find(o=>Math.abs(o.x-spawnX)<90)||dash.obstacles.find(o=>o.x>track.clientWidth-150&&o.x<track.clientWidth+140);if(support){x=support.x+6;raise=88;}' duck-quest/js/game-v96.js
+          grep -Fq 'hitW=ow*.48,hitH=oh*.32,hitX=o.x+ow*.26,hitY=H-ground-hitH-o.raise' duck-quest/js/game-v96.js
+          node --check script-v24-196.js
+          node --check sw-v24-196.js
+          node --check duck-quest/js/game-v96.js
+          echo "VERIFIED: v24.196 dash forgiving coins update is valid."
+
+      - name: Clean old Duckie Days update clutter
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -d .github/workflows ]; then
+            find .github/workflows -maxdepth 1 -type f \( -name 'install-duck-habit-hub-v*.yml' -o -name 'install-duckie-days-v*.yml' \) ! -name 'install-duckie-days-v24-196-dash-forgiving-coins.yml' -delete
+          fi
+          find . -maxdepth 1 -type f -iname '*update-only*.zip' ! -name 'Duckie-Days-v24.196-dash-forgiving-coins-update-only.zip' -delete
+          find . -maxdepth 1 -type f -name 'V24.*-NOTES.txt' ! -name 'V24.196-NOTES.txt' -delete
+          find . -maxdepth 1 -type f -name 'style-v24-*.css' ! -name 'style-v24-195.css' ! -name 'style-v24-196.css' -delete
+          find . -maxdepth 1 -type f -name 'script-v24-*.js' ! -name 'script-v24-195.js' ! -name 'script-v24-196.js' -delete
+          find . -maxdepth 1 -type f -name 'sw-v24-*.js' ! -name 'sw-v24-195.js' ! -name 'sw-v24-196.js' -delete
+          rm -f "Duckie-Days-v24.196-dash-forgiving-coins-update-only.zip"
+
+      - name: Commit v24.196 and cleanup
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && { echo "ERROR: No changes were staged."; exit 1; }
+          git commit -m "Install Duckie Days v24.196 dash forgiving coins update"
+          git push
+
+      - name: Success
+        shell: bash
+        run: |
+          echo "SUCCESS: v24.196 installed, verified, cleaned, committed, and pushed."
