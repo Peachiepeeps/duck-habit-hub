@@ -1,5 +1,0 @@
-Duckie Days v24.185
-- Fixed a treasure chest progression bug after battles.
-- After rewards are granted, pressing Continue now advances to the next encounter exactly once.
-- Prevents the same chest from repeatedly reopening and rolling multiple rewards.
-- Leaves the v24.184 Duckie Dash layout and the working hatchery unchanged.

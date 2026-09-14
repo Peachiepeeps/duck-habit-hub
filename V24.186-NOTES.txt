@@ -1,0 +1,5 @@
+Duckie Days v24.186 Retry
+- Raises incubating eggs upward on each hatchery nest.
+- Keeps timer/status pills in their existing position.
+- Preserves the proven v24.179 external hatchery code exactly and applies only a tiny CSS override afterward.
+- Keeps the v24.185 chest Continue fix and v24.184 Duckie Dash layout unchanged.
