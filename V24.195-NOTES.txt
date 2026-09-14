@@ -1,4 +1,0 @@
-Duckie Days v24.195
-- Fixed Duckie Dash object alignment so cart, coins, mushrooms, and tiny ducks share the same ground line.
-- Fixed visual/collision mismatch that caused damage when jumping over mushrooms.
-- Kept run-stage item sizing slightly larger for visibility.
