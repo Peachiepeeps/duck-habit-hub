@@ -9512,5 +9512,84 @@ setInterval(()=>{
   setInterval(()=>{if(!screen.classList.contains('hidden')){try{api?.renderHatchery?.();}catch(error){}}},1000);
 })();
 
-window.DUCKIE_DAYS_BUILD='24.179';
+window.DUCKIE_DAYS_BUILD='24.202';
 
+
+
+/* v24.202 — Wishing Fountain recovery: smaller fountain art, shorter caption,
+   and restore the hidden Continue button after choosing a fountain wish. */
+(function(){
+  const styleId='duckie-fountain-v202-style';
+  if(!document.getElementById(styleId)){
+    const style=document.createElement('style');
+    style.id=styleId;
+    style.textContent=`
+      #chestSprite.fountain-scene-art-v202{
+        width:min(146px,38vw)!important;
+        height:min(146px,38vw)!important;
+        object-fit:contain!important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function applyFountainUiV202(){
+    if(!ui?.chestSprite) return;
+    ui.chestSprite.classList.remove('fountain-scene-art-v202');
+    if(pendingChest?.eventType==='wishing-fountain'){
+      ui.chestSprite.src='assets/events/Fountain.png';
+      ui.chestSprite.classList.add('event-scene-art','fountain-scene-art-v202');
+      if(ui.chestCaption) ui.chestCaption.textContent='Wishing Fountain';
+    }
+  }
+
+  const prevShowChestV202=showChest;
+  showChest=function(data){
+    if(data?.eventType==='wishing-fountain'){
+      data={...data, captionText:'Wishing Fountain'};
+    }
+    prevShowChestV202(data);
+    applyFountainUiV202();
+  };
+
+  const prevShowEventChoicesV202=showEventChoices;
+  showEventChoices=function(type){
+    prevShowEventChoicesV202(type);
+    if(type==='wishing-fountain'){
+      applyFountainUiV202();
+      ui?.openChest?.classList.add('hidden');
+    }
+  };
+
+  const prevOpenPendingChestV202=openPendingChest;
+  openPendingChest=async function(){
+    if(pendingChest?.eventType){
+      ui?.openChest?.classList.remove('hidden');
+    }
+    const result=await prevOpenPendingChestV202();
+    if(pendingChest?.eventType==='wishing-fountain'){
+      applyFountainUiV202();
+    }
+    if(pendingChest?.eventType && pendingChest?.opened && ui?.openChest){
+      ui.openChest.classList.remove('hidden');
+      ui.openChest.disabled=false;
+      ui.openChest.textContent='Continue';
+    }
+    return result;
+  };
+
+  // Rebind in case the button had an older listener closure.
+  setTimeout(()=>{
+    const btn=document.getElementById('openChest');
+    if(!btn) return;
+    const fresh=btn.cloneNode(true);
+    btn.replaceWith(fresh);
+    ui.openChest=fresh;
+    fresh.addEventListener('click',openPendingChest);
+    if(pendingChest?.eventType && pendingChest?.opened){
+      fresh.classList.remove('hidden');
+      fresh.disabled=false;
+      fresh.textContent='Continue';
+    }
+  },0);
+})();
