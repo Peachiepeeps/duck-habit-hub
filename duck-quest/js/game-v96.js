@@ -2126,6 +2126,16 @@ function buildBuddyCatalog() {
   addTable("mushroom-cat",MUSHROOM_CAT_VARIANTS,true);
   addTable("tree-squirrel",TREE_SQUIRREL_VARIANTS,true);
   entries.push(catalogEntry("mimic","base",ENEMIES.mimic,false,false));
+  entries.push(catalogEntry("mimic","lucky",{
+    id:"lucky",name:"Lucky Mimic",
+    idle:["assets/enemies/mimic/lucky/idle-1.webp","assets/enemies/mimic/lucky/idle-2.webp"],
+    hurt:"assets/enemies/mimic/lucky/closed.webp"
+  },false,false));
+  entries.push(catalogEntry("mimic","healthy",{
+    id:"healthy",name:"Healthy Mimic",
+    idle:["assets/enemies/mimic/healthy/idle-1.webp","assets/enemies/mimic/healthy/idle-2.webp"],
+    hurt:"assets/enemies/mimic/healthy/closed.webp"
+  },false,false));
   const mimicShiny=SHINY_VARIANTS.mimic;
   if(mimicShiny) entries.push(catalogEntry("mimic","shiny",mimicShiny,false,true));
   addTable("cool-seagull",SEAGULL_VARIANTS,false);
@@ -2208,6 +2218,7 @@ function buddyOwnedQuantity(key) {
 function enemyVariantId(enemy) {
   if(!enemy) return "base";
   if(enemy.shiny) return "shiny";
+  if(enemy.id==="mimic" && enemy.mimicChestStyle) return String(enemy.mimicChestStyle)==="regular" ? "base" : String(enemy.mimicChestStyle);
   return String(
     enemy.catSlimeVariant || enemy.beeVariant || enemy.flowerVariant || enemy.acornMouseVariant || enemy.mushroomVariant || enemy.treeSquirrelVariant || enemy.oceanVariant || enemy.seaunicornVariant || enemy.jellybunVariant ||
     enemy.catterpillarVariant || enemy.seaStarVariant || enemy.appleBabyVariant || enemy.gummyWormVariant || enemy.puddingPigVariant || enemy.gingerlollyVariant || enemy.candycaneDeerVariant || enemy.gummySharkVariant || enemy.creamFoxVariant || enemy.starMouseVariant || enemy.puffFairyVariant || enemy.tulipaVariant || enemy.snoudVariant || enemy.cloudBunnyVariant || enemy.lunarMothVariant || enemy.ariesVariant || enemy.cherubDuckVariant || "base"
@@ -9512,7 +9523,7 @@ setInterval(()=>{
   setInterval(()=>{if(!screen.classList.contains('hidden')){try{api?.renderHatchery?.();}catch(error){}}},1000);
 })();
 
-window.DUCKIE_DAYS_BUILD='24.202';
+window.DUCKIE_DAYS_BUILD='24.203';
 
 
 
@@ -9592,4 +9603,65 @@ window.DUCKIE_DAYS_BUILD='24.202';
       fresh.textContent='Continue';
     }
   },0);
+})();
+
+
+/* v24.203 — Mimic buddy key recovery.
+   Lucky/Healthy Mimics are separate Buddy variants instead of overwriting the regular pink Mimic.
+   This intentionally does not alter the chest -> Open -> Mimic reveal -> battlefield sequence. */
+(function(){
+  function restoreOverwrittenMimicBuddyV203(){
+    try{
+      ensureBuddySave();
+      const collection=hubSave?.buddies?.collection;
+      if(!collection) return;
+      const base=collection['mimic:base'];
+      if(!base) return;
+      const name=String(base.name||'').toLowerCase();
+      const image=String(base.image||'').toLowerCase();
+      const isLucky=name.includes('lucky mimic') || image.includes('/mimic/lucky/');
+      const isHealthy=name.includes('healthy mimic') || image.includes('/mimic/healthy/');
+      if(!isLucky && !isHealthy) return;
+
+      const variantId=isLucky?'lucky':'healthy';
+      const variantKey=`mimic:${variantId}`;
+      const total=Math.max(1,Math.floor(Number(base.quantity)||1));
+      const variantCatalog=BUDDY_CATALOG_BY_KEY.get(variantKey);
+      const baseCatalog=BUDDY_CATALOG_BY_KEY.get('mimic:base');
+
+      if(!collection[variantKey]){
+        collection[variantKey]={
+          ...base,
+          ...variantCatalog,
+          key:variantKey,
+          enemyId:'mimic',
+          variantId,
+          quantity:1,
+          capturedAt:Number(base.capturedAt)||Date.now()
+        };
+      }else{
+        collection[variantKey].quantity=Math.max(1,Number(collection[variantKey].quantity)||1)+1;
+      }
+
+      collection['mimic:base']={
+        ...base,
+        ...baseCatalog,
+        key:'mimic:base',
+        enemyId:'mimic',
+        variantId:'base',
+        quantity:Math.max(1,total-1),
+        shiny:false,
+        boss:false,
+        capturedAt:Number(base.capturedAt)||Date.now()
+      };
+
+      persistAll();
+      try{ renderBattleBuddy?.(); }catch(error){}
+      try{ renderBuddyBook?.(); }catch(error){}
+    }catch(error){
+      console.warn('v24.203 Mimic buddy recovery skipped:',error);
+    }
+  }
+
+  restoreOverwrittenMimicBuddyV203();
 })();

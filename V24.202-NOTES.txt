@@ -1,5 +1,0 @@
-Duckie Days v24.202 — Wishing Fountain recovery.
-- Fixes the Wishing Fountain getting stuck after choosing an option.
-- Restores the Continue button after fountain rewards.
-- Uses a shorter Wishing Fountain caption so the top text is not cut off.
-- Shrinks the fountain scene art so it fits more cleanly.

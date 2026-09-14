@@ -1,0 +1,7 @@
+Duckie Days v24.203
+- Duckie Dash driver sprite is now visibly layered on top of the cart like the supplied mock-up.
+- Hurt sprite remains visible briefly after a Dash collision.
+- Added a compact in-course Dash tracker showing time remaining and coins collected.
+- Lucky and Healthy Mimics now save as separate Buddy variants instead of replacing the regular pink Mimic.
+- Includes a one-time recovery for a regular Mimic that was already overwritten by Lucky/Healthy Mimic data.
+- Preserves the existing chest -> Open -> Mimic reveal -> battlefield sequence.
