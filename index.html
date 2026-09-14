@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="duck-habit-build" content="24.175" />
+  <meta name="duck-habit-build" content="24.176" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta id="appThemeColor" name="theme-color" content="#f7dbe5" />
   <title>Duckie Days</title>
   <!-- v24.107 tall-phone room anchor + CSS wallpaper geometry fix -->
-  <link rel="stylesheet" href="style-v24-175.css?v=24-175" />
+  <link rel="stylesheet" href="style-v24-176.css?v=24-176" />
 
   <link rel="manifest" href="manifest.webmanifest?v=24-169">
   <link rel="apple-touch-icon" href="apple-touch-icon-v5.png">
@@ -1096,7 +1096,7 @@
       </section>
     </section>
   </main>
-  <script src="script-v24-175.js?v=24-175"></script>
+  <script src="script-v24-176.js?v=24-176"></script>
 
   <script>
     // v24.84: use a stable service-worker URL and actively check the deployed
@@ -1166,7 +1166,7 @@
       window.addEventListener("load", async () => {
         try {
           await duckHubClearOldCodeCaches();
-          const registration = await navigator.serviceWorker.register("./sw-v24-175.js?v=24-175", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("./sw-v24-176.js?v=24-176", { updateViaCache: "none" });
           await registration.update();
           if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
           await duckHubCheckForUpdate(registration);
