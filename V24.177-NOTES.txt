@@ -1,8 +1,0 @@
-Duckie Days v24.177 — Hatchery Clean Surface Fix
-
-- Leaves the now-correct compact Equip Charm / Hatching Area buttons unchanged.
-- Fixes the hatchery by painting the scene directly on the hatchery screen instead of depending on the legacy inner-world height chain.
-- Reparents the hatchery to document.body while open so the Duck Quest grid cannot collapse it.
-- Removes legacy hatchery classes on every enforcement pass.
-- Uses a small 120ms geometry enforcer only while the hatchery is open to neutralize older delayed resize callbacks.
-- Keeps all existing egg inventory, nest, timer, and hatch interactions.

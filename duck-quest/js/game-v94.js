@@ -7846,6 +7846,10 @@ setInterval(()=>{
   document.querySelector('#closeEggInventory')?.addEventListener('click',closeEggInventory);
   document.querySelector('#eggInventoryBackdrop')?.addEventListener('click',closeEggInventory);
 
+  window.DuckieHatchApiV178={
+    renderHatchery, openEggInventory, closeEggInventory, closeHatchDetail,
+    openHatchDetail, refreshFeatureBadges
+  };
   refreshFeatureBadges();renderDashSelectors();renderHatchery();
 })();
 
@@ -9332,4 +9336,113 @@ setInterval(()=>{
   }
 })();
 
-window.DUCKIE_DAYS_BUILD='24.177';
+
+
+// v24.178 — isolated hatchery screen. The old #hatcheryScreen is retired entirely
+// so no legacy hatchery CSS, timers, or geometry callbacks can affect this surface.
+(function(){
+  const api=window.DuckieHatchApiV178;
+  const old=document.getElementById('hatcheryScreen');
+  if(old) old.remove();
+
+  const screen=document.createElement('section');
+  screen.id='hatcheryScreenV178';
+  screen.className='screen hidden hatchery-clean-v178';
+  screen.setAttribute('aria-label','Hatching Area');
+  screen.innerHTML=`
+    <div class="hatchery-v178-scene">
+      <img class="hatchery-v178-bg" src="assets/eggs/Hatching-background-new.png?v=24-178" alt="">
+      <div class="hatchery-v178-topbar">
+        <div class="hatchery-v178-title">Hatching Area</div>
+        <button id="hatchInventoryButton" class="hatch-inventory-button" type="button">Inventory <span id="hatchInventoryCount" class="count">0</span></button>
+      </div>
+      <div id="hatchWorldReady" class="hatch-world-ready hidden">An egg is ready! ✨</div>
+      <div id="hatchNestSlots" class="hatch-nest-slots hatch-nest-slots-v178" aria-label="Incubating eggs"></div>
+    </div>
+    <div id="hatchDetailModal" class="hatch-modal hidden" aria-hidden="true">
+      <button id="hatchDetailBackdrop" class="hatch-modal-backdrop" type="button" aria-label="Close egg window"></button>
+      <section class="hatch-modal-card" role="dialog" aria-modal="true" aria-labelledby="hatchDetailTitle">
+        <button id="closeHatchDetail" class="hatch-modal-close" type="button" aria-label="Close">×</button>
+        <div class="hatch-modal-heading"><span id="hatchDetailKicker" class="mini-label">INCUBATOR</span><h2 id="hatchDetailTitle">Buddy Egg</h2><small id="hatchDetailSubtitle">Warm and cozy.</small></div>
+        <div class="hatch-window">
+          <div id="hatchGlow" class="hatch-window-glow" aria-hidden="true"></div>
+          <img class="hatch-window-nest" src="assets/eggs/Hatch-nest.png" alt="">
+          <img id="hatchDetailEgg" class="hatch-window-egg" src="assets/eggs/Common-egg.png" alt="Buddy egg">
+          <div id="hatchResult" class="hatch-result hidden" aria-live="polite"></div>
+        </div>
+        <div id="hatchDetailStatus" class="hatch-detail-status">Incubating...</div>
+        <div id="hatchDetailActions" class="hatch-detail-actions"></div>
+      </section>
+    </div>
+    <div id="eggInventoryModal" class="hatch-modal hidden" aria-hidden="true">
+      <button id="eggInventoryBackdrop" class="hatch-modal-backdrop" type="button" aria-label="Close egg inventory"></button>
+      <section class="hatch-modal-card" role="dialog" aria-modal="true" aria-labelledby="eggInventoryTitle">
+        <button id="closeEggInventory" class="hatch-modal-close" type="button" aria-label="Close">×</button>
+        <div class="hatch-modal-heading"><span class="mini-label">EGG INVENTORY</span><h2 id="eggInventoryTitle">Choose an Egg</h2><small>You can keep as many eggs as you find.</small></div>
+        <div id="eggInventoryGrid" class="egg-inventory-summary"></div>
+        <p id="eggInventoryNote" class="egg-inventory-note">Only three eggs can incubate at once.</p>
+      </section>
+    </div>`;
+  document.body.appendChild(screen);
+
+  // Rebind controls because the old dynamically-generated hatchery node was removed.
+  document.getElementById('hatchInventoryButton')?.addEventListener('click',()=>api?.openEggInventory?.(null,false));
+  document.getElementById('closeHatchDetail')?.addEventListener('click',()=>api?.closeHatchDetail?.());
+  document.getElementById('hatchDetailBackdrop')?.addEventListener('click',()=>api?.closeHatchDetail?.());
+  document.getElementById('closeEggInventory')?.addEventListener('click',()=>api?.closeEggInventory?.());
+  document.getElementById('eggInventoryBackdrop')?.addEventListener('click',()=>api?.closeEggInventory?.());
+
+  function setV178Top(){
+    const header=document.querySelector('.quest-header');
+    const bottom=Math.max(0,Math.round(header?.getBoundingClientRect().bottom||72));
+    screen.style.setProperty('--hatch-v178-top',`${bottom}px`);
+  }
+  function openV178(){
+    setV178Top();
+    window.scrollTo?.(0,0);
+    screen.classList.remove('hidden');
+    document.body.classList.add('hatchery-v178-active');
+    try{api?.renderHatchery?.();}catch(error){console.warn('v24.178 hatchery render',error);}
+  }
+  function closeV178(){
+    screen.classList.add('hidden');
+    document.body.classList.remove('hatchery-v178-active');
+  }
+
+  const previousShowScreenV178=showScreen;
+  showScreen=function(which){
+    if(which!=='hatchery') closeV178();
+    previousShowScreenV178(which);
+    if(which==='hatchery') openV178();
+  };
+
+  // Reinstall the global back button so Hatching Area returns to Duck Quest home,
+  // not out to the Games hub.
+  const oldBack=document.getElementById('backGames');
+  if(oldBack){
+    const fresh=oldBack.cloneNode(true);
+    oldBack.replaceWith(fresh);
+    fresh.addEventListener('click',()=>{
+      if(!screen.classList.contains('hidden')){
+        showScreen('home');
+        try{renderMeta?.();}catch(error){}
+        return;
+      }
+      const visible=(id)=>{const el=document.getElementById(id);return !!el&&!el.classList.contains('hidden');};
+      if(visible('homeScreen')){window.location.href='../#games';return;}
+      if(visible('dashScreen')||visible('charmScreen')||visible('buddyScreen')){showScreen('home');try{renderMeta?.();}catch(error){};return;}
+      if(visible('battleScreen')||visible('resultScreen')){try{returnHome();}catch(error){showScreen('home');}return;}
+      showScreen('home');
+    });
+  }
+
+  window.addEventListener('resize',()=>{if(!screen.classList.contains('hidden'))setV178Top();},{passive:true});
+  window.addEventListener('orientationchange',()=>setTimeout(()=>{if(!screen.classList.contains('hidden'))setV178Top();},100),{passive:true});
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize',()=>{if(!screen.classList.contains('hidden'))setV178Top();},{passive:true});
+  }
+  setInterval(()=>{if(!screen.classList.contains('hidden')){try{api?.renderHatchery?.();}catch(error){}}},1000);
+})();
+
+window.DUCKIE_DAYS_BUILD='24.179';
+
