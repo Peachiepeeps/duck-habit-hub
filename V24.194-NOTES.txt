@@ -1,0 +1,4 @@
+Duckie Days v24.194
+- Duckie Dash run-stage pickups and obstacles tuned.
+- Coins and mushroom obstacles are larger and positioned higher during runs.
+- Cache/version strings bumped for a clean install.

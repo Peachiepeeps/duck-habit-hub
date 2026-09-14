@@ -1,7 +1,0 @@
-Duckie Days v24.193
-- Hatch detail popup: Nest # and Egg Type are centered more cleanly and nudged slightly right.
-- Hatch detail popup: removes the Warm and cozy / rare surprise subtitle.
-- Duckie Dash: starting a run now expands the course into a dedicated battle-like play stage.
-- Duckie Dash: HUD is visible during the full run stage.
-- Duckie Dash: results include Run Again and Dash Menu.
-- Preserves the user's exact v24.192 hatch egg positioning tweaks.
