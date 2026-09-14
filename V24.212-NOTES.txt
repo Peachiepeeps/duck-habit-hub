@@ -1,8 +1,0 @@
-Duckie Days v24.212 — Theme Buttons + Stage Contrast
-
-- Equip Charm, Token Shop, and Hatching Area now follow every active Duck Quest UI theme.
-- Fixes the older Token Shop CSS specificity that was overriding the new theme colors.
-- Token Shop modal surfaces now also inherit the active theme.
-- "Levels __–__" text in Choose Stage now uses the theme's high-contrast foreground color.
-- The Stage detail popup's level range gets the same readability treatment.
-- Keeps v24.211 theme catalog/palettes and all prior gameplay fixes intact.

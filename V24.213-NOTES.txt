@@ -1,0 +1,22 @@
+Duckie Days v24.213 — Quest Boost Items + Duckie Dash Time Hearts
+
+New shared items:
+- EXP Candy Small: +20% of the active Duck Quest OC's current EXP bar.
+- EXP Candy Large: +50% of the active Duck Quest OC's current EXP bar.
+- Warm Blanket: halves the remaining hatch time of an incubating egg.
+
+Main Hub Shop prices (Pink Coins):
+- EXP Candy Small: 600
+- EXP Candy Large: 1,400
+- Warm Blanket: 900
+
+Token Shop prices (Jump Tokens):
+- EXP Candy Small: 5
+- EXP Candy Large: 10
+- Warm Blanket: 7
+
+Duckie Dash:
+- Pink Heart Refill can rarely appear and adds +10 seconds.
+- Gold Heart Refill is much rarer and adds +30 seconds.
+- Time-heart pickups obey the same obstacle safety spacing as ordinary pickups.
+- Existing double-jump two-coin stacks above obstacles are preserved.

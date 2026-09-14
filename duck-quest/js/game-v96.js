@@ -7548,6 +7548,7 @@ setInterval(()=>{
 (function(){
   const DASH_COST=3;
   window.DUCKIE_DASH_CORE='24.208-driver-safe-coins';
+  window.DUCKIE_BOOST_CORE='24.213-candy-blanket-time-hearts';
   const COMMON_EGG_MS=60*60*1000;
   const RARE_EGG_MS=24*60*60*1000;
   const RARE_EGG_SHINY_RATE=1/100;
@@ -7865,16 +7866,49 @@ setInterval(()=>{
   function renderEggInventory(){const grid=document.querySelector('#eggInventoryGrid');if(!grid)return;grid.innerHTML='';['common','rare'].forEach(type=>{const d=eggDefinition(type),qty=specialQty(`${type}-egg`);const card=document.createElement('div');card.className='egg-inventory-card';card.innerHTML=`<img src="${d.image}" alt="${d.name}"><strong>${d.name}</strong><span class="egg-count">Owned ×${qty}</span><small>${type==='common'?'1 hour · Non-boss Buddies · normal Shiny chance':'24 hours · Bosses favored · 1 / 100 Shiny chance'}</small>`;const b=document.createElement('button');b.type='button';b.className='pixel-button primary';const noSlot=inventoryTargetSlot===null&&emptyIncubator()<0;b.disabled=qty<=0||noSlot;b.textContent=qty<=0?'None Owned':inventoryReplacing?`Switch to ${d.name}`:'Incubate';b.addEventListener('click',()=>startEgg(type,inventoryTargetSlot,inventoryReplacing));card.appendChild(b);grid.appendChild(card);});const note=document.querySelector('#eggInventoryNote');if(note){if(inventoryReplacing)note.textContent='Switching returns the current egg to your inventory and restarts the new egg timer.';else if(inventoryTargetSlot!==null)note.textContent=`This egg will go into Nest ${inventoryTargetSlot+1}.`;else if(emptyIncubator()<0)note.textContent='All three nests are occupied. Tap an incubating egg and choose Switch Egg if you want to replace one.';else note.textContent='Only three eggs can incubate at once. Your extra eggs stay safely in inventory.';}const title=document.querySelector('#eggInventoryTitle');if(title)title.textContent=inventoryReplacing?'Switch Egg':'Choose an Egg';}
   function openEggInventory(targetSlot=null,replace=false){inventoryTargetSlot=Number.isInteger(targetSlot)?targetSlot:null;inventoryReplacing=Boolean(replace);renderEggInventory();const modal=document.querySelector('#eggInventoryModal');modal?.classList.remove('hidden');modal?.setAttribute('aria-hidden','false');}
   function updateHatchDetailTimer(){if(selectedHatchSlot===null||hatchAnimating)return;const slot=questSave.eggs.incubators[selectedHatchSlot];if(!slot)return;const ready=Date.now()>=slot.endAt;const status=document.querySelector('#hatchDetailStatus');if(status)status.textContent=ready?'Oh?':`${fmtRemaining(slot.endAt-Date.now())} until hatch`;if(ready&&!document.querySelector('#hatchNowButton'))openHatchDetail(selectedHatchSlot);}
-  function openHatchDetail(index){ensureExpansionSave();const slot=questSave.eggs.incubators[index];if(!slot)return;selectedHatchSlot=index;hatchAnimating=false;const d=eggDefinition(slot.type),ready=Date.now()>=slot.endAt;const modal=document.querySelector('#hatchDetailModal');modal?.classList.remove('hidden');modal?.setAttribute('aria-hidden','false');const result=document.querySelector('#hatchResult');if(result){result.className='hatch-result hidden';result.innerHTML='';}const glow=document.querySelector('#hatchGlow');glow?.classList.remove('active');const egg=document.querySelector('#hatchDetailEgg');if(egg){egg.src=d.image;egg.alt=d.name;egg.className='hatch-window-egg';egg.classList.remove('hidden');}const title=document.querySelector('#hatchDetailTitle');if(title)title.textContent=d.name;const kicker=document.querySelector('#hatchDetailKicker');if(kicker)kicker.textContent=`NEST ${index+1}`;const sub=document.querySelector('#hatchDetailSubtitle');if(sub)sub.textContent=ready?'It is wiggling... it wants out!':slot.type==='rare'?'A rare little surprise is warming up.':'Warm and cozy.';const status=document.querySelector('#hatchDetailStatus');if(status)status.textContent=ready?'Oh?':`${fmtRemaining(slot.endAt-Date.now())} until hatch`;const actions=document.querySelector('#hatchDetailActions');if(actions){actions.innerHTML='';if(ready){const hatch=document.createElement('button');hatch.id='hatchNowButton';hatch.type='button';hatch.className='pixel-button primary';hatch.textContent='Hatch!';hatch.addEventListener('click',()=>hatchSlot(index));actions.appendChild(hatch);}else{const swap=document.createElement('button');swap.type='button';swap.className='pixel-button';swap.textContent='Switch Egg';swap.addEventListener('click',()=>{closeHatchDetail();openEggInventory(index,true)});actions.appendChild(swap);}const close=document.createElement('button');close.type='button';close.className='pixel-button';close.textContent=ready?'Not Yet':'Close';close.addEventListener('click',closeHatchDetail);actions.appendChild(close);}}
+  function warmBlanketQtyV213(){return Math.max(0,Math.floor(Number(hubSave?.inventory?.['warm-blanket'])||0));}
+  function applyWarmBlanketV213(index){
+    const slot=questSave?.eggs?.incubators?.[index];
+    if(!slot || Date.now()>=slot.endAt) return;
+    if(!useInventory('warm-blanket',1)){setMessage('You do not have a Warm Blanket.');return;}
+    const now=Date.now(),remaining=Math.max(0,slot.endAt-now);
+    slot.endAt=now+Math.max(1000,Math.ceil(remaining*.50));
+    persistAll();refreshFeatureBadges();renderHatchery();openHatchDetail(index);
+  }
+  function openHatchDetail(index){
+    ensureExpansionSave();const slot=questSave.eggs.incubators[index];if(!slot)return;selectedHatchSlot=index;hatchAnimating=false;
+    const d=eggDefinition(slot.type),ready=Date.now()>=slot.endAt;const modal=document.querySelector('#hatchDetailModal');
+    modal?.classList.remove('hidden');modal?.setAttribute('aria-hidden','false');
+    const result=document.querySelector('#hatchResult');if(result){result.className='hatch-result hidden';result.innerHTML='';}
+    const glow=document.querySelector('#hatchGlow');glow?.classList.remove('active');
+    const egg=document.querySelector('#hatchDetailEgg');if(egg){egg.src=d.image;egg.alt=d.name;egg.className='hatch-window-egg';egg.classList.remove('hidden');}
+    const title=document.querySelector('#hatchDetailTitle');if(title)title.textContent=d.name;
+    const kicker=document.querySelector('#hatchDetailKicker');if(kicker)kicker.textContent=`NEST ${index+1}`;
+    const sub=document.querySelector('#hatchDetailSubtitle');if(sub)sub.textContent=ready?'It is wiggling... it wants out!':slot.type==='rare'?'A rare little surprise is warming up.':'Warm and cozy.';
+    const status=document.querySelector('#hatchDetailStatus');if(status)status.textContent=ready?'Oh?':`${fmtRemaining(slot.endAt-Date.now())} until hatch`;
+    const actions=document.querySelector('#hatchDetailActions');if(actions){
+      actions.innerHTML='';
+      if(ready){
+        const hatch=document.createElement('button');hatch.id='hatchNowButton';hatch.type='button';hatch.className='pixel-button primary';hatch.textContent='Hatch!';hatch.addEventListener('click',()=>hatchSlot(index));actions.appendChild(hatch);
+      }else{
+        const swap=document.createElement('button');swap.type='button';swap.className='pixel-button';swap.textContent='Switch Egg';swap.addEventListener('click',()=>{closeHatchDetail();openEggInventory(index,true)});actions.appendChild(swap);
+        const blankets=warmBlanketQtyV213();
+        if(blankets>0){
+          const blanket=document.createElement('button');blanket.type='button';blanket.className='pixel-button warm-blanket-use-v213';blanket.innerHTML=`<img src="../assets/items/quest-boosts/Warm-blanket.png" alt="">Warm Blanket ×${blankets}`;blanket.addEventListener('click',()=>applyWarmBlanketV213(index));actions.appendChild(blanket);
+        }
+      }
+      const close=document.createElement('button');close.type='button';close.className='pixel-button';close.textContent=ready?'Not Yet':'Close';close.addEventListener('click',closeHatchDetail);actions.appendChild(close);
+    }
+  }
   async function hatchSlot(index){const slot=questSave.eggs.incubators[index];if(!slot||Date.now()<slot.endAt||hatchAnimating)return;hatchAnimating=true;const egg=document.querySelector('#hatchDetailEgg'),glow=document.querySelector('#hatchGlow'),actions=document.querySelector('#hatchDetailActions'),status=document.querySelector('#hatchDetailStatus');if(actions)actions.querySelectorAll('button').forEach(b=>b.disabled=true);if(status)status.textContent='Something is happening...!';egg?.classList.add('hatching');glow?.classList.add('active');await sleep(1380);const entry=rollEggBuddy(slot.type);if(!entry){hatchAnimating=false;return;}const owned=grantCatalogBuddy(entry),eggDef=eggDefinition(slot.type);questSave.eggs.incubators[index]=null;questSave.eggs.lastHatch={name:entry.name,image:entry.image,shiny:Boolean(entry.shiny),boss:Boolean(entry.boss),eggName:eggDef.name,quantity:owned.quantity};persistAll();refreshFeatureBadges();renderBuddyHomeCount();renderHatchery();if(egg)egg.classList.add('hidden');const result=document.querySelector('#hatchResult');if(result){result.className=`hatch-result${entry.shiny?' shiny':''}`;result.innerHTML=`<div><img src="${entry.image}" alt="${entry.name}"><strong>${entry.name}${entry.shiny?' ✨':''}</strong><small>${entry.boss?'Boss Buddy · ':''}${entry.shiny?'Shiny · ':''}Owned ×${owned.quantity}</small></div>`;}const title=document.querySelector('#hatchDetailTitle');if(title)title.textContent='It hatched!';const sub=document.querySelector('#hatchDetailSubtitle');if(sub)sub.textContent=`Your ${eggDef.name} became a new Buddy!`;if(status)status.textContent=`Meet ${entry.name}${entry.shiny?' ✨':''}!`;if(actions){actions.innerHTML='';const done=document.createElement('button');done.type='button';done.className='pixel-button primary';done.textContent='Yay! ♡';done.addEventListener('click',()=>{hatchAnimating=false;closeHatchDetail();renderHatchery();});actions.appendChild(done);}}
   function renderHatchery(){ensureExpansionSave();const total=specialQty('common-egg')+specialQty('rare-egg');const count=document.querySelector('#hatchInventoryCount');if(count)count.textContent=String(total);const ready=readyEggs(),flag=document.querySelector('#hatchWorldReady');if(flag){flag.classList.toggle('hidden',ready<=0);flag.textContent=ready===1?'An egg is ready! ✨':`${ready} eggs are ready! ✨`;}const slots=document.querySelector('#hatchNestSlots');if(slots){slots.innerHTML='';questSave.eggs.incubators.forEach((slot,i)=>{const b=document.createElement('button');b.type='button';b.className='hatch-nest-slot';b.setAttribute('aria-label',slot?`Nest ${i+1}, ${eggDefinition(slot.type).name}`:`Nest ${i+1}, empty`);if(!slot){b.innerHTML=`<span class="hatch-empty-plus" aria-hidden="true">＋</span><span class="hatch-slot-status">Empty Nest</span>`;b.addEventListener('click',()=>openEggInventory(i,false));}else{const d=eggDefinition(slot.type),isReady=Date.now()>=slot.endAt;b.classList.toggle('ready',isReady);b.innerHTML=`<img class="hatch-main-egg" src="${d.image}" alt="${d.name}"><span class="hatch-slot-status">${isReady?'Ready! Tap to hatch':fmtRemaining(slot.endAt-Date.now())}</span>`;b.addEventListener('click',()=>openHatchDetail(i));}slots.appendChild(b);});}if(!document.querySelector('#eggInventoryModal')?.classList.contains('hidden'))renderEggInventory();refreshFeatureBadges();updateHatchDetailTimer();}
   setInterval(()=>{refreshFeatureBadges();if(!document.querySelector('#hatcheryScreen')?.classList.contains('hidden'))renderHatchery();},1000);
 
   // ----- Duckie Dash -----
-  const dash={running:false,raf:0,last:0,elapsed:0,hearts:3,coins:0,tiny:0,jumpY:0,jumpV:0,jumpCount:0,obstacles:[],pickups:[],obstacleClock:0,coinClock:0,segment:-1,invuln:0};
+  const dash={running:false,raf:0,last:0,elapsed:0,duration:30,hearts:3,coins:0,tiny:0,jumpY:0,jumpV:0,jumpCount:0,obstacles:[],pickups:[],obstacleClock:0,coinClock:0,segment:-1,invuln:0};
   function dashTrack(){return document.querySelector('#dashTrack');}
   function clearDashObjects(){dash.obstacles.forEach(o=>o.el.remove());dash.pickups.forEach(o=>o.el.remove());dash.obstacles=[];dash.pickups=[];}
-  function dashHud(){const set=(id,v)=>{const e=document.querySelector(id);if(e)e.textContent=String(v)};set('#dashHearts',dash.hearts);set('#dashCoins',dash.coins);set('#dashTiny',dash.tiny);set('#dashTime',Math.max(0,30-dash.elapsed).toFixed(1));}
+  function dashHud(){const set=(id,v)=>{const e=document.querySelector(id);if(e)e.textContent=String(v)};set('#dashHearts',dash.hearts);set('#dashCoins',dash.coins);set('#dashTiny',dash.tiny);set('#dashTime',Math.max(0,(Number(dash.duration)||30)-dash.elapsed).toFixed(1));}
   function resetDashPreview(){ensureExpansionSave();const cfg=DASH_STAGE[questSave.dash.selectedStage];const bg=document.querySelector('#dashBg');if(bg)bg.src=cfg.backgrounds[0];const runner=document.querySelector('#dashRunner');if(runner)runner.style.transform='translateY(0px)';syncDashDriverV208(false);dashHud();}
   function renderDashReadyOverlay(){const ov=document.querySelector('#dashOverlay');if(!ov)return;ov.classList.remove('hidden');ov.innerHTML=`<div class="dash-overlay-card"><strong>Ready?</strong><small>Use 3 Jump Tokens to run. A rare Free Run is used first if you have one.</small><button id="dashStart" class="pixel-button primary" type="button">Start Duckie Dash</button></div>`;ov.querySelector('#dashStart')?.addEventListener('click',e=>{e.stopPropagation();startDash()});}
   function leaveDashRunStage(){dash.running=false;cancelAnimationFrame(dash.raf);clearDashObjects();document.querySelector('#dashScreen')?.classList.remove('dash-run-stage-v193');document.body.classList.remove('dash-run-stage-v193-active');resetDashPreview();renderDashReadyOverlay();try{renderDashSelectors?.();}catch(error){}}
@@ -7889,8 +7923,9 @@ setInterval(()=>{
     const pickupNear=(x,gap=pickupGap)=>dash.pickups.some(o=>Math.abs(o.x-x)<gap);
     const add=(thing,x,raise,extra={})=>{
       const el=document.createElement('img');
-      el.className=`dash-thing ${thing==='obstacle'?'dash-obstacle':thing==='tiny'?'dash-tiny-duck':'dash-coin'}`;
-      el.src=thing==='obstacle'?cfg.obstacle:thing==='tiny'?'../assets/ducks/Tiny-duck.webp':'../assets/ui/pink-coin.webp';
+      const timeHeart=thing==='time-pink'||thing==='time-gold';
+      el.className=`dash-thing ${thing==='obstacle'?'dash-obstacle':thing==='tiny'?'dash-tiny-duck':timeHeart?'dash-time-heart-v213':'dash-coin'}`;
+      el.src=thing==='obstacle'?cfg.obstacle:thing==='tiny'?'../assets/ducks/Tiny-duck.webp':thing==='time-pink'?'../assets/bakery/drops/Pink-heart-refill.webp':thing==='time-gold'?'../assets/bakery/drops/Gold-heart-refill.webp':'../assets/ui/pink-coin.webp';
       el.alt='';track.appendChild(el);
       const obj={kind:thing,x,raise,el,hit:false,...extra};
       (thing==='obstacle'?dash.obstacles:dash.pickups).push(obj);
@@ -7899,52 +7934,45 @@ setInterval(()=>{
 
     if(kind==='obstacle'){
       let x=spawnX,tries=0;
-      // Never introduce a mushroom/obstacle beside an existing coin lane.
-      while((obstacleNear(x,96)||dash.pickups.some(o=>o.kind==='coin'&&!o.overObstacleStack&&Math.abs(o.x-x)<safeObstacleGap))&&tries<10){x+=70;tries++;}
-      add('obstacle',x,groundRaise);
-      return;
+      // Do not let a new obstacle appear beside an ordinary coin OR a time-heart pickup.
+      while((obstacleNear(x,96)||dash.pickups.some(o=>o.kind!=='tiny'&&!o.overObstacleStack&&Math.abs(o.x-x)<safeObstacleGap))&&tries<10){x+=70;tries++;}
+      add('obstacle',x,groundRaise);return;
     }
-
     if(kind==='tiny'){
-      let x=spawnX,tries=0;
-      while((obstacleNear(x,94)||pickupNear(x,48))&&tries<8){x+=54;tries++;}
-      add('tiny',x,groundRaise);
-      return;
+      let x=spawnX,tries=0;while((obstacleNear(x,94)||pickupNear(x,48))&&tries<8){x+=54;tries++;}add('tiny',x,groundRaise);return;
     }
-
     if(kind==='coin'){
-      // Sometimes reward a double-jump with two coins stacked safely above an obstacle.
-      const support=dash.obstacles
-        .filter(o=>o.x>W-105&&o.x<W+190)
-        .sort((a,b)=>Math.abs(a.x-spawnX)-Math.abs(b.x-spawnX))[0]||null;
+      // Keep the fun two-coin vertical reward over mushrooms for double-jumps.
+      const support=dash.obstacles.filter(o=>o.x>W-105&&o.x<W+190).sort((a,b)=>Math.abs(a.x-spawnX)-Math.abs(b.x-spawnX))[0]||null;
       if(support&&Math.random()<0.46){
         const obstacleW=Math.min(W*.155,74),coinW=Math.min(W*.098,42);
         const stackX=support.x+Math.max(7,(obstacleW-coinW)/2);
-        // Lower coin clears the obstacle on a normal jump; upper coin rewards the second jump.
-        add('coin',stackX,96,{overObstacleStack:true});
-        add('coin',stackX,148,{overObstacleStack:true});
-        return;
+        add('coin',stackX,96,{overObstacleStack:true});add('coin',stackX,148,{overObstacleStack:true});return;
       }
 
-      // All ordinary coins must stay well away from every obstacle horizontally.
+      // Rare time extensions use the existing Merge Game Heart Refill art.
+      const heartRoll=Math.random();
+      const specialKind=heartRoll<0.006?'time-gold':heartRoll<0.036?'time-pink':null;
       let x=spawnX+Math.floor(Math.random()*68),tries=0;
       while((obstacleNear(x,safeObstacleGap)||pickupNear(x,pickupGap))&&tries<12){x+=48;tries++;}
-      // One final hard guarantee in case a crowded spawn lane exhausted the normal tries.
       while(obstacleNear(x,safeObstacleGap)){x+=safeObstacleGap;}
-      const heights=[28,52,76,102,128];
-      const raise=heights[Math.floor(Math.random()*heights.length)];
-      add('coin',x,raise);
+      if(specialKind){
+        const raise=[54,78,102][Math.floor(Math.random()*3)];
+        add(specialKind,x,raise,{timeBonus:specialKind==='time-gold'?30:10});
+        return;
+      }
+      const heights=[28,52,76,102,128];const raise=heights[Math.floor(Math.random()*heights.length)];add('coin',x,raise);
     }
   }
   function recordTinyDuck(){hubSave.tinyDuckSightings=Math.max(0,Number(hubSave.tinyDuckSightings)||0)+1;if(!Array.isArray(hubSave.unlockedDucks))hubSave.unlockedDucks=[];const add=id=>{if(!hubSave.unlockedDucks.includes(id))hubSave.unlockedDucks.push(id)};add('tiny-duck');if(hubSave.tinyDuckSightings>=4)add('tiny-duck-stack');if(hubSave.tinyDuckSightings>=100)add('pile-of-tiny-ducks');}
   function overlap(ax,ay,aw,ah,bx,by,bw,bh){return ax<bx+bw&&ax+aw>bx&&ay<by+bh&&ay+ah>by;}
   function changeDashSegment(){const cfg=DASH_STAGE[questSave.dash.selectedStage],bg=document.querySelector('#dashBg');if(!bg)return;const segment=Math.floor(dash.elapsed/5);if(segment===dash.segment)return;dash.segment=segment;if(segment>=5){bg.src=cfg.backgrounds[3];return;}let choices=[0,1,2];const current=Number(bg.dataset.segmentIndex);if(Number.isFinite(current)&&choices.length>1)choices=choices.filter(x=>x!==current);const idx=choices[Math.floor(Math.random()*choices.length)];bg.dataset.segmentIndex=String(idx);bg.src=cfg.backgrounds[idx];if(segment>0&&Math.random()<.25)setTimeout(()=>{if(dash.running)spawnDashThing('tiny')},900);}
   function finishDash(success){if(!dash.running)return;dash.running=false;cancelAnimationFrame(dash.raf);const base=success?20:5;const award=base+dash.coins;hubSave.coins=Math.max(0,Number(hubSave.coins)||0)+award;questSave.dash.runs=Math.max(0,Number(questSave.dash.runs)||0)+1;const score=Math.max(0,Math.floor(dash.elapsed*4+dash.coins*8+dash.tiny*60+(success?100:0)));questSave.dash.highScore=Math.max(questSave.dash.highScore,score);persistAll();refreshFeatureBadges();const ov=document.querySelector('#dashOverlay');if(ov){ov.classList.remove('hidden');ov.innerHTML=`<div class="dash-overlay-card"><strong>${success?'Finish Line!':'Run Ended!'}</strong><small>${success?'You reached the boss-stage finish!':'Your cart ran out of hearts.'}<br>Pink Coins +${award}<br>Tiny Ducks ${dash.tiny}<br>Score ${score}</small><div class="dash-result-actions-v193"><button id="dashAgain" class="pixel-button primary" type="button">Run Again</button><button id="dashRunMenuV193" class="pixel-button" type="button">Dash Menu</button></div></div>`;ov.querySelector('#dashAgain')?.addEventListener('click',startDash);ov.querySelector('#dashRunMenuV193')?.addEventListener('click',leaveDashRunStage);}}
-  function dashFrame(ts){if(!dash.running)return;if(!dash.last)dash.last=ts;const dt=Math.min(.04,(ts-dash.last)/1000);dash.last=ts;dash.elapsed+=dt;dash.invuln=Math.max(0,dash.invuln-dt);dash.obstacleClock+=dt;dash.coinClock+=dt;changeDashSegment();if(dash.elapsed>=30){finishDash(true);return;}if(dash.obstacleClock>1.75){dash.obstacleClock=0;spawnDashThing('obstacle')}if(dash.coinClock>.9){dash.coinClock=0;spawnDashThing('coin')}
+  function dashFrame(ts){if(!dash.running)return;if(!dash.last)dash.last=ts;const dt=Math.min(.04,(ts-dash.last)/1000);dash.last=ts;dash.elapsed+=dt;dash.invuln=Math.max(0,dash.invuln-dt);dash.obstacleClock+=dt;dash.coinClock+=dt;changeDashSegment();if(dash.elapsed>=(Number(dash.duration)||30)){finishDash(true);return;}if(dash.obstacleClock>1.75){dash.obstacleClock=0;spawnDashThing('obstacle')}if(dash.coinClock>.9){dash.coinClock=0;spawnDashThing('coin')}
     dash.jumpV-=1380*dt;dash.jumpY=Math.max(0,dash.jumpY+dash.jumpV*dt);if(dash.jumpY<=0&&dash.jumpV<0){dash.jumpY=0;dash.jumpV=0;dash.jumpCount=0}const runner=document.querySelector('#dashRunner');if(runner)runner.style.transform=`translateY(${-dash.jumpY}px)`;const track=dashTrack();if(!track){finishDash(false);return;}const W=track.clientWidth,H=track.clientHeight,playerX=W*.12,playerW=Math.min(W*.20,92),playerH=playerW*.75,ground=H*.10,playerY=H-ground-playerH-dash.jumpY;const speed=W*.43;
     dash.obstacles=dash.obstacles.filter(o=>{o.x-=speed*dt;o.el.style.left=`${o.x}px`;o.el.style.bottom=`${ground+o.raise}px`;const ow=Math.min(W*.155,74),oh=ow,hitW=ow*.44,hitH=oh*.27,hitX=o.x+ow*.28,hitY=H-ground-hitH-o.raise;if(!o.hit&&dash.invuln<=0&&overlap(playerX,playerY,playerW*.72,playerH*.75,hitX,hitY,hitW,hitH)){o.hit=true;dash.hearts--;dash.invuln=1.0;runner?.classList.add('hit');syncDashDriverV208(true);setTimeout(()=>{runner?.classList.remove('hit');syncDashDriverV208(false)},420);dashHud();if(dash.hearts<=0){finishDash(false);return false}}if(o.x<-80){o.el.remove();return false}return true});
-    dash.pickups=dash.pickups.filter(o=>{o.x-=speed*dt;o.el.style.left=`${o.x}px`;o.el.style.bottom=`${ground+o.raise}px`;const iw=o.kind==='tiny'?Math.min(W*.108,48):Math.min(W*.098,42),ih=iw,pickW=iw*.74,pickH=ih*.74,pickX=o.x+iw*.13,pickY=H-ground-pickH-o.raise;if(overlap(playerX,playerY,playerW*.72,playerH*.75,pickX,pickY,pickW,pickH)){if(o.kind==='tiny'){dash.tiny++;recordTinyDuck()}else dash.coins++;o.el.remove();dashHud();return false}if(o.x<-60){o.el.remove();return false}return true});dashHud();dash.raf=requestAnimationFrame(dashFrame)}
-  function startDash(){if(dash.running)return;ensureExpansionSave();if(questSave.dash.freeRuns>0)questSave.dash.freeRuns--;else if(!useInventory('jump-token',DASH_COST)){setMessage('Duckie Dash costs 3 Jump Tokens.');refreshFeatureBadges();return;}clearDashObjects();Object.assign(dash,{running:true,last:0,elapsed:0,hearts:3,coins:0,tiny:0,jumpY:0,jumpV:0,jumpCount:0,obstacleClock:0,coinClock:0,segment:-1,invuln:0});document.querySelector('#dashScreen')?.classList.add('dash-run-stage-v193');document.body.classList.add('dash-run-stage-v193-active');const ov=document.querySelector('#dashOverlay');ov?.classList.add('hidden');persistAll();refreshFeatureBadges();resetDashPreview();dash.raf=requestAnimationFrame(dashFrame)}
+    dash.pickups=dash.pickups.filter(o=>{o.x-=speed*dt;o.el.style.left=`${o.x}px`;o.el.style.bottom=`${ground+o.raise}px`;const isTime=o.kind==='time-pink'||o.kind==='time-gold';const iw=o.kind==='tiny'?Math.min(W*.108,48):isTime?Math.min(W*.108,46):Math.min(W*.098,42),ih=iw,pickW=iw*.74,pickH=ih*.74,pickX=o.x+iw*.13,pickY=H-ground-pickH-o.raise;if(overlap(playerX,playerY,playerW*.72,playerH*.75,pickX,pickY,pickW,pickH)){if(o.kind==='tiny'){dash.tiny++;recordTinyDuck()}else if(isTime){const bonus=Math.max(0,Number(o.timeBonus)||0);dash.duration=(Number(dash.duration)||30)+bonus;const pop=document.createElement('div');pop.className='dash-time-pop-v213';pop.textContent=`+${bonus}s`;track.appendChild(pop);setTimeout(()=>pop.remove(),950)}else dash.coins++;o.el.remove();dashHud();return false}if(o.x<-60){o.el.remove();return false}return true});dashHud();dash.raf=requestAnimationFrame(dashFrame)}
+  function startDash(){if(dash.running)return;ensureExpansionSave();if(questSave.dash.freeRuns>0)questSave.dash.freeRuns--;else if(!useInventory('jump-token',DASH_COST)){setMessage('Duckie Dash costs 3 Jump Tokens.');refreshFeatureBadges();return;}clearDashObjects();Object.assign(dash,{running:true,last:0,elapsed:0,duration:30,hearts:3,coins:0,tiny:0,jumpY:0,jumpV:0,jumpCount:0,obstacleClock:0,coinClock:0,segment:-1,invuln:0});document.querySelector('#dashScreen')?.classList.add('dash-run-stage-v193');document.body.classList.add('dash-run-stage-v193-active');const ov=document.querySelector('#dashOverlay');ov?.classList.add('hidden');persistAll();refreshFeatureBadges();resetDashPreview();dash.raf=requestAnimationFrame(dashFrame)}
   document.querySelector('#dashTrack')?.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;dashJump()});
   document.addEventListener('keydown',e=>{if(document.querySelector('#dashScreen')?.classList.contains('hidden'))return;if(e.key===' '||e.key==='ArrowUp'){e.preventDefault();dashJump()}});
   document.querySelector('#dashStart')?.addEventListener('click',e=>{e.stopPropagation();startDash()});
