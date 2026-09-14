@@ -1,5 +1,5 @@
 {
-  "version": "24.189",
+  "version": "24.190",
   "updated": "2026-09-13",
-  "notes": "Hatchery egg placement fine tune for top and middle nests, plus lower egg position in the egg detail window."
+  "notes": "Hatchery middle egg nudged up a bit more and egg detail popup lowered further."
 }

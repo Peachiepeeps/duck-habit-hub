@@ -1,5 +1,0 @@
-Duckie Days v24.189
-- Hatchery top egg nudged higher.
-- Hatchery middle egg nudged higher a bit more than the top egg.
-- Hatchery bottom egg kept at the working position.
-- Egg detail popup window lowers the egg so it sits on the darker nest center more naturally.
