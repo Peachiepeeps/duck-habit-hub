@@ -14058,4 +14058,4 @@ if (window.location.hash === "#games") {
   history.replaceState(null, "", window.location.pathname + window.location.search);
 }
 
-// v24.179 cache-bust build.
+// v24.181 compact Duckie Dash screen build.
