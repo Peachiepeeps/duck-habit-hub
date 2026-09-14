@@ -1,0 +1,170 @@
+name: Install Duckie Days v24.174 Verified Recovery FIXED
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - "Duckie-Days-v24.174-verified-recovery-update-only.zip"
+      - ".github/workflows/install-duckie-days-v24-174-verified-recovery-fixed.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  install-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Require exact update ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.174-verified-recovery-update-only.zip"
+          if [ ! -f "$ZIP" ]; then
+            echo "ERROR: $ZIP was not found at the repository root."
+            echo "Root directory:"
+            ls -1A
+            exit 1
+          fi
+          unzip -tq "$ZIP"
+          echo "FOUND AND VALIDATED: $ZIP"
+
+      - name: Install v24.174
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.174-verified-recovery-update-only.zip"
+          TMP=".duckie-days-v24-174-install"
+          rm -rf "$TMP"
+          mkdir -p "$TMP"
+          unzip -q "$ZIP" -d "$TMP"
+          cp -a "$TMP"/. ./
+          rm -rf "$TMP"
+          echo "Installed update package into checkout."
+
+      - name: Verify exact v24.174 build
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq '"version": "24.174"' version.json
+          grep -Fq 'duck-habit-build" content="24.174"' index.html
+          grep -Fq 'style-v24-174.css?v=24-174' index.html
+          grep -Fq 'script-v24-174.js?v=24-174' index.html
+          grep -Fq 'sw-v24-174.js?v=24-174' index.html
+          grep -Fq 'css/style-v77.css?v=24-174' duck-quest/index.html
+          grep -Fq 'js/game-v89.js?v=24-174' duck-quest/index.html
+          grep -Fq "window.DUCKIE_DAYS_BUILD='24.174'" duck-quest/js/game-v89.js
+          grep -Fq 'v24.173 — final Duck Quest home layout' duck-quest/js/game-v89.js
+          grep -Fq 'hatchery-solid-screen' duck-quest/css/style-v77.css
+          grep -Fq "mimicName:'Mimic'" duck-quest/js/game-v89.js
+          grep -Fq "mimicName:'Lucky Mimic'" duck-quest/js/game-v89.js
+          grep -Fq "mimicName:'Healthy Mimic'" duck-quest/js/game-v89.js
+          grep -Fq "mimicName:'Amethyst Mimic'" duck-quest/js/game-v89.js
+          test -f duck-quest/assets/enemies/mimic/lucky/idle-1.webp
+          test -f duck-quest/assets/enemies/mimic/healthy/idle-1.webp
+          test -f duck-quest/assets/shinies/amethyst-mimic-idle-1.webp
+          node --check script-v24-174.js
+          node --check sw-v24-174.js
+          node --check duck-quest/js/game-v89.js
+          echo "VERIFIED: v24.174 files and JavaScript are valid."
+
+      - name: Clean old Duckie Days update clutter
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          KEEP_WORKFLOW=".github/workflows/install-duckie-days-v24-174-verified-recovery-fixed.yml"
+          if [ -d .github/workflows ]; then
+            for f in .github/workflows/install-duck-habit-hub-v*.yml .github/workflows/install-duckie-days-v*.yml; do
+              [ -e "$f" ] || continue
+              [ "$f" = "$KEEP_WORKFLOW" ] && continue
+              rm -f "$f"
+            done
+          fi
+
+          for f in *update-only*.zip; do
+            [ -e "$f" ] || continue
+            rm -f "$f"
+          done
+
+          rm -f README-v24.*.txt
+          rm -f DUCKIE_DAYS_v24.*_notes.txt
+          rm -f V24.173-NOTES.txt
+
+          for f in style-v24-*.css; do
+            [ -e "$f" ] || continue
+            case "$f" in
+              style-v24-173.css|style-v24-174.css) ;;
+              *) rm -f "$f" ;;
+            esac
+          done
+
+          for f in script-v24-*.js; do
+            [ -e "$f" ] || continue
+            case "$f" in
+              script-v24-173.js|script-v24-174.js) ;;
+              *) rm -f "$f" ;;
+            esac
+          done
+
+          for f in sw-v24-*.js; do
+            [ -e "$f" ] || continue
+            case "$f" in
+              sw-v24-173.js|sw-v24-174.js) ;;
+              *) rm -f "$f" ;;
+            esac
+          done
+
+          for f in duck-quest/css/style-v*.css; do
+            [ -e "$f" ] || continue
+            case "$f" in
+              duck-quest/css/style-v76.css|duck-quest/css/style-v77.css) ;;
+              *) rm -f "$f" ;;
+            esac
+          done
+
+          for f in duck-quest/js/game-v*.js; do
+            [ -e "$f" ] || continue
+            case "$f" in
+              duck-quest/js/game-v88.js|duck-quest/js/game-v89.js) ;;
+              *) rm -f "$f" ;;
+            esac
+          done
+
+          echo "Cleanup complete. Current + one fallback build retained."
+
+      - name: Verify cleanup did not remove active files
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f style-v24-174.css
+          test -f script-v24-174.js
+          test -f sw-v24-174.js
+          test -f duck-quest/css/style-v77.css
+          test -f duck-quest/js/game-v89.js
+          test -f .github/workflows/install-duckie-days-v24-174-verified-recovery-fixed.yml
+          grep -Fq '"version": "24.174"' version.json
+          echo "CLEANUP VERIFIED."
+
+      - name: Commit installed build and cleanup
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          echo "Changes to commit:"
+          git status --short
+          if git diff --cached --quiet; then
+            echo "ERROR: No repository changes were staged."
+            exit 1
+          fi
+          git commit -m "Install Duckie Days v24.174 verified recovery"
+          git push
+
+      - name: Final success marker
+        shell: bash
+        run: |
+          echo "SUCCESS: v24.174 was installed, verified, cleaned, committed, and pushed."
