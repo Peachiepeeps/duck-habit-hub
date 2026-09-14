@@ -1,0 +1,4 @@
+Duckie Days v24.206
+- Emergency recovery for chest Open/Continue buttons after v24.205.
+- Fixes the v24.205 global-state bridge so pending chest state is visible to the corrected Mimic handler.
+- Keeps all v24.204 Merchant/Dash fixes and v24.205 Lucky/Healthy Mimic asset mappings intact.
