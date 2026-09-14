@@ -1,8 +1,0 @@
-Duckie Days v24.178 — isolated Hatching Area rebuild
-
-- Keeps the v24.176 compact Equip Charm / Hatching Area buttons unchanged.
-- Retires the legacy dynamically-styled #hatcheryScreen node.
-- Creates a clean #hatcheryScreenV178 surface that old hatchery CSS/timers cannot target.
-- Reuses the existing egg inventory, incubation, hatch, and Buddy reward logic through an exposed hatch API.
-- Global Duck Quest back button returns from Hatching Area to Quest Home.
-- Uses Hatching-background-new.png directly as a fixed full-screen scene.
