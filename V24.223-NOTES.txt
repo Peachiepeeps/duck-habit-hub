@@ -1,6 +1,7 @@
-Duckie Days v24.222 — Larger Fullscreen Duckie Dash Backgrounds
+Duckie Days v24.223 — Revised 2x Fullscreen Duckie Dash Backgrounds
 
-- Replaces all four Duckie Dash strips with Jessica's enlarged 150% artwork.
+- Replaces all four Duckie Dash strips with Jessica's revised 2x artwork.
+- Uses the original 4096 x 334 PNG exports without chat-image downscaling.
 - Displays every Dash strip at 100% of the play-area height.
 - Preserves the Meadow, Ocean, Candyland, and Cloud Garden stage mapping.
 - Preserves the v24.220 no-freeze fix with no recursive overlay observer.
