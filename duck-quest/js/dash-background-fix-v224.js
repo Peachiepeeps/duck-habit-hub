@@ -1,13 +1,13 @@
-// Duckie Days v24.223 — revised 2x full-height endless Dash strips without observer recursion.
+// Duckie Days v24.224 — revised 2x full-height endless Dash strips without observer recursion.
 (function(){
   'use strict';
 
-  window.DUCKIE_DASH_BACKGROUND_FIX='24.223-2x-fullscreen-endless-no-freeze';
+  window.DUCKIE_DASH_BACKGROUND_FIX='24.224-2x-fullscreen-endless-no-freeze';
 
   const style=document.createElement('style');
-  style.id='duckieDashBackgroundV223Style';
+  style.id='duckieDashBackgroundV224Style';
   style.textContent=`
-    /* These are the revised 2x 4096 × 334 repeatable strips supplied for v24.223.
+    /* These are the revised 2x 4096 × 334 repeatable strips retained in v24.224.
        Fill the complete run surface while preserving their horizontal loop. */
     #dashBgScrollV217{
       position:absolute!important;
