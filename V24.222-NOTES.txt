@@ -1,7 +1,8 @@
-Duckie Days v24.221 — Duckie Dash Seven-Eighths Background
+Duckie Days v24.222 — Larger Fullscreen Duckie Dash Backgrounds
 
-- Enlarges each long Duckie Dash background strip to exactly 87.5% of the play-area height.
-- Anchors the artwork to the bottom, leaving only a slim sky band above it.
+- Replaces all four Duckie Dash strips with Jessica's enlarged 150% artwork.
+- Displays every Dash strip at 100% of the play-area height.
+- Preserves the Meadow, Ocean, Candyland, and Cloud Garden stage mapping.
 - Preserves the v24.220 no-freeze fix with no recursive overlay observer.
 - Includes the v24.218 Dash power-ups and Mysterious Merchant repair.
 - Repeats the selected stage strip seamlessly for the full timed run.

@@ -1,14 +1,14 @@
-// Duckie Days v24.221 — seven-eighths endless Dash strips without observer recursion.
+// Duckie Days v24.222 — larger full-height endless Dash strips without observer recursion.
 (function(){
   'use strict';
 
-  window.DUCKIE_DASH_BACKGROUND_FIX='24.221-seven-eighths-endless-strip-no-freeze';
+  window.DUCKIE_DASH_BACKGROUND_FIX='24.222-larger-fullscreen-endless-no-freeze';
 
   const style=document.createElement('style');
-  style.id='duckieDashBackgroundV221Style';
+  style.id='duckieDashBackgroundV222Style';
   style.textContent=`
-    /* The supplied 2048 × 167 artwork is a long repeatable strip. Jessica chose
-       for it to cover seven-eighths of the run surface, with a slim sky band. */
+    /* These are the enlarged 2048 × 167 repeatable strips supplied for v24.222.
+       Fill the complete run surface while preserving their horizontal loop. */
     #dashBgScrollV217{
       position:absolute!important;
       inset:0!important;
@@ -29,7 +29,7 @@
       width:auto!important;
       min-width:0!important;
       max-width:none!important;
-      height:87.5%!important;
+      height:100%!important;
       min-height:0!important;
       max-height:none!important;
       object-fit:fill!important;

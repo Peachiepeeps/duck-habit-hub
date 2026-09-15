@@ -7547,7 +7547,7 @@ setInterval(()=>{
 // v24.166 — Duckie Dash, Buddy Eggs, Mysterious Merchant, and Sibling Spat
 (function(){
   const DASH_COST=3;
-  window.DUCKIE_DASH_CORE='24.221-seven-eighths-endless-strip-no-freeze';
+  window.DUCKIE_DASH_CORE='24.222-larger-fullscreen-endless-no-freeze';
   window.DUCKIE_BOOST_CORE='24.213-candy-blanket-time-hearts';
   const COMMON_EGG_MS=60*60*1000;
   const RARE_EGG_MS=24*60*60*1000;
