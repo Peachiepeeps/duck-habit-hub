@@ -1,0 +1,11 @@
+Duckie Days v24.219 — Smaller Endless Dash Strips
+
+- Includes the v24.218 Dash power-ups and Mysterious Merchant repair.
+- Displays the 2048 x 167 Dash strips near their intended small pixel scale.
+- Repeats the selected stage strip seamlessly for the full timed run.
+- Removes the boss-stage background and boss-stage completion language.
+- Duckie Dash now completes only when its timer reaches zero.
+- Angel Wing grants about 1.4x speed for 10 seconds.
+- Bubble grants 10 seconds of obstacle protection and displays over the rider/cart.
+- Obstacles add 10 seconds to the run instead of removing hearts.
+- Mysterious Merchant reliably shows exactly two purchase choices plus No Thanks.

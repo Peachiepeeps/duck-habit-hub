@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="duck-habit-build" content="24.218" />
+  <meta name="duck-habit-build" content="24.219" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta id="appThemeColor" name="theme-color" content="#f7dbe5" />
@@ -1097,14 +1097,14 @@
     </section>
   </main>
   <script src="script-v24-201.js?v=24-201"></script>
-  <script src="hub-shop-boosts-v213.js?v=24-218"></script>
-  <script src="hub-exp-candy-use-v215.js?v=24-218"></script>
+  <script src="hub-shop-boosts-v213.js?v=24-219"></script>
+  <script src="hub-exp-candy-use-v215.js?v=24-219"></script>
 
   <script>
     // v24.84: use a stable service-worker URL and actively check the deployed
     // build when the installed PWA is opened/resumed. This prevents Android
     // from keeping an already-open standalone app on an older app shell.
-    const DUCK_HUB_BUILD = "24.218";
+    const DUCK_HUB_BUILD = "24.219";
     let duckHubReloadingForUpdate = false;
 
     function duckHubReloadFresh(version) {
@@ -1168,7 +1168,7 @@
       window.addEventListener("load", async () => {
         try {
           await duckHubClearOldCodeCaches();
-          const registration = await navigator.serviceWorker.register("./sw-v24-218.js?v=24-218", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("./sw-v24-219.js?v=24-219", { updateViaCache: "none" });
           await registration.update();
           if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
           await duckHubCheckForUpdate(registration);

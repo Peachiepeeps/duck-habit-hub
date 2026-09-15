@@ -1,9 +1,0 @@
-Duckie Days v24.218 — Dash Power-Ups + Merchant Choices
-
-- Keeps the v24.217 Duckie Dash additions in this single installer.
-- Angel Wing grants about 1.4x speed for 10 seconds.
-- Bubble grants 10 seconds of obstacle protection and displays over the rider/cart.
-- Obstacles add 10 seconds to the run instead of removing hearts.
-- Meadow, Ocean, Candyland, and Cloud Garden use their dedicated smooth-scrolling strips.
-- Mysterious Merchant reliably shows exactly two purchase choices plus No Thanks.
-- Buying deducts Pink Coins and grants the selected item/charm; No Thanks safely continues the run.
