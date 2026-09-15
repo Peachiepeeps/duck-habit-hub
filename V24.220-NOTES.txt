@@ -1,5 +1,8 @@
-Duckie Days v24.219 — Smaller Endless Dash Strips
+Duckie Days v24.220 — Duckie Dash Freeze Hotfix
 
+- Removes the self-triggering overlay observer that froze the game when Duckie Dash opened.
+- Uses guarded, one-time text cleanup with no recursive DOM updates.
+- Includes the v24.219 smaller endless strip and timer-only completion behavior.
 - Includes the v24.218 Dash power-ups and Mysterious Merchant repair.
 - Displays the 2048 x 167 Dash strips near their intended small pixel scale.
 - Repeats the selected stage strip seamlessly for the full timed run.

@@ -1,11 +1,11 @@
-// Duckie Days v24.219 — correctly scaled, endlessly repeating Dash strips.
+// Duckie Days v24.220 — scaled endless Dash strips without observer recursion.
 (function(){
   'use strict';
 
-  window.DUCKIE_DASH_BACKGROUND_FIX='24.219-small-endless-strip';
+  window.DUCKIE_DASH_BACKGROUND_FIX='24.220-small-endless-strip-no-freeze';
 
   const style=document.createElement('style');
-  style.id='duckieDashBackgroundV219Style';
+  style.id='duckieDashBackgroundV220Style';
   style.textContent=`
     /* The supplied 2048 × 167 artwork is a long repeatable strip. Keep it near
        its intended pixel scale instead of stretching its short height to fill
@@ -63,9 +63,11 @@
     const overlay=document.querySelector('#dashOverlay');
     if(!overlay) return;
     overlay.querySelectorAll('strong,small').forEach(node=>{
-      node.textContent=node.textContent
+      const before=node.textContent||'';
+      const after=before
         .replace(/Finish Line!/gi,'Time’s Up!')
         .replace(/You reached the boss-stage finish!/gi,'The timer reached zero — run complete!');
+      if(after!==before) node.textContent=after;
     });
   }
 
@@ -78,10 +80,10 @@
   if(background){
     new MutationObserver(syncSky).observe(background,{attributes:true,attributeFilter:['src']});
   }
-  const overlay=document.querySelector('#dashOverlay');
-  if(overlay){
-    new MutationObserver(removeBossLanguage).observe(overlay,{childList:true,subtree:true});
-  }
+  // v24.219 watched the overlay and then rewrote every observed text node,
+  // including unchanged ones. That caused an endless MutationObserver loop
+  // as soon as Duckie Dash opened. The game source now owns this copy, so a
+  // single guarded cleanup at load is sufficient and cannot recurse.
   document.querySelector('#dashStageButtons')?.addEventListener('click',()=>setTimeout(syncSky,0));
   window.addEventListener('resize',syncSky,{passive:true});
   sync();
