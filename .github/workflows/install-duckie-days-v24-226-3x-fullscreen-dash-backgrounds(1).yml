@@ -1,0 +1,152 @@
+name: Install Duckie Days v24.226 3x Fullscreen Duckie Dash Backgrounds
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - "Duckie-Days-v24.226-3x-fullscreen-dash-backgrounds-update-only(1).zip"
+      - ".github/workflows/install-duckie-days-v24-226-3x-fullscreen-dash-backgrounds(1).yml"
+
+permissions:
+  contents: write
+
+jobs:
+  install-update:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Require exact v24.226 ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.226-3x-fullscreen-dash-backgrounds-update-only(1).zip"
+          test -f "$ZIP" || { echo "ERROR: $ZIP is missing."; ls -1; exit 1; }
+          unzip -tq "$ZIP"
+
+      - name: Install v24.226
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.226-3x-fullscreen-dash-backgrounds-update-only(1).zip"
+          TMP=.duckie-days-v24-226-install
+          rm -rf "$TMP" && mkdir -p "$TMP"
+          unzip -q "$ZIP" -d "$TMP"
+          python3 "$TMP/tools/patch-v226.py" "$TMP"
+          rm -rf "$TMP"
+
+      - name: Verify v24.226
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq '"version": "24.226"' version.json
+          grep -Fq 'duck-habit-build" content="24.226"' index.html
+          grep -Fq 'const DUCK_HUB_BUILD = "24.226";' index.html
+          grep -Fq "window.DUCKIE_DASH_CORE='24.226-3x-fullscreen-endless-no-freeze';" duck-quest/js/game-v96.js
+          grep -Fq "window.DUCKIE_DASH_BACKGROUND_FIX='24.226-3x-fullscreen-endless-no-freeze';" duck-quest/js/dash-background-fix-v226.js
+          grep -Fq 'height:100%!important' duck-quest/js/dash-background-fix-v226.js
+          grep -Fq 'align-items:flex-end!important' duck-quest/js/dash-background-fix-v226.js
+          grep -Fq 'object-position:left bottom!important' duck-quest/js/dash-background-fix-v226.js
+          grep -Fq 'dashBgCloneV217' duck-quest/js/game-v96.js
+          grep -Fq "dash.elapsed>=(Number(dash.duration)||30)" duck-quest/js/game-v96.js
+          grep -Fq "dash.bgOffset=(dash.bgOffset+speed*dt*.55)%bg.clientWidth" duck-quest/js/game-v96.js
+          grep -Fq "const speed=W*.43*(dash.speedBoost>0?1.4:1)" duck-quest/js/game-v96.js
+          grep -Fq "dashBackground:'assets/dash/backgrounds/DD-Meadow-3x.png'" duck-quest/js/game-v96.js
+          grep -Fq "dashBackground:'assets/dash/backgrounds/DD-Ocean-3x.png'" duck-quest/js/game-v96.js
+          grep -Fq "dashBackground:'assets/dash/backgrounds/DD-Candyland-3x.png'" duck-quest/js/game-v96.js
+          grep -Fq "dashBackground:'assets/dash/backgrounds/DD-CloudGarden-3x.png'" duck-quest/js/game-v96.js
+          grep -Fq 'dash-background-fix-v226.js?v=24-226' duck-quest/index.html
+          grep -Fq './duck-quest/js/dash-background-fix-v226.js?v=24-226' sw-v24-226.js
+          grep -Fq './duck-quest/assets/dash/backgrounds/DD-Meadow-3x.png' sw-v24-226.js
+          grep -Fq "importScripts('./sw-v24-226.js');" sw.js
+          grep -Fq "window.DUCKIE_DAYS_QUEST_FLOW='24.225-next-level-and-start-picker';" duck-quest/js/game-v96.js
+          grep -Fq "window.DUCKIE_DAYS_MERCHANT_FIX='24.225-discounted-colored-charms';" duck-quest/js/merchant-fix-v218.js
+          test -f V24.226-NOTES.txt
+          test ! -f duck-quest/js/dash-background-fix-v224.js
+          node --check duck-quest/js/game-v96.js
+          node --check duck-quest/js/dash-background-fix-v226.js
+          node --check duck-quest/js/merchant-fix-v218.js
+          node --check sw-v24-226.js
+          python3 - <<'PY'
+          from hashlib import sha256
+          from pathlib import Path
+          from struct import unpack
+
+          expected = {
+              'DD-Meadow-3x.png': '70373033c26135fa63895b752d14b49522cb706c1da3aef75d0d4190e3be2b2c',
+              'DD-Ocean-3x.png': '5477fbd2c3a05266e492fede380929c45e940e3121b5ccdbb77d2cba75bec264',
+              'DD-Candyland-3x.png': '2caf90cd8e093fd55db18c83be2ff6a2557c755ef8107c8f77a627195c9baa4e',
+              'DD-CloudGarden-3x.png': 'd7cf67f36a50ac87e8878c3ec6fbedad7f4011c88f80c888ff0fcb9e507a2248',
+          }
+          root = Path('duck-quest/assets/dash/backgrounds')
+          for name, digest in expected.items():
+              data = (root / name).read_bytes()
+              assert data[:8] == b'\x89PNG\r\n\x1a\n'
+              assert unpack('>II', data[16:24]) == (6600, 1500), name
+              assert sha256(data).hexdigest() == digest, name
+
+          fix = Path('duck-quest/js/dash-background-fix-v226.js').read_text(encoding='utf-8')
+          assert 'height:87.5%' not in fix
+          assert 'clamp(' not in fix
+          assert 'MutationObserver(syncSky)' in fix
+          assert 'MutationObserver(sync)' not in fix
+
+          game = Path('duck-quest/js/game-v96.js').read_text(encoding='utf-8')
+          assert game.count('id="dashBgCloneV217"') == 1
+          assert "finishDash(true);return;" in game
+          assert "dash.speedBoost>0?1.4:1" in game
+          assert "Finish Line!" not in game
+
+          page = Path('duck-quest/index.html').read_text(encoding='utf-8')
+          assert page.index('merchant-fix-v218.js?v=24-226') < page.index('dash-background-fix-v226.js?v=24-226')
+          assert 'dash-background-fix-v224.js' not in page
+          print('VERIFIED: four 6600 x 1500 backgrounds, 100% height, endless loop, and prior fixes are present.')
+          PY
+          echo "VERIFIED: v24.226 code, artwork, and cache files are valid."
+
+      - name: Clean old update clutter
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -d .github/workflows ]; then
+            find .github/workflows -maxdepth 1 -type f \( -name 'install-duck-habit-hub-v*.yml' -o -name 'install-duckie-days-v*.yml' \) ! -name 'install-duckie-days-v24-226-3x-fullscreen-dash-backgrounds(1).yml' -delete
+          fi
+          find . -maxdepth 1 -type f -iname '*update-only*.zip' -delete
+          find . -maxdepth 1 -type f -name 'V24.*-NOTES.txt' ! -name 'V24.226-NOTES.txt' -delete
+          find . -maxdepth 1 -type f -name 'sw-v24-*.js' ! -name 'sw-v24-226.js' -delete
+          find duck-quest/js -maxdepth 1 -type f -name 'dash-background-fix-v*.js' ! -name 'dash-background-fix-v226.js' -delete
+
+      - name: Final verification after cleanup
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f duck-quest/js/game-v96.js
+          test -f duck-quest/js/merchant-fix-v218.js
+          test -f duck-quest/js/dash-background-fix-v226.js
+          test -f duck-quest/assets/dash/backgrounds/DD-Meadow-3x.png
+          test -f duck-quest/assets/dash/backgrounds/DD-Ocean-3x.png
+          test -f duck-quest/assets/dash/backgrounds/DD-Candyland-3x.png
+          test -f duck-quest/assets/dash/backgrounds/DD-CloudGarden-3x.png
+          test -f sw-v24-226.js
+          test -f V24.226-NOTES.txt
+          COUNT=$(find .github/workflows -maxdepth 1 -type f -name 'install-duckie-days-v*.yml' | wc -l | tr -d ' ')
+          test "$COUNT" = "1"
+          echo "VERIFIED: v24.226 installed cleanly."
+
+      - name: Commit v24.226 and cleanup
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && { echo "ERROR: No changes were staged."; exit 1; }
+          git commit -m "Install Duckie Days v24.226 3x fullscreen Dash backgrounds"
+          git push
+
+      - name: Success
+        shell: bash
+        run: |
+          echo "SUCCESS: v24.226 installed, verified, cleaned, committed, and pushed."
