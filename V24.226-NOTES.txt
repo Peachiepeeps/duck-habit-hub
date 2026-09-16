@@ -1,0 +1,10 @@
+Duckie Days v24.226 — New 3x Fullscreen Duckie Dash Backgrounds
+
+- Replaces all four Duckie Dash stage strips with the supplied 6600 x 1500 artwork.
+- Maps the Meadow and Cloud Garden artwork to their visually correct stages despite the swapped source filenames.
+- Keeps every Duckie Dash background at 100% of the play-area height.
+- Keeps two copies of each strip side by side for a smooth endless horizontal loop.
+- Duckie Dash still ends only when its timer reaches zero; there is no background finish or boss stage.
+- Preserves the no-freeze repair and avoids recursive overlay observation.
+- Preserves v24.225 Mysterious Merchant pricing/color fixes and Quest result/start-point flow.
+- Uses new -3x asset filenames so installed PWAs cannot reuse older cached background images.

@@ -7589,7 +7589,7 @@ setInterval(()=>{
 // v24.166 — Duckie Dash, Buddy Eggs, Mysterious Merchant, and Sibling Spat
 (function(){
   const DASH_COST=3;
-  window.DUCKIE_DASH_CORE='24.224-2x-fullscreen-endless-no-freeze';
+  window.DUCKIE_DASH_CORE='24.226-3x-fullscreen-endless-no-freeze';
   window.DUCKIE_BOOST_CORE='24.213-candy-blanket-time-hearts';
   const COMMON_EGG_MS=60*60*1000;
   const RARE_EGG_MS=24*60*60*1000;
@@ -7607,10 +7607,10 @@ setInterval(()=>{
     {id:'annika',name:'Annika Cart',image:'assets/dash/carts/Duck-car-annika.png',kind:'happiness',characterId:'annika'}
   ];
   const DASH_STAGE={
-    meadow:{name:'Meadow',dashBackground:'assets/dash/backgrounds/DD-Meadow.png',backgrounds:['assets/dash/backgrounds/DD-Meadow.png'],obstacle:'assets/dash/Obstacle-mushroom.png'},
-    ocean:{name:'Ocean',dashBackground:'assets/dash/backgrounds/DD-Ocean.png',backgrounds:['assets/dash/backgrounds/DD-Ocean.png'],obstacle:'assets/dash/Obstacle-rock.png'},
-    candy:{name:'Candyland',dashBackground:'assets/dash/backgrounds/DD-Candyland.png',backgrounds:['assets/dash/backgrounds/DD-Candyland.png'],obstacle:'assets/dash/Obstacle-gumdrop.png'},
-    cloud:{name:'Cloud Garden',dashBackground:'assets/dash/backgrounds/DD-CloudGarden.png',backgrounds:['assets/dash/backgrounds/DD-CloudGarden.png'],obstacle:'assets/dash/Obstacle-cloud.png'}
+    meadow:{name:'Meadow',dashBackground:'assets/dash/backgrounds/DD-Meadow-3x.png',backgrounds:['assets/dash/backgrounds/DD-Meadow-3x.png'],obstacle:'assets/dash/Obstacle-mushroom.png'},
+    ocean:{name:'Ocean',dashBackground:'assets/dash/backgrounds/DD-Ocean-3x.png',backgrounds:['assets/dash/backgrounds/DD-Ocean-3x.png'],obstacle:'assets/dash/Obstacle-rock.png'},
+    candy:{name:'Candyland',dashBackground:'assets/dash/backgrounds/DD-Candyland-3x.png',backgrounds:['assets/dash/backgrounds/DD-Candyland-3x.png'],obstacle:'assets/dash/Obstacle-gumdrop.png'},
+    cloud:{name:'Cloud Garden',dashBackground:'assets/dash/backgrounds/DD-CloudGarden-3x.png',backgrounds:['assets/dash/backgrounds/DD-CloudGarden-3x.png'],obstacle:'assets/dash/Obstacle-cloud.png'}
   };
   const SPECIAL_REWARD_ITEMS={
     token:{id:'jump-token',name:'Jump Token',image:'assets/dash/Jump-Token.png'},
@@ -7776,7 +7776,7 @@ setInterval(()=>{
             <div><span class="mini-label">COURSE</span><div id="dashStageButtons" class="dash-stage-buttons"></div></div>
             <div class="dash-playbox">
               <div class="dash-hud"><span>Power <strong id="dashPower">—</strong></span><span>Time <strong id="dashTime">30.0</strong></span><span>Coins <strong id="dashCoins">0</strong></span><span>Tiny Ducks <strong id="dashTiny">0</strong></span></div>
-              <div id="dashTrack" class="dash-track"><div id="dashBgScrollV217" class="dash-bg-scroll-v217"><img id="dashBg" class="dash-bg" src="assets/dash/backgrounds/DD-Meadow.png" alt=""><img id="dashBgCloneV217" class="dash-bg" src="assets/dash/backgrounds/DD-Meadow.png" alt=""></div><div id="dashRunner" class="dash-runner dash-runner-v208" aria-label="OC riding a duck cart"><img id="dashRunnerDriverV208" class="dash-driver-v208" src="assets/characters/peep/base/idle-1.webp" alt=""><img id="dashRunnerCartV208" class="dash-cart-v208" src="${DASH_CARTS[0].image}" alt="Duck cart"><img id="dashBubble" class="dash-bubble-v217" src="assets/dash/Bubble.png" alt=""></div><div id="dashOverlay" class="dash-overlay"><div class="dash-overlay-card"><strong>Ready?</strong><small>Use 3 Jump Tokens to run. A rare Free Run is used first if you have one.</small><button id="dashStart" class="pixel-button primary" type="button">Start Duckie Dash</button></div></div></div>
+              <div id="dashTrack" class="dash-track"><div id="dashBgScrollV217" class="dash-bg-scroll-v217"><img id="dashBg" class="dash-bg" src="assets/dash/backgrounds/DD-Meadow-3x.png" alt=""><img id="dashBgCloneV217" class="dash-bg" src="assets/dash/backgrounds/DD-Meadow-3x.png" alt=""></div><div id="dashRunner" class="dash-runner dash-runner-v208" aria-label="OC riding a duck cart"><img id="dashRunnerDriverV208" class="dash-driver-v208" src="assets/characters/peep/base/idle-1.webp" alt=""><img id="dashRunnerCartV208" class="dash-cart-v208" src="${DASH_CARTS[0].image}" alt="Duck cart"><img id="dashBubble" class="dash-bubble-v217" src="assets/dash/Bubble.png" alt=""></div><div id="dashOverlay" class="dash-overlay"><div class="dash-overlay-card"><strong>Ready?</strong><small>Use 3 Jump Tokens to run. A rare Free Run is used first if you have one.</small><button id="dashStart" class="pixel-button primary" type="button">Start Duckie Dash</button></div></div></div>
               <div class="dash-tap-note">Tap anywhere on the course to jump! ♡</div>
             </div>
             <div class="dash-garage-wrap"><span class="mini-label">CART GARAGE</span><div id="dashGarage" class="dash-garage"></div></div>

@@ -1,14 +1,14 @@
-// Duckie Days v24.224 — revised 2x full-height endless Dash strips without observer recursion.
+// Duckie Days v24.226 — new 3x full-height endless Duckie Dash strips.
 (function(){
   'use strict';
 
-  window.DUCKIE_DASH_BACKGROUND_FIX='24.224-2x-fullscreen-endless-no-freeze';
+  window.DUCKIE_DASH_BACKGROUND_FIX='24.226-3x-fullscreen-endless-no-freeze';
 
   const style=document.createElement('style');
-  style.id='duckieDashBackgroundV224Style';
+  style.id='duckieDashBackgroundV226Style';
   style.textContent=`
-    /* These are the revised 2x 4096 × 334 repeatable strips retained in v24.224.
-       Fill the complete run surface while preserving their horizontal loop. */
+    /* The 6600 × 1500 strips fill the entire play surface. Two copies remain
+       side by side so the game can loop them continuously until time runs out. */
     #dashBgScrollV217{
       position:absolute!important;
       inset:0!important;
@@ -40,17 +40,17 @@
   document.head.appendChild(style);
 
   const SKY_BY_FILE={
-    'DD-Meadow.png':'rgb(129,154,239)',
-    'DD-Ocean.png':'rgb(6,72,233)',
-    'DD-Candyland.png':'rgb(229,194,228)',
-    'DD-CloudGarden.png':'rgb(211,186,255)'
+    'DD-Meadow-3x.png':'rgb(129,154,239)',
+    'DD-Ocean-3x.png':'rgb(6,72,233)',
+    'DD-Candyland-3x.png':'rgb(229,194,228)',
+    'DD-CloudGarden-3x.png':'rgb(211,186,255)'
   };
 
   function syncSky(){
     const track=document.querySelector('#dashTrack');
     const image=document.querySelector('#dashBg');
     if(!track || !image) return;
-    const file=String(image.getAttribute('src')||'').split('/').pop();
+    const file=String(image.getAttribute('src')||'').split('/').pop().split('?')[0];
     track.style.setProperty('background',SKY_BY_FILE[file]||'#cde8f4','important');
   }
 
@@ -79,10 +79,6 @@
   if(background){
     new MutationObserver(syncSky).observe(background,{attributes:true,attributeFilter:['src']});
   }
-  // v24.219 watched the overlay and then rewrote every observed text node,
-  // including unchanged ones. That caused an endless MutationObserver loop
-  // as soon as Duckie Dash opened. The game source now owns this copy, so a
-  // single guarded cleanup at load is sufficient and cannot recurse.
   document.querySelector('#dashStageButtons')?.addEventListener('click',()=>setTimeout(syncSky,0));
   window.addEventListener('resize',syncSky,{passive:true});
   sync();
