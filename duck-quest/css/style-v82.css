@@ -2955,6 +2955,11 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
 .route-current-rank strong{font-size:1rem}
 .route-modal-actions{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:3px}
 .route-modal-actions .pixel-button{min-height:48px}
+.route-start-level-picker{width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:end;padding:10px;border:2px solid var(--border,#c98e9e);border-radius:14px;background:var(--quest-surface-2,#fff2f7)}
+.route-start-level-picker.hidden{display:none!important}
+.route-start-level-picker label{grid-column:1/-1;font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.route-start-level-picker select{min-width:0;height:46px;padding:0 12px;border:2px solid var(--border,#c98e9e);border-radius:10px;background:var(--panel,#fffdf7);color:inherit;font:inherit;font-weight:800}
+.route-start-level-picker .pixel-button{min-height:46px;white-space:nowrap}
 
 .skill-book-modal-card{text-align:left}
 .skill-book-modal-card>.mini-label,
@@ -3015,6 +3020,8 @@ button:focus-visible{outline:4px solid #fff;outline-offset:2px}
   .route-modal-image{width:min(230px,78%)}
   .route-modal-actions{gap:6px}
   .route-modal-actions .pixel-button{min-height:44px;font-size:.58rem;padding:6px}
+  .route-start-level-picker{grid-template-columns:1fr;padding:8px;gap:6px}
+  .route-start-level-picker .pixel-button{width:100%}
   .skill-book-note{font-size:.58rem}
   .skill-book-list .skill-summary{padding:7px}
   .skill-summary-title small{font-size:.46rem}

@@ -1,8 +1,8 @@
-// Duckie Days v24.218 — reliable Mysterious Merchant choices.
+// Duckie Days v24.225 — discounted Mysterious Merchant stock + colored charms.
 (function(){
   'use strict';
 
-  window.DUCKIE_DAYS_MERCHANT_FIX='24.218-visible-purchase-options';
+  window.DUCKIE_DAYS_MERCHANT_FIX='24.225-discounted-colored-charms';
 
   const STYLE_ID='duckieMerchantV218Style';
   const HOLDER_CLASS='merchant-actions-v218';
@@ -37,6 +37,20 @@
         height:40px!important;
         object-fit:contain!important;
         image-rendering:pixelated!important;
+      }
+      #eventChoiceActions.${HOLDER_CLASS} .merchant-charm-art-v225{
+        width:42px!important;
+        height:46px!important;
+        display:grid!important;
+        place-items:center!important;
+      }
+      #eventChoiceActions.${HOLDER_CLASS} .merchant-charm-art-v225 .charm-art{
+        width:42px!important;
+        height:46px!important;
+      }
+      #eventChoiceActions.${HOLDER_CLASS} .merchant-charm-art-v225 .charm-outline{
+        width:100%!important;
+        height:100%!important;
       }
       #eventChoiceActions.${HOLDER_CLASS} .merchant-choice-v218 strong{
         display:block!important;
@@ -109,6 +123,38 @@
     return list[Math.floor(Math.random()*list.length)];
   }
 
+  const MERCHANT_DISCOUNT=.20;
+  const MERCHANT_NORMAL_PRICES=Object.freeze({
+    'buddy-pon':50,
+    'super-buddy-pon':100,
+    'boss-buddy-pon':175,
+    'jump-token':80,
+    'common-egg':160,
+    'rare-egg':425
+  });
+
+  function normalPriceFor(ware){
+    if(ware?.kind==='charm'){
+      try{
+        const price=Number(CHARM_DEFS?.[ware.id]?.price);
+        if(Number.isFinite(price)&&price>0) return price;
+      }catch(error){ /* Use the ware's own price below. */ }
+    }
+    const listed=Number(MERCHANT_NORMAL_PRICES[ware?.id]);
+    if(Number.isFinite(listed)&&listed>0) return listed;
+    const supplied=Number(ware?.normalPrice ?? ware?.price);
+    return Number.isFinite(supplied)&&supplied>0 ? supplied : 1;
+  }
+
+  function applyMerchantDiscount(ware){
+    if(!ware || ware.merchantDiscountV225) return ware;
+    const normalPrice=normalPriceFor(ware);
+    ware.normalPrice=normalPrice;
+    ware.price=Math.max(1,Math.round(normalPrice*(1-MERCHANT_DISCOUNT)));
+    ware.merchantDiscountV225=true;
+    return ware;
+  }
+
   function fallbackStock(){
     const options=[
       {kind:'item',id:'buddy-pon',name:'Buddy Pon',image:'../assets/items/buddy-pons/buddy-pon.webp',price:50,detail:'A basic Buddy Pon.'},
@@ -142,7 +188,8 @@
         options.push({
           kind:'charm',id:charm.id,name:charm.name,
           image:'assets/charms/Charm-outline.png',
-          price:Math.max(100,Math.round(Number(charm.price||200)*.85)),
+          price:Number(charm.price||200),
+          normalPrice:Number(charm.price||200),
           detail:charm.effect
         });
       }
@@ -159,6 +206,7 @@
   function ensureStock(chest){
     if(!Array.isArray(chest.wares) || chest.wares.length===0) chest.wares=fallbackStock();
     chest.wares=chest.wares.slice(0,2);
+    chest.wares.forEach(applyMerchantDiscount);
     return chest.wares;
   }
 
@@ -251,22 +299,33 @@
     button.dataset.merchantBuyV218=String(index);
     button.disabled=Boolean(ware.sold);
 
-    const image=document.createElement('img');
-    image.src=String(ware.image||'../assets/ui/pink-coin.webp');
-    image.alt='';
+    let artwork;
+    if(ware.kind==='charm'){
+      artwork=document.createElement('span');
+      artwork.className='merchant-charm-art-v225';
+      try{
+        artwork.innerHTML=charmArtMarkup(CHARM_DEFS?.[ware.id],'small');
+      }catch(error){
+        artwork.innerHTML='<img src="assets/charms/Charm-outline.png" alt="">';
+      }
+    }else{
+      artwork=document.createElement('img');
+      artwork.src=String(ware.image||'../assets/ui/pink-coin.webp');
+      artwork.alt='';
+    }
 
     const copy=document.createElement('span');
     const name=document.createElement('strong');
     name.textContent=ware.sold?`Sold — ${ware.name}`:String(ware.name||'Mystery Item');
     const detail=document.createElement('small');
-    detail.textContent=String(ware.detail||'A curious little find.');
+    detail.textContent=`20% off · ${String(ware.detail||'A curious little find.')}`;
     copy.append(name,detail);
 
     const price=document.createElement('span');
     price.className='merchant-price-v218';
     price.textContent=ware.sold?'Sold':`${Math.max(0,Math.floor(Number(ware.price)||0))} Coins`;
 
-    button.append(image,copy,price);
+    button.append(artwork,copy,price);
     button.addEventListener('click',()=>buy(ware));
     return button;
   }

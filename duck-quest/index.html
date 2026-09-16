@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta id="questThemeColor" name="theme-color" content="#f6c6d6" />
   <title>Duck Quest</title>
-  <link rel="stylesheet" href="css/style-v82.css?v=24-224" />
+  <link rel="stylesheet" href="css/style-v82.css?v=24-225" />
 </head>
 <body>
   <main class="quest-shell">
@@ -182,12 +182,17 @@
         <h2 id="routeModalTitle">Meadow</h2>
         <strong id="routeModalRange" class="route-modal-range">Levels 1–40</strong>
         <div class="route-current-rank">
-          <span>Current Level</span>
+          <span>Latest Level</span>
           <strong id="routeModalCurrentRank">1</strong>
         </div>
         <div class="route-modal-actions">
           <button id="startCurrentRoute" class="pixel-button primary" type="button">Start from Current</button>
-          <button id="startBeginningRoute" class="pixel-button" type="button">Start from Beginning</button>
+          <button id="startBeginningRoute" class="pixel-button" type="button" aria-expanded="false">Pick Starting Point</button>
+        </div>
+        <div id="routeStartLevelPicker" class="route-start-level-picker hidden">
+          <label for="routeStartLevelSelect">Starting Level</label>
+          <select id="routeStartLevelSelect" aria-label="Choose a starting level"></select>
+          <button id="startSelectedRoute" class="pixel-button primary" type="button">Start Level 1</button>
         </div>
       </div>
     </section>
@@ -466,9 +471,9 @@
         <div id="resultItems" class="result-items"></div>
 
         <div class="result-actions">
-          <button id="runAgain" class="pixel-button primary large" type="button">Run Again</button>
+          <button id="runNextRank" class="pixel-button primary large" type="button">Run Next Level</button>
           <button id="backToQuest" class="pixel-button" type="button">Duck Quest Menu</button>
-          <button id="runNextRank" class="pixel-button" type="button">Run Next Level</button>
+          <button id="runAgain" class="pixel-button primary large hidden" type="button">Continue Run</button>
         </div>
       </div>
     </section>
@@ -486,22 +491,22 @@
     </section>
   </main>
 
-  <script src="js/game-v96.js?v=24-224"></script>
-  <script src="js/hatchery-v179.js?v=24-224"></script>
-  <script src="js/hatchery-egg-position-v192.js?v=24-224"></script>
-  <script src="js/hatchery-ui-v193.js?v=24-224"></script>
-  <script src="js/dash-home-v180.js?v=24-224"></script>
-  <script src="js/dash-screen-v184.js?v=24-224"></script>
-  <script src="js/dash-screen-v193.js?v=24-224"></script>
-  <script src="js/token-shop-v200.js?v=24-224"></script>
-  <script src="js/quest-fixes-v204.js?v=24-224"></script>
-  <script src="js/quest-fixes-v207.js?v=24-224"></script>
-  <script src="js/quest-fixes-v209.js?v=24-224"></script>
-  <script src="js/theme-refresh-v211.js?v=24-224"></script>
-  <script src="js/theme-fixes-v212.js?v=24-224"></script>
-  <script src="js/boost-items-v213.js?v=24-224"></script>
-  <script src="js/boost-labels-v215.js?v=24-224"></script>
-  <script src="js/merchant-fix-v218.js?v=24-224"></script>
-  <script src="js/dash-background-fix-v224.js?v=24-224"></script>
+  <script src="js/game-v96.js?v=24-225"></script>
+  <script src="js/hatchery-v179.js?v=24-225"></script>
+  <script src="js/hatchery-egg-position-v192.js?v=24-225"></script>
+  <script src="js/hatchery-ui-v193.js?v=24-225"></script>
+  <script src="js/dash-home-v180.js?v=24-225"></script>
+  <script src="js/dash-screen-v184.js?v=24-225"></script>
+  <script src="js/dash-screen-v193.js?v=24-225"></script>
+  <script src="js/token-shop-v200.js?v=24-225"></script>
+  <script src="js/quest-fixes-v204.js?v=24-225"></script>
+  <script src="js/quest-fixes-v207.js?v=24-225"></script>
+  <script src="js/quest-fixes-v209.js?v=24-225"></script>
+  <script src="js/theme-refresh-v211.js?v=24-225"></script>
+  <script src="js/theme-fixes-v212.js?v=24-225"></script>
+  <script src="js/boost-items-v213.js?v=24-225"></script>
+  <script src="js/boost-labels-v215.js?v=24-225"></script>
+  <script src="js/merchant-fix-v218.js?v=24-225"></script>
+  <script src="js/dash-background-fix-v224.js?v=24-225"></script>
 </body>
 </html>

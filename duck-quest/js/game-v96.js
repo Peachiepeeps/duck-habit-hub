@@ -1,5 +1,6 @@
 // Duck Quest game-v67 — polished battle UI + six-Buddy battle switching
 const HUB_SAVE_KEY = "duckHabitHubSave_v1";
+window.DUCKIE_DAYS_QUEST_FLOW='24.225-next-level-and-start-picker';
 const MAX_LEVEL = 100;
 const AREA_CONFIG = Object.freeze({
   meadow: {
@@ -2386,6 +2387,9 @@ const ui = {
   routeModalCurrentRank: document.querySelector("#routeModalCurrentRank"),
   startCurrentRoute: document.querySelector("#startCurrentRoute"),
   startBeginningRoute: document.querySelector("#startBeginningRoute"),
+  routeStartLevelPicker: document.querySelector("#routeStartLevelPicker"),
+  routeStartLevelSelect: document.querySelector("#routeStartLevelSelect"),
+  startSelectedRoute: document.querySelector("#startSelectedRoute"),
   skillBookModal: document.querySelector("#skillBookModal"),
   openSkillBook: document.querySelector("#openSkillBook"),
   closeSkillBook: document.querySelector("#closeSkillBook"),
@@ -4656,8 +4660,31 @@ function renderBuddyCollection() {
 }
 
 function closeRoutePicker(){
+  ui.routeStartLevelPicker?.classList.add("hidden");
+  ui.startBeginningRoute?.setAttribute("aria-expanded","false");
   ui.routePickerModal?.classList.add("hidden");
   ui.routePickerModal?.setAttribute("aria-hidden","true");
+}
+
+function syncStartingPointButton(){
+  if(!ui.routeStartLevelSelect||!ui.startSelectedRoute) return;
+  const level=Math.max(1,Number(ui.routeStartLevelSelect.value)||1);
+  ui.startSelectedRoute.textContent=`Start Level ${level}`;
+}
+
+function populateStartingPointPicker(progress){
+  if(!ui.routeStartLevelSelect) return;
+  const latest=Math.max(1,Math.floor(Number(progress?.unlockedRank)||1));
+  const previous=Math.max(1,Math.min(latest,Math.floor(Number(progress?.lastRank)||latest)));
+  ui.routeStartLevelSelect.innerHTML="";
+  for(let level=1;level<=latest;level++){
+    const option=document.createElement("option");
+    option.value=String(level);
+    option.textContent=`Level ${level}`;
+    ui.routeStartLevelSelect.appendChild(option);
+  }
+  ui.routeStartLevelSelect.value=String(previous);
+  syncStartingPointButton();
 }
 
 function openRoutePicker(areaId){
@@ -4671,6 +4698,9 @@ function openRoutePicker(areaId){
   if(ui.routeModalTitle) ui.routeModalTitle.textContent=cfg.name;
   if(ui.routeModalRange) ui.routeModalRange.textContent=`Levels 1–${cfg.maxRank}`;
   if(ui.routeModalCurrentRank) ui.routeModalCurrentRank.textContent=String(progress.unlockedRank||1);
+  populateStartingPointPicker(progress);
+  ui.routeStartLevelPicker?.classList.add("hidden");
+  ui.startBeginningRoute?.setAttribute("aria-expanded","false");
   persistAll();
   renderMeta();
   ui.routePickerModal?.classList.remove("hidden");
@@ -7249,7 +7279,10 @@ function renderResult(won) {
     ui.runNextRank.classList.add("hidden");
     ui.runNextRank.disabled=true;
     const runAgain=document.querySelector("#runAgain");
-    if(runAgain) runAgain.textContent=`Continue Floor ${progress.checkpoint}`;
+    if(runAgain){
+      runAgain.classList.remove("hidden");
+      runAgain.textContent=`Continue Floor ${progress.checkpoint}`;
+    }
   } else {
     const areaId=currentRun?.area||selectedArea; const cfg=getAreaConfig(areaId); const progress=areaProgress(areaId);
     ui.resultKicker.textContent=won?"RUN COMPLETE!":"RUN ENDED";
@@ -7259,13 +7292,13 @@ function renderResult(won) {
     const canRunNext=Boolean(won)&&nextRank>finishedRank&&nextRank<=progress.unlockedRank;
     ui.runNextRank.classList.toggle("hidden",!won);
     ui.runNextRank.disabled=Boolean(won)&&!canRunNext;
-    ui.runNextRank.textContent=canRunNext?`Run ${cfg.name} Level ${nextRank}`:"Max Level Reached";
+    ui.runNextRank.textContent=canRunNext?"Run Next Level":"Max Level Reached";
     ui.runNextRank.dataset.rank=canRunNext?String(nextRank):"";
     ui.runNextRank.dataset.area=areaId;
     if(ui.resultProgressLabel) ui.resultProgressLabel.textContent="Level";
     ui.resultRank.textContent=`${cfg.name} Level ${finishedRank}`;
     const runAgain=document.querySelector("#runAgain");
-    if(runAgain) runAgain.textContent="Run Again";
+    if(runAgain) runAgain.classList.add("hidden");
   }
 
   ui.resultCoins.textContent=currentRun?.coinsEarned||0;
@@ -7439,7 +7472,16 @@ ui.startCurrentRoute?.addEventListener("click",()=>{
   beginRun();
 });
 ui.startBeginningRoute?.addEventListener("click",()=>{
-  selectedRank=1;
+  const opening=ui.routeStartLevelPicker?.classList.contains("hidden");
+  ui.routeStartLevelPicker?.classList.toggle("hidden",!opening);
+  ui.startBeginningRoute?.setAttribute("aria-expanded",String(Boolean(opening)));
+  if(opening) ui.routeStartLevelSelect?.focus();
+});
+ui.routeStartLevelSelect?.addEventListener("change",syncStartingPointButton);
+ui.startSelectedRoute?.addEventListener("click",()=>{
+  const progress=areaProgress(selectedArea);
+  const latest=Math.max(1,Math.min(getAreaConfig(selectedArea).maxRank,Math.floor(Number(progress.unlockedRank)||1)));
+  selectedRank=Math.max(1,Math.min(latest,Math.floor(Number(ui.routeStartLevelSelect?.value)||1)));
   closeRoutePicker();
   beginRun();
 });
@@ -7999,15 +8041,15 @@ setInterval(()=>{
   function finishNonBattleEvent(message){clearMerchantUi();hideEventChoices();ui.openChest?.classList.add('hidden');ui.chestLayer?.classList.add('hidden');setMessage(message);if(currentRun){refillActiveHeroHpV210();markEndlessFloorComplete();}ui.continueButton.textContent=currentRun?.mode==='endless'?'Next Floor':'Continue';ui.postFloorActions?.classList.remove('hidden');ui.leaveEndlessButton?.classList.toggle('hidden',currentRun?.mode!=='endless');setPostFloorLayout(true);actionLocked=false;persistAll();refreshFeatureBadges();}
   function merchantStock(){
     const options=[
-      {kind:'item',id:'buddy-pon',name:'Buddy Pon',image:'../assets/items/buddy-pons/buddy-pon.webp',price:50,detail:'A basic Buddy Pon.'},
-      {kind:'item',id:'super-buddy-pon',name:'Super Buddy Pon',image:'../assets/items/buddy-pons/super-buddy-pon.webp',price:100,detail:'A stronger Buddy Pon.'},
-      {kind:'item',id:'boss-buddy-pon',name:'Boss Buddy Pon',image:'../assets/items/buddy-pons/boss-buddy-pon.webp',price:175,detail:'Made for tougher Buddies.'},
-      {kind:'item',id:'jump-token',name:'Jump Token',image:'assets/dash/Jump-Token.png',price:80,detail:'One token toward Duckie Dash.'},
-      {kind:'item',id:'common-egg',name:'Common Egg',image:'assets/eggs/Common-egg.png',price:160,detail:'Hatches a non-boss Buddy.'},
-      {kind:'item',id:'rare-egg',name:'Rare Egg',image:'assets/eggs/Rare-egg.png',price:425,detail:'Bosses favored + better Shiny chance.'}
+      {kind:'item',id:'buddy-pon',name:'Buddy Pon',image:'../assets/items/buddy-pons/buddy-pon.webp',price:40,normalPrice:50,detail:'A basic Buddy Pon.'},
+      {kind:'item',id:'super-buddy-pon',name:'Super Buddy Pon',image:'../assets/items/buddy-pons/super-buddy-pon.webp',price:80,normalPrice:100,detail:'A stronger Buddy Pon.'},
+      {kind:'item',id:'boss-buddy-pon',name:'Boss Buddy Pon',image:'../assets/items/buddy-pons/boss-buddy-pon.webp',price:140,normalPrice:175,detail:'Made for tougher Buddies.'},
+      {kind:'item',id:'jump-token',name:'Jump Token',image:'assets/dash/Jump-Token.png',price:64,normalPrice:80,detail:'One token toward Duckie Dash.'},
+      {kind:'item',id:'common-egg',name:'Common Egg',image:'assets/eggs/Common-egg.png',price:128,normalPrice:160,detail:'Hatches a non-boss Buddy.'},
+      {kind:'item',id:'rare-egg',name:'Rare Egg',image:'assets/eggs/Rare-egg.png',price:340,normalPrice:425,detail:'Bosses favored + better Shiny chance.'}
     ];
-    const craft=REWARD_ITEMS.filter(x=>!String(x.id).includes('buddy-pon')&&!String(x.id).includes('heart-refill'));if(craft.length){const x=craft[Math.floor(Math.random()*craft.length)];options.push({kind:'item',id:x.id,name:x.name,image:x.image,price:70+Math.floor(Math.random()*51),detail:'A random crafting supply.'});}
-    const owned=charmState().owned||{};const charms=Object.values(CHARM_DEFS).filter(c=>!c.special&&!owned[c.id]);if(charms.length){const c=charms[Math.floor(Math.random()*charms.length)];options.push({kind:'charm',id:c.id,name:c.name,image:'assets/charms/Charm-outline.png',price:Math.max(100,Math.round(Number(c.price||200)*.85)),detail:c.effect});}
+    const craft=REWARD_ITEMS.filter(x=>!String(x.id).includes('buddy-pon')&&!String(x.id).includes('heart-refill'));if(craft.length){const x=craft[Math.floor(Math.random()*craft.length)],normalPrice=70+Math.floor(Math.random()*51);options.push({kind:'item',id:x.id,name:x.name,image:x.image,price:Math.max(1,Math.round(normalPrice*.8)),normalPrice,detail:'A random crafting supply.'});}
+    const owned=charmState().owned||{};const charms=Object.values(CHARM_DEFS).filter(c=>!c.special&&!owned[c.id]);if(charms.length){const c=charms[Math.floor(Math.random()*charms.length)],normalPrice=Number(c.price||200);options.push({kind:'charm',id:c.id,name:c.name,image:'assets/charms/Charm-outline.png',price:Math.max(1,Math.round(normalPrice*.8)),normalPrice,detail:c.effect});}
     const copy=options.slice(),out=[];while(copy.length&&out.length<2){out.push(copy.splice(Math.floor(Math.random()*copy.length),1)[0])}return out;
   }
   function showMerchantEvent(){
@@ -8039,7 +8081,8 @@ setInterval(()=>{
       b.type='button';
       b.className='pixel-button merchant-ware';
       b.disabled=Boolean(ware.sold);
-      b.innerHTML=`<img src="${ware.image}" alt=""><span><strong>${ware.name}</strong><small>${ware.detail}</small></span><span class="price">${ware.sold?'Sold':'◉ '+ware.price}</span>`;
+      const artwork=ware.kind==='charm'?charmArtMarkup(CHARM_DEFS[ware.id],'small'):`<img src="${ware.image}" alt="">`;
+      b.innerHTML=`${artwork}<span><strong>${ware.name}</strong><small>20% off · ${ware.detail}</small></span><span class="price">${ware.sold?'Sold':'◉ '+ware.price}</span>`;
       b.addEventListener('click',()=>{
         if(ware.sold)return;
         if(Number(hubSave.coins||0)<ware.price){setMessage('Not enough Pink Coins for that item.');return;}
