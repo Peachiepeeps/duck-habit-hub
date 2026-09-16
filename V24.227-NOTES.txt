@@ -1,9 +1,0 @@
-Duckie Days v24.227 — Lower Foreground and Faster Duckie Dash
-
-- Lowers the shared Duckie Dash foreground ground line from 10% to 7%.
-- The OC, duck cart, obstacles, Tiny Ducks, coins, hearts, Angel Wings, and Bubbles all move down together.
-- Collision geometry uses the same 7% ground line, so visuals and hitboxes remain aligned.
-- Increases the base course speed from 0.43 to 0.48 playfield widths per second (about 12%).
-- Preserves the Angel Wing's 1.4x speed multiplier and ten-second duration.
-- Leaves all four 6600 x 1500 fullscreen backgrounds byte-for-byte unchanged.
-- Preserves endless looping, timer-only completion, power-ups, safe obstacle patterns, and prior v24.225 fixes.
