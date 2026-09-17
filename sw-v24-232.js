@@ -1,12 +1,12 @@
-const APP_CACHE = 'duck-habit-hub-app-v24-229';
-const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-229';
+const APP_CACHE = 'duck-habit-hub-app-v24-232';
+const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-232';
 const IMAGE_CACHE = 'duck-habit-hub-images-stable-v1';
 
 const APP_SHELL = [
-  './','./index.html','./manifest.webmanifest?v=24-229','./version.json',
-  './style-v24-201.css','./script-v24-201.js','./sw-v24-229.js','./sw.js',
+  './','./index.html','./manifest.webmanifest?v=24-232','./version.json',
+  './style-v24-201.css?v=24-232','./script-v24-201.js?v=24-232','./sw-v24-232.js','./sw.js',
   './apple-touch-icon-v5.png','./favicon-32-v5.png','./icon-192-v5.png','./icon-512-v5.png','./icon-maskable-512-v5.png',
-  './assets/ui/pink-coin.webp','./assets/ducks/Standard-duck.webp','./assets/ducks/Top-hat-duck.webp',
+  './assets/ui/pink-coin.webp','./assets/ui/icons/duckipedia.webp','./assets/ducks/Standard-duck.webp','./assets/ducks/Top-hat-duck.webp',
   './duck-quest/assets/dash/Jump-Token.png','./duck-quest/assets/eggs/Common-egg.png','./duck-quest/assets/eggs/Rare-egg.png',
   './duck-quest/assets/eggs/Hatching-background-new.png','./duck-quest/assets/eggs/Hatch-nest.png','./assets/miko/Miko-angry.PNG',
   './duck-quest/assets/charms/Fortune-green-charm.png',
@@ -14,11 +14,11 @@ const APP_SHELL = [
   './duck-quest/assets/enemies/mimic/healthy/closed.webp','./duck-quest/assets/enemies/mimic/healthy/open.webp','./duck-quest/assets/enemies/mimic/healthy/idle-1.webp','./duck-quest/assets/enemies/mimic/healthy/idle-2.webp',
   './assets/ui/profile-borders/Sparkle-border.png','./assets/ui/profile-borders/Stitched-border.png','./assets/ui/profile-borders/Sakura-border.png',
   './shared-ui-theme-v24-131.css','./shared-ui-theme-v24-131.js',
-  './memory-game/index.html','./sort-game/index.html','./crane-game/index.html','./crane-game/play-v24-40.html',
-  './duck-quest/index.html','./duck-quest/js/game-v96.js?v=24-229','./duck-quest/js/quest-fixes-v204.js?v=24-229','./duck-quest/js/quest-fixes-v207.js?v=24-229','./duck-quest/js/quest-fixes-v209.js?v=24-229','./duck-quest/js/theme-refresh-v211.js?v=24-229','./duck-quest/js/theme-fixes-v212.js?v=24-229','./duck-quest/js/boost-items-v213.js?v=24-229','./duck-quest/js/boost-labels-v215.js?v=24-229','./assets/bakery/drops/Gold-heart-refill.webp','./assets/bakery/drops/Pink-heart-refill.webp','./assets/items/quest-boosts/Warm-blanket.png','./assets/items/quest-boosts/Exp-candy-large.png','./assets/items/quest-boosts/Exp-candy-small.png','./hub-shop-boosts-v213.js?v=24-229','./hub-exp-candy-use-v215.js?v=24-229','./duck-quest/js/hatchery-v179.js?v=24-229','./duck-quest/js/hatchery-egg-position-v192.js?v=24-229','./duck-quest/js/hatchery-ui-v193.js?v=24-229','./duck-quest/js/dash-home-v180.js?v=24-229','./duck-quest/js/dash-screen-v184.js?v=24-229','./duck-quest/js/dash-screen-v193.js?v=24-229','./duck-quest/js/token-shop-v200.js?v=24-229','./duck-quest/css/style-v82.css?v=24-229',
+  './memory-game/index.html','./sort-game/index.html','./crane-game/index.html?v=24-232','./crane-game/play-v24-40.html?v=24-232','./crane-game/style-v24-40.css?v=24-232','./crane-game/script-v24-40.js?v=24-232',
+  './duck-quest/index.html','./duck-quest/js/game-v96.js?v=24-232','./duck-quest/js/quest-fixes-v204.js?v=24-232','./duck-quest/js/quest-fixes-v207.js?v=24-232','./duck-quest/js/quest-fixes-v209.js?v=24-232','./duck-quest/js/theme-refresh-v211.js?v=24-232','./duck-quest/js/theme-fixes-v212.js?v=24-232','./duck-quest/js/boost-items-v213.js?v=24-232','./duck-quest/js/boost-labels-v215.js?v=24-232','./assets/bakery/drops/Gold-heart-refill.webp','./assets/bakery/drops/Pink-heart-refill.webp','./assets/items/quest-boosts/Warm-blanket.png','./assets/items/quest-boosts/Exp-candy-large.png','./assets/items/quest-boosts/Exp-candy-small.png','./hub-shop-boosts-v213.js?v=24-232','./hub-exp-candy-use-v215.js?v=24-232','./duck-quest/js/hatchery-v179.js?v=24-232','./duck-quest/js/hatchery-egg-position-v192.js?v=24-232','./duck-quest/js/hatchery-ui-v193.js?v=24-232','./duck-quest/js/dash-home-v180.js?v=24-232','./duck-quest/js/dash-screen-v184.js?v=24-232','./duck-quest/js/dash-screen-v193.js?v=24-232','./duck-quest/js/token-shop-v200.js?v=24-232','./duck-quest/css/style-v82.css?v=24-232',
   './bakery/index.html',
-  './duck-quest/js/dash-background-fix-v226.js?v=24-229',
-  './duck-quest/js/merchant-fix-v218.js?v=24-229',
+  './duck-quest/js/dash-background-fix-v226.js?v=24-232',
+  './duck-quest/js/merchant-fix-v218.js?v=24-232',
   './duck-quest/assets/dash/Angel-Wing.png',
   './duck-quest/assets/dash/Bubble-icon.png',
   './duck-quest/assets/dash/Bubble.png',

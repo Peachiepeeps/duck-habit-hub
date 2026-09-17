@@ -7805,3 +7805,48 @@ body[data-quest-theme="midnight-pixel"] .secondary-button,body[data-quest-theme=
 }
 
 /* v24.178 cache-bust build. */
+
+
+/* v24.232 — use the Duckipedia duck-book icon as the room's Book object. */
+#roomBookImage.duckipedia-room-book-v232{
+  inset:auto;
+  left:4.3%;
+  right:auto;
+  top:auto;
+  bottom:.4%;
+  width:19%;
+  height:11%;
+  object-fit:contain;
+  object-position:center;
+  transform:none;
+  filter:drop-shadow(0 3px 2px rgba(70,48,55,.18));
+}
+#roomBookImage.duckipedia-room-book-v232.on-shelf{
+  left:73.2%;
+  top:91.2%;
+  bottom:auto;
+  width:20.5%;
+  height:11.7%;
+  transform:none;
+}
+#roomBookImage.duckipedia-room-book-v232.on-dresser{
+  left:1.8%;
+  top:54.8%;
+  bottom:auto;
+  width:19%;
+  height:11.7%;
+  transform:none;
+}
+@media(max-width:600px){
+  #roomBookImage.duckipedia-room-book-v232,
+  #roomBookImage.duckipedia-room-book-v232.on-shelf,
+  #roomBookImage.duckipedia-room-book-v232.on-dresser{
+    left:70.2%;
+    right:auto;
+    top:auto;
+    bottom:11.8%;
+    width:20.5%;
+    height:11.7%;
+    transform:none;
+  }
+}

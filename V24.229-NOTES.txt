@@ -1,8 +1,0 @@
-Duckie Days v24.229 — Aligned Duckie Dash Foreground
-
-- Raises the shared Duckie Dash object ground from 3% to 5%.
-- Moves the visible OC and duck cart down from the old 10% override to the same 5% + 4px line used by ground-level obstacles and Tiny Ducks.
-- Aligns the runner collision box to that exact visible line.
-- Preserves the current 0.48 base speed and 1.4x Angel Wing boost.
-- Leaves all four 6600 x 1500 fullscreen backgrounds byte-for-byte unchanged.
-- Preserves endless looping, timer-only completion, object patterns, pickups, and earlier Merchant/Quest fixes.

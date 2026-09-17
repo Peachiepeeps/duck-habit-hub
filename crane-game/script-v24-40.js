@@ -1,10 +1,10 @@
 const HUB_SAVE_KEY = "duckHabitHubSave_v1";
 const CRANE_SAVE_KEY = "duckHabitHubCrane_v1";
 
-const PRIZE_COIN_REWARD = 3;
-const MACHINE_CLEAR_BONUS = 10;
-const RESET_COST = 10;
+const PLAY_COST = 10;
+const RESET_COST = 50;
 const CATCH_CHANCE = 0.60;
+window.DUCK_CRANE_REWARD_BUILD = '24.232-duck-copy-prizes';
 
 const DUCK_CATALOG = {
   "angry-duck": {
@@ -366,14 +366,35 @@ function setCoins(value){
   coinCount.textContent = data.coins;
 }
 
-function addCoins(amount){
+function awardDuckCopy(duckId){
+  const id = String(duckId || "");
+  if(!DUCK_CATALOG[id]) return 0;
   const data = loadHubSave();
-  data.coins = Math.max(0, Math.floor(Number(data.coins) || 0) + Math.floor(Number(amount) || 0));
+  if(!Array.isArray(data.unlockedDucks)) data.unlockedDucks = [];
+  const wasUnlocked = data.unlockedDucks.includes(id);
+  if(!wasUnlocked) data.unlockedDucks.push(id);
+  if(!data.duckCollectionCounts || typeof data.duckCollectionCounts !== "object" || Array.isArray(data.duckCollectionCounts)){
+    data.duckCollectionCounts = {};
+  }
+  const before = Math.max(wasUnlocked ? 1 : 0, Math.floor(Number(data.duckCollectionCounts[id]) || 0));
+  const owned = before + 1;
+  data.duckCollectionCounts[id] = owned;
   data.stats = data.stats && typeof data.stats === "object" ? data.stats : {};
   data.stats.cranePrizes = Math.max(0, Number(data.stats.cranePrizes) || 0) + 1;
-  data.stats.coinsEarnedTotal = Math.max(0, Number(data.stats.coinsEarnedTotal) || 0) + Math.max(0, Math.floor(Number(amount) || 0));
   saveHubSave(data);
-  coinCount.textContent = data.coins;
+  return owned;
+}
+
+function pulseCoinBox(){
+  const box = document.getElementById("coinBox");
+  box?.animate(
+    [
+      {transform:"scale(1)"},
+      {transform:"scale(1.08)"},
+      {transform:"scale(1)"}
+    ],
+    {duration:360,easing:"ease-out"}
+  );
 }
 
 function getUnlockedDuckIds(){
@@ -386,7 +407,7 @@ function updateAvailability(){
   const ids = getUnlockedDuckIds();
   const hasDucks = ids.length > 0;
   emptyState.classList.toggle("hidden", hasDucks);
-  dropButton.disabled = !hasDucks || busy;
+  dropButton.disabled = !hasDucks || !prizes.length || busy;
   resetButton.disabled = !hasDucks || busy;
   return ids;
 }
@@ -649,19 +670,14 @@ function releaseJoystick(e){
 joystick.addEventListener("pointerup",releaseJoystick);
 joystick.addEventListener("pointercancel",releaseJoystick);
 
-async function showWinToast(prize,machineCleared=false){
+async function showWinToast(prize,machineCleared=false,owned=1){
   winImage.src = prize.image;
   winImage.alt = prize.name;
   winName.textContent = prize.name;
-
-  const total = PRIZE_COIN_REWARD + (machineCleared ? MACHINE_CLEAR_BONUS : 0);
-  winRewardText.textContent = machineCleared
-    ? `+${PRIZE_COIN_REWARD} Pink Coins + ${MACHINE_CLEAR_BONUS} clear bonus!`
-    : `+${PRIZE_COIN_REWARD} Pink Coins!`;
-
+  winRewardText.textContent = `Duck collected! Owned ×${Math.max(1,Number(owned)||1)}`;
   winText.textContent = machineCleared
-    ? `Machine cleared! Total reward: +${total} Pink Coins. ♡`
-    : "";
+    ? `Machine cleared! A fresh set of ducks will be restocked for free. ♡`
+    : `${prize.name} was added to your collection. ♡`;
 
   winToast.classList.add("show");
   winToast.setAttribute("aria-hidden","false");
@@ -707,7 +723,15 @@ async function returnClawToHome(){
 }
 
 async function dropClaw(){
-  if(busy || !getUnlockedDuckIds().length) return;
+  if(busy || !getUnlockedDuckIds().length || !prizes.length) return;
+
+  const coins = getCoins();
+  if(coins < PLAY_COST){
+    pulseCoinBox();
+    setMessage(`You need ${PLAY_COST} Pink Coins to play!`);
+    return;
+  }
+  setCoins(coins-PLAY_COST);
 
   busy = true;
   dropButton.disabled = true;
@@ -820,25 +844,16 @@ async function dropClaw(){
   prizes = prizes.filter(p=>p.uid!==target.uid);
   const machineCleared = prizes.length===0;
 
-  addCoins(PRIZE_COIN_REWARD);
-  if(machineCleared){
-    // Clear bonus should not count as another crane prize statistic.
-    const data = loadHubSave();
-    data.coins = Math.max(0,Math.floor(Number(data.coins)||0)+MACHINE_CLEAR_BONUS);
-    data.stats = data.stats && typeof data.stats === "object" ? data.stats : {};
-    data.stats.coinsEarnedTotal = Math.max(0, Number(data.stats.coinsEarnedTotal) || 0) + MACHINE_CLEAR_BONUS;
-    saveHubSave(data);
-    coinCount.textContent = data.coins;
-  }
-
+  const owned = awardDuckCopy(target.duckId);
   saveCraneState();
-  await showWinToast(target,machineCleared);
+  await showWinToast(target,machineCleared,owned);
 
   clawX = CHUTE_X;
   setClawPosition(clawX,CLAW_HOME_Y,false);
 
   if(machineCleared){
     newPrizeLayout();
+    setMessage("Machine cleared! Fresh ducks were restocked for free. ♡");
   }else{
     renderPrizes();
     saveCraneState();
@@ -859,16 +874,8 @@ function resetPrizes(){
 
   const coins = getCoins();
   if(coins < RESET_COST){
-    // Keep the clean machine look; briefly pulse the coin counter instead of a big alert.
-    const box = document.getElementById("coinBox");
-    box.animate(
-      [
-        {transform:"scale(1)"},
-        {transform:"scale(1.08)"},
-        {transform:"scale(1)"}
-      ],
-      {duration:360,easing:"ease-out"}
-    );
+    pulseCoinBox();
+    setMessage(`You need ${RESET_COST} Pink Coins to restock!`);
     return;
   }
 
