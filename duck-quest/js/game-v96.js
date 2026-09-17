@@ -7594,6 +7594,7 @@ setInterval(()=>{
   const DASH_BASE_SPEED=.48;
   window.DUCKIE_DASH_CORE='24.229-aligned-foreground';
   window.DUCKIE_DASH_REWARD_FIX='24.232-persist-coins-and-tiny-ducks';
+  window.DUCKIE_DASH_LIVE_REWARDS='24.233-results-total-refresh';
   window.DUCKIE_BOOST_CORE='24.213-candy-blanket-time-hearts';
   const COMMON_EGG_MS=60*60*1000;
   const RARE_EGG_MS=24*60*60*1000;
@@ -8020,7 +8021,7 @@ setInterval(()=>{
 
       // Rare hearts extend the run; Angel Wing and Bubble are ten-second power-ups.
       const specialRoll=Math.random();
-      const specialKind=specialRoll<0.006?'time-gold':specialRoll<0.036?'time-pink':specialRoll<0.054?'wing':specialRoll<0.072?'bubble':null;
+      const specialKind=specialRoll<0.008?'time-gold':specialRoll<0.042?'time-pink':specialRoll<0.060?'wing':specialRoll<0.078?'bubble':null;
       let x=spawnX+Math.floor(Math.random()*68),tries=0;
       while((obstacleNear(x,safeObstacleGap)||pickupNear(x,pickupGap))&&tries<12){x+=48;tries++;}
       while(obstacleNear(x,safeObstacleGap)){x+=safeObstacleGap;}
@@ -8051,14 +8052,18 @@ setInterval(()=>{
     latest.coins=Math.max(0,Number(latest.coins)||0)+coinAward;
     latest.stats=latest.stats&&typeof latest.stats==='object'?latest.stats:{};
     latest.stats.coinsEarnedTotal=Math.max(0,Number(latest.stats.coinsEarnedTotal)||0)+coinAward;
+    let tinyOwned=Math.max(
+      Array.isArray(latest.unlockedDucks)&&latest.unlockedDucks.includes('tiny-duck')?1:0,
+      Math.floor(Number(latest.duckCollectionCounts?.['tiny-duck'])||0)
+    );
     if(tinyDucks>0){
       latest.tinyDuckSightings=Math.max(0,Number(latest.tinyDuckSightings)||0)+tinyDucks;
-      addDashDuckCopyV232(latest,'tiny-duck',tinyDucks);
+      tinyOwned=addDashDuckCopyV232(latest,'tiny-duck',tinyDucks);
       if(latest.tinyDuckSightings>=4)addDashDuckCopyV232(latest,'tiny-duck-stack');
       if(latest.tinyDuckSightings>=100)addDashDuckCopyV232(latest,'pile-of-tiny-ducks');
     }
     hubSave=latest;
-    return {coins:coinAward,tiny:tinyDucks};
+    return {coins:coinAward,tiny:tinyDucks,totalCoins:Math.floor(latest.coins),tinyOwned};
   }
   function overlap(ax,ay,aw,ah,bx,by,bw,bh){return ax<bx+bw&&ax+aw>bx&&ay<by+bh&&ay+ah>by;}
   function changeDashSegment(){const segment=Math.floor(dash.elapsed/5);if(segment===dash.segment)return;dash.segment=segment;if(segment>0&&Math.random()<.25)setTimeout(()=>{if(dash.running)spawnDashThing('tiny')},900);}
@@ -8072,11 +8077,12 @@ setInterval(()=>{
     const score=Math.max(0,Math.floor(dash.elapsed*4+dash.coins*8+dash.tiny*60+(success?100:0)));
     questSave.dash.highScore=Math.max(questSave.dash.highScore,score);
     persistAll();
+    if(ui.coinCount)ui.coinCount.textContent=rewards.totalCoins.toLocaleString();
     refreshFeatureBadges();
     const ov=document.querySelector('#dashOverlay');
     if(ov){
       ov.classList.remove('hidden');
-      ov.innerHTML=`<div class="dash-overlay-card"><strong>${success?'Time’s Up!':'Run Ended!'}</strong><small>${success?'The timer reached zero — run complete!':'The run ended early.'}<br>Pink Coins +${rewards.coins}<br>Tiny Ducks +${rewards.tiny}<br>Score ${score}</small><div class="dash-result-actions-v193"><button id="dashAgain" class="pixel-button primary" type="button">Run Again</button><button id="dashRunMenuV193" class="pixel-button" type="button">Dash Menu</button></div></div>`;
+      ov.innerHTML=`<div class="dash-overlay-card"><strong>${success?'Time’s Up!':'Run Ended!'}</strong><small>${success?'The timer reached zero — run complete!':'The run ended early.'}<br>Pink Coins +${rewards.coins} · Total ${rewards.totalCoins.toLocaleString()}<br>Tiny Ducks +${rewards.tiny} · Owned ×${rewards.tinyOwned}<br>Score ${score}</small><div class="dash-result-actions-v193"><button id="dashAgain" class="pixel-button primary" type="button">Run Again</button><button id="dashRunMenuV193" class="pixel-button" type="button">Dash Menu</button></div></div>`;
       ov.querySelector('#dashAgain')?.addEventListener('click',startDash);
       ov.querySelector('#dashRunMenuV193')?.addEventListener('click',leaveDashRunStage);
     }
