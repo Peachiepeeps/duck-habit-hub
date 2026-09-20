@@ -1,3 +1,0 @@
-Duckie Days v24.235
-
-Adds the first 65-card Trading Card collection, binder, favorites, missing-card view, animated three-card packs, a free Starter Pack, Duck Quest drops, Daily Shop cards, Memory Match card pairs, Crane packs, and independent Gacha pack bonuses. Also includes the faster 30/60-second Duckie Dash choices and moves the Hub book to the true bottom-right corner.

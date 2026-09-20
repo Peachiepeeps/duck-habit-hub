@@ -1,0 +1,3 @@
+Duckie Days v24.236
+
+Fixes Trading Card artwork and missing-card silhouettes so they render visibly above the opaque card templates. Expands Card Pack opening into an interactive sequence: Open a Pack, pack appears, click or swipe to rip, pack opens, cards rise into view, then tap each card to reveal it. Packs are consumed only when the rip begins.
