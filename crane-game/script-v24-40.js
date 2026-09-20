@@ -385,6 +385,13 @@ function awardDuckCopy(duckId){
   return owned;
 }
 
+function awardCardPack(){
+  const data=loadHubSave();
+  const count=window.DuckieTradingCards?.grantPack(data,1)||0;
+  saveHubSave(data);
+  return count;
+}
+
 function pulseCoinBox(){
   const box = document.getElementById("coinBox");
   box?.animate(
@@ -460,6 +467,11 @@ function newPrizeLayout(){
     };
   });
 
+  if(window.DuckieTradingCards && Math.random()<.03){
+    const index=Math.floor(Math.random()*prizes.length);
+    prizes[index]={...prizes[index],kind:"card-pack",duckId:null,name:"Card Pack",image:"../assets/trading-cards/card-pack-unopened.png"};
+  }
+
   saveCraneState();
   renderPrizes();
   updateAvailability();
@@ -477,14 +489,12 @@ function loadCraneState(){
 
     const unlocked = new Set(getUnlockedDuckIds());
     const valid = saved.prizes.filter(p =>
-      p &&
-      typeof p.duckId === "string" &&
-      unlocked.has(p.duckId) &&
-      DUCK_CATALOG[p.duckId]
+      p && ((p.kind==="card-pack" && window.DuckieTradingCards) ||
+      (typeof p.duckId === "string" && unlocked.has(p.duckId) && DUCK_CATALOG[p.duckId]))
     ).map(p => ({
       ...p,
-      name:DUCK_CATALOG[p.duckId].name,
-      image:DUCK_CATALOG[p.duckId].image,
+      name:p.kind==="card-pack"?"Card Pack":DUCK_CATALOG[p.duckId].name,
+      image:p.kind==="card-pack"?"../assets/trading-cards/card-pack-unopened.png":DUCK_CATALOG[p.duckId].image,
       x:clamp(Number(p.x)||.50,.390,.790),
       y:clamp(Number(p.y)||.64,.605,.685)
     }));
@@ -505,7 +515,7 @@ function renderPrizes(){
   prizeLayer.innerHTML = "";
   prizes.forEach(p=>{
     const img = document.createElement("img");
-    img.className = "prize";
+    img.className = `prize${p.kind==="card-pack"?" crane-pack-prize":""}`;
     img.dataset.uid = p.uid;
     img.src = p.image;
     img.alt = p.name;
@@ -674,10 +684,12 @@ async function showWinToast(prize,machineCleared=false,owned=1){
   winImage.src = prize.image;
   winImage.alt = prize.name;
   winName.textContent = prize.name;
-  winRewardText.textContent = `Duck collected! Owned ×${Math.max(1,Number(owned)||1)}`;
-  winText.textContent = machineCleared
-    ? `Machine cleared! A fresh set of ducks will be restocked for free. ♡`
-    : `${prize.name} was added to your collection. ♡`;
+  winRewardText.textContent = prize.kind==="card-pack" ? `Unopened packs ×${Math.max(1,Number(owned)||1)}` : `Duck collected! Owned ×${Math.max(1,Number(owned)||1)}`;
+  winText.textContent = prize.kind==="card-pack"
+    ? `A Card Pack was added to Trading Cards in Duckipedia! ♡`
+    : machineCleared
+      ? `Machine cleared! A fresh set of ducks will be restocked for free. ♡`
+      : `${prize.name} was added to your collection. ♡`;
 
   winToast.classList.add("show");
   winToast.setAttribute("aria-hidden","false");
@@ -844,7 +856,7 @@ async function dropClaw(){
   prizes = prizes.filter(p=>p.uid!==target.uid);
   const machineCleared = prizes.length===0;
 
-  const owned = awardDuckCopy(target.duckId);
+  const owned = target.kind==="card-pack" ? awardCardPack() : awardDuckCopy(target.duckId);
   saveCraneState();
   await showWinToast(target,machineCleared,owned);
 
