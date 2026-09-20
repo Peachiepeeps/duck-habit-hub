@@ -1,0 +1,6 @@
+Duckie Days v24.238
+
+Trading Card quality-of-life fixes:
+- Replaces the pack-opening corner X with a cute pink Close button beneath the three cards.
+- Refreshes the Trading Card collection directly from the saved collection after a pack is opened/closed and whenever the app regains focus or visibility.
+- Keeps Show Missing results inside a scrollable card area so the collection no longer runs past the Duckipedia window.

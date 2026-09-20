@@ -8670,7 +8670,7 @@ function launchDuckSort() {
 }
 
 function launchCraneGame() {
-  window.location.href = "crane-game/?v=24-237";
+  window.location.href = "crane-game/?v=24-238";
 }
 
 function launchMemoryGame() {

@@ -1,1 +1,1 @@
-importScripts('./sw-v24-237.js?v=24-237');
+importScripts('./sw-v24-238.js?v=24-238');

@@ -1,3 +1,0 @@
-Duckie Days v24.237
-
-Compacts the mobile Trading Cards collection: four card thumbnails per phone row (about half their previous width), six on tablets, and eight on wide screens. Tapped card details open at a larger readable size. The Duckipedia tabs now remain on one line, and the Card Pack image, count, and Open Pack button share one condensed horizontal row. The collection count, rarity filter, and Show Missing control are also tightened into one row on phones.
