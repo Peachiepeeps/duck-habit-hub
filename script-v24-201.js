@@ -5946,6 +5946,10 @@ function characterPreviewSrc(characterId, file) {
 
 function duckThumbFile(duck) {
   const file = String(duck?.file || "");
+  if (!file) return "";
+
+  if (!file.startsWith("assets/ducks/")) return file;
+
   const name = file.split("/").pop();
   return name ? `assets/thumbs/ducks/${name.replace(/\.[^.]+$/, ".webp")}` : file;
 }
