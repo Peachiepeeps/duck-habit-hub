@@ -1773,6 +1773,11 @@ const FURNITURE_RECIPES = Object.freeze(Object.fromEntries(
 ));
 
 const DUCKS = {
+  "lukio-duck": {
+    "name": "Lukio Duck",
+    "file": "duck-quest/assets/love-interests/lukio/Lukio-duck.png",
+    "acquisition": "love-interest-lukio"
+  },
   "angry-duck": {
     "name": "Angry Duck",
     "file": "assets/ducks/angry-duck.webp",
@@ -3785,7 +3790,7 @@ const GACHA_RARITY_WEIGHTS = Object.freeze({
 });
 const GACHA_SUPER_DUCKS = new Set(["peep-duck", "miko-duck", "io-duck", "miho-duck", "annika-duck", "goose", "rainbow-duck"]);
 const GACHA_GATED_SUPER_DUCKS = new Set(["peep-duck", "miko-duck", "io-duck", "miho-duck", "annika-duck", "goose"]);
-const GACHA_EXCLUDED_DUCKS = new Set(["tiny-duck", "tiny-duck-stack", "pile-of-tiny-ducks"]);
+const GACHA_EXCLUDED_DUCKS = new Set(["tiny-duck", "tiny-duck-stack", "pile-of-tiny-ducks", "lukio-duck"]);
 const DUCK_TROPHY_MILESTONES = Object.freeze([
   { count: 1, tier: "bronze", label: "Bronze" },
   { count: 25, tier: "silver", label: "Silver" },
@@ -8682,7 +8687,7 @@ function launchDuckSort() {
 }
 
 function launchCraneGame() {
-  window.location.href = "crane-game/?v=24-243";
+  window.location.href = "crane-game/?v=24-244";
 }
 
 function launchMemoryGame() {
@@ -9550,6 +9555,8 @@ function duckDiscoveryHint(duck) {
   if (duck.recipe) return "Craft this duck in the Duck Crafter to discover it.";
 
   switch (duck.acquisition) {
+    case "love-interest-lukio":
+      return "Meet Lukio while exploring Duck Quest as Miko to unlock this special duck.";
     case "honk-of-approval":
       return honkOfApprovalProgressText();
     case "rare-drop":

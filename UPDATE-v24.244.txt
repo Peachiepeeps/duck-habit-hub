@@ -1,0 +1,13 @@
+Duckie Days v24.244
+
+- Forces the Trading Card data/UI/CSS onto fresh v24.244 filenames so the old 65-card cache cannot win.
+- Expected Trading Card total is now 71: original 65 + five Fabled cards + Lukio.
+- Trading Card results now flex to the bottom of the Duckipedia panel instead of leaving a large cream gap.
+- Registers Lukio Duck in Duckipedia as a Missing entry before the encounter and unlocks it after meeting Lukio.
+- Keeps Lukio Duck out of random gacha pools.
+- Lukio's Rare card uses idle-1 in the standard Rare template and is rewarded by his encounter.
+- Adds robust fallback card saving if the encounter fires before the Trading Card helper is available.
+- Love-interest encounters use a 5% roll and are strictly disabled unless Miko is the active playable OC.
+- Repair: supports the live APP_SHELL service-worker cache list.
+- Love-interest encounter chance is one shared 5% roll per completed encounter.
+- Love-interest encounters are strictly Miko-only using duckQuest.activeCharacter.

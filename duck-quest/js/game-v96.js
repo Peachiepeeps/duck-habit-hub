@@ -7189,6 +7189,7 @@ function refillActiveHeroHpV210(){
 window.DUCKIE_HP_REFILL_CORE='24.210-all-oc-between-encounters';
 
 function nextEncounter() {
+  if(window.DuckieLoveInterests?.maybeBeforeNextEncounter?.(()=>nextEncounter())) return;
   refillActiveHeroHpV210();
   resetDoubleBattleUi();
   ui.chestLayer.classList.add("hidden");
