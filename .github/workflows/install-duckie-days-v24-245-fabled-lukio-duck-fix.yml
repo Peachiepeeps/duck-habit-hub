@@ -1,0 +1,238 @@
+name: Install Duckie Days v24.245 Fabled + Lukio Duck Fix
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/install-duckie-days-v24-245-fabled-lukio-duck-fix.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  install-update:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install v24.245
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+
+          ROOT = Path.cwd()
+
+          def read(path):
+              return (ROOT / path).read_text(encoding="utf-8")
+
+          def write(path, text):
+              p = ROOT / path
+              p.parent.mkdir(parents=True, exist_ok=True)
+              p.write_text(text, encoding="utf-8")
+
+          version = str(json.loads(read("version.json")).get("version"))
+          if version != "24.244":
+              raise RuntimeError(f"Expected v24.244 before this repair, found {version!r}")
+
+          # ------------------------------------------------------------
+          # 1) Fix Lukio Duck thumbnail handling.
+          # ------------------------------------------------------------
+          script = read("script-v24-201.js")
+
+          old_thumb = 'function duckThumbFile(duck) {\n  const file = String(duck?.file || "");\n  const name = file.split("/").pop();\n  return name ? `assets/thumbs/ducks/${name.replace(/\\.[^.]+$/, ".webp")}` : file;\n}'
+          new_thumb = 'function duckThumbFile(duck) {\n  const file = String(duck?.file || "");\n  if (!file) return "";\n\n  // Special/event ducks can live outside assets/ducks and may not have a\n  // generated assets/thumbs/ducks/*.webp counterpart. Use the original art.\n  if (!file.startsWith("assets/ducks/")) return file;\n\n  const name = file.split("/").pop();\n  return name ? `assets/thumbs/ducks/${name.replace(/\\.[^.]+$/, ".webp")}` : file;\n}'
+
+          if old_thumb not in script:
+              raise RuntimeError("Could not locate duckThumbFile() in script-v24-201.js")
+          script = script.replace(old_thumb, new_thumb, 1)
+          write("script-v24-201.js", script)
+
+          # ------------------------------------------------------------
+          # 2) Fabled cards are complete card images, not framed art.
+          # ------------------------------------------------------------
+          tc = read("trading-cards-v244.js")
+
+          anchor = 'const locked=Boolean(opts.locked),face=document.createElement("div");face.className=`tc-face tc-${card.rarity}${locked?" tc-locked":""}`;face.dataset.cardId=card.id;'
+          fabled_branch = '''const locked=Boolean(opts.locked),face=document.createElement("div");face.className=`tc-face tc-${card.rarity}${locked?" tc-locked":""}`;face.dataset.cardId=card.id;
+    if(card.rarity==="fabled"){
+      face.classList.add("tc-fabled-full");
+      const full=document.createElement("img");
+      full.className="tc-fabled-image";
+      full.src=cardArt(card);
+      full.alt=locked?`${card.name} Fabled card, not yet collected`:`${card.name} Fabled card`;
+      face.append(full);
+      return face;
+    }'''
+
+          if anchor not in tc:
+              raise RuntimeError("Could not locate createFace() anchor in trading-cards-v244.js")
+          tc = tc.replace(anchor, fabled_branch, 1)
+          tc = tc.replace('if(card.rarity==="rare"||card.rarity==="fabled")', 'if(card.rarity==="rare")', 1)
+          write("trading-cards-v245.js", tc)
+
+          # ------------------------------------------------------------
+          # 3) CSS: full-card Fabled display + locked darkening.
+          # ------------------------------------------------------------
+          css = read("trading-cards-v244.css")
+          fabled_css = '''
+          /* v24.245 — Fabled cards are already-finished full card images. */
+          .tc-face.tc-fabled-full{background:transparent}
+          .tc-fabled-image{
+            position:absolute;
+            inset:0;
+            z-index:1;
+            width:100%;
+            height:100%;
+            object-fit:contain;
+            image-rendering:pixelated;
+          }
+          .tc-face.tc-fabled-full.tc-locked{
+            filter:grayscale(.45) brightness(.40) saturate(.50) drop-shadow(0 3px 3px rgba(84,49,69,.16));
+          }
+          .tc-face.tc-fabled-full.tc-locked .tc-fabled-image{
+            opacity:.86;
+            filter:none;
+          }
+          '''
+          if ".tc-face.tc-fabled-full" not in css:
+              css += "\n" + fabled_css.strip() + "\n"
+          write("trading-cards-v245.css", css)
+
+          # UI logic is unchanged; give it the matching versioned filename.
+          write("trading-cards-ui-v245.js", read("trading-cards-ui-v244.js"))
+
+          # ------------------------------------------------------------
+          # 4) Update page references.
+          # ------------------------------------------------------------
+          def patch_page(path):
+              text = read(path)
+              text = text.replace("trading-cards-v244.js", "trading-cards-v245.js")
+              text = text.replace("trading-cards-ui-v244.js", "trading-cards-ui-v245.js")
+              text = text.replace("trading-cards-v244.css", "trading-cards-v245.css")
+              text = text.replace("?v=24-244", "?v=24-245")
+              text = text.replace('content="24.244"', 'content="24.245"')
+              text = text.replace('const DUCK_HUB_BUILD = "24.244";', 'const DUCK_HUB_BUILD = "24.245";')
+              write(path, text)
+
+          for page in [
+              "index.html",
+              "memory-game/index.html",
+              "crane-game/index.html",
+              "crane-game/play-v24-40.html",
+              "duck-quest/index.html",
+          ]:
+              if (ROOT / page).exists():
+                  patch_page(page)
+
+          # ------------------------------------------------------------
+          # 5) Service worker/cache bump.
+          # ------------------------------------------------------------
+          sw = read("sw-v24-244.js")
+          sw = sw.replace("duck-habit-hub-app-v24-244", "duck-habit-hub-app-v24-245")
+          sw = sw.replace("duck-habit-hub-runtime-v24-244", "duck-habit-hub-runtime-v24-245")
+          sw = sw.replace("trading-cards-v244.js", "trading-cards-v245.js")
+          sw = sw.replace("trading-cards-ui-v244.js", "trading-cards-ui-v245.js")
+          sw = sw.replace("trading-cards-v244.css", "trading-cards-v245.css")
+          sw = sw.replace("?v=24-244", "?v=24-245")
+          sw = sw.replace("./sw-v24-244.js", "./sw-v24-245.js")
+          write("sw-v24-245.js", sw)
+          write("sw.js", "importScripts('./sw-v24-245.js?v=24-245');\n")
+
+          write("version.json", json.dumps({"version":"24.245"}, indent=2) + "\n")
+          write(
+              "UPDATE-v24.245.txt",
+              "Duckie Days v24.245\n\n"
+              "- Fixes Lukio Duck's broken Duckipedia thumbnail by using the original special-duck image when no generated thumbnail exists.\n"
+              "- Fabled cards now use their finished uploaded card images directly, with no standard card template layered over them.\n"
+              "- Locked Fabled cards stay visible but are greyed/darkened until collected.\n"
+          )
+
+          print("Installed Duckie Days v24.245.")
+          PY
+
+      - name: Verify v24.245
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          grep -Fq '"version": "24.245"' version.json
+
+          test -f trading-cards-v245.js
+          test -f trading-cards-ui-v245.js
+          test -f trading-cards-v245.css
+          test -f sw-v24-245.js
+
+          # Lukio Duck
+          grep -Fq 'if (!file.startsWith("assets/ducks/")) return file;' script-v24-201.js
+          grep -Fq '"file": "duck-quest/assets/love-interests/lukio/Lukio-duck.png"' script-v24-201.js
+          test -f duck-quest/assets/love-interests/lukio/Lukio-duck.png
+
+          # Fabled full-image behavior
+          grep -Fq 'if(card.rarity==="fabled")' trading-cards-v245.js
+          grep -Fq 'full.className="tc-fabled-image"' trading-cards-v245.js
+          grep -Fq 'face.classList.add("tc-fabled-full")' trading-cards-v245.js
+          ! grep -Fq 'if(card.rarity==="rare"||card.rarity==="fabled")' trading-cards-v245.js
+
+          grep -Fq '.tc-face.tc-fabled-full.tc-locked' trading-cards-v245.css
+          grep -Fq 'brightness(.40)' trading-cards-v245.css
+
+          # All five finished Fabled images
+          test -f duck-quest/assets/trading-cards/fabled/F-acorn-mouse.png
+          test -f duck-quest/assets/trading-cards/fabled/F-flower.png
+          test -f duck-quest/assets/trading-cards/fabled/F-bee.png
+          test -f duck-quest/assets/trading-cards/fabled/F-slime-kitty.png
+          test -f duck-quest/assets/trading-cards/fabled/F-mimic.png
+
+          grep -Fq 'trading-cards-v245.js?v=24-245' index.html
+          grep -Fq 'trading-cards-v245.css?v=24-245' index.html
+          grep -Fq "importScripts('./sw-v24-245.js?v=24-245');" sw.js
+
+          node --check trading-cards-v245.js
+          node --check trading-cards-ui-v245.js
+          node --check script-v24-201.js
+          node --check sw-v24-245.js
+
+          echo "VERIFIED: Lukio Duck image and Fabled rendering are fixed."
+
+      - name: Clean old update clutter
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          SELF="install-duckie-days-v24-245-fabled-lukio-duck-fix.yml"
+
+          if [ -d .github/workflows ]; then
+            find .github/workflows -maxdepth 1 -type f               \( -name 'install-duck-habit-hub-v*.yml' -o -name 'install-duckie-days-v*.yml' \)               ! -name "$SELF" -delete
+          fi
+
+          find . -maxdepth 1 -type f -name 'UPDATE-v*.txt' ! -name 'UPDATE-v24.245.txt' -delete
+          find . -maxdepth 1 -type f -name 'sw-v24-*.js' ! -name 'sw-v24-245.js' -delete
+
+      - name: Commit v24.245
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+          git diff --cached --quiet && {
+            echo "ERROR: No changes were staged."
+            exit 1
+          }
+
+          git commit -m "Fix Lukio Duck and Fabled card rendering"
+          git push
+
+      - name: Success
+        shell: bash
+        run: |
+          echo "SUCCESS: v24.245 installed and verified."
