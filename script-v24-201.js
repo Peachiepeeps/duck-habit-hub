@@ -2571,6 +2571,11 @@ const THUMB_BOUNDS = {
 };
 
 const MIKO_THUMB_BOUNDS = {
+  "Miko-Lukio-Hair-Streak.png": [426,878,551,1049],
+  "Miko-Lukio-hoodie-shop.png": [371,1189,739,1530],
+  "Miko-Lukio-Shorts.png": [407,1403,660,1551],
+  "Miko-Lukio-Socks.png": [385,1647,686,1796],
+  "Miko-Lukio-Booties.png": [379,1723,691,1812],
   "Miko-angry.webp": [332,953,740,1164],
   "Miko-bangs.webp": [250,766,826,1216],
   "Miko-base-arm.webp": [389,1171,492,1355],
@@ -2615,6 +2620,12 @@ const MIKO_THUMB_BOUNDS = {
 };
 
 const MIKO_ASSETS = {
+  "lukio-hair-streak": { label: "Lukio Set · Hair Streak", file: "Miko-Lukio-Hair-Streak.png", z: 49 },
+  "lukio-hoodie": { label: "Lukio Set · Hoodie", file: "Miko-Lukio-hoodie.png", previewFile: "Miko-Lukio-hoodie-shop.png", z: 34 },
+  "lukio-sleeve": { label: "Lukio Set · Sleeve", file: "Miko-lukio-sleeve.png", z: 37 },
+  "lukio-shorts": { label: "Lukio Set · Shorts", file: "Miko-Lukio-Shorts.png", z: 31 },
+  "lukio-socks": { label: "Lukio Set · Socks", file: "Miko-Lukio-Socks.png", z: 29 },
+  "lukio-booties": { label: "Lukio Set · Booties", file: "Miko-Lukio-Booties.png", z: 39 },
   "base": { label: "Body Base", file: "Miko-base.webp", z: 20 },
   "hair-main": { label: "Hair", file: "Miko-hair.webp", z: 15 },
   "bangs": { label: "Bangs", file: "Miko-bangs.webp", z: 48 },
@@ -2913,10 +2924,10 @@ const MIKO_CLOSET = [
   },
   { id: "bangsStyle", label: "Bangs", type: "single", options: ["bangs", "bangs-pinned"] },
   { id: "shirt", label: "Shirt", type: "single", allowNone: true, options: ["top-button", "shirt-blouse"] },
-  { id: "outer", label: "Layers", type: "single", allowNone: true, options: ["top-hoodie", "top-sweater", "top-big-shirt", "outer-black-blazer"] },
-  { id: "bottom", label: "Bottoms", type: "single", options: ["bottom-capris", "bottom-jeans", "bottom-boxers", "bottom-shorts"] },
-  { id: "socks", label: "Socks", type: "single", allowNone: true, options: ["socks", "socks-garter"] },
-  { id: "shoes", label: "Shoes", type: "single", allowNone: true, options: ["shoes-loafer", "shoes-fancy-loafers"] },
+  { id: "outer", label: "Layers", type: "single", allowNone: true, options: ["top-hoodie", "top-sweater", "top-big-shirt", "outer-black-blazer", "lukio-hoodie"] },
+  { id: "bottom", label: "Bottoms", type: "single", options: ["bottom-capris", "bottom-jeans", "bottom-boxers", "bottom-shorts", "lukio-shorts"] },
+  { id: "socks", label: "Socks", type: "single", allowNone: true, options: ["socks", "socks-garter", "lukio-socks"] },
+  { id: "shoes", label: "Shoes", type: "single", allowNone: true, options: ["shoes-loafer", "shoes-fancy-loafers", "lukio-booties"] },
   {
     id: "extras",
     label: "Extras",
@@ -3175,16 +3186,16 @@ function normalizeMikoOutfit(rawOutfit = {}) {
 
   if (!hadShirtField) shirt = "top-button";
   if (![null, "top-button", "shirt-blouse"].includes(shirt)) shirt = "top-button";
-  if (![null, "top-hoodie", "top-sweater", "top-big-shirt", "outer-black-blazer"].includes(outer)) outer = "top-hoodie";
+  if (![null, "top-hoodie", "top-sweater", "top-big-shirt", "outer-black-blazer", "lukio-hoodie"].includes(outer)) outer = "top-hoodie";
 
   const bangsStyle = ["bangs", "bangs-pinned"].includes(incoming.bangsStyle)
     ? incoming.bangsStyle
     : "bangs";
-  const bottom = ["bottom-capris", "bottom-jeans", "bottom-boxers", "bottom-shorts"].includes(incoming.bottom)
+  const bottom = ["bottom-capris", "bottom-jeans", "bottom-boxers", "bottom-shorts", "lukio-shorts"].includes(incoming.bottom)
     ? incoming.bottom
     : "bottom-capris";
-  const socks = ["socks", "socks-garter"].includes(incoming.socks) ? incoming.socks : null;
-  const shoes = [null, "shoes-loafer", "shoes-fancy-loafers"].includes(incoming.shoes)
+  const socks = ["socks", "socks-garter", "lukio-socks"].includes(incoming.socks) ? incoming.socks : null;
+  const shoes = [null, "shoes-loafer", "shoes-fancy-loafers", "lukio-booties"].includes(incoming.shoes)
     ? incoming.shoes
     : "shoes-loafer";
 
@@ -5429,6 +5440,7 @@ function getMikoEquippedAssetIds() {
   if (outfit.outer === "top-hoodie") ids.push("top-hoodie-sleeve");
   else if (outfit.outer === "top-sweater") ids.push("top-sweater-sleeve");
   else if (outfit.outer === "outer-black-blazer") ids.push("outer-black-blazer-arm");
+  else if (outfit.outer === "lukio-hoodie") ids.push("lukio-sleeve");
 
   // Socks sit below any equipped shoes. Belt is already inserted earlier so it
   // stays under outer Layers but still above shirts and bottoms.
@@ -8670,7 +8682,7 @@ function launchDuckSort() {
 }
 
 function launchCraneGame() {
-  window.location.href = "crane-game/?v=24-238";
+  window.location.href = "crane-game/?v=24-243";
 }
 
 function launchMemoryGame() {

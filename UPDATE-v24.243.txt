@@ -1,0 +1,8 @@
+Duckie Days v24.243
+
+- Uses the proven small-workflow + ZIP installer format so GitHub does not reject the workflow for exceeding 500 KB.
+- Adds the 5 Fabled Trading Cards and keeps only Common / Uncommon / Rare / Fabled.
+- Extends the Trading Card collection scroll area farther down.
+- Adds Lukio's encounter for Miko, with the supplied dialogue, wink, and bouncing pixel heart finale.
+- Unlocks Lukio Duck, Lukio's three encounter sprites, Miko's Lukio outfit pieces in the Closet, and Lukio's Rare Trading Card.
+- Lukio's Rare card uses Lukio-idle-1.png inside the same Rare card template as the other Rare cards.
