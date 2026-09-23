@@ -1,0 +1,177 @@
+/* Duckie Days v24.255 — Task layout + collectible shelf refinement */
+
+.tasks-panel-v255-compact .task-title-replaced-v255,
+.tasks-panel-v255-compact .task-actions-replaced-v255{
+  display:none !important;
+}
+
+#taskCompactHeaderV255{
+  margin:2px 0 10px;
+  display:grid;
+  gap:8px;
+}
+
+#taskCompactTitleV255,
+.task-compact-title-v255{
+  margin:0;
+  text-align:center;
+  font-size:1.42rem;
+  line-height:1.05;
+  font-weight:950;
+  color:#6f4f5a;
+}
+
+#taskCompactActionsV255,
+.task-compact-actions-v255{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+  align-items:stretch;
+}
+
+.task-compact-actions-v255 > button,
+.task-compact-action-v255{
+  width:100%;
+  min-height:42px;
+  justify-content:center !important;
+  margin:0 !important;
+}
+
+.tasks-panel-v255-compact .task-tabs,
+.tasks-panel-v255-compact .tasks-tabs,
+.tasks-panel-v255-compact [role="tablist"]{
+  margin-top:2px !important;
+}
+
+.task-compact-actions-v255 #openTaskShopButton{
+  padding-inline:10px;
+}
+
+.task-compact-actions-v255 #openTaskShopButton strong{
+  margin-left:4px;
+}
+
+/* Room alignment */
+#roomMirrorImage{translate:0 -12% !important;}
+#roomBookImage{translate:0 -10% !important;}
+#taskShelfButton{top:57% !important;bottom:auto !important;}
+
+/* Collectible shelf should behave more like Shelf of Ducks */
+#taskCollectibleWing.duck-shelf-layout-v255{
+  --shelf-main:#a56d7c;
+  --shelf-line:#7c5060;
+  --shelf-paper:#fff9fb;
+}
+#taskCollectibleWing[data-shelf-theme="berry"]{--shelf-main:#a56d7c;--shelf-line:#7c5060;--shelf-paper:#fff9fb;}
+#taskCollectibleWing[data-shelf-theme="mint"]{--shelf-main:#87a98f;--shelf-line:#65806c;--shelf-paper:#f7fff8;}
+#taskCollectibleWing[data-shelf-theme="blue"]{--shelf-main:#7d95b6;--shelf-line:#5d7394;--shelf-paper:#f8fbff;}
+#taskCollectibleWing[data-shelf-theme="peach"]{--shelf-main:#cda183;--shelf-line:#a67d61;--shelf-paper:#fffaf6;}
+#taskCollectibleWing[data-shelf-theme="lavender"]{--shelf-main:#9c8fc1;--shelf-line:#7768a0;--shelf-paper:#fcf9ff;}
+#taskCollectibleWing[data-shelf-theme="cream"]{--shelf-main:#c9b58c;--shelf-line:#9b845f;--shelf-paper:#fffdf7;}
+
+#taskCollectibleWing.duck-shelf-layout-v255 .task-collectible-title-v254{
+  top:-2%;
+}
+#taskCollectibleWing.duck-shelf-layout-v255 .task-collectible-title-v254 strong{
+  font-size:1.05rem;
+}
+
+#taskShelfThemeBarV255,
+.task-shelf-theme-bar-v255{
+  position:absolute;
+  left:8%;
+  right:8%;
+  top:11.6%;
+  z-index:2;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  pointer-events:auto;
+}
+
+.task-shelf-theme-label-v255{
+  font-size:.58rem;
+  font-weight:900;
+  letter-spacing:.1em;
+  color:#755764;
+}
+
+.task-shelf-theme-swatches-v255{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+
+.task-shelf-theme-choice-v255{
+  width:26px;
+  height:26px;
+  padding:0;
+  display:grid;
+  place-items:center;
+  border:2px solid rgba(116,83,95,.2);
+  border-radius:999px;
+  background:#fff;
+}
+.task-shelf-theme-choice-v255 > span{
+  width:16px;
+  height:16px;
+  border-radius:999px;
+  display:block;
+  background:linear-gradient(180deg,var(--swatch-paper),var(--swatch-paper) 35%,var(--swatch-main) 35%,var(--swatch-main) 62%,var(--swatch-paper) 62%,var(--swatch-paper));
+  box-shadow:inset 0 0 0 2px var(--swatch-line);
+}
+.task-shelf-theme-choice-v255.active{
+  border-color:#e38cab;
+  box-shadow:0 0 0 2px rgba(227,140,171,.18);
+}
+
+#taskCollectibleWing.duck-shelf-layout-v255 #taskCollectibleSlots,
+#taskCollectibleWing.duck-shelf-layout-v255 .task-collectible-slots-v254{
+  top:19.5%;
+  left:7%;
+  right:7%;
+  bottom:7%;
+  padding:3% 3.5%;
+  gap:4% 5%;
+  border-left:10px solid var(--shelf-line);
+  border-right:10px solid var(--shelf-line);
+  border-radius:10px;
+  background:
+    linear-gradient(to bottom,
+      transparent 28%,
+      var(--shelf-main) 28%,
+      var(--shelf-main) 31.5%,
+      transparent 31.5%,
+      transparent 61.5%,
+      var(--shelf-main) 61.5%,
+      var(--shelf-main) 65%,
+      transparent 65%,
+      transparent 95%,
+      var(--shelf-main) 95%,
+      var(--shelf-main) 100%),
+    color-mix(in srgb, var(--shelf-paper) 92%, white 8%);
+  box-shadow:
+    inset 0 0 0 2px color-mix(in srgb, var(--shelf-line) 18%, white 82%),
+    0 6px 18px rgba(69,45,37,.10);
+}
+
+#taskCollectibleWing.duck-shelf-layout-v255 .task-collectible-slot-v254 img{
+  width:94%;
+  height:94%;
+}
+#taskCollectibleWing.duck-shelf-layout-v255 .task-collectible-slot-v254 > span{
+  width:36px;
+  height:36px;
+  border-color:color-mix(in srgb, var(--shelf-line) 35%, white 65%);
+  color:color-mix(in srgb, var(--shelf-line) 70%, white 30%);
+  background:color-mix(in srgb, var(--shelf-paper) 80%, white 20%);
+}
+
+@media (max-width: 600px){
+  .task-compact-actions-v255{grid-template-columns:1fr;}
+  #taskShelfThemeBarV255{display:grid;justify-content:stretch;}
+  .task-shelf-theme-swatches-v255{justify-content:flex-start;}
+}
