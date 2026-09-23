@@ -1,0 +1,93 @@
+/* Duckie Days v24.258 — follow-up polish */
+
+/* =========================================================
+   MAIN ROOM: align arrows and lift the Book higher
+   ========================================================= */
+#roomWingButton,
+#taskShelfButton{
+  top:auto !important;
+  bottom:5.8% !important;
+}
+#roomWingButton{
+  left:3.8% !important;
+}
+#taskShelfButton{
+  right:3.8% !important;
+}
+
+#roomBookImage.on-shelf{
+  top:auto !important;
+  bottom:12.7% !important;
+  translate:none !important;
+  transform:translate(70%,0) !important;
+}
+.book-hotspot.on-shelf{
+  left:68.8% !important;
+  top:auto !important;
+  bottom:11.2% !important;
+  width:25.5% !important;
+  height:16.0% !important;
+}
+
+@media (max-width:600px){
+  #roomWingButton,
+  #taskShelfButton{
+    top:auto !important;
+    bottom:5.8% !important;
+  }
+  #roomBookImage.on-shelf{
+    top:auto !important;
+    bottom:12.8% !important;
+    translate:none !important;
+    transform:translate(70%,0) !important;
+  }
+  .book-hotspot.on-shelf{
+    left:68.6% !important;
+    top:auto !important;
+    bottom:11.6% !important;
+    width:26.0% !important;
+    height:16.4% !important;
+  }
+}
+
+/* =========================================================
+   TASKS: hide Task Shop count and use requested art icons
+   ========================================================= */
+.tasks-header-actions-v257 #openTaskShopButton strong{
+  display:none !important;
+}
+.tasks-header-actions-v257 #openTaskShopButton{
+  gap:8px;
+}
+.task-treasure-status-v257 .status-icon-img-v258{
+  width:28px;
+  height:28px;
+  object-fit:contain;
+  flex:0 0 auto;
+  image-rendering:auto;
+}
+.task-treasure-status-v257.active .status-icon-img-v258{
+  transform:scale(1.02);
+}
+
+/* =========================================================
+   COLLECTIBLE SHELF: use the same lower-row placement as ducks
+   ========================================================= */
+#taskCollectibleWing .task-collectible-slot-v254:nth-child(n+13):nth-child(-n+16) img{
+  transform:translateY(-6%) !important;
+}
+#taskCollectibleWing .task-collectible-slot-v254:nth-child(n+17):nth-child(-n+20) img{
+  transform:translateY(-18%) !important;
+}
+#taskCollectibleWing .task-collectible-slot-v254:nth-child(n+21):nth-child(-n+24) img{
+  transform:translateY(-38%) !important;
+}
+#taskCollectibleWing .task-collectible-slot-v254:nth-child(n+13):nth-child(-n+16) > span{
+  transform:translateY(-8%);
+}
+#taskCollectibleWing .task-collectible-slot-v254:nth-child(n+17):nth-child(-n+20) > span{
+  transform:translateY(-20%);
+}
+#taskCollectibleWing .task-collectible-slot-v254:nth-child(n+21):nth-child(-n+24) > span{
+  transform:translateY(-40%);
+}

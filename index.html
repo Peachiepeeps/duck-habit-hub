@@ -10,7 +10,8 @@
   <link rel="stylesheet" href="style-v24-201.css?v=24-254" />
   <link rel="stylesheet" href="trading-cards-v250.css?v=24-254" />
   <link rel="stylesheet" href="task-progression-v254.css?v=24-254" />
-  <link rel="stylesheet" href="task-progression-v257.css?v=24-257" />
+  <link rel="stylesheet" href="task-progression-v257.css?v=24-258" />
+  <link rel="stylesheet" href="task-progression-v258.css?v=24-258" />
 
   <link rel="manifest" href="manifest.webmanifest?v=24-201">
   <link rel="apple-touch-icon" href="apple-touch-icon-v5.png">
@@ -669,7 +670,6 @@
           <button id="openTaskShopButton" class="task-shop-open-v254" type="button">
             <img src="assets/task-shop/Duck-bucks.png" alt="" />
             <span>Task Shop</span>
-            <strong id="taskHeaderBuckCount">0</strong>
           </button>
           <button id="completedTab" class="completed-tasks-button" type="button" aria-selected="false">✓ Completed</button>
           <button id="addTaskButton" class="add-task-button" type="button">＋ Add Task</button>
@@ -1158,14 +1158,14 @@
   <script src="hub-shop-boosts-v213.js?v=24-254"></script>
   <script src="hub-exp-candy-use-v215.js?v=24-254"></script>
   <script src="trading-cards-ui-v250.js?v=24-254"></script>
-  <script src="task-progression-v254.js?v=24-257"></script>
-  <script src="task-progression-v257.js?v=24-257"></script>
+  <script src="task-progression-v254.js?v=24-258"></script>
+  <script src="task-progression-v257.js?v=24-258"></script>
 
   <script>
     // v24.84: use a stable service-worker URL and actively check the deployed
     // build when the installed PWA is opened/resumed. This prevents Android
     // from keeping an already-open standalone app on an older app shell.
-    const DUCK_HUB_BUILD = "24.257";
+    const DUCK_HUB_BUILD = "24.258";
     let duckHubReloadingForUpdate = false;
 
     function duckHubReloadFresh(version) {
@@ -1229,7 +1229,7 @@
       window.addEventListener("load", async () => {
         try {
           await duckHubClearOldCodeCaches();
-          const registration = await navigator.serviceWorker.register("./sw.js?v=24-257", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("./sw.js?v=24-258", { updateViaCache: "none" });
           await registration.update();
           if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
           await duckHubCheckForUpdate(registration);

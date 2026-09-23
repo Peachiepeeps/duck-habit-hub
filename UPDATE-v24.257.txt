@@ -1,6 +1,0 @@
-Duckie Days v24.257 — Shelf Asset + Tasks Layout Correction
-
-- Collectible Shelf now uses the exact same user-drawn shelf assets and slot geometry as Shelf of Ducks.
-- Collectible shelf supports cream, brown, and dark-brown shelf assets.
-- Main room right arrow lines up with the left arrow; Book sits above it with a larger tap target.
-- Tasks now follow the requested order and the Task Treasure area is condensed to match the reference.

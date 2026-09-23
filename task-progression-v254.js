@@ -221,13 +221,13 @@
     bucks.append(makeBuckInline(p.duckBucks));
 
     const perfect=document.createElement('div');perfect.className=`task-treasure-status-v257${p.perfectDayClaimed?' active':''}`;
-    const perfectIcon=document.createElement('span');perfectIcon.className='status-icon-v257';perfectIcon.textContent='🧰';
+    const perfectIcon=document.createElement('img');perfectIcon.className='status-icon-img-v258';perfectIcon.src='duck-quest/assets/items/chests/treasure/closed.png';perfectIcon.alt='';
     const perfectCopy=document.createElement('span');perfectCopy.className='status-copy-v257';
-    perfectCopy.innerHTML=`<strong>Perfect Day</strong><small>${p.perfectDayClaimed?'Obtained':'Not yet'}</small>`;
+    perfectCopy.innerHTML=`<strong>Perfect Day</strong><small>${p.perfectDayClaimed?'Obtained':'5 tasks + clear list'}</small>`;
     perfect.append(perfectIcon,perfectCopy);
 
     const boost=document.createElement('div');boost.className=`task-treasure-status-v257${p.buddyBoostActive?' active':''}`;
-    const boostIcon=document.createElement('span');boostIcon.className='status-icon-v257';boostIcon.textContent='🐷';
+    const boostIcon=document.createElement('img');boostIcon.className='status-icon-img-v258';boostIcon.src='duck-quest/assets/enemies/cat-slime/base/Strawberry-idle-1-neutral.png';boostIcon.alt='';
     const boostCopy=document.createElement('span');boostCopy.className='status-copy-v257';
     boostCopy.innerHTML=`<strong>Buddy Boost</strong><small>${p.buddyBoostActive?'Activated':'5 tasks'}</small>`;
     boost.append(boostIcon,boostCopy);
@@ -274,7 +274,7 @@
       }
 
       const dueAfter=readyTodayCount();
-      if(dueBefore>0 && dueAfter===0 && !p.perfectDayClaimed){
+      if(dueBefore>0 && dueAfter===0 && p.completedToday>=5 && !p.perfectDayClaimed){
         p.perfectDayClaimed=true;
         messages.push(perfectDayReward());
       }

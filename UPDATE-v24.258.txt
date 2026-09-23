@@ -1,0 +1,7 @@
+Duckie Days v24.258 — Task polish follow-up
+
+- Task Shop header button no longer shows a number.
+- Perfect Day now requires 5 completed tasks plus clearing today's due tasks.
+- Task Treasure status row now uses the requested closed chest and pink cat-slime icons.
+- Collectible shelf slot positions now mirror Shelf of Ducks lower-row placement.
+- Main-room arrows line up and the Book is lifted higher for easier access.
