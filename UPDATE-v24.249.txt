@@ -1,0 +1,1 @@
+Duckie Days v24.249\n\n- Adds Circe and Quin as Miko-only love-interest encounters.\n- Shared love-interest chance stays 5 percent total.\n- Circe and Quin each grant their duck and Miko outfit on their solo encounter.\n- Their Rare cards unlock together from the Circe x Quin reunion cutscene.\n

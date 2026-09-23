@@ -1,1 +1,0 @@
-Duckie Days v24.248\n\n- Adds Yuzuru and Westley as Miko-only love-interest encounters.\n- Shared love-interest chance stays 5 percent total.\n- Yuzuru and Westley each grant their duck and Miko outfit on their solo encounter.\n- Their Rare cards unlock together from the Westley x Yuzuru reunion cutscene.\n

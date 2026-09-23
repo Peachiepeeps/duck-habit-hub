@@ -1,0 +1,17 @@
+.love-interest-layer{position:fixed;inset:0;z-index:15000;display:grid;place-items:center;padding:16px;background:rgba(35,24,40,.72);backdrop-filter:blur(4px)}
+.love-interest-layer.hidden{display:none!important}
+.love-interest-card{width:min(94vw,720px);max-height:92dvh;overflow:auto;padding:16px 18px 20px;border:3px solid #d790b0;border-radius:22px;background:linear-gradient(#fff9fc,#f4edff);color:#59404d;text-align:center;box-shadow:0 18px 55px #0005}
+.love-interest-kicker{margin:0;color:#ac6384;font-size:.72rem;font-weight:950;letter-spacing:.08em}
+.love-interest-card h2{margin:3px 0 8px}
+.love-interest-stage{min-height:220px;display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:end}
+.love-interest-stage>img{image-rendering:pixelated;object-fit:contain}
+.love-interest-left,.love-interest-right{justify-self:center;width:min(34vw,175px);max-height:230px}
+.love-interest-heart{align-self:center}
+.love-interest-heart.hidden{visibility:hidden}
+.love-interest-heart img{width:46px;height:auto;image-rendering:pixelated;animation:love-interest-heart-bob .55s steps(2,end) infinite}
+@keyframes love-interest-heart-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+.love-interest-dialogue{margin:8px 0 12px;padding:12px 14px;border:2px solid #ebbed1;border-radius:15px;background:#fff;text-align:left}
+.love-interest-speaker{color:#a45378}
+.love-interest-line{min-height:2.8em;margin:5px 0 0;line-height:1.4}
+.love-interest-next{min-width:110px;padding:9px 22px;border:2px solid #d96c99;border-radius:999px;background:linear-gradient(#ffb7d0,#ef83ad);color:white;font:inherit;font-weight:950;box-shadow:0 3px 0 #b75b84}
+@media(max-width:560px){.love-interest-stage{min-height:190px}.love-interest-left,.love-interest-right{width:min(38vw,145px);max-height:195px}.love-interest-heart img{width:38px}}
