@@ -4,7 +4,7 @@
   const BUILD='24.254';
   const DB_ICON='assets/task-shop/Duck-bucks.png';
   const SHELF_UNLOCK_TASKS=50;
-  const SHELF_SLOTS=12;
+  const SHELF_SLOTS=24;
   const SURPRISE_CHANCE=.15;
 
   const COLLECTIBLES=[
@@ -191,15 +191,12 @@
   function renderTaskProgressCard(){
     const p=ensureProgress();
     const card=document.createElement('section');
-    card.className='task-treasure-card-v254';
+    card.className='task-treasure-card-v254 task-treasure-card-v257';
 
-    const head=document.createElement('div');head.className='task-treasure-head-v254';
-    const titles=document.createElement('div');
-    const eyebrow=document.createElement('span');eyebrow.textContent='TASK TREASURE';
-    const title=document.createElement('strong');title.textContent=`${p.completedToday} task${p.completedToday===1?'':'s'} today`;
-    titles.append(eyebrow,title);
-    const bucks=makeBuckInline(p.duckBucks);bucks.classList.add('large');
-    head.append(titles,bucks);
+    const head=document.createElement('div');head.className='task-treasure-head-v257';
+    const label=document.createElement('span');label.textContent='TREASURE TASKS';
+    const completed=document.createElement('strong');completed.textContent=`${p.completedToday} task${p.completedToday===1?'':'s'} completed today`;
+    head.append(label,completed);
 
     const next=nextTreasureTarget(p.completedToday);
     const prev=previousTreasureTarget(p.completedToday,next);
@@ -218,23 +215,25 @@
       milestones.append(chip);
     });
 
-    const perks=document.createElement('div');perks.className='task-perks-v254';
-    const boost=document.createElement('div');
-    boost.className=`task-perk-v254${p.buddyBoostActive?' active':''}`;
-    boost.innerHTML=`<strong>${p.buddyBoostActive?'✦ Buddy Boost Active':'Buddy Boost'}</strong><small>${p.buddyBoostActive?'+20% Buddy ability power in Duck Quest until daily reset.':'Complete 5 tasks today to boost Buddy abilities.'}</small>`;
-    const due=readyTodayCount();
-    const perfect=document.createElement('div');
-    perfect.className=`task-perk-v254${p.perfectDayClaimed?' active':''}`;
-    perfect.innerHTML=`<strong>${p.perfectDayClaimed?'♡ Perfect Day Chest Opened':'Perfect Day Chest'}</strong><small>${p.perfectDayClaimed?'Come back tomorrow for another.':due>0?`Finish all ${due} task${due===1?'':'s'} still due today.`:'No due tasks are waiting right now.'}</small>`;
-    perks.append(boost,perfect);
+    const statusRow=document.createElement('div');statusRow.className='task-treasure-status-row-v257';
 
-    const shelf=document.createElement('div');shelf.className='task-shelf-progress-v254';
-    const life=Math.max(0,Number(save.stats?.tasksCompleted)||0);
-    shelf.innerHTML=p.shelfUnlocked
-      ? `<strong>Collectible Shelf Unlocked! ♡</strong><span>Use the new right-side room arrow to display Task Shop collectibles.</span>`
-      : `<strong>Collectible Shelf · ${Math.min(life,SHELF_UNLOCK_TASKS)} / ${SHELF_UNLOCK_TASKS}</strong><span>Complete ${Math.max(0,SHELF_UNLOCK_TASKS-life)} more lifetime task${SHELF_UNLOCK_TASKS-life===1?'':'s'} to unlock it.</span>`;
+    const bucks=document.createElement('div');bucks.className='task-treasure-status-v257';
+    bucks.append(makeBuckInline(p.duckBucks));
 
-    card.append(head,bar,progress,milestones,perks,shelf);
+    const perfect=document.createElement('div');perfect.className=`task-treasure-status-v257${p.perfectDayClaimed?' active':''}`;
+    const perfectIcon=document.createElement('span');perfectIcon.className='status-icon-v257';perfectIcon.textContent='🧰';
+    const perfectCopy=document.createElement('span');perfectCopy.className='status-copy-v257';
+    perfectCopy.innerHTML=`<strong>Perfect Day</strong><small>${p.perfectDayClaimed?'Obtained':'Not yet'}</small>`;
+    perfect.append(perfectIcon,perfectCopy);
+
+    const boost=document.createElement('div');boost.className=`task-treasure-status-v257${p.buddyBoostActive?' active':''}`;
+    const boostIcon=document.createElement('span');boostIcon.className='status-icon-v257';boostIcon.textContent='🐷';
+    const boostCopy=document.createElement('span');boostCopy.className='status-copy-v257';
+    boostCopy.innerHTML=`<strong>Buddy Boost</strong><small>${p.buddyBoostActive?'Activated':'5 tasks'}</small>`;
+    boost.append(boostIcon,boostCopy);
+
+    statusRow.append(bucks,perfect,boost);
+    card.append(head,bar,progress,milestones,statusRow);
     return card;
   }
 
@@ -302,8 +301,10 @@
     renderTasks=function(){
       const result=previousRenderTasks.apply(this,arguments);
       ensureProgress();
-      if(currentTaskTab==='today' && tasksContent && !tasksContent.querySelector('.task-treasure-card-v254')){
-        tasksContent.prepend(renderTaskProgressCard());
+      if(tasksContent){
+        const panel=tasksContent.closest('#tasksPanel');
+        panel?.querySelectorAll('.task-treasure-card-v254').forEach(node=>node.remove());
+        if(currentTaskTab==='today') tasksContent.before(renderTaskProgressCard());
       }
       renderDuckBuckBalances();
       return result;
@@ -431,7 +432,7 @@
     taskCollectibleSlots.innerHTML='';
     p.shelfSlots.forEach((id,index)=>{
       const item=COLLECTIBLES.find(entry=>entry.id===id);
-      const btn=document.createElement('button');btn.type='button';btn.className=`task-collectible-slot-v254${item?' occupied':''}`;
+      const btn=document.createElement('button');btn.type='button';btn.className=`wing-duck-slot task-collectible-slot-v254${item?' occupied':''}`;
       if(item){const img=document.createElement('img');img.src=item.image;img.alt='';btn.append(img);btn.setAttribute('aria-label',`Shelf spot ${index+1}: ${item.name}`);}
       else{const plus=document.createElement('span');plus.textContent='+';btn.append(plus);btn.setAttribute('aria-label',`Shelf spot ${index+1}: empty`);}
       btn.addEventListener('click',()=>openTaskCollectiblePicker(index));

@@ -10,8 +10,7 @@
   <link rel="stylesheet" href="style-v24-201.css?v=24-254" />
   <link rel="stylesheet" href="trading-cards-v250.css?v=24-254" />
   <link rel="stylesheet" href="task-progression-v254.css?v=24-254" />
-  <link rel="stylesheet" href="task-progression-v255.css?v=24-255" />
-  <link rel="stylesheet" href="task-progression-v256.css?v=24-256" />
+  <link rel="stylesheet" href="task-progression-v257.css?v=24-257" />
 
   <link rel="manifest" href="manifest.webmanifest?v=24-201">
   <link rel="apple-touch-icon" href="apple-touch-icon-v5.png">
@@ -82,11 +81,21 @@
         <div id="wingDuckSlots" class="wing-duck-slots"></div>
       </section>
 
-      <section id="taskCollectibleWing" class="task-collectible-wing-v254 hidden" aria-label="Task Collectible Shelf">
+      <section id="taskCollectibleWing" class="task-collectible-wing-v254 task-collectible-wing-v257 hidden" aria-label="Task Collectible Shelf">
+        <img id="taskCollectibleShelfImage" class="wing-shelf-image task-collectible-shelf-image-v257" src="assets/room-expansion/shelves/shelf-cream.webp" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+
         <div class="task-collectible-title-v254">
           <span>TASK TREASURES</span>
           <strong>Collectible Shelf</strong>
         </div>
+
+        <div id="taskCollectibleShelfStylePicker" class="task-shelf-style-picker-v257" aria-label="Collectible shelf style">
+          <span>Shelf</span>
+          <button type="button" data-task-shelf-style="cream" aria-label="Cream shelf" title="Cream shelf"></button>
+          <button type="button" data-task-shelf-style="brown" aria-label="Brown shelf" title="Brown shelf"></button>
+          <button type="button" data-task-shelf-style="dark-brown" aria-label="Dark brown shelf" title="Dark brown shelf"></button>
+        </div>
+
         <div id="taskCollectibleSlots" class="task-collectible-slots-v254"></div>
       </section>
 
@@ -650,22 +659,20 @@
         </div>
       </section>
 
-      <section id="tasksPanel" class="panel tasks-panel hidden" aria-label="Tasks">
-        <div class="panel-header tasks-header">
-          <div class="tasks-heading">
-            <p class="eyebrow">YOUR TASKS</p>
-            <h1>Tasks</h1>
-          </div>
-          <div class="tasks-header-actions">
-            <button id="openTaskShopButton" class="task-shop-open-v254" type="button">
-              <img src="assets/task-shop/Duck-bucks.png" alt="" />
-              <span>Task Shop</span>
-              <strong id="taskHeaderBuckCount">0</strong>
-            </button>
-            <button id="completedTab" class="completed-tasks-button" type="button" aria-selected="false">✓ Completed</button>
-            <button id="addTaskButton" class="add-task-button" type="button">＋ Add Task</button>
-          </div>
+      <section id="tasksPanel" class="panel tasks-panel tasks-panel-v257 hidden" aria-label="Tasks">
+        <div class="tasks-header-v257">
+          <h1>Your Tasks</h1>
           <button id="closeTasks" class="close-button" type="button" aria-label="Return to menu">×</button>
+        </div>
+
+        <div class="tasks-header-actions-v257">
+          <button id="openTaskShopButton" class="task-shop-open-v254" type="button">
+            <img src="assets/task-shop/Duck-bucks.png" alt="" />
+            <span>Task Shop</span>
+            <strong id="taskHeaderBuckCount">0</strong>
+          </button>
+          <button id="completedTab" class="completed-tasks-button" type="button" aria-selected="false">✓ Completed</button>
+          <button id="addTaskButton" class="add-task-button" type="button">＋ Add Task</button>
         </div>
 
         <div class="tasks-toolbar">
@@ -1151,15 +1158,14 @@
   <script src="hub-shop-boosts-v213.js?v=24-254"></script>
   <script src="hub-exp-candy-use-v215.js?v=24-254"></script>
   <script src="trading-cards-ui-v250.js?v=24-254"></script>
-  <script src="task-progression-v254.js?v=24-254"></script>
-  <script src="task-progression-v255.js?v=24-255"></script>
-  <script src="task-progression-v256.js?v=24-256"></script>
+  <script src="task-progression-v254.js?v=24-257"></script>
+  <script src="task-progression-v257.js?v=24-257"></script>
 
   <script>
     // v24.84: use a stable service-worker URL and actively check the deployed
     // build when the installed PWA is opened/resumed. This prevents Android
     // from keeping an already-open standalone app on an older app shell.
-    const DUCK_HUB_BUILD = "24.254";
+    const DUCK_HUB_BUILD = "24.257";
     let duckHubReloadingForUpdate = false;
 
     function duckHubReloadFresh(version) {
@@ -1223,7 +1229,7 @@
       window.addEventListener("load", async () => {
         try {
           await duckHubClearOldCodeCaches();
-          const registration = await navigator.serviceWorker.register("./sw.js?v=24-254", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("./sw.js?v=24-257", { updateViaCache: "none" });
           await registration.update();
           if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
           await duckHubCheckForUpdate(registration);
