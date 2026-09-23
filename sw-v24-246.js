@@ -1,13 +1,13 @@
-const APP_CACHE = 'duck-habit-hub-app-v24-245';
-const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-245';
+const APP_CACHE = 'duck-habit-hub-app-v24-246';
+const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-246';
 const IMAGE_CACHE = 'duck-habit-hub-images-stable-v1';
 
 const APP_SHELL = [
-  './trading-cards-v245.css?v=24-245','./trading-cards-v245.js?v=24-245','./trading-cards-ui-v245.js?v=24-245',
+  './trading-cards-v246.css?v=24-246','./trading-cards-v246.js?v=24-246','./trading-cards-ui-v246.js?v=24-246',
   './assets/trading-cards/card-common.png','./assets/trading-cards/card-uncommon.png','./assets/trading-cards/card-rare.png','./assets/trading-cards/card-back.png','./assets/trading-cards/card-pack-unopened.png','./assets/trading-cards/card-pack-ripped.png','./assets/trading-cards/card-pack-torn-top.png',
-  './memory-game/trading-card-memory-v235.js?v=24-245','./duck-quest/js/trading-card-drops-v235.js?v=24-245',
-  './','./index.html','./manifest.webmanifest?v=24-245','./version.json',
-  './style-v24-201.css?v=24-245','./script-v24-201.js?v=24-245','./sw-v24-245.js','./sw.js',
+  './memory-game/trading-card-memory-v235.js?v=24-246','./duck-quest/js/trading-card-drops-v235.js?v=24-246',
+  './','./index.html','./manifest.webmanifest?v=24-246','./version.json',
+  './style-v24-201.css?v=24-246','./script-v24-201.js?v=24-246','./sw-v24-246.js','./sw.js',
   './apple-touch-icon-v5.png','./favicon-32-v5.png','./icon-192-v5.png','./icon-512-v5.png','./icon-maskable-512-v5.png',
   './assets/ui/pink-coin.webp','./assets/ui/icons/duckipedia.webp','./assets/ducks/Standard-duck.webp','./assets/ducks/Top-hat-duck.webp',
   './duck-quest/assets/dash/Jump-Token.png','./duck-quest/assets/eggs/Common-egg.png','./duck-quest/assets/eggs/Rare-egg.png',
@@ -17,11 +17,11 @@ const APP_SHELL = [
   './duck-quest/assets/enemies/mimic/healthy/closed.webp','./duck-quest/assets/enemies/mimic/healthy/open.webp','./duck-quest/assets/enemies/mimic/healthy/idle-1.webp','./duck-quest/assets/enemies/mimic/healthy/idle-2.webp',
   './assets/ui/profile-borders/Sparkle-border.png','./assets/ui/profile-borders/Stitched-border.png','./assets/ui/profile-borders/Sakura-border.png',
   './shared-ui-theme-v24-131.css','./shared-ui-theme-v24-131.js',
-  './memory-game/index.html','./sort-game/index.html','./crane-game/index.html?v=24-245','./crane-game/play-v24-40.html?v=24-245','./crane-game/style-v24-40.css?v=24-245','./crane-game/script-v24-40.js?v=24-245',
-  './duck-quest/index.html','./duck-quest/js/game-v96.js?v=24-245','./duck-quest/js/quest-fixes-v204.js?v=24-245','./duck-quest/js/quest-fixes-v207.js?v=24-245','./duck-quest/js/quest-fixes-v209.js?v=24-245','./duck-quest/js/theme-refresh-v211.js?v=24-245','./duck-quest/js/theme-fixes-v212.js?v=24-245','./duck-quest/js/boost-items-v213.js?v=24-245','./duck-quest/js/boost-labels-v215.js?v=24-245','./assets/bakery/drops/Gold-heart-refill.webp','./assets/bakery/drops/Pink-heart-refill.webp','./assets/items/quest-boosts/Warm-blanket.png','./assets/items/quest-boosts/Exp-candy-large.png','./assets/items/quest-boosts/Exp-candy-small.png','./hub-shop-boosts-v213.js?v=24-245','./hub-exp-candy-use-v215.js?v=24-245','./duck-quest/js/hatchery-v179.js?v=24-245','./duck-quest/js/hatchery-egg-position-v192.js?v=24-245','./duck-quest/js/hatchery-ui-v193.js?v=24-245','./duck-quest/js/dash-home-v180.js?v=24-245','./duck-quest/js/dash-screen-v184.js?v=24-245','./duck-quest/js/dash-screen-v193.js?v=24-245','./duck-quest/js/token-shop-v200.js?v=24-245','./duck-quest/css/style-v82.css?v=24-245',
+  './memory-game/index.html','./sort-game/index.html','./crane-game/index.html?v=24-246','./crane-game/play-v24-40.html?v=24-246','./crane-game/style-v24-40.css?v=24-246','./crane-game/script-v24-40.js?v=24-246',
+  './duck-quest/index.html','./duck-quest/js/game-v96.js?v=24-246','./duck-quest/js/quest-fixes-v204.js?v=24-246','./duck-quest/js/quest-fixes-v207.js?v=24-246','./duck-quest/js/quest-fixes-v209.js?v=24-246','./duck-quest/js/theme-refresh-v211.js?v=24-246','./duck-quest/js/theme-fixes-v212.js?v=24-246','./duck-quest/js/boost-items-v213.js?v=24-246','./duck-quest/js/boost-labels-v215.js?v=24-246','./assets/bakery/drops/Gold-heart-refill.webp','./assets/bakery/drops/Pink-heart-refill.webp','./assets/items/quest-boosts/Warm-blanket.png','./assets/items/quest-boosts/Exp-candy-large.png','./assets/items/quest-boosts/Exp-candy-small.png','./hub-shop-boosts-v213.js?v=24-246','./hub-exp-candy-use-v215.js?v=24-246','./duck-quest/js/hatchery-v179.js?v=24-246','./duck-quest/js/hatchery-egg-position-v192.js?v=24-246','./duck-quest/js/hatchery-ui-v193.js?v=24-246','./duck-quest/js/dash-home-v180.js?v=24-246','./duck-quest/js/dash-screen-v184.js?v=24-246','./duck-quest/js/dash-screen-v193.js?v=24-246','./duck-quest/js/token-shop-v200.js?v=24-246','./duck-quest/css/style-v82.css?v=24-246',
   './bakery/index.html',
-  './duck-quest/js/dash-background-fix-v226.js?v=24-245',
-  './duck-quest/js/merchant-fix-v218.js?v=24-245',
+  './duck-quest/js/dash-background-fix-v226.js?v=24-246',
+  './duck-quest/js/merchant-fix-v218.js?v=24-246',
   './duck-quest/assets/dash/Angel-Wing.png',
   './duck-quest/assets/dash/Bubble-icon.png',
   './duck-quest/assets/dash/Bubble.png',
@@ -29,8 +29,6 @@ const APP_SHELL = [
   './duck-quest/assets/dash/backgrounds/DD-Ocean-3x.png',
   './duck-quest/assets/dash/backgrounds/DD-Candyland-3x.png',
   './duck-quest/assets/dash/backgrounds/DD-CloudGarden-3x.png',
-  './duck-quest/js/love-interest-lukio-v244.js?v=24-245',
-  './duck-quest/css/love-interest-lukio-v244.css?v=24-245',
   './duck-quest/assets/trading-cards/fabled/F-acorn-mouse.png',
   './duck-quest/assets/trading-cards/fabled/F-flower.png',
   './duck-quest/assets/trading-cards/fabled/F-bee.png',
@@ -48,6 +46,27 @@ const APP_SHELL = [
   './assets/miko/Miko-Lukio-hoodie-shop.png',
   './assets/miko/Miko-Lukio-hoodie.png',
   './assets/miko/Miko-lukio-sleeve.png',
+  './duck-quest/js/love-interests-v246.js?v=24-246',
+  './duck-quest/css/love-interests-v246.css?v=24-246',
+  './duck-quest/assets/love-interests/shinobu/Shinobu-duck.png',
+  './duck-quest/assets/love-interests/shinobu/Shinobu-idle-1.png',
+  './duck-quest/assets/love-interests/shinobu/Shinobu-idle-2.png',
+  './duck-quest/assets/love-interests/shinobu/Shinobu-happy.png',
+  './duck-quest/assets/love-interests/shinobu/Miko-Shino-Baret.png',
+  './duck-quest/assets/love-interests/shinobu/Miko-Shino-Boots.png',
+  './duck-quest/assets/love-interests/shinobu/Miko-Shino-Jeans.png',
+  './duck-quest/assets/love-interests/shinobu/Miko-Shino-Sweater.png',
+  './duck-quest/assets/love-interests/shinobu/Miko-Shino-Sweater-Shop.png',
+  './duck-quest/assets/love-interests/shinobu/Miko-Shino-sleeve.png',
+  './duck-quest/assets/love-interests/cheryln/Cheryln-duck.png',
+  './duck-quest/assets/love-interests/cheryln/Cheryln-idle-1.png',
+  './duck-quest/assets/love-interests/cheryln/Cheryln-idle-2.png',
+  './duck-quest/assets/love-interests/cheryln/Cheryln-happy.png',
+  './duck-quest/assets/love-interests/cheryln/Miko-Cheryln-Banana-Hairpin.png',
+  './duck-quest/assets/love-interests/cheryln/Miko-Cheryln-boots.png',
+  './duck-quest/assets/love-interests/cheryln/Miko-Cheryln-shorts.png',
+  './duck-quest/assets/love-interests/cheryln/Miko-Cheryln-sweater.png',
+  './duck-quest/assets/love-interests/cheryln/Miko-Cheryln-white-tights.png',
 ];
 
 self.addEventListener('message', event => {

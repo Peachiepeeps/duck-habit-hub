@@ -1773,6 +1773,16 @@ const FURNITURE_RECIPES = Object.freeze(Object.fromEntries(
 ));
 
 const DUCKS = {
+  "cheryln-duck": {
+    "name": "Cheryln Duck",
+    "file": "duck-quest/assets/love-interests/cheryln/Cheryln-duck.png",
+    "acquisition": "love-interest-cheryln"
+  },
+  "shinobu-duck": {
+    "name": "Shinobu Duck",
+    "file": "duck-quest/assets/love-interests/shinobu/Shinobu-duck.png",
+    "acquisition": "love-interest-shinobu"
+  },
   "lukio-duck": {
     "name": "Lukio Duck",
     "file": "duck-quest/assets/love-interests/lukio/Lukio-duck.png",
@@ -2625,6 +2635,16 @@ const MIKO_THUMB_BOUNDS = {
 };
 
 const MIKO_ASSETS = {
+  "shino-beret": { label: "Shinobu Set · Beret", file: "Miko-Shino-Baret.png", z: 49 },
+  "shino-sweater": { label: "Shinobu Set · Sweater", file: "Miko-Shino-Sweater.png", previewFile: "Miko-Shino-Sweater-Shop.png", z: 34 },
+  "shino-sleeve": { label: "Shinobu Set · Sleeve", file: "Miko-Shino-sleeve.png", z: 37 },
+  "shino-jeans": { label: "Shinobu Set · Jeans", file: "Miko-Shino-Jeans.png", z: 31 },
+  "shino-boots": { label: "Shinobu Set · Boots", file: "Miko-Shino-Boots.png", z: 39 },
+  "cheryln-hairpin": { label: "Cheryln Set · Banana Hairpin", file: "Miko-Cheryln-Banana-Hairpin.png", z: 49 },
+  "cheryln-sweater": { label: "Cheryln Set · Sweater", file: "Miko-Cheryln-sweater.png", previewFile: "Miko-Cheryln-sweater.png", z: 34 },
+  "cheryln-shorts": { label: "Cheryln Set · Shorts", file: "Miko-Cheryln-shorts.png", z: 31 },
+  "cheryln-tights": { label: "Cheryln Set · White Tights", file: "Miko-Cheryln-white-tights.png", z: 29 },
+  "cheryln-boots": { label: "Cheryln Set · Boots", file: "Miko-Cheryln-boots.png", z: 39 },
   "lukio-hair-streak": { label: "Lukio Set · Hair Streak", file: "Miko-Lukio-Hair-Streak.png", z: 49 },
   "lukio-hoodie": { label: "Lukio Set · Hoodie", file: "Miko-Lukio-hoodie.png", previewFile: "Miko-Lukio-hoodie-shop.png", z: 34 },
   "lukio-sleeve": { label: "Lukio Set · Sleeve", file: "Miko-lukio-sleeve.png", z: 37 },
@@ -2929,15 +2949,15 @@ const MIKO_CLOSET = [
   },
   { id: "bangsStyle", label: "Bangs", type: "single", options: ["bangs", "bangs-pinned"] },
   { id: "shirt", label: "Shirt", type: "single", allowNone: true, options: ["top-button", "shirt-blouse"] },
-  { id: "outer", label: "Layers", type: "single", allowNone: true, options: ["top-hoodie", "top-sweater", "top-big-shirt", "outer-black-blazer", "lukio-hoodie"] },
-  { id: "bottom", label: "Bottoms", type: "single", options: ["bottom-capris", "bottom-jeans", "bottom-boxers", "bottom-shorts", "lukio-shorts"] },
-  { id: "socks", label: "Socks", type: "single", allowNone: true, options: ["socks", "socks-garter", "lukio-socks"] },
-  { id: "shoes", label: "Shoes", type: "single", allowNone: true, options: ["shoes-loafer", "shoes-fancy-loafers", "lukio-booties"] },
+  { id: "outer", label: "Layers", type: "single", allowNone: true, options: ["top-hoodie", "top-sweater", "top-big-shirt", "outer-black-blazer", "lukio-hoodie", "shino-sweater", "cheryln-sweater"] },
+  { id: "bottom", label: "Bottoms", type: "single", options: ["bottom-capris", "bottom-jeans", "bottom-boxers", "bottom-shorts", "lukio-shorts", "shino-jeans", "cheryln-shorts"] },
+  { id: "socks", label: "Socks", type: "single", allowNone: true, options: ["socks", "socks-garter", "lukio-socks", "cheryln-tights"] },
+  { id: "shoes", label: "Shoes", type: "single", allowNone: true, options: ["shoes-loafer", "shoes-fancy-loafers", "lukio-booties", "shino-boots", "cheryln-boots"] },
   {
     id: "extras",
     label: "Extras",
     type: "multi",
-    options: ["belt", "headband", "hairpins-black", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip"]
+    options: ["belt", "headband", "hairpins-black", "shino-beret", "cheryln-hairpin", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip"]
   }
 ];
 
@@ -3191,16 +3211,16 @@ function normalizeMikoOutfit(rawOutfit = {}) {
 
   if (!hadShirtField) shirt = "top-button";
   if (![null, "top-button", "shirt-blouse"].includes(shirt)) shirt = "top-button";
-  if (![null, "top-hoodie", "top-sweater", "top-big-shirt", "outer-black-blazer", "lukio-hoodie"].includes(outer)) outer = "top-hoodie";
+  if (![null, "top-hoodie", "top-sweater", "top-big-shirt", "outer-black-blazer", "lukio-hoodie", "shino-sweater", "cheryln-sweater"].includes(outer)) outer = "top-hoodie";
 
   const bangsStyle = ["bangs", "bangs-pinned"].includes(incoming.bangsStyle)
     ? incoming.bangsStyle
     : "bangs";
-  const bottom = ["bottom-capris", "bottom-jeans", "bottom-boxers", "bottom-shorts", "lukio-shorts"].includes(incoming.bottom)
+  const bottom = ["bottom-capris", "bottom-jeans", "bottom-boxers", "bottom-shorts", "lukio-shorts", "shino-jeans", "cheryln-shorts"].includes(incoming.bottom)
     ? incoming.bottom
     : "bottom-capris";
-  const socks = ["socks", "socks-garter", "lukio-socks"].includes(incoming.socks) ? incoming.socks : null;
-  const shoes = [null, "shoes-loafer", "shoes-fancy-loafers", "lukio-booties"].includes(incoming.shoes)
+  const socks = ["socks", "socks-garter", "lukio-socks", "cheryln-tights"].includes(incoming.socks) ? incoming.socks : null;
+  const shoes = [null, "shoes-loafer", "shoes-fancy-loafers", "lukio-booties", "shino-boots", "cheryln-boots"].includes(incoming.shoes)
     ? incoming.shoes
     : "shoes-loafer";
 
@@ -3790,7 +3810,7 @@ const GACHA_RARITY_WEIGHTS = Object.freeze({
 });
 const GACHA_SUPER_DUCKS = new Set(["peep-duck", "miko-duck", "io-duck", "miho-duck", "annika-duck", "goose", "rainbow-duck"]);
 const GACHA_GATED_SUPER_DUCKS = new Set(["peep-duck", "miko-duck", "io-duck", "miho-duck", "annika-duck", "goose"]);
-const GACHA_EXCLUDED_DUCKS = new Set(["tiny-duck", "tiny-duck-stack", "pile-of-tiny-ducks", "lukio-duck"]);
+const GACHA_EXCLUDED_DUCKS = new Set(["tiny-duck", "tiny-duck-stack", "pile-of-tiny-ducks", "lukio-duck", "shinobu-duck", "cheryln-duck"]);
 const DUCK_TROPHY_MILESTONES = Object.freeze([
   { count: 1, tier: "bronze", label: "Bronze" },
   { count: 25, tier: "silver", label: "Silver" },
@@ -5446,6 +5466,7 @@ function getMikoEquippedAssetIds() {
   else if (outfit.outer === "top-sweater") ids.push("top-sweater-sleeve");
   else if (outfit.outer === "outer-black-blazer") ids.push("outer-black-blazer-arm");
   else if (outfit.outer === "lukio-hoodie") ids.push("lukio-sleeve");
+  else if (outfit.outer === "shino-sweater") ids.push("shino-sleeve");
 
   // Socks sit below any equipped shoes. Belt is already inserted earlier so it
   // stays under outer Layers but still above shirts and bottoms.
@@ -9559,6 +9580,10 @@ function duckDiscoveryHint(duck) {
   if (duck.recipe) return "Craft this duck in the Duck Crafter to discover it.";
 
   switch (duck.acquisition) {
+    case "love-interest-cheryln":
+      return "Meet Cheryln while exploring Duck Quest as Miko to unlock this special duck.";
+    case "love-interest-shinobu":
+      return "Meet Shinobu while exploring Duck Quest as Miko to unlock this special duck.";
     case "love-interest-lukio":
       return "Meet Lukio while exploring Duck Quest as Miko to unlock this special duck.";
     case "honk-of-approval":

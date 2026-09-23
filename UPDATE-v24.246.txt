@@ -1,0 +1,1 @@
+Duckie Days v24.246\n\n- Adds Shinobu and Cheryln as Miko love-interest encounters.\n- Shared love-interest chance stays 5 percent total and remains Miko-only.\n- Shinobu and Cheryln each grant their duck and Miko outfit on their solo encounter.\n- Their Rare cards unlock together from the Shinobu x Cheryln reunion cutscene.\n

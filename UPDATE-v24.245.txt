@@ -1,5 +1,0 @@
-Duckie Days v24.245
-
-- Fixes Lukio Duck's broken Duckipedia thumbnail by using the original special-duck image.
-- Fabled cards now use their finished uploaded card images directly, with no standard template layered over them.
-- Locked Fabled cards stay visible but are greyed/darkened until collected.
