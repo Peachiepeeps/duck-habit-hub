@@ -1,2 +1,2 @@
-// Legacy installed-PWA compatibility bridge.
-importScripts('./sw-v24-252.js?v=24-252');
+// Legacy service-worker bridge.
+importScripts('./sw-v24-254.js?v=24-254');

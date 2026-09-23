@@ -1,0 +1,11 @@
+Duckie Days v24.254 — Task Progression
+
+- New Duck Bucks currency: +1 for every completed Task, spendable only in the Task Shop.
+- Task Shop includes five exclusive plushes at 20 Duck Bucks each, EXP Candies, Card Packs, Rare Eggs, and Jump Token bundles.
+- New 12-slot Task Collectible Shelf unlocks at 50 lifetime completed tasks and is reached from a new right-side room arrow.
+- Task Treasure Meter keeps rewarding beyond 1/5/15, with fixed rewards through 60 and repeat Duck Buck rewards every 20 tasks after that.
+- Perfect Day Chest rewards finishing every Task due that day.
+- Every Task has a 15% chance for a Surprise Task Drop.
+- Completing 5 Tasks in a day activates a +20% Buddy ability boost in Duck Quest until the daily reset.
+- Miko Failed Spell is now a gamble: 84% normal 1.85x, 15% huge 4.25x, 1% non-lethal backfire.
+- Mysterious Merchant tips his hat and automatically leaves after both wares are purchased.

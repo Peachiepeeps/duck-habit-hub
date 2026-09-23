@@ -2,7 +2,7 @@
 (function(){
   'use strict';
 
-  window.DUCKIE_DAYS_MERCHANT_FIX='24.225-discounted-colored-charms';
+  window.DUCKIE_DAYS_MERCHANT_FIX='24.254-auto-leave';
 
   const STYLE_ID='duckieMerchantV218Style';
   const HOLDER_CLASS='merchant-actions-v218';
@@ -73,6 +73,15 @@
         grid-template-columns:1fr!important;
         min-height:46px!important;
         text-align:center!important;
+      }
+      #chestSprite.merchant-tip-hat-v254{
+        transform-origin:55% 28%!important;
+        animation:merchantTipHatV254 .62s ease-in-out 1!important;
+      }
+      @keyframes merchantTipHatV254{
+        0%,100%{transform:translateY(0) rotate(0deg)}
+        35%{transform:translateY(3px) rotate(9deg)}
+        65%{transform:translateY(1px) rotate(-3deg)}
       }
       #chestLayer.merchant-scene-v218{
         display:grid!important;
@@ -252,6 +261,20 @@
     try{ persistAll(); }catch(error){ /* non-fatal */ }
     refreshVisibleCounts();
     try{ setMessage(`Bought ${ware.name}!`); }catch(error){ /* non-fatal */ }
+
+    const soldOut=Array.isArray(chest.wares) && chest.wares.length>0 && chest.wares.every(item=>Boolean(item?.sold));
+    if(soldOut){
+      chest.autoLeavingV254=true;
+      if(ui?.chestSprite){
+        ui.chestSprite.classList.remove('merchant-tip-hat-v254');
+        void ui.chestSprite.offsetWidth;
+        ui.chestSprite.classList.add('merchant-tip-hat-v254');
+      }
+      try{ setMessage('Sold out! Gentleman Duck tips his hat and heads on his way.'); }catch(error){ /* non-fatal */ }
+      setTimeout(()=>leaveMerchant(),720);
+      return;
+    }
+
     mountMerchant(true);
   }
 
@@ -334,6 +357,7 @@
     const chest=currentMerchant();
     const holder=ui?.eventChoiceActions;
     if(!chest || !holder) return false;
+    if(chest.autoLeavingV254) return true;
 
     installStyle();
     const wares=ensureStock(chest);

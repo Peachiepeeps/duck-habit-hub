@@ -589,7 +589,7 @@ const MIKO_SKILLS = [
     hitsAll: true,
     cooldown: 2,
     sprite: "assets/characters/miko/base/failed-spell.webp",
-    description: "A magical mishap explodes for heavy damage. Hits all enemies in Double Trouble."
+    description: "A chaotic gamble! Usually 1.85× to all enemies, with a 15% chance for a huge 4.25× blast and a tiny 1% chance to backfire on Miko."
   },
   {
     id: "hexed-heckle",
@@ -6061,31 +6061,48 @@ async function useAllEnemySkill(skill){
     setMessage(`${heroDisplayName()} got too flustered and the attack missed everybody!`);
     await sleep(600);
   } else {
-    const names=targets.map(enemy=>enemy.name).join(" and ");
-    setMessage(`${skillDisplayName(skill)} hits ${names}!`);
-    await sleep(260);
+    const failedSpellRoll=skill.id==="failed-spell"?Math.random():null;
+    const failedSpellBackfire=skill.id==="failed-spell" && failedSpellRoll<0.01;
+    const failedSpellHuge=skill.id==="failed-spell" && !failedSpellBackfire && failedSpellRoll<0.16;
 
-    for(const target of targets){
-      if(!target || target.hpNow<=0) continue;
-      selectCurrentEnemy(target);
-      const stats=peepStats();
-      const boostedAttack=stats.attack
-        *(skillState.attackBuffTurns>0?skillState.attackBuffMultiplier:1)
-        *(skillState.buddyAttackBuffTurns>0?skillState.buddyAttackMultiplier:1)
-        *(skillState.enemyDefenseDownTurns>0?skillState.enemyDefenseMultiplier:1);
-      const crit=Math.random()<0.11;
-      const variance=0.92+Math.random()*0.16;
-      const multiplier=Number(skill.multiplier)||1;
-      const dmg=Math.max(1,Math.round(boostedAttack*multiplier*variance*(crit?1.5:1)));
-      await hurtEnemy(dmg);
+    if(failedSpellBackfire){
+      const before=currentRun.hp;
+      const backlash=Math.max(1,Math.round(currentRun.maxHp*0.25));
+      currentRun.hp=Math.max(1,currentRun.hp-backlash);
+      const lost=Math.max(0,before-currentRun.hp);
+      setMessage(`Failed Spell BACKFIRED! The magic loops around and bonks Miko for ${lost} HP!`);
+      if(lost>0) showFloat(`-${lost}`,"damage","peep");
+      renderPeepHp();
+      await sleep(700);
+    } else {
+      const names=targets.map(enemy=>enemy.name).join(" and ");
+      setMessage(failedSpellHuge
+        ? `Failed Spell goes WILD! A huge blast hits ${names}!`
+        : `${skillDisplayName(skill)} hits ${names}!`);
+      await sleep(260);
 
-      if(skill.type==="damage-burn" && target.hpNow>0 && Math.random()<Number(skill.burnChance||1)){
-        skillState.enemyBurnTurns=Math.max(Number(skillState.enemyBurnTurns||0),Number(skill.burnTurns||99));
-        skillState.enemyBurnDamagePercent=Number(skill.burnDamagePercent||0.08);
-        saveCurrentEnemyEffects(target);
+      for(const target of targets){
+        if(!target || target.hpNow<=0) continue;
+        selectCurrentEnemy(target);
+        const stats=peepStats();
+        const boostedAttack=stats.attack
+          *(skillState.attackBuffTurns>0?skillState.attackBuffMultiplier:1)
+          *(skillState.buddyAttackBuffTurns>0?skillState.buddyAttackMultiplier:1)
+          *(skillState.enemyDefenseDownTurns>0?skillState.enemyDefenseMultiplier:1);
+        const crit=Math.random()<0.11;
+        const variance=0.92+Math.random()*0.16;
+        const multiplier=failedSpellHuge?4.25:(Number(skill.multiplier)||1);
+        const dmg=Math.max(1,Math.round(boostedAttack*multiplier*variance*(crit?1.5:1)));
+        await hurtEnemy(dmg);
+
+        if(skill.type==="damage-burn" && target.hpNow>0 && Math.random()<Number(skill.burnChance||1)){
+          skillState.enemyBurnTurns=Math.max(Number(skillState.enemyBurnTurns||0),Number(skill.burnTurns||99));
+          skillState.enemyBurnDamagePercent=Number(skill.burnDamagePercent||0.08);
+          saveCurrentEnemyEffects(target);
+        }
+        if(target.hpNow>0) saveCurrentEnemyEffects(target);
+        await sleep(80);
       }
-      if(target.hpNow>0) saveCurrentEnemyEffects(target);
-      await sleep(80);
     }
   }
 
@@ -6251,6 +6268,36 @@ async function useSkill(skill) {
       await hurtEnemy(dmg);
       if(i<hits-1 && currentEnemy?.hpNow>0) await sleep(90);
     }
+    }
+  } else if(skill.id==="failed-spell") {
+    if(heroCanMissFromFluster(skill)) {
+      setMessage(`${heroDisplayName()} got too flustered and missed!`);
+      await sleep(540);
+    } else {
+      if(skill.cooldown) skillState.cooldowns[skill.id]=skill.cooldown;
+      if(skill.oncePerBattle) skillState.onceUsed[skill.id]=true;
+      const roll=Math.random();
+      if(roll<0.01){
+        const before=currentRun.hp;
+        const backlash=Math.max(1,Math.round(currentRun.maxHp*0.25));
+        currentRun.hp=Math.max(1,currentRun.hp-backlash);
+        const lost=Math.max(0,before-currentRun.hp);
+        setMessage(`Failed Spell BACKFIRED! The magic loops around and bonks Miko for ${lost} HP!`);
+        if(lost>0) showFloat(`-${lost}`,"damage","peep");
+        renderPeepHp();
+        await sleep(700);
+      } else {
+        const huge=roll<0.16;
+        const multiplier=huge?4.25:(skill.multiplier||1.85);
+        const stats=peepStats();
+        const boostedAttack=stats.attack*(skillState.attackBuffTurns>0?skillState.attackBuffMultiplier:1)*(skillState.buddyAttackBuffTurns>0?skillState.buddyAttackMultiplier:1)*(skillState.enemyDefenseDownTurns>0?skillState.enemyDefenseMultiplier:1);
+        const crit=Math.random()<0.11;
+        const variance=0.9+Math.random()*0.2;
+        const dmg=Math.max(1,Math.round(boostedAttack*multiplier*variance*(crit?1.5:1)));
+        setMessage((huge?"Failed Spell goes WILD! HUGE DAMAGE!":"Failed Spell!") + (crit?" CRITICAL!":""));
+        await sleep(280);
+        await hurtEnemy(dmg);
+      }
     }
   } else if(skill.type==="damage-burn") {
     if(heroCanMissFromFluster(skill)) {
