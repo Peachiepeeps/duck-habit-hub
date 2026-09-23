@@ -1,5 +1,0 @@
-Duckie Days v24.255 — Task UI + Collectible Shelf Polish
-
-- Tasks window compacted: centered title at the top, then a clean row for Task Shop, Completed, and Add Task.
-- Collectible Shelf now mirrors the same kind of layout behavior as the Shelf of Ducks and adds color/theme swapping.
-- Room polish: mirror and book moved upward; right shelf arrow aligned with the left-side duck shelf arrow.

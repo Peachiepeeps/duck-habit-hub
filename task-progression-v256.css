@@ -1,0 +1,236 @@
+/* Duckie Days v24.256 — task panel + collectible shelf correction */
+
+.tasks-panel-v256 .task-replaced-title-v256,
+.tasks-panel-v256 .task-replaced-actions-v256{
+  display:none !important;
+}
+
+#taskTopShellV256{
+  margin:0 0 10px;
+  display:grid;
+  gap:10px;
+}
+.task-heading-v256{
+  display:grid;
+  gap:2px;
+}
+.task-eyebrow-v256{
+  margin:0;
+  font-size:.66rem;
+  font-weight:950;
+  letter-spacing:.15em;
+  color:#c86d90;
+  text-transform:uppercase;
+}
+.task-title-v256{
+  margin:0;
+  font-size:1.38rem;
+  line-height:1.05;
+  font-weight:950;
+  color:#583947;
+}
+.task-actions-row-v256{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+  align-items:stretch;
+}
+.task-actions-row-v256 > button,
+.task-header-action-v256{
+  min-width:0;
+  width:100%;
+  min-height:42px;
+  justify-content:center !important;
+  margin:0 !important;
+}
+.tasks-panel-v256 .task-tabs,
+.tasks-panel-v256 .tasks-tabs,
+.tasks-panel-v256 [role="tablist"]{
+  margin-top:0 !important;
+  margin-bottom:10px !important;
+}
+
+/* Condensed Task Treasure area */
+.tasks-panel-v256 .task-treasure-card-v254{
+  margin:0 0 10px;
+  padding:10px;
+  gap:8px;
+  border-radius:16px;
+}
+.tasks-panel-v256 .task-treasure-head-v254>div:first-child>strong{font-size:1rem;}
+.tasks-panel-v256 .task-treasure-milestones-v254{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:6px;
+  overflow:visible;
+  padding-bottom:0;
+}
+.tasks-panel-v256 .task-treasure-chip-v254{
+  min-height:54px;
+  padding:6px 4px;
+  border-radius:12px;
+}
+.tasks-panel-v256 .task-treasure-chip-v254 span{font-size:.48rem;}
+.tasks-panel-v256 .task-perks-v254{
+  grid-template-columns:1fr;
+  gap:6px;
+}
+.tasks-panel-v256 .task-perk-v254,
+.tasks-panel-v256 .task-shelf-progress-v254{
+  padding:9px 10px;
+}
+.tasks-panel-v256 #tasksContent,
+.tasks-panel-v256 .tasks-content{
+  margin-top:2px;
+}
+
+/* Main room alignment */
+#taskShelfButton.task-shelf-button-v256{
+  top:auto;
+  bottom:auto;
+  right:3% !important;
+  left:auto !important;
+}
+#roomBookImage{translate:0 -28% !important;}
+.book-hotspot{top:69.5% !important;}
+
+/* Collectible shelf */
+#taskCollectibleWing.task-shelf-v256{
+  --shelf-main:#8b5f45;
+  --shelf-line:#171311;
+  --shelf-paper:#efe2d5;
+  position:absolute;
+  z-index:40;
+  inset:10.5% 4.8% 7%;
+  pointer-events:none;
+}
+#taskCollectibleWing[data-shelf-theme="linen"]{--shelf-main:#d6c9bb;--shelf-line:#8d7b68;--shelf-paper:#f7f0e6;}
+#taskCollectibleWing[data-shelf-theme="cocoa"]{--shelf-main:#8b5f45;--shelf-line:#171311;--shelf-paper:#efe2d5;}
+#taskCollectibleWing[data-shelf-theme="espresso"]{--shelf-main:#5d4337;--shelf-line:#161110;--shelf-paper:#eadfda;}
+
+#taskCollectibleWing.task-shelf-v256 .task-collectible-title-v254{
+  top:0;
+  left:10%;
+  right:10%;
+  display:grid;
+  gap:2px;
+  text-align:center;
+}
+#taskCollectibleWing.task-shelf-v256 .task-collectible-title-v254 span{
+  font-size:.62rem;
+  font-weight:950;
+  letter-spacing:.15em;
+  color:#8a6572;
+}
+#taskCollectibleWing.task-shelf-v256 .task-collectible-title-v254 strong{
+  font-size:1.05rem;
+  color:#6f4f5a;
+}
+#taskShelfThemeBarV256{
+  position:absolute;
+  top:4.8%;
+  right:6.4%;
+  z-index:2;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  pointer-events:auto;
+  padding:8px 10px;
+  border-radius:999px;
+  background:rgba(255,248,251,.88);
+  box-shadow:0 3px 0 rgba(112,72,79,.12);
+}
+.task-shelf-theme-choice-v256{
+  width:22px;
+  height:22px;
+  padding:0;
+  border-radius:50%;
+  border:2px solid rgba(117,85,99,.18);
+  background:#fff;
+  display:grid;
+  place-items:center;
+}
+.task-shelf-theme-choice-v256 > span{
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  display:block;
+  background:var(--swatch-main);
+  box-shadow:inset 0 0 0 2px var(--swatch-line);
+}
+.task-shelf-theme-choice-v256.active{
+  border-color:#e38cab;
+  box-shadow:0 0 0 2px rgba(227,140,171,.18);
+}
+
+#taskCollectibleWing.task-shelf-v256 #taskCollectibleSlots,
+#taskCollectibleWing.task-shelf-v256 .task-collectible-slots-v254{
+  position:absolute;
+  top:12.5%;
+  left:2.5%;
+  right:2.5%;
+  bottom:2.8%;
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-template-rows:repeat(6,minmax(0,1fr));
+  gap:0 5.5%;
+  padding:3.3% 4% 2.5%;
+  pointer-events:auto;
+  border:8px solid var(--shelf-line);
+  border-radius:10px;
+  background:
+    linear-gradient(to bottom,
+      var(--shelf-main) 0 14%,
+      var(--shelf-line) 14% 15.2%,
+      var(--shelf-main) 15.2% 30%,
+      var(--shelf-line) 30% 31.2%,
+      var(--shelf-main) 31.2% 46%,
+      var(--shelf-line) 46% 47.2%,
+      var(--shelf-main) 47.2% 62%,
+      var(--shelf-line) 62% 63.2%,
+      var(--shelf-main) 63.2% 78%,
+      var(--shelf-line) 78% 79.2%,
+      var(--shelf-main) 79.2% 94%,
+      var(--shelf-line) 94% 95.2%,
+      var(--shelf-main) 95.2% 100%);
+  box-shadow:0 5px 0 rgba(76,52,43,.12), inset 0 0 0 3px rgba(255,255,255,.08);
+}
+#taskCollectibleWing.task-shelf-v256 .task-collectible-slot-v254{
+  position:relative;
+  align-self:end;
+  justify-self:center;
+  width:100%;
+  aspect-ratio:1/1;
+  margin-bottom:14%;
+  display:grid;
+  place-items:end center;
+  border:0;
+  padding:0;
+  background:transparent;
+}
+#taskCollectibleWing.task-shelf-v256 .task-collectible-slot-v254 img{
+  width:96%;
+  height:96%;
+  object-fit:contain;
+  filter:drop-shadow(0 3px 2px rgba(23,17,16,.2));
+}
+#taskCollectibleWing.task-shelf-v256 .task-collectible-slot-v254>span{
+  width:36px;
+  height:36px;
+  align-self:center;
+  display:grid;
+  place-items:center;
+  border:2px dashed rgba(255,255,255,.55);
+  border-radius:50%;
+  background:rgba(255,255,255,.58);
+  color:rgba(77,59,54,.45);
+  font-size:1.15rem;
+  font-weight:850;
+}
+
+@media (max-width:600px){
+  .task-actions-row-v256{grid-template-columns:1fr;}
+  .tasks-panel-v256 .task-treasure-milestones-v254{grid-template-columns:repeat(2,minmax(0,1fr));}
+  #taskShelfThemeBarV256{top:4.2%;right:5.2%;padding:6px 8px;gap:6px;}
+  .task-shelf-theme-choice-v256{width:20px;height:20px;}
+}
