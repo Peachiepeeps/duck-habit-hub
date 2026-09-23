@@ -3431,6 +3431,59 @@ function persistAll() {
   localStorage.setItem(HUB_SAVE_KEY, JSON.stringify(hubSave));
 }
 
+
+// v24.251 — Love-interest reward bridge. The love-interest runtime lives in a
+// separate script, while Duck Quest keeps an in-memory hubSave object. Merge
+// only the reward-bearing fields here so a subsequent persistAll() cannot
+// overwrite a freshly-earned duck, outfit, or Trading Card.
+window.DuckieQuestLoveRewardSync = function(incoming){
+  try{
+    if(!incoming || typeof incoming!=="object") return false;
+
+    if(!hubSave.loveInterests || typeof hubSave.loveInterests!=="object") hubSave.loveInterests={};
+    for(const [id,state] of Object.entries(incoming.loveInterests||{})){
+      if(!state || typeof state!=="object") continue;
+      hubSave.loveInterests[id]={...(hubSave.loveInterests[id]||{}),...state};
+    }
+
+    if(!hubSave.loveInterestPairs || typeof hubSave.loveInterestPairs!=="object") hubSave.loveInterestPairs={};
+    for(const [id,state] of Object.entries(incoming.loveInterestPairs||{})){
+      if(!state || typeof state!=="object") continue;
+      hubSave.loveInterestPairs[id]={...(hubSave.loveInterestPairs[id]||{}),...state};
+    }
+
+    if(!hubSave.characterUnlockedItems || typeof hubSave.characterUnlockedItems!=="object") hubSave.characterUnlockedItems={};
+    const currentMiko=Array.isArray(hubSave.characterUnlockedItems.miko)?hubSave.characterUnlockedItems.miko:[];
+    const incomingMiko=Array.isArray(incoming.characterUnlockedItems?.miko)?incoming.characterUnlockedItems.miko:[];
+    hubSave.characterUnlockedItems.miko=[...new Set([...currentMiko,...incomingMiko])];
+
+    const currentDucks=Array.isArray(hubSave.unlockedDucks)?hubSave.unlockedDucks:[];
+    const incomingDucks=Array.isArray(incoming.unlockedDucks)?incoming.unlockedDucks:[];
+    hubSave.unlockedDucks=[...new Set([...currentDucks,...incomingDucks])];
+
+    if(!hubSave.duckCollectionCounts || typeof hubSave.duckCollectionCounts!=="object") hubSave.duckCollectionCounts={};
+    for(const [duckId,count] of Object.entries(incoming.duckCollectionCounts||{})){
+      hubSave.duckCollectionCounts[duckId]=Math.max(Number(hubSave.duckCollectionCounts[duckId]||0),Number(count||0));
+    }
+
+    if(!hubSave.tradingCards || typeof hubSave.tradingCards!=="object") hubSave.tradingCards={};
+    if(!hubSave.tradingCards.owned || typeof hubSave.tradingCards.owned!=="object") hubSave.tradingCards.owned={};
+    const incomingCards=incoming.tradingCards && typeof incoming.tradingCards==="object"?incoming.tradingCards:{};
+    for(const [cardId,count] of Object.entries(incomingCards.owned||{})){
+      hubSave.tradingCards.owned[cardId]=Math.max(Number(hubSave.tradingCards.owned[cardId]||0),Number(count||0));
+    }
+    const unseenNow=Array.isArray(hubSave.tradingCards.unseen)?hubSave.tradingCards.unseen:[];
+    const unseenIncoming=Array.isArray(incomingCards.unseen)?incomingCards.unseen:[];
+    hubSave.tradingCards.unseen=[...new Set([...unseenNow,...unseenIncoming])];
+
+    persistAll();
+    return true;
+  }catch(error){
+    console.warn("Love-interest reward sync failed:",error);
+    return false;
+  }
+};
+
 function clampInt(value,min,max,fallback) {
   const n = Math.round(Number(value));
   return Number.isFinite(n) ? Math.min(max,Math.max(min,n)) : fallback;

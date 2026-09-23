@@ -2,15 +2,16 @@
   "use strict";
 
   const SAVE_KEY = "duckHabitHubSave_v1";
-  const SHARED_CHANCE = 0.05;
+  const SHARED_CHANCE = 0.02;
   const HEART_SRC = "assets/love-interests/lukio/Pixel-heart.png";
-  const MIKO_IDLE = "assets/characters/miko/base/idle-1.webp";
+  const MIKO_IDLE_1 = "assets/characters/miko/base/idle-1.webp";
+  const MIKO_IDLE_2 = "assets/characters/miko/base/idle-2.webp";
   const MIKO_SMUG = "assets/characters/miko/base/smug.webp";
 
   const CHARACTERS = {
     miko: {
       name: "Miko",
-      sprites: { idle: MIKO_IDLE, smug: MIKO_SMUG }
+      sprites: { idle1: MIKO_IDLE_1, idle2: MIKO_IDLE_2, smug: MIKO_SMUG }
     },
     lukio: {
       name: "Lukio",
@@ -440,6 +441,11 @@
   }
 
   function save(data){
+    if (typeof window.DuckieQuestLoveRewardSync === "function") {
+      try {
+        if (window.DuckieQuestLoveRewardSync(data)) return;
+      } catch (_) {}
+    }
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));
   }
 
@@ -513,9 +519,10 @@
     }
     if (options.grantCard) {
       state.cardUnlocked = true;
-      grantCard(data, cfg.cardId, 1);
+      const owned = Math.max(0, Number(data.tradingCards?.owned?.[cfg.cardId] || 0));
+      if (owned < 1) grantCard(data, cfg.cardId, 1);
     }
-    state.unlockedAt = Date.now();
+    if (!state.unlockedAt) state.unlockedAt = Date.now();
   }
 
   function unlockCardsOnly(data, keys){
@@ -524,95 +531,184 @@
       const cfg = CHARACTERS[key];
       const state = root.loveInterests[key];
       state.cardUnlocked = true;
-      grantCard(data, cfg.cardId, 1);
+      const owned = Math.max(0, Number(data.tradingCards?.owned?.[cfg.cardId] || 0));
+      if (owned < 1) grantCard(data, cfg.cardId, 1);
     }
   }
 
-  function spriteFor(charId, pose){
+  let sceneFrameTimer = null;
+  let sceneFrameIndex = 0;
+
+  function cleanDialogueText(value){
+    return String(value || "")
+      .replace(/\*(?:happy|content|threaten|angry|smug|thinking)\*\s*/gi, "")
+      .replace(/^\((?:winks?|smug)\)\s*/i, "")
+      .replace(/\s+\*(?:happy|content|threaten|angry|smug|thinking)\*$/gi, "")
+      .trim();
+  }
+
+  function spriteFrames(charId, pose){
     const cfg = CHARACTERS[charId];
-    if (!cfg) return "";
-    if (charId === "miko") return cfg.sprites[pose || "idle"] || cfg.sprites.idle;
-    return cfg.sprites[pose || "idle1"] || cfg.sprites.idle1 || cfg.sprites.idle;
+    if (!cfg) return [];
+    const p = String(pose || (charId === "miko" ? "idle" : "idle1")).toLowerCase();
+    const idle = [cfg.sprites.idle1, cfg.sprites.idle2].filter(Boolean);
+    if (p === "idle" || p === "idle1" || p === "idle2" || p === "neutral") {
+      return idle.length ? idle : Object.values(cfg.sprites).filter(Boolean).slice(0, 1);
+    }
+    const special = cfg.sprites[p] || cfg.sprites[pose];
+    return special ? [special] : (idle.length ? idle : []);
+  }
+
+  function stopSceneAnimation(){
+    if (sceneFrameTimer) clearInterval(sceneFrameTimer);
+    sceneFrameTimer = null;
   }
 
   function sceneLayer(){
-    let el = document.querySelector(".love-interest-layer");
+    const battlefield = document.querySelector("#battlefield");
+    if (!battlefield) return null;
+    let el = battlefield.querySelector(".love-interest-battle-scene");
     if (el) return el;
     el = document.createElement("div");
-    el.className = "love-interest-layer hidden";
+    el.className = "love-interest-battle-scene hidden";
+    el.setAttribute("aria-hidden", "true");
     el.innerHTML = `
-      <section class="love-interest-card" role="dialog" aria-modal="true" aria-label="Love interest encounter">
-        <p class="love-interest-kicker"></p>
-        <h2 class="love-interest-title"></h2>
-        <div class="love-interest-stage">
-          <img class="love-interest-left" src="" alt="">
-          <span class="love-interest-heart hidden"><img src="${HEART_SRC}" alt=""></span>
-          <img class="love-interest-right" src="" alt="">
-        </div>
-        <div class="love-interest-dialogue">
-          <strong class="love-interest-speaker"></strong>
-          <p class="love-interest-line"></p>
-        </div>
-        <button type="button" class="love-interest-next">Next</button>
-      </section>`;
-    document.body.append(el);
+      <img class="love-interest-battle-sprite love-interest-battle-left" src="" alt="">
+      <span class="love-interest-battle-heart hidden"><img src="${HEART_SRC}" alt=""></span>
+      <img class="love-interest-battle-sprite love-interest-battle-right" src="" alt="">`;
+    battlefield.append(el);
     return el;
+  }
+
+  function updateSceneSprites(state){
+    if (!state?.el) return;
+    const leftFrames = spriteFrames(state.scene.leftId, state.leftPose);
+    const rightFrames = spriteFrames(state.scene.rightId, state.rightPose);
+    if (leftFrames.length) state.left.src = leftFrames[sceneFrameIndex % leftFrames.length];
+    if (rightFrames.length) state.right.src = rightFrames[sceneFrameIndex % rightFrames.length];
+  }
+
+  function startSceneAnimation(state){
+    stopSceneAnimation();
+    sceneFrameIndex = 0;
+    updateSceneSprites(state);
+    sceneFrameTimer = setInterval(() => {
+      sceneFrameIndex = (sceneFrameIndex + 1) % 2;
+      updateSceneSprites(state);
+    }, 520);
+  }
+
+  function sceneRewardMessage(scene){
+    if (scene.id.includes("-")) return "Both Trading Cards unlocked! ♡";
+    if (scene.id === "lukio") return "Lukio Duck, Miko's Lukio outfit, and Lukio's card unlocked! ♡";
+    return `${scene.title} Duck and Miko's ${scene.title} outfit unlocked! ♡`;
+  }
+
+  function markSceneUi(active){
+    const selectors = [".peep-combatant", "#enemyCombatant", "#enemyCombatant2", "#buddyCombatant", "#chestLayer", "#commandGrid", "#postFloorActions"];
+    selectors.forEach(selector => document.querySelector(selector)?.classList.toggle("love-interest-scene-hidden", active));
+    document.querySelector("#battlefield")?.classList.toggle("love-interest-scene-active", active);
   }
 
   function showScene(sceneId, onFinished){
     const scene = SCENES[sceneId];
     if (!scene || open) return false;
-    open = true;
-
     const el = sceneLayer();
-    const kicker = el.querySelector(".love-interest-kicker");
-    const title = el.querySelector(".love-interest-title");
-    const left = el.querySelector(".love-interest-left");
-    const right = el.querySelector(".love-interest-right");
-    const heart = el.querySelector(".love-interest-heart");
-    const speaker = el.querySelector(".love-interest-speaker");
-    const line = el.querySelector(".love-interest-line");
-    const next = el.querySelector(".love-interest-next");
+    const message = document.querySelector("#battleMessage");
+    const actions = document.querySelector("#eventChoiceActions");
+    if (!el || !message || !actions) return false;
 
-    kicker.textContent = scene.kicker || "LOVE INTEREST ENCOUNTER";
-    title.textContent = scene.title || "Love Interest";
+    open = true;
+    markSceneUi(true);
+    const encounterLabel = document.querySelector("#encounterLabel");
+    if (encounterLabel) encounterLabel.textContent = `${scene.kicker || "LOVE INTEREST"} · ${scene.title}`;
+
+    const state = {
+      scene,
+      el,
+      left: el.querySelector(".love-interest-battle-left"),
+      right: el.querySelector(".love-interest-battle-right"),
+      heart: el.querySelector(".love-interest-battle-heart"),
+      leftPose: scene.leftId === "miko" ? "idle" : "idle1",
+      rightPose: scene.rightId === "miko" ? "idle" : "idle1"
+    };
+    state.left.alt = CHARACTERS[scene.leftId]?.name || scene.leftId;
+    state.right.alt = CHARACTERS[scene.rightId]?.name || scene.rightId;
 
     let index = 0;
     const render = () => {
       const step = scene.dialogue[index];
-      speaker.textContent = step.speaker;
-      line.textContent = step.text;
-      left.src = spriteFor(scene.leftId, step.leftPose);
-      right.src = spriteFor(scene.rightId, step.rightPose);
-      left.alt = CHARACTERS[scene.leftId]?.name || scene.leftId;
-      right.alt = CHARACTERS[scene.rightId]?.name || scene.rightId;
-      next.textContent = index === scene.dialogue.length - 1 ? "Finish" : "Next";
-    };
-
-    next.onclick = () => {
-      if (index < scene.dialogue.length - 1) {
-        index += 1;
-        render();
-        return;
-      }
-      next.disabled = true;
-      heart.classList.remove("hidden");
-      scene.reward();
-      setTimeout(() => {
-        heart.classList.add("hidden");
-        el.classList.add("hidden");
-        next.disabled = false;
-        open = false;
-        if (typeof onFinished === "function") {
-          bypassNextRoll = true;
-          onFinished();
+      state.leftPose = step.leftPose || state.leftPose;
+      state.rightPose = step.rightPose || state.rightPose;
+      updateSceneSprites(state);
+      const clean = cleanDialogueText(step.text);
+      message.textContent = step.speaker === "Narrator" ? clean : `${step.speaker}: ${clean}`;
+      actions.innerHTML = "";
+      const row = document.createElement("div");
+      row.className = "love-interest-dialogue-actions";
+      const next = document.createElement("button");
+      next.type = "button";
+      next.className = "pixel-button primary";
+      const last = index >= scene.dialogue.length - 1;
+      next.textContent = last ? "Finish" : "Next";
+      next.addEventListener("click", () => {
+        if (!last) {
+          index += 1;
+          render();
+          return;
         }
-      }, 1600);
+        next.disabled = true;
+        state.heart.classList.remove("hidden");
+        scene.reward();
+        message.textContent = sceneRewardMessage(scene);
+        setTimeout(() => {
+          stopSceneAnimation();
+          state.heart.classList.add("hidden");
+          el.classList.add("hidden");
+          el.setAttribute("aria-hidden", "true");
+          actions.innerHTML = "";
+          actions.classList.add("hidden");
+          markSceneUi(false);
+          open = false;
+          if (typeof onFinished === "function") {
+            bypassNextRoll = true;
+            onFinished();
+          }
+        }, 1350);
+      });
+      row.append(next);
+      actions.append(row);
+      actions.classList.remove("hidden");
     };
 
-    render();
     el.classList.remove("hidden");
+    el.setAttribute("aria-hidden", "false");
+    startSceneAnimation(state);
+    render();
     return true;
+  }
+
+  function reconcileRecordedRewards(){
+    const data = load();
+    const root = ensureAll(data);
+    let shouldSave = false;
+    for (const key of ["lukio", "shinobu", "cheryln", "hibiki", "devlin", "yuzuru", "westley", "circe", "quin"]) {
+      if (!root.loveInterests[key]?.encountered) continue;
+      unlockCharacter(data, key, { grantCard: key === "lukio", grantDuck: true, grantOutfit: true });
+      shouldSave = true;
+    }
+    const pairChecks = [
+      ["shinobuCheryln", ["shinobu", "cheryln"]],
+      ["devlinHibiki", ["hibiki", "devlin"]],
+      ["westleyYuzuru", ["yuzuru", "westley"]],
+      ["circeQuin", ["circe", "quin"]]
+    ];
+    for (const [pairKey, keys] of pairChecks) {
+      if (!root.pairScenes[pairKey]?.cardsGranted) continue;
+      unlockCardsOnly(data, keys);
+      shouldSave = true;
+    }
+    if (shouldSave) save(data);
   }
 
   function eligibleScenes(){
@@ -664,6 +760,8 @@
 
     return showScene(chooseScene(ids), continueFn);
   }
+
+  reconcileRecordedRewards();
 
   window.DuckieLoveInterests = window.DuckieLoveInterests || {};
   window.DuckieLoveInterests.activeCharacterId = activeCharacterId;

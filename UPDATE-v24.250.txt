@@ -1,1 +1,0 @@
-Duckie Days v24.250\n\n- Adds five new finished full-art Fabled Trading Cards: Peep, Io, Annika, Miho, and Shinobu x Cheryln.\n- Duckipedia Trading Cards now sort Common, Uncommon, Rare, then Fabled.\n- Favorites remain grouped within each rarity instead of jumping ahead of lower rarities.\n- Repairs the hub service-worker registration to use the stable sw.js entry point.\n

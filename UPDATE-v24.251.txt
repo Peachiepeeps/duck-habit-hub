@@ -1,0 +1,9 @@
+Duckie Days v24.251
+
+- Love-interest encounters now play directly on the Duck Quest battle background like Sibling Spat.
+- Both scene characters animate and face each other.
+- Expression directions such as Happy, smug, content, angry, and threaten are sprite changes only and no longer appear in dialogue text.
+- Shared Miko love-interest encounter chance reduced from 5% to 2%.
+- Fixed love-interest duck/outfit/card rewards being overwritten by Duck Quest's in-memory save.
+- Love-interest outfits remain encounter-exclusive and are not Shop purchases.
+- Added accurate Closet crop bounds so love-interest outfit thumbnails appear at a useful size.

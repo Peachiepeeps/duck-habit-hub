@@ -2661,7 +2661,61 @@ const MIKO_THUMB_BOUNDS = {
   "Daisy-Crown.png": [202,776,859,995],
   "Sunglasses.png": [281,753,789,970],
   "Halo.png": [376,540,705,720],
-  "Candy-Hairclip.webp": [295,983,370,1059]
+  "Candy-Hairclip.webp": [295,983,370,1059],
+  "Miko-Shino-Baret.png": [286, 612, 845, 1004],
+  "Miko-Shino-Boots.png": [383, 1673, 689, 1805],
+  "Miko-Shino-Jeans.png": [403, 1407, 667, 1772],
+  "Miko-Shino-Sweater-Shop.png": [377, 1199, 736, 1508],
+  "Miko-Shino-Sweater.png": [399, 1220, 736, 1508],
+  "Miko-Shino-sleeve.png": [377, 1199, 492, 1357],
+  "Miko-Cheryln-Banana-Hairpin.png": [682, 910, 743, 993],
+  "Miko-Cheryln-boots.png": [385, 1725, 687, 1805],
+  "Miko-Cheryln-shorts.png": [398, 1388, 673, 1524],
+  "Miko-Cheryln-sweater.png": [388, 1215, 693, 1447],
+  "Miko-Cheryln-white-tights.png": [388, 1412, 685, 1793],
+  "Miko-Hibiki-Ribbon.png": [761, 978, 861, 1101],
+  "Miko-Hibiki-back-coat.png": [485, 1437, 581, 1605],
+  "Miko-Hibiki-boots.png": [385, 1701, 685, 1807],
+  "Miko-Hibiki-coat-shop.png": [352, 1202, 810, 1639],
+  "Miko-Hibiki-coat-sleeve.png": [385, 978, 861, 1357],
+  "Miko-Hibiki-coat.png": [352, 1225, 810, 1639],
+  "Miko-Hibiki-shirt.png": [430, 1216, 642, 1442],
+  "Miko-Hibiki-shorts.png": [404, 1358, 669, 1547],
+  "Miko-Hibiki-stockings.png": [388, 1571, 682, 1794],
+  "Miko-Devlin-Belt.png": [420, 1414, 664, 1454],
+  "Miko-Devlin-Tie.png": [515, 1246, 560, 1392],
+  "Miko-Devlin-Vest.png": [424, 1221, 650, 1433],
+  "Miko-Devlin-loafers.png": [380, 1746, 691, 1808],
+  "Miko-Devlin-pants.png": [405, 1436, 664, 1769],
+  "Miko-Devlin-shirt.png": [391, 1216, 673, 1463],
+  "Miko-Yuzuru-bracelet.png": [427, 1204, 483, 1229],
+  "Miko-Yuzuru-shirt.png": [383, 1226, 694, 1526],
+  "Miko-Yuzuru-shoes.png": [382, 1721, 689, 1811],
+  "Miko-Yuzuru-shorts.png": [411, 1407, 662, 1548],
+  "Miko-Yuzuru-socks.png": [386, 1653, 686, 1795],
+  "Miko-Westley-Face-makeup.png": [395, 1127, 678, 1175],
+  "Miko-Westley-Jacket-shop.png": [376, 1179, 763, 1533],
+  "Miko-Westley-Jacket.png": [389, 1208, 763, 1533],
+  "Miko-Westley-boots.png": [384, 1633, 687, 1817],
+  "Miko-Westley-pants.png": [399, 1407, 675, 1646],
+  "Miko-Westley-sleeve.png": [376, 1179, 500, 1359],
+  "Miko-Westley-top.png": [427, 1221, 654, 1429],
+  "Miko-circe-choker.png": [507, 1220, 566, 1246],
+  "Miko-circe-shoes.png": [383, 1724, 687, 1804],
+  "Miko-circe-shorts.png": [403, 1417, 664, 1561],
+  "Miko-circe-stockings.png": [385, 1403, 685, 1795],
+  "Miko-circe-sweater-shop.png": [373, 1195, 735, 1458],
+  "Miko-circe-sweater.png": [396, 1210, 735, 1458],
+  "Miko-circe-tank-top.png": [427, 1223, 647, 1452],
+  "Miko-circe-sleeve.png": [373, 1195, 491, 1355],
+  "Miko-Quin-Hairpins.png": [685, 954, 741, 1037],
+  "Miko-Quin-back-jacket.png": [455, 1227, 604, 1507],
+  "Miko-Quin-boots.png": [383, 1699, 688, 1805],
+  "Miko-Quin-jacket-shop.png": [386, 1168, 773, 1548],
+  "Miko-Quin-jacket.png": [386, 1216, 773, 1548],
+  "Miko-Quin-shirt.png": [422, 1221, 660, 1494],
+  "Miko-Quin-shorts.png": [400, 1408, 669, 1536],
+  "Miko-Quin-sleeve.png": [387, 1168, 535, 1357]
 };
 
 const MIKO_ASSETS = {
@@ -6969,6 +7023,18 @@ function closetLockedMessage(id, asset) {
     "candy-hairclip": "Candy Hairclip is locked — complete Candyland Level 120 with this OC in Duck Quest!",
     "halo": "Halo is locked — complete Cloud Garden Level 160 with this OC in Duck Quest!"
   };
+  const loveInterestWardrobe = {
+    "lukio-hair-streak":"Lukio","lukio-hoodie":"Lukio","lukio-shorts":"Lukio","lukio-socks":"Lukio","lukio-booties":"Lukio",
+    "shino-beret":"Shinobu","shino-sweater":"Shinobu","shino-sleeve":"Shinobu","shino-jeans":"Shinobu","shino-boots":"Shinobu",
+    "cheryln-hairpin":"Cheryln","cheryln-sweater":"Cheryln","cheryln-shorts":"Cheryln","cheryln-tights":"Cheryln","cheryln-boots":"Cheryln",
+    "hibiki-ribbon":"Hibiki","hibiki-shirt":"Hibiki","hibiki-coat":"Hibiki","hibiki-back-coat":"Hibiki","hibiki-coat-sleeve":"Hibiki","hibiki-shorts":"Hibiki","hibiki-stockings":"Hibiki","hibiki-boots":"Hibiki",
+    "devlin-shirt":"Devlin","devlin-vest":"Devlin","devlin-tie":"Devlin","devlin-pants":"Devlin","devlin-belt":"Devlin","devlin-loafers":"Devlin","devlin-bangs-pinned":"Devlin",
+    "yuzuru-shirt":"Yuzuru","yuzuru-shorts":"Yuzuru","yuzuru-socks":"Yuzuru","yuzuru-shoes":"Yuzuru","yuzuru-bracelet":"Yuzuru",
+    "westley-top":"Westley","westley-jacket":"Westley","westley-sleeve":"Westley","westley-pants":"Westley","westley-boots":"Westley","westley-face-makeup":"Westley",
+    "circe-tank-top":"Circe","circe-sweater":"Circe","circe-sleeve":"Circe","circe-shorts":"Circe","circe-stockings":"Circe","circe-shoes":"Circe","circe-choker":"Circe",
+    "quin-shirt":"Quin","quin-jacket":"Quin","quin-back-jacket":"Quin","quin-sleeve":"Quin","quin-shorts":"Quin","quin-boots":"Quin","quin-hairpins":"Quin"
+  };
+  if (loveInterestWardrobe[id]) return `${asset.label} is locked — meet ${loveInterestWardrobe[id]} while exploring Duck Quest as Miko!`;
   return questRewardHints[id] || `${asset.label} is locked — unlock it from the Shop!`;
 }
 
