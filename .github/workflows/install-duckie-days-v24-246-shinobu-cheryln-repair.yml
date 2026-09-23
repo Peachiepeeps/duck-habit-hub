@@ -1,0 +1,216 @@
+name: Repair Duckie Days v24.246 Shinobu + Cheryln
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/install-duckie-days-v24-246-shinobu-cheryln-repair.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-246-install
+  cancel-in-progress: false
+
+jobs:
+  install-update:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Require existing v24.246 ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.246-shinobu-cheryln-update-only.zip"
+          test -f "$ZIP" || {
+            echo "ERROR: $ZIP is missing from the repository root."
+            exit 1
+          }
+          unzip -tq "$ZIP"
+
+      - name: Repair installer and install v24.246
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ZIP="Duckie-Days-v24.246-shinobu-cheryln-update-only.zip"
+          TMP=".duckie-days-v24-246-repair"
+          rm -rf "$TMP"
+          mkdir -p "$TMP"
+          unzip -q "$ZIP" -d "$TMP"
+
+          python3 - "$TMP/tools/patch-v246.py" <<'PY'
+          from pathlib import Path
+          import sys
+
+          path = Path(sys.argv[1])
+          text = path.read_text(encoding="utf-8")
+
+          bad_head = (
+              "hub = ensure_option_line(\n"
+              "    hub,\n"
+              "    'options: [\"headband\", \"hairpins-black\", \"lukio-hair-streak\"]',\n"
+              "    'options: [\"headband\", \"hairpins-black\", \"lukio-hair-streak\", \"shino-beret\", \"cheryln-hairpin\"]',\n"
+              "    'head options'\n"
+              ")"
+          )
+          fixed_extras = (
+              "hub = ensure_option_line(\n"
+              "    hub,\n"
+              "    'options: [\"belt\", \"headband\", \"hairpins-black\", \"daisy-crown\", \"ocean-sunglasses\", \"halo\", \"candy-hairclip\"]',\n"
+              "    'options: [\"belt\", \"headband\", \"hairpins-black\", \"shino-beret\", \"cheryln-hairpin\", \"daisy-crown\", \"ocean-sunglasses\", \"halo\", \"candy-hairclip\"]',\n"
+              "    'extras options'\n"
+              ")"
+          )
+          if bad_head not in text:
+              raise RuntimeError("Could not locate the faulty head-options block.")
+          text = text.replace(bad_head, fixed_extras, 1)
+
+          bad_gacha = (
+              "for duck_id in ['shinobu-duck', 'cheryln-duck']:\n"
+              "    if duck_id not in hub.split('const GACHA_EXCLUDED_DUCKS = new Set(',1)[1]:\n"
+              "        hub = hub.replace(']);', f', \"{duck_id}\"]);', 1)"
+          )
+          fixed_gacha = (
+              "gacha_old = 'const GACHA_EXCLUDED_DUCKS = new Set([\"tiny-duck\", \"tiny-duck-stack\", \"pile-of-tiny-ducks\", \"lukio-duck\"]);'\n"
+              "gacha_new = 'const GACHA_EXCLUDED_DUCKS = new Set([\"tiny-duck\", \"tiny-duck-stack\", \"pile-of-tiny-ducks\", \"lukio-duck\", \"shinobu-duck\", \"cheryln-duck\"]);'\n"
+              "if gacha_new not in hub:\n"
+              "    if gacha_old not in hub:\n"
+              "        raise RuntimeError('Could not locate GACHA_EXCLUDED_DUCKS.')\n"
+              "    hub = hub.replace(gacha_old, gacha_new, 1)"
+          )
+          if bad_gacha not in text:
+              raise RuntimeError("Could not locate the unsafe GACHA block.")
+          text = text.replace(bad_gacha, fixed_gacha, 1)
+
+          shoe_block = (
+              "hub = hub.replace(\n"
+              "    '[null, \"shoes-loafer\", \"shoes-fancy-loafers\", \"lukio-booties\"].includes(incoming.shoes)',\n"
+              "    '[null, \"shoes-loafer\", \"shoes-fancy-loafers\", \"lukio-booties\", \"shino-boots\", \"cheryln-boots\"].includes(incoming.shoes)'\n"
+              ")"
+          )
+          extra_norm = (
+              "\nhub = hub.replace(\n"
+              "    '[\"belt\", \"headband\", \"hairpins-black\", \"daisy-crown\", \"ocean-sunglasses\", \"halo\", \"candy-hairclip\"].includes(id)',\n"
+              "    '[\"belt\", \"headband\", \"hairpins-black\", \"shino-beret\", \"cheryln-hairpin\", \"daisy-crown\", \"ocean-sunglasses\", \"halo\", \"candy-hairclip\"].includes(id)'\n"
+              ")"
+          )
+          if "shino-beret\", \"cheryln-hairpin\", \"daisy-crown" not in text:
+              if shoe_block not in text:
+                  raise RuntimeError("Could not locate the Miko shoe normalizer anchor.")
+              text = text.replace(shoe_block, shoe_block + extra_norm, 1)
+
+          path.write_text(text, encoding="utf-8")
+          print("Repaired patch-v246.py for the live v24.245 closet structure.")
+          PY
+
+          python3 -m py_compile "$TMP/tools/patch-v246.py"
+          python3 "$TMP/tools/patch-v246.py" "$TMP"
+          rm -rf "$TMP"
+
+      - name: Verify v24.246
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          grep -Fq '"version": "24.246"' version.json
+
+          test -f trading-cards-v246.js
+          test -f trading-cards-ui-v246.js
+          test -f trading-cards-v246.css
+          test -f sw-v24-246.js
+          test -f duck-quest/js/love-interests-v246.js
+          test -f duck-quest/css/love-interests-v246.css
+
+          grep -Fq 'id:"r-love-shinobu"' trading-cards-v246.js
+          grep -Fq 'number:"R-032"' trading-cards-v246.js
+          grep -Fq 'id:"r-love-cheryln"' trading-cards-v246.js
+          grep -Fq 'number:"R-033"' trading-cards-v246.js
+
+          grep -Fq '"shinobu-duck": {' script-v24-201.js
+          grep -Fq '"cheryln-duck": {' script-v24-201.js
+          grep -Fq '"shinobu-duck", "cheryln-duck"' script-v24-201.js
+
+          grep -Fq '"shino-beret"' script-v24-201.js
+          grep -Fq '"shino-sweater"' script-v24-201.js
+          grep -Fq '"cheryln-hairpin"' script-v24-201.js
+          grep -Fq '"cheryln-tights"' script-v24-201.js
+
+          grep -Fq 'const SHARED_CHANCE = 0.05;' duck-quest/js/love-interests-v246.js
+          grep -Fq 'data?.duckQuest?.activeCharacter' duck-quest/js/love-interests-v246.js
+          grep -Fq 'window.triggerShinobuEncounter' duck-quest/js/love-interests-v246.js
+          grep -Fq 'window.triggerCherylnEncounter' duck-quest/js/love-interests-v246.js
+          grep -Fq 'window.triggerShinobuCherylnCutscene' duck-quest/js/love-interests-v246.js
+
+          test -f duck-quest/assets/love-interests/shinobu/Shinobu-duck.png
+          test -f duck-quest/assets/love-interests/cheryln/Cheryln-duck.png
+          test -f assets/miko/Miko-Shino-Sweater.png
+          test -f assets/miko/Miko-Cheryln-sweater.png
+
+          grep -Fq 'trading-cards-v246.js?v=24-246' index.html
+          grep -Fq 'js/love-interests-v246.js?v=24-246' duck-quest/index.html
+          grep -Fq "importScripts('./sw-v24-246.js?v=24-246');" sw.js
+
+          node --check trading-cards-v246.js
+          node --check trading-cards-ui-v246.js
+          node --check script-v24-201.js
+          node --check duck-quest/js/love-interests-v246.js
+          node --check sw-v24-246.js
+
+          node - <<'NODE'
+          const fs=require('fs'),vm=require('vm');
+          const src=fs.readFileSync('trading-cards-v246.js','utf8');
+          const ctx={
+            window:{},
+            localStorage:{getItem:()=>null,setItem:()=>{}},
+            location:{pathname:'/'},
+            document:{createElement:()=>({classList:{add:()=>{}},append:()=>{},dataset:{}})}
+          };
+          vm.createContext(ctx);
+          vm.runInContext(src,ctx);
+          const TC=ctx.window.DuckieTradingCards;
+          if(TC.cards.length!==73) throw new Error(`Expected 73 Trading Cards, found ${TC.cards.length}`);
+          if(!TC.byId['r-love-shinobu']) throw new Error('Shinobu Rare card is missing');
+          if(!TC.byId['r-love-cheryln']) throw new Error('Cheryln Rare card is missing');
+          console.log('VERIFIED: 73 cards including Shinobu and Cheryln.');
+          NODE
+
+          echo "VERIFIED: repaired v24.246 is valid."
+
+      - name: Clean old installers and bundles
+        shell: bash
+        run: |
+          set -euo pipefail
+          SELF="install-duckie-days-v24-246-shinobu-cheryln-repair.yml"
+
+          if [ -d .github/workflows ]; then
+            find .github/workflows -maxdepth 1 -type f               \( -name 'install-duck-habit-hub-v*.yml' -o -name 'install-duckie-days-v*.yml' \)               ! -name "$SELF" -delete
+          fi
+
+          find . -maxdepth 1 -type f -name 'UPDATE-v*.txt' ! -name 'UPDATE-v24.246.txt' -delete
+          find . -maxdepth 1 -type f -name 'sw-v24-*.js' ! -name 'sw-v24-246.js' -delete
+          find . -maxdepth 1 -type f -name '*update-only*.zip' -delete
+
+      - name: Commit v24.246
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && {
+            echo "ERROR: No changes were staged."
+            exit 1
+          }
+          git commit -m "Repair Shinobu and Cheryln love-interest update"
+          git push
+
+      - name: Success
+        shell: bash
+        run: |
+          echo "SUCCESS: v24.246 installed and verified."
