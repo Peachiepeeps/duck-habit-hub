@@ -1,0 +1,153 @@
+name: Install Duckie Days v24.252 Love Interest Layout + Closet Fix
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/install-duckie-days-v24-252-love-interest-layout-closet-fix.yml"
+      - "Duckie-Days-v24.252-love-interest-layout-closet-fix-update-only.zip"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-252-install
+  cancel-in-progress: false
+
+jobs:
+  install-update:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Require v24.252 update ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.252-love-interest-layout-closet-fix-update-only.zip"
+          test -f "$ZIP" || {
+            echo "ERROR: $ZIP is missing from the repository root."
+            exit 1
+          }
+          unzip -tq "$ZIP"
+
+      - name: Install v24.252
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.252-love-interest-layout-closet-fix-update-only.zip"
+          TMP=".duckie-days-v24-252"
+          rm -rf "$TMP"
+          mkdir -p "$TMP"
+          unzip -q "$ZIP" -d "$TMP"
+          python3 -m py_compile "$TMP/tools/patch-v252.py"
+          node --check "$TMP/love-interests-v252.js"
+          python3 "$TMP/tools/patch-v252.py" "$TMP"
+          rm -rf "$TMP"
+
+      - name: Verify v24.252
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          grep -Fq '"version": "24.252"' version.json
+          test -f duck-quest/js/love-interests-v252.js
+          test -f duck-quest/css/love-interests-v252.css
+          test -f sw-v24-252.js
+          test -f sw-v24-244.js
+
+          # Scene layout / sizing.
+          grep -Fq 'const SHARED_CHANCE = 0.02;' duck-quest/js/love-interests-v252.js
+          grep -Fq 'const referenceHeight = 96;' duck-quest/js/love-interests-v252.js
+          grep -Fq 'sourcePixelScale' duck-quest/js/love-interests-v252.js
+          grep -Fq '#battlefield > .peep-combatant' duck-quest/js/love-interests-v252.js
+          grep -Fq '"#commandStage"' duck-quest/js/love-interests-v252.js
+          grep -Fq 'love-interest-dialogue-active' duck-quest/js/love-interests-v252.js
+          grep -Fq '#battlefield.love-interest-scene-active > .peep-combatant' duck-quest/css/love-interests-v252.css
+          grep -Fq 'grid-template-rows:auto auto!important' duck-quest/css/love-interests-v252.css
+          grep -Fq 'font-size:1rem!important' duck-quest/css/love-interests-v252.css
+          grep -Fq 'width:min(220px,70%)!important' duck-quest/css/love-interests-v252.css
+          grep -Fq 'writing-mode:horizontal-tb!important' duck-quest/css/love-interests-v252.css
+
+          # Shirts category.
+          grep -Fq 'label: "Shirts"' script-v24-201.js
+          grep -Fq 'options: ["top-button", "shirt-blouse", "top-big-shirt", "westley-top", "quin-shirt", "circe-tank-top", "yuzuru-shirt"]' script-v24-201.js
+          grep -Fq 'options: ["top-hoodie", "top-sweater", "outer-black-blazer", "lukio-hoodie", "shino-sweater", "cheryln-sweater", "hibiki-coat", "devlin-vest", "westley-jacket", "circe-sweater", "quin-jacket"]' script-v24-201.js
+          grep -Fq 'outfit.shirt === "top-big-shirt"' script-v24-201.js
+          grep -Fq 'outfit.shirt === "westley-top"' script-v24-201.js
+          grep -Fq 'outfit.shirt === "quin-shirt"' script-v24-201.js
+          grep -Fq 'outfit.shirt === "circe-tank-top"' script-v24-201.js
+          grep -Fq 'outfit.shirt === "yuzuru-shirt"' script-v24-201.js
+
+          # Extras category.
+          grep -Fq '"lukio-hair-streak"' script-v24-201.js
+          grep -Fq '"hibiki-ribbon"' script-v24-201.js
+          grep -Fq '"westley-face-makeup"' script-v24-201.js
+          grep -Fq '"yuzuru-bracelet"' script-v24-201.js
+          grep -Fq '"devlin-belt"' script-v24-201.js
+          grep -Fq '"devlin-tie"' script-v24-201.js
+          grep -Fq '"circe-choker"' script-v24-201.js
+          grep -Fq '"quin-hairpins"' script-v24-201.js
+
+          # Accessories are independently equipped, not forced by Layers/Bottoms.
+          ! grep -Fq 'outfit.outer === "yuzuru-shirt"' script-v24-201.js
+          ! grep -Fq 'ids.push("devlin-belt")' script-v24-201.js
+          grep -Fq 'outfit.outer === "westley-jacket") ids.push("westley-sleeve")' script-v24-201.js
+          grep -Fq 'outfit.outer === "circe-sweater") ids.push("circe-sleeve")' script-v24-201.js
+          grep -Fq 'outfit.outer === "quin-jacket") ids.push("quin-back-jacket", "quin-sleeve")' script-v24-201.js
+
+          grep -Fq 'js/love-interests-v252.js?v=24-252' duck-quest/index.html
+          grep -Fq 'css/love-interests-v252.css?v=24-252' duck-quest/index.html
+          grep -Fq "importScripts('./sw-v24-252.js?v=24-252');" sw.js
+          grep -Fq "importScripts('./sw-v24-252.js?v=24-252');" sw-v24-244.js
+          grep -Fq 'love-interests-v252.js?v=24-252' sw-v24-252.js
+          grep -Fq 'love-interests-v252.css?v=24-252' sw-v24-252.js
+
+          node --check script-v24-201.js
+          node --check duck-quest/js/love-interests-v252.js
+          node --check sw-v24-252.js
+
+          echo "VERIFIED: v24.252 love-interest layout and Miko Closet organization are valid."
+
+      - name: Clean old installers and bundles
+        shell: bash
+        run: |
+          set -euo pipefail
+          SELF="install-duckie-days-v24-252-love-interest-layout-closet-fix.yml"
+
+          if [ -d .github/workflows ]; then
+            find .github/workflows -maxdepth 1 -type f \
+              \( -name 'install-duck-habit-hub-v*.yml' -o -name 'install-duckie-days-v*.yml' -o -name 'repair-duckie-days-v*.yml' \) \
+              ! -name "$SELF" -delete
+          fi
+
+          find . -maxdepth 1 -type f -name 'UPDATE-v*.txt' ! -name 'UPDATE-v24.252.txt' -delete
+          find . -maxdepth 1 -type f -name '*update-only*.zip' -delete
+
+          # Keep the compatibility bridge plus the current worker.
+          find . -maxdepth 1 -type f -name 'sw-v24-*.js' \
+            ! -name 'sw-v24-244.js' ! -name 'sw-v24-252.js' -delete
+
+          rm -f duck-quest/js/love-interests-v251.js duck-quest/css/love-interests-v251.css
+
+      - name: Commit v24.252
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && {
+            echo "ERROR: No changes were staged."
+            exit 1
+          }
+          git commit -m "Polish love-interest layout and organize Miko Closet"
+          git push
+
+      - name: Success
+        shell: bash
+        run: |
+          echo "SUCCESS: v24.252 installed and verified."
