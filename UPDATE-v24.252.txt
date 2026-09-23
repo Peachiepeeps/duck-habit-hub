@@ -1,0 +1,10 @@
+Duckie Days v24.252
+
+- Love-interest cutscenes now fully hide the normal battle Miko so only one Miko appears.
+- Scene portraits preserve their original source-pixel size differences, keeping shorter and taller OCs proportional to Miko.
+- Dialogue is larger and the Next/Finish button is horizontal and centered.
+- The empty command area is removed during love-interest dialogue.
+- Miko Shirts now include Westley Top, Quin Shirt, Circe Tank Top, Yuzuru Shirt, and Big Shirt.
+- Big Shirt and Yuzuru Shirt moved out of Layers and into Shirts.
+- Miko Extras now include Hibiki Ribbon, Westley Face Makeup, Yuzuru Bracelet, Devlin Belt, Devlin Tie, Circe Choker, Quin Hairpins, and Lukio Hair Streak.
+- Love-interest accessories are independently equippable instead of being forced on by jackets/pants.

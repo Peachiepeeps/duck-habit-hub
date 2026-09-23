@@ -3072,8 +3072,8 @@ const MIKO_CLOSET = [
     options: ["hair-main"]
   },
   { id: "bangsStyle", label: "Bangs", type: "single", options: ["bangs", "bangs-pinned"] },
-  { id: "shirt", label: "Shirt", type: "single", allowNone: true, options: ["top-button", "shirt-blouse"] },
-  { id: "outer", label: "Layers", type: "single", allowNone: true, options: ["top-hoodie", "top-sweater", "top-big-shirt", "outer-black-blazer", "lukio-hoodie", "shino-sweater", "cheryln-sweater", "hibiki-coat", "devlin-vest", "yuzuru-shirt", "westley-jacket", "circe-sweater", "quin-jacket"] },
+  { id: "shirt", label: "Shirts", type: "single", allowNone: true, options: ["top-button", "shirt-blouse", "top-big-shirt", "westley-top", "quin-shirt", "circe-tank-top", "yuzuru-shirt"] },
+  { id: "outer", label: "Layers", type: "single", allowNone: true, options: ["top-hoodie", "top-sweater", "outer-black-blazer", "lukio-hoodie", "shino-sweater", "cheryln-sweater", "hibiki-coat", "devlin-vest", "westley-jacket", "circe-sweater", "quin-jacket"] },
   { id: "bottom", label: "Bottoms", type: "single", options: ["bottom-capris", "bottom-jeans", "bottom-boxers", "bottom-shorts", "lukio-shorts", "shino-jeans", "cheryln-shorts", "hibiki-shorts", "devlin-pants", "yuzuru-shorts", "westley-pants", "circe-shorts", "quin-shorts"] },
   { id: "socks", label: "Socks", type: "single", allowNone: true, options: ["socks", "socks-garter", "lukio-socks", "cheryln-tights", "hibiki-stockings", "yuzuru-socks", "circe-stockings"] },
   { id: "shoes", label: "Shoes", type: "single", allowNone: true, options: ["shoes-loafer", "shoes-fancy-loafers", "lukio-booties", "shino-boots", "cheryln-boots", "hibiki-boots", "devlin-loafers", "yuzuru-shoes", "westley-boots", "circe-shoes", "quin-boots"] },
@@ -3081,7 +3081,7 @@ const MIKO_CLOSET = [
     id: "extras",
     label: "Extras",
     type: "multi",
-    options: ["belt", "headband", "hairpins-black", "shino-beret", "cheryln-hairpin", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip"]
+    options: ["belt", "headband", "hairpins-black", "lukio-hair-streak", "shino-beret", "cheryln-hairpin", "hibiki-ribbon", "westley-face-makeup", "yuzuru-bracelet", "devlin-belt", "devlin-tie", "circe-choker", "quin-hairpins", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip"]
   }
 ];
 
@@ -3334,8 +3334,16 @@ function normalizeMikoOutfit(rawOutfit = {}) {
   }
 
   if (!hadShirtField) shirt = "top-button";
-  if (![null, "top-button", "shirt-blouse"].includes(shirt)) shirt = "top-button";
-  if (![null, "top-hoodie", "top-sweater", "top-big-shirt", "outer-black-blazer", "lukio-hoodie", "shino-sweater", "cheryln-sweater", "hibiki-coat", "devlin-vest", "yuzuru-shirt", "westley-jacket", "circe-sweater", "quin-jacket"].includes(outer)) outer = "top-hoodie";
+
+  // v24.252: Big Shirt and Yuzuru Shirt moved from Layers to Shirts. Preserve
+  // any existing equipped look by migrating the old outer selection.
+  if (outer === "top-big-shirt" || outer === "yuzuru-shirt") {
+    shirt = outer;
+    outer = null;
+  }
+
+  if (![null, "top-button", "shirt-blouse", "top-big-shirt", "westley-top", "quin-shirt", "circe-tank-top", "yuzuru-shirt"].includes(shirt)) shirt = "top-button";
+  if (![null, "top-hoodie", "top-sweater", "outer-black-blazer", "lukio-hoodie", "shino-sweater", "cheryln-sweater", "hibiki-coat", "devlin-vest", "westley-jacket", "circe-sweater", "quin-jacket"].includes(outer)) outer = "top-hoodie";
 
   const bangsStyle = ["bangs", "bangs-pinned"].includes(incoming.bangsStyle)
     ? incoming.bangsStyle
@@ -3349,7 +3357,7 @@ function normalizeMikoOutfit(rawOutfit = {}) {
     : "shoes-loafer";
 
   const extras = Array.isArray(incoming.extras)
-    ? incoming.extras.filter(id => ["belt", "headband", "hairpins-black", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip"].includes(id))
+    ? incoming.extras.filter(id => ["belt", "headband", "hairpins-black", "lukio-hair-streak", "shino-beret", "cheryln-hairpin", "hibiki-ribbon", "westley-face-makeup", "yuzuru-bracelet", "devlin-belt", "devlin-tie", "circe-choker", "quin-hairpins", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip"].includes(id))
     : [];
 
   const normalized = {
@@ -5575,6 +5583,11 @@ function getMikoEquippedAssetIds() {
   if (outfit.bottom) ids.push(outfit.bottom);
   if (outfit.shirt === "top-button") ids.push("top-button");
   else if (outfit.shirt === "shirt-blouse") ids.push("shirt-blouse");
+  else if (outfit.shirt === "top-big-shirt") ids.push("top-big-shirt");
+  else if (outfit.shirt === "westley-top") ids.push("westley-top");
+  else if (outfit.shirt === "quin-shirt") ids.push("quin-shirt");
+  else if (outfit.shirt === "circe-tank-top") ids.push("circe-tank-top");
+  else if (outfit.shirt === "yuzuru-shirt") ids.push("yuzuru-shirt");
 
   // Special Extras (like Belt) sit over shirts and bottoms, but stay under any
   // outer Layers like the Hoodie, Big Shirt, Sweater, or Black Blazer.
@@ -5591,13 +5604,11 @@ function getMikoEquippedAssetIds() {
   else if (outfit.outer === "outer-black-blazer") ids.push("outer-black-blazer-arm");
   else if (outfit.outer === "lukio-hoodie") ids.push("lukio-sleeve");
   else if (outfit.outer === "shino-sweater") ids.push("shino-sleeve");
-  else if (outfit.outer === "hibiki-coat") ids.push("hibiki-back-coat", "hibiki-shirt", "hibiki-ribbon", "hibiki-coat-sleeve");
-  else if (outfit.outer === "devlin-vest") ids.push("devlin-shirt", "devlin-tie", "devlin-bangs-pinned");
-  else if (outfit.outer === "yuzuru-shirt") ids.push("yuzuru-bracelet");
-  else if (outfit.outer === "westley-jacket") ids.push("westley-top", "westley-sleeve", "westley-face-makeup");
-  else if (outfit.outer === "circe-sweater") ids.push("circe-tank-top", "circe-sleeve", "circe-choker");
-  else if (outfit.outer === "quin-jacket") ids.push("quin-back-jacket", "quin-shirt", "quin-sleeve", "quin-hairpins");
-  if (outfit.bottom === "devlin-pants") ids.push("devlin-belt");
+  else if (outfit.outer === "hibiki-coat") ids.push("hibiki-back-coat", "hibiki-shirt", "hibiki-coat-sleeve");
+  else if (outfit.outer === "devlin-vest") ids.push("devlin-shirt", "devlin-bangs-pinned");
+  else if (outfit.outer === "westley-jacket") ids.push("westley-sleeve");
+  else if (outfit.outer === "circe-sweater") ids.push("circe-sleeve");
+  else if (outfit.outer === "quin-jacket") ids.push("quin-back-jacket", "quin-sleeve");
 
   // Socks sit below any equipped shoes. Belt is already inserted earlier so it
   // stays under outer Layers but still above shirts and bottoms.

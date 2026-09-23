@@ -1,0 +1,159 @@
+/* Duckie Days v24.252 — Sibling-Spat-style love-interest scenes. */
+.love-interest-battle-scene{
+  position:absolute;
+  inset:0;
+  z-index:13;
+  pointer-events:none;
+  overflow:hidden;
+}
+.love-interest-battle-scene.hidden{display:none!important}
+
+/* The normal battle hero/enemies must disappear completely while scene
+   portraits are active. The more-specific battlefield rules below beat older
+   Miko display:block rules in the main Duck Quest stylesheet. */
+#battlefield.love-interest-scene-active > .peep-combatant,
+#battlefield.love-interest-scene-active > #enemyCombatant,
+#battlefield.love-interest-scene-active > #enemyCombatant2,
+#battlefield.love-interest-scene-active > #buddyCombatant,
+#battlefield.love-interest-scene-active > #chestLayer,
+.love-interest-scene-hidden{
+  display:none!important;
+}
+
+/* Portraits share one source-pixel scale set by JS instead of being forced
+   into equal boxes. That preserves the height differences drawn into the
+   original 64x96 / 66x102 / 70x104 source files. */
+.love-interest-battle-sprite{
+  position:absolute;
+  bottom:4%;
+  width:auto!important;
+  height:auto!important;
+  max-width:none!important;
+  max-height:none!important;
+  object-fit:none!important;
+  image-rendering:pixelated;
+  filter:drop-shadow(0 4px 0 rgba(0,0,0,.12));
+  transform-origin:center bottom;
+  will-change:transform;
+}
+.love-interest-battle-left{
+  left:6%;
+  animation:loveInterestLeftIdleV252 1.05s ease-in-out infinite;
+}
+.love-interest-battle-right{
+  right:6%;
+  animation:loveInterestRightIdleV252 1.05s ease-in-out -.525s infinite;
+}
+@keyframes loveInterestLeftIdleV252{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-4px)}
+}
+@keyframes loveInterestRightIdleV252{
+  0%,100%{transform:scaleX(-1) translateY(0)}
+  50%{transform:scaleX(-1) translateY(-4px)}
+}
+
+.love-interest-battle-heart{
+  position:absolute;
+  left:50%;
+  bottom:39%;
+  z-index:4;
+  width:52px;
+  height:52px;
+  transform:translateX(-50%);
+  display:grid;
+  place-items:center;
+  animation:loveInterestHeartV252 .6s ease-in-out infinite alternate;
+}
+.love-interest-battle-heart.hidden{display:none!important}
+.love-interest-battle-heart img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  image-rendering:pixelated;
+}
+@keyframes loveInterestHeartV252{
+  from{transform:translateX(-50%) translateY(0)}
+  to{transform:translateX(-50%) translateY(-2px)}
+}
+
+/* Dialogue should read like a compact cutscene, not a full-height command
+   panel. The Next/Finish button is a horizontal centered button. */
+#battleScreen .battle-ui.love-interest-dialogue-active{
+  min-height:0!important;
+  height:auto!important;
+  flex:0 0 auto!important;
+  grid-template-rows:auto auto!important;
+  align-content:start!important;
+  gap:10px!important;
+  padding:12px!important;
+}
+#battleScreen .battle-ui.love-interest-dialogue-active #commandStage,
+#battleScreen .battle-ui.love-interest-dialogue-active #postFloorActions{
+  display:none!important;
+}
+#battleScreen .battle-ui.love-interest-dialogue-active .battle-message{
+  min-height:68px!important;
+  padding:12px 14px!important;
+  padding-right:14px!important;
+  font-size:1rem!important;
+  line-height:1.45!important;
+  align-items:center!important;
+}
+#battleScreen .battle-ui.love-interest-dialogue-active #eventChoiceActions{
+  display:flex!important;
+  justify-content:center!important;
+  align-items:center!important;
+  width:100%!important;
+  min-height:0!important;
+  height:auto!important;
+  padding:0!important;
+  margin:0!important;
+}
+#battleScreen .battle-ui.love-interest-dialogue-active #eventChoiceActions.hidden{
+  display:none!important;
+}
+.love-interest-dialogue-actions{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  width:100%;
+}
+.love-interest-dialogue-actions .pixel-button{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:min(220px,70%)!important;
+  min-width:130px!important;
+  max-width:220px!important;
+  height:auto!important;
+  min-height:50px!important;
+  padding:10px 24px!important;
+  margin:0 auto!important;
+  font-size:.92rem!important;
+  line-height:1.1!important;
+  writing-mode:horizontal-tb!important;
+  white-space:nowrap!important;
+}
+
+@media(max-width:600px){
+  .love-interest-battle-left{left:4%}
+  .love-interest-battle-right{right:4%}
+  .love-interest-battle-heart{width:42px;height:42px;bottom:37%}
+  #battleScreen .battle-ui.love-interest-dialogue-active{
+    padding:10px!important;
+    gap:8px!important;
+  }
+  #battleScreen .battle-ui.love-interest-dialogue-active .battle-message{
+    min-height:64px!important;
+    padding:10px 11px!important;
+    padding-right:11px!important;
+    font-size:.88rem!important;
+    line-height:1.42!important;
+  }
+  .love-interest-dialogue-actions .pixel-button{
+    width:min(210px,72%)!important;
+    min-height:48px!important;
+    font-size:.86rem!important;
+  }
+}

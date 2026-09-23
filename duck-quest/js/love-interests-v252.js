@@ -580,12 +580,35 @@
     return el;
   }
 
+  function sizeSceneSprite(img){
+    const battlefield = document.querySelector("#battlefield");
+    if (!img || !battlefield || !img.naturalWidth || !img.naturalHeight) return;
+    // All battle portraits were drawn pixel-for-pixel against Miko's source
+    // sprite. Scale one source pixel by the same amount for every character so
+    // taller/shorter source canvases keep their intended height differences.
+    const referenceHeight = 96;
+    const referenceDisplayHeight = Math.max(120, battlefield.clientHeight * 0.76);
+    const sourcePixelScale = referenceDisplayHeight / referenceHeight;
+    img.style.width = `${Math.round(img.naturalWidth * sourcePixelScale)}px`;
+    img.style.height = `${Math.round(img.naturalHeight * sourcePixelScale)}px`;
+  }
+
+  function setSceneSpriteSource(img, src){
+    if (!img || !src) return;
+    if (img.getAttribute("src") === src) {
+      if (img.complete) sizeSceneSprite(img);
+      return;
+    }
+    img.src = src;
+    if (img.complete) sizeSceneSprite(img);
+  }
+
   function updateSceneSprites(state){
     if (!state?.el) return;
     const leftFrames = spriteFrames(state.scene.leftId, state.leftPose);
     const rightFrames = spriteFrames(state.scene.rightId, state.rightPose);
-    if (leftFrames.length) state.left.src = leftFrames[sceneFrameIndex % leftFrames.length];
-    if (rightFrames.length) state.right.src = rightFrames[sceneFrameIndex % rightFrames.length];
+    if (leftFrames.length) setSceneSpriteSource(state.left, leftFrames[sceneFrameIndex % leftFrames.length]);
+    if (rightFrames.length) setSceneSpriteSource(state.right, rightFrames[sceneFrameIndex % rightFrames.length]);
   }
 
   function startSceneAnimation(state){
@@ -605,9 +628,26 @@
   }
 
   function markSceneUi(active){
-    const selectors = [".peep-combatant", "#enemyCombatant", "#enemyCombatant2", "#buddyCombatant", "#chestLayer", "#commandGrid", "#postFloorActions"];
-    selectors.forEach(selector => document.querySelector(selector)?.classList.toggle("love-interest-scene-hidden", active));
+    // Hide the entire normal battle layer while the scene portraits are on the
+    // battlefield. In particular, hiding the whole commandStage removes the
+    // giant empty mobile command area and guarantees there is only ONE Miko.
+    const selectors = ["#battlefield > .peep-combatant", "#enemyCombatant", "#enemyCombatant2", "#buddyCombatant", "#chestLayer", "#commandStage", "#postFloorActions"];
+    selectors.forEach(selector => {
+      const node = document.querySelector(selector);
+      if (!node) return;
+      node.classList.toggle("love-interest-scene-hidden", active);
+      if (active) {
+        if (!node.dataset.loveInterestPreviousDisplay) node.dataset.loveInterestPreviousDisplay = node.style.display || "__empty__";
+        node.style.setProperty("display", "none", "important");
+      } else {
+        const previous = node.dataset.loveInterestPreviousDisplay;
+        node.style.removeProperty("display");
+        if (previous && previous !== "__empty__") node.style.display = previous;
+        delete node.dataset.loveInterestPreviousDisplay;
+      }
+    });
     document.querySelector("#battlefield")?.classList.toggle("love-interest-scene-active", active);
+    document.querySelector("#battleScreen .battle-ui")?.classList.toggle("love-interest-dialogue-active", active);
   }
 
   function showScene(sceneId, onFinished){
@@ -634,6 +674,8 @@
     };
     state.left.alt = CHARACTERS[scene.leftId]?.name || scene.leftId;
     state.right.alt = CHARACTERS[scene.rightId]?.name || scene.rightId;
+    state.left.onload = () => sizeSceneSprite(state.left);
+    state.right.onload = () => sizeSceneSprite(state.right);
 
     let index = 0;
     const render = () => {
@@ -663,6 +705,9 @@
         message.textContent = sceneRewardMessage(scene);
         setTimeout(() => {
           stopSceneAnimation();
+          if (state.resizeHandler) window.removeEventListener("resize", state.resizeHandler);
+          state.left.onload = null;
+          state.right.onload = null;
           state.heart.classList.add("hidden");
           el.classList.add("hidden");
           el.setAttribute("aria-hidden", "true");
@@ -683,6 +728,8 @@
 
     el.classList.remove("hidden");
     el.setAttribute("aria-hidden", "false");
+    state.resizeHandler = () => { sizeSceneSprite(state.left); sizeSceneSprite(state.right); };
+    window.addEventListener("resize", state.resizeHandler);
     startSceneAnimation(state);
     render();
     return true;
