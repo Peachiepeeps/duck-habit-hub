@@ -1,0 +1,78 @@
+name: Install Duckie Days v24.270 Workshop + Buddy Details
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/install-duckie-days-v24-270-workshop-buddy-details.yml"
+      - ".github/workflows/install-duckie-days-v24-270-workshop-buddy-details.yaml"
+      - "Duckie-Days-v24.270-workshop-buddy-details-mimic-fix-update-only.zip"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-270-install
+  cancel-in-progress: false
+
+jobs:
+  install-update:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Require update ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.270-workshop-buddy-details-mimic-fix-update-only.zip"
+          test -f "$ZIP" || { echo "ERROR: $ZIP is missing from the repository root."; exit 1; }
+          unzip -tq "$ZIP"
+
+      - name: Install and verify v24.270
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.270-workshop-buddy-details-mimic-fix-update-only.zip"
+          TMP=".duckie-days-v24-270"
+          rm -rf "$TMP"
+          mkdir -p "$TMP"
+          unzip -q "$ZIP" -d "$TMP"
+          python3 -m py_compile "$TMP/tools/patch-v270.py" "$TMP/tools/verify-v270.py"
+          node --check "$TMP/payload/trading-cards-ui-v270.js"
+          node --check "$TMP/payload/duck-quest/js/quest-v270.js"
+          node --check "$TMP/payload/sw-v24-270.js"
+          python3 "$TMP/tools/patch-v270.py" "$TMP"
+          python3 "$TMP/tools/verify-v270.py" .
+          rm -rf "$TMP"
+
+      - name: Clean old installers and update bundles
+        shell: bash
+        run: |
+          set -euo pipefail
+          SELF_YML="install-duckie-days-v24-270-workshop-buddy-details.yml"
+          SELF_YAML="install-duckie-days-v24-270-workshop-buddy-details.yaml"
+          if [ -d .github/workflows ]; then
+            find .github/workflows -maxdepth 1 -type f               \( -name 'install-duck-habit-hub-v*.yml' -o -name 'install-duck-habit-hub-v*.yaml' -o -name 'install-duckie-days-v*.yml' -o -name 'install-duckie-days-v*.yaml' -o -name 'repair-duckie-days-v*.yml' -o -name 'repair-duckie-days-v*.yaml' \)               ! -name "$SELF_YML" ! -name "$SELF_YAML" -delete
+          fi
+          find . -maxdepth 1 -type f -name 'UPDATE-v*.txt' ! -name 'UPDATE-v24.270.txt' -delete
+          find . -maxdepth 1 -type f -name 'sw-v24-*.js' ! -name 'sw-v24-270.js' -delete
+          find . -maxdepth 1 -type f -name '*update-only*.zip' -delete
+
+      - name: Commit v24.270
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && { echo "ERROR: No changes were staged."; exit 1; }
+          git commit -m "Add Workshop previews and Buddy details"
+          git push
+
+      - name: Success
+        shell: bash
+        run: |
+          echo 'SUCCESS: Duckie Days v24.270 installed and verified.'
