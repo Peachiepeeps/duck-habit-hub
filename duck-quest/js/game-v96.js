@@ -2247,7 +2247,7 @@ function enemyVariantId(enemy) {
   if(enemy.id==="mimic" && enemy.mimicChestStyle) return String(enemy.mimicChestStyle)==="regular" ? "base" : String(enemy.mimicChestStyle);
   return String(
     enemy.catSlimeVariant || enemy.beeVariant || enemy.flowerVariant || enemy.acornMouseVariant || enemy.mushroomVariant || enemy.treeSquirrelVariant || enemy.oceanVariant || enemy.seaunicornVariant || enemy.jellybunVariant ||
-    enemy.catterpillarVariant || enemy.seaStarVariant || enemy.appleBabyVariant || enemy.gummyWormVariant || enemy.puddingPigVariant || enemy.gingerlollyVariant || enemy.candycaneDeerVariant || enemy.gummySharkVariant || enemy.creamFoxVariant || enemy.starMouseVariant || enemy.puffFairyVariant || enemy.tulipaVariant || enemy.snoudVariant || enemy.cloudBunnyVariant || enemy.lunarMothVariant || enemy.ariesVariant || enemy.cherubDuckVariant || "base"
+    enemy.catterpillarVariant || enemy.seaStarVariant || enemy.appleBabyVariant || enemy.gummyWormVariant || enemy.puddingPigVariant || enemy.gingerlollyVariant || enemy.candycaneDeerVariant || enemy.gummySharkVariant || enemy.creamFoxVariant || enemy.starMouseVariant || enemy.puffFairyVariant || enemy.tulipaVariant || enemy.snoudVariant || enemy.cloudBunnyVariant || enemy.lunarMothVariant || enemy.ariesVariant || enemy.cherubDuckVariant || enemy.plushbunVariant || "base"
   );
 }
 
@@ -4533,7 +4533,7 @@ function assignBuddyFromBook(entry,characterId,slotIndex){
 }
 
 const BUDDY_AREA_FAMILIES = Object.freeze({
-  meadow:["cat-slime","bee","flower","acorn-mouse","catterpillar","mushroom-cat","tree-squirrel","mimic"],
+  meadow:["cat-slime","bee","flower","acorn-mouse","catterpillar","plushbun","mushroom-cat","tree-squirrel","mimic"],
   ocean:["cool-seagull","sea-turtle","catfish","seaunicorn","sea-star","vampire-squid","jellybun"],
   candy:["apple-baby","gummy-worm","pudding-pig","gingerlolly","candycane-deer","gummy-shark","cream-fox"],
   cloud:["star-mouse","puff-fairy","tulipa","snoud","cloud-bunny","lunar-moth","aries","cherub-duck"]

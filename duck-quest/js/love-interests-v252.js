@@ -758,6 +758,13 @@
     if (shouldSave) save(data);
   }
 
+  // LUV_BIRDIE_FOCUS_V262: Luv & Birdie can temporarily weight one Miko love interest.
+  function luvBirdieFocus(data){
+    const focus=data?.luvBirdieFocusV262;
+    if(!focus || !focus.characterId || Number(focus.rollsRemaining)<=0) return null;
+    return focus;
+  }
+
   function eligibleScenes(){
     const data = load();
     const root = ensureAll(data);
@@ -773,39 +780,45 @@
     if (!root.loveInterests.circe.encountered) ids.push("circe");
     if (!root.loveInterests.quin.encountered) ids.push("quin");
 
-    if (root.loveInterests.shinobu.encountered && root.loveInterests.cheryln.encountered && !root.pairScenes.shinobuCheryln.cardsGranted) {
-      ids.push("shinobu-cheryln");
-    }
-    if (root.loveInterests.hibiki.encountered && root.loveInterests.devlin.encountered && !root.pairScenes.devlinHibiki.cardsGranted) {
-      ids.push("devlin-hibiki");
-    }
-    if (root.loveInterests.yuzuru.encountered && root.loveInterests.westley.encountered && !root.pairScenes.westleyYuzuru.cardsGranted) {
-      ids.push("westley-yuzuru");
-    }
-    if (root.loveInterests.circe.encountered && root.loveInterests.quin.encountered && !root.pairScenes.circeQuin.cardsGranted) {
-      ids.push("circe-quin");
-    }
+    const focus=luvBirdieFocus(data);
+    if(focus && CHARACTERS[focus.characterId] && !ids.includes(focus.characterId)) ids.push(focus.characterId);
+
+    if (root.loveInterests.shinobu.encountered && root.loveInterests.cheryln.encountered && !root.pairScenes.shinobuCheryln.cardsGranted) ids.push("shinobu-cheryln");
+    if (root.loveInterests.hibiki.encountered && root.loveInterests.devlin.encountered && !root.pairScenes.devlinHibiki.cardsGranted) ids.push("devlin-hibiki");
+    if (root.loveInterests.yuzuru.encountered && root.loveInterests.westley.encountered && !root.pairScenes.westleyYuzuru.cardsGranted) ids.push("westley-yuzuru");
+    if (root.loveInterests.circe.encountered && root.loveInterests.quin.encountered && !root.pairScenes.circeQuin.cardsGranted) ids.push("circe-quin");
     return ids;
   }
 
-  function chooseScene(ids){
+  function chooseScene(ids, data){
+    const focus=luvBirdieFocus(data);
+    if(focus && ids.includes(focus.characterId)){
+      const weighted=[];
+      ids.forEach(id=>{const weight=id===focus.characterId?Math.max(1,Number(focus.weight)||3):1;for(let i=0;i<weight;i++)weighted.push(id);});
+      return weighted[Math.floor(Math.random()*weighted.length)];
+    }
     const pairScenes = ids.filter(id => id.includes("-"));
     if (pairScenes.length) return pairScenes[Math.floor(Math.random() * pairScenes.length)];
     return ids[Math.floor(Math.random() * ids.length)];
   }
 
   function maybeBeforeNextEncounter(continueFn){
-    if (bypassNextRoll) {
-      bypassNextRoll = false;
-      return false;
-    }
+    if (bypassNextRoll) { bypassNextRoll = false; return false; }
     if (open || !isMiko()) return false;
 
+    const data=load();
     const ids = eligibleScenes();
     if (!ids.length) return false;
     if (Math.random() >= SHARED_CHANCE) return false;
 
-    return showScene(chooseScene(ids), continueFn);
+    const chosen=chooseScene(ids,data);
+    const focus=luvBirdieFocus(data);
+    if(focus){
+      focus.rollsRemaining=Math.max(0,Number(focus.rollsRemaining)-1);
+      if(chosen===focus.characterId || focus.rollsRemaining<=0) delete data.luvBirdieFocusV262;
+      save(data);
+    }
+    return showScene(chosen, continueFn);
   }
 
   reconcileRecordedRewards();

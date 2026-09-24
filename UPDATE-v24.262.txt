@@ -1,0 +1,7 @@
+Duckie Days v24.262
+
+- Adds Card Dust and the Card Workshop: duplicate conversion, rarity upgrades, normal color variant unlocks, and Holo finishes.
+- Adds 10 new Fabled cards to Card Packs.
+- Adds animated Luv & Birdie as a Miko special encounter with temporary 3x love-interest weighting.
+- Adds the card-focused Gift Box encounter and Gift Box Mimic.
+- Adds Plushbun as a universal wandering enemy with normal shiny odds and Stuffed Surprise rewards.

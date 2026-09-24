@@ -1,0 +1,10 @@
+/* Duckie Days v24.262 — Luv & Birdie, Gift Box Mimic, Plushbun */
+.chest-layer.luv-birdie-active-v262 .luv-birdie-art-v262{width:min(112px,30vw)!important;height:min(112px,30vw)!important;object-fit:contain!important;image-rendering:pixelated;}
+.luv-birdie-menu-v262{max-height:min(52vh,390px);overflow:auto;}
+.luv-birdie-copy-v262{display:grid;gap:4px;text-align:center;padding:2px 4px 6px;color:#674d59;}
+.luv-birdie-copy-v262 strong{font-size:.78rem}.luv-birdie-copy-v262 small{font-size:.56rem;line-height:1.35;color:#826b75}
+.luv-birdie-grid-v262{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;}
+.luv-birdie-choice-v262{min-height:40px;padding:7px 5px;font-size:.62rem;}
+.gift-box-active-v262{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:10px!important;background:rgba(74,52,48,.25)!important;}
+.gift-box-art-v262{width:min(164px,44vw)!important;height:min(164px,44vw)!important;object-fit:contain!important;image-rendering:pixelated;}
+@media(max-width:480px){.luv-birdie-grid-v262{grid-template-columns:repeat(2,minmax(0,1fr));}.chest-layer.luv-birdie-active-v262 .luv-birdie-art-v262{width:min(104px,28vw)!important;height:min(104px,28vw)!important;}}

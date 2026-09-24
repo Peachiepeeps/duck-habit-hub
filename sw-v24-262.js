@@ -1,5 +1,5 @@
-const APP_CACHE = 'duck-habit-hub-app-v24-261';
-const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-261';
+const APP_CACHE = 'duck-habit-hub-app-v24-262';
+const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-262';
 const IMAGE_CACHE = 'duck-habit-hub-images-stable-v1';
 
 const APP_SHELL = [
@@ -7,7 +7,7 @@ const APP_SHELL = [
   './assets/trading-cards/card-common.png','./assets/trading-cards/card-uncommon.png','./assets/trading-cards/card-rare.png','./assets/trading-cards/card-back.png','./assets/trading-cards/card-pack-unopened.png','./assets/trading-cards/card-pack-ripped.png','./assets/trading-cards/card-pack-torn-top.png',
   './memory-game/trading-card-memory-v235.js?v=24-261','./duck-quest/js/trading-card-drops-v235.js?v=24-261',
   './','./index.html','./manifest.webmanifest?v=24-261','./version.json',
-  './style-v24-201.css?v=24-261','./script-v24-201.js?v=24-261','./sw-v24-261.js','./sw.js',
+  './style-v24-201.css?v=24-261','./script-v24-201.js?v=24-261','./sw-v24-262.js','./sw.js',
   './apple-touch-icon-v5.png','./favicon-32-v5.png','./icon-192-v5.png','./icon-512-v5.png','./icon-maskable-512-v5.png',
   './assets/ui/pink-coin.webp','./assets/ui/icons/duckipedia.webp','./assets/ducks/Standard-duck.webp','./assets/ducks/Top-hat-duck.webp',
   './duck-quest/assets/dash/Jump-Token.png','./duck-quest/assets/eggs/Common-egg.png','./duck-quest/assets/eggs/Rare-egg.png',
@@ -163,6 +163,54 @@ const APP_SHELL = [
   './task-progression-v260.css?v=24-261',
   './task-progression-v261.js?v=24-261',
   './task-progression-v261.css?v=24-261',
+
+  './trading-cards-v262.css?v=24-262',
+  './trading-cards-v262.js?v=24-262',
+  './trading-cards-ui-v262.js?v=24-262',
+  './duck-quest/css/special-encounters-v262.css?v=24-262',
+  './duck-quest/js/special-encounters-v262.js?v=24-262',
+  './duck-quest/assets/events/luv-and-birdie/idle-1.png',
+  './duck-quest/assets/events/luv-and-birdie/idle-2.png',
+  './duck-quest/assets/events/gift-box/regular-closed.png',
+  './duck-quest/assets/events/gift-box/regular-open.png',
+  './duck-quest/assets/events/gift-box/lucky-closed.png',
+  './duck-quest/assets/events/gift-box/lucky-idle-1.png',
+  './duck-quest/assets/events/gift-box/lucky-idle-2.png',
+  './duck-quest/assets/events/gift-box/lucky-open.png',
+  './duck-quest/assets/events/gift-box/shiny-closed.png',
+  './duck-quest/assets/events/gift-box/shiny-open.png',
+  './duck-quest/assets/events/gift-box/mimic-idle-1.png',
+  './duck-quest/assets/events/gift-box/mimic-idle-2.png',
+  './duck-quest/assets/events/gift-box/mimic-shiny-idle-1.png',
+  './duck-quest/assets/events/gift-box/mimic-shiny-idle-2.png',
+  './duck-quest/assets/enemies/plushbun/base/idle-1.png',
+  './duck-quest/assets/enemies/plushbun/base/idle-2.png',
+  './duck-quest/assets/enemies/plushbun/base/hurt.png',
+  './duck-quest/assets/enemies/plushbun/base/pink-idle-1.png',
+  './duck-quest/assets/enemies/plushbun/base/pink-idle-2.png',
+  './duck-quest/assets/enemies/plushbun/base/pink-hurt.png',
+  './duck-quest/assets/enemies/plushbun/base/mint-idle-1.png',
+  './duck-quest/assets/enemies/plushbun/base/mint-idle-2.png',
+  './duck-quest/assets/enemies/plushbun/base/mint-hurt.png',
+  './duck-quest/assets/enemies/plushbun/base/purple-idle-1.png',
+  './duck-quest/assets/enemies/plushbun/base/purple-idle-2.png',
+  './duck-quest/assets/enemies/plushbun/base/purple-hurt.png',
+  './duck-quest/assets/enemies/plushbun/base/red-idle-1.png',
+  './duck-quest/assets/enemies/plushbun/base/red-idle-2.png',
+  './duck-quest/assets/enemies/plushbun/base/red-hurt.png',
+  './duck-quest/assets/enemies/plushbun/base/shiny-idle-1.png',
+  './duck-quest/assets/enemies/plushbun/base/shiny-idle-2.png',
+  './duck-quest/assets/enemies/plushbun/base/shiny-hurt.png',
+  './duck-quest/assets/trading-cards/fabled/F-hibiki-jackie.png',
+  './duck-quest/assets/trading-cards/fabled/F-loofah.png',
+  './duck-quest/assets/trading-cards/fabled/F-cool-seagull.png',
+  './duck-quest/assets/trading-cards/fabled/F-seaunicorn-seaturtle.png',
+  './duck-quest/assets/trading-cards/fabled/F-miko-espurr.png',
+  './duck-quest/assets/trading-cards/fabled/F-frappe.png',
+  './duck-quest/assets/trading-cards/fabled/F-gummy-shark.png',
+  './duck-quest/assets/trading-cards/fabled/F-venni.png',
+  './duck-quest/assets/trading-cards/fabled/F-catfish.png',
+  './duck-quest/assets/trading-cards/fabled/F-silly.png',
 ];
 
 self.addEventListener('message', event => {
