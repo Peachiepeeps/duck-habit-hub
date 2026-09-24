@@ -1,0 +1,126 @@
+name: Install Duckie Days v24.260 Home Plush + Task Polish
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/install-duckie-days-v24-260-home-plush-task-polish.yml"
+      - "Duckie-Days-v24.260-home-plush-task-polish-update-only.zip"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-260-install
+  cancel-in-progress: false
+
+jobs:
+  install-update:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Require v24.260 update ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.260-home-plush-task-polish-update-only.zip"
+          test -f "$ZIP" || {
+            echo "ERROR: $ZIP is missing from the repository root."
+            exit 1
+          }
+          unzip -tq "$ZIP"
+
+      - name: Install v24.260
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.260-home-plush-task-polish-update-only.zip"
+          TMP=".duckie-days-v24-260"
+          rm -rf "$TMP"
+          mkdir -p "$TMP"
+          unzip -q "$ZIP" -d "$TMP"
+
+          python3 -m py_compile "$TMP/tools/patch-v260.py"
+          node --check "$TMP/task-progression-v260.js"
+          python3 "$TMP/tools/patch-v260.py" "$TMP"
+          rm -rf "$TMP"
+
+      - name: Verify v24.260
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          grep -Fq '"version": "24.260"' version.json
+          test -f task-progression-v260.js
+          test -f task-progression-v260.css
+          grep -Fq 'task-progression-v260.css?v=24-260' index.html
+          grep -Fq 'task-progression-v260.js?v=24-260' index.html
+
+          # Book moved right, not vertically changed.
+          grep -Fq 'left:72.8% !important;' task-progression-v260.css
+          grep -Fq 'left:70.8% !important;' task-progression-v260.css
+
+          # Dresser plush support.
+          grep -Fq 'task-dresser-collectible-v260' task-progression-v260.js
+          grep -Fq 'task-dresser-button-v260' task-progression-v260.js
+          grep -Fq 'dresserCollectibleByRoom' task-progression-v260.js
+          grep -Fq 'top:63.3%;' task-progression-v260.css
+
+          # Treasure progress visibly advances on task 1, 2, 3, etc.
+          grep -Fq 'p.completedToday/Math.max(1,next)' task-progression-v254.js
+
+          # Bottom helper text removed from Tasks window.
+          ! grep -Fq 'Anytime tasks wait until you complete them once.' index.html
+
+          # App refresh/cache wiring.
+          grep -Fq 'const DUCK_HUB_BUILD = "24.260";' index.html
+          grep -Fq 'navigator.serviceWorker.register("./sw.js?v=24-260"' index.html
+          test -f sw-v24-260.js
+          grep -Fq "importScripts('./sw-v24-260.js?v=24-260');" sw.js
+          grep -Fq './task-progression-v260.js?v=24-260' sw-v24-260.js
+          grep -Fq './task-progression-v260.css?v=24-260' sw-v24-260.js
+
+          node --check task-progression-v254.js
+          node --check task-progression-v260.js
+          node --check sw-v24-260.js
+
+          echo "VERIFIED: v24.260 Home Plush + Task Polish update is valid."
+
+      - name: Clean old installers and update bundles
+        shell: bash
+        run: |
+          set -euo pipefail
+          SELF="install-duckie-days-v24-260-home-plush-task-polish.yml"
+
+          if [ -d .github/workflows ]; then
+            find .github/workflows -maxdepth 1 -type f \
+              \( -name 'install-duck-habit-hub-v*.yml' -o -name 'install-duckie-days-v*.yml' -o -name 'repair-duckie-days-v*.yml' \) \
+              ! -name "$SELF" -delete
+          fi
+
+          find . -maxdepth 1 -type f -name 'UPDATE-v*.txt' ! -name 'UPDATE-v24.260.txt' -delete
+          find . -maxdepth 1 -type f -name 'sw-v24-*.js' ! -name 'sw-v24-260.js' ! -name 'sw-v24-244.js' -delete
+          find . -maxdepth 1 -type f -name '*update-only*.zip' -delete
+
+      - name: Commit v24.260
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && {
+            echo "ERROR: No changes were staged."
+            exit 1
+          }
+          git commit -m "Add dresser plush display and task polish"
+          git push
+
+      - name: Success
+        shell: bash
+        run: |
+          echo "SUCCESS: v24.260 installed and verified."
