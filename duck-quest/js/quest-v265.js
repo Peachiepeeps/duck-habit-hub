@@ -283,49 +283,9 @@
     const count=heading.querySelector('#buddyCollectionCount');if(count)count.before(button);else heading.append(button);
   }
 
-  // ---- Duckie Dash setup cleanup -----------------------------------------
-  function dashInventoryCount(){return Math.max(0,Math.floor(Number(hubSave?.inventory?.['jump-token'])||0));}
-  function updateDashBalances(){
-    const row=document.querySelector('#dashBalancesV265');if(!row)return;
-    row.querySelector('[data-dash-balance="coins"]').textContent=Math.max(0,Number(hubSave?.coins)||0).toLocaleString();
-    row.querySelector('[data-dash-balance="tokens"]').textContent=dashInventoryCount().toLocaleString();
-  }
-  function applyDashSetupV265(){
-    const screen=document.querySelector('#dashScreen');const shell=screen?.querySelector('.dq-feature-shell');if(!screen||!shell||screen.classList.contains('hidden'))return;
-    const overlay=screen.querySelector('#dashOverlay');const overlayCard=overlay?.querySelector('.dash-overlay-card');
-    const duration=overlayCard?.querySelector('.dash-duration-label-v235');const start=overlayCard?.querySelector('#dashStart');const note=overlayCard?.querySelector('small');
-    let config=screen.querySelector('#dashConfigV265');
-    if(duration&&start){
-      if(!config){config=document.createElement('section');config.id='dashConfigV265';config.className='dash-config-v265';}
-      if(duration.parentElement!==config)config.append(duration);
-      let balances=config.querySelector('#dashBalancesV265');if(!balances){balances=document.createElement('div');balances.id='dashBalancesV265';balances.className='dash-balances-v265';balances.innerHTML='<span>Pink Coins <strong data-dash-balance="coins">0</strong></span><span>Jump Tokens <strong data-dash-balance="tokens">0</strong></span>';config.append(balances);}
-      if(note&&note.parentElement!==config)config.append(note);
-      if(start.parentElement!==config)config.append(start);
-      const playbox=screen.querySelector('.dash-playbox');const garage=screen.querySelector('.dash-garage-wrap');const anchor=playbox||null;
-      if(config.parentElement!==shell)shell.insertBefore(config,anchor);else if(anchor&&config.nextElementSibling!==anchor)shell.insertBefore(config,anchor);
-      overlay?.classList.add('dash-ready-external-v265');
-    }
-    screen.querySelector('#dashCostBelowPreviewV184')?.classList.add('hidden');
-    updateDashBalances();
-  }
-  try{
-    if(typeof startDash==='function'){
-      const priorStartDashV265=startDash;startDash=function(){document.querySelector('#dashConfigV265')?.classList.add('hidden');document.querySelector('#dashOverlay')?.classList.remove('dash-ready-external-v265');return priorStartDashV265.apply(this,arguments);};
-    }
-    if(typeof finishDash==='function'){
-      const priorFinishDashV265=finishDash;finishDash=function(){document.querySelector('#dashOverlay')?.classList.remove('dash-ready-external-v265');document.querySelector('#dashConfigV265')?.classList.add('hidden');return priorFinishDashV265.apply(this,arguments);};
-    }
-    if(typeof renderDashReadyOverlay==='function'){
-      const priorReadyV265=renderDashReadyOverlay;renderDashReadyOverlay=function(){const result=priorReadyV265.apply(this,arguments);document.querySelector('#dashConfigV265')?.classList.remove('hidden');requestAnimationFrame(applyDashSetupV265);return result;};
-    }
-    if(typeof showScreen==='function'){
-      const priorShowScreenV265=showScreen;showScreen=function(which){const result=priorShowScreenV265.apply(this,arguments);if(which==='dash')requestAnimationFrame(applyDashSetupV265);return result;};
-    }
-  }catch(error){}
+  // v24.269: Dash UI patch removed; game-v96 + quest-v269 own Dash navigation.
 
-  ensureBox();dustState();installBuddyBoxButton();
-  requestAnimationFrame(()=>{installBuddyBoxButton();applyDashSetupV265();});
-  setInterval(()=>{const dashScreen=document.querySelector('#dashScreen');if(dashScreen&&!dashScreen.classList.contains('hidden')){applyDashSetupV265();updateDashBalances();}},700);
+  ensureBox();dustState();
   window.DUCKIE_BUDDY_BOX_V265={open:openBuddyBox,ensure:ensureBox,powerFactor:buddyPowerFactor};
   window.DUCKIE_QUEST_V265='24.265';
 })();

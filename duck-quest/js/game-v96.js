@@ -8325,6 +8325,21 @@ setInterval(()=>{
   document.querySelector('#closeEggInventory')?.addEventListener('click',closeEggInventory);
   document.querySelector('#eggInventoryBackdrop')?.addEventListener('click',closeEggInventory);
 
+  window.DUCKIE_DASH_API_V269={
+    start:startDash,
+    getStatus:()=>( {
+      tokens:specialQty('jump-token'),
+      freeRuns:Math.max(0,Math.floor(Number(questSave.dash.freeRuns)||0)),
+      duration:Number(questSave.dash.runDuration)===60?60:30,
+      coins:Math.max(0,Number(hubSave.coins)||0)
+    }),
+    setDuration:(value)=>{
+      questSave.dash.runDuration=Number(value)===60?60:30;
+      persistAll();
+    },
+    refresh:refreshFeatureBadges
+  };
+
   window.DuckieHatchApiV178={
     renderHatchery, openEggInventory, closeEggInventory, closeHatchDetail,
     openHatchDetail, refreshFeatureBadges

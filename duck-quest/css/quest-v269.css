@@ -1,0 +1,18 @@
+/* Duck Quest v24.269 — stability-first static home + clean Dash menu */
+#openSkillBook.home-skills-hidden-v269{display:none!important}
+.hero-quick-actions #openCharmScreen{min-height:39px!important;padding:6px 7px!important}
+#questHomeTools #openBuddyBoxHomeV269{display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important}
+#questHomeTools #openBuddyBoxHomeV269 img{width:34px!important;height:34px!important;object-fit:contain!important;image-rendering:pixelated!important}
+.buddy-box-dust-v265 img.buddy-box-dust-icon-v269{width:16px!important;height:16px!important;object-fit:contain!important;margin-right:4px!important;vertical-align:middle!important}
+#dashScreen .dash-config-v265{display:none!important}
+#dashScreen:not(.dash-run-stage-v193) .dash-playbox,#dashScreen:not(.dash-run-stage-v193) .dash-tap-note{display:none!important}
+#dashScreen.dash-run-stage-v193 .dash-playbox{display:grid!important}
+#dashScreen .dash-config-v269{display:grid;gap:9px;padding:12px;border:2px solid rgba(140,98,93,.14);border-radius:16px;background:#fffdfb}
+#dashScreen .dash-config-v269 label{display:grid;gap:6px;color:#684b58;font-weight:900}
+#dashScreen .dash-config-v269 select{width:100%;min-height:44px;padding:8px 12px;border:2px solid #d987ab;border-radius:13px;background:#fff;color:#684b58;font:inherit;font-weight:800}
+#dashScreen .dash-balances-v269{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#dashScreen .dash-balances-v269 span{display:grid;place-items:center;gap:2px;min-height:58px;padding:7px;border:2px solid rgba(140,98,93,.11);border-radius:12px;background:#fff8f8;color:#8c7079;font-size:.58rem;font-weight:900;text-transform:uppercase;letter-spacing:.04em}
+#dashScreen .dash-balances-v269 strong{color:#624851;font-size:.82rem;letter-spacing:0;text-transform:none}
+#dashScreen .dash-help-v269{margin:0;color:#876f78;font-size:.62rem;line-height:1.35;text-align:center}
+#dashScreen #dashStartMenuV269{width:100%;min-height:46px}
+#dashScreen #dashStartMenuV269:disabled{opacity:.48;box-shadow:none}

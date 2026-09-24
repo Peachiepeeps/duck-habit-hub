@@ -1,0 +1,10 @@
+Duckie Days v24.269 — Duck Quest stability repair
+
+- Removes the old Duckie Dash polling/re-parenting patch.
+- Removes the layered v24.267/v24.268 Duck Quest rearranger scripts.
+- Makes the agreed Duck Quest home layout static.
+- Exposes the real Duckie Dash start function from game-v96.
+- Rebuilds Duckie Dash setup as one clean event-driven menu.
+- Removes the pre-run course/Ready preview.
+- If 60 seconds is selected with only 3–4 Jump Tokens, the menu falls back to the playable 30-second option.
+- Keeps v24.268 Card Pack purchases and the smaller Duckipedia Power Up Dust icon.
