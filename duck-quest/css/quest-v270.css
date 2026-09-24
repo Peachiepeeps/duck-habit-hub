@@ -1,0 +1,72 @@
+/* Duckie Days v24.270 — Buddy Details polish */
+.buddy-box-detail-v265{
+  z-index:20!important;
+  box-shadow:
+    0 0 0 100vmax rgba(63,39,50,.34),
+    0 16px 48px rgba(61,39,48,.34)!important;
+}
+.buddy-detail-status-v270{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:7px;
+  margin:10px 0;
+}
+.buddy-detail-status-v270 span{
+  display:grid;
+  gap:2px;
+  padding:8px;
+  border:2px solid #dfc5c9;
+  border-radius:11px;
+  background:#fff;
+  color:#80666f;
+  font-size:.56rem;
+  font-weight:900;
+  line-height:1.25;
+}
+.buddy-detail-status-v270 span strong{
+  color:#654b55;
+  font-size:.63rem;
+}
+.buddy-detail-status-v270 .boost-active-v270{
+  border-color:#a9cca9;
+  background:#f2faee;
+  color:#58715c;
+}
+.buddy-power-panel-v270{
+  margin:9px 0 7px;
+  padding:9px;
+  border:2px solid #e1bec8;
+  border-radius:12px;
+  background:#fff7fa;
+  text-align:center;
+}
+.buddy-power-panel-v270 strong{
+  display:block;
+  color:#704f5b;
+  font-size:.7rem;
+}
+.buddy-power-panel-v270 small{
+  display:block;
+  margin-top:3px;
+  color:#947883;
+  font-size:.53rem;
+  line-height:1.3;
+}
+.buddy-power-panel-v270 .buddy-dust-balance-v270{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  margin-top:6px;
+  color:#7f606c;
+  font-size:.58rem;
+  font-weight:900;
+}
+.buddy-power-panel-v270 .buddy-dust-balance-v270 img{
+  width:12px;
+  height:12px;
+  object-fit:contain;
+}
+@media(max-width:600px){
+  .buddy-detail-status-v270{grid-template-columns:1fr}
+}
