@@ -1,13 +1,13 @@
-const APP_CACHE = 'duck-habit-hub-app-v24-263';
-const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-263';
+const APP_CACHE = 'duck-habit-hub-app-v24-264';
+const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-264';
 const IMAGE_CACHE = 'duck-habit-hub-images-stable-v1';
 
 const APP_SHELL = [
-  './trading-cards-v250.css?v=24-261','./trading-cards-v250.js?v=24-261','./trading-cards-ui-v250.js?v=24-261',
+  './trading-cards-v250.css?v=24-261','./trading-cards-v250.js?v=24-261','./trading-cards-ui-v250.js?v=24-264',
   './assets/trading-cards/card-common.png','./assets/trading-cards/card-uncommon.png','./assets/trading-cards/card-rare.png','./assets/trading-cards/card-back.png','./assets/trading-cards/card-pack-unopened.png','./assets/trading-cards/card-pack-ripped.png','./assets/trading-cards/card-pack-torn-top.png',
   './memory-game/trading-card-memory-v235.js?v=24-261','./duck-quest/js/trading-card-drops-v235.js?v=24-261',
   './','./index.html','./manifest.webmanifest?v=24-261','./version.json',
-  './style-v24-201.css?v=24-261','./script-v24-201.js?v=24-261','./sw-v24-263.js','./sw.js',
+  './style-v24-201.css?v=24-261','./script-v24-201.js?v=24-264','./sw-v24-264.js','./sw.js',
   './apple-touch-icon-v5.png','./favicon-32-v5.png','./icon-192-v5.png','./icon-512-v5.png','./icon-maskable-512-v5.png',
   './assets/ui/pink-coin.webp','./assets/ui/icons/duckipedia.webp','./assets/ducks/Standard-duck.webp','./assets/ducks/Top-hat-duck.webp',
   './duck-quest/assets/dash/Jump-Token.png','./duck-quest/assets/eggs/Common-egg.png','./duck-quest/assets/eggs/Rare-egg.png',
@@ -16,7 +16,6 @@ const APP_SHELL = [
   './duck-quest/assets/enemies/mimic/lucky/closed.webp','./duck-quest/assets/enemies/mimic/lucky/open.webp','./duck-quest/assets/enemies/mimic/lucky/idle-1.webp','./duck-quest/assets/enemies/mimic/lucky/idle-2.webp',
   './duck-quest/assets/enemies/mimic/healthy/closed.webp','./duck-quest/assets/enemies/mimic/healthy/open.webp','./duck-quest/assets/enemies/mimic/healthy/idle-1.webp','./duck-quest/assets/enemies/mimic/healthy/idle-2.webp',
   './assets/ui/profile-borders/Sparkle-border.png','./assets/ui/profile-borders/Stitched-border.png','./assets/ui/profile-borders/Sakura-border.png',
-  './shared-ui-theme-v24-131.css','./shared-ui-theme-v24-131.js',
   './memory-game/index.html','./sort-game/index.html','./crane-game/index.html?v=24-261','./crane-game/play-v24-40.html?v=24-261','./crane-game/style-v24-40.css?v=24-261','./crane-game/script-v24-40.js?v=24-261',
   './duck-quest/index.html','./duck-quest/js/game-v96.js?v=24-261','./duck-quest/js/quest-fixes-v204.js?v=24-261','./duck-quest/js/quest-fixes-v207.js?v=24-261','./duck-quest/js/quest-fixes-v209.js?v=24-261','./duck-quest/js/theme-refresh-v211.js?v=24-261','./duck-quest/js/theme-fixes-v212.js?v=24-261','./duck-quest/js/boost-items-v213.js?v=24-261','./duck-quest/js/boost-labels-v215.js?v=24-261','./assets/bakery/drops/Gold-heart-refill.webp','./assets/bakery/drops/Pink-heart-refill.webp','./assets/items/quest-boosts/Warm-blanket.png','./assets/items/quest-boosts/Exp-candy-large.png','./assets/items/quest-boosts/Exp-candy-small.png','./hub-shop-boosts-v213.js?v=24-261','./hub-exp-candy-use-v215.js?v=24-261','./duck-quest/js/hatchery-v179.js?v=24-261','./duck-quest/js/hatchery-egg-position-v192.js?v=24-261','./duck-quest/js/hatchery-ui-v193.js?v=24-261','./duck-quest/js/dash-home-v180.js?v=24-261','./duck-quest/js/dash-screen-v184.js?v=24-261','./duck-quest/js/dash-screen-v193.js?v=24-261','./duck-quest/js/token-shop-v200.js?v=24-261','./duck-quest/css/style-v82.css?v=24-261',
   './bakery/index.html',
@@ -166,9 +165,10 @@ const APP_SHELL = [
 
   './trading-cards-v262.css?v=24-262',
   './trading-cards-v262.js?v=24-262',
-  './trading-cards-ui-v263.js?v=24-263',
-  './duck-quest/css/special-encounters-v262.css?v=24-262',
-  './duck-quest/js/special-encounters-v262.js?v=24-262',
+  './trading-cards-v264.css?v=24-264',
+  './trading-cards-ui-v264.js?v=24-264',
+  './duck-quest/css/special-encounters-v264.css?v=24-264',
+  './duck-quest/js/special-encounters-v264.js?v=24-264',
   './duck-quest/assets/events/luv-and-birdie/idle-1.png',
   './duck-quest/assets/events/luv-and-birdie/idle-2.png',
   './duck-quest/assets/events/gift-box/regular-closed.png',
@@ -287,6 +287,16 @@ async function staleWhileRevalidate(request, cacheName = RUNTIME_CACHE, maxEntri
   return cached || (await network) || Response.error();
 }
 
+async function cacheFirstRefresh(request, cacheName = APP_CACHE) {
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(request, {ignoreSearch:true});
+  const network = fetch(request, {cache:'no-store'}).then(async response => {
+    if (response && response.ok) await cache.put(request, response.clone());
+    return response;
+  }).catch(() => null);
+  return cached || (await network) || Response.error();
+}
+
 function isPwaIcon(pathname) {
   const name = pathname.split('/').pop() || '';
   return ['apple-touch-icon-v5.png','favicon-32-v5.png','icon-192-v5.png','icon-512-v5.png','icon-maskable-512-v5.png'].includes(name);
@@ -299,7 +309,9 @@ self.addEventListener('fetch', event => {
   if (url.origin !== self.location.origin) return;
 
   if (request.mode === 'navigate') {
-    event.respondWith(networkFirst(request));
+    // Fast PWA startup: use the installed shell immediately, then refresh it
+    // in the background. version.json still performs a network-first build check.
+    event.respondWith(cacheFirstRefresh(request, APP_CACHE));
     return;
   }
 
@@ -310,8 +322,18 @@ self.addEventListener('fetch', event => {
     return;
   }
 
+  if (pathname.endsWith('/version.json') || pathname.endsWith('version.json')) {
+    event.respondWith(networkFirst(request));
+    return;
+  }
+
   if (pathname.endsWith('.js') || pathname.endsWith('.css') || pathname.endsWith('.html') ||
-      pathname.endsWith('.json') || pathname.endsWith('.webmanifest')) {
+      pathname.endsWith('.webmanifest')) {
+    event.respondWith(cacheFirstRefresh(request, APP_CACHE));
+    return;
+  }
+
+  if (pathname.endsWith('.json')) {
     event.respondWith(networkFirst(request));
     return;
   }

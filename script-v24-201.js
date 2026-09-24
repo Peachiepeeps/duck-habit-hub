@@ -13359,8 +13359,8 @@ function ensureSpecificDateControls() {
 }
 
 function setTaskRewardInForm(amount) {
-  const value = Math.max(1, Number(amount) || 5);
-  const preset = [5, 10, 20, 30].includes(value) ? String(value) : "custom";
+  const value = Math.max(1, Number(amount) || 15);
+  const preset = [15, 25, 40, 50].includes(value) ? String(value) : "custom";
   const radio = document.querySelector(`input[name="taskReward"][value="${preset}"]`);
   if (radio) radio.checked = true;
   const isCustom = preset === "custom";
@@ -13441,7 +13441,7 @@ function resetTaskForm() {
   taskForm.reset();
   ensureSpecificDateControls();
   if (taskSource) taskSource.value = "new";
-  setTaskRewardInForm(5);
+  setTaskRewardInForm(15);
   if (specificDateOptions && taskSpecificDate) {
     specificDateOptions.classList.remove("hidden");
     taskSpecificDate.min = localDateKey();
@@ -13477,7 +13477,7 @@ function updateRepeatExtras() {
 
 function getTaskReward() {
   const checked = document.querySelector('input[name="taskReward"]:checked');
-  if (!checked) return 5;
+  if (!checked) return 15;
   if (checked.value !== "custom") return Number(checked.value);
   return Math.max(1, Math.min(999, Number(customReward.value) || 0));
 }

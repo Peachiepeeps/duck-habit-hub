@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="duck-habit-build" content="24.263" />
+  <meta name="duck-habit-build" content="24.264" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta id="appThemeColor" name="theme-color" content="#f7dbe5" />
@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="style-v24-201.css?v=24-254" />
   <link rel="stylesheet" href="trading-cards-v250.css?v=24-254" />
   <link rel="stylesheet" href="trading-cards-v262.css?v=24-262" />
+  <link rel="stylesheet" href="trading-cards-v264.css?v=24-264" />
   <link rel="stylesheet" href="task-progression-v254.css?v=24-261" />
   <link rel="stylesheet" href="task-progression-v257.css?v=24-261" />
   <link rel="stylesheet" href="task-progression-v258.css?v=24-261" />
@@ -743,10 +744,10 @@
             <fieldset class="reward-fieldset">
               <legend>Pink Coin reward</legend>
               <div class="reward-grid">
-                <label><input type="radio" name="taskReward" value="5" checked /><span>Easy<br><b>5</b></span></label>
-                <label><input type="radio" name="taskReward" value="10" /><span>Medium<br><b>10</b></span></label>
-                <label><input type="radio" name="taskReward" value="20" /><span>Big<br><b>20</b></span></label>
-                <label><input type="radio" name="taskReward" value="30" /><span>Extra<br><b>30</b></span></label>
+                <label><input type="radio" name="taskReward" value="15" checked /><span>Easy<br><b>15</b></span></label>
+                <label><input type="radio" name="taskReward" value="25" /><span>Medium<br><b>25</b></span></label>
+                <label><input type="radio" name="taskReward" value="40" /><span>Big<br><b>40</b></span></label>
+                <label><input type="radio" name="taskReward" value="50" /><span>Extra<br><b>50</b></span></label>
                 <label><input id="customRewardRadio" type="radio" name="taskReward" value="custom" /><span>Custom</span></label>
               </div>
               <input id="customReward" class="custom-reward hidden" type="number" inputmode="numeric" min="1" max="999" placeholder="1–999" />
@@ -1158,11 +1159,11 @@
   </main>
   <script src="trading-cards-v250.js?v=24-254"></script>
   <script src="trading-cards-v262.js?v=24-262"></script>
-  <script src="script-v24-201.js?v=24-254"></script>
+  <script src="script-v24-201.js?v=24-264"></script>
   <script src="hub-shop-boosts-v213.js?v=24-254"></script>
   <script src="hub-exp-candy-use-v215.js?v=24-254"></script>
-  <script src="trading-cards-ui-v250.js?v=24-254"></script>
-  <script src="trading-cards-ui-v263.js?v=24-263"></script>
+  <script src="trading-cards-ui-v250.js?v=24-264"></script>
+  <script src="trading-cards-ui-v264.js?v=24-264"></script>
   <script src="task-progression-v254.js?v=24-261"></script>
   <script src="task-progression-v257.js?v=24-261"></script>
   <script src="task-progression-v260.js?v=24-261"></script>
@@ -1172,7 +1173,7 @@
     // v24.84: use a stable service-worker URL and actively check the deployed
     // build when the installed PWA is opened/resumed. This prevents Android
     // from keeping an already-open standalone app on an older app shell.
-    const DUCK_HUB_BUILD = "24.263";
+    const DUCK_HUB_BUILD = "24.264";
     let duckHubReloadingForUpdate = false;
 
     function duckHubReloadFresh(version) {
@@ -1236,7 +1237,7 @@
       window.addEventListener("load", async () => {
         try {
           await duckHubClearOldCodeCaches();
-          const registration = await navigator.serviceWorker.register("./sw.js?v=24-263", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("./sw.js?v=24-264", { updateViaCache: "none" });
           await registration.update();
           if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
           await duckHubCheckForUpdate(registration);

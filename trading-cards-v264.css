@@ -1,0 +1,16 @@
+/* Duckie Days v24.264 — dedicated Card Workshop + card detail swipe polish */
+.tc-detail-actions-v264{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.tc-detail-actions-v264 .tc-detail-fav{margin-top:0;width:100%}
+.tc-detail-workshop-v264{border:2px solid #d58faf;border-radius:12px;background:linear-gradient(#fff5fa,#ffe4ef);padding:8px 12px;color:#9e4f75;font:inherit;font-weight:900;cursor:pointer}
+.tc-detail-card{touch-action:pan-y}
+.tc-workshop-layer-v264{position:fixed;z-index:10080;inset:0;display:grid;place-items:center;padding:16px;background:rgba(58,36,52,.62);backdrop-filter:blur(5px)}
+.tc-workshop-layer-v264.hidden{display:none!important}
+.tc-workshop-card-v264{position:relative;width:min(94vw,520px);max-height:92vh;overflow:auto;padding:20px 16px;border:3px solid #eca6c2;border-radius:22px;background:#fff9fc;box-shadow:0 18px 55px rgba(56,30,47,.42)}
+.tc-workshop-close-v264{position:absolute;z-index:5;right:10px;top:10px;width:36px;height:36px;border:2px solid #e4a2bd;border-radius:50%;background:#fff;color:#684657;font:inherit;font-size:22px;font-weight:900}
+.tc-workshop-head-v264{display:grid;grid-template-columns:96px 1fr;gap:13px;align-items:center;padding:3px 38px 12px 2px;border-bottom:2px dashed rgba(190,111,143,.25)}
+.tc-workshop-preview-v264{width:92px!important;margin:0!important}
+.tc-workshop-head-v264 h2{margin:2px 0 4px;color:#684657;font-size:1.05rem}.tc-workshop-head-v264 p{margin:2px 0;color:#8e7480;font-size:.62rem;font-weight:800}
+.tc-workshop-kicker-v264{color:#c45d89!important;font-size:.52rem!important;font-weight:950!important;letter-spacing:.12em}
+.tc-workshop-dust-v264 strong{color:#c34f83;font-size:.78rem}
+.tc-workshop-sections-v264{border-top:0!important;margin-top:10px!important;padding-top:0!important}
+@media(max-width:560px){.tc-detail-actions-v264{grid-template-columns:1fr}.tc-workshop-card-v264{padding:18px 12px}.tc-workshop-head-v264{grid-template-columns:78px 1fr;gap:10px}.tc-workshop-preview-v264{width:74px!important}}

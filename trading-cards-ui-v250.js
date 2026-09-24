@@ -3,6 +3,7 @@
   const TC=window.DuckieTradingCards;if(!TC)return;
   let state=TC.ensureState(save);
   let showMissing=false,rarityFilter="all",packRipping=false,packSequence=0,packPointer=null;
+  let detailCardId=null;
   const progress=document.querySelector(".duckipedia-progress-card"),duckGrid=document.querySelector("#duckipediaGrid"),bottom=document.querySelector(".duckipedia-bottom-counter"),tabs=document.querySelector(".duckipedia-tabs");
   if(!tabs||!duckGrid)return;
 
@@ -41,7 +42,36 @@
     if(!list.length){const empty=document.createElement("div");empty.className="tc-empty";empty.innerHTML=showMissing?"<strong>No cards in this rarity yet.</strong>":"<strong>No cards collected here yet!</strong><br>Try your Starter Pack, Duck Quest, or the Daily Shop. ♡";grid.append(empty);return;}
     list.forEach(card=>{const qty=Math.max(0,Number(state.owned[card.id])||0),locked=qty<1;const entry=document.createElement("article");entry.className="tc-entry";const fav=document.createElement("button");fav.type="button";fav.className=`tc-favorite${isFavorite(card.id)?" active":""}`;fav.textContent="♥";fav.disabled=locked;fav.setAttribute("aria-label",`Favorite ${card.name}`);fav.addEventListener("click",e=>{e.stopPropagation();toggleFavorite(card.id)});const face=TC.createFace(card,{locked});const name=document.createElement("span");name.className="tc-entry-label";name.textContent=locked?`${TC.labels[card.rarity]} · ${card.number}`:card.name;const owned=document.createElement("span");owned.className="tc-owned";owned.textContent=locked?"Missing":`Owned ×${qty}`;entry.append(fav,face,name,owned);entry.addEventListener("click",()=>openDetail(card,locked));grid.append(entry);});
   }
-  function openDetail(card,locked){const body=detail.querySelector("#tcDetailBody");body.innerHTML="";body.append(TC.createFace(card,{locked}));const title=document.createElement("h2");title.textContent=locked?"???":card.name;const meta=document.createElement("p");meta.innerHTML=`<strong>${TC.labels[card.rarity]}</strong> · ${card.number}<br>${card.category}`;const owned=document.createElement("p");owned.textContent=locked?"Not collected yet":`Owned ×${state.owned[card.id]}`;const hint=document.createElement("p");hint.textContent=card.hint;body.append(title,meta,owned,hint);if(!locked){const fav=document.createElement("button");fav.className="tc-detail-fav";fav.textContent=isFavorite(card.id)?"♥ Favorited":"♡ Add to Favorites";fav.addEventListener("click",()=>{toggleFavorite(card.id);openDetail(card,false)});body.append(fav);}detail.classList.remove("hidden");}
+  function openDetail(card,locked){
+    syncCardState();
+    detailCardId=card.id;
+    const body=detail.querySelector("#tcDetailBody");body.innerHTML="";body.append(TC.createFace(card,{locked}));
+    const title=document.createElement("h2");title.textContent=locked?"???":card.name;
+    const meta=document.createElement("p");const displayRarity=TC.effectiveRarity?.(card,save)||card.rarity;meta.innerHTML=`<strong>${TC.labels[displayRarity]||displayRarity}</strong> · ${card.number}<br>${card.category}`;
+    const owned=document.createElement("p");owned.textContent=locked?"Not collected yet":`Owned ×${state.owned[card.id]}`;
+    const hint=document.createElement("p");hint.textContent=card.hint;body.append(title,meta,owned,hint);
+    if(!locked){
+      const actions=document.createElement("div");actions.className="tc-detail-actions-v264";
+      const fav=document.createElement("button");fav.className="tc-detail-fav";fav.type="button";fav.textContent=isFavorite(card.id)?"♥ Favorited":"♡ Add to Favorites";fav.addEventListener("click",()=>{toggleFavorite(card.id);openDetail(card,false)});
+      const workshop=document.createElement("button");workshop.className="tc-detail-workshop-v264";workshop.type="button";workshop.textContent="Card Workshop";workshop.addEventListener("click",()=>window.DuckieCardWorkshopV264?.open?.(card.id));
+      actions.append(fav,workshop);body.append(actions);
+    }
+    detail.classList.remove("hidden");
+  }
+  function navigateCardDetail(direction){
+    const list=sortedCards();
+    if(list.length<2||!detailCardId)return;
+    const index=list.findIndex(card=>card.id===detailCardId);
+    if(index<0)return;
+    const next=list[(index+direction+list.length)%list.length];
+    const locked=Math.max(0,Number(state.owned[next.id])||0)<1;
+    openDetail(next,locked);
+  }
+  const detailCard=detail.querySelector(".tc-detail-card");
+  let detailTouchStart=null;
+  detailCard?.addEventListener("touchstart",event=>{const touch=event.touches?.[0];if(!touch)return;detailTouchStart={x:touch.clientX,y:touch.clientY};},{passive:true});
+  detailCard?.addEventListener("touchend",event=>{if(!detailTouchStart)return;const touch=event.changedTouches?.[0];if(!touch){detailTouchStart=null;return;}const dx=touch.clientX-detailTouchStart.x,dy=touch.clientY-detailTouchStart.y;detailTouchStart=null;if(Math.abs(dx)>=52&&Math.abs(dx)>Math.abs(dy)*1.15)navigateCardDetail(dx<0?1:-1);},{passive:true});
+  window.addEventListener("duckie-card-workshop-updated",event=>{if(detail.classList.contains("hidden")||!detailCardId)return;if(event.detail?.cardId&&event.detail.cardId!==detailCardId)return;const card=TC.byId[detailCardId];if(card)openDetail(card,Math.max(0,Number(state.owned[card.id])||0)<1);});
   function showCardView(){currentDuckipediaFilter="cards";document.querySelectorAll("[data-duck-filter]").forEach(b=>{const active=b===cardTab;b.classList.toggle("active",active);b.setAttribute("aria-selected",String(active));});progress?.classList.add("hidden");duckGrid.classList.add("hidden");bottom?.classList.add("hidden");panel.classList.remove("hidden");renderCards();}
   function hideCardView(){panel.classList.add("hidden");progress?.classList.remove("hidden");duckGrid.classList.remove("hidden");bottom?.classList.remove("hidden");}
   cardTab.addEventListener("click",showCardView);tabs.querySelectorAll("[data-duck-filter]:not([data-duck-filter=cards])").forEach(button=>button.addEventListener("click",hideCardView));
@@ -94,5 +124,5 @@
   const oldShowTen=showTenPullSummary;showTenPullSummary=function(results){oldShowTen(results);document.querySelector("#gachaSummaryModal .gacha-pack-bonus")?.remove();const count=results.filter(result=>result.cardPackBonus).length;if(count){const bonus=document.createElement("div");bonus.className="gacha-pack-bonus";bonus.textContent=`✨ Bonus Card Pack${count>1?`s ×${count}`:""} found!`;gachaSummaryGrid.after(bonus);}};
 
   if(!state.starterPackGranted){state.starterPackGranted=true;state.unopenedPacks+=1;persist();setTimeout(()=>showToast("A free Starter Card Pack is waiting in Duckipedia! ♡"),700);}
-  window.DUCKIE_TRADING_CARD_UI_BUILD="24.250";
+  window.DUCKIE_TRADING_CARD_UI_BUILD="24.264";
 })();
