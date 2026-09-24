@@ -1,0 +1,23 @@
+/* Duck Quest v24.268 — restore simple Dash menu -> separate run view */
+
+/* No course preview / Ready card on the setup menu. */
+#dashScreen:not(.dash-run-stage-v193) .dash-playbox{
+  display:none!important;
+}
+#dashScreen:not(.dash-run-stage-v193) .dash-tap-note{
+  display:none!important;
+}
+
+/* Keep the setup controls tidy without the preview beneath them. */
+#dashScreen:not(.dash-run-stage-v193) .dash-config-v265{
+  margin-bottom:0!important;
+}
+#dashScreen .dash-start-menu-v268{
+  width:100%!important;
+  min-height:46px!important;
+}
+
+/* The actual run is still the existing full-screen Duckie Dash view. */
+#dashScreen.dash-run-stage-v193 .dash-playbox{
+  display:grid!important;
+}

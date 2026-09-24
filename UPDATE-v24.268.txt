@@ -1,0 +1,7 @@
+Duckie Days v24.268
+
+- Shrinks the inline Power Up Dust Glitter icon in Duckipedia/Card Workshop to about one-quarter of its v24.267 size.
+- Removes the Duckie Dash course preview / Ready screen from the setup menu.
+- Restores a simple menu Start button that launches the existing full-screen Duckie Dash run view.
+- Adds Card Packs to the Cards shop: 150 Pink Coins each, up to 3 packs per day.
+- Preserves the v24.265 Buddy Box/leveling/task-editing core and the v24.267 UI repair.

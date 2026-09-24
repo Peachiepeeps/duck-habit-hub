@@ -1,11 +1,12 @@
-const APP_CACHE='duck-habit-hub-app-v24-267';
+const APP_CACHE='duck-habit-hub-app-v24-268';
 const APP_SHELL=[
- './','./index.html','./version.json','./sw.js?v=24-267',
- './hub-v265.css?v=24-265','./hub-v267.css?v=24-267','./hub-v265.js?v=24-265','./hub-v267.js?v=24-267',
- './trading-cards-ui-v265.js?v=24-265','./trading-cards-ui-v267.js?v=24-267',
- './duck-quest/css/quest-v265.css?v=24-265','./duck-quest/css/quest-v267.css?v=24-267',
- './duck-quest/js/quest-v265.js?v=24-265','./duck-quest/js/quest-v267.js?v=24-267',
- './assets/ingredients/Sparkle.webp','./duck-quest/assets/enemies/cat-slime/base/Strawberry-idle-1-neutral.webp'
+ './','./index.html','./version.json','./sw.js?v=24-268',
+ './hub-v265.css?v=24-265','./hub-v267.css?v=24-267','./hub-v268.css?v=24-268',
+ './hub-v265.js?v=24-265','./hub-v267.js?v=24-267',
+ './trading-cards-ui-v265.js?v=24-265','./trading-cards-ui-v267.js?v=24-267','./trading-cards-ui-v268.js?v=24-268',
+ './duck-quest/css/quest-v265.css?v=24-265','./duck-quest/css/quest-v267.css?v=24-267','./duck-quest/css/quest-v268.css?v=24-268',
+ './duck-quest/js/quest-v265.js?v=24-265','./duck-quest/js/quest-v267.js?v=24-267','./duck-quest/js/quest-v268.js?v=24-268',
+ './assets/trading-cards/card-pack-unopened.png','./assets/ingredients/Sparkle.webp'
 ];
 self.addEventListener('message',e=>{if(e.data?.type==='SKIP_WAITING')self.skipWaiting();});
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(APP_CACHE).then(c=>c.addAll(APP_SHELL)));});
