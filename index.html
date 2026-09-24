@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="duck-habit-build" content="24.254" />
+  <meta name="duck-habit-build" content="24.259" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta id="appThemeColor" name="theme-color" content="#f7dbe5" />
@@ -9,9 +9,10 @@
   <!-- v24.107 tall-phone room anchor + CSS wallpaper geometry fix -->
   <link rel="stylesheet" href="style-v24-201.css?v=24-254" />
   <link rel="stylesheet" href="trading-cards-v250.css?v=24-254" />
-  <link rel="stylesheet" href="task-progression-v254.css?v=24-254" />
-  <link rel="stylesheet" href="task-progression-v257.css?v=24-258" />
-  <link rel="stylesheet" href="task-progression-v258.css?v=24-258" />
+  <link rel="stylesheet" href="task-progression-v254.css?v=24-259" />
+  <link rel="stylesheet" href="task-progression-v257.css?v=24-259" />
+  <link rel="stylesheet" href="task-progression-v258.css?v=24-259" />
+  <link rel="stylesheet" href="task-progression-v259.css?v=24-259" />
 
   <link rel="manifest" href="manifest.webmanifest?v=24-201">
   <link rel="apple-touch-icon" href="apple-touch-icon-v5.png">
@@ -97,7 +98,7 @@
           <button type="button" data-task-shelf-style="dark-brown" aria-label="Dark brown shelf" title="Dark brown shelf"></button>
         </div>
 
-        <div id="taskCollectibleSlots" class="task-collectible-slots-v254"></div>
+        <div id="taskCollectibleSlots" class="wing-duck-slots task-collectible-slots-v254"></div>
       </section>
 
       <div id="taskCollectiblePicker" class="task-collectible-picker-v254 hidden" aria-hidden="true">
@@ -1158,14 +1159,14 @@
   <script src="hub-shop-boosts-v213.js?v=24-254"></script>
   <script src="hub-exp-candy-use-v215.js?v=24-254"></script>
   <script src="trading-cards-ui-v250.js?v=24-254"></script>
-  <script src="task-progression-v254.js?v=24-258"></script>
-  <script src="task-progression-v257.js?v=24-258"></script>
+  <script src="task-progression-v254.js?v=24-259"></script>
+  <script src="task-progression-v257.js?v=24-259"></script>
 
   <script>
     // v24.84: use a stable service-worker URL and actively check the deployed
     // build when the installed PWA is opened/resumed. This prevents Android
     // from keeping an already-open standalone app on an older app shell.
-    const DUCK_HUB_BUILD = "24.258";
+    const DUCK_HUB_BUILD = "24.259";
     let duckHubReloadingForUpdate = false;
 
     function duckHubReloadFresh(version) {
@@ -1229,7 +1230,7 @@
       window.addEventListener("load", async () => {
         try {
           await duckHubClearOldCodeCaches();
-          const registration = await navigator.serviceWorker.register("./sw.js?v=24-258", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("./sw.js?v=24-259", { updateViaCache: "none" });
           await registration.update();
           if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
           await duckHubCheckForUpdate(registration);

@@ -1,2 +1,2 @@
 // Legacy service-worker bridge.
-importScripts('./sw-v24-258.js?v=24-258');
+importScripts('./sw-v24-259.js?v=24-259');

@@ -1,0 +1,107 @@
+/* Duckie Days v24.259 — exact collectible shelf seating + Book lift */
+
+/* =========================================================
+   BOOK: keep it clearly ABOVE the room arrows on every home.
+   Target the actual Duckipedia Book id/class so older room-furniture
+   placement rules cannot pull it back down.
+   ========================================================= */
+#roomBookImage.duckipedia-room-book-v232,
+#roomBookImage.duckipedia-room-book-v232.on-shelf,
+#roomBookImage.duckipedia-room-book-v232.on-dresser{
+  left:70.2% !important;
+  right:auto !important;
+  top:auto !important;
+  bottom:18.0% !important;
+  width:20.5% !important;
+  height:11.7% !important;
+  translate:none !important;
+  transform:none !important;
+}
+
+#bookHotspot.book-hotspot,
+#bookHotspot.book-hotspot.on-shelf,
+#bookHotspot.book-hotspot.on-dresser{
+  left:68.5% !important;
+  right:auto !important;
+  top:auto !important;
+  bottom:16.6% !important;
+  width:25.5% !important;
+  height:15.2% !important;
+}
+
+@media(max-width:600px){
+  #roomBookImage.duckipedia-room-book-v232,
+  #roomBookImage.duckipedia-room-book-v232.on-shelf,
+  #roomBookImage.duckipedia-room-book-v232.on-dresser{
+    left:70.2% !important;
+    right:auto !important;
+    top:auto !important;
+    bottom:18.4% !important;
+    width:20.5% !important;
+    height:11.7% !important;
+    translate:none !important;
+    transform:none !important;
+  }
+
+  #bookHotspot.book-hotspot,
+  #bookHotspot.book-hotspot.on-shelf,
+  #bookHotspot.book-hotspot.on-dresser{
+    left:68.2% !important;
+    right:auto !important;
+    top:auto !important;
+    bottom:16.8% !important;
+    width:26.0% !important;
+    height:15.6% !important;
+  }
+}
+
+/* =========================================================
+   COLLECTIBLE SHELF: use the exact CURRENT Shelf of Ducks grid.
+   The duck shelf's final calibration is not six equal rows; it uses
+   the real shelf-opening heights from the 1080x1920 shelf artwork.
+   ========================================================= */
+#taskCollectibleWing #taskCollectibleSlots.wing-duck-slots{
+  left:6.2% !important;
+  right:5.2% !important;
+  top:17.9167% !important;
+  bottom:7.8125% !important;
+  display:grid !important;
+  grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+  grid-template-rows:211fr 242fr 248fr 242fr 229fr 210fr !important;
+  gap:0 1.6% !important;
+  padding:0 2.2% !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+
+/* Exact current Shelf of Ducks bottom-seating rule. */
+#taskCollectibleWing #taskCollectibleSlots.wing-duck-slots .wing-duck-slot img,
+#taskCollectibleWing #taskCollectibleSlots.wing-duck-slots .wing-duck-slot:nth-child(n+13):nth-child(-n+16) img,
+#taskCollectibleWing #taskCollectibleSlots.wing-duck-slots .wing-duck-slot:nth-child(n+17):nth-child(-n+20) img,
+#taskCollectibleWing #taskCollectibleSlots.wing-duck-slots .wing-duck-slot:nth-child(n+21):nth-child(-n+24) img{
+  width:72% !important;
+  height:76% !important;
+  object-fit:contain !important;
+  object-position:center bottom !important;
+  transform:translateY(5%) !important;
+}
+
+/* Empty + buttons sit on the same ledges as the duck shelf too. */
+#taskCollectibleWing #taskCollectibleSlots.wing-duck-slots .wing-duck-slot > span,
+#taskCollectibleWing #taskCollectibleSlots.wing-duck-slots .wing-duck-slot:nth-child(n+13):nth-child(-n+16) > span,
+#taskCollectibleWing #taskCollectibleSlots.wing-duck-slots .wing-duck-slot:nth-child(n+17):nth-child(-n+20) > span,
+#taskCollectibleWing #taskCollectibleSlots.wing-duck-slots .wing-duck-slot:nth-child(n+21):nth-child(-n+24) > span{
+  margin-bottom:0 !important;
+  transform:none !important;
+}
+
+/* Tall-phone calibration copied from the actual Shelf of Ducks. */
+@media(max-width:600px) and (max-aspect-ratio:9/16){
+  #taskCollectibleWing #taskCollectibleSlots.wing-duck-slots{
+    top:calc(50% - 88.8889vw + 31.8519vw) !important;
+    bottom:auto !important;
+    height:127.9630vw !important;
+  }
+}
