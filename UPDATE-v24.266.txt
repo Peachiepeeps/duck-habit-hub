@@ -1,0 +1,8 @@
+Duckie Days v24.266
+
+- Moves Buddy Box out of Buddy Book and onto the Duck Quest main page.
+- Moves Equip Charm into the former OC Skills slot and removes its icon.
+- Moves OC Skills into each OC Status page under the rank area.
+- Treats Power Up Dust as a currency using the Glitter asset instead of an inventory item.
+- Cleans up the daily Card Shop so cards use the available width and render larger/wider.
+- Preserves the shelf/book follow-up for a later update.

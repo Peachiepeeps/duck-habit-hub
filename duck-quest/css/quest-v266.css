@@ -1,0 +1,6 @@
+/* Duck Quest v24.266 layout follow-up */
+.buddy-book-header-v266 .buddy-box-button{ display:none !important; }
+.duck-quest-main-actions-v266{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+.duck-quest-main-actions-v266 .buddy-box-home-button-v266{ order:2; }
+.duck-quest-main-actions-v266 .equip-charm-button-v266{ order:1; }
+.oc-skills-on-status-v266{ display:block; }

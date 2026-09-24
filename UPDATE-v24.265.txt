@@ -1,8 +1,0 @@
-Duckie Days v24.265
-
-- Adds Power Up Dust and migrates Card Dust 1:1.
-- Adds Pokemon-style individual Buddy levels (1-100) and the Buddy Box.
-- Adds Buddy release for Power Up Dust and level-based Buddy move scaling.
-- Adds task editing by tapping a task card.
-- Cleans up Duckie Dash setup, card shop, Battle inventory, and owned wallpapers.
-- Repairs Duck shelf selection and moves the room Book onto the dresser when present.
