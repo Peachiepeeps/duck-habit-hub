@@ -1,0 +1,79 @@
+name: Install Duckie Days v24.269 Duck Quest Stability Repair
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/install-duckie-days-v24-269-duck-quest-stability-repair.yml"
+      - ".github/workflows/install-duckie-days-v24-269-duck-quest-stability-repair.yaml"
+      - "Duckie-Days-v24.269-duck-quest-stability-repair-update-only.zip"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-269-install
+  cancel-in-progress: false
+
+jobs:
+  install-update:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Require update ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.269-duck-quest-stability-repair-update-only.zip"
+          test -f "$ZIP" || { echo "ERROR: $ZIP is missing from the repository root."; exit 1; }
+          unzip -tq "$ZIP"
+
+      - name: Install and verify v24.269
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.269-duck-quest-stability-repair-update-only.zip"
+          TMP=".duckie-days-v24-269"
+          rm -rf "$TMP"
+          mkdir -p "$TMP"
+          unzip -q "$ZIP" -d "$TMP"
+          python3 -m py_compile "$TMP/tools/patch-v269.py" "$TMP/tools/verify-v269.py"
+          node --check "$TMP/payload/duck-quest/js/quest-v269.js"
+          node --check "$TMP/payload/sw-v24-269.js"
+          python3 "$TMP/tools/patch-v269.py" "$TMP"
+          python3 "$TMP/tools/verify-v269.py" .
+          rm -rf "$TMP"
+
+      - name: Clean old installers and update bundles
+        shell: bash
+        run: |
+          set -euo pipefail
+          SELF_YML="install-duckie-days-v24-269-duck-quest-stability-repair.yml"
+          SELF_YAML="install-duckie-days-v24-269-duck-quest-stability-repair.yaml"
+          if [ -d .github/workflows ]; then
+            find .github/workflows -maxdepth 1 -type f \
+              \( -name 'install-duck-habit-hub-v*.yml' -o -name 'install-duck-habit-hub-v*.yaml' -o -name 'install-duckie-days-v*.yml' -o -name 'install-duckie-days-v*.yaml' -o -name 'repair-duckie-days-v*.yml' -o -name 'repair-duckie-days-v*.yaml' \) \
+              ! -name "$SELF_YML" ! -name "$SELF_YAML" -delete
+          fi
+          find . -maxdepth 1 -type f -name 'UPDATE-v*.txt' ! -name 'UPDATE-v24.269.txt' -delete
+          find . -maxdepth 1 -type f -name 'sw-v24-*.js' ! -name 'sw-v24-269.js' -delete
+          find . -maxdepth 1 -type f -name '*update-only*.zip' -delete
+
+      - name: Commit v24.269
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && { echo "ERROR: No changes were staged."; exit 1; }
+          git commit -m "Stabilize Duck Quest and restore Duckie Dash"
+          git push
+
+      - name: Success
+        shell: bash
+        run: |
+          echo 'SUCCESS: Duckie Days v24.269 installed and verified.'
