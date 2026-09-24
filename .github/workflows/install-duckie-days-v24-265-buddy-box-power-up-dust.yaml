@@ -5,6 +5,7 @@ name: Install Duckie Days v24.265 Buddy Box + Power Up Dust
   push:
     paths:
       - ".github/workflows/install-duckie-days-v24-265-buddy-box-power-up-dust.yml"
+      - ".github/workflows/install-duckie-days-v24-265-buddy-box-power-up-dust.yaml"
       - "Duckie-Days-v24.265-buddy-box-power-up-dust-update-only.zip"
 
 permissions:
@@ -53,11 +54,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          SELF="install-duckie-days-v24-265-buddy-box-power-up-dust.yml"
+          SELF_YML="install-duckie-days-v24-265-buddy-box-power-up-dust.yml"
+          SELF_YAML="install-duckie-days-v24-265-buddy-box-power-up-dust.yaml"
           if [ -d .github/workflows ]; then
-            find .github/workflows -maxdepth 1 -type f \
-              \( -name 'install-duck-habit-hub-v*.yml' -o -name 'install-duckie-days-v*.yml' -o -name 'repair-duckie-days-v*.yml' \) \
-              ! -name "$SELF" -delete
+            find .github/workflows -maxdepth 1 -type f               \( -name 'install-duck-habit-hub-v*.yml' -o -name 'install-duck-habit-hub-v*.yaml' -o -name 'install-duckie-days-v*.yml' -o -name 'install-duckie-days-v*.yaml' -o -name 'repair-duckie-days-v*.yml' -o -name 'repair-duckie-days-v*.yaml' \)               ! -name "$SELF_YML" ! -name "$SELF_YAML" -delete
           fi
           find . -maxdepth 1 -type f -name 'UPDATE-v*.txt' ! -name 'UPDATE-v24.265.txt' -delete
           find . -maxdepth 1 -type f -name 'sw-v24-*.js' ! -name 'sw-v24-265.js' ! -name 'sw-v24-244.js' -delete
@@ -75,4 +75,6 @@ jobs:
           git push
 
       - name: Success
-        run: echo "SUCCESS: Duckie Days v24.265 installed and verified."
+        shell: bash
+        run: |
+          echo "SUCCESS: Duckie Days v24.265 installed and verified."
