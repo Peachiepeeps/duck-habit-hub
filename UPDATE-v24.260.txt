@@ -1,0 +1,7 @@
+Duckie Days v24.260 — Home Plush + Task Polish
+
+- Room Book nudged a little farther right while keeping its current height.
+- Owned Task Shop plushes can be placed on the dresser in the current home room.
+- One dresser plush can be displayed at a time; placing it there moves it off the Task Treasure shelf.
+- Task Treasure progress bar now visibly fills with each completed task.
+- Removed the helper text from the bottom of the Tasks window.

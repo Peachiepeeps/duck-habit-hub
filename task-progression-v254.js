@@ -199,8 +199,7 @@
     head.append(label,completed);
 
     const next=nextTreasureTarget(p.completedToday);
-    const prev=previousTreasureTarget(p.completedToday,next);
-    const ratio=Math.max(0,Math.min(1,(p.completedToday-prev)/Math.max(1,next-prev)));
+    const ratio=Math.max(0,Math.min(1,p.completedToday/Math.max(1,next)));
     const bar=document.createElement('div');bar.className='task-treasure-bar-v254';
     const fill=document.createElement('span');fill.style.width=`${ratio*100}%`;bar.append(fill);
     const progress=document.createElement('div');progress.className='task-treasure-progress-v254';
@@ -451,8 +450,14 @@
     const p=ensureProgress();
     if(!p.collectiblesOwned.includes(id)) return;
     p.shelfSlots.forEach((current,index)=>{if(current===id)p.shelfSlots[index]=null;});
+    if(p.dresserCollectibleByRoom && typeof p.dresserCollectibleByRoom==='object'){
+      Object.keys(p.dresserCollectibleByRoom).forEach(room=>{
+        if(p.dresserCollectibleByRoom[room]===id) delete p.dresserCollectibleByRoom[room];
+      });
+    }
     p.shelfSlots[selectedTaskCollectibleSlot]=id;
     saveNow();closeTaskCollectiblePicker();renderTaskShelf();
+    try{window.DuckieTaskDresserV260?.renderDresserCollectible?.();}catch(error){}
   }
 
   function renderTaskCollectiblePicker(){

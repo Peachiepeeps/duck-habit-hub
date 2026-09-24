@@ -1,7 +1,0 @@
-Duckie Days v24.259 — Book + Collectible Shelf Exact Alignment
-
-- Book is moved much higher than the room arrows, with its tap target moved with it.
-- Collectible Shelf now literally uses the Shelf of Ducks grid class.
-- Collectible shelf rows use the exact final Shelf of Ducks row heights and tall-phone geometry.
-- Collectible item and empty-slot baselines match the current Shelf of Ducks seating rules.
-- Task panel layout is otherwise unchanged.
