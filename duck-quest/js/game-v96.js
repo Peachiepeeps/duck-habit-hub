@@ -5509,10 +5509,10 @@ async function useBuddySkill(){
     case "jackpot": {
       const roll=Math.random();
       if(roll<.45){
-        await hit(1.6,.12,1.6);
+        await hit(skill.multiplier||1.6,skill.critChance||.12,skill.critMultiplier||1.6);
         setMessage(`Jackpot Bite! ${buddy.name} hit the damage jackpot!`);
       }else if(roll<.75){
-        const healed=healHero(.25);
+        const healed=healHero(skill.healPercent||.25);
         setMessage(`Jackpot Bite! Healing prize — restored ${healed} HP!`);
       }else{
         const coins=Math.max(1,Math.round(randInt(15,35)*affectionRewardMultiplier()));

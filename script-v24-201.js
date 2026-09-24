@@ -4951,7 +4951,7 @@ function renderWingDuckPicker() {
     return;
   }
 
-  unlocked.forEach(([id, duck]) => {
+  unlocked.forEach(([id, duck], index) => {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "wing-duck-choice";

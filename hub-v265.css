@@ -1,0 +1,50 @@
+/* Duckie Days v24.265 — hub/card/task/shop polish */
+
+/* Keep the two card actions condensed side-by-side on phones. */
+@media(max-width:560px){
+  .tc-detail-actions-v264{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important}
+  .tc-detail-actions-v264 .tc-detail-fav,
+  .tc-detail-actions-v264 .tc-detail-workshop-v264{min-width:0;padding:7px 5px!important;font-size:.68rem!important;line-height:1.15}
+  .tc-detail-card{padding-bottom:14px!important}
+}
+
+/* Daily Trading Card Shop: three tidy cards across instead of long skinny columns. */
+.tc-shop-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important;align-items:start}
+.tc-shop-card{min-width:0;padding:7px 5px!important;gap:5px!important;border-radius:13px!important}
+.tc-shop-card .tc-face{width:min(100%,110px)!important;justify-self:center}
+.tc-shop-card>strong{font-size:.68rem;line-height:1.08;min-height:2.15em;display:grid;place-items:center;overflow-wrap:anywhere}
+.tc-shop-price{font-size:.66rem}.tc-shop-price img{width:15px!important;height:15px!important}
+.tc-shop-buy{width:100%;min-height:36px;padding:6px 3px!important;font-size:.62rem!important;line-height:1.08}
+.tc-shop-card:last-child{grid-column:auto!important;max-width:none!important;justify-self:stretch!important}
+@media(max-width:390px){.tc-shop-grid{gap:6px!important}.tc-shop-card{padding:6px 3px!important}.tc-shop-card>strong{font-size:.60rem}.tc-shop-buy{font-size:.56rem!important}}
+
+/* Task cards are editable by tapping their non-button body. */
+.task-card{cursor:pointer}
+.task-card:hover .task-card-title,.task-card:focus-within .task-card-title{color:#8e5f73}
+.task-edit-mode-v265 #savedTaskPicker{display:none!important}
+
+/* Battle inventory grouping. */
+.inventory-grid:has(.inventory-group-v265){display:block!important}
+.inventory-group-v265{display:grid;gap:8px;margin:0 0 16px}
+.inventory-group-heading-v265{display:grid;gap:2px;padding:0 4px;text-align:left}
+.inventory-group-heading-v265 strong{color:#765462;font-size:.78rem}
+.inventory-group-heading-v265 small{color:#9d838d;font-size:.56rem}
+.inventory-group-grid-v265{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.buddy-pon-group-v265 .inventory-group-grid-v265{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.buddy-pon-group-v265 .inventory-item-card{padding:9px 4px;min-width:0}
+.buddy-pon-group-v265 .inventory-item-card strong{font-size:.57rem;line-height:1.08}
+.buddy-pon-group-v265 .inventory-item-icon{width:64px;height:64px}
+@media(max-width:390px){.buddy-pon-group-v265 .inventory-item-icon{width:54px;height:54px}.buddy-pon-group-v265 .inventory-item-card strong{font-size:.52rem}}
+
+/* Power Up Dust appears with Supplies. */
+.power-dust-card-v265{position:relative;background:linear-gradient(145deg,#fff7d8,#fff0f7)!important;border-color:#e6c687!important;cursor:default!important}
+.power-dust-icon-v265{display:grid!important;place-items:center!important;border-radius:50%;background:radial-gradient(circle,#fff7a8,#e8b86a 62%,#c89352);color:#fff;font-size:2rem;text-shadow:0 2px #a46f3b}
+.power-dust-note-v265{color:#a1848e;font-size:.52rem;font-weight:800}
+
+/* Put the Book onto the left dresser so long hair cannot cover it. */
+#roomBookImage.duckipedia-room-book-v232.on-dresser{left:2.4%!important;right:auto!important;top:55.4%!important;bottom:auto!important;width:13.5%!important;height:9.5%!important;transform:none!important;z-index:15!important}
+#bookHotspot.book-hotspot.on-dresser{left:2.4%!important;right:auto!important;top:55.4%!important;bottom:auto!important;width:13.5%!important;height:9.5%!important}
+@media(max-width:600px){
+  #roomBookImage.duckipedia-room-book-v232.on-dresser{left:2.2%!important;top:55.7%!important;width:13.8%!important;height:9.2%!important}
+  #bookHotspot.book-hotspot.on-dresser{left:2.2%!important;top:55.7%!important;width:13.8%!important;height:9.2%!important}
+}

@@ -1,13 +1,13 @@
-const APP_CACHE = 'duck-habit-hub-app-v24-264';
-const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-264';
+const APP_CACHE = 'duck-habit-hub-app-v24-265';
+const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-265';
 const IMAGE_CACHE = 'duck-habit-hub-images-stable-v1';
 
 const APP_SHELL = [
-  './trading-cards-v250.css?v=24-261','./trading-cards-v250.js?v=24-261','./trading-cards-ui-v250.js?v=24-264',
+  './trading-cards-v250.css?v=24-261','./trading-cards-v250.js?v=24-261','./trading-cards-ui-v250.js?v=24-265',
   './assets/trading-cards/card-common.png','./assets/trading-cards/card-uncommon.png','./assets/trading-cards/card-rare.png','./assets/trading-cards/card-back.png','./assets/trading-cards/card-pack-unopened.png','./assets/trading-cards/card-pack-ripped.png','./assets/trading-cards/card-pack-torn-top.png',
   './memory-game/trading-card-memory-v235.js?v=24-261','./duck-quest/js/trading-card-drops-v235.js?v=24-261',
   './','./index.html','./manifest.webmanifest?v=24-261','./version.json',
-  './style-v24-201.css?v=24-261','./script-v24-201.js?v=24-264','./sw-v24-264.js','./sw.js',
+  './style-v24-201.css?v=24-261','./script-v24-201.js?v=24-265','./sw-v24-265.js','./sw.js',
   './apple-touch-icon-v5.png','./favicon-32-v5.png','./icon-192-v5.png','./icon-512-v5.png','./icon-maskable-512-v5.png',
   './assets/ui/pink-coin.webp','./assets/ui/icons/duckipedia.webp','./assets/ducks/Standard-duck.webp','./assets/ducks/Top-hat-duck.webp',
   './duck-quest/assets/dash/Jump-Token.png','./duck-quest/assets/eggs/Common-egg.png','./duck-quest/assets/eggs/Rare-egg.png',
@@ -165,10 +165,14 @@ const APP_SHELL = [
 
   './trading-cards-v262.css?v=24-262',
   './trading-cards-v262.js?v=24-262',
+  './trading-cards-v265.js?v=24-265',
+  './hub-v265.css?v=24-265','./hub-v265.js?v=24-265',
   './trading-cards-v264.css?v=24-264',
-  './trading-cards-ui-v264.js?v=24-264',
+  './trading-cards-ui-v265.js?v=24-265',
   './duck-quest/css/special-encounters-v264.css?v=24-264',
-  './duck-quest/js/special-encounters-v264.js?v=24-264',
+  './duck-quest/css/quest-v265.css?v=24-265',
+  './duck-quest/js/special-encounters-v265.js?v=24-265',
+  './duck-quest/js/quest-v265.js?v=24-265',
   './duck-quest/assets/events/luv-and-birdie/idle-1.png',
   './duck-quest/assets/events/luv-and-birdie/idle-2.png',
   './duck-quest/assets/events/gift-box/regular-closed.png',

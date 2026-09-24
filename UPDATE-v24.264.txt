@@ -1,8 +1,0 @@
-Duckie Days v24.264
-
-- Resizes Gift Box encounters to match normal Mimic chests and keeps the same chest bounce/open feel.
-- Shows the actual won Trading Card or Card Pack in the battlefield with a small bump/pop animation.
-- Adds swipe-left / swipe-right navigation to Trading Card detail views.
-- Moves Card Workshop controls into a dedicated popup opened beside Add to Favorites.
-- Raises new Task reward presets to 15 / 25 / 40 / 50 / Custom.
-- Speeds repeat PWA launches by serving the installed app shell immediately while refreshing code in the background.
