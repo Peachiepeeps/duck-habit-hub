@@ -1,5 +1,5 @@
-const APP_CACHE = 'duck-habit-hub-app-v24-262';
-const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-262';
+const APP_CACHE = 'duck-habit-hub-app-v24-263';
+const RUNTIME_CACHE = 'duck-habit-hub-runtime-v24-263';
 const IMAGE_CACHE = 'duck-habit-hub-images-stable-v1';
 
 const APP_SHELL = [
@@ -7,7 +7,7 @@ const APP_SHELL = [
   './assets/trading-cards/card-common.png','./assets/trading-cards/card-uncommon.png','./assets/trading-cards/card-rare.png','./assets/trading-cards/card-back.png','./assets/trading-cards/card-pack-unopened.png','./assets/trading-cards/card-pack-ripped.png','./assets/trading-cards/card-pack-torn-top.png',
   './memory-game/trading-card-memory-v235.js?v=24-261','./duck-quest/js/trading-card-drops-v235.js?v=24-261',
   './','./index.html','./manifest.webmanifest?v=24-261','./version.json',
-  './style-v24-201.css?v=24-261','./script-v24-201.js?v=24-261','./sw-v24-262.js','./sw.js',
+  './style-v24-201.css?v=24-261','./script-v24-201.js?v=24-261','./sw-v24-263.js','./sw.js',
   './apple-touch-icon-v5.png','./favicon-32-v5.png','./icon-192-v5.png','./icon-512-v5.png','./icon-maskable-512-v5.png',
   './assets/ui/pink-coin.webp','./assets/ui/icons/duckipedia.webp','./assets/ducks/Standard-duck.webp','./assets/ducks/Top-hat-duck.webp',
   './duck-quest/assets/dash/Jump-Token.png','./duck-quest/assets/eggs/Common-egg.png','./duck-quest/assets/eggs/Rare-egg.png',
@@ -166,7 +166,7 @@ const APP_SHELL = [
 
   './trading-cards-v262.css?v=24-262',
   './trading-cards-v262.js?v=24-262',
-  './trading-cards-ui-v262.js?v=24-262',
+  './trading-cards-ui-v263.js?v=24-263',
   './duck-quest/css/special-encounters-v262.css?v=24-262',
   './duck-quest/js/special-encounters-v262.js?v=24-262',
   './duck-quest/assets/events/luv-and-birdie/idle-1.png',

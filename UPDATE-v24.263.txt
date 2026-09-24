@@ -1,0 +1,6 @@
+Duckie Days v24.263 — Card Workshop Startup Repair
+
+- Fixes the v24.262 Card Workshop MutationObserver loop that could freeze the hub during startup.
+- Card Dust count updates now avoid unnecessary DOM mutations.
+- Card detail updates now observe only the trading-card detail layer opening/closing instead of the entire document.
+- Keeps all v24.262 cards, Luv & Birdie, Gift Box Mimic, Plushbun, Card Dust, rarity upgrades, variants, and Holo features.
