@@ -199,11 +199,12 @@
     head.append(label,completed);
 
     const next=nextTreasureTarget(p.completedToday);
-    const ratio=Math.max(0,Math.min(1,p.completedToday/Math.max(1,next)));
+    const dailyTotal=60;
+    const ratio=Math.max(0,Math.min(1,p.completedToday/Math.max(1,dailyTotal)));
     const bar=document.createElement('div');bar.className='task-treasure-bar-v254';
     const fill=document.createElement('span');fill.style.width=`${ratio*100}%`;bar.append(fill);
     const progress=document.createElement('div');progress.className='task-treasure-progress-v254';
-    progress.innerHTML=`<span>Next treasure at <b>${next}</b></span><span>${p.completedToday} / ${next}</span>`;
+    progress.innerHTML=`<span>Daily Task Treasure Goal <b>${dailyTotal}</b></span><span>${p.completedToday} / ${dailyTotal}</span>`;
 
     const milestones=document.createElement('div');milestones.className='task-treasure-milestones-v254';
     FIXED_MILESTONES.forEach(m=>{

@@ -1,0 +1,8 @@
+Duckie Days v24.261 — Snuggle Ducks + Task Treasure 60
+
+- Added a permanent Task Shop perk using the standard duck asset: Snuggle Ducks.
+- Once unlocked, every OC can wear a second head duck, facing the first duck like a snuggle/kiss.
+- Added a second duck assignment button in Duckipedia when the perk is owned.
+- Head-duck doubles now appear in the room, profiles, and Status portrait.
+- Task Treasure progress now fills across the full daily 60-task ladder and displays x / 60.
+- Book nudged a little farther right again.
