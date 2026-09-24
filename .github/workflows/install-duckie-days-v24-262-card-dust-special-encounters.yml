@@ -1,0 +1,165 @@
+name: Install Duckie Days v24.262 Card Dust + Special Encounters
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/install-duckie-days-v24-262-card-dust-special-encounters.yml"
+      - "Duckie-Days-v24.262-card-dust-special-encounters-update-only.zip"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-262-install
+  cancel-in-progress: false
+
+jobs:
+  install-update:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Require v24.262 update ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.262-card-dust-special-encounters-update-only.zip"
+          test -f "$ZIP" || {
+            echo "ERROR: $ZIP is missing from the repository root."
+            exit 1
+          }
+          unzip -tq "$ZIP"
+
+      - name: Install v24.262
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.262-card-dust-special-encounters-update-only.zip"
+          TMP=".duckie-days-v24-262"
+          rm -rf "$TMP"
+          mkdir -p "$TMP"
+          unzip -q "$ZIP" -d "$TMP"
+
+          python3 -m py_compile "$TMP/tools/patch-v262.py"
+          node --check "$TMP/payload/trading-cards-v262.js"
+          node --check "$TMP/payload/trading-cards-ui-v262.js"
+          node --check "$TMP/payload/duck-quest/js/special-encounters-v262.js"
+          python3 "$TMP/tools/patch-v262.py" "$TMP"
+          rm -rf "$TMP"
+
+      - name: Verify v24.262
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          grep -Fq '"version": "24.262"' version.json
+          grep -Fq 'const DUCK_HUB_BUILD = "24.262";' index.html
+          grep -Fq 'navigator.serviceWorker.register("./sw.js?v=24-262"' index.html
+
+          # Card Dust + Card Workshop.
+          test -f trading-cards-v262.js
+          test -f trading-cards-ui-v262.js
+          test -f trading-cards-v262.css
+          grep -Fq 'Card Workshop' trading-cards-ui-v262.js
+          grep -Fq 'Card Dust' trading-cards-ui-v262.js
+          grep -Fq 'HOLO_DUST=75' trading-cards-ui-v262.js
+          grep -Fq 'HOLO_EXTRAS=3' trading-cards-ui-v262.js
+          grep -Fq 'VARIANT_DUST=20' trading-cards-ui-v262.js
+          grep -Fq '"common:uncommon":40' trading-cards-ui-v262.js
+          grep -Fq '"uncommon:rare":100' trading-cards-ui-v262.js
+
+          # New Fabled cards + Plushbun cards are registered.
+          grep -Fq 'F-020' trading-cards-v262.js
+          grep -Fq 'f-hibiki-jackie' trading-cards-v262.js
+          grep -Fq 'f-silly' trading-cards-v262.js
+          grep -Fq 'c-plushbun' trading-cards-v262.js
+          grep -Fq 'r-plushbun' trading-cards-v262.js
+
+          # New Duck Quest events.
+          test -f duck-quest/js/special-encounters-v262.js
+          test -f duck-quest/css/special-encounters-v262.css
+          grep -Fq 'luv-birdie' duck-quest/js/special-encounters-v262.js
+          grep -Fq 'Luv and Birdie snuggle together' duck-quest/js/special-encounters-v262.js
+          grep -Fq 'rollsRemaining:3' duck-quest/js/special-encounters-v262.js
+          grep -Fq 'weight:3' duck-quest/js/special-encounters-v262.js
+          grep -Fq 'Math.random()<0.05' duck-quest/js/special-encounters-v262.js
+          grep -Fq 'Math.random()<0.06' duck-quest/js/special-encounters-v262.js
+          grep -Fq 'Math.random()<0.25' duck-quest/js/special-encounters-v262.js
+          grep -Fq 'currentShinyRate()' duck-quest/js/special-encounters-v262.js
+          grep -Fq 'Stuffed Surprise!' duck-quest/js/special-encounters-v262.js
+          grep -Fq 'LUV_BIRDIE_FOCUS_V262' duck-quest/js/love-interests-v252.js
+          grep -Fq 'enemy.plushbunVariant' duck-quest/js/game-v96.js
+
+          # HTML wiring.
+          grep -Fq 'trading-cards-v262.css?v=24-262' index.html
+          grep -Fq 'trading-cards-v262.js?v=24-262' index.html
+          grep -Fq 'trading-cards-ui-v262.js?v=24-262' index.html
+          grep -Fq '../trading-cards-v262.js?v=24-262' duck-quest/index.html
+          grep -Fq 'special-encounters-v262.css?v=24-262' duck-quest/index.html
+          grep -Fq 'special-encounters-v262.js?v=24-262' duck-quest/index.html
+
+          # Assets.
+          test -f duck-quest/assets/events/luv-and-birdie/idle-1.png
+          test -f duck-quest/assets/events/luv-and-birdie/idle-2.png
+          test -f duck-quest/assets/events/gift-box/regular-closed.png
+          test -f duck-quest/assets/events/gift-box/mimic-idle-1.png
+          test -f duck-quest/assets/events/gift-box/mimic-shiny-idle-1.png
+          test -f duck-quest/assets/enemies/plushbun/base/idle-1.png
+          test -f duck-quest/assets/enemies/plushbun/base/shiny-idle-1.png
+          test -f duck-quest/assets/trading-cards/fabled/F-hibiki-jackie.png
+          test -f duck-quest/assets/trading-cards/fabled/F-silly.png
+
+          # App refresh/cache wiring.
+          test -f sw-v24-262.js
+          grep -Fq "importScripts('./sw-v24-262.js?v=24-262');" sw.js
+          grep -Fq './trading-cards-v262.js?v=24-262' sw-v24-262.js
+          grep -Fq './duck-quest/js/special-encounters-v262.js?v=24-262' sw-v24-262.js
+          grep -Fq './duck-quest/assets/enemies/plushbun/base/shiny-idle-1.png' sw-v24-262.js
+
+          node --check trading-cards-v262.js
+          node --check trading-cards-ui-v262.js
+          node --check duck-quest/js/special-encounters-v262.js
+          node --check duck-quest/js/love-interests-v252.js
+          node --check duck-quest/js/game-v96.js
+          node --check sw-v24-262.js
+
+          echo "VERIFIED: v24.262 Card Dust + Special Encounters update is valid."
+
+      - name: Clean old installers and update bundles
+        shell: bash
+        run: |
+          set -euo pipefail
+          SELF="install-duckie-days-v24-262-card-dust-special-encounters.yml"
+
+          if [ -d .github/workflows ]; then
+            find .github/workflows -maxdepth 1 -type f \
+              \( -name 'install-duck-habit-hub-v*.yml' -o -name 'install-duckie-days-v*.yml' -o -name 'repair-duckie-days-v*.yml' \) \
+              ! -name "$SELF" -delete
+          fi
+
+          find . -maxdepth 1 -type f -name 'UPDATE-v*.txt' ! -name 'UPDATE-v24.262.txt' -delete
+          find . -maxdepth 1 -type f -name 'sw-v24-*.js' ! -name 'sw-v24-262.js' ! -name 'sw-v24-244.js' -delete
+          find . -maxdepth 1 -type f -name '*update-only*.zip' -delete
+
+      - name: Commit v24.262
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && {
+            echo "ERROR: No changes were staged."
+            exit 1
+          }
+          git commit -m "Add Card Dust, special encounters, and Plushbun"
+          git push
+
+      - name: Success
+        shell: bash
+        run: |
+          echo "SUCCESS: v24.262 installed and verified."
