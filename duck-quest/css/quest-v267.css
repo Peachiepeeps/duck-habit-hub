@@ -1,0 +1,10 @@
+/* Duck Quest v24.267 repair */
+#buddyScreen #openBuddyBoxV265{display:none!important}
+#openSkillBook.moved-to-status-v267{display:none!important}
+.hero-quick-actions #openCharmScreen{
+  min-height:38px!important; padding:6px 10px!important;
+}
+#openCharmScreen .home-charm-icon{display:none!important}
+#openBuddyBoxHomeV267 img{width:34px;height:34px;object-fit:contain;image-rendering:pixelated}
+#openBuddyBoxHomeV267{display:flex;align-items:center;justify-content:center;gap:7px}
+.buddy-box-dust-v265 img{width:24px;height:24px;object-fit:contain;vertical-align:middle;margin-right:4px}

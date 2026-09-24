@@ -1,0 +1,8 @@
+Duckie Days v24.267 repair
+
+- Restores the v24.265 Buddy Box, buddy leveling, task editing, inventory grouping, and Card Workshop logic that v24.266 accidentally replaced.
+- Moves Buddy Box to Duck Quest home using the Strawberry Cat Slime icon.
+- Moves Equip Charm into the former OC Skills spot with no icon.
+- Adds OC Skills to the Home Hub Status page under the Duck Quest ranks.
+- Treats Power Up Dust as a currency and uses the Glitter ingredient asset.
+- Fixes the Card Shop width so the 3 daily cards use the full Shop content area.

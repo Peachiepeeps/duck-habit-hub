@@ -1,0 +1,50 @@
+/* Duckie Days v24.267 repair/polish */
+/* Preserve v24.265, then override only the requested UI pieces. */
+.shop-grid > .tc-shop-grid{
+  grid-column:1 / -1!important;
+  width:100%!important;
+  max-width:none!important;
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:12px!important;
+  align-items:start!important;
+}
+.shop-grid > .tc-shop-grid .tc-shop-card{
+  width:100%!important;
+  min-width:0!important;
+  padding:10px 8px!important;
+  gap:7px!important;
+  box-sizing:border-box!important;
+}
+.shop-grid > .tc-shop-grid .tc-face{
+  width:100%!important;
+  max-width:124px!important;
+  margin:0 auto!important;
+}
+.shop-grid > .tc-shop-grid .tc-shop-card>strong{
+  font-size:.72rem!important;
+  line-height:1.08!important;
+  min-height:2.2em!important;
+}
+.shop-grid > .tc-shop-grid .tc-shop-buy{
+  min-height:40px!important;
+  padding:7px 5px!important;
+  font-size:.64rem!important;
+}
+@media(max-width:365px){
+  .shop-grid > .tc-shop-grid{gap:7px!important}
+  .shop-grid > .tc-shop-grid .tc-shop-card{padding:7px 4px!important}
+  .shop-grid > .tc-shop-grid .tc-shop-card>strong{font-size:.62rem!important}
+}
+
+/* Power Up Dust is a currency, never an Inventory tile. */
+.power-dust-card-v265{display:none!important}
+.power-up-dust-pill-v267{
+  min-height:42px; padding:5px 10px 5px 7px; display:flex; align-items:center; justify-content:center; gap:5px;
+  border-radius:999px; border:2px solid rgba(124,91,101,.22); background:rgba(255,255,255,.82); color:#6e4653;
+  box-shadow:0 4px 12px rgba(91,61,71,.06); font-weight:900;
+}
+.power-up-dust-pill-v267 img,.power-up-dust-inline-icon-v267{width:26px;height:26px;object-fit:contain;image-rendering:auto}
+.status-header .power-up-dust-pill-v267{margin-left:auto}
+.status-header .status-header-coin + .power-up-dust-pill-v267{margin-left:6px}
+.status-skills-button-v267{width:100%;margin-top:10px;min-height:44px;border:2px solid #e3b4c6;border-radius:14px;background:#fff7fb;color:#7b4e5d;font:inherit;font-weight:900}
