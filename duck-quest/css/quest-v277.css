@@ -1,0 +1,58 @@
+/* Duckie Days v24.277 — one tidy stack for Buddy details */
+.buddy-box-detail-v265{inset:auto 9px;top:50%;transform:translateY(-50%);height:auto;max-height:calc(100% - 18px);overflow-y:auto}
+.buddy-box-detail-layout-v276{height:auto;min-height:0;grid-template-rows:repeat(4,auto);gap:8px}
+.buddy-box-detail-header-v276{grid-template-columns:82px minmax(0,1fr);align-items:center;gap:12px;padding-right:36px}
+.buddy-box-portrait-v277{width:82px;display:grid;justify-items:center;gap:5px}
+.buddy-box-detail-v265 .buddy-box-icon-window-v276{width:82px;height:82px}
+.buddy-box-detail-actions-v277{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.buddy-box-detail-actions-v277>button{min-width:0;min-height:37px;padding:5px 9px;border:2px solid #cf91ab;border-radius:11px;background:#fae0e9;color:#704759;font:inherit;font-size:.64rem;font-weight:900;cursor:pointer}
+.buddy-box-detail-actions-v277>button:disabled{opacity:.45;cursor:default}
+.buddy-box-detail-actions-v277 small{display:block;margin-top:1px;font-size:.48rem;color:#886576}
+.buddy-box-info-fields-v277{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:10px 0 12px}
+.buddy-box-info-fields-v277 label{display:grid;gap:4px;min-width:0;color:#826576;font-size:.57rem;font-weight:900}
+.buddy-box-info-fields-v277 input,.buddy-box-info-fields-v277 select{width:100%;min-width:0;height:37px;padding:5px;border:2px solid #ddb5c3;border-radius:9px;background:#fff;color:#604a55;font:inherit;font-size:.63rem}
+.buddy-box-info-dialog-v277 #buddyBoxSaveIdentityV274{background:#f9ddea}
+.buddy-box-main-v276{grid-template-columns:minmax(0,1fr);gap:8px;align-content:start}
+.buddy-box-move-v276,.buddy-box-controls-v276>section{min-height:0;padding:10px 12px}
+.buddy-box-move-v276{gap:4px}
+.buddy-box-move-v276>p{-webkit-line-clamp:2;line-clamp:2}
+.buddy-box-stats-v276{margin-top:3px}
+.buddy-box-extra-v276{margin-top:2px;padding-top:5px}
+.buddy-box-controls-v276{grid-template-rows:auto auto;gap:8px}
+.buddy-box-footer-v276{grid-template-columns:repeat(3,minmax(0,1fr))}
+.buddy-box-footer-v276 .danger{grid-column:auto}
+@media(min-width:650px){
+  .buddy-box-detail-v265{left:50%;right:auto;width:min(90%,620px);transform:translate(-50%,-50%)}
+  .buddy-box-link-v276{display:grid;grid-template-columns:minmax(0,1fr) 145px;column-gap:9px;align-items:end}
+  .buddy-box-link-v276>strong{grid-column:1/-1}
+  .buddy-box-link-fields-v276{grid-column:1;margin-top:6px}
+  .buddy-box-link-actions-v276{grid-column:2;margin-top:0}
+}
+@media(max-width:600px){
+  .buddy-box-detail-v265{inset:auto 6px;top:50%;max-height:calc(100% - 12px);transform:translateY(-50%);padding:8px}
+  .buddy-box-detail-layout-v276,.buddy-box-main-v276,.buddy-box-controls-v276{gap:5px}
+  .buddy-box-detail-header-v276{grid-template-columns:61px minmax(0,1fr);gap:7px;padding-right:29px}
+  .buddy-box-portrait-v277{width:61px}
+  .buddy-box-detail-v265 .buddy-box-icon-window-v276{width:61px;height:61px}
+  .buddy-box-detail-actions-v277{gap:5px}
+  .buddy-box-detail-actions-v277>button{min-height:31px;padding:3px 5px;font-size:.56rem}
+  .buddy-box-detail-actions-v277 small{font-size:.43rem}
+  .buddy-box-move-v276,.buddy-box-controls-v276>section{padding:6px 8px}
+  .buddy-box-move-v276{gap:3px}
+  .buddy-box-move-v276>p{-webkit-line-clamp:2;line-clamp:2}
+  .buddy-box-extra-v276{padding-top:4px}
+  .buddy-box-footer-v276 .danger{grid-column:auto}
+}
+@media(max-height:540px){
+  .buddy-box-detail-v265{inset:auto 4px;top:50%;max-height:calc(100% - 8px);transform:translateY(-50%);padding:6px}
+  .buddy-box-detail-layout-v276,.buddy-box-main-v276,.buddy-box-controls-v276{gap:3px}
+  .buddy-box-detail-header-v276{grid-template-columns:49px minmax(0,1fr);gap:5px}
+  .buddy-box-portrait-v277{width:49px}
+  .buddy-box-detail-v265 .buddy-box-icon-window-v276{width:49px;height:49px}
+  .buddy-box-detail-actions-v277>button{min-height:25px;padding:2px;font-size:.49rem}
+  .buddy-box-move-v276,.buddy-box-controls-v276>section{padding:4px 6px}
+  .buddy-box-footer-v276 .danger{grid-column:auto}
+}
+@media(min-width:650px) and (max-height:540px){
+  .buddy-box-detail-v265{left:50%;right:auto;width:min(90%,620px);transform:translate(-50%,-50%)}
+}

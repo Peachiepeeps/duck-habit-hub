@@ -197,8 +197,10 @@
     boxLayer.querySelector('#buddyBoxSortV265')?.addEventListener('change',event=>{boxSort=event.target.value;renderBuddyBox();});
     boxLayer.addEventListener('keydown',event=>{
       if(event.key!=='Escape')return;
-      const dialog=boxLayer.querySelector('#buddyBoxLevelDialogV276');
-      if(dialog&&!dialog.classList.contains('hidden')){dialog.classList.add('hidden');dialog.setAttribute('aria-hidden','true');}
+      const dialog=['#buddyBoxInfoDialogV277','#buddyBoxLevelDialogV276']
+        .map(selector=>boxLayer.querySelector(selector))
+        .find(element=>element&&!element.classList.contains('hidden'));
+      if(dialog){dialog.classList.add('hidden');dialog.setAttribute('aria-hidden','true');}
       else if(selectedEntryId)closeBuddyBoxDetail();
       else closeBuddyBox();
       event.stopPropagation();
@@ -340,15 +342,20 @@
       <button class="buddy-box-detail-close-v265" type="button" aria-label="Close buddy details">×</button>
       <div class="buddy-box-detail-layout-v276">
         <header class="buddy-box-detail-header-v276">
-          <span class="buddy-box-detail-art-v265 buddy-box-icon-window-v276" aria-label="${escapeHtml(entry.nickname||entry.name)} icon"></span>
+          <div class="buddy-box-portrait-v277">
+            <span class="buddy-box-detail-art-v265 buddy-box-icon-window-v276" aria-label="${escapeHtml(entry.nickname||entry.name)} icon"></span>
+          </div>
           <div class="buddy-box-detail-identity-v276">
             <span class="mini-label">${entry.shiny?'✦ SHINY · ':''}${entry.boss?'BOSS BUDDY':'BUDDY'}</span>
             <h3>${escapeHtml(entry.nickname||entry.name)}</h3>
             <p>${escapeHtml(entry.name)} · ${escapeHtml(entry.variantId||'base')} · Caught ${escapeHtml(captured)}</p>
             <div class="buddy-box-level-row-v276"><strong>Lv. ${level} / 100</strong><span>${balance.toLocaleString()} ✦ Dust</span></div>
           </div>
-          <button id="buddyBoxLevelUpV276" class="buddy-box-level-button-v276" type="button" ${level>=100?'disabled':''}>Level up</button>
         </header>
+        <div class="buddy-box-detail-actions-v277">
+          <button id="buddyBoxLevelUpV276" class="buddy-box-level-button-v276" type="button" ${level>=100?'disabled':''}>Level up</button>
+          <button id="buddyBoxInfoV277" type="button">Buddy info <small>Name & gender</small></button>
+        </div>
         <div class="buddy-box-main-v276">
           <section class="buddy-box-move-v276" aria-label="Buddy move and stats">
             <span class="mini-label">BATTLE MOVE</span>
@@ -358,19 +365,6 @@
             <div class="buddy-box-extra-v276"><span>Power <strong>×${buddyPowerFactor(level).toFixed(2)}</strong></span><span>Daily boost <strong>${dailyBoost?'Active ✦':'Off'}</strong></span></div>
           </section>
           <div class="buddy-box-controls-v276">
-            <section class="buddy-box-edit-v276" aria-label="Buddy name and gender">
-              <strong>Name & Gender</strong>
-              <div class="buddy-box-edit-fields-v276">
-                <label>Nickname<input id="buddyBoxNicknameV274" maxlength="20" value="${escapeHtml(entry.nickname||'')}" placeholder="${escapeHtml(entry.name)}"></label>
-                <label>Gender<select id="buddyBoxGenderV274">
-                  <option value="" ${!entry.gender?'selected':''}>Not set</option>
-                  <option value="female" ${entry.gender==='female'?'selected':''}>Female ♀</option>
-                  <option value="male" ${entry.gender==='male'?'selected':''}>Male ♂</option>
-                  <option value="nonbinary" ${entry.gender==='nonbinary'?'selected':''}>Nonbinary ✦</option>
-                </select></label>
-              </div>
-              <button id="buddyBoxSaveIdentityV274" type="button">Save name & gender</button>
-            </section>
             <section class="buddy-box-link-v276" aria-label="Link buddy to OC">
               <strong>Linked OC: ${escapeHtml(linked)}</strong>
               <div class="buddy-box-link-fields-v276">
@@ -386,6 +380,22 @@
           <button id="buddyBoxLockV265" type="button">${entry.locked?'🔒 Locked':'🔓 Lock'}</button>
           <button id="buddyBoxReleaseV265" class="danger" type="button" ${familyCount(entry.key)<=1?'disabled':''}>Release +${releaseValue(entry)} ✦</button>
         </footer>
+      </div>
+      <div id="buddyBoxInfoDialogV277" class="buddy-box-level-dialog-v276 buddy-box-info-dialog-v277 hidden" role="dialog" aria-modal="true" aria-label="Name and gender for ${escapeHtml(entry.nickname||entry.name)}" aria-hidden="true">
+        <div class="buddy-box-level-card-v276">
+          <strong>Buddy info</strong>
+          <p>Choose a nickname and gender for ${escapeHtml(entry.name)}.</p>
+          <div class="buddy-box-info-fields-v277">
+            <label>Nickname<input id="buddyBoxNicknameV274" maxlength="20" value="${escapeHtml(entry.nickname||'')}" placeholder="${escapeHtml(entry.name)}"></label>
+            <label>Gender<select id="buddyBoxGenderV274">
+              <option value="" ${!entry.gender?'selected':''}>Not set</option>
+              <option value="female" ${entry.gender==='female'?'selected':''}>Female ♀</option>
+              <option value="male" ${entry.gender==='male'?'selected':''}>Male ♂</option>
+              <option value="nonbinary" ${entry.gender==='nonbinary'?'selected':''}>Nonbinary ✦</option>
+            </select></label>
+          </div>
+          <div class="buddy-box-level-confirm-v276"><button id="buddyBoxCancelInfoV277" type="button">Cancel</button><button id="buddyBoxSaveIdentityV274" type="button">Save</button></div>
+        </div>
       </div>
       <div id="buddyBoxLevelDialogV276" class="buddy-box-level-dialog-v276 hidden" role="dialog" aria-modal="true" aria-label="Level up ${escapeHtml(entry.nickname||entry.name)}" aria-hidden="true">
         <div class="buddy-box-level-card-v276">
@@ -419,6 +429,16 @@
     dialog.querySelectorAll('[data-power]').forEach(button=>button.addEventListener('click',()=>choose(levelOptions.find(option=>option.steps===button.dataset.power))));
     detail.querySelector('#buddyBoxCancelLevelV276').addEventListener('click',hideDialog);
     confirm.addEventListener('click',()=>{if(choice){const steps=choice.steps==='max'?'max':choice.count;hideDialog();powerEntry(entry,steps);}});
+    const infoDialog=detail.querySelector('#buddyBoxInfoDialogV277');
+    const hideInfo=()=>{infoDialog.classList.add('hidden');infoDialog.setAttribute('aria-hidden','true');};
+    detail.querySelector('#buddyBoxInfoV277').addEventListener('click',()=>{
+      detail.querySelector('#buddyBoxNicknameV274').value=entry.nickname||'';
+      detail.querySelector('#buddyBoxGenderV274').value=entry.gender||'';
+      infoDialog.classList.remove('hidden');infoDialog.setAttribute('aria-hidden','false');
+      detail.querySelector('#buddyBoxNicknameV274').focus?.();
+    });
+    detail.querySelector('#buddyBoxCancelInfoV277').addEventListener('click',hideInfo);
+    infoDialog.addEventListener('click',event=>{if(event.target===infoDialog)hideInfo();});
     detail.querySelector('#buddyBoxSaveIdentityV274').addEventListener('click',()=>updateEntryPersonalization(entry,detail));
     detail.querySelector('#buddyBoxEquipV265').addEventListener('click',()=>equipEntry(entry,detail.querySelector('#buddyBoxOcV265').value,Number(detail.querySelector('#buddyBoxSlotV265').value)||0));
     detail.querySelector('#buddyBoxUnassignV274').addEventListener('click',()=>unassignEntry(entry));
