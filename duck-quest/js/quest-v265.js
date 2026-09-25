@@ -190,11 +190,19 @@
   function ensureBoxLayer(){
     if(boxLayer)return boxLayer;
     boxLayer=document.createElement('section');boxLayer.id='buddyBoxLayerV265';boxLayer.className='buddy-box-layer-v265 hidden';boxLayer.setAttribute('aria-hidden','true');
-    boxLayer.innerHTML=`<div class="buddy-box-card-v265"><div class="buddy-box-head-v265"><div><span class="mini-label">BUDDY BOX</span><h2>Your Buddies</h2></div><div class="buddy-box-dust-v265">✦ <strong id="buddyBoxDustV265">0</strong></div><button id="closeBuddyBoxV265" class="pixel-button small" type="button">Close</button></div><div class="buddy-box-tools-v265"><div class="buddy-box-filters-v265"><button class="selected" data-box-filter="all" type="button">All</button><button data-box-filter="favorites" type="button">Favorites</button><button data-box-filter="shiny" type="button">Shiny ✨</button></div><label>Sort <select id="buddyBoxSortV265"><option value="newest">Newest</option><option value="level">Highest Level</option><option value="name">Name</option></select></label></div><div id="buddyBoxGridV265" class="buddy-box-grid-v265"></div><p id="buddyBoxEmptyV265" class="buddy-box-empty-v265 hidden">No Buddies match this view yet.</p><section id="buddyBoxDetailV265" class="buddy-box-detail-v265 hidden"></section></div>`;
+    boxLayer.innerHTML=`<div class="buddy-box-card-v265"><div class="buddy-box-head-v265"><div><span class="mini-label">BUDDY BOX</span><h2>Your Buddies</h2></div><div class="buddy-box-dust-v265">✦ <strong id="buddyBoxDustV265">0</strong></div><button id="closeBuddyBoxV265" class="pixel-button small" type="button">Close</button></div><div class="buddy-box-tools-v265"><div class="buddy-box-filters-v265"><button class="selected" data-box-filter="all" type="button">All</button><button data-box-filter="favorites" type="button">Favorites</button><button data-box-filter="shiny" type="button">Shiny ✨</button></div><label>Sort <select id="buddyBoxSortV265"><option value="newest">Newest</option><option value="level">Highest Level</option><option value="name">Name</option></select></label></div><div id="buddyBoxGridV265" class="buddy-box-grid-v265"></div><p id="buddyBoxEmptyV265" class="buddy-box-empty-v265 hidden">No Buddies match this view yet.</p><section id="buddyBoxDetailV265" class="buddy-box-detail-v265 hidden" role="dialog" aria-modal="true" aria-label="Buddy details"></section></div>`;
     document.body.append(boxLayer);
     boxLayer.querySelector('#closeBuddyBoxV265')?.addEventListener('click',closeBuddyBox);
     boxLayer.querySelectorAll('[data-box-filter]').forEach(button=>button.addEventListener('click',()=>{boxFilter=button.dataset.boxFilter||'all';renderBuddyBox();}));
     boxLayer.querySelector('#buddyBoxSortV265')?.addEventListener('change',event=>{boxSort=event.target.value;renderBuddyBox();});
+    boxLayer.addEventListener('keydown',event=>{
+      if(event.key!=='Escape')return;
+      const dialog=boxLayer.querySelector('#buddyBoxLevelDialogV276');
+      if(dialog&&!dialog.classList.contains('hidden')){dialog.classList.add('hidden');dialog.setAttribute('aria-hidden','true');}
+      else if(selectedEntryId)closeBuddyBoxDetail();
+      else closeBuddyBox();
+      event.stopPropagation();
+    });
     return boxLayer;
   }
 
@@ -311,82 +319,106 @@
   function renderBuddyBoxDetail(entryId){
     const entry=boxEntry(entryId);if(!entry)return;selectedEntryId=entry.id;
     const layer=ensureBoxLayer(),detail=layer.querySelector('#buddyBoxDetailV265');detail.classList.remove('hidden');
-    const factor=buddyPowerFactor(entry.level),one=entry.level<100?nextLevelCost(entry.level):0;
-    const tenSteps=Math.min(10,100-entry.level),ten=tenSteps?totalLevelCost(entry.level,tenSteps):0;
-    const max=maxAffordableLevels(entry.level,dustBalance());
+    const level=entry.level,balance=dustBalance(),one=level<100?nextLevelCost(level):0;
+    const tenSteps=Math.min(10,100-level),ten=tenSteps?totalLevelCost(level,tenSteps):0;
+    const max=maxAffordableLevels(level,balance);
     const location=entryEquippedLocation(entry.id);
     const characters=[...new Set([...visibleCharacters(),...(location?[location.characterId]:[])])];
     const defaultCharacter=location?.characterId||(characters.includes(activeCharacterId)?activeCharacterId:characters[0]||'peep');
     const selectedSlot=location?.slotIndex??0;
     const skill=buddySkillForEnemyId?.(entry.enemyId);
-    const stats=buddyMoveStats(skill,entry.level);
-    const linked=location?`${characterName(location.characterId)} · ${location.slotIndex===0?'Main Buddy':`Slot ${location.slotIndex+1}`}`:'Not linked yet';
-    const genderText={female:'Female ♀',male:'Male ♂',nonbinary:'Nonbinary ✦'}[entry.gender]||'Not set';
+    const stats=buddyMoveStats(skill,level);
+    const linked=location?`${characterName(location.characterId)} · ${location.slotIndex===0?'Main':`Slot ${location.slotIndex+1}`}`:'In Box';
     const captured=Number.isFinite(Number(entry.capturedAt))?new Date(Number(entry.capturedAt)).toLocaleDateString():'Unknown';
     const dailyBoost=Boolean(window.DuckieTaskBuddyBoostV254?.boostActive?.());
+    const levelOptions=[
+      {steps:'1',count:level<100?1:0,cost:one,label:'+1 level'},
+      {steps:'10',count:tenSteps,cost:ten,label:`+${tenSteps||10} levels`},
+      {steps:'max',count:max.count,cost:max.cost,label:`Max affordable · ${max.count} levels`}
+    ];
     detail.innerHTML=`
       <button class="buddy-box-detail-close-v265" type="button" aria-label="Close buddy details">×</button>
-      <div class="buddy-box-detail-top-v265">
-        <span class="buddy-box-detail-art-v265"></span>
-        <div><span class="mini-label">${entry.shiny?'✨ SHINY · ':''}${entry.boss?'BOSS BUDDY':'BUDDY'}</span>
-          <h3>${escapeHtml(entry.nickname||entry.name)}</h3>
-          <p>${escapeHtml(entry.name)} · Lv. ${entry.level} / 100</p>
-          <p>${escapeHtml(genderText)} · ${escapeHtml(entry.variantId||'base')} variant</p>
+      <div class="buddy-box-detail-layout-v276">
+        <header class="buddy-box-detail-header-v276">
+          <span class="buddy-box-detail-art-v265 buddy-box-icon-window-v276" aria-label="${escapeHtml(entry.nickname||entry.name)} icon"></span>
+          <div class="buddy-box-detail-identity-v276">
+            <span class="mini-label">${entry.shiny?'✦ SHINY · ':''}${entry.boss?'BOSS BUDDY':'BUDDY'}</span>
+            <h3>${escapeHtml(entry.nickname||entry.name)}</h3>
+            <p>${escapeHtml(entry.name)} · ${escapeHtml(entry.variantId||'base')} · Caught ${escapeHtml(captured)}</p>
+            <div class="buddy-box-level-row-v276"><strong>Lv. ${level} / 100</strong><span>${balance.toLocaleString()} ✦ Dust</span></div>
+          </div>
+          <button id="buddyBoxLevelUpV276" class="buddy-box-level-button-v276" type="button" ${level>=100?'disabled':''}>Level up</button>
+        </header>
+        <div class="buddy-box-main-v276">
+          <section class="buddy-box-move-v276" aria-label="Buddy move and stats">
+            <span class="mini-label">BATTLE MOVE</span>
+            <strong>${escapeHtml(skill?.name||'No move yet')}</strong>
+            <p>${escapeHtml(skill?.description||'This Buddy does not have a battle move yet.')}</p>
+            <div class="buddy-box-stats-v276">${stats.map(item=>`<span>${escapeHtml(item.label)} <strong>${escapeHtml(item.value)}</strong></span>`).join('')}</div>
+            <div class="buddy-box-extra-v276"><span>Power <strong>×${buddyPowerFactor(level).toFixed(2)}</strong></span><span>Daily boost <strong>${dailyBoost?'Active ✦':'Off'}</strong></span></div>
+          </section>
+          <div class="buddy-box-controls-v276">
+            <section class="buddy-box-edit-v276" aria-label="Buddy name and gender">
+              <strong>Name & Gender</strong>
+              <div class="buddy-box-edit-fields-v276">
+                <label>Nickname<input id="buddyBoxNicknameV274" maxlength="20" value="${escapeHtml(entry.nickname||'')}" placeholder="${escapeHtml(entry.name)}"></label>
+                <label>Gender<select id="buddyBoxGenderV274">
+                  <option value="" ${!entry.gender?'selected':''}>Not set</option>
+                  <option value="female" ${entry.gender==='female'?'selected':''}>Female ♀</option>
+                  <option value="male" ${entry.gender==='male'?'selected':''}>Male ♂</option>
+                  <option value="nonbinary" ${entry.gender==='nonbinary'?'selected':''}>Nonbinary ✦</option>
+                </select></label>
+              </div>
+              <button id="buddyBoxSaveIdentityV274" type="button">Save name & gender</button>
+            </section>
+            <section class="buddy-box-link-v276" aria-label="Link buddy to OC">
+              <strong>Linked OC: ${escapeHtml(linked)}</strong>
+              <div class="buddy-box-link-fields-v276">
+                <label>OC<select id="buddyBoxOcV265">${characters.map(id=>`<option value="${id}" ${id===defaultCharacter?'selected':''}>${escapeHtml(characterName(id))}</option>`).join('')}</select></label>
+                <label>Slot<select id="buddyBoxSlotV265">${Array.from({length:6},(_,i)=>`<option value="${i}" ${i===selectedSlot?'selected':''}>${i===0?'★ Main':`Slot ${i+1}`}</option>`).join('')}</select></label>
+              </div>
+              <div class="buddy-box-link-actions-v276"><button id="buddyBoxEquipV265" type="button">${location?'Move':'Link'} Buddy</button><button id="buddyBoxUnassignV274" type="button" ${location?'':'disabled'}>Unlink</button></div>
+            </section>
+          </div>
         </div>
+        <footer class="buddy-box-bottom-actions-v265 buddy-box-footer-v276">
+          <button id="buddyBoxFavoriteV265" type="button">${entry.favorite?'♥ Favorite':'♡ Favorite'}</button>
+          <button id="buddyBoxLockV265" type="button">${entry.locked?'🔒 Locked':'🔓 Lock'}</button>
+          <button id="buddyBoxReleaseV265" class="danger" type="button" ${familyCount(entry.key)<=1?'disabled':''}>Release +${releaseValue(entry)} ✦</button>
+        </footer>
       </div>
-      <section class="buddy-box-info-v274" aria-label="Buddy information">
-        <div class="buddy-box-facts-v274">
-          <span>Linked OC<strong>${escapeHtml(linked)}</strong></span>
-          <span>Captured<strong>${escapeHtml(captured)}</strong></span>
-          <span>Move Power<strong>×${factor.toFixed(2)}</strong></span>
-          <span>Daily Task Boost<strong>${dailyBoost?'Active · +20%':'Not active'}</strong></span>
+      <div id="buddyBoxLevelDialogV276" class="buddy-box-level-dialog-v276 hidden" role="dialog" aria-modal="true" aria-label="Level up ${escapeHtml(entry.nickname||entry.name)}" aria-hidden="true">
+        <div class="buddy-box-level-card-v276">
+          <strong>Level up ${escapeHtml(entry.nickname||entry.name)}</strong>
+          <p>Choose how much to power up. Dust is spent when you confirm.</p>
+          <div class="buddy-box-level-options-v276">${levelOptions.map(option=>`<button type="button" data-power="${option.steps}" ${!option.count||balance<option.cost?'disabled':''}>${option.label}<small>${option.count?`${option.cost} ✦`: '—'}</small></button>`).join('')}</div>
+          <p class="buddy-box-level-summary-v276" aria-live="polite"></p>
+          <div class="buddy-box-level-confirm-v276"><button id="buddyBoxCancelLevelV276" type="button">Cancel</button><button id="buddyBoxConfirmLevelV276" type="button">Confirm</button></div>
         </div>
-        <div class="buddy-box-move-v274">
-          <strong>${escapeHtml(skill?.name||'No move yet')}</strong>
-          <p>${escapeHtml(skill?.description||'This Buddy does not have a battle move yet.')}</p>
-          ${stats.length?`<div class="buddy-box-stats-v274">${stats.map(item=>`<span>${escapeHtml(item.label)}<strong>${escapeHtml(item.value)}</strong></span>`).join('')}</div>`:''}
-        </div>
-      </section>
-      <section class="buddy-box-section-v274" aria-label="Power up buddy">
-        <div class="buddy-box-section-heading-v274"><strong>Power Up · Lv. ${entry.level} / 100</strong><span>${dustBalance().toLocaleString()} ✦ Dust</span></div>
-        <div class="buddy-level-bar-v265"><span style="width:${entry.level}%"></span></div>
-        <div class="buddy-power-actions-v265">
-          <button data-power="1" type="button" ${entry.level>=100||dustBalance()<one?'disabled':''}>+1 Level <small>${one} ✦</small></button>
-          <button data-power="10" type="button" ${tenSteps<1||dustBalance()<ten?'disabled':''}>+${tenSteps||10} Levels <small>${ten} ✦</small></button>
-          <button data-power="max" type="button" ${max.count<1?'disabled':''}>Max Affordable <small>${max.count?`${max.count} levels · ${max.cost} ✦`:'—'}</small></button>
-        </div>
-      </section>
-      <section class="buddy-box-section-v274" aria-label="Customize buddy">
-        <div class="buddy-box-section-heading-v274"><strong>Name & Gender</strong></div>
-        <div class="buddy-box-customize-v274">
-          <label>Nickname<input id="buddyBoxNicknameV274" maxlength="20" value="${escapeHtml(entry.nickname||'')}" placeholder="${escapeHtml(entry.name)}"></label>
-          <label>Gender<select id="buddyBoxGenderV274">
-            <option value="" ${!entry.gender?'selected':''}>Not set</option>
-            <option value="female" ${entry.gender==='female'?'selected':''}>Female ♀</option>
-            <option value="male" ${entry.gender==='male'?'selected':''}>Male ♂</option>
-            <option value="nonbinary" ${entry.gender==='nonbinary'?'selected':''}>Nonbinary ✦</option>
-          </select></label>
-          <button id="buddyBoxSaveIdentityV274" type="button">Save</button>
-        </div>
-      </section>
-      <section class="buddy-box-section-v274" aria-label="Link buddy to OC">
-        <div class="buddy-box-section-heading-v274"><strong>Linked to: ${escapeHtml(linked)}</strong></div>
-        <div class="buddy-box-equip-v265">
-          <label>OC<select id="buddyBoxOcV265">${characters.map(id=>`<option value="${id}" ${id===defaultCharacter?'selected':''}>${escapeHtml(characterName(id))}</option>`).join('')}</select></label>
-          <label>Slot<select id="buddyBoxSlotV265">${Array.from({length:6},(_,i)=>`<option value="${i}" ${i===selectedSlot?'selected':''}>${i===0?'★ Main Buddy':`Slot ${i+1}`}</option>`).join('')}</select></label>
-          <button id="buddyBoxEquipV265" type="button">${location?'Move Buddy':'Link Buddy'}</button>
-          <button id="buddyBoxUnassignV274" type="button" ${location?'':'disabled'}>Unlink</button>
-        </div>
-      </section>
-      <div class="buddy-box-bottom-actions-v265">
-        <button id="buddyBoxFavoriteV265" type="button">${entry.favorite?'♥ Favorited':'♡ Favorite'}</button>
-        <button id="buddyBoxLockV265" type="button">${entry.locked?'🔒 Locked':'🔓 Lock'}</button>
-        <button id="buddyBoxReleaseV265" class="danger" type="button" ${familyCount(entry.key)<=1?'disabled':''}>Release +${releaseValue(entry)} ✦</button>
-      </div>
-      <p class="buddy-box-dust-note-v265">Your last copy of each Buddy family is protected.</p>`;
+      </div>`;
     detail.querySelector('.buddy-box-detail-art-v265').append(buddyTileImage(entry));
     detail.querySelector('.buddy-box-detail-close-v265').addEventListener('click',closeBuddyBoxDetail);
-    detail.querySelectorAll('[data-power]').forEach(button=>button.addEventListener('click',()=>powerEntry(entry,button.dataset.power==='max'?'max':Number(button.dataset.power))));
+    const dialog=detail.querySelector('#buddyBoxLevelDialogV276');
+    const summary=detail.querySelector('.buddy-box-level-summary-v276');
+    const confirm=detail.querySelector('#buddyBoxConfirmLevelV276');
+    let choice=null;
+    const choose=option=>{
+      choice=option;
+      dialog.querySelectorAll('[data-power]').forEach(button=>button.classList.toggle('selected',button.dataset.power===option?.steps));
+      confirm.disabled=!option;
+      summary.textContent=option?`Lv. ${level} → Lv. ${level+option.count} · ${option.cost} ✦ Dust · ${balance-option.cost} left`
+        :(level>=100?'This Buddy is fully leveled.':`You need ${Math.max(0,one-balance)} more ✦ Dust for the next level.`);
+    };
+    const hideDialog=()=>{dialog.classList.add('hidden');dialog.setAttribute('aria-hidden','true');};
+    dialog.addEventListener('click',event=>{if(event.target===dialog)hideDialog();});
+    detail.querySelector('#buddyBoxLevelUpV276').addEventListener('click',()=>{
+      dialog.classList.remove('hidden');dialog.setAttribute('aria-hidden','false');
+      choose(levelOptions.find(option=>option.count&&balance>=option.cost)||null);
+      (dialog.querySelector('[data-power]:not(:disabled)')||detail.querySelector('#buddyBoxCancelLevelV276'))?.focus?.();
+    });
+    dialog.querySelectorAll('[data-power]').forEach(button=>button.addEventListener('click',()=>choose(levelOptions.find(option=>option.steps===button.dataset.power))));
+    detail.querySelector('#buddyBoxCancelLevelV276').addEventListener('click',hideDialog);
+    confirm.addEventListener('click',()=>{if(choice){const steps=choice.steps==='max'?'max':choice.count;hideDialog();powerEntry(entry,steps);}});
     detail.querySelector('#buddyBoxSaveIdentityV274').addEventListener('click',()=>updateEntryPersonalization(entry,detail));
     detail.querySelector('#buddyBoxEquipV265').addEventListener('click',()=>equipEntry(entry,detail.querySelector('#buddyBoxOcV265').value,Number(detail.querySelector('#buddyBoxSlotV265').value)||0));
     detail.querySelector('#buddyBoxUnassignV274').addEventListener('click',()=>unassignEntry(entry));
