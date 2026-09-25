@@ -1,7 +1,7 @@
 (()=>{
   "use strict";
 
-  const BUILD="24.271";
+  const BUILD="24.272";
   const DEFAULT_LEAD=60;
   const REMINDER_KEY="remindersV271";
   const taskForm=document.querySelector("#taskForm");
@@ -123,7 +123,9 @@
 
     const apiState=api?.getState?.() || {};
     if(!api?.upsertReminder || apiState.permission!=="granted" || !apiState.fid){
-      await cancelRemote(task.id);
+      // Registration can finish after the page opens. Keep an existing remote
+      // reminder alive while a permitted device is reconnecting.
+      if(apiState.permission!=="granted") await cancelRemote(task.id);
       if(!quiet) safeToast("Reminder saved. Tap 🔔 Notifications to enable phone alerts.");
       return {scheduled:false,reason:"notifications-off"};
     }
@@ -135,7 +137,7 @@
     }
 
     let sendAt=new Date(deadline.getTime()-(s.leadMinutes*60000));
-    if(sendAt.getTime()<=Date.now()) sendAt=new Date(Date.now()+15000);
+    if(sendAt.getTime()<=Date.now()) sendAt=new Date();
 
     await api.upsertReminder({
       taskId:task.id,

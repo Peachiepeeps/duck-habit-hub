@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, deleteDoc, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import {
   getMessaging,
   isSupported,
@@ -11,7 +11,7 @@ import {
   unregister
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-messaging.js";
 
-const BUILD = "24.271";
+const BUILD = "24.272";
 const firebaseConfig = {
   apiKey: "AIzaSyD1pZO7FDXyjBtc7idwVqe22p6wTub4lkg",
   authDomain: "duckie-days.firebaseapp.com",
@@ -225,22 +225,30 @@ async function upsertReminder(reminder) {
   if (!taskId) throw new Error("Reminder is missing its task ID.");
 
   const ref = doc(db, "taskReminders", reminderDocId(user.uid, taskId));
-  await setDoc(ref, {
-    uid: user.uid,
-    taskId,
-    title: String(reminder.title || "Duckie Days ♡").slice(0, 120),
-    body: String(reminder.body || "You have a task reminder! ♡").slice(0, 240),
-    url: String(reminder.url || location.href).slice(0, 600),
-    sendAt: reminder.sendAt,
-    deadlineAt: reminder.deadlineAt || null,
-    leadMinutes: Math.max(0, Number(reminder.leadMinutes) || 0),
-    status: "pending",
-    claimedAt: null,
-    sentAt: null,
-    attemptCount: 0,
-    lastError: null,
-    updatedAt: serverTimestamp()
-  }, { merge: true });
+  const title = String(reminder.title || "Duckie Days ♡").slice(0, 120);
+  const body = String(reminder.body || "You have a task reminder! ♡").slice(0, 240);
+  const url = String(reminder.url || location.href).slice(0, 600);
+  const leadMinutes = Math.max(0, Number(reminder.leadMinutes) || 0);
+  const scheduleKey = JSON.stringify([
+    reminder.deadlineAt?.getTime() ?? null, leadMinutes, title, body, url
+  ]);
+  // Opening the app or returning to its tab must never re-arm a sent reminder.
+  await runTransaction(db, async transaction => {
+    const snapshot = await transaction.get(ref);
+    const old = snapshot.exists() ? snapshot.data() : null;
+    const sameLegacySchedule = old && !old.scheduleKey &&
+      old.deadlineAt?.toMillis?.() === reminder.deadlineAt?.getTime() &&
+      Number(old.leadMinutes) === leadMinutes && old.body === body;
+    if (old?.scheduleKey === scheduleKey || (sameLegacySchedule && old.status === "sent")) return;
+    transaction.set(ref, {
+      uid: user.uid, taskId, title, body, url,
+      sendAt: reminder.sendAt, deadlineAt: reminder.deadlineAt || null,
+      leadMinutes, scheduleKey,
+      revision: crypto.randomUUID(),
+      status: "pending", claimedAt: null, claimId: null, sentAt: null,
+      attemptCount: 0, lastError: null, updatedAt: serverTimestamp()
+    });
+  });
   return ref.id;
 }
 
