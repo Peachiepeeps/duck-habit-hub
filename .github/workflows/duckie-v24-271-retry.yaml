@@ -1,0 +1,76 @@
+name: Retry Duckie Days v24.271 Phone Task Reminders
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Duckie-Days-v24.271-phone-task-reminders-RETRY-update-only.zip'
+      - '.github/workflows/retry-duckie-days-v24-271-phone-task-reminders.yaml'
+      - '.github/workflows/retry-duckie-days-v24-271-phone-task-reminders.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  install-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Require retry ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f "Duckie-Days-v24.271-phone-task-reminders-RETRY-update-only.zip"
+          unzip -tq "Duckie-Days-v24.271-phone-task-reminders-RETRY-update-only.zip"
+
+      - name: Install and verify v24.271
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .duckie-update-v271
+          mkdir .duckie-update-v271
+          unzip -q "Duckie-Days-v24.271-phone-task-reminders-RETRY-update-only.zip" -d .duckie-update-v271
+          test -f .duckie-update-v271/payload/version.json
+          test -f .duckie-update-v271/tools/patch-v271.py
+          python -m py_compile .duckie-update-v271/tools/patch-v271.py .duckie-update-v271/tools/verify-v271.py
+          node --check .duckie-update-v271/payload/task-reminders-v271.js
+          node --check .duckie-update-v271/payload/firebase-reminders-v271.mjs
+          node --check .duckie-update-v271/payload/sw-v24-271.js
+          node --check .duckie-update-v271/payload/firebase-backend/sendDueTaskReminders-v271.js
+          python .duckie-update-v271/tools/patch-v271.py
+          python .duckie-update-v271/tools/verify-v271.py
+          node --check task-reminders-v271.js
+          node --check firebase-reminders-v271.mjs
+          node --check sw-v24-271.js
+          node --check firebase-backend/sendDueTaskReminders-v271.js
+
+      - name: Clean installer files
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .duckie-update-v271
+          rm -f "Duckie-Days-v24.271-phone-task-reminders-update-only.zip"
+          rm -f "Duckie-Days-v24.271-phone-task-reminders-RETRY-update-only.zip"
+          rm -f ".github/workflows/install-duckie-days-v24-271-phone-task-reminders.yaml"
+          rm -f ".github/workflows/install-duckie-days-v24-271-phone-task-reminders.yml"
+          rm -f ".github/workflows/retry-duckie-days-v24-271-phone-task-reminders.yaml"
+          rm -f ".github/workflows/retry-duckie-days-v24-271-phone-task-reminders.yml"
+
+      - name: Commit v24.271
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Add phone task reminders"
+            git push
+          fi
+
+      - name: Success
+        run: echo "Duckie Days v24.271 phone task reminders installed successfully."
