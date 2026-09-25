@@ -4,6 +4,10 @@
   const TC=window.DuckieTradingCards;
   const CHARACTER_IDS=['peep','miko','io','miho','annika'];
   const RELEASE_DUST={normal:10,boss:25,shiny:50};
+  const MIMIC_BOX_ICONS={
+    'mimic:lucky':'assets/enemies/mimic/lucky/idle-2.webp',
+    'mimic:healthy':'assets/enemies/mimic/healthy/idle-2.webp'
+  };
 
   function dustState(){
     const state=TC?.cardCraft?.ensure?.(hubSave);
@@ -43,6 +47,16 @@
       entry.locked=Boolean(entry.locked);
       entry.nickname=String(entry.nickname||'').slice(0,20);
       entry.gender=['female','male','nonbinary'].includes(entry.gender)?entry.gender:'';
+      if(entry.enemyId==='mimic' && typeof BUDDY_CATALOG_BY_KEY!=='undefined'){
+        const form=BUDDY_CATALOG_BY_KEY.get(entry.key);
+        if(form){
+          const image=MIMIC_BOX_ICONS[entry.key]||form.image;
+          if(entry.name!==form.name){entry.name=form.name;changed=true;}
+          if(entry.variantId!==form.variantId){entry.variantId=form.variantId;changed=true;}
+          if(entry.image!==image){entry.image=image;changed=true;}
+          if(!Array.isArray(entry.idle)||entry.idle.join('|')!==form.idle.join('|')){entry.idle=form.idle.slice();changed=true;}
+        }
+      }
     });
     if(!box.equippedInstanceByCharacter||typeof box.equippedInstanceByCharacter!=='object') {box.equippedInstanceByCharacter={};changed=true;}
     CHARACTER_IDS.forEach(id=>{
@@ -113,6 +127,18 @@
     return null;
   }
   function familyCount(key){return ensureBox({persist:false}).entries.filter(entry=>entry.key===key).length;}
+  const familySortIndex=new Map(),colorSortIndex=new Map();
+  if(typeof BUDDY_CATALOG!=='undefined')BUDDY_CATALOG.forEach((form,index)=>{
+    if(!familySortIndex.has(form.enemyId))familySortIndex.set(form.enemyId,familySortIndex.size);
+    colorSortIndex.set(form.key,index);
+  });
+  function compareBuddyFamily(a,b){
+    return (familySortIndex.get(a.enemyId)??Infinity)-(familySortIndex.get(b.enemyId)??Infinity)
+      ||String(a.enemyId).localeCompare(String(b.enemyId))
+      ||(colorSortIndex.get(a.key)??Infinity)-(colorSortIndex.get(b.key)??Infinity)
+      ||String(a.variantId).localeCompare(String(b.variantId))
+      ||(Number(b.capturedAt)||0)-(Number(a.capturedAt)||0);
+  }
 
   // Capture remains compatible with Buddy Book quantities while adding an individual Box Buddy.
   try{
@@ -190,7 +216,7 @@
   function ensureBoxLayer(){
     if(boxLayer)return boxLayer;
     boxLayer=document.createElement('section');boxLayer.id='buddyBoxLayerV265';boxLayer.className='buddy-box-layer-v265 hidden';boxLayer.setAttribute('aria-hidden','true');
-    boxLayer.innerHTML=`<div class="buddy-box-card-v265"><div class="buddy-box-head-v265"><div><span class="mini-label">BUDDY BOX</span><h2>Your Buddies</h2></div><div class="buddy-box-dust-v265">✦ <strong id="buddyBoxDustV265">0</strong></div><button id="closeBuddyBoxV265" class="pixel-button small" type="button">Close</button></div><div class="buddy-box-tools-v265"><div class="buddy-box-filters-v265"><button class="selected" data-box-filter="all" type="button">All</button><button data-box-filter="favorites" type="button">Favorites</button><button data-box-filter="shiny" type="button">Shiny ✨</button></div><label>Sort <select id="buddyBoxSortV265"><option value="newest">Newest</option><option value="level">Highest Level</option><option value="name">Name</option></select></label></div><div id="buddyBoxGridV265" class="buddy-box-grid-v265"></div><p id="buddyBoxEmptyV265" class="buddy-box-empty-v265 hidden">No Buddies match this view yet.</p><section id="buddyBoxDetailV265" class="buddy-box-detail-v265 hidden" role="dialog" aria-modal="true" aria-label="Buddy details"></section></div>`;
+    boxLayer.innerHTML=`<div class="buddy-box-card-v265"><div class="buddy-box-head-v265"><div><span class="mini-label">BUDDY BOX</span><h2>Your Buddies</h2></div><div class="buddy-box-dust-v265">✦ <strong id="buddyBoxDustV265">0</strong></div><button id="closeBuddyBoxV265" class="pixel-button small" type="button">Close</button></div><div class="buddy-box-tools-v265"><div class="buddy-box-filters-v265"><button class="selected" data-box-filter="all" type="button">All</button><button data-box-filter="favorites" type="button">Favorites</button><button data-box-filter="shiny" type="button">Shiny ✨</button></div><label>Sort <select id="buddyBoxSortV265"><option value="newest">Newest</option><option value="level">Highest Level</option><option value="name">Name</option><option value="family">Family (color order)</option></select></label></div><div id="buddyBoxGridV265" class="buddy-box-grid-v265"></div><p id="buddyBoxEmptyV265" class="buddy-box-empty-v265 hidden">No Buddies match this view yet.</p><section id="buddyBoxDetailV265" class="buddy-box-detail-v265 hidden" role="dialog" aria-modal="true" aria-label="Buddy details"></section></div>`;
     document.body.append(boxLayer);
     boxLayer.querySelector('#closeBuddyBoxV265')?.addEventListener('click',closeBuddyBox);
     boxLayer.querySelectorAll('[data-box-filter]').forEach(button=>button.addEventListener('click',()=>{boxFilter=button.dataset.boxFilter||'all';renderBuddyBox();}));
@@ -216,7 +242,7 @@
     const sort=layer.querySelector('#buddyBoxSortV265');if(sort)sort.value=boxSort;
     let entries=[...box.entries];
     if(boxFilter==='favorites')entries=entries.filter(e=>e.favorite);else if(boxFilter==='shiny')entries=entries.filter(e=>e.shiny);
-    entries.sort((a,b)=>boxSort==='level'?(b.level-a.level)||String(a.name).localeCompare(String(b.name)):boxSort==='name'?String(a.name).localeCompare(String(b.name)):(Number(b.capturedAt)||0)-(Number(a.capturedAt)||0));
+    entries.sort((a,b)=>boxSort==='family'?compareBuddyFamily(a,b):boxSort==='level'?(b.level-a.level)||String(a.name).localeCompare(String(b.name)):boxSort==='name'?String(a.name).localeCompare(String(b.name)):(Number(b.capturedAt)||0)-(Number(a.capturedAt)||0));
     const grid=layer.querySelector('#buddyBoxGridV265');grid.innerHTML='';
     entries.forEach(entry=>{
       const button=document.createElement('button');button.type='button';button.className=`buddy-box-tile-v265${entry.shiny?' shiny':''}${entry.favorite?' favorite':''}`;button.dataset.instanceId=entry.id;
@@ -269,7 +295,7 @@
     if(!window.confirm(prompt))return;
     const box=ensureBox({persist:false});box.entries=box.entries.filter(item=>item.id!==entry.id);
     const record=hubSave.buddies.collection?.[entry.key];if(record)record.quantity=Math.max(1,Math.floor(Number(record.quantity)||1)-1);
-    addDust(amount);selectedEntryId=null;try{persistAll();renderBuddyCollection?.();}catch(error){}renderBuddyBox();
+    addDust(amount);closeBuddyBoxDetail();try{persistAll();renderBuddyCollection?.();}catch(error){}renderBuddyBox();
   }
 
   function updateEntryPersonalization(entry,detail){
@@ -282,6 +308,29 @@
       hubSave.buddies.personalizationByCharacter[location.characterId][location.slotIndex]=
         nickname||gender?{nickname,gender}:null;
     }
+    try{persistAll();renderBuddyCollection?.();renderMeta?.();}catch(error){}
+    renderBuddyBox();
+  }
+
+  function restorePinkMimic(entry){
+    const location=entryEquippedLocation(entry.id);
+    if(entry.key!=='mimic:lucky'||location?.characterId!=='peep'||location.slotIndex!==0)return;
+    if(!window.confirm('Restore this Peep buddy to the regular pink Mimic? This changes only this copy; your other Lucky Mimics stay Lucky.'))return;
+    const form=typeof BUDDY_CATALOG_BY_KEY!=='undefined'?BUDDY_CATALOG_BY_KEY.get('mimic:base'):null;
+    if(!form)return;
+    const box=ensureBox({reconcile:false,persist:false});
+    ensureBuddySave();
+    const collection=hubSave.buddies.collection;
+    const luckyCount=box.entries.filter(item=>item.id!==entry.id&&item.key==='mimic:lucky').length;
+    if(luckyCount&&collection['mimic:lucky'])collection['mimic:lucky'].quantity=luckyCount;
+    else delete collection['mimic:lucky'];
+    const baseCount=box.entries.filter(item=>item.key==='mimic:base').length;
+    collection['mimic:base']={...form,...collection['mimic:base'],key:'mimic:base',
+      quantity:Math.max(baseCount,Number(collection['mimic:base']?.quantity)||0)+1,
+      capturedAt:Number(collection['mimic:base']?.capturedAt)||entry.capturedAt};
+    entry.key='mimic:base';entry.variantId='base';entry.name=form.name;
+    entry.image=form.image;entry.idle=form.idle.slice();entry.shiny=false;entry.boss=false;
+    hubSave.buddies.equippedByCharacter.peep[0]='mimic:base';
     try{persistAll();renderBuddyCollection?.();renderMeta?.();}catch(error){}
     renderBuddyBox();
   }
@@ -332,6 +381,7 @@
     const stats=buddyMoveStats(skill,level);
     const linked=location?`${characterName(location.characterId)} · ${location.slotIndex===0?'Main':`Slot ${location.slotIndex+1}`}`:'In Box';
     const captured=Number.isFinite(Number(entry.capturedAt))?new Date(Number(entry.capturedAt)).toLocaleDateString():'Unknown';
+    const canRestorePink=entry.key==='mimic:lucky'&&location?.characterId==='peep'&&location.slotIndex===0;
     const dailyBoost=Boolean(window.DuckieTaskBuddyBoostV254?.boostActive?.());
     const levelOptions=[
       {steps:'1',count:level<100?1:0,cost:one,label:'+1 level'},
@@ -394,6 +444,7 @@
               <option value="nonbinary" ${entry.gender==='nonbinary'?'selected':''}>Nonbinary ✦</option>
             </select></label>
           </div>
+          ${canRestorePink?'<button id="buddyBoxRestorePinkV278" class="buddy-box-restore-v278" type="button">Restore Peep’s pink Mimic</button>':''}
           <div class="buddy-box-level-confirm-v276"><button id="buddyBoxCancelInfoV277" type="button">Cancel</button><button id="buddyBoxSaveIdentityV274" type="button">Save</button></div>
         </div>
       </div>
@@ -440,6 +491,7 @@
     detail.querySelector('#buddyBoxCancelInfoV277').addEventListener('click',hideInfo);
     infoDialog.addEventListener('click',event=>{if(event.target===infoDialog)hideInfo();});
     detail.querySelector('#buddyBoxSaveIdentityV274').addEventListener('click',()=>updateEntryPersonalization(entry,detail));
+    detail.querySelector('#buddyBoxRestorePinkV278')?.addEventListener('click',()=>restorePinkMimic(entry));
     detail.querySelector('#buddyBoxEquipV265').addEventListener('click',()=>equipEntry(entry,detail.querySelector('#buddyBoxOcV265').value,Number(detail.querySelector('#buddyBoxSlotV265').value)||0));
     detail.querySelector('#buddyBoxUnassignV274').addEventListener('click',()=>unassignEntry(entry));
     detail.querySelector('#buddyBoxFavoriteV265').addEventListener('click',()=>{entry.favorite=!entry.favorite;persistAll();renderBuddyBox();});

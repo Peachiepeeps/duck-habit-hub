@@ -1,0 +1,7 @@
+/* Duckie Days v24.278 — buddy form correction inside Buddy info */
+.buddy-box-info-dialog-v277 .buddy-box-restore-v278{
+  display:block;width:100%;margin:-3px 0 10px;min-height:30px;padding:4px 8px;
+  border:1px solid #d8a9ba;border-radius:9px;background:#fff;color:#795368;
+  font:inherit;font-size:.55rem;font-weight:900;cursor:pointer
+}
+.buddy-box-info-dialog-v277 .buddy-box-restore-v278:hover{background:#fff0f5}
