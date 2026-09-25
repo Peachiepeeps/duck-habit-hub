@@ -5407,7 +5407,8 @@ function tickEnemyBuddyEffects(){
 
 async function useBuddySkill(){
   const buddy=activeBattleBuddyRecord();
-  const skill=buddySkillForEnemyId(buddy?.enemyId);
+  const baseSkill=buddySkillForEnemyId(buddy?.enemyId);
+  const skill=window.DUCKIE_BUDDY_BOX_V265?.scaleSkill?.(baseSkill,buddy?.level||1)||baseSkill;
   if(actionLocked || !currentEnemy || !buddy || !skill || Number(skillState.buddyCooldown||0)>0) return;
   closeCommandWindow();
   actionLocked=true;

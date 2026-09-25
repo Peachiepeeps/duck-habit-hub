@@ -121,6 +121,7 @@
   function enhanceBuddyDetail(){
     const detail=document.querySelector('#buddyBoxDetailV265:not(.hidden)');
     if(!detail || !lastBuddyId) return;
+    if(detail.querySelector('.buddy-box-info-v274')) return;
 
     const entry=buddyById(lastBuddyId);
     if(!entry) return;

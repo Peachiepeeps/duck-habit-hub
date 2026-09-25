@@ -34,9 +34,16 @@
     }
     const box=hubSave.buddyBoxV265;
     if(!Array.isArray(box.entries)){box.entries=[];changed=true;}
-    box.entries=box.entries.filter(entry=>entry&&typeof entry==='object'&&entry.id&&entry.key).map(entry=>({
-      ...entry,level:Math.max(1,Math.min(100,Math.floor(Number(entry.level)||1))),favorite:Boolean(entry.favorite),locked:Boolean(entry.locked),nickname:String(entry.nickname||'').slice(0,20),gender:['female','male','nonbinary'].includes(entry.gender)?entry.gender:''
-    }));
+    // Preserve each entry object: detail buttons retain references to it.
+    // Replacing every entry on each read made level-up and edits target stale copies.
+    box.entries=box.entries.filter(entry=>entry&&typeof entry==='object'&&entry.id&&entry.key);
+    box.entries.forEach(entry=>{
+      entry.level=Math.max(1,Math.min(100,Math.floor(Number(entry.level)||1)));
+      entry.favorite=Boolean(entry.favorite);
+      entry.locked=Boolean(entry.locked);
+      entry.nickname=String(entry.nickname||'').slice(0,20);
+      entry.gender=['female','male','nonbinary'].includes(entry.gender)?entry.gender:'';
+    });
     if(!box.equippedInstanceByCharacter||typeof box.equippedInstanceByCharacter!=='object') {box.equippedInstanceByCharacter={};changed=true;}
     CHARACTER_IDS.forEach(id=>{
       if(!Array.isArray(box.equippedInstanceByCharacter[id])){box.equippedInstanceByCharacter[id]=Array(6).fill(null);changed=true;}
@@ -78,8 +85,12 @@
           if(mapped[i]!==instance.id){mapped[i]=instance.id;changed=true;}
           used.add(instance.id);
           const personal=personals[i];
-          if(personal?.nickname&&instance.nickname!==personal.nickname){instance.nickname=String(personal.nickname).slice(0,20);changed=true;}
-          if(personal?.gender&&instance.gender!==personal.gender){instance.gender=personal.gender;changed=true;}
+          if(personal){
+            const nickname=String(personal.nickname||'').slice(0,20);
+            const gender=['female','male','nonbinary'].includes(personal.gender)?personal.gender:'';
+            if(instance.nickname!==nickname){instance.nickname=nickname;changed=true;}
+            if(instance.gender!==gender){instance.gender=gender;changed=true;}
+          }
         }
       }
       box.equippedInstanceByCharacter[characterId]=mapped;
@@ -156,20 +167,8 @@
     return out;
   }
 
-  // Temporarily scale the active Buddy's skill for this action. This keeps all existing skill logic intact.
-  try{
-    if(typeof useBuddySkill==='function'){
-      const priorUseBuddySkill=useBuddySkill;
-      useBuddySkill=async function(){
-        const buddy=activeBattleBuddyRecord?.();
-        const enemyId=String(buddy?.enemyId||'');
-        const original=BUDDY_SKILLS?.[enemyId];
-        if(!original||!buddy)return priorUseBuddySkill.apply(this,arguments);
-        BUDDY_SKILLS[enemyId]=scaledBuddySkill(original,buddy.level||1);
-        try{return await priorUseBuddySkill.apply(this,arguments);}finally{BUDDY_SKILLS[enemyId]=original;}
-      };
-    }
-  }catch(error){console.warn('Buddy level scaling v24.265 skipped',error);}
+  // The battle core requests a scaled copy when a Buddy acts. BUDDY_SKILLS is
+  // frozen, so mutating its entries would throw before the action begins.
 
   try{
     if(typeof renderBattleBuddy==='function'){
@@ -211,6 +210,7 @@
     const grid=layer.querySelector('#buddyBoxGridV265');grid.innerHTML='';
     entries.forEach(entry=>{
       const button=document.createElement('button');button.type='button';button.className=`buddy-box-tile-v265${entry.shiny?' shiny':''}${entry.favorite?' favorite':''}`;button.dataset.instanceId=entry.id;
+      button.setAttribute('aria-label',`View ${entry.nickname||entry.name}, level ${entry.level}`);
       const art=document.createElement('span');art.className='buddy-box-art-v265';art.append(buddyTileImage(entry));if(entry.shiny){const s=document.createElement('i');s.textContent='✦';art.append(s);}
       const name=document.createElement('strong');name.textContent=entry.nickname||entry.name;
       const level=document.createElement('span');level.textContent=`Lv. ${entry.level}`;
@@ -262,16 +262,134 @@
     addDust(amount);selectedEntryId=null;try{persistAll();renderBuddyCollection?.();}catch(error){}renderBuddyBox();
   }
 
+  function updateEntryPersonalization(entry,detail){
+    const nickname=String(detail.querySelector('#buddyBoxNicknameV274')?.value||'').trim().slice(0,20);
+    const gender=String(detail.querySelector('#buddyBoxGenderV274')?.value||'');
+    if(!['','female','male','nonbinary'].includes(gender))return;
+    const location=entryEquippedLocation(entry.id);
+    entry.nickname=nickname;entry.gender=gender;
+    if(location){
+      hubSave.buddies.personalizationByCharacter[location.characterId][location.slotIndex]=
+        nickname||gender?{nickname,gender}:null;
+    }
+    try{persistAll();renderBuddyCollection?.();renderMeta?.();}catch(error){}
+    renderBuddyBox();
+  }
+
+  function unassignEntry(entry){
+    const location=entryEquippedLocation(entry.id);
+    if(!location)return;
+    const {characterId,slotIndex}=location;
+    hubSave.buddies.equippedByCharacter[characterId][slotIndex]=null;
+    hubSave.buddies.personalizationByCharacter[characterId][slotIndex]=null;
+    ensureBox({persist:false}).equippedInstanceByCharacter[characterId][slotIndex]=null;
+    try{persistAll();renderBuddyCollection?.();renderMeta?.();}catch(error){}
+    renderBuddyBox();
+  }
+
+  function buddyMoveStats(skill,level){
+    if(!skill)return [];
+    const scaled=scaledBuddySkill(skill,level),items=[];
+    const pct=value=>`${Math.round(value*100)}%`;
+    const add=(label,value)=>items.push({label,value});
+    if(Number.isFinite(scaled.multiplier))add('Damage',`×${scaled.multiplier.toFixed(2)}`);
+    if(Number.isFinite(scaled.healPercent))add('Healing',pct(scaled.healPercent));
+    if(Number.isFinite(scaled.attackDown))add('Enemy Attack ↓',pct(scaled.attackDown));
+    if(Number.isFinite(scaled.damageReduction))add('Damage Reduced',pct(scaled.damageReduction));
+    if(Number.isFinite(scaled.missChance))add('Enemy Miss Chance',pct(scaled.missChance));
+    if(Number.isFinite(scaled.stunChance))add('Stun Chance',pct(scaled.stunChance));
+    if(Number.isFinite(scaled.attackBoost))add('OC Attack ↑',pct(scaled.attackBoost));
+    if(Number.isFinite(scaled.defenseDown))add('Enemy Defense ↓',pct(scaled.defenseDown));
+    if(Number.isFinite(scaled.drainPercent))add('Damage Healed',pct(scaled.drainPercent));
+    if(Number.isFinite(scaled.weakenChance))add('Weaken Chance',pct(scaled.weakenChance));
+    if(Number.isFinite(scaled.critChance))add('Critical Chance',pct(scaled.critChance));
+    if(Number.isFinite(scaled.duration))add('Effect Length',`${scaled.duration} turns`);
+    add('Cooldown','3 turns');
+    return items;
+  }
+
   function renderBuddyBoxDetail(entryId){
     const entry=boxEntry(entryId);if(!entry)return;selectedEntryId=entry.id;
     const layer=ensureBoxLayer(),detail=layer.querySelector('#buddyBoxDetailV265');detail.classList.remove('hidden');
-    const factor=buddyPowerFactor(entry.level),one=entry.level<100?nextLevelCost(entry.level):0,tenSteps=Math.min(10,100-entry.level),ten=tenSteps?totalLevelCost(entry.level,tenSteps):0,max=maxAffordableLevels(entry.level,dustBalance());
-    const characters=visibleCharacters();const defaultCharacter=characters.includes(activeCharacterId)?activeCharacterId:characters[0]||'peep';
-    detail.innerHTML=`<button class="buddy-box-detail-close-v265" type="button" aria-label="Close">×</button><div class="buddy-box-detail-top-v265"><span class="buddy-box-detail-art-v265"></span><div><span class="mini-label">${entry.shiny?'SHINY BUDDY':entry.boss?'BOSS BUDDY':'BUDDY'}</span><h3>${escapeHtml(entry.nickname||entry.name)}</h3><p>${escapeHtml(entry.name)} · Lv. ${entry.level}</p><p>Move Power ×${factor.toFixed(2)}</p></div></div><div class="buddy-level-bar-v265"><span style="width:${entry.level}%"></span></div><div class="buddy-power-actions-v265"><button data-power="1" type="button" ${entry.level>=100||dustBalance()<one?'disabled':''}>+1 <small>${one} ✦</small></button><button data-power="10" type="button" ${tenSteps<1||dustBalance()<ten?'disabled':''}>+${tenSteps||10} <small>${ten} ✦</small></button><button data-power="max" type="button" ${max.count<1?'disabled':''}>Max Affordable <small>${max.count?`${max.count} Lv · ${max.cost} ✦`:'—'}</small></button></div><div class="buddy-box-equip-v265"><label>OC<select id="buddyBoxOcV265">${characters.map(id=>`<option value="${id}" ${id===defaultCharacter?'selected':''}>${characterName(id)}</option>`).join('')}</select></label><label>Slot<select id="buddyBoxSlotV265">${Array.from({length:6},(_,i)=>`<option value="${i}">${i===0?'★ Main Buddy':`Slot ${i+1}`}</option>`).join('')}</select></label><button id="buddyBoxEquipV265" type="button">Equip</button></div><div class="buddy-box-bottom-actions-v265"><button id="buddyBoxFavoriteV265" type="button">${entry.favorite?'♥ Favorited':'♡ Favorite'}</button><button id="buddyBoxLockV265" type="button">${entry.locked?'🔒 Locked':'🔓 Lock'}</button><button id="buddyBoxReleaseV265" class="danger" type="button" ${familyCount(entry.key)<=1?'disabled':''}>Release +${releaseValue(entry)} ✦</button></div><p class="buddy-box-dust-note-v265">Power Up Dust: <strong>${dustBalance().toLocaleString()}</strong> · Your last copy of a Buddy family is protected.</p>`;
+    const factor=buddyPowerFactor(entry.level),one=entry.level<100?nextLevelCost(entry.level):0;
+    const tenSteps=Math.min(10,100-entry.level),ten=tenSteps?totalLevelCost(entry.level,tenSteps):0;
+    const max=maxAffordableLevels(entry.level,dustBalance());
+    const location=entryEquippedLocation(entry.id);
+    const characters=[...new Set([...visibleCharacters(),...(location?[location.characterId]:[])])];
+    const defaultCharacter=location?.characterId||(characters.includes(activeCharacterId)?activeCharacterId:characters[0]||'peep');
+    const selectedSlot=location?.slotIndex??0;
+    const skill=buddySkillForEnemyId?.(entry.enemyId);
+    const stats=buddyMoveStats(skill,entry.level);
+    const linked=location?`${characterName(location.characterId)} · ${location.slotIndex===0?'Main Buddy':`Slot ${location.slotIndex+1}`}`:'Not linked yet';
+    const genderText={female:'Female ♀',male:'Male ♂',nonbinary:'Nonbinary ✦'}[entry.gender]||'Not set';
+    const captured=Number.isFinite(Number(entry.capturedAt))?new Date(Number(entry.capturedAt)).toLocaleDateString():'Unknown';
+    const dailyBoost=Boolean(window.DuckieTaskBuddyBoostV254?.boostActive?.());
+    detail.innerHTML=`
+      <button class="buddy-box-detail-close-v265" type="button" aria-label="Close buddy details">×</button>
+      <div class="buddy-box-detail-top-v265">
+        <span class="buddy-box-detail-art-v265"></span>
+        <div><span class="mini-label">${entry.shiny?'✨ SHINY · ':''}${entry.boss?'BOSS BUDDY':'BUDDY'}</span>
+          <h3>${escapeHtml(entry.nickname||entry.name)}</h3>
+          <p>${escapeHtml(entry.name)} · Lv. ${entry.level} / 100</p>
+          <p>${escapeHtml(genderText)} · ${escapeHtml(entry.variantId||'base')} variant</p>
+        </div>
+      </div>
+      <section class="buddy-box-info-v274" aria-label="Buddy information">
+        <div class="buddy-box-facts-v274">
+          <span>Linked OC<strong>${escapeHtml(linked)}</strong></span>
+          <span>Captured<strong>${escapeHtml(captured)}</strong></span>
+          <span>Move Power<strong>×${factor.toFixed(2)}</strong></span>
+          <span>Daily Task Boost<strong>${dailyBoost?'Active · +20%':'Not active'}</strong></span>
+        </div>
+        <div class="buddy-box-move-v274">
+          <strong>${escapeHtml(skill?.name||'No move yet')}</strong>
+          <p>${escapeHtml(skill?.description||'This Buddy does not have a battle move yet.')}</p>
+          ${stats.length?`<div class="buddy-box-stats-v274">${stats.map(item=>`<span>${escapeHtml(item.label)}<strong>${escapeHtml(item.value)}</strong></span>`).join('')}</div>`:''}
+        </div>
+      </section>
+      <section class="buddy-box-section-v274" aria-label="Power up buddy">
+        <div class="buddy-box-section-heading-v274"><strong>Power Up · Lv. ${entry.level} / 100</strong><span>${dustBalance().toLocaleString()} ✦ Dust</span></div>
+        <div class="buddy-level-bar-v265"><span style="width:${entry.level}%"></span></div>
+        <div class="buddy-power-actions-v265">
+          <button data-power="1" type="button" ${entry.level>=100||dustBalance()<one?'disabled':''}>+1 Level <small>${one} ✦</small></button>
+          <button data-power="10" type="button" ${tenSteps<1||dustBalance()<ten?'disabled':''}>+${tenSteps||10} Levels <small>${ten} ✦</small></button>
+          <button data-power="max" type="button" ${max.count<1?'disabled':''}>Max Affordable <small>${max.count?`${max.count} levels · ${max.cost} ✦`:'—'}</small></button>
+        </div>
+      </section>
+      <section class="buddy-box-section-v274" aria-label="Customize buddy">
+        <div class="buddy-box-section-heading-v274"><strong>Name & Gender</strong></div>
+        <div class="buddy-box-customize-v274">
+          <label>Nickname<input id="buddyBoxNicknameV274" maxlength="20" value="${escapeHtml(entry.nickname||'')}" placeholder="${escapeHtml(entry.name)}"></label>
+          <label>Gender<select id="buddyBoxGenderV274">
+            <option value="" ${!entry.gender?'selected':''}>Not set</option>
+            <option value="female" ${entry.gender==='female'?'selected':''}>Female ♀</option>
+            <option value="male" ${entry.gender==='male'?'selected':''}>Male ♂</option>
+            <option value="nonbinary" ${entry.gender==='nonbinary'?'selected':''}>Nonbinary ✦</option>
+          </select></label>
+          <button id="buddyBoxSaveIdentityV274" type="button">Save</button>
+        </div>
+      </section>
+      <section class="buddy-box-section-v274" aria-label="Link buddy to OC">
+        <div class="buddy-box-section-heading-v274"><strong>Linked to: ${escapeHtml(linked)}</strong></div>
+        <div class="buddy-box-equip-v265">
+          <label>OC<select id="buddyBoxOcV265">${characters.map(id=>`<option value="${id}" ${id===defaultCharacter?'selected':''}>${escapeHtml(characterName(id))}</option>`).join('')}</select></label>
+          <label>Slot<select id="buddyBoxSlotV265">${Array.from({length:6},(_,i)=>`<option value="${i}" ${i===selectedSlot?'selected':''}>${i===0?'★ Main Buddy':`Slot ${i+1}`}</option>`).join('')}</select></label>
+          <button id="buddyBoxEquipV265" type="button">${location?'Move Buddy':'Link Buddy'}</button>
+          <button id="buddyBoxUnassignV274" type="button" ${location?'':'disabled'}>Unlink</button>
+        </div>
+      </section>
+      <div class="buddy-box-bottom-actions-v265">
+        <button id="buddyBoxFavoriteV265" type="button">${entry.favorite?'♥ Favorited':'♡ Favorite'}</button>
+        <button id="buddyBoxLockV265" type="button">${entry.locked?'🔒 Locked':'🔓 Lock'}</button>
+        <button id="buddyBoxReleaseV265" class="danger" type="button" ${familyCount(entry.key)<=1?'disabled':''}>Release +${releaseValue(entry)} ✦</button>
+      </div>
+      <p class="buddy-box-dust-note-v265">Your last copy of each Buddy family is protected.</p>`;
     detail.querySelector('.buddy-box-detail-art-v265').append(buddyTileImage(entry));
     detail.querySelector('.buddy-box-detail-close-v265').addEventListener('click',closeBuddyBoxDetail);
     detail.querySelectorAll('[data-power]').forEach(button=>button.addEventListener('click',()=>powerEntry(entry,button.dataset.power==='max'?'max':Number(button.dataset.power))));
+    detail.querySelector('#buddyBoxSaveIdentityV274').addEventListener('click',()=>updateEntryPersonalization(entry,detail));
     detail.querySelector('#buddyBoxEquipV265').addEventListener('click',()=>equipEntry(entry,detail.querySelector('#buddyBoxOcV265').value,Number(detail.querySelector('#buddyBoxSlotV265').value)||0));
+    detail.querySelector('#buddyBoxUnassignV274').addEventListener('click',()=>unassignEntry(entry));
     detail.querySelector('#buddyBoxFavoriteV265').addEventListener('click',()=>{entry.favorite=!entry.favorite;persistAll();renderBuddyBox();});
     detail.querySelector('#buddyBoxLockV265').addEventListener('click',()=>{entry.locked=!entry.locked;persistAll();renderBuddyBox();});
     detail.querySelector('#buddyBoxReleaseV265').addEventListener('click',()=>releaseEntry(entry));
@@ -286,6 +404,6 @@
   // v24.269: Dash UI patch removed; game-v96 + quest-v269 own Dash navigation.
 
   ensureBox();dustState();
-  window.DUCKIE_BUDDY_BOX_V265={open:openBuddyBox,ensure:ensureBox,powerFactor:buddyPowerFactor};
+  window.DUCKIE_BUDDY_BOX_V265={open:openBuddyBox,ensure:ensureBox,powerFactor:buddyPowerFactor,scaleSkill:scaledBuddySkill};
   window.DUCKIE_QUEST_V265='24.265';
 })();
