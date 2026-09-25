@@ -11,7 +11,7 @@ import {
   unregister
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-messaging.js";
 
-const BUILD = "24.272";
+const BUILD = "24.273";
 const firebaseConfig = {
   apiKey: "AIzaSyD1pZO7FDXyjBtc7idwVqe22p6wTub4lkg",
   authDomain: "duckie-days.firebaseapp.com",
@@ -214,6 +214,25 @@ function reminderDocId(uid, taskId) {
   return `${uid}--${String(taskId).replace(/[^A-Za-z0-9_.-]/g, "_")}`;
 }
 
+// Keep the schedule we successfully saved on this device. A previously sent
+// reminder must not be armed again merely because Duckie Days was reopened.
+const syncedSchedules = new Map();
+function cacheKey(uid, taskId) {
+  return `duckie-reminder-v273:${uid}:${taskId}`;
+}
+function cachedSchedule(key) {
+  if (syncedSchedules.has(key)) return syncedSchedules.get(key);
+  try { return localStorage.getItem(key); } catch (error) { return null; }
+}
+function rememberSchedule(key, value) {
+  syncedSchedules.set(key, value);
+  try { localStorage.setItem(key, value); } catch (error) {}
+}
+function forgetSchedule(key) {
+  syncedSchedules.delete(key);
+  try { localStorage.removeItem(key); } catch (error) {}
+}
+
 async function upsertReminder(reminder) {
   const user = await ensureAuth();
   if (!user) throw new Error("Duckie Days could not sign in to Firebase.");
@@ -232,23 +251,36 @@ async function upsertReminder(reminder) {
   const scheduleKey = JSON.stringify([
     reminder.deadlineAt?.getTime() ?? null, leadMinutes, title, body, url
   ]);
-  // Opening the app or returning to its tab must never re-arm a sent reminder.
-  await runTransaction(db, async transaction => {
-    const snapshot = await transaction.get(ref);
-    const old = snapshot.exists() ? snapshot.data() : null;
-    const sameLegacySchedule = old && !old.scheduleKey &&
-      old.deadlineAt?.toMillis?.() === reminder.deadlineAt?.getTime() &&
-      Number(old.leadMinutes) === leadMinutes && old.body === body;
-    if (old?.scheduleKey === scheduleKey || (sameLegacySchedule && old.status === "sent")) return;
-    transaction.set(ref, {
-      uid: user.uid, taskId, title, body, url,
-      sendAt: reminder.sendAt, deadlineAt: reminder.deadlineAt || null,
-      leadMinutes, scheduleKey,
-      revision: crypto.randomUUID(),
-      status: "pending", claimedAt: null, claimId: null, sentAt: null,
-      attemptCount: 0, lastError: null, updatedAt: serverTimestamp()
-    });
+  const key = cacheKey(user.uid, taskId);
+  if (cachedSchedule(key) === scheduleKey) return ref.id;
+
+  const fields = () => ({
+    uid: user.uid, taskId, title, body, url,
+    sendAt: reminder.sendAt, deadlineAt: reminder.deadlineAt || null,
+    leadMinutes, scheduleKey, revision: crypto.randomUUID(),
+    status: "pending", claimedAt: null, claimId: null, sentAt: null,
+    attemptCount: 0, lastError: null, updatedAt: serverTimestamp()
   });
+  try {
+    // Existing reminders can be read when permitted, so do not rearm one
+    // already sent on a device that predates the local schedule cache.
+    await runTransaction(db, async transaction => {
+      const snapshot = await transaction.get(ref);
+      const old = snapshot.exists() ? snapshot.data() : null;
+      const sameLegacySchedule = old && !old.scheduleKey &&
+        old.deadlineAt?.toMillis?.() === reminder.deadlineAt?.getTime() &&
+        Number(old.leadMinutes) === leadMinutes && old.body === body;
+      if (old?.scheduleKey === scheduleKey ||
+          (sameLegacySchedule && old.status === "sent")) return;
+      transaction.set(ref, fields());
+    });
+  } catch (error) {
+    if (error?.code !== "permission-denied") throw error;
+    // Some rules allow creating an owned document but cannot read it before
+    // creation. setDoc uses only the write permission in that case.
+    await setDoc(ref, fields(), {merge: true});
+  }
+  rememberSchedule(key, scheduleKey);
   return ref.id;
 }
 
@@ -258,6 +290,7 @@ async function cancelReminder(taskId) {
   await deleteDoc(doc(db, "taskReminders", reminderDocId(user.uid, taskId))).catch(error => {
     if (error?.code !== "not-found") throw error;
   });
+  forgetSchedule(cacheKey(user.uid, taskId));
   return true;
 }
 

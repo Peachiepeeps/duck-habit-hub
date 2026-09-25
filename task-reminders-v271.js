@@ -1,7 +1,7 @@
 (()=>{
   "use strict";
 
-  const BUILD="24.272";
+  const BUILD="24.273";
   const DEFAULT_LEAD=60;
   const REMINDER_KEY="remindersV271";
   const taskForm=document.querySelector("#taskForm");
@@ -165,9 +165,13 @@
       }
     }
     saveNow();
+    let failures=0;
     for(const task of tasks){
-      if(readSettings(task.id).enabled) await syncTask(task,{quiet:true});
+      if(!readSettings(task.id).enabled) continue;
+      try{ await syncTask(task,{quiet:true}); }
+      catch(error){ console.warn("Reminder sync failed",error); failures++; }
     }
+    if(failures) safeToast("Some phone reminders could not be scheduled. Open a reminder and tap Save to retry.");
   }
 
   function ensureFormFields(){
@@ -309,7 +313,10 @@
         try{created=(save.tasks||[]).find(task=>!before.has(task.id))||null;}catch(error){}
         if(!created) return;
         writeSettings(created.id,settings);
-        syncTask(created,{quiet:false}).catch(error=>console.warn("Reminder sync failed",error));
+        syncTask(created,{quiet:false}).catch(error=>{
+          console.warn("Reminder sync failed",error);
+          safeToast("Phone reminder could not be scheduled. Open it and tap Save to retry.");
+        });
         try{ if(typeof renderTasks==="function") renderTasks(); }catch(error){}
       },0);
     },true);
