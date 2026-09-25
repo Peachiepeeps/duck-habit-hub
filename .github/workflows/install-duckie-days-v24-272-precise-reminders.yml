@@ -1,0 +1,61 @@
+name: Install Duckie Days v24.272 Precise Reminders
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Duckie-Days-v24.272-precise-reminders-update-only.zip'
+      - '.github/workflows/install-duckie-days-v24-272-precise-reminders.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-272-install
+  cancel-in-progress: false
+
+jobs:
+  install-update:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require exact update ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f Duckie-Days-v24.272-precise-reminders-update-only.zip
+          unzip -tq Duckie-Days-v24.272-precise-reminders-update-only.zip
+      - name: Install and verify v24.272
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .duckie-update-v272
+          unzip -q Duckie-Days-v24.272-precise-reminders-update-only.zip -d .duckie-update-v272
+          python3 -m py_compile .duckie-update-v272/tools/patch-v272.py .duckie-update-v272/tools/verify-v272.py
+          node --check .duckie-update-v272/payload/firebase-backend/index.js
+          node --check .duckie-update-v272/payload/firebase-reminders-v271.mjs
+          node --check .duckie-update-v272/payload/task-reminders-v271.js
+          python3 .duckie-update-v272/tools/patch-v272.py
+          python3 .duckie-update-v272/tools/verify-v272.py
+          node --check firebase-backend/index.js
+      - name: Remove temporary installer files
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .duckie-update-v272
+          rm -f Duckie-Days-v24.272-precise-reminders-update-only.zip
+          rm -f .github/workflows/install-duckie-days-v24-272-precise-reminders.yml
+      - name: Commit app update
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+          else
+            git commit -m 'Schedule Duckie Days reminders more precisely'
+            git push
+          fi
