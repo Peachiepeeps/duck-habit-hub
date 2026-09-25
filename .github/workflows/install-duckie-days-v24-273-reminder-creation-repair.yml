@@ -1,0 +1,60 @@
+name: Install Duckie Days v24.273 Reminder Creation Repair
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Duckie-Days-v24.273-reminder-creation-repair-update-only.zip'
+      - '.github/workflows/install-duckie-days-v24-273-reminder-creation-repair.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-273-install
+  cancel-in-progress: false
+
+jobs:
+  install-update:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require exact update ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f Duckie-Days-v24.273-reminder-creation-repair-update-only.zip
+          unzip -tq Duckie-Days-v24.273-reminder-creation-repair-update-only.zip
+      - name: Install and verify v24.273
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .duckie-update-v273
+          unzip -q Duckie-Days-v24.273-reminder-creation-repair-update-only.zip -d .duckie-update-v273
+          python3 -m py_compile .duckie-update-v273/tools/patch-v273.py .duckie-update-v273/tools/verify-v273.py
+          node --check .duckie-update-v273/payload/firebase-reminders-v271.mjs
+          node --check .duckie-update-v273/payload/task-reminders-v271.js
+          python3 .duckie-update-v273/tools/patch-v273.py
+          python3 .duckie-update-v273/tools/verify-v273.py
+          node --check firebase-reminders-v271.mjs
+      - name: Remove temporary installer files
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .duckie-update-v273
+          rm -f Duckie-Days-v24.273-reminder-creation-repair-update-only.zip
+          rm -f .github/workflows/install-duckie-days-v24-273-reminder-creation-repair.yml
+      - name: Commit app update
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+          else
+            git commit -m 'Repair new Duckie Days reminder creation'
+            git push
+          fi
