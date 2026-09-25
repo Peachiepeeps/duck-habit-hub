@@ -1,0 +1,61 @@
+name: Install Duckie Days v24.274 Buddy Moves and Box
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Duckie-Days-v24.274-buddy-moves-box-update-only.zip'
+      - '.github/workflows/install-duckie-days-v24-274-buddy-moves-box.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-274-install
+  cancel-in-progress: false
+
+jobs:
+  install-update:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require exact update ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f Duckie-Days-v24.274-buddy-moves-box-update-only.zip
+          unzip -tq Duckie-Days-v24.274-buddy-moves-box-update-only.zip
+      - name: Install and verify v24.274
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .duckie-update-v274
+          unzip -q Duckie-Days-v24.274-buddy-moves-box-update-only.zip -d .duckie-update-v274
+          python3 -m py_compile .duckie-update-v274/tools/patch-v274.py .duckie-update-v274/tools/verify-v274.py
+          node --check .duckie-update-v274/payload/duck-quest/js/game-v96.js
+          node --check .duckie-update-v274/payload/duck-quest/js/quest-v265.js
+          node --check .duckie-update-v274/payload/duck-quest/js/quest-v270.js
+          node --check .duckie-update-v274/payload/sw-v24-274.js
+          python3 .duckie-update-v274/tools/patch-v274.py
+          python3 .duckie-update-v274/tools/verify-v274.py
+      - name: Remove temporary installer files
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .duckie-update-v274
+          rm -f Duckie-Days-v24.274-buddy-moves-box-update-only.zip
+          rm -f .github/workflows/install-duckie-days-v24-274-buddy-moves-box.yml
+      - name: Commit app update
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+          else
+            git commit -m 'Repair Buddy moves and expand Buddy Box'
+            git push
+          fi
