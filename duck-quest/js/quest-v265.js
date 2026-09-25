@@ -215,7 +215,7 @@
       const name=document.createElement('strong');name.textContent=entry.nickname||entry.name;
       const level=document.createElement('span');level.textContent=`Lv. ${entry.level}`;
       const location=entryEquippedLocation(entry.id);const status=document.createElement('small');status.textContent=location?`${characterName(location.characterId)} · Slot ${location.slotIndex+1}`:(entry.favorite?'♥ Favorite':'In Box');
-      button.append(art,name,level,status);button.addEventListener('click',()=>openBuddyBoxDetail(entry.id));grid.append(button);
+      button.append(art,name,level,status);button.addEventListener('click',()=>renderBuddyBoxDetail(entry.id));grid.append(button);
     });
     layer.querySelector('#buddyBoxEmptyV265').classList.toggle('hidden',entries.length>0);
     if(selectedEntryId&&!boxEntry(selectedEntryId))closeBuddyBoxDetail();
