@@ -1,108 +1,50 @@
-name: Install Duckie Days v24.280 Special Variants
+name: Install Duckie Days v24.280 from existing bundle
 
-"on":
-  workflow_dispatch:
+on:
   push:
     paths:
-      - "Duckie-Days-v24.280-Changed-Files.zip"
-      - ".github/workflows/install-duckie-days-v24-280-special-variants.yml"
-      - ".github/workflows/install-duckie-days-v24-280-special-variants.yaml"
+      - .github/workflows/install_v24_280.yml
+  workflow_dispatch:
 
 permissions:
   contents: write
 
-concurrency:
-  group: duckie-days-v24-280-special-variants
-  cancel-in-progress: false
-
 jobs:
-  install-update:
-    if: github.actor != 'github-actions[bot]'
+  install:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-
-      - name: Require and verify update ZIP
-        shell: bash
+      - uses: actions/checkout@v4
+      - name: Extract and check update
         run: |
-          set -euo pipefail
-          ZIP="Duckie-Days-v24.280-Changed-Files.zip"
-          test -f "$ZIP" || { echo "ERROR: $ZIP is missing from the repository root."; exit 1; }
-          unzip -tq "$ZIP"
-
-      - name: Install v24.280 special variants
-        shell: bash
-        run: |
-          set -euo pipefail
-          ZIP="Duckie-Days-v24.280-Changed-Files.zip"
-          TMP=".duckie-days-v24-280-update"
-
-          rm -rf "$TMP"
-          mkdir -p "$TMP"
-          unzip -q "$ZIP" -d "$TMP"
-
-          test -f "$TMP/duck-quest/js/game-v96.js"
-          test -f "$TMP/duck-quest/index.html"
-          test -f "$TMP/index.html"
-          test -f "$TMP/version.json"
-          test -f "$TMP/sw.js"
-          test -f "$TMP/sw-v24-280.js"
-          test -f "$TMP/UPDATE-v24.280.txt"
-
-          node --check "$TMP/duck-quest/js/game-v96.js"
-          node --check "$TMP/sw.js"
-          node --check "$TMP/sw-v24-280.js"
-
           python3 - <<'PY'
-          import json
-          with open('.duckie-days-v24-280-update/version.json', encoding='utf-8') as f:
-              data = json.load(f)
-          assert data.get('version') == '24.280', f"Unexpected version: {data!r}"
-          print('Verified version 24.280')
+          import io, json, pathlib, zipfile
+          bundle = pathlib.Path('Duckie-Days-v24.280-Workflow-Upload-Bundle.zip')
+          source = zipfile.ZipFile(bundle)
+          inner = zipfile.ZipFile(io.BytesIO(source.read('Duckie-Days-v24.280-Changed-Files.zip')))
+          files = {
+              'duck-quest/js/game-v96.js', 'duck-quest/index.html',
+              'index.html', 'version.json', 'sw.js', 'sw-v24-280.js',
+              'UPDATE-v24.280.txt',
+          }
+          assert set(inner.namelist()) == files, 'Unexpected update ZIP contents'
+          assert inner.testzip() is None, 'Update ZIP is damaged'
+          assert json.loads(inner.read('version.json'))['version'] == '24.280'
+          current = json.loads(pathlib.Path('version.json').read_text())['version']
+          assert tuple(map(int, current.split('.'))) <= (24, 280), f'Current version {current} is newer'
+          for name in files:
+              path = pathlib.Path(name)
+              path.parent.mkdir(parents=True, exist_ok=True)
+              path.write_bytes(inner.read(name))
           PY
-
-          cp -a "$TMP"/. ./
-          rm -rf "$TMP"
-
-      - name: Verify installed files
-        shell: bash
-        run: |
-          set -euo pipefail
           node --check duck-quest/js/game-v96.js
-          node --check sw.js
           node --check sw-v24-280.js
-
-          python3 - <<'PY'
-          import json
-          with open('version.json', encoding='utf-8') as f:
-              data = json.load(f)
-          assert data.get('version') == '24.280', f"Installed version is not 24.280: {data!r}"
-          print('Installed files verified successfully.')
-          PY
-
-      - name: Remove installer ZIP
-        shell: bash
+          python3 -c "import json; assert json.load(open('version.json'))['version'] == '24.280'"
+      - name: Commit update
         run: |
-          set -euo pipefail
-          rm -f "Duckie-Days-v24.280-Changed-Files.zip"
-
-      - name: Commit v24.280
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-
-          if git diff --cached --quiet; then
-            echo "ERROR: No changes were staged."
-            exit 1
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add duck-quest/js/game-v96.js duck-quest/index.html index.html version.json sw.js sw-v24-280.js UPDATE-v24.280.txt
+          if ! git diff --cached --quiet; then
+            git commit -m 'Install Duckie Days v24.280 special variants'
+            git push
           fi
-
-          git commit -m "Add special enemy variants"
-          git push
-
-      - name: Success
-        run: echo "Duckie Days v24.280 special variants installed successfully."
