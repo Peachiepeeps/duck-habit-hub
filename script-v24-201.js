@@ -1290,6 +1290,36 @@ const ITEMS = {
     "duckPerch": "shelf",
     "thumbBounds": [0, 320, 254, 1807]
   },
+  "book-shelf-brown": {
+    "name": "Brown Book Shelf",
+    "category": "furniture",
+    "image": "assets/furniture/book-shelves/book-shelf-brown.png",
+    "icon": "▔",
+    "sellValue": 0,
+    "furnitureSlot": "bookShelf",
+    "furnitureType": "bookShelf",
+    "thumbBounds": [327, 292, 753, 347]
+  },
+  "book-shelf-white": {
+    "name": "White Book Shelf",
+    "category": "furniture",
+    "image": "assets/furniture/book-shelves/book-shelf-white.png",
+    "icon": "▔",
+    "sellValue": 0,
+    "furnitureSlot": "bookShelf",
+    "furnitureType": "bookShelf",
+    "thumbBounds": [327, 292, 753, 347]
+  },
+  "book-shelf-dark": {
+    "name": "Dark Book Shelf",
+    "category": "furniture",
+    "image": "assets/furniture/book-shelves/book-shelf-dark.png",
+    "icon": "▔",
+    "sellValue": 0,
+    "furnitureSlot": "bookShelf",
+    "furnitureType": "bookShelf",
+    "thumbBounds": [327, 292, 753, 347]
+  },
   "dresser-brown": {
     "name": "Brown Dresser",
     "category": "furniture",
@@ -2469,6 +2499,20 @@ function migrateLegacyInventory(saved) {
   }
   return inventory;
 }
+
+const FREE_BOOK_SHELF_IDS = Object.freeze([
+  "book-shelf-brown",
+  "book-shelf-white",
+  "book-shelf-dark"
+]);
+
+function ensureFreeBookShelves() {
+  if (!save.inventory || typeof save.inventory !== "object") save.inventory = {};
+  for (const itemId of FREE_BOOK_SHELF_IDS) {
+    save.inventory[itemId] = Math.max(1, Number(save.inventory[itemId]) || 0);
+  }
+}
+
 
 const SHOPPING_DURATION_MS = 60 * 60 * 1000;
 const SHOPPING_DAILY_LIMIT = 3;
@@ -4457,6 +4501,7 @@ const rugFurnitureDisplay = document.querySelector("#rugFurnitureDisplay");
 const leftFurnitureDisplay = document.querySelector("#leftFurnitureDisplay");
 const petBedFurnitureDisplay = document.querySelector("#petBedFurnitureDisplay");
 const lightsFurnitureDisplay = document.querySelector("#lightsFurnitureDisplay");
+const bookShelfFurnitureDisplay = document.querySelector("#bookShelfFurnitureDisplay");
 const furnitureDuckLayer = document.querySelector("#furnitureDuckLayer");
 const roomPickerButton = document.querySelector("#roomPickerButton");
 const roomPickerSwatch = document.querySelector("#roomPickerSwatch");
@@ -7512,7 +7557,11 @@ function renderInventoryItemSheet() {
     const placeButton = document.createElement("button");
     placeButton.type = "button";
     placeButton.className = `inventory-action primary${isPlaced ? " placed" : ""}`;
-    placeButton.textContent = isPlaced ? "Remove from Room" : "Place in Room";
+    const isBookShelf = placementItem.furnitureSlot === "bookShelf";
+    placeButton.textContent = isBookShelf
+      ? (isPlaced ? "Selected Shelf" : "Use This Shelf")
+      : (isPlaced ? "Remove from Room" : "Place in Room");
+    placeButton.disabled = Boolean(isBookShelf && isPlaced);
     placeButton.addEventListener("click", () => placeFurnitureItemInCurrentRoom(placementItemId));
     inventorySheetActions.append(placeButton);
   }
@@ -7654,7 +7703,8 @@ const EMPTY_ROOM_FURNITURE = Object.freeze({
   left: null,
   petBed: null,
   rug: null,
-  lights: null
+  lights: null,
+  bookShelf: "book-shelf-brown"
 });
 
 const SHELF_DUCK_PERCHES = Object.freeze([
@@ -7719,6 +7769,7 @@ function furnitureSlotLabel(slot) {
     : slot === "petBed" ? "Pet Bed"
     : slot === "rug" ? "Rug"
     : slot === "lights" ? "Wall Lights"
+    : slot === "bookShelf" ? "Book Shelf"
     : "Furniture";
 }
 
@@ -7751,14 +7802,12 @@ function reserveBookFurniturePerches(roomId = save.room) {
 }
 
 function renderRoomBookPlacement() {
-  const leftType = currentLeftFurnitureType(save.room);
-
-  roomBookImage.classList.toggle("on-shelf", leftType === "shelf");
-  roomBookImage.classList.toggle("on-dresser", leftType === "dresser");
-  bookHotspot.classList.toggle("on-shelf", leftType === "shelf");
-  bookHotspot.classList.toggle("on-dresser", leftType === "dresser");
-
-  if (reserveBookFurniturePerches(save.room)) persist();
+  // v24.285: the Book now has its own wall shelf above the OC.
+  // It no longer moves onto the Six-Shelf or dresser.
+  roomBookImage.classList.remove("on-shelf", "on-dresser");
+  bookHotspot.classList.remove("on-shelf", "on-dresser");
+  roomBookImage.classList.add("book-wall-shelf-v285");
+  bookHotspot.classList.add("book-wall-shelf-v285");
 }
 
 function renderRoomFurniture() {
@@ -7767,6 +7816,7 @@ function renderRoomFurniture() {
   renderFurnitureOverlay(leftFurnitureDisplay, roomFurniture.left);
   renderFurnitureOverlay(petBedFurnitureDisplay, roomFurniture.petBed);
   renderFurnitureOverlay(lightsFurnitureDisplay, roomFurniture.lights);
+  renderFurnitureOverlay(bookShelfFurnitureDisplay, roomFurniture.bookShelf);
 
   const leftType = currentLeftFurnitureType(save.room);
   leftFurnitureDisplay.classList.toggle("dresser-furniture", leftType === "dresser");
@@ -7787,6 +7837,10 @@ function placeFurnitureItemInCurrentRoom(itemId) {
   const currentId = roomFurniture[slot] || null;
 
   if (currentId === itemId) {
+    if (slot === "bookShelf") {
+      showToast(`${item.name} is already holding your Book. ♡`);
+      return;
+    }
     roomFurniture[slot] = null;
     persist();
     renderRoom();
@@ -7821,6 +7875,16 @@ function furniturePlacementText(itemId) {
   if (!item?.furnitureSlot) return "";
   const room = ROOMS.find(entry => entry.id === save.room) || ROOMS[0];
   const currentId = getRoomFurniture(room.id)[item.furnitureSlot] || null;
+
+  if (item.furnitureSlot === "bookShelf") {
+    if (currentId === itemId) {
+      return `${item.name} is currently holding the Book above the OC.`;
+    }
+    if (currentId && ITEMS[currentId]) {
+      return `The Book is currently on ${ITEMS[currentId].name}. Choose this color to switch it.`;
+    }
+    return `Choose this shelf to place the Book above the OC.`;
+  }
 
   if (currentId === itemId) {
     return `Currently placed in ${room.name} · ${furnitureSlotLabel(item.furnitureSlot)}.`;
@@ -14447,6 +14511,7 @@ syncSelectedCharacterRoom();
 normalizeRoomExpansion();
 migrateLegacyPetBedsOnce();
 migrateLegacyMainRoomDecor();
+ensureFreeBookShelves();
 persist();
 
 const roomToGrowUnlockedOnLoad = evaluateRoomToGrow({ notify: false });

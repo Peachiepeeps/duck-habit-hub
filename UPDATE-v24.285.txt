@@ -1,0 +1,9 @@
+Duckie Days v24.285 — Book Wall Shelf
+
+- Adds Brown, White, and Dark Book Shelf decor using the supplied artwork.
+- All three shelves are free and automatically kept in Furniture inventory.
+- Brown is the default shelf in every OC's home.
+- Choosing White or Dark from Inventory swaps the shelf color.
+- The shelf cannot be sold or removed because it permanently holds the Book.
+- Moves the Duckipedia Book onto the wall shelf above the OC.
+- The Book no longer occupies the dresser or Six-Shelf, so those furniture perches stay free.
