@@ -1,0 +1,130 @@
+name: Consolidate Duckie Days Root Code v24.287
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/consolidate-duckie-days-root-code.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-287-root-consolidation
+  cancel-in-progress: false
+
+jobs:
+  consolidate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Confirm current app version
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq '"version": "24.286"' version.json
+          test -f hub-v286.css
+          test -f sw-v24-286.js
+
+      - name: Build clean current files
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64
+          code = base64.b64decode("ZnJvbSBwYXRobGliIGltcG9ydCBQYXRoCmltcG9ydCByZSwganNvbiwgc2h1dGlsLCBzeXMKUk9PVD1QYXRoLmN3ZCgpCkJVSUxEPScyNC4yODcnCgpkZWYgcmVhZChwKTogcmV0dXJuIChST09UL3ApLnJlYWRfdGV4dChlbmNvZGluZz0ndXRmLTgnKQpkZWYgd3JpdGUocCxzKToKICAgIHE9Uk9PVC9wOyBxLnBhcmVudC5ta2RpcihwYXJlbnRzPVRydWUsZXhpc3Rfb2s9VHJ1ZSk7IHEud3JpdGVfdGV4dChzLGVuY29kaW5nPSd1dGYtOCcpCgpkZWYgY29uY2F0X2NzcyhmaWxlcyx0aXRsZSk6CiAgICBwYXJ0cz1bZicvKiB7dGl0bGV9IOKAlCBjb25zb2xpZGF0ZWQgZm9yIER1Y2tpZSBEYXlzIHtCVUlMRH0uICovJ10KICAgIGZvciBmIGluIGZpbGVzOgogICAgICAgIHBhcnRzLmFwcGVuZChmJ1xuLyogPT09PT0gU291cmNlOiB7Zn0gPT09PT0gKi9cbicrcmVhZChmKS5yc3RyaXAoKSsiXG4iKQogICAgcmV0dXJuICdcbicuam9pbihwYXJ0cykKCmRlZiBjb25jYXRfanMoZmlsZXMsdGl0bGUpOgogICAgcGFydHM9W2YnLy8ge3RpdGxlfSDigJQgY29uc29saWRhdGVkIGZvciBEdWNraWUgRGF5cyB7QlVJTER9LiddCiAgICBmb3IgZiBpbiBmaWxlczoKICAgICAgICBwYXJ0cy5hcHBlbmQoZidcbi8vID09PT09IFNvdXJjZToge2Z9ID09PT09XG4nK3JlYWQoZikucnN0cmlwKCkrIlxuOyIpCiAgICByZXR1cm4gJ1xuJy5qb2luKHBhcnRzKSsiXG4iCgojIHJlcXVpcmVkIGN1cnJlbnQgZmlsZXMKcmVxdWlyZWQ9Wwonc3R5bGUtdjI0LTIwMS5jc3MnLCdzY3JpcHQtdjI0LTIwMS5qcycsJ3N3LXYyNC0yODYuanMnLCdpbmRleC5odG1sJywKJ3RyYWRpbmctY2FyZHMtdjI1MC5jc3MnLCd0cmFkaW5nLWNhcmRzLXYyNjIuY3NzJywndHJhZGluZy1jYXJkcy12MjY0LmNzcycsCid0cmFkaW5nLWNhcmRzLXYyNTAuanMnLCd0cmFkaW5nLWNhcmRzLXYyNjIuanMnLCd0cmFkaW5nLWNhcmRzLXYyNjUuanMnLAondHJhZGluZy1jYXJkcy11aS12MjUwLmpzJywndHJhZGluZy1jYXJkcy11aS12MjY1LmpzJywndHJhZGluZy1jYXJkcy11aS12MjY3LmpzJywndHJhZGluZy1jYXJkcy11aS12MjY4LmpzJywndHJhZGluZy1jYXJkcy11aS12MjcwLmpzJywKJ3Rhc2stcHJvZ3Jlc3Npb24tdjI1NC5jc3MnLCd0YXNrLXByb2dyZXNzaW9uLXYyNTcuY3NzJywndGFzay1wcm9ncmVzc2lvbi12MjU4LmNzcycsJ3Rhc2stcHJvZ3Jlc3Npb24tdjI1OS5jc3MnLCd0YXNrLXByb2dyZXNzaW9uLXYyNjAuY3NzJywndGFzay1wcm9ncmVzc2lvbi12MjYxLmNzcycsCid0YXNrLXByb2dyZXNzaW9uLXYyNTQuanMnLCd0YXNrLXByb2dyZXNzaW9uLXYyNTcuanMnLCd0YXNrLXByb2dyZXNzaW9uLXYyNjAuanMnLCd0YXNrLXByb2dyZXNzaW9uLXYyNjEuanMnLAondGFzay1yZW1pbmRlcnMtdjI3MS5jc3MnLCd0YXNrLXJlbWluZGVycy12MjcxLmpzJywnZmlyZWJhc2UtcmVtaW5kZXJzLXYyNzEubWpzJywKJ2h1Yi12MjY1LmNzcycsJ2h1Yi12MjY3LmNzcycsJ2h1Yi12MjY4LmNzcycsJ2h1Yi12MjcwLmNzcycsJ2h1Yi12Mjg2LmNzcycsCidodWItc2hvcC1ib29zdHMtdjIxMy5qcycsJ2h1Yi1leHAtY2FuZHktdXNlLXYyMTUuanMnLCdodWItdjI2NS5qcycsJ2h1Yi12MjY3LmpzJywKJ2R1Y2stcXVlc3QvaW5kZXguaHRtbCcsJ2NyYW5lLWdhbWUvcGxheS12MjQtNDAuaHRtbCcsJ21lbW9yeS1nYW1lL2luZGV4Lmh0bWwnCl0KZm9yIGYgaW4gcmVxdWlyZWQ6CiAgICBpZiBub3QgKFJPT1QvZikuZXhpc3RzKCk6IHJhaXNlIFN5c3RlbUV4aXQoZidNaXNzaW5nIHJlcXVpcmVkIGZpbGU6IHtmfScpCgojIEN1cnJlbnQgc2ltcGxlIG5hbWVzLgp3cml0ZSgnYXBwLmNzcycsIHJlYWQoJ3N0eWxlLXYyNC0yMDEuY3NzJykpCndyaXRlKCdhcHAuanMnLCByZWFkKCdzY3JpcHQtdjI0LTIwMS5qcycpKQp3cml0ZSgndHJhZGluZy1jYXJkcy1iYXNlLmNzcycsIHJlYWQoJ3RyYWRpbmctY2FyZHMtdjI1MC5jc3MnKSkKd3JpdGUoJ3RyYWRpbmctY2FyZHMtYmFzZS5qcycsIHJlYWQoJ3RyYWRpbmctY2FyZHMtdjI1MC5qcycpKQp3cml0ZSgndHJhZGluZy1jYXJkcy1leHRyYS5jc3MnLCBjb25jYXRfY3NzKFsndHJhZGluZy1jYXJkcy12MjYyLmNzcycsJ3RyYWRpbmctY2FyZHMtdjI2NC5jc3MnXSwnVHJhZGluZyBDYXJkcyBleHRyYSBzdHlsZXMnKSkKd3JpdGUoJ3RyYWRpbmctY2FyZHMtZXh0cmEuanMnLCBjb25jYXRfanMoWyd0cmFkaW5nLWNhcmRzLXYyNjIuanMnLCd0cmFkaW5nLWNhcmRzLXYyNjUuanMnXSwnVHJhZGluZyBDYXJkcyBleHRyYSBsb2dpYycpKQp3cml0ZSgndHJhZGluZy1jYXJkcy11aS5qcycsIGNvbmNhdF9qcyhbJ3RyYWRpbmctY2FyZHMtdWktdjI1MC5qcycsJ3RyYWRpbmctY2FyZHMtdWktdjI2NS5qcycsJ3RyYWRpbmctY2FyZHMtdWktdjI2Ny5qcycsJ3RyYWRpbmctY2FyZHMtdWktdjI2OC5qcycsJ3RyYWRpbmctY2FyZHMtdWktdjI3MC5qcyddLCdUcmFkaW5nIENhcmRzIFVJJykpCndyaXRlKCd0YXNrcy5jc3MnLCBjb25jYXRfY3NzKFsndGFzay1wcm9ncmVzc2lvbi12MjU0LmNzcycsJ3Rhc2stcHJvZ3Jlc3Npb24tdjI1Ny5jc3MnLCd0YXNrLXByb2dyZXNzaW9uLXYyNTguY3NzJywndGFzay1wcm9ncmVzc2lvbi12MjU5LmNzcycsJ3Rhc2stcHJvZ3Jlc3Npb24tdjI2MC5jc3MnLCd0YXNrLXByb2dyZXNzaW9uLXYyNjEuY3NzJ10sJ1Rhc2tzJykpCndyaXRlKCd0YXNrcy5qcycsIGNvbmNhdF9qcyhbJ3Rhc2stcHJvZ3Jlc3Npb24tdjI1NC5qcycsJ3Rhc2stcHJvZ3Jlc3Npb24tdjI1Ny5qcycsJ3Rhc2stcHJvZ3Jlc3Npb24tdjI2MC5qcycsJ3Rhc2stcHJvZ3Jlc3Npb24tdjI2MS5qcyddLCdUYXNrcycpKQp3cml0ZSgndGFzay1yZW1pbmRlcnMuY3NzJywgcmVhZCgndGFzay1yZW1pbmRlcnMtdjI3MS5jc3MnKSkKd3JpdGUoJ3Rhc2stcmVtaW5kZXJzLmpzJywgcmVhZCgndGFzay1yZW1pbmRlcnMtdjI3MS5qcycpKQp3cml0ZSgnZmlyZWJhc2UtcmVtaW5kZXJzLm1qcycsIHJlYWQoJ2ZpcmViYXNlLXJlbWluZGVycy12MjcxLm1qcycpKQp3cml0ZSgnaHViLmNzcycsIGNvbmNhdF9jc3MoWydodWItdjI2NS5jc3MnLCdodWItdjI2Ny5jc3MnLCdodWItdjI2OC5jc3MnLCdodWItdjI3MC5jc3MnLCdodWItdjI4Ni5jc3MnXSwnSG9tZSAvIEh1YicpKQp3cml0ZSgnaHViLWJvb3N0cy5qcycsIGNvbmNhdF9qcyhbJ2h1Yi1zaG9wLWJvb3N0cy12MjEzLmpzJywnaHViLWV4cC1jYW5keS11c2UtdjIxNS5qcyddLCdIdWIgYm9vc3QgaGVscGVycycpKQp3cml0ZSgnaHViLmpzJywgY29uY2F0X2pzKFsnaHViLXYyNjUuanMnLCdodWItdjI2Ny5qcyddLCdIdWIgaGVscGVycycpKQoKIyBNYWluIGluZGV4OiByZXBsYWNlIGN1cnJlbnQgQ1NTIGJsb2NrIGFuZCBKUyBibG9jayB3aGlsZSBwcmVzZXJ2aW5nIGV4YWN0IGxvYWQgb3JkZXIuCmlkeD1yZWFkKCdpbmRleC5odG1sJykKb2xkX2Nzcz0nJycgIDxsaW5rIHJlbD0ic3R5bGVzaGVldCIgaHJlZj0ic3R5bGUtdjI0LTIwMS5jc3M/dj0yNC0yNTQiIC8+XG4gIDxsaW5rIHJlbD0ic3R5bGVzaGVldCIgaHJlZj0idHJhZGluZy1jYXJkcy12MjUwLmNzcz92PTI0LTI1NCIgLz5cbiAgPGxpbmsgcmVsPSJzdHlsZXNoZWV0IiBocmVmPSJ0cmFkaW5nLWNhcmRzLXYyNjIuY3NzP3Y9MjQtMjYyIiAvPlxuICA8bGluayByZWw9InN0eWxlc2hlZXQiIGhyZWY9InRyYWRpbmctY2FyZHMtdjI2NC5jc3M/dj0yNC0yNjQiIC8+XG4gIDxsaW5rIHJlbD0ic3R5bGVzaGVldCIgaHJlZj0idGFzay1wcm9ncmVzc2lvbi12MjU0LmNzcz92PTI0LTI2MSIgLz5cbiAgPGxpbmsgcmVsPSJzdHlsZXNoZWV0IiBocmVmPSJ0YXNrLXByb2dyZXNzaW9uLXYyNTcuY3NzP3Y9MjQtMjYxIiAvPlxuICA8bGluayByZWw9InN0eWxlc2hlZXQiIGhyZWY9InRhc2stcHJvZ3Jlc3Npb24tdjI1OC5jc3M/dj0yNC0yNjEiIC8+XG4gIDxsaW5rIHJlbD0ic3R5bGVzaGVldCIgaHJlZj0idGFzay1wcm9ncmVzc2lvbi12MjU5LmNzcz92PTI0LTI2MSIgLz5cbiAgPGxpbmsgcmVsPSJzdHlsZXNoZWV0IiBocmVmPSJ0YXNrLXByb2dyZXNzaW9uLXYyNjAuY3NzP3Y9MjQtMjYxIiAvPlxuICA8bGluayByZWw9InN0eWxlc2hlZXQiIGhyZWY9InRhc2stcHJvZ3Jlc3Npb24tdjI2MS5jc3M/dj0yNC0yNjEiIC8+XG4gIDxsaW5rIHJlbD0ic3R5bGVzaGVldCIgaHJlZj0iaHViLXYyNjUuY3NzP3Y9MjQtMjY1IiAvPlxuICA8bGluayByZWw9InN0eWxlc2hlZXQiIGhyZWY9Imh1Yi12MjY3LmNzcz92PTI0LTI2NyIgLz5cbiAgPGxpbmsgcmVsPSJzdHlsZXNoZWV0IiBocmVmPSJodWItdjI2OC5jc3M/dj0yNC0yNjgiIC8+XG4gIDxsaW5rIHJlbD0ic3R5bGVzaGVldCIgaHJlZj0iaHViLXYyNzAuY3NzP3Y9MjQtMjcwIiAvPlxuICA8bGluayByZWw9InN0eWxlc2hlZXQiIGhyZWY9Imh1Yi12Mjg2LmNzcz92PTI0LTI4NiIgLz5cbiAgPGxpbmsgcmVsPSJzdHlsZXNoZWV0IiBocmVmPSJ0YXNrLXJlbWluZGVycy12MjcxLmNzcz92PTI0LTI3MyIgLz4nJycKbmV3X2Nzcz1mJycnICA8bGluayByZWw9InN0eWxlc2hlZXQiIGhyZWY9ImFwcC5jc3M/dj17QlVJTER9IiAvPlxuICA8bGluayByZWw9InN0eWxlc2hlZXQiIGhyZWY9InRyYWRpbmctY2FyZHMtYmFzZS5jc3M/dj17QlVJTER9IiAvPlxuICA8bGluayByZWw9InN0eWxlc2hlZXQiIGhyZWY9InRyYWRpbmctY2FyZHMtZXh0cmEuY3NzP3Y9e0JVSUxEfSIgLz5cbiAgPGxpbmsgcmVsPSJzdHlsZXNoZWV0IiBocmVmPSJ0YXNrcy5jc3M/dj17QlVJTER9IiAvPlxuICA8bGluayByZWw9InN0eWxlc2hlZXQiIGhyZWY9Imh1Yi5jc3M/dj17QlVJTER9IiAvPlxuICA8bGluayByZWw9InN0eWxlc2hlZXQiIGhyZWY9InRhc2stcmVtaW5kZXJzLmNzcz92PXtCVUlMRH0iIC8+JycnCmlmIG9sZF9jc3Mgbm90IGluIGlkeDogcmFpc2UgU3lzdGVtRXhpdCgnTWFpbiBpbmRleCBDU1MgYmxvY2sgbm8gbG9uZ2VyIG1hdGNoZXMgZXhwZWN0ZWQgbGl2ZSBsb2FkZXIuJykKaWR4PWlkeC5yZXBsYWNlKG9sZF9jc3MsbmV3X2NzcywxKQpvbGRfanM9JycnICA8c2NyaXB0IHNyYz0idHJhZGluZy1jYXJkcy12MjUwLmpzP3Y9MjQtMjU0Ij48L3NjcmlwdD5cbiAgPHNjcmlwdCBzcmM9InRyYWRpbmctY2FyZHMtdjI2Mi5qcz92PTI0LTI2MiI+PC9zY3JpcHQ+XG4gIDxzY3JpcHQgc3JjPSJ0cmFkaW5nLWNhcmRzLXYyNjUuanM/dj0yNC0yNjUiPjwvc2NyaXB0PlxuICA8c2NyaXB0IHNyYz0ic2NyaXB0LXYyNC0yMDEuanM/dj0yNC0yODYiPjwvc2NyaXB0PlxuICA8c2NyaXB0IHNyYz0iaHViLXNob3AtYm9vc3RzLXYyMTMuanM/dj0yNC0yNTQiPjwvc2NyaXB0PlxuICA8c2NyaXB0IHNyYz0iaHViLWV4cC1jYW5keS11c2UtdjIxNS5qcz92PTI0LTI1NCI+PC9zY3JpcHQ+XG4gIDxzY3JpcHQgc3JjPSJ0cmFkaW5nLWNhcmRzLXVpLXYyNTAuanM/dj0yNC0yNjUiPjwvc2NyaXB0PlxuICA8c2NyaXB0IHNyYz0idHJhZGluZy1jYXJkcy11aS12MjY1LmpzP3Y9MjQtMjY1Ij48L3NjcmlwdD5cbiAgPHNjcmlwdCBzcmM9InRyYWRpbmctY2FyZHMtdWktdjI2Ny5qcz92PTI0LTI2NyI+PC9zY3JpcHQ+XG4gIDxzY3JpcHQgc3JjPSJ0cmFkaW5nLWNhcmRzLXVpLXYyNjguanM/dj0yNC0yNjgiPjwvc2NyaXB0PlxuICA8c2NyaXB0IHNyYz0idHJhZGluZy1jYXJkcy11aS12MjcwLmpzP3Y9MjQtMjcwIj48L3NjcmlwdD5cbiAgPHNjcmlwdCBzcmM9InRhc2stcHJvZ3Jlc3Npb24tdjI1NC5qcz92PTI0LTI2MSI+PC9zY3JpcHQ+XG4gIDxzY3JpcHQgc3JjPSJ0YXNrLXByb2dyZXNzaW9uLXYyNTcuanM/dj0yNC0yNjEiPjwvc2NyaXB0PlxuICA8c2NyaXB0IHNyYz0idGFzay1wcm9ncmVzc2lvbi12MjYwLmpzP3Y9MjQtMjYxIj48L3NjcmlwdD5cbiAgPHNjcmlwdCBzcmM9InRhc2stcHJvZ3Jlc3Npb24tdjI2MS5qcz92PTI0LTI2MSI+PC9zY3JpcHQ+XG4gIDxzY3JpcHQgdHlwZT0ibW9kdWxlIiBzcmM9ImZpcmViYXNlLXJlbWluZGVycy12MjcxLm1qcz92PTI0LTI3MyI+PC9zY3JpcHQ+XG4gIDxzY3JpcHQgc3JjPSJ0YXNrLXJlbWluZGVycy12MjcxLmpzP3Y9MjQtMjczIj48L3NjcmlwdD5cbiAgPHNjcmlwdCBzcmM9Imh1Yi12MjY1LmpzP3Y9MjQtMjY1Ij48L3NjcmlwdD5cbiAgPHNjcmlwdCBzcmM9Imh1Yi12MjY3LmpzP3Y9MjQtMjY3Ij48L3NjcmlwdD4nJycKbmV3X2pzPWYnJycgIDxzY3JpcHQgc3JjPSJ0cmFkaW5nLWNhcmRzLWJhc2UuanM/dj17QlVJTER9Ij48L3NjcmlwdD5cbiAgPHNjcmlwdCBzcmM9InRyYWRpbmctY2FyZHMtZXh0cmEuanM/dj17QlVJTER9Ij48L3NjcmlwdD5cbiAgPHNjcmlwdCBzcmM9ImFwcC5qcz92PXtCVUlMRH0iPjwvc2NyaXB0PlxuICA8c2NyaXB0IHNyYz0iaHViLWJvb3N0cy5qcz92PXtCVUlMRH0iPjwvc2NyaXB0PlxuICA8c2NyaXB0IHNyYz0idHJhZGluZy1jYXJkcy11aS5qcz92PXtCVUlMRH0iPjwvc2NyaXB0PlxuICA8c2NyaXB0IHNyYz0idGFza3MuanM/dj17QlVJTER9Ij48L3NjcmlwdD5cbiAgPHNjcmlwdCB0eXBlPSJtb2R1bGUiIHNyYz0iZmlyZWJhc2UtcmVtaW5kZXJzLm1qcz92PXtCVUlMRH0iPjwvc2NyaXB0PlxuICA8c2NyaXB0IHNyYz0idGFzay1yZW1pbmRlcnMuanM/dj17QlVJTER9Ij48L3NjcmlwdD5cbiAgPHNjcmlwdCBzcmM9Imh1Yi5qcz92PXtCVUlMRH0iPjwvc2NyaXB0PicnJwppZiBvbGRfanMgbm90IGluIGlkeDogcmFpc2UgU3lzdGVtRXhpdCgnTWFpbiBpbmRleCBKUyBibG9jayBubyBsb25nZXIgbWF0Y2hlcyBleHBlY3RlZCBsaXZlIGxvYWRlci4nKQppZHg9aWR4LnJlcGxhY2Uob2xkX2pzLG5ld19qcywxKQppZHg9aWR4LnJlcGxhY2UoJ2NvbnRlbnQ9IjI0LjI4NiInLCdjb250ZW50PSIyNC4yODciJywxKQppZHg9aWR4LnJlcGxhY2UoJ2NvbnN0IERVQ0tfSFVCX0JVSUxEID0gIjI0LjI4NiI7JywnY29uc3QgRFVDS19IVUJfQlVJTEQgPSAiMjQuMjg3IjsnLDEpCmlkeD1pZHgucmVwbGFjZSgnLi9zdy5qcz92PTI0LTI4NicsJy4vc3cuanM/dj0yNC0yODcnKQppZHg9aWR4LnJlcGxhY2UoJ21hbmlmZXN0LndlYm1hbmlmZXN0P3Y9MjQtMjAxJywnbWFuaWZlc3Qud2VibWFuaWZlc3Q/dj0yNC0yODcnKQp3cml0ZSgnaW5kZXguaHRtbCcsaWR4KQoKIyBVcGRhdGUgb3RoZXIgcGFnZXMgdGhhdCBpbnRlbnRpb25hbGx5IHNoYXJlIHRoZSBjYXJkIGNvcmUuCmRxPXJlYWQoJ2R1Y2stcXVlc3QvaW5kZXguaHRtbCcpCm9sZD0nJycgIDxzY3JpcHQgc3JjPSIuLi90cmFkaW5nLWNhcmRzLXYyNTAuanM/dj0yNC0yNTUiPjwvc2NyaXB0PlxuICA8c2NyaXB0IHNyYz0iLi4vdHJhZGluZy1jYXJkcy12MjYyLmpzP3Y9MjQtMjYyIj48L3NjcmlwdD5cbiAgPHNjcmlwdCBzcmM9Ii4uL3RyYWRpbmctY2FyZHMtdjI2NS5qcz92PTI0LTI2NSI+PC9zY3JpcHQ+JycnCm5ldz1mJycnICA8c2NyaXB0IHNyYz0iLi4vdHJhZGluZy1jYXJkcy1iYXNlLmpzP3Y9e0JVSUxEfSI+PC9zY3JpcHQ+XG4gIDxzY3JpcHQgc3JjPSIuLi90cmFkaW5nLWNhcmRzLWV4dHJhLmpzP3Y9e0JVSUxEfSI+PC9zY3JpcHQ+JycnCmlmIG9sZCBub3QgaW4gZHE6IHJhaXNlIFN5c3RlbUV4aXQoJ0R1Y2sgUXVlc3QgY2FyZCBsb2FkZXIgY2hhbmdlZCB1bmV4cGVjdGVkbHkuJykKd3JpdGUoJ2R1Y2stcXVlc3QvaW5kZXguaHRtbCcsZHEucmVwbGFjZShvbGQsbmV3LDEpKQoKZm9yIHAgaW4gWydjcmFuZS1nYW1lL3BsYXktdjI0LTQwLmh0bWwnLCdtZW1vcnktZ2FtZS9pbmRleC5odG1sJ106CiAgICBzPXJlYWQocCkKICAgIHM9cy5yZXBsYWNlKCcuLi90cmFkaW5nLWNhcmRzLXYyNTAuY3NzP3Y9MjQtMjU1JyxmJy4uL3RyYWRpbmctY2FyZHMtYmFzZS5jc3M/dj17QlVJTER9JykKICAgIHM9cy5yZXBsYWNlKCcuLi90cmFkaW5nLWNhcmRzLXYyNTAuanM/dj0yNC0yNTUnLGYnLi4vdHJhZGluZy1jYXJkcy1iYXNlLmpzP3Y9e0JVSUxEfScpCiAgICB3cml0ZShwLHMpCgojIE5ldyBzaW5nbGUgc2VydmljZSB3b3JrZXI6IGtlZXAgRmlyZWJhc2UgKyBmZXRjaCBsb2dpYywgcmVwbGFjZSBhcHAgY2FjaGUvc2hlbGwuCm9sZHN3PXJlYWQoJ3N3LXYyNC0yODYuanMnKQojIEtlZXAgdGhlIHRyYWlsaW5nIHdvcmtlciBldmVudCBsb2dpYywgYnV0IHJlcGxhY2UgY2FjaGUgY29uc3RhbnQvbGlzdC4KbT1yZS5zZWFyY2gociJjb25zdCBBUFBfQ0FDSEU9Lio/O1xuY29uc3QgQVBQX1NIRUxMPVxbKC4qPylcXTtcbiIsIG9sZHN3LCBmbGFncz1yZS5TKQppZiBub3QgbTogcmFpc2UgU3lzdGVtRXhpdCgnQ291bGQgbm90IGxvY2F0ZSBzZXJ2aWNlLXdvcmtlciBzaGVsbCBsaXN0LicpCm9sZF9lbnRyaWVzPXJlLmZpbmRhbGwociInKFteJ10rKSciLCBtLmdyb3VwKDEpKQprZWVwPVtdCmZvciBlIGluIG9sZF9lbnRyaWVzOgogICAgaWYgZS5zdGFydHN3aXRoKCcuL2R1Y2stcXVlc3QvJykgb3IgZS5zdGFydHN3aXRoKCcuL2Fzc2V0cy8nKToKICAgICAgICBrZWVwLmFwcGVuZChlKQpyb290X2VudHJpZXM9WwogJy4vJywnLi9pbmRleC5odG1sJywnLi92ZXJzaW9uLmpzb24nLGYnLi9zdy5qcz92PXtCVUlMRH0nLGYnLi9tYW5pZmVzdC53ZWJtYW5pZmVzdD92PXtCVUlMRH0nLAogZicuL2FwcC5jc3M/dj17QlVJTER9JyxmJy4vdHJhZGluZy1jYXJkcy1iYXNlLmNzcz92PXtCVUlMRH0nLGYnLi90cmFkaW5nLWNhcmRzLWV4dHJhLmNzcz92PXtCVUlMRH0nLGYnLi90YXNrcy5jc3M/dj17QlVJTER9JyxmJy4vaHViLmNzcz92PXtCVUlMRH0nLGYnLi90YXNrLXJlbWluZGVycy5jc3M/dj17QlVJTER9JywKIGYnLi90cmFkaW5nLWNhcmRzLWJhc2UuanM/dj17QlVJTER9JyxmJy4vdHJhZGluZy1jYXJkcy1leHRyYS5qcz92PXtCVUlMRH0nLGYnLi9hcHAuanM/dj17QlVJTER9JyxmJy4vaHViLWJvb3N0cy5qcz92PXtCVUlMRH0nLGYnLi90cmFkaW5nLWNhcmRzLXVpLmpzP3Y9e0JVSUxEfScsZicuL3Rhc2tzLmpzP3Y9e0JVSUxEfScsZicuL2ZpcmViYXNlLXJlbWluZGVycy5tanM/dj17QlVJTER9JyxmJy4vdGFzay1yZW1pbmRlcnMuanM/dj17QlVJTER9JyxmJy4vaHViLmpzP3Y9e0JVSUxEfScKXQplbnRyaWVzPVtdCmZvciBlIGluIHJvb3RfZW50cmllcytrZWVwOgogICAgaWYgZSBub3QgaW4gZW50cmllczogZW50cmllcy5hcHBlbmQoZSkKbmV3X2Jsb2NrPSJjb25zdCBBUFBfQ0FDSEU9J2R1Y2staGFiaXQtaHViLWFwcC12MjQtMjg3JztcbmNvbnN0IEFQUF9TSEVMTD1bXG4iKyIsXG4iLmpvaW4oIiAiK3JlcHIoeCkgZm9yIHggaW4gZW50cmllcykrIlxuXTtcbiIKc3c9b2xkc3dbOm0uc3RhcnQoKV0rbmV3X2Jsb2NrK29sZHN3W20uZW5kKCk6XQp3cml0ZSgnc3cuanMnLHN3KQoKIyBWZXJzaW9uIGFuZCBhIHNpbmdsZSByb2xsaW5nIGNoYW5nZWxvZyBmaWxlLgp3cml0ZSgndmVyc2lvbi5qc29uJywganNvbi5kdW1wcyh7J3ZlcnNpb24nOkJVSUxEfSxpbmRlbnQ9MikrIlxuIikKd3JpdGUoJ0NIQU5HRUxPRy1MQVRFU1QudHh0JyxmJycnRHVja2llIERheXMge0JVSUxEfVxuXG5SZXBvc2l0b3J5IGNvbnNvbGlkYXRpb24gLyBkZXZlbG9wZXIgY2xlYW51cC5cblxuQ3VycmVudCByb290IGNvZGUgZmlsZXMgYXJlIG5vdyBpbnRlbnRpb25hbGx5IHNpbXBsZTpcbi0gYXBwLmpzIC8gYXBwLmNzcyDigJQgbWFpbiBodWIgYXBwbGljYXRpb25cbi0gaHViLmpzIC8gaHViLmNzcyAvIGh1Yi1ib29zdHMuanMg4oCUIGhvbWUtcm9vbSBhbmQgaHViIGZlYXR1cmVzXG4tIHRhc2tzLmpzIC8gdGFza3MuY3NzIOKAlCB0YXNrcyBhbmQgY29sbGVjdGlibGUgc2hlbGZcbi0gdGFzay1yZW1pbmRlcnMuanMgLyB0YXNrLXJlbWluZGVycy5jc3MgLyBmaXJlYmFzZS1yZW1pbmRlcnMubWpzIOKAlCByZW1pbmRlcnNcbi0gdHJhZGluZy1jYXJkcy1iYXNlLmpzIC8gLmNzcyDigJQgc2hhcmVkIGNhcmQgY29yZSBhbHNvIHVzZWQgYnkgbWluaS1nYW1lc1xuLSB0cmFkaW5nLWNhcmRzLWV4dHJhLmpzIC8gLmNzcyDigJQgbmV3ZXIgY2FyZCBhZGRpdGlvbnNcbi0gdHJhZGluZy1jYXJkcy11aS5qcyDigJQgY2FyZCBib29rL3dvcmtzaG9wIFVJXG4tIHN3LmpzIOKAlCBjb21wbGV0ZSBzZXJ2aWNlIHdvcmtlciAobm8gZXh0cmEgc3ctdiMjIyBmaWxlKVxuXG5UaGUgb2xkIG51bWJlcmVkIHNvdXJjZSBmaWxlcyByZW1haW4gcmVjb3ZlcmFibGUgdGhyb3VnaCBHaXQgaGlzdG9yeSwgYnV0IGFyZSBubyBsb25nZXIga2VwdCBpbiB0aGUgbGl2ZSByb290LlxuJycnKQoKIyBBZGQvdXBkYXRlIFJFQURNRSBkZXZlbG9wZXIgbWFwLgpyZWFkbWU9cmVhZCgnUkVBRE1FLm1kJykgaWYgKFJPT1QvJ1JFQURNRS5tZCcpLmV4aXN0cygpIGVsc2UgJyMgRHVja2llIERheXNcbicKc3RhcnQ9JzwhLS0gQ1VSUkVOVC1GSUxFLU1BUDpTVEFSVCAtLT4nOyBlbmQ9JzwhLS0gQ1VSUkVOVC1GSUxFLU1BUDpFTkQgLS0+JwpzZWN0aW9uPWYnJyd7c3RhcnR9XG4jIyBDdXJyZW50IGZpbGUgbWFwXG5cblRoZSByb290IGNvZGUgd2FzIGNvbnNvbGlkYXRlZCBpbiB2e0JVSUxEfSBzbyBmdXR1cmUgdXBkYXRlcyBhcmUgZWFzaWVyIHRvIGZvbGxvdy5cblxuLSBgYXBwLmpzYCAvIGBhcHAuY3NzYCDigJQgbWFpbiBhcHAgYW5kIGJhc2Ugc3R5bGluZ1xuLSBgaHViLmpzYCAvIGBodWIuY3NzYCDigJQgSG9tZS9yb29tIGZlYXR1cmVzOyAqKkJvb2sgc2hlbGYgcG9zaXRpb25pbmcgaXMgaW4gYGh1Yi5jc3NgKipcbi0gYGh1Yi1ib29zdHMuanNgIOKAlCBIdWIgU2hvcCAvIEVYUCBDYW5keSBoZWxwZXJzXG4tIGB0YXNrcy5qc2AgLyBgdGFza3MuY3NzYCDigJQgVGFza3MsIER1Y2sgQnVja3MsIGFuZCBDb2xsZWN0aWJsZSBTaGVsZlxuLSBgdGFzay1yZW1pbmRlcnMuanNgIC8gYHRhc2stcmVtaW5kZXJzLmNzc2AgLyBgZmlyZWJhc2UtcmVtaW5kZXJzLm1qc2Ag4oCUIHRhc2sgcmVtaW5kZXJzXG4tIGB0cmFkaW5nLWNhcmRzLWJhc2UuanNgIC8gYC5jc3NgIOKAlCBzaGFyZWQgVHJhZGluZyBDYXJkIGNvcmVcbi0gYHRyYWRpbmctY2FyZHMtZXh0cmEuanNgIC8gYC5jc3NgIOKAlCBuZXdlciBUcmFkaW5nIENhcmQgZGF0YS9mZWF0dXJlc1xuLSBgdHJhZGluZy1jYXJkcy11aS5qc2Ag4oCUIFRyYWRpbmcgQ2FyZCBib29rL3dvcmtzaG9wIFVJXG4tIGBkdWNrLXF1ZXN0L2Ag4oCUIER1Y2sgUXVlc3QgZ2FtZSBmaWxlc1xuLSBgc3cuanNgIOKAlCBzZXJ2aWNlIHdvcmtlci9jYWNoZSBsaXN0XG5cbk9sZCBudW1iZXJlZCBmaWxlcyB3ZXJlIHJlbW92ZWQgZnJvbSB0aGUgbGl2ZSB0cmVlIGFmdGVyIGJlaW5nIGNvbnNvbGlkYXRlZDsgR2l0IGhpc3Rvcnkgc3RpbGwgcHJlc2VydmVzIHRoZW0uXG57ZW5kfScnJwppZiBzdGFydCBpbiByZWFkbWUgYW5kIGVuZCBpbiByZWFkbWU6CiAgICByZWFkbWU9cmUuc3ViKHJlLmVzY2FwZShzdGFydCkrcicuKj8nK3JlLmVzY2FwZShlbmQpLHNlY3Rpb24scmVhZG1lLGZsYWdzPXJlLlMpCmVsc2U6CiAgICByZWFkbWU9cmVhZG1lLnJzdHJpcCgpKyJcblxuIitzZWN0aW9uKyJcbiIKd3JpdGUoJ1JFQURNRS5tZCcscmVhZG1lKQoKIyBSZW1vdmUgbnVtYmVyZWQgcm9vdCBmZWF0dXJlIHNvdXJjZXMgbm93IHNhZmVseSByZXByZXNlbnRlZCBieSB0aGUgY29uc29saWRhdGVkIGZpbGVzLgpwYXR0ZXJucz1bCiAnc3R5bGUtdjI0LTIwMS5jc3MnLCdzY3JpcHQtdjI0LTIwMS5qcycsJ3N3LXYyNC0yODYuanMnLCdVUERBVEUtdjI0LjI4Ni50eHQnLAogJ2h1Yi12Ki5jc3MnLCdodWItdiouanMnLCdodWItc2hvcC1ib29zdHMtdiouanMnLCdodWItZXhwLWNhbmR5LXVzZS12Ki5qcycsCiAndGFzay1wcm9ncmVzc2lvbi12Ki5jc3MnLCd0YXNrLXByb2dyZXNzaW9uLXYqLmpzJywndGFzay1yZW1pbmRlcnMtdiouY3NzJywndGFzay1yZW1pbmRlcnMtdiouanMnLCdmaXJlYmFzZS1yZW1pbmRlcnMtdioubWpzJywKICd0cmFkaW5nLWNhcmRzLXYqLmNzcycsJ3RyYWRpbmctY2FyZHMtdiouanMnLCd0cmFkaW5nLWNhcmRzLXVpLXYqLmpzJwpdCmZvciBwYXQgaW4gcGF0dGVybnM6CiAgICBmb3IgcCBpbiBST09ULmdsb2IocGF0KToKICAgICAgICBpZiBwLmlzX2ZpbGUoKTogcC51bmxpbmsoKQoKIyBBbHNvIHJlbW92ZSBsZWZ0b3ZlciB1cGRhdGUvdXBsb2FkIGNsdXR0ZXIgaWYgYW55IHN1cnZpdmVkIGVhcmxpZXIgY2xlYW51cHMuCmZvciBwYXQgaW4gWwogICAgJ3NjcmlwdC12MjQtMjAwLmpzJywnc3R5bGUtdjI0LTIwMC5jc3MnLCdzdy12MjQtKi5qcycsCiAgICAnVVBEQVRFLXYyNC4qLnR4dCcsJ0R1Y2tpZS1EYXlzLXYqLnppcCcsJ0R1Y2tpZURheXNfdiouemlwKicsCiAgICAnaW5zdGFsbC1kdWNraWUtZGF5cy0qLnltbCcKXToKICAgIGZvciBwIGluIFJPT1QuZ2xvYihwYXQpOgogICAgICAgIGlmIHAuaXNfZmlsZSgpOgogICAgICAgICAgICBwLnVubGluaygpCgpwcmludCgnRHVja2llIERheXMgdjI0LjI4NyByb290IGNvbnNvbGlkYXRpb24gY29tcGxldGUuJykK").decode("utf-8")
+          exec(compile(code, "duckie_refactor_v24287.py", "exec"))
+          PY
+
+      - name: Validate consolidated app
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node --check app.js
+          node --check hub-boosts.js
+          node --check hub.js
+          node --check trading-cards-base.js
+          node --check trading-cards-extra.js
+          node --check trading-cards-ui.js
+          node --check tasks.js
+          node --check task-reminders.js
+          node --check firebase-reminders.mjs
+          node --check sw.js
+
+          grep -Fq 'app.css?v=24.287' index.html
+          grep -Fq 'hub.css?v=24.287' index.html
+          grep -Fq 'tasks.js?v=24.287' index.html
+          grep -Fq 'trading-cards-ui.js?v=24.287' index.html
+          grep -Fq 'firebase-reminders.mjs?v=24.287' index.html
+          grep -Fq 'duck-habit-build" content="24.287"' index.html
+          grep -Fq 'const DUCK_HUB_BUILD = "24.287";' index.html
+
+          grep -Fq '../trading-cards-base.js?v=24.287' duck-quest/index.html
+          grep -Fq '../trading-cards-extra.js?v=24.287' duck-quest/index.html
+          grep -Fq '../trading-cards-base.js?v=24.287' crane-game/play-v24-40.html
+          grep -Fq '../trading-cards-base.js?v=24.287' memory-game/index.html
+
+          grep -Fq "duck-habit-hub-app-v24-287" sw.js
+          grep -Fq "./hub.css?v=24.287" sw.js
+          grep -Fq "./trading-cards-base.js?v=24.287" sw.js
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          root=Path('.')
+          sw=(root/'sw.js').read_text(encoding='utf-8')
+          m=re.search(r'const APP_SHELL=\[(.*?)\];',sw,re.S)
+          assert m, 'APP_SHELL missing'
+          missing=[]
+          for entry in re.findall(r"'([^']+)'",m.group(1)):
+              if not entry.startswith('./'):
+                  continue
+              rel=entry.split('?',1)[0][2:]
+              if not rel:
+                  continue
+              if not (root/rel).exists():
+                  missing.append(entry)
+          assert not missing, f'Missing cached files: {missing}'
+          print('All service-worker app-shell paths exist.')
+          PY
+
+          if find . -maxdepth 1 -type f \( \
+            -name 'hub-v*.css' -o -name 'hub-v*.js' \
+            -o -name 'task-progression-v*' -o -name 'task-reminders-v*' \
+            -o -name 'firebase-reminders-v*' \
+            -o -name 'trading-cards-v*' -o -name 'trading-cards-ui-v*' \
+            -o -name 'script-v24-201.js' -o -name 'style-v24-201.css' \
+            -o -name 'sw-v24-*.js' \
+          \) | grep -q .; then
+            echo "ERROR: old numbered root files remain"
+            find . -maxdepth 1 -type f | sort
+            exit 1
+          fi
+
+          echo
+          echo "Clean root code files:"
+          find . -maxdepth 1 -type f \( -name '*.js' -o -name '*.mjs' -o -name '*.css' \) -printf '%f\n' | sort
+
+      - name: Remove this one-time workflow
+        shell: bash
+        run: |
+          rm -f ".github/workflows/consolidate-duckie-days-root-code.yml"
+
+      - name: Commit v24.287 cleanup
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "ERROR: no consolidation changes were staged."
+            exit 1
+          fi
+          git commit -m "Consolidate root code for easier Duckie Days development"
+          git push
