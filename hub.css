@@ -1,0 +1,350 @@
+/* Home / Hub — consolidated for Duckie Days 24.287. */
+
+/* ===== Source: hub-v265.css ===== */
+/* Duckie Days v24.265 — hub/card/task/shop polish */
+
+/* Keep the two card actions condensed side-by-side on phones. */
+@media(max-width:560px){
+  .tc-detail-actions-v264{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important}
+  .tc-detail-actions-v264 .tc-detail-fav,
+  .tc-detail-actions-v264 .tc-detail-workshop-v264{min-width:0;padding:7px 5px!important;font-size:.68rem!important;line-height:1.15}
+  .tc-detail-card{padding-bottom:14px!important}
+}
+
+/* Daily Trading Card Shop: three tidy cards across instead of long skinny columns. */
+.tc-shop-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important;align-items:start}
+.tc-shop-card{min-width:0;padding:7px 5px!important;gap:5px!important;border-radius:13px!important}
+.tc-shop-card .tc-face{width:min(100%,110px)!important;justify-self:center}
+.tc-shop-card>strong{font-size:.68rem;line-height:1.08;min-height:2.15em;display:grid;place-items:center;overflow-wrap:anywhere}
+.tc-shop-price{font-size:.66rem}.tc-shop-price img{width:15px!important;height:15px!important}
+.tc-shop-buy{width:100%;min-height:36px;padding:6px 3px!important;font-size:.62rem!important;line-height:1.08}
+.tc-shop-card:last-child{grid-column:auto!important;max-width:none!important;justify-self:stretch!important}
+@media(max-width:390px){.tc-shop-grid{gap:6px!important}.tc-shop-card{padding:6px 3px!important}.tc-shop-card>strong{font-size:.60rem}.tc-shop-buy{font-size:.56rem!important}}
+
+/* Task cards are editable by tapping their non-button body. */
+.task-card{cursor:pointer}
+.task-card:hover .task-card-title,.task-card:focus-within .task-card-title{color:#8e5f73}
+.task-edit-mode-v265 #savedTaskPicker{display:none!important}
+
+/* Battle inventory grouping. */
+.inventory-grid:has(.inventory-group-v265){display:block!important}
+.inventory-group-v265{display:grid;gap:8px;margin:0 0 16px}
+.inventory-group-heading-v265{display:grid;gap:2px;padding:0 4px;text-align:left}
+.inventory-group-heading-v265 strong{color:#765462;font-size:.78rem}
+.inventory-group-heading-v265 small{color:#9d838d;font-size:.56rem}
+.inventory-group-grid-v265{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.buddy-pon-group-v265 .inventory-group-grid-v265{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.buddy-pon-group-v265 .inventory-item-card{padding:9px 4px;min-width:0}
+.buddy-pon-group-v265 .inventory-item-card strong{font-size:.57rem;line-height:1.08}
+.buddy-pon-group-v265 .inventory-item-icon{width:64px;height:64px}
+@media(max-width:390px){.buddy-pon-group-v265 .inventory-item-icon{width:54px;height:54px}.buddy-pon-group-v265 .inventory-item-card strong{font-size:.52rem}}
+
+/* Power Up Dust appears with Supplies. */
+.power-dust-card-v265{position:relative;background:linear-gradient(145deg,#fff7d8,#fff0f7)!important;border-color:#e6c687!important;cursor:default!important}
+.power-dust-icon-v265{display:grid!important;place-items:center!important;border-radius:50%;background:radial-gradient(circle,#fff7a8,#e8b86a 62%,#c89352);color:#fff;font-size:2rem;text-shadow:0 2px #a46f3b}
+.power-dust-note-v265{color:#a1848e;font-size:.52rem;font-weight:800}
+
+/* Put the Book onto the left dresser so long hair cannot cover it. */
+#roomBookImage.duckipedia-room-book-v232.on-dresser{left:2.4%!important;right:auto!important;top:55.4%!important;bottom:auto!important;width:13.5%!important;height:9.5%!important;transform:none!important;z-index:15!important}
+#bookHotspot.book-hotspot.on-dresser{left:2.4%!important;right:auto!important;top:55.4%!important;bottom:auto!important;width:13.5%!important;height:9.5%!important}
+@media(max-width:600px){
+  #roomBookImage.duckipedia-room-book-v232.on-dresser{left:2.2%!important;top:55.7%!important;width:13.8%!important;height:9.2%!important}
+  #bookHotspot.book-hotspot.on-dresser{left:2.2%!important;top:55.7%!important;width:13.8%!important;height:9.2%!important}
+}
+
+
+/* ===== Source: hub-v267.css ===== */
+/* Duckie Days v24.267 repair/polish */
+/* Preserve v24.265, then override only the requested UI pieces. */
+.shop-grid > .tc-shop-grid{
+  grid-column:1 / -1!important;
+  width:100%!important;
+  max-width:none!important;
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:12px!important;
+  align-items:start!important;
+}
+.shop-grid > .tc-shop-grid .tc-shop-card{
+  width:100%!important;
+  min-width:0!important;
+  padding:10px 8px!important;
+  gap:7px!important;
+  box-sizing:border-box!important;
+}
+.shop-grid > .tc-shop-grid .tc-face{
+  width:100%!important;
+  max-width:124px!important;
+  margin:0 auto!important;
+}
+.shop-grid > .tc-shop-grid .tc-shop-card>strong{
+  font-size:.72rem!important;
+  line-height:1.08!important;
+  min-height:2.2em!important;
+}
+.shop-grid > .tc-shop-grid .tc-shop-buy{
+  min-height:40px!important;
+  padding:7px 5px!important;
+  font-size:.64rem!important;
+}
+@media(max-width:365px){
+  .shop-grid > .tc-shop-grid{gap:7px!important}
+  .shop-grid > .tc-shop-grid .tc-shop-card{padding:7px 4px!important}
+  .shop-grid > .tc-shop-grid .tc-shop-card>strong{font-size:.62rem!important}
+}
+
+/* Power Up Dust is a currency, never an Inventory tile. */
+.power-dust-card-v265{display:none!important}
+.power-up-dust-pill-v267{
+  min-height:42px; padding:5px 10px 5px 7px; display:flex; align-items:center; justify-content:center; gap:5px;
+  border-radius:999px; border:2px solid rgba(124,91,101,.22); background:rgba(255,255,255,.82); color:#6e4653;
+  box-shadow:0 4px 12px rgba(91,61,71,.06); font-weight:900;
+}
+.power-up-dust-pill-v267 img,.power-up-dust-inline-icon-v267{width:26px;height:26px;object-fit:contain;image-rendering:auto}
+.status-header .power-up-dust-pill-v267{margin-left:auto}
+.status-header .status-header-coin + .power-up-dust-pill-v267{margin-left:6px}
+.status-skills-button-v267{width:100%;margin-top:10px;min-height:44px;border:2px solid #e3b4c6;border-radius:14px;background:#fff7fb;color:#7b4e5d;font:inherit;font-weight:900}
+
+
+/* ===== Source: hub-v268.css ===== */
+/* Duckie Days v24.268 — small Dust icon + daily Card Pack shop */
+
+/* Only shrink the inline Duckipedia / Card Workshop Glitter icon.
+   The larger Status currency pill intentionally stays unchanged. */
+.tc-dust-line-v262 > .power-up-dust-inline-icon-v267,
+.tc-workshop-dust-v264 > .power-up-dust-inline-icon-v267{
+  width:7px!important;
+  height:7px!important;
+  min-width:7px!important;
+  min-height:7px!important;
+  margin-right:2px!important;
+  object-fit:contain!important;
+  vertical-align:middle!important;
+}
+
+/* Daily Card Pack purchase row beneath the 3 card offers. */
+.shop-grid > .tc-shop-grid .tc-pack-shop-v268{
+  grid-column:1 / -1!important;
+  display:grid!important;
+  grid-template-columns:58px minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:10px!important;
+  width:100%!important;
+  padding:10px 12px!important;
+  text-align:left!important;
+}
+.tc-pack-shop-v268 .tc-pack-shop-art-v268{
+  width:52px!important;
+  height:68px!important;
+  object-fit:contain!important;
+  image-rendering:pixelated;
+}
+.tc-pack-shop-copy-v268{
+  min-width:0;
+  display:grid;
+  gap:2px;
+}
+.tc-pack-shop-copy-v268 strong{
+  color:#684653;
+  font-size:.78rem;
+}
+.tc-pack-shop-copy-v268 small{
+  color:#957681;
+  font-size:.58rem;
+  line-height:1.25;
+}
+.tc-pack-shop-v268 .tc-shop-buy{
+  width:auto!important;
+  min-width:92px!important;
+  padding:7px 9px!important;
+}
+@media(max-width:390px){
+  .shop-grid > .tc-shop-grid .tc-pack-shop-v268{
+    grid-template-columns:48px minmax(0,1fr)!important;
+  }
+  .tc-pack-shop-v268 .tc-pack-shop-art-v268{
+    width:44px!important;height:58px!important;
+  }
+  .tc-pack-shop-v268 .tc-shop-buy{
+    grid-column:1/-1!important;
+    width:100%!important;
+  }
+}
+
+
+/* ===== Source: hub-v270.css ===== */
+/* Duckie Days v24.270 — Card Workshop confirmation preview */
+
+/* Nudge card numbers into the bottom-left white corner. */
+.tc-face:not(.tc-fabled-full) .tc-number{
+  left:5.4%!important;
+  bottom:3.8%!important;
+}
+
+/* Variant preview sits above Card Workshop without replacing/re-rendering it. */
+.tc-variant-preview-layer-v270{
+  position:fixed;
+  z-index:10250;
+  inset:0;
+  display:grid;
+  place-items:center;
+  padding:16px;
+  background:rgba(58,36,52,.62);
+  backdrop-filter:blur(4px);
+}
+.tc-variant-preview-layer-v270.hidden{display:none!important}
+.tc-variant-preview-card-v270{
+  position:relative;
+  width:min(94vw,430px);
+  max-height:92vh;
+  overflow:auto;
+  display:grid;
+  justify-items:center;
+  gap:10px;
+  padding:20px 18px 18px;
+  border:3px solid #e7a4bf;
+  border-radius:22px;
+  background:#fff9fc;
+  color:#684653;
+  text-align:center;
+  box-shadow:0 18px 55px rgba(56,30,47,.38);
+}
+.tc-variant-preview-close-v270{
+  position:absolute;
+  z-index:4;
+  right:10px;
+  top:10px;
+  width:36px;
+  height:36px;
+  border:2px solid #e4a2bd;
+  border-radius:50%;
+  background:#fff;
+  color:#74515f;
+  font:inherit;
+  font-size:1.2rem;
+  font-weight:900;
+}
+.tc-variant-preview-card-v270 .tc-face{
+  width:min(66vw,245px);
+  margin-top:5px;
+}
+.tc-variant-preview-kicker-v270{
+  margin:0;
+  color:#bf648c;
+  font-size:.62rem;
+  font-weight:950;
+  letter-spacing:.12em;
+}
+.tc-variant-preview-card-v270 h3{
+  margin:0;
+  font-size:1.05rem;
+}
+.tc-variant-preview-cost-v270{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  margin:0;
+  color:#82626f;
+  font-size:.68rem;
+  font-weight:900;
+}
+.tc-variant-preview-cost-v270 img{
+  width:12px;
+  height:12px;
+  object-fit:contain;
+}
+.tc-variant-preview-note-v270{
+  margin:0;
+  color:#947581;
+  font-size:.6rem;
+  line-height:1.35;
+}
+.tc-variant-preview-upgrade-v270{
+  width:min(100%,280px);
+  min-height:44px;
+  border:2px solid #d96c99;
+  border-radius:12px;
+  background:linear-gradient(#ffb8d1,#ef83ad);
+  color:#fff;
+  font:inherit;
+  font-weight:950;
+  box-shadow:0 3px 0 #b75b84;
+}
+.tc-variant-preview-upgrade-v270:disabled{
+  opacity:.48;
+  box-shadow:none;
+}
+
+
+/* ===== Source: hub-v286.css ===== */
+/* Duckie Days v24.286 — Book wall shelf placement tweak */
+
+/* The supplied shelf PNGs are full 1080×1920 transparent room overlays,
+   so they stay aligned with the user's reference at every 9:16 scene size. */
+.book-shelf-furniture{
+  z-index:9!important;
+  top:4.2%!important;
+  bottom:auto!important;
+}
+
+/* Keep the shelf out of the alternate Shelf-of-Ducks room view. */
+.stage.room-wing-view #bookShelfFurnitureDisplay,
+.stage.task-shelf-view #bookShelfFurnitureDisplay{
+  display:none!important;
+}
+
+/* v24.286: lower the shelf and Book together and make the Book bigger. */
+#roomBookImage.duckipedia-room-book-v232.book-wall-shelf-v285{
+  inset:auto!important;
+  left:42.4%!important;
+  right:auto!important;
+  top:11.3%!important;
+  bottom:auto!important;
+  width:19%!important;
+  height:11%!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  transform:none!important;
+  z-index:8!important;
+  filter:drop-shadow(0 3px 2px rgba(70,48,55,.18))!important;
+}
+
+#bookHotspot.book-hotspot.book-wall-shelf-v285{
+  left:39.9%!important;
+  right:auto!important;
+  top:10.0%!important;
+  bottom:auto!important;
+  width:21%!important;
+  height:12.2%!important;
+}
+
+/* On tall phones the room art is still a 9:16 scene anchored to the top.
+   Use vw vertically so the Book remains attached to that scene instead of
+   drifting with the extra viewport height. */
+@media(max-width:600px){
+  .book-shelf-furniture{
+    top:7.8vw!important;
+    bottom:auto!important;
+  }
+  #roomBookImage.duckipedia-room-book-v232.book-wall-shelf-v285{
+    left:42.4%!important;
+    top:19.8vw!important;
+    bottom:auto!important;
+    width:19vw!important;
+    height:19vw!important;
+  }
+  #bookHotspot.book-hotspot.book-wall-shelf-v285{
+    left:39.9%!important;
+    top:22.8vw!important;
+    bottom:auto!important;
+    width:21vw!important;
+    height:21vw!important;
+  }
+}
+
+/* The shelf is a permanent Book holder rather than removable room furniture. */
+.inventory-action.primary.placed:disabled{
+  opacity:.72;
+  cursor:default;
+}

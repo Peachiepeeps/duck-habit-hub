@@ -1,9 +1,0 @@
-Duckie Days v24.286 - Book Shelf Placement Tweak
-
-This is a small follow-up to v24.285.
-
-Changes:
-- lowers the wall shelf a noticeable amount
-- lowers the Duckipedia Book with it
-- makes the Duckipedia Book bigger for readability
-- keeps the same shelf color switching and free inventory behavior

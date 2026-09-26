@@ -1,0 +1,808 @@
+/* Tasks — consolidated for Duckie Days 24.287. */
+
+/* ===== Source: task-progression-v254.css ===== */
+/* Duckie Days v24.254 — Task Progression */
+
+/* Lift the existing right-side room objects to make room for the new shelf arrow. */
+#roomMirrorImage{translate:0 -8%;}
+#roomBookImage{translate:0 -7%;}
+.mirror-hotspot{top:12.5%!important;height:64%!important;}
+.book-hotspot{top:77.8%!important;}
+
+/* Duck Bucks */
+.task-duck-buck-inline-v254{
+  display:inline-flex;align-items:center;gap:5px;white-space:nowrap;color:#54715b;
+}
+.task-duck-buck-inline-v254 img{width:24px;height:24px;object-fit:contain;}
+.task-duck-buck-inline-v254.large{padding:5px 9px;border:2px solid rgba(79,118,86,.22);border-radius:999px;background:#eef7e8;}
+.task-duck-buck-inline-v254.large img{width:30px;height:30px;}
+.task-duck-buck-inline-v254 strong{font-size:.78rem;}
+
+.tasks-header-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end;}
+.task-shop-open-v254{
+  min-height:34px;border:2px solid rgba(82,125,89,.28);border-radius:999px;padding:6px 9px;
+  display:inline-flex;align-items:center;gap:5px;background:#eef7e8;color:#54715b;font:inherit;font-size:.64rem;font-weight:900;
+}
+.task-shop-open-v254 img{width:22px;height:22px;object-fit:contain;}
+
+/* Task Treasure */
+.task-treasure-card-v254{
+  margin:0 0 12px;padding:12px;display:grid;gap:9px;border:3px solid #c88fa4;border-radius:14px;
+  background:linear-gradient(180deg,#fff5f8,#fffaf5);box-shadow:0 5px 0 rgba(112,72,79,.12);
+}
+.task-treasure-head-v254{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.task-treasure-head-v254>div:first-child{display:grid;gap:2px;}
+.task-treasure-head-v254>div:first-child>span{font-size:.56rem;font-weight:950;letter-spacing:.12em;color:#bd6988;}
+.task-treasure-head-v254>div:first-child>strong{font-size:.96rem;color:#6f4f5a;}
+.task-treasure-bar-v254{height:15px;padding:2px;border:2px solid #ad7c8d;border-radius:999px;background:#ead7dc;overflow:hidden;}
+.task-treasure-bar-v254>span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#ef8fb3,#f7bdcf);transition:width .25s ease;}
+.task-treasure-progress-v254{display:flex;justify-content:space-between;gap:8px;color:#94737d;font-size:.57rem;font-weight:850;}
+.task-treasure-milestones-v254{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;}
+.task-treasure-milestones-v254::-webkit-scrollbar{display:none;}
+.task-treasure-chip-v254{flex:0 0 88px;min-height:60px;padding:7px 5px;display:grid;place-items:center;align-content:center;gap:3px;border:2px solid #dfb1c0;border-radius:10px;background:#fff;text-align:center;}
+.task-treasure-chip-v254 b{display:grid;place-items:center;width:25px;height:25px;border-radius:50%;background:#f8d9e4;color:#8e5770;font-size:.64rem;}
+.task-treasure-chip-v254 span{font-size:.46rem;line-height:1.22;color:#94737d;font-weight:800;}
+.task-treasure-chip-v254.claimed{background:#eff8eb;border-color:#a8c89e;}
+.task-treasure-chip-v254.claimed b{background:#d9edd0;color:#557f4e;}
+.task-perks-v254{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.task-perk-v254{padding:9px;border:2px solid rgba(139,101,115,.15);border-radius:10px;background:rgba(255,255,255,.72);display:grid;gap:3px;}
+.task-perk-v254 strong{font-size:.62rem;color:#70525d;}
+.task-perk-v254 small{font-size:.49rem;line-height:1.3;color:#94737d;font-weight:750;}
+.task-perk-v254.active{border-color:rgba(99,147,87,.35);background:#eff8eb;}
+.task-shelf-progress-v254{padding:9px 10px;border:2px dashed rgba(112,89,99,.22);border-radius:10px;background:rgba(255,250,246,.76);display:grid;gap:2px;}
+.task-shelf-progress-v254 strong{font-size:.61rem;color:#73525f;}
+.task-shelf-progress-v254 span{font-size:.5rem;line-height:1.3;color:#997e88;font-weight:750;}
+
+/* Task Shop */
+.task-shop-panel-v254{z-index:265;top:5%;bottom:4%;max-height:none;padding:14px;}
+.task-shop-header-v254{margin-bottom:10px;}
+.task-shop-heading-v254{flex:1;}
+.task-shop-buck-pill-v254{display:flex;align-items:center;gap:5px;padding:5px 9px;border:2px solid rgba(82,125,89,.25);border-radius:999px;background:#eef7e8;color:#4f6d56;}
+.task-shop-buck-pill-v254 img{width:30px;height:30px;object-fit:contain;}
+.task-shop-buck-pill-v254 strong{font-size:.78rem;}
+.task-shop-intro-v254{margin:0 0 10px;padding:9px 11px;border-radius:12px;background:#f7eef3;color:#8b6e79;font-size:.58rem;line-height:1.4;font-weight:750;}
+.task-shop-grid-v254{min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;padding:2px 1px 10px;}
+.task-shop-item-v254{min-width:0;padding:9px;display:grid;grid-template-columns:72px minmax(0,1fr);gap:8px;border:2px solid rgba(118,87,99,.15);border-radius:14px;background:rgba(255,255,255,.88);box-shadow:0 3px 9px rgba(63,39,47,.06);}
+.task-shop-item-v254>img{width:72px;height:72px;object-fit:contain;align-self:center;}
+.task-shop-item-v254>div:nth-child(2){min-width:0;display:grid;align-content:start;gap:3px;}
+.task-shop-item-v254>div:nth-child(2)>strong{font-size:.68rem;color:#674b55;}
+.task-shop-item-v254>div:nth-child(2)>small{font-size:.49rem;line-height:1.3;color:#9b818a;font-weight:700;}
+.task-shop-item-foot-v254{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:7px;}
+.task-shop-item-foot-v254 button{min-width:70px;border:0;border-radius:10px;padding:7px 9px;background:#dcedd5;color:#526d51;font:inherit;font-size:.58rem;font-weight:900;}
+.task-shop-item-foot-v254 button:disabled{opacity:.48;}
+.task-shop-item-v254.owned{background:#f2f8ee;border-color:rgba(102,144,91,.25);}
+
+/* New right-side Collectible Shelf arrow */
+.task-shelf-button-v254{
+  position:absolute;z-index:108;right:3.8%;bottom:1.3%;width:44px;height:34px;display:grid;place-items:center;
+  border:2px solid rgba(103,79,91,.22);border-radius:999px;background:rgba(255,249,251,.92);box-shadow:0 4px 12px rgba(55,32,40,.13);color:#7f5e6a;cursor:pointer;
+}
+.task-shelf-button-v254 #taskShelfArrow{margin-top:-2px;font-size:1.65rem;font-weight:900;line-height:1;}
+.task-shelf-button-v254.locked{opacity:.82;}
+.task-shelf-lock-v254{position:absolute;right:-2px;top:-21px;min-width:48px;padding:3px 5px;border:2px solid rgba(103,79,91,.15);border-radius:999px;background:#fff8fb;color:#876b75;font-size:.43rem;font-weight:900;white-space:nowrap;}
+.room-wing-button.task-shelf-hidden-v254{display:none!important;}
+
+.stage.task-shelf-view #roomMirrorImage,
+.stage.task-shelf-view #roomBookImage,
+.stage.task-shelf-view #mirrorHotspot,
+.stage.task-shelf-view #bookHotspot,
+.stage.task-shelf-view #rugFurnitureDisplay,
+.stage.task-shelf-view #leftFurnitureDisplay,
+.stage.task-shelf-view #petBedFurnitureDisplay,
+.stage.task-shelf-view #lightsFurnitureDisplay,
+.stage.task-shelf-view #furnitureDuckLayer,
+.stage.task-shelf-view #floorDuckDisplay,
+.stage.task-shelf-view #peepWrap{display:none!important;}
+
+.task-collectible-wing-v254{position:absolute;z-index:40;inset:13% 7% 8%;pointer-events:none;}
+.task-collectible-title-v254{position:absolute;top:0;left:0;right:0;display:grid;gap:2px;text-align:center;color:#755764;text-shadow:0 1px 0 rgba(255,255,255,.72);}
+.task-collectible-title-v254 span{font-size:.56rem;font-weight:900;letter-spacing:.12em;}
+.task-collectible-title-v254 strong{font-size:1rem;}
+.task-collectible-slots-v254{position:absolute;left:3%;right:3%;top:12%;bottom:4%;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,1fr);gap:0 5%;padding:2% 3%;pointer-events:auto;border-left:9px solid rgba(116,83,69,.72);border-right:9px solid rgba(116,83,69,.72);border-radius:8px;background:linear-gradient(to bottom,transparent 31%,rgba(116,83,69,.78) 31%,rgba(116,83,69,.78) 34%,transparent 34%,transparent 65%,rgba(116,83,69,.78) 65%,rgba(116,83,69,.78) 68%,transparent 68%,transparent 96%,rgba(116,83,69,.78) 96%,rgba(116,83,69,.78) 100%),rgba(255,250,247,.2);box-shadow:inset 0 0 0 2px rgba(255,255,255,.24),0 5px 18px rgba(69,45,37,.1);}
+.task-collectible-slot-v254{position:relative;align-self:end;width:100%;aspect-ratio:1/1;margin-bottom:13%;display:grid;place-items:end center;border:0;padding:0;background:transparent;cursor:pointer;}
+.task-collectible-slot-v254 img{width:96%;height:96%;object-fit:contain;filter:drop-shadow(0 3px 2px rgba(74,53,46,.13));}
+.task-collectible-slot-v254>span{width:34px;height:34px;align-self:center;display:grid;place-items:center;border:2px dashed rgba(116,83,69,.28);border-radius:50%;background:rgba(255,255,255,.52);color:rgba(100,73,63,.55);font-size:1.2rem;font-weight:850;}
+
+.task-collectible-picker-v254{position:absolute;inset:0;z-index:315;}
+.task-collectible-picker-backdrop-v254{position:absolute;inset:0;width:100%;border:0;background:rgba(67,48,57,.28);backdrop-filter:blur(2px);}
+.task-collectible-picker-card-v254{position:absolute;left:7%;right:7%;top:50%;max-height:74%;overflow-y:auto;transform:translateY(-50%);padding:15px;border:2px solid rgba(128,94,108,.16);border-radius:24px;background:#fff9fb;box-shadow:0 16px 40px rgba(62,40,49,.24);}
+.task-collectible-picker-card-v254 h2{margin:2px 42px 2px 0;color:#70515d;font-size:1.08rem;}
+.task-collectible-picker-card-v254 p{color:#967c86;font-size:.63rem;line-height:1.4;}
+.task-collectible-picker-close-v254{position:absolute;right:10px;top:10px;width:36px;height:36px;display:grid;place-items:center;border:2px solid rgba(117,85,99,.14);border-radius:50%;background:#fff;color:#73525f;font:inherit;font-size:1.2rem;}
+.task-collectible-clear-v254{width:100%;min-height:38px;margin-bottom:10px;border:2px solid rgba(126,97,109,.11);border-radius:13px;background:#f7edf1;color:#826572;font:inherit;font-size:.64rem;font-weight:850;}
+.task-collectible-clear-v254:disabled{opacity:.45;}
+.task-collectible-picker-grid-v254{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;}
+.task-collectible-choice-v254{min-width:0;padding:7px 5px;display:grid;justify-items:center;gap:3px;border:2px solid rgba(125,92,106,.11);border-radius:15px;background:#fff;color:#765966;font:inherit;}
+.task-collectible-choice-v254 img{width:100%;aspect-ratio:1/1;object-fit:contain;}
+.task-collectible-choice-v254 span{width:100%;overflow:hidden;color:#7f626e;font-size:.52rem;font-weight:800;text-overflow:ellipsis;white-space:nowrap;}
+.task-collectible-empty-v254{grid-column:1/-1;margin:16px 4px;text-align:center!important;}
+
+@media(max-width:600px){
+  .task-perks-v254{grid-template-columns:1fr;}
+  .task-shop-grid-v254{grid-template-columns:1fr;}
+  .task-shop-item-v254{grid-template-columns:66px minmax(0,1fr);}
+  .task-shop-item-v254>img{width:66px;height:66px;}
+  .tasks-header-actions{max-width:66%;}
+}
+
+
+/* ===== Source: task-progression-v257.css ===== */
+/* Duckie Days v24.257 — exact shelf asset + task panel correction */
+
+/* =========================================================
+   MAIN ROOM: align arrows and make the Book easy to tap
+   ========================================================= */
+#taskShelfButton{
+  top:auto !important;
+  bottom:1.3% !important;
+  left:auto !important;
+  right:3.8% !important;
+}
+
+/* Keep the Book clearly ABOVE the right arrow. */
+#roomBookImage.on-shelf{
+  translate:none !important;
+  transform:translate(70%,-8%) !important;
+}
+.book-hotspot.on-shelf{
+  left:68% !important;
+  top:73% !important;
+  width:30% !important;
+  height:22% !important;
+}
+
+@media (max-width:600px){
+  /* The built-in left arrow sits at bottom:4.6% on mobile. Match it exactly. */
+  #taskShelfButton{
+    top:auto !important;
+    bottom:4.6% !important;
+    left:auto !important;
+    right:3.8% !important;
+  }
+
+  /* The room Book uses a full-height art canvas on phones, so lift that canvas. */
+  #roomBookImage.on-shelf{
+    top:auto !important;
+    bottom:8.7% !important;
+    translate:none !important;
+    transform:translate(70%,0) !important;
+  }
+  /* Bigger target than the picture itself so it is comfortable to tap. */
+  .book-hotspot.on-shelf{
+    left:67.5% !important;
+    top:auto !important;
+    bottom:7.0% !important;
+    width:31% !important;
+    height:18% !important;
+  }
+}
+
+/* =========================================================
+   COLLECTIBLE SHELF: use the SAME shelf art/layout as Shelf of Ducks
+   ========================================================= */
+#taskCollectibleWing.task-collectible-wing-v257{
+  position:absolute;
+  z-index:40;
+  inset:0 !important;
+  pointer-events:none;
+}
+#taskCollectibleWing .task-collectible-shelf-image-v257{
+  position:absolute;
+  z-index:40;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  pointer-events:none;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+#taskCollectibleWing .task-collectible-title-v254{
+  z-index:44;
+  top:10.3% !important;
+  left:0 !important;
+  right:0 !important;
+  pointer-events:none;
+}
+#taskCollectibleWing .task-collectible-title-v254 span{
+  font-size:.56rem;
+  font-weight:900;
+  letter-spacing:.12em;
+}
+#taskCollectibleWing .task-collectible-title-v254 strong{
+  font-size:1rem;
+}
+
+#taskCollectibleWing .task-shelf-style-picker-v257{
+  position:absolute;
+  z-index:46;
+  top:11.0%;
+  right:5.7%;
+  display:flex;
+  align-items:center;
+  gap:5px;
+  padding:5px 7px;
+  border:2px solid rgba(113,83,94,.12);
+  border-radius:999px;
+  background:rgba(255,250,251,.88);
+  box-shadow:0 3px 10px rgba(66,46,54,.09);
+  pointer-events:auto;
+}
+#taskCollectibleWing .task-shelf-style-picker-v257 > span{
+  margin-right:1px;
+  color:#886d78;
+  font-size:.48rem;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+#taskCollectibleWing .task-shelf-style-picker-v257 button{
+  width:20px;
+  height:20px;
+  border:2px solid rgba(62,45,51,.22);
+  border-radius:50%;
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.24);
+  cursor:pointer;
+}
+#taskCollectibleWing .task-shelf-style-picker-v257 button[data-task-shelf-style="cream"]{background:#c9bbb5;}
+#taskCollectibleWing .task-shelf-style-picker-v257 button[data-task-shelf-style="brown"]{background:#805943;}
+#taskCollectibleWing .task-shelf-style-picker-v257 button[data-task-shelf-style="dark-brown"]{background:#51423c;}
+#taskCollectibleWing .task-shelf-style-picker-v257 button.active{
+  outline:3px solid rgba(255,245,249,.96);
+  outline-offset:1px;
+  box-shadow:0 0 0 2px rgba(130,91,107,.42);
+}
+
+/* EXACT slot geometry from the existing Shelf of Ducks. */
+#taskCollectibleWing #taskCollectibleSlots,
+#taskCollectibleWing .task-collectible-slots-v254{
+  position:absolute;
+  z-index:43;
+  left:6.2% !important;
+  right:5.2% !important;
+  top:16.0% !important;
+  bottom:7.4% !important;
+  display:grid !important;
+  grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+  grid-template-rows:repeat(6,minmax(0,1fr)) !important;
+  gap:0 1.6% !important;
+  padding:0 2.2% !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  pointer-events:auto;
+}
+#taskCollectibleWing .task-collectible-slot-v254{
+  position:relative;
+  align-self:stretch !important;
+  width:100% !important;
+  height:100% !important;
+  aspect-ratio:auto !important;
+  margin:0 !important;
+  display:grid;
+  place-items:end center;
+  border:0;
+  padding:0;
+  background:transparent;
+  cursor:pointer;
+}
+#taskCollectibleWing .task-collectible-slot-v254 img{
+  width:72% !important;
+  height:76% !important;
+  object-fit:contain;
+  object-position:center bottom;
+  transform:translateY(5%);
+  filter:drop-shadow(0 3px 2px rgba(54,38,33,.15));
+}
+#taskCollectibleWing .task-collectible-slot-v254:nth-child(n+17):nth-child(-n+20) img{transform:translateY(0%);}
+#taskCollectibleWing .task-collectible-slot-v254:nth-child(n+21):nth-child(-n+24) img{transform:translateY(-14%);}
+#taskCollectibleWing .task-collectible-slot-v254 > span{
+  width:30px !important;
+  height:30px !important;
+  align-self:end !important;
+  margin-bottom:19% !important;
+  display:grid;
+  place-items:center;
+  border:2px dashed rgba(93,68,59,.25) !important;
+  border-radius:50%;
+  background:rgba(255,255,255,.48) !important;
+  color:rgba(100,73,63,.55);
+  font-size:1.2rem;
+  font-weight:850;
+}
+
+@media (max-width:430px){
+  #taskCollectibleWing .task-shelf-style-picker-v257{
+    top:11.4%;
+    right:4.7%;
+    gap:4px;
+    padding:4px 6px;
+  }
+  #taskCollectibleWing .task-shelf-style-picker-v257 > span{display:none;}
+  #taskCollectibleWing .task-shelf-style-picker-v257 button{width:18px;height:18px;}
+}
+
+/* =========================================================
+   TASKS: match the user's compact mockup
+   ========================================================= */
+.tasks-panel-v257{
+  display:flex;
+  flex-direction:column;
+}
+.tasks-header-v257{
+  position:relative;
+  min-height:42px;
+  display:grid;
+  place-items:center;
+  margin:0 0 7px;
+}
+.tasks-header-v257 h1{
+  margin:0;
+  padding:0 48px;
+  color:#5f404c;
+  font-size:1.30rem;
+  line-height:1.05;
+  font-weight:950;
+  text-align:center;
+}
+.tasks-header-v257 .close-button{
+  position:absolute;
+  right:0;
+  top:50%;
+  transform:translateY(-50%);
+}
+.tasks-header-actions-v257{
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+  align-items:stretch;
+  margin:0 0 8px;
+  max-width:none !important;
+}
+.tasks-header-actions-v257 > button{
+  width:100%;
+  min-width:0;
+  min-height:40px;
+  margin:0 !important;
+  justify-content:center;
+  white-space:nowrap;
+}
+.tasks-header-actions-v257 #openTaskShopButton{
+  padding:6px 8px;
+}
+.tasks-header-actions-v257 #openTaskShopButton img{width:21px;height:21px;}
+.tasks-header-actions-v257 #openTaskShopButton span{font-size:.64rem;}
+.tasks-header-actions-v257 #openTaskShopButton strong{font-size:.62rem;}
+
+.tasks-panel-v257 .tasks-toolbar{
+  margin-bottom:8px;
+}
+.tasks-panel-v257 .task-tabs{
+  width:100%;
+  display:grid !important;
+  grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+  gap:4px;
+  padding:3px;
+  border-radius:999px;
+}
+.tasks-panel-v257 .task-tab{
+  grid-column:auto !important;
+  padding:7px 4px;
+  font-size:.66rem;
+}
+
+/* Treasure box: much shorter and closer to the mockup. */
+.tasks-panel-v257 .task-treasure-card-v254{
+  flex:0 0 auto;
+  margin:0 0 9px;
+  padding:10px 11px;
+  gap:7px;
+  border-width:3px;
+  border-radius:16px;
+}
+.task-treasure-head-v257{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+.task-treasure-head-v257 > span{
+  color:#bd6988;
+  font-size:.61rem;
+  font-weight:950;
+  letter-spacing:.12em;
+}
+.task-treasure-head-v257 > strong{
+  color:#674b55;
+  font-size:.76rem;
+  font-weight:900;
+  text-align:right;
+}
+.tasks-panel-v257 .task-treasure-bar-v254{height:13px;}
+.tasks-panel-v257 .task-treasure-progress-v254{font-size:.53rem;}
+.tasks-panel-v257 .task-treasure-milestones-v254{
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:5px;
+  overflow:visible;
+  padding:0;
+}
+.tasks-panel-v257 .task-treasure-chip-v254{
+  min-width:0;
+  min-height:49px;
+  padding:5px 2px;
+  border-radius:9px;
+}
+.tasks-panel-v257 .task-treasure-chip-v254 b{
+  width:21px;
+  height:21px;
+  font-size:.55rem;
+}
+.tasks-panel-v257 .task-treasure-chip-v254 span{
+  font-size:.39rem;
+  line-height:1.1;
+}
+.task-treasure-status-row-v257{
+  display:grid;
+  grid-template-columns:.8fr 1.1fr 1.1fr;
+  gap:6px;
+  padding-top:7px;
+  border-top:2px solid rgba(200,143,164,.28);
+}
+.task-treasure-status-v257{
+  min-width:0;
+  min-height:46px;
+  padding:6px 7px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  border:2px solid rgba(139,101,115,.15);
+  border-radius:10px;
+  background:rgba(255,255,255,.76);
+  color:#795765;
+  text-align:center;
+}
+.task-treasure-status-v257.active{
+  background:#eff8eb;
+  border-color:rgba(99,147,87,.32);
+}
+.task-treasure-status-v257 .task-duck-buck-inline-v254 img{width:24px;height:24px;}
+.task-treasure-status-v257 .task-duck-buck-inline-v254 strong{font-size:.72rem;}
+.task-treasure-status-v257 .status-icon-v257{font-size:1.05rem;line-height:1;}
+.task-treasure-status-v257 .status-copy-v257{
+  min-width:0;
+  display:grid;
+  gap:1px;
+}
+.task-treasure-status-v257 .status-copy-v257 strong{
+  font-size:.51rem;
+  line-height:1.08;
+}
+.task-treasure-status-v257 .status-copy-v257 small{
+  color:#9a7b87;
+  font-size:.42rem;
+  line-height:1.1;
+}
+.tasks-panel-v257 .tasks-content{
+  min-height:0;
+  flex:1 1 auto;
+  margin-top:0;
+  padding-top:1px;
+}
+.tasks-panel-v257 .task-kind-note{
+  flex:0 0 auto;
+}
+
+@media (max-width:420px){
+  .tasks-panel-v257{
+    left:3%;
+    right:3%;
+    top:4%;
+    bottom:4%;
+    padding:11px;
+  }
+  .tasks-header-v257 h1{font-size:1.18rem;}
+  .tasks-header-actions-v257{gap:6px;}
+  .tasks-header-actions-v257 > button{min-height:38px;padding-left:5px;padding-right:5px;font-size:.61rem;}
+  .tasks-panel-v257 .task-tab{font-size:.61rem;padding:7px 2px;}
+  .tasks-panel-v257 .task-treasure-card-v254{padding:9px 8px;gap:6px;}
+  .tasks-panel-v257 .task-treasure-milestones-v254{gap:3px;}
+  .tasks-panel-v257 .task-treasure-chip-v254{min-height:47px;padding:4px 1px;}
+  .tasks-panel-v257 .task-treasure-chip-v254 span{font-size:.36rem;}
+  .task-treasure-status-row-v257{gap:4px;}
+  .task-treasure-status-v257{padding:5px 4px;gap:3px;}
+}
+
+
+/* ===== Source: task-progression-v258.css ===== */
+/* Duckie Days v24.258 — follow-up polish */
+
+/* =========================================================
+   MAIN ROOM: align arrows and lift the Book higher
+   ========================================================= */
+#roomWingButton,
+#taskShelfButton{
+  top:auto !important;
+  bottom:5.8% !important;
+}
+#roomWingButton{
+  left:3.8% !important;
+}
+#taskShelfButton{
+  right:3.8% !important;
+}
+
+#roomBookImage.on-shelf{
+  top:auto !important;
+  bottom:12.7% !important;
+  translate:none !important;
+  transform:translate(70%,0) !important;
+}
+.book-hotspot.on-shelf{
+  left:68.8% !important;
+  top:auto !important;
+  bottom:11.2% !important;
+  width:25.5% !important;
+  height:16.0% !important;
+}
+
+@media (max-width:600px){
+  #roomWingButton,
+  #taskShelfButton{
+    top:auto !important;
+    bottom:5.8% !important;
+  }
+  #roomBookImage.on-shelf{
+    top:auto !important;
+    bottom:12.8% !important;
+    translate:none !important;
+    transform:translate(70%,0) !important;
+  }
+  .book-hotspot.on-shelf{
+    left:68.6% !important;
+    top:auto !important;
+    bottom:11.6% !important;
+    width:26.0% !important;
+    height:16.4% !important;
+  }
+}
+
+/* =========================================================
+   TASKS: hide Task Shop count and use requested art icons
+   ========================================================= */
+.tasks-header-actions-v257 #openTaskShopButton strong{
+  display:none !important;
+}
+.tasks-header-actions-v257 #openTaskShopButton{
+  gap:8px;
+}
+.task-treasure-status-v257 .status-icon-img-v258{
+  width:28px;
+  height:28px;
+  object-fit:contain;
+  flex:0 0 auto;
+  image-rendering:auto;
+}
+.task-treasure-status-v257.active .status-icon-img-v258{
+  transform:scale(1.02);
+}
+
+/* =========================================================
+   COLLECTIBLE SHELF: use the same lower-row placement as ducks
+   ========================================================= */
+#taskCollectibleWing .task-collectible-slot-v254:nth-child(n+13):nth-child(-n+16) img{
+  transform:translateY(-6%) !important;
+}
+#taskCollectibleWing .task-collectible-slot-v254:nth-child(n+17):nth-child(-n+20) img{
+  transform:translateY(-18%) !important;
+}
+#taskCollectibleWing .task-collectible-slot-v254:nth-child(n+21):nth-child(-n+24) img{
+  transform:translateY(-38%) !important;
+}
+#taskCollectibleWing .task-collectible-slot-v254:nth-child(n+13):nth-child(-n+16) > span{
+  transform:translateY(-8%);
+}
+#taskCollectibleWing .task-collectible-slot-v254:nth-child(n+17):nth-child(-n+20) > span{
+  transform:translateY(-20%);
+}
+#taskCollectibleWing .task-collectible-slot-v254:nth-child(n+21):nth-child(-n+24) > span{
+  transform:translateY(-40%);
+}
+
+
+/* ===== Source: task-progression-v259.css ===== */
+/* Duckie Days v24.259 — exact collectible shelf seating + Book lift */
+
+/* =========================================================
+   BOOK: keep it clearly ABOVE the room arrows on every home.
+   Target the actual Duckipedia Book id/class so older room-furniture
+   placement rules cannot pull it back down.
+   ========================================================= */
+#roomBookImage.duckipedia-room-book-v232,
+#roomBookImage.duckipedia-room-book-v232.on-shelf,
+#roomBookImage.duckipedia-room-book-v232.on-dresser{
+  left:70.2% !important;
+  right:auto !important;
+  top:auto !important;
+  bottom:18.0% !important;
+  width:20.5% !important;
+  height:11.7% !important;
+  translate:none !important;
+  transform:none !important;
+}
+
+#bookHotspot.book-hotspot,
+#bookHotspot.book-hotspot.on-shelf,
+#bookHotspot.book-hotspot.on-dresser{
+  left:68.5% !important;
+  right:auto !important;
+  top:auto !important;
+  bottom:16.6% !important;
+  width:25.5% !important;
+  height:15.2% !important;
+}
+
+@media(max-width:600px){
+  #roomBookImage.duckipedia-room-book-v232,
+  #roomBookImage.duckipedia-room-book-v232.on-shelf,
+  #roomBookImage.duckipedia-room-book-v232.on-dresser{
+    left:70.2% !important;
+    right:auto !important;
+    top:auto !important;
+    bottom:18.4% !important;
+    width:20.5% !important;
+    height:11.7% !important;
+    translate:none !important;
+    transform:none !important;
+  }
+
+  #bookHotspot.book-hotspot,
+  #bookHotspot.book-hotspot.on-shelf,
+  #bookHotspot.book-hotspot.on-dresser{
+    left:68.2% !important;
+    right:auto !important;
+    top:auto !important;
+    bottom:16.8% !important;
+    width:26.0% !important;
+    height:15.6% !important;
+  }
+}
+
+/* =========================================================
+   COLLECTIBLE SHELF: use the exact CURRENT Shelf of Ducks grid.
+   The duck shelf's final calibration is not six equal rows; it uses
+   the real shelf-opening heights from the 1080x1920 shelf artwork.
+   ========================================================= */
+#taskCollectibleWing #taskCollectibleSlots.wing-duck-slots{
+  left:6.2% !important;
+  right:5.2% !important;
+  top:17.9167% !important;
+  bottom:7.8125% !important;
+  display:grid !important;
+  grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+  grid-template-rows:211fr 242fr 248fr 242fr 229fr 210fr !important;
+  gap:0 1.6% !important;
+  padding:0 2.2% !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+
+/* Exact current Shelf of Ducks bottom-seating rule. */
+#taskCollectibleWing #taskCollectibleSlots.wing-duck-slots .wing-duck-slot img,
+#taskCollectibleWing #taskCollectibleSlots.wing-duck-slots .wing-duck-slot:nth-child(n+13):nth-child(-n+16) img,
+#taskCollectibleWing #taskCollectibleSlots.wing-duck-slots .wing-duck-slot:nth-child(n+17):nth-child(-n+20) img,
+#taskCollectibleWing #taskCollectibleSlots.wing-duck-slots .wing-duck-slot:nth-child(n+21):nth-child(-n+24) img{
+  width:72% !important;
+  height:76% !important;
+  object-fit:contain !important;
+  object-position:center bottom !important;
+  transform:translateY(5%) !important;
+}
+
+/* Empty + buttons sit on the same ledges as the duck shelf too. */
+#taskCollectibleWing #taskCollectibleSlots.wing-duck-slots .wing-duck-slot > span,
+#taskCollectibleWing #taskCollectibleSlots.wing-duck-slots .wing-duck-slot:nth-child(n+13):nth-child(-n+16) > span,
+#taskCollectibleWing #taskCollectibleSlots.wing-duck-slots .wing-duck-slot:nth-child(n+17):nth-child(-n+20) > span,
+#taskCollectibleWing #taskCollectibleSlots.wing-duck-slots .wing-duck-slot:nth-child(n+21):nth-child(-n+24) > span{
+  margin-bottom:0 !important;
+  transform:none !important;
+}
+
+/* Tall-phone calibration copied from the actual Shelf of Ducks. */
+@media(max-width:600px) and (max-aspect-ratio:9/16){
+  #taskCollectibleWing #taskCollectibleSlots.wing-duck-slots{
+    top:calc(50% - 88.8889vw + 31.8519vw) !important;
+    bottom:auto !important;
+    height:127.9630vw !important;
+  }
+}
+
+
+/* ===== Source: task-progression-v260.css ===== */
+/* Duckie Days v24.260 — home plush + task polish */
+
+/* Move the room Book a little farther right without changing its height. */
+#roomBookImage.duckipedia-room-book-v232,
+#roomBookImage.duckipedia-room-book-v232.on-shelf,
+#roomBookImage.duckipedia-room-book-v232.on-dresser{
+  left:77.0% !important;
+}
+#bookHotspot.book-hotspot,
+#bookHotspot.book-hotspot.on-shelf,
+#bookHotspot.book-hotspot.on-dresser{
+  left:77.0% !important;
+}
+
+/* Task Shop dresser placement button for owned plushes. */
+.task-shop-item-foot-v254{
+  flex-wrap:wrap;
+}
+.task-dresser-button-v260{
+  background:#f4e4ed !important;
+  color:#805b6b !important;
+}
+.task-dresser-button-v260.active{
+  background:#edd4e1 !important;
+  color:#664652 !important;
+  box-shadow:inset 0 0 0 2px rgba(120,77,94,.13);
+}
+
+/* Task Shop plush displayed on the top of the current room dresser. */
+.task-dresser-collectible-v260{
+  position:absolute;
+  z-index:26;
+  left:11.7%;
+  top:63.3%;
+  width:13.5%;
+  height:auto;
+  object-fit:contain;
+  transform:translate(-50%,-50%);
+  transform-origin:50% 100%;
+  filter:drop-shadow(0 3px 3px rgba(58,38,44,.16));
+  pointer-events:none;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+
+@media(max-width:600px){
+  #roomBookImage.duckipedia-room-book-v232,
+  #roomBookImage.duckipedia-room-book-v232.on-shelf,
+  #roomBookImage.duckipedia-room-book-v232.on-dresser{
+    left:77.0% !important;
+  }
+  #bookHotspot.book-hotspot,
+  #bookHotspot.book-hotspot.on-shelf,
+  #bookHotspot.book-hotspot.on-dresser{
+    left:77.0% !important;
+  }
+}
+
+
+/* ===== Source: task-progression-v261.css ===== */
+/* Duckie Days v24.261 — Snuggle Ducks + Task Treasure polish */
+
+/* Book nudged a bit farther right than v24.260. */
+#bookButton{
+  left:73.8% !important;
+}
+#bookHotspot{
+  left:71.8% !important;
+}
+
+/* Second head-duck visuals. */
+.double-head-duck-secondary{
+  transform:translate(-50%, -50%) scaleX(-1) !important;
+}
+.profile-head-duck.double-head-duck-secondary,
+.status-head-duck.double-head-duck-secondary{
+  transform:translate(-50%, -50%) scaleX(-1) !important;
+}
+
+/* Secondary duck assignment button styling. */
+#assignDuckToOcSecond .duck-placement-button-icon{
+  font-size:1rem;
+}

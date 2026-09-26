@@ -1,0 +1,15 @@
+Duckie Days 24.287
+
+Repository consolidation / developer cleanup.
+
+Current root code files are now intentionally simple:
+- app.js / app.css — main hub application
+- hub.js / hub.css / hub-boosts.js — home-room and hub features
+- tasks.js / tasks.css — tasks and collectible shelf
+- task-reminders.js / task-reminders.css / firebase-reminders.mjs — reminders
+- trading-cards-base.js / .css — shared card core also used by mini-games
+- trading-cards-extra.js / .css — newer card additions
+- trading-cards-ui.js — card book/workshop UI
+- sw.js — complete service worker (no extra sw-v### file)
+
+The old numbered source files remain recoverable through Git history, but are no longer kept in the live root.
