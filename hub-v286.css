@@ -4,7 +4,7 @@
    so they stay aligned with the user's reference at every 9:16 scene size. */
 .book-shelf-furniture{
   z-index:9!important;
-  top:3.4%!important;
+  top:4.2%!important;
   bottom:auto!important;
 }
 
@@ -18,10 +18,10 @@
   inset:auto!important;
   left:42.4%!important;
   right:auto!important;
-  top:11.4%!important;
+  top:13.4%!important;
   bottom:auto!important;
-  width:16.2%!important;
-  height:9.2%!important;
+  width:19%!important;
+  height:11%!important;
   object-fit:contain!important;
   object-position:center!important;
   transform:none!important;
@@ -43,15 +43,15 @@
    drifting with the extra viewport height. */
 @media(max-width:600px){
   .book-shelf-furniture{
-    top:6.1vw!important;
+    top:7.8vw!important;
     bottom:auto!important;
   }
   #roomBookImage.duckipedia-room-book-v232.book-wall-shelf-v285{
     left:42.4%!important;
-    top:25.4vw!important;
+    top:30vw!important;
     bottom:auto!important;
-    width:16.2vw!important;
-    height:16.2vw!important;
+    width:19vw!important;
+    height:19vw!important;
   }
   #bookHotspot.book-hotspot.book-wall-shelf-v285{
     left:39.9%!important;
