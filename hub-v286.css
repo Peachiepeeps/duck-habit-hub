@@ -9,7 +9,8 @@
 }
 
 /* Keep the shelf out of the alternate Shelf-of-Ducks room view. */
-.stage.room-wing-view #bookShelfFurnitureDisplay{
+.stage.room-wing-view #bookShelfFurnitureDisplay,
+.stage.task-shelf-view #bookShelfFurnitureDisplay{
   display:none!important;
 }
 
