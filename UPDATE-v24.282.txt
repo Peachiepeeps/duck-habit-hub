@@ -1,0 +1,17 @@
+Duckie Days v24.282 - Peep Mimic Profile Assignment Sync
+
+Fixes the final Peep Mimic mismatch between Duck Quest and the main OC profile.
+
+What was wrong:
+- Buddy Box tracked the correct individual pink Mimic instance.
+- The main profile still read the older aggregate key mimic:lucky.
+- The portrait resolver was therefore correctly showing gold for the stale key.
+
+What this update changes:
+- If a Mimic profile key disagrees with the Mimic instance assigned in Buddy Box,
+  the profile trusts the individual Buddy Box instance and repairs the stale key.
+- Peep's current Main Buddy should automatically repair from mimic:lucky to
+  mimic:base when the profile is opened/rendered.
+- Profile-side Buddy assignments now also update the Buddy Box instance mapping,
+  preventing the two systems from drifting apart again.
+- No Mimic artwork is changed in this update.

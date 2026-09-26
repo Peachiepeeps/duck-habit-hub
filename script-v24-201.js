@@ -12082,6 +12082,65 @@ function buddyEquippedCount(key, excludeCharacterId = "", excludeSlotIndex = -1)
   return count;
 }
 
+function buddyBoxMappedEntry(characterId, slotIndex) {
+  const box = save.buddyBoxV265;
+  if (!box || typeof box !== "object" || !Array.isArray(box.entries)) return null;
+  const maps = box.equippedInstanceByCharacter;
+  if (!maps || typeof maps !== "object") return null;
+  const mapped = Array.isArray(maps[characterId]) ? maps[characterId] : [];
+  const instanceId = typeof mapped[slotIndex] === "string" ? mapped[slotIndex] : null;
+  if (!instanceId) return null;
+  return box.entries.find(entry => entry && entry.id === instanceId) || null;
+}
+
+function syncProfileBuddyInstanceAssignment(characterId, slotIndex, buddyKey) {
+  const box = save.buddyBoxV265;
+  if (!box || typeof box !== "object" || !Array.isArray(box.entries)) return;
+
+  if (!box.equippedInstanceByCharacter || typeof box.equippedInstanceByCharacter !== "object") {
+    box.equippedInstanceByCharacter = {};
+  }
+
+  const current = Array.isArray(box.equippedInstanceByCharacter[characterId])
+    ? box.equippedInstanceByCharacter[characterId]
+    : [];
+  const mapped = Array.from({ length: BUDDY_SLOT_COUNT }, (_, index) =>
+    typeof current[index] === "string" ? current[index] : null
+  );
+
+  const safeIndex = Math.max(0, Math.min(BUDDY_SLOT_COUNT - 1, Number(slotIndex) || 0));
+
+  if (!buddyKey) {
+    mapped[safeIndex] = null;
+    box.equippedInstanceByCharacter[characterId] = mapped;
+    return;
+  }
+
+  const currentEntry = box.entries.find(
+    entry => entry && entry.id === mapped[safeIndex] && entry.key === buddyKey
+  );
+  if (currentEntry) {
+    box.equippedInstanceByCharacter[characterId] = mapped;
+    return;
+  }
+
+  const used = new Set();
+  for (const [otherCharacterId, otherSlotsRaw] of Object.entries(box.equippedInstanceByCharacter)) {
+    const otherSlots = Array.isArray(otherSlotsRaw) ? otherSlotsRaw : [];
+    otherSlots.forEach((instanceId, index) => {
+      if (otherCharacterId === characterId && index === safeIndex) return;
+      if (typeof instanceId === "string") used.add(instanceId);
+    });
+  }
+
+  const candidate = box.entries.find(
+    entry => entry && entry.key === buddyKey && !used.has(entry.id)
+  );
+
+  mapped[safeIndex] = candidate?.id || null;
+  box.equippedInstanceByCharacter[characterId] = mapped;
+}
+
 function getBuddySlots(characterId = save.selectedCharacter) {
   if (!save.buddies || typeof save.buddies !== "object") save.buddies = normalizeBuddySave(null);
   if (!save.buddies.equippedByCharacter || typeof save.buddies.equippedByCharacter !== "object") {
@@ -12091,11 +12150,41 @@ function getBuddySlots(characterId = save.selectedCharacter) {
   const source = Array.isArray(save.buddies.equippedByCharacter[characterId])
     ? save.buddies.equippedByCharacter[characterId]
     : [];
+
+  let repairedMimicAssignment = false;
   const slots = Array.from({ length: BUDDY_SLOT_COUNT }, (_, index) => {
-    const key = typeof source[index] === "string" ? source[index] : null;
+    let key = typeof source[index] === "string" ? source[index] : null;
+
+    // v24.282:
+    // Buddy Box owns the individual Buddy copy. If an older aggregate Mimic
+    // key disagrees with the actual mapped Mimic instance, trust the instance.
+    // This repairs Peep's stale mimic:lucky Main Buddy -> mimic:base without
+    // changing unrelated Buddy families.
+    const mappedEntry = buddyBoxMappedEntry(characterId, index);
+    const keyIsMimic = typeof key === "string" && key.startsWith("mimic:");
+    const mappedIsMimic =
+      mappedEntry?.enemyId === "mimic" ||
+      (typeof mappedEntry?.key === "string" && mappedEntry.key.startsWith("mimic:"));
+
+    if (
+      keyIsMimic &&
+      mappedIsMimic &&
+      mappedEntry.key !== key &&
+      buddyByKey(mappedEntry.key)
+    ) {
+      key = mappedEntry.key;
+      repairedMimicAssignment = true;
+    }
+
     return key && buddyByKey(key) ? key : null;
   });
+
   save.buddies.equippedByCharacter[characterId] = slots;
+
+  if (repairedMimicAssignment) {
+    persist();
+  }
+
   return slots;
 }
 
@@ -12237,6 +12326,12 @@ function assignBuddyToProfile(characterId, slotIndex, buddyKey) {
   }
 
   save.buddies.equippedByCharacter[characterId] = slots;
+
+  // Keep the newer individual Buddy Box assignment synchronized when a
+  // profile Buddy circle is changed. Duck Quest already syncs the reverse
+  // direction, so after v24.282 both screens use the same Buddy copy.
+  syncProfileBuddyInstanceAssignment(characterId, index, slots[index]);
+
   if (previousKey !== slots[index]) clearBuddySlotPersonalization(characterId, index);
   persist();
   renderProfileBuddies(characterId);
