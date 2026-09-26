@@ -826,6 +826,7 @@ const ENEMIES = {
     exp: 34,
     coinMin: 18,
     coinMax: 28,
+    portrait: "assets/enemies/mimic/base/open-1.webp",
     idle: [
       "assets/enemies/mimic/base/open-1.webp",
       "assets/enemies/mimic/base/open-2.webp"
@@ -1940,6 +1941,7 @@ const SHINY_VARIANTS = Object.freeze({
   },
   "mimic": {
     id:"amethyst", name:"Amethyst Mimic",
+    portrait:"assets/shinies/amethyst-mimic-idle-1.webp",
     idle:["assets/shinies/amethyst-mimic-idle-1.webp","assets/shinies/amethyst-mimic-idle-2.webp"],
     hurt:"assets/shinies/amethyst-mimic-closed.webp"
   },
@@ -2131,7 +2133,7 @@ function catalogEntry(enemyId, variantId, variant, boss=false, shiny=false) {
     enemyId,
     variantId:shiny ? "shiny" : variantId,
     name:String(variant?.name || ENEMIES[enemyId]?.name || "Buddy"),
-    image:String(idleFrames[0] || ""),
+    image:String(variant?.portrait || idleFrames[0] || ""),
     idle:idleFrames,
     boss:Boolean(boss),
     shiny:Boolean(shiny)
@@ -2154,11 +2156,13 @@ function buildBuddyCatalog() {
   entries.push(catalogEntry("mimic","base",ENEMIES.mimic,false,false));
   entries.push(catalogEntry("mimic","lucky",{
     id:"lucky",name:"Lucky Mimic",
+    portrait:"assets/enemies/mimic/lucky/open.webp",
     idle:["assets/enemies/mimic/lucky/idle-1.webp","assets/enemies/mimic/lucky/idle-2.webp"],
     hurt:"assets/enemies/mimic/lucky/closed.webp"
   },false,false));
   entries.push(catalogEntry("mimic","healthy",{
     id:"healthy",name:"Healthy Mimic",
+    portrait:"assets/enemies/mimic/healthy/open.webp",
     idle:["assets/enemies/mimic/healthy/idle-1.webp","assets/enemies/mimic/healthy/idle-2.webp"],
     hurt:"assets/enemies/mimic/healthy/closed.webp"
   },false,false));

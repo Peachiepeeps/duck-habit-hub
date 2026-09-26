@@ -4,10 +4,13 @@
   const TC=window.DuckieTradingCards;
   const CHARACTER_IDS=['peep','miko','io','miho','annika'];
   const RELEASE_DUST={normal:10,boss:25,shiny:50};
-  const MIMIC_BOX_ICONS={
-    'mimic:lucky':'assets/enemies/mimic/lucky/idle-2.webp',
-    'mimic:healthy':'assets/enemies/mimic/healthy/idle-2.webp'
-  };
+  const MIMIC_BOX_ICONS=Object.freeze({
+    'mimic:base':'assets/enemies/mimic/base/open-1.webp',
+    'mimic:lucky':'assets/enemies/mimic/lucky/open.webp',
+    'mimic:healthy':'assets/enemies/mimic/healthy/open.webp',
+    'mimic:shiny':'assets/shinies/amethyst-mimic-idle-1.webp',
+    'mimic:amethyst':'assets/shinies/amethyst-mimic-idle-1.webp'
+  });
 
   function dustState(){
     const state=TC?.cardCraft?.ensure?.(hubSave);

@@ -7,29 +7,36 @@
   const CHARACTER_NAMES={peep:'Peep',miko:'Miko',io:'Io',miho:'Miho',annika:'Annika'};
 
   function mimicArt(entry){
-    if(!entry || String(entry.enemyId||'').toLowerCase()!=='mimic') return null;
+    if(!entry) return null;
+    const enemyId=String(entry.enemyId||'').toLowerCase();
+    const key=String(entry.key||'').toLowerCase();
     const variant=String(entry.variantId||'').toLowerCase();
     const name=String(entry.name||'').toLowerCase();
+    const isMimic=enemyId==='mimic' || key.startsWith('mimic:') || name.includes('mimic');
+    if(!isMimic) return null;
 
-    if(variant==='lucky' || name.includes('lucky mimic')){
+    if(key==='mimic:lucky' || variant==='lucky' || name.includes('lucky mimic')){
       return {
-        image:'assets/enemies/mimic/lucky/idle-1.webp',
+        image:'assets/enemies/mimic/lucky/open.webp',
         idle:['assets/enemies/mimic/lucky/idle-1.webp','assets/enemies/mimic/lucky/idle-2.webp']
       };
     }
-    if(variant==='healthy' || name.includes('healthy mimic')){
+    if(key==='mimic:healthy' || variant==='healthy' || name.includes('healthy mimic')){
       return {
-        image:'assets/enemies/mimic/healthy/idle-1.webp',
+        image:'assets/enemies/mimic/healthy/open.webp',
         idle:['assets/enemies/mimic/healthy/idle-1.webp','assets/enemies/mimic/healthy/idle-2.webp']
       };
     }
-    if(variant==='amethyst' || variant==='shiny' || name.includes('amethyst mimic')){
+    if(key==='mimic:shiny' || key==='mimic:amethyst' || variant==='amethyst' || variant==='shiny' || name.includes('amethyst mimic')){
       return {
         image:'assets/shinies/amethyst-mimic-idle-1.webp',
         idle:['assets/shinies/amethyst-mimic-idle-1.webp','assets/shinies/amethyst-mimic-idle-2.webp']
       };
     }
-    return null;
+    return {
+      image:'assets/enemies/mimic/base/open-1.webp',
+      idle:['assets/enemies/mimic/base/open-1.webp','assets/enemies/mimic/base/open-2.webp']
+    };
   }
 
   function repairEntry(entry){

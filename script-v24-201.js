@@ -12124,7 +12124,44 @@ function buddyGenderSymbol(gender) {
   return "";
 }
 
+const PROFILE_MIMIC_PORTRAITS = Object.freeze({
+  base: "duck-quest/assets/enemies/mimic/base/open-1.webp",
+  lucky: "duck-quest/assets/enemies/mimic/lucky/open.webp",
+  healthy: "duck-quest/assets/enemies/mimic/healthy/open.webp",
+  amethyst: "duck-quest/assets/shinies/amethyst-mimic-idle-1.webp"
+});
+
+function profileMimicPortraitSource(buddy) {
+  if (!buddy) return "";
+  const enemyId = String(buddy.enemyId || "").toLowerCase();
+  const key = String(buddy.key || "").toLowerCase();
+  const variant = String(buddy.variantId || "").toLowerCase();
+  const name = String(buddy.name || "").toLowerCase();
+  const isMimic = enemyId === "mimic" || key.startsWith("mimic:") || name.includes("mimic");
+  if (!isMimic) return "";
+
+  if (key === "mimic:lucky" || variant === "lucky" || name.includes("lucky mimic")) {
+    return PROFILE_MIMIC_PORTRAITS.lucky;
+  }
+  if (key === "mimic:healthy" || variant === "healthy" || name.includes("healthy mimic")) {
+    return PROFILE_MIMIC_PORTRAITS.healthy;
+  }
+  if (
+    key === "mimic:shiny" ||
+    key === "mimic:amethyst" ||
+    variant === "amethyst" ||
+    variant === "shiny" ||
+    name.includes("amethyst mimic")
+  ) {
+    return PROFILE_MIMIC_PORTRAITS.amethyst;
+  }
+  return PROFILE_MIMIC_PORTRAITS.base;
+}
+
 function buddyImageSource(buddy) {
+  const mimicPortrait = profileMimicPortraitSource(buddy);
+  if (mimicPortrait) return mimicPortrait;
+
   const image = String(buddy?.image || "").trim();
   if (!image) return "";
   if (/^(?:https?:|data:|blob:|\/)/i.test(image)) return image;

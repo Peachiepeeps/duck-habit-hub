@@ -1,0 +1,19 @@
+Duckie Days v24.281 - Mimic Portrait Fix
+
+All Mimic Buddy icons now use a consistent eyes-visible, no-white-claw portrait.
+
+Pink/base:
+  duck-quest/assets/enemies/mimic/base/open-1.webp
+
+Lucky:
+  duck-quest/assets/enemies/mimic/lucky/open.webp
+
+Healthy:
+  duck-quest/assets/enemies/mimic/healthy/open.webp
+
+Amethyst:
+  duck-quest/assets/shinies/amethyst-mimic-idle-1.webp
+
+This also repairs already-saved Mimic copies and makes the main OC profile
+use the same resolver as the Buddy system, including Peep's pink Mimic.
+Chest disguise art and two-frame battle animations remain separate.
