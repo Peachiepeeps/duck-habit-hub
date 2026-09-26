@@ -2204,7 +2204,8 @@ function normalizeBuddyCollection(raw) {
       if(!value || typeof value!=="object" || Array.isArray(value)) continue;
       const key=String(value.key || fallbackKey || "").trim();
       if(!key) continue;
-      collection[key]={
+
+      let normalized={
         key,
         enemyId:String(value.enemyId || ""),
         variantId:String(value.variantId || "base"),
@@ -2216,6 +2217,27 @@ function normalizeBuddyCollection(raw) {
         quantity:Math.max(1,Math.floor(Number(value.quantity)||1)),
         capturedAt:Math.max(0,Number(value.capturedAt)||0)
       };
+
+      // v24.284: Mimic key is the source of truth.
+      // Old saves can contain key=mimic:base with variantId/name/image left
+      // behind from Lucky/Healthy. Never let stale metadata redefine the key.
+      if(key.startsWith("mimic:")){
+        const catalog=BUDDY_CATALOG_BY_KEY.get(key);
+        if(catalog){
+          normalized={
+            ...normalized,
+            enemyId:"mimic",
+            variantId:catalog.variantId,
+            name:catalog.name,
+            image:catalog.image,
+            idle:Array.isArray(catalog.idle)?catalog.idle.slice():[],
+            shiny:Boolean(catalog.shiny),
+            boss:Boolean(catalog.boss)
+          };
+        }
+      }
+
+      collection[key]=normalized;
     }
   }
   return collection;

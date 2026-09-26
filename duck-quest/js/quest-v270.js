@@ -15,19 +15,46 @@
     const isMimic=enemyId==='mimic' || key.startsWith('mimic:') || name.includes('mimic');
     if(!isMimic) return null;
 
-    if(key==='mimic:lucky' || variant==='lucky' || name.includes('lucky mimic')){
+    // v24.284: exact saved key always wins over stale legacy metadata.
+    if(key==='mimic:base'){
+      return {
+        image:'assets/enemies/mimic/base/open-1.webp',
+        idle:['assets/enemies/mimic/base/open-1.webp','assets/enemies/mimic/base/open-2.webp']
+      };
+    }
+    if(key==='mimic:lucky'){
       return {
         image:'assets/enemies/mimic/lucky/open.webp',
         idle:['assets/enemies/mimic/lucky/idle-1.webp','assets/enemies/mimic/lucky/idle-2.webp']
       };
     }
-    if(key==='mimic:healthy' || variant==='healthy' || name.includes('healthy mimic')){
+    if(key==='mimic:healthy'){
       return {
         image:'assets/enemies/mimic/healthy/open.webp',
         idle:['assets/enemies/mimic/healthy/idle-1.webp','assets/enemies/mimic/healthy/idle-2.webp']
       };
     }
-    if(key==='mimic:shiny' || key==='mimic:amethyst' || variant==='amethyst' || variant==='shiny' || name.includes('amethyst mimic')){
+    if(key==='mimic:shiny' || key==='mimic:amethyst'){
+      return {
+        image:'assets/shinies/amethyst-mimic-idle-1.webp',
+        idle:['assets/shinies/amethyst-mimic-idle-1.webp','assets/shinies/amethyst-mimic-idle-2.webp']
+      };
+    }
+
+    // Legacy fallback for pre-key saves only.
+    if(variant==='lucky' || name.includes('lucky mimic')){
+      return {
+        image:'assets/enemies/mimic/lucky/open.webp',
+        idle:['assets/enemies/mimic/lucky/idle-1.webp','assets/enemies/mimic/lucky/idle-2.webp']
+      };
+    }
+    if(variant==='healthy' || name.includes('healthy mimic')){
+      return {
+        image:'assets/enemies/mimic/healthy/open.webp',
+        idle:['assets/enemies/mimic/healthy/idle-1.webp','assets/enemies/mimic/healthy/idle-2.webp']
+      };
+    }
+    if(variant==='amethyst' || variant==='shiny' || name.includes('amethyst mimic')){
       return {
         image:'assets/shinies/amethyst-mimic-idle-1.webp',
         idle:['assets/shinies/amethyst-mimic-idle-1.webp','assets/shinies/amethyst-mimic-idle-2.webp']

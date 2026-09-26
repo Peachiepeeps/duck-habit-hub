@@ -3474,6 +3474,63 @@ function normalizeBuddyRecord(record, fallbackKey = "") {
   const key = String(record.key || fallbackKey || "").trim();
   if (!key) return null;
 
+  const quantity = Math.max(1, Math.floor(Number(record.quantity) || 1));
+  const capturedAt = Math.max(0, Number(record.capturedAt) || 0);
+
+  // v24.284: canonical Mimic identity comes from its key.
+  // This strips stale Lucky/Healthy metadata from mimic:base on page load.
+  const mimicForms = {
+    "mimic:base": {
+      enemyId: "mimic",
+      variantId: "base",
+      name: "Mimic",
+      image: "assets/enemies/mimic/base/open-1.webp",
+      shiny: false,
+      boss: false
+    },
+    "mimic:lucky": {
+      enemyId: "mimic",
+      variantId: "lucky",
+      name: "Lucky Mimic",
+      image: "assets/enemies/mimic/lucky/open.webp",
+      shiny: false,
+      boss: false
+    },
+    "mimic:healthy": {
+      enemyId: "mimic",
+      variantId: "healthy",
+      name: "Healthy Mimic",
+      image: "assets/enemies/mimic/healthy/open.webp",
+      shiny: false,
+      boss: false
+    },
+    "mimic:shiny": {
+      enemyId: "mimic",
+      variantId: "shiny",
+      name: "Amethyst Mimic",
+      image: "assets/shinies/amethyst-mimic-idle-1.webp",
+      shiny: true,
+      boss: false
+    },
+    "mimic:amethyst": {
+      enemyId: "mimic",
+      variantId: "shiny",
+      name: "Amethyst Mimic",
+      image: "assets/shinies/amethyst-mimic-idle-1.webp",
+      shiny: true,
+      boss: false
+    }
+  };
+
+  if (mimicForms[key]) {
+    return {
+      key,
+      ...mimicForms[key],
+      quantity,
+      capturedAt
+    };
+  }
+
   const image = String(record.image || "").trim();
   const name = String(record.name || "Buddy").trim() || "Buddy";
 
@@ -3485,8 +3542,8 @@ function normalizeBuddyRecord(record, fallbackKey = "") {
     image,
     shiny: Boolean(record.shiny),
     boss: Boolean(record.boss),
-    quantity: Math.max(1, Math.floor(Number(record.quantity) || 1)),
-    capturedAt: Math.max(0, Number(record.capturedAt) || 0)
+    quantity,
+    capturedAt
   };
 }
 
@@ -12275,15 +12332,22 @@ function profileMimicPortraitSource(buddy) {
   const isMimic = enemyId === "mimic" || key.startsWith("mimic:") || name.includes("mimic");
   if (!isMimic) return "";
 
-  if (key === "mimic:lucky" || variant === "lucky" || name.includes("lucky mimic")) {
+  // v24.284: exact form key is authoritative.
+  if (key === "mimic:base") return PROFILE_MIMIC_PORTRAITS.base;
+  if (key === "mimic:lucky") return PROFILE_MIMIC_PORTRAITS.lucky;
+  if (key === "mimic:healthy") return PROFILE_MIMIC_PORTRAITS.healthy;
+  if (key === "mimic:shiny" || key === "mimic:amethyst") {
+    return PROFILE_MIMIC_PORTRAITS.amethyst;
+  }
+
+  // Legacy fallback only if an old record has no recognized key.
+  if (variant === "lucky" || name.includes("lucky mimic")) {
     return PROFILE_MIMIC_PORTRAITS.lucky;
   }
-  if (key === "mimic:healthy" || variant === "healthy" || name.includes("healthy mimic")) {
+  if (variant === "healthy" || name.includes("healthy mimic")) {
     return PROFILE_MIMIC_PORTRAITS.healthy;
   }
   if (
-    key === "mimic:shiny" ||
-    key === "mimic:amethyst" ||
     variant === "amethyst" ||
     variant === "shiny" ||
     name.includes("amethyst mimic")
