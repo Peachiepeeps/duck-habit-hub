@@ -84,20 +84,72 @@
   function syncBoxAssignments(box=hubSave.buddyBoxV265){
     if(!box)return false;
     let changed=false;
+
+    // v24.283 one-time repair for the save that originally converted Peep's
+    // pink Mimic into a Lucky Mimic. Prefer an unassigned regular/base Mimic
+    // instance and repair BOTH assignment systems before normal reconciliation.
+    if(!box.peepPinkMimicRepairV24283){
+      const peepSlots=hubSave.buddies?.equippedByCharacter?.peep;
+      const peepMapped=box.equippedInstanceByCharacter?.peep;
+      if(Array.isArray(peepSlots) && peepSlots[0]==='mimic:lucky' && Array.isArray(peepMapped)){
+        const usedElsewhere=new Set();
+        for(const characterId of CHARACTER_IDS){
+          const ids=box.equippedInstanceByCharacter?.[characterId];
+          if(!Array.isArray(ids))continue;
+          ids.forEach((id,index)=>{
+            if(characterId==='peep' && index===0)return;
+            if(typeof id==='string')usedElsewhere.add(id);
+          });
+        }
+        const pink=box.entries.find(entry=>entry?.key==='mimic:base' && !usedElsewhere.has(entry.id));
+        if(pink && hubSave.buddies?.collection?.['mimic:base']){
+          peepSlots[0]='mimic:base';
+          peepMapped[0]=pink.id;
+          box.peepPinkMimicRepairV24283=true;
+          changed=true;
+        }
+      }
+    }
+
     const used=new Set();
     CHARACTER_IDS.forEach(characterId=>{
       const slots=hubSave.buddies?.equippedByCharacter?.[characterId]||Array(6).fill(null);
       const personals=hubSave.buddies?.personalizationByCharacter?.[characterId]||Array(6).fill(null);
       const mapped=box.equippedInstanceByCharacter[characterId]||Array(6).fill(null);
+
       for(let i=0;i<6;i++){
-        const key=typeof slots[i]==='string'?slots[i]:null;
-        if(!key){if(mapped[i]){mapped[i]=null;changed=true;}continue;}
-        let instance=box.entries.find(entry=>entry.id===mapped[i]&&entry.key===key&&!used.has(entry.id));
-        if(!instance)instance=box.entries.find(entry=>entry.key===key&&!used.has(entry.id));
+        let key=typeof slots[i]==='string'?slots[i]:null;
+
+        // The individual Buddy instance is the newer, more precise assignment.
+        // If it is valid and unused, trust its key instead of replacing it
+        // because an older aggregate form key disagrees.
+        let instance=box.entries.find(entry=>entry?.id===mapped[i]&&!used.has(entry.id));
+        if(instance){
+          if(key!==instance.key){
+            slots[i]=instance.key;
+            key=instance.key;
+            changed=true;
+          }
+        }
+
+        if(!key){
+          if(mapped[i]){mapped[i]=null;changed=true;}
+          continue;
+        }
+
+        if(!instance || instance.key!==key){
+          instance=box.entries.find(entry=>entry.key===key&&!used.has(entry.id));
+        }
+
         if(!instance){
           const record=hubSave.buddies.collection?.[key];
-          if(record){instance=instanceFromRecord(record);box.entries.push(instance);changed=true;}
+          if(record){
+            instance=instanceFromRecord(record);
+            box.entries.push(instance);
+            changed=true;
+          }
         }
+
         if(instance){
           if(mapped[i]!==instance.id){mapped[i]=instance.id;changed=true;}
           used.add(instance.id);
@@ -110,8 +162,13 @@
           }
         }
       }
+
       box.equippedInstanceByCharacter[characterId]=mapped;
+      if(hubSave.buddies?.equippedByCharacter){
+        hubSave.buddies.equippedByCharacter[characterId]=slots;
+      }
     });
+
     return changed;
   }
 

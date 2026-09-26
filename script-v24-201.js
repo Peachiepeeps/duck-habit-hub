@@ -12141,7 +12141,53 @@ function syncProfileBuddyInstanceAssignment(characterId, slotIndex, buddyKey) {
   box.equippedInstanceByCharacter[characterId] = mapped;
 }
 
+function repairPeepPinkMimicMainV24283() {
+  const box = save.buddyBoxV265;
+  const buddies = save.buddies;
+  if (!box || typeof box !== "object" || !Array.isArray(box.entries)) return false;
+  if (box.peepPinkMimicRepairV24283) return false;
+  if (!buddies || typeof buddies !== "object") return false;
+
+  const peepSlots = Array.isArray(buddies.equippedByCharacter?.peep)
+    ? buddies.equippedByCharacter.peep
+    : null;
+  if (!peepSlots || peepSlots[0] !== "mimic:lucky") return false;
+  if (!buddies.collection?.["mimic:base"]) return false;
+
+  if (!box.equippedInstanceByCharacter || typeof box.equippedInstanceByCharacter !== "object") {
+    box.equippedInstanceByCharacter = {};
+  }
+  const currentPeepMap = Array.isArray(box.equippedInstanceByCharacter.peep)
+    ? box.equippedInstanceByCharacter.peep
+    : [];
+  const peepMap = Array.from({ length: BUDDY_SLOT_COUNT }, (_, index) =>
+    typeof currentPeepMap[index] === "string" ? currentPeepMap[index] : null
+  );
+
+  const usedElsewhere = new Set();
+  for (const [otherCharacterId, rawSlots] of Object.entries(box.equippedInstanceByCharacter)) {
+    const slots = Array.isArray(rawSlots) ? rawSlots : [];
+    slots.forEach((instanceId, index) => {
+      if (otherCharacterId === "peep" && index === 0) return;
+      if (typeof instanceId === "string") usedElsewhere.add(instanceId);
+    });
+  }
+
+  const pink = box.entries.find(
+    entry => entry && entry.key === "mimic:base" && !usedElsewhere.has(entry.id)
+  );
+  if (!pink) return false;
+
+  peepSlots[0] = "mimic:base";
+  peepMap[0] = pink.id;
+  box.equippedInstanceByCharacter.peep = peepMap;
+  box.peepPinkMimicRepairV24283 = true;
+  persist();
+  return true;
+}
+
 function getBuddySlots(characterId = save.selectedCharacter) {
+  if (characterId === "peep") repairPeepPinkMimicMainV24283();
   if (!save.buddies || typeof save.buddies !== "object") save.buddies = normalizeBuddySave(null);
   if (!save.buddies.equippedByCharacter || typeof save.buddies.equippedByCharacter !== "object") {
     save.buddies.equippedByCharacter = {};
