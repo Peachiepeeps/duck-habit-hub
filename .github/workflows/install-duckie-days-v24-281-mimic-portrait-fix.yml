@@ -1,0 +1,84 @@
+name: Install Duckie Days v24.281 Mimic Portrait Fix
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - "Duckie-Days-v24.281-mimic-portrait-fix-update-only.zip"
+      - ".github/workflows/install-duckie-days-v24-281-mimic-portrait-fix.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-281-mimic-portrait-fix
+  cancel-in-progress: false
+
+jobs:
+  install-update:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Check update bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.281-mimic-portrait-fix-update-only.zip"
+          test -f "$ZIP"
+          unzip -tq "$ZIP"
+
+          test -f duck-quest/assets/enemies/mimic/base/open-1.webp
+          test -f duck-quest/assets/enemies/mimic/lucky/open.webp
+          test -f duck-quest/assets/enemies/mimic/healthy/open.webp
+          test -f duck-quest/assets/shinies/amethyst-mimic-idle-1.webp
+
+      - name: Install and verify v24.281
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.281-mimic-portrait-fix-update-only.zip"
+          TMP=".duckie-days-v24-281"
+
+          rm -rf "$TMP"
+          mkdir -p "$TMP"
+          unzip -q "$ZIP" -d "$TMP"
+
+          python3 -m py_compile "$TMP/tools/patch-v281.py" "$TMP/tools/verify-v281.py"
+          python3 "$TMP/tools/patch-v281.py"
+
+          node --check duck-quest/js/game-v96.js
+          node --check duck-quest/js/quest-v265.js
+          node --check duck-quest/js/quest-v270.js
+          node --check script-v24-201.js
+          node --check sw-v24-281.js
+          node --check sw.js
+
+          python3 "$TMP/tools/verify-v281.py"
+
+      - name: Remove temporary installer files
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf ".duckie-days-v24-281"
+          rm -f "Duckie-Days-v24.281-mimic-portrait-fix-update-only.zip"
+          rm -f ".github/workflows/install-duckie-days-v24-281-mimic-portrait-fix.yml"
+
+      - name: Commit app update
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+          if git diff --cached --quiet; then
+            echo "ERROR: No changes were staged."
+            exit 1
+          fi
+
+          git commit -m "Fix Mimic portraits across Buddy Box and OC profiles"
+          git push
