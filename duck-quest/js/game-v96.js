@@ -2251,6 +2251,234 @@ function enemyVariantId(enemy) {
   );
 }
 
+const SPECIAL_VARIANT_POWERS = Object.freeze({
+  "acorn-mouse:purple": {name:"Nutty Defense!",type:"guard",chance:.30,maxUses:2,guardMultiplier:.70,guardHits:1},
+  "catterpillar:orange": {name:"Sticky Silk!",type:"hero-next-attack-down",chance:.30,maxUses:2,heroAttackMultiplier:.75},
+  "tree-squirrel:peach": {name:"Acorn Barrage!",type:"attack-stun",chance:.28,maxUses:2,multiplier:1.25,stunChance:.20},
+  "seaunicorn:dark": {name:"Bubble Veil!",type:"guard",chance:.30,maxUses:2,guardMultiplier:.80,guardHits:2},
+  "sea-star:blue": {name:"Regrow!",type:"heal",chance:.32,maxUses:2,healPercent:.25},
+  "jellybun:grey": {name:"Jelly Shock!",type:"attack-paralyze",chance:.28,maxUses:2,multiplier:1.25,paralyzeChance:.35,paralyzeMoves:5,paralyzeFailChance:.10},
+  "vampire-squid:coral": {name:"Deep Drain!",type:"deep-drain",chance:.30,maxUses:2,multiplier:1.10,drainPercent:.75},
+  "apple-baby:green": {name:"Juicy Snack!",type:"heal",chance:.32,maxUses:2,healPercent:.25},
+  "gummy-worm:red": {name:"Sticky Gummy!",type:"hero-next-attack-down",chance:.30,maxUses:2,heroAttackMultiplier:.75},
+  "pudding-pig:choco": {name:"Pudding Splash!",type:"hero-attack-down",chance:.30,maxUses:2,heroAttackMultiplier:.80,duration:2},
+  "gingerlolly:purple": {name:"Double Bonk!",type:"double-hit",chance:.24,maxUses:1,multiplier:1.25,hits:2},
+  "candycane-deer:yellow": {name:"Candy Headbutt!",type:"recoil-attack",chance:.28,maxUses:2,multiplier:1.50,recoilPercent:.10},
+  "gummy-shark:orange": {name:"Mega Gummy Chomp!",type:"attack-hero-next-down",chance:.28,maxUses:2,multiplier:1.30,heroAttackMultiplier:.80},
+  "cream-fox:strawberry": {name:"Whipped Cream!",type:"heal-guard",chance:.30,maxUses:2,healPercent:.18,guardMultiplier:.80,guardHits:1},
+  "star-mouse:purple": {name:"Wish Upon a Star!",type:"heal-next-attack-up",chance:.30,maxUses:2,healPercent:.12,attackMultiplier:1.15},
+  "puff-fairy:purple": {name:"Fairy Fluff!",type:"hero-stun-chance",chance:.32,maxUses:2,statusChance:.25,stunTurns:1},
+  "tulipa:dark": {name:"Photosynthesis!",type:"heal-guard",chance:.30,maxUses:2,healPercent:.15,guardMultiplier:.85,guardHits:1},
+  "snoud:grey": {name:"Cold Snap!",type:"hero-sleep-chance",chance:.32,maxUses:2,statusChance:.25,sleepTurns:2},
+  "cloud-bunny:black": {name:"Cloud Dodge!",type:"dodge",chance:.30,maxUses:99,cooldownTurns:3},
+  "lunar-moth:golden": {name:"Moon Shine!",type:"heal-attack-up",chance:.30,maxUses:2,healPercent:.10,attackMultiplier:1.15,duration:2},
+  "aries:galaxy": {name:"Ram Rush!",type:"attack-hero-next-down",chance:.28,maxUses:2,multiplier:1.30,heroAttackMultiplier:.80},
+  "cherub-duck:aqua": {name:"Cherub Blessing!",type:"heal-guard",chance:.30,maxUses:2,healPercent:.18,guardMultiplier:.80,guardHits:1}
+});
+
+function configureEnemySpecialVariant(enemy){
+  if(!enemy || enemy.shiny) return enemy;
+  const key=`${String(enemy.id||"")}:${enemyVariantId(enemy)}`;
+  const power=SPECIAL_VARIANT_POWERS[key];
+  if(!power) return enemy;
+  enemy.variantSpecial={...power};
+  enemy.variantSpecialUses=0;
+  enemy.variantGuardHitsRemaining=0;
+  enemy.variantGuardMultiplier=1;
+  enemy.variantGuardName="";
+  enemy.variantDodgeReady=false;
+  enemy.variantDodgeCooldown=0;
+  enemy.variantNextAttackMultiplier=1;
+  enemy.variantAttackBoostTurns=0;
+  enemy.variantAttackBoostMultiplier=1;
+  if(key==="vampire-squid:coral") enemy.lifeDrain=false;
+  if(power.type==="heal"){
+    enemy.healPercent=Number(power.healPercent)||0;
+    enemy.maxHeals=Number(power.maxUses)||2;
+    enemy.healChance=Number(power.chance)||.30;
+    enemy.healMoveName=power.name;
+  }
+  return enemy;
+}
+
+function heroSkillDealsDamage(skill){
+  if(!skill) return false;
+  return !["heal","full-heal","buff","full-heal-buff","self-damage-buff","stun"].includes(String(skill.type||""));
+}
+
+async function blockHeroAttackFromSpecialStatus(skill){
+  if(!heroSkillDealsDamage(skill)) return false;
+  if(Number(skillState.heroSleepTurns||0)>0){
+    setMessage(`${heroDisplayName()} is asleep and can't attack!${skillState.heroSleepTurns>0?` ${skillState.heroSleepTurns} sleepy turn${skillState.heroSleepTurns===1?"":"s"} left.`:""}`);
+    await sleep(650); return true;
+  }
+  if(Number(skillState.heroStunTurns||0)>0){
+    setMessage(`${heroDisplayName()} is stunned and can't attack!`);
+    await sleep(650); return true;
+  }
+  if(Number(skillState.heroParalysisMoves||0)>0){
+    const failChance=Math.max(0,Math.min(1,Number(skillState.heroParalysisFailChance)||.10));
+    if(Math.random()<failChance){
+      setMessage(`${heroDisplayName()} is paralyzed and couldn't attack!${skillState.heroParalysisMoves>0?` ${skillState.heroParalysisMoves} affected move${skillState.heroParalysisMoves===1?"":"s"} left.`:""}`);
+      await sleep(650);
+      return true;
+    }
+  }
+  return false;
+}
+
+function beginHeroSpecialAttackScale(skill){
+  specialHeroAttackScale=1;
+  if(!heroSkillDealsDamage(skill)) return 1;
+  let mult=1;
+  if(Number(skillState.heroAttackDownTurns||0)>0){
+    mult*=Math.max(.10,Number(skillState.heroAttackDownMultiplier)||1);
+  }
+  if(Number(skillState.heroNextAttackMultiplier||1)<1){
+    mult*=Math.max(.10,Number(skillState.heroNextAttackMultiplier)||1);
+    skillState.heroNextAttackMultiplier=1;
+  }
+  specialHeroAttackScale=Math.max(.10,mult);
+  return specialHeroAttackScale;
+}
+
+function clearHeroSpecialAttackScale(){ specialHeroAttackScale=1; }
+
+function applyEnemyVariantGuard(power){
+  currentEnemy.variantGuardHitsRemaining=Math.max(1,Number(power.guardHits)||1);
+  currentEnemy.variantGuardMultiplier=Math.max(.10,Math.min(1,Number(power.guardMultiplier)||1));
+  currentEnemy.variantGuardName=power.name||"Special Guard";
+}
+
+function healCurrentEnemyPercent(percent){
+  if(!currentEnemy || currentEnemy.hpNow<=0) return 0;
+  const before=currentEnemy.hpNow;
+  const amount=Math.max(1,Math.round(currentEnemy.maxHp*Math.max(0,Number(percent)||0)));
+  currentEnemy.hpNow=Math.min(currentEnemy.maxHp,currentEnemy.hpNow+amount);
+  const healed=Math.max(0,currentEnemy.hpNow-before);
+  if(healed>0){ showFloat(`+${healed}`,"heal","enemy"); renderEnemyHp(); }
+  return healed;
+}
+
+async function tryEnemySpecialVariantMove(){
+  const power=currentEnemy?.variantSpecial;
+  if(!currentEnemy || !power) return false;
+  if(power.type==="heal") return false; // handled by the existing healer-variant branch above
+  if(Number(currentEnemy.variantSpecialUses||0)>=Number(power.maxUses||2)) return false;
+  if(power.type==="dodge" && (currentEnemy.variantDodgeReady || Number(currentEnemy.variantDodgeCooldown||0)>0)) return false;
+  if(power.type==="guard" && Number(currentEnemy.variantGuardHitsRemaining||0)>0) return false;
+  if(power.type==="heal" && currentEnemy.hpNow>=currentEnemy.maxHp) return false;
+  if(power.type==="heal-guard" && currentEnemy.hpNow>=currentEnemy.maxHp && Number(currentEnemy.variantGuardHitsRemaining||0)>0) return false;
+  if(Math.random()>=Math.max(0,Math.min(1,Number(power.chance)||.30))) return false;
+
+  currentEnemy.variantSpecialUses=Math.max(0,Number(currentEnemy.variantSpecialUses)||0)+1;
+  const refs=activeEnemyUi();
+  const pop=async()=>{ refs.sprite?.classList.add("attack-pop"); await sleep(300); refs.sprite?.classList.remove("attack-pop"); };
+
+  if(power.type==="guard"){
+    applyEnemyVariantGuard(power);
+    setMessage(`${currentEnemy.name} used ${power.name} The next ${Number(power.guardHits)||1} hit${Number(power.guardHits)===1?"":"s"} deal less damage.`);
+    await pop(); return true;
+  }
+  if(power.type==="hero-next-attack-down"){
+    skillState.heroNextAttackMultiplier=Math.min(Number(skillState.heroNextAttackMultiplier||1),Number(power.heroAttackMultiplier)||.75);
+    setMessage(`${currentEnemy.name} used ${power.name} ${heroDisplayName()}'s next attack is weakened!`);
+    await pop(); return true;
+  }
+  if(power.type==="attack-stun"){
+    const dealt=await performEnemyAttack(Number(power.multiplier)||1.25,`${currentEnemy.name} used ${power.name}`);
+    if(currentRun?.hp>0 && dealt>0 && Math.random()<Number(power.stunChance||.20)){
+      skillState.heroStunTurns=Math.max(Number(skillState.heroStunTurns||0),1);
+      setMessage(`${power.name} stunned ${heroDisplayName()}!`); await sleep(420);
+    }
+    return true;
+  }
+  if(power.type==="attack-paralyze"){
+    const dealt=await performEnemyAttack(Number(power.multiplier)||1.25,`${currentEnemy.name} used ${power.name}`);
+    if(currentRun?.hp>0 && dealt>0 && Math.random()<Number(power.paralyzeChance||.35)){
+      skillState.heroParalysisMoves=Math.max(Number(skillState.heroParalysisMoves||0),Number(power.paralyzeMoves)||5);
+      skillState.heroParalysisFailChance=Number(power.paralyzeFailChance)||.10;
+      setMessage(`${heroDisplayName()} was paralyzed! For the next ${skillState.heroParalysisMoves} attacks, there is a 10% chance they can't attack.`);
+      await sleep(500);
+    }
+    return true;
+  }
+  if(power.type==="deep-drain"){
+    await performEnemyAttack(Number(power.multiplier)||1.10,`${currentEnemy.name} used ${power.name}`,Number(power.drainPercent)||.75);
+    return true;
+  }
+  if(power.type==="hero-attack-down"){
+    skillState.heroAttackDownTurns=Math.max(Number(skillState.heroAttackDownTurns||0),Number(power.duration)||2);
+    skillState.heroAttackDownMultiplier=Math.min(Number(skillState.heroAttackDownMultiplier||1),Number(power.heroAttackMultiplier)||.80);
+    setMessage(`${currentEnemy.name} used ${power.name} ${heroDisplayName()}'s Attack fell by ${Math.round((1-(Number(power.heroAttackMultiplier)||.80))*100)}% for ${Number(power.duration)||2} attacks.`);
+    await pop(); return true;
+  }
+  if(power.type==="double-hit"){
+    setMessage(`${currentEnemy.name} used ${power.name}`); await sleep(220);
+    const hits=Math.max(2,Number(power.hits)||2);
+    for(let i=0;i<hits && currentRun?.hp>0;i++){
+      await performEnemyAttack(Number(power.multiplier)||1.25,`${power.name} Hit ${i+1}!`);
+      if(i<hits-1 && currentRun?.hp>0) await sleep(120);
+    }
+    return true;
+  }
+  if(power.type==="recoil-attack"){
+    await performEnemyAttack(Number(power.multiplier)||1.50,`${currentEnemy.name} used ${power.name}`);
+    if(currentEnemy?.hpNow>1){
+      const recoil=Math.max(1,Math.round(currentEnemy.maxHp*Math.max(0,Number(power.recoilPercent)||.10)));
+      const before=currentEnemy.hpNow;
+      currentEnemy.hpNow=Math.max(1,currentEnemy.hpNow-recoil);
+      const lost=Math.max(0,before-currentEnemy.hpNow);
+      if(lost>0){ showFloat(`-${lost}`,"damage","enemy"); renderEnemyHp(); setMessage(`${power.name} hit hard, but ${currentEnemy.name} took ${lost} recoil damage!`); await sleep(420); }
+    }
+    return true;
+  }
+  if(power.type==="attack-hero-next-down"){
+    const dealt=await performEnemyAttack(Number(power.multiplier)||1.30,`${currentEnemy.name} used ${power.name}`);
+    if(currentRun?.hp>0 && dealt>0){
+      skillState.heroNextAttackMultiplier=Math.min(Number(skillState.heroNextAttackMultiplier||1),Number(power.heroAttackMultiplier)||.80);
+      setMessage(`${power.name} weakened ${heroDisplayName()}'s next attack!`); await sleep(360);
+    }
+    return true;
+  }
+  if(power.type==="heal-guard"){
+    const healed=healCurrentEnemyPercent(power.healPercent); applyEnemyVariantGuard(power);
+    setMessage(`${currentEnemy.name} used ${power.name} ${healed>0?`Recovered ${healed} HP and `:""}softened the next hit.`);
+    await pop(); return true;
+  }
+  if(power.type==="heal-next-attack-up"){
+    const healed=healCurrentEnemyPercent(power.healPercent);
+    currentEnemy.variantNextAttackMultiplier=Math.max(Number(currentEnemy.variantNextAttackMultiplier||1),Number(power.attackMultiplier)||1.15);
+    setMessage(`${currentEnemy.name} used ${power.name} ${healed>0?`Recovered ${healed} HP and `:""}powered up its next attack!`);
+    await pop(); return true;
+  }
+  if(power.type==="hero-stun-chance"){
+    const landed=Math.random()<Number(power.statusChance||.25);
+    if(landed) skillState.heroStunTurns=Math.max(Number(skillState.heroStunTurns||0),Number(power.stunTurns)||1);
+    setMessage(`${currentEnemy.name} used ${power.name}${landed?` ${heroDisplayName()} is too dazed to attack next turn!`:" It sparkled harmlessly this time."}`);
+    await pop(); return true;
+  }
+  if(power.type==="hero-sleep-chance"){
+    const landed=Math.random()<Number(power.statusChance||.25);
+    if(landed) skillState.heroSleepTurns=Math.max(Number(skillState.heroSleepTurns||0),Number(power.sleepTurns)||2);
+    setMessage(`${currentEnemy.name} used ${power.name}${landed?` ${heroDisplayName()} fell asleep for ${Number(power.sleepTurns)||2} turns!`:" ${heroDisplayName()} stayed awake!"}`);
+    await pop(); return true;
+  }
+  if(power.type==="dodge"){
+    currentEnemy.variantDodgeReady=true;
+    setMessage(`${currentEnemy.name} used ${power.name} The next incoming attack will miss completely!`);
+    await pop(); return true;
+  }
+  if(power.type==="heal-attack-up"){
+    const healed=healCurrentEnemyPercent(power.healPercent);
+    currentEnemy.variantAttackBoostTurns=Math.max(Number(currentEnemy.variantAttackBoostTurns||0),Number(power.duration)||2);
+    currentEnemy.variantAttackBoostMultiplier=Math.max(Number(currentEnemy.variantAttackBoostMultiplier||1),Number(power.attackMultiplier)||1.15);
+    setMessage(`${currentEnemy.name} used ${power.name} ${healed>0?`Recovered ${healed} HP and `:""}Attack rose by 15% for ${Number(power.duration)||2} attacks.`);
+    await pop(); return true;
+  }
+  return false;
+}
+
 function buddyKeyForEnemy(enemy) {
   return `${enemy?.id || "enemy"}:${enemy?.shiny ? "shiny" : enemyVariantId(enemy)}`;
 }
@@ -2996,6 +3224,7 @@ const QUICK_HEAL_PERCENT = 0.25;
 const QUICK_HEAL_MAX_USES = 4;
 let quickHealUses = 0;
 let skillState = {};
+let specialHeroAttackScale = 1;
 let buddyUsedThisHeroTurn = false;
 let activeBattleBuddySlot = 0;
 let buddySwitchUsedThisEncounter = false;
@@ -3577,7 +3806,7 @@ function peepStats(level = activeHeroProgress().level) {
   const hpBonus=Math.max(0,Number(vitality?.hpBonus)||0);
   return {
     maxHp: Math.round((42 + (level - 1) * 4.2) * (1 + hpBonus)),
-    attack: Math.round(8 + (level - 1) * 1.15),
+    attack: Math.round((8 + (level - 1) * 1.15) * Math.max(0.10, Number(specialHeroAttackScale)||1)),
     defense: Math.round(2 + (level - 1) * 0.48)
   };
 }
@@ -5071,8 +5300,12 @@ function startEncounter() {
     enemyAccuracyDownTurns:0, enemyMissChance:0,
     enemyBurnTurns:0, enemyBurnDamagePercent:0,
     heroMissTurns:0, heroMissChance:0,
+    heroNextAttackMultiplier:1, heroAttackDownTurns:0, heroAttackDownMultiplier:1,
+    heroStunTurns:0, heroSleepTurns:0, heroParalysisMoves:0, heroParalysisFailChance:0,
     enemyNextAttackMultiplier:1, enemyStunned:false, enemyStunTurns:0
   };
+  specialHeroAttackScale=1;
+  currentRun.luckyFluffUsedThisEncounter=false;
   buddyUsedThisHeroTurn=false;
   activeBattleBuddySlot=firstAssignedBattleBuddySlot();
   buddySwitchUsedThisEncounter=false;
@@ -5251,6 +5484,7 @@ function startEnemy(enemyId, options={}) {
     : enemyScaled(template,currentRun.rank,currentRun.area);
   currentEnemy.id=enemyId;
   currentEnemy._doubleSlot=Number(options.slot)===1?1:0;
+  configureEnemySpecialVariant(currentEnemy);
   currentEnemy.healsUsed=0; currentEnemy.specialUses=0; currentEnemy.shellHitsRemaining=0;
   currentEnemy.zoomiesBoost=false; currentEnemy.lifeDrainsUsed=0;
   ensureEnemyEffectSnapshot(currentEnemy);
@@ -5410,6 +5644,7 @@ async function useBuddySkill(){
   const baseSkill=buddySkillForEnemyId(buddy?.enemyId);
   const skill=window.DUCKIE_BUDDY_BOX_V265?.scaleSkill?.(baseSkill,buddy?.level||1)||baseSkill;
   if(actionLocked || !currentEnemy || !buddy || !skill || Number(skillState.buddyCooldown||0)>0) return;
+  if(currentRun && buddy.enemyId==="plushbun" && buddy.variantId==="red") currentRun.luckyFluffUsedThisEncounter=true;
   closeCommandWindow();
   actionLocked=true;
   skillState.buddyCooldown=3;
@@ -6052,6 +6287,14 @@ async function useAllEnemySkill(skill){
   actionLocked=true;
   renderSkills();
   renderCommandButtons();
+  if(await blockHeroAttackFromSpecialStatus(skill)){
+    decrementCooldowns("special-status-skip");
+    await enemyTurnSequence();
+    actionLocked=false;
+    renderCommandButtons(); renderSkills(); renderBattleItems();
+    return;
+  }
+  beginHeroSpecialAttackScale(skill);
   setHeroFrame(skill.sprite || heroIdleFrames()[0]);
   addHeroVisualClass("attack-pop");
 
@@ -6109,6 +6352,7 @@ async function useAllEnemySkill(skill){
 
   removeHeroVisualClass("attack-pop");
   restoreHeroIdleFrame();
+  clearHeroSpecialAttackScale();
   decrementCooldowns(skill.id);
 
   const defeated=targets.filter(enemy=>enemy && enemy.hpNow<=0 && !enemy._defeated);
@@ -6138,6 +6382,14 @@ async function useSkill(skill) {
   renderSkills();
   renderCommandButtons();
 
+  if(await blockHeroAttackFromSpecialStatus(skill)){
+    decrementCooldowns("special-status-skip");
+    await enemyTurnSequence();
+    actionLocked=false;
+    renderCommandButtons(); renderSkills(); renderBattleItems();
+    return;
+  }
+  beginHeroSpecialAttackScale(skill);
   setHeroFrame(skill.sprite || heroIdleFrames()[0]);
   addHeroVisualClass("attack-pop");
 
@@ -6362,6 +6614,7 @@ async function useSkill(skill) {
 
   removeHeroVisualClass("attack-pop");
   restoreHeroIdleFrame();
+  clearHeroSpecialAttackScale();
   decrementCooldowns(skill.id);
 
   if(currentEnemy && currentEnemy.hpNow<=0) {
@@ -6389,18 +6642,43 @@ function decrementCooldowns(usedSkillId) {
     skillState.heroMissTurns--;
     if(skillState.heroMissTurns<=0) skillState.heroMissChance=0;
   }
+  if(Number(skillState.heroAttackDownTurns||0)>0){
+    skillState.heroAttackDownTurns=Math.max(0,Number(skillState.heroAttackDownTurns||0)-1);
+    if(skillState.heroAttackDownTurns<=0) skillState.heroAttackDownMultiplier=1;
+  }
+  if(Number(skillState.heroStunTurns||0)>0) skillState.heroStunTurns=Math.max(0,Number(skillState.heroStunTurns||0)-1);
+  if(Number(skillState.heroSleepTurns||0)>0) skillState.heroSleepTurns=Math.max(0,Number(skillState.heroSleepTurns||0)-1);
+  if(Number(skillState.heroParalysisMoves||0)>0){
+    skillState.heroParalysisMoves=Math.max(0,Number(skillState.heroParalysisMoves||0)-1);
+    if(skillState.heroParalysisMoves<=0) skillState.heroParalysisFailChance=0;
+  }
   tickPlayerBuddyEffects();
 }
 
 async function hurtEnemyNonLethal(dmg=1) {
   if(!currentEnemy) return;
   const before=Math.max(0,Number(currentEnemy.hpNow)||0);
+
+  if(currentEnemy.variantDodgeReady){
+    currentEnemy.variantDodgeReady=false;
+    const cooldown=Math.max(1,Number(currentEnemy.variantSpecial?.cooldownTurns)||3);
+    currentEnemy.variantDodgeCooldown=cooldown+1;
+    setMessage(`${currentEnemy.name}'s Cloud Dodge made the attack miss completely!`);
+    await sleep(360);
+    return 0;
+  }
+
   if(before<=1){
     currentEnemy.hpNow=1;
     renderEnemyHp();
     return;
   }
-  const finalDmg=Math.max(1,Math.round(Number(dmg)||1));
+  let finalDmg=Math.max(1,Math.round(Number(dmg)||1));
+  if(Number(currentEnemy.variantGuardHitsRemaining||0)>0){
+    finalDmg=Math.max(1,Math.ceil(finalDmg*Math.max(.10,Number(currentEnemy.variantGuardMultiplier)||1)));
+    currentEnemy.variantGuardHitsRemaining=Math.max(0,Number(currentEnemy.variantGuardHitsRemaining||0)-1);
+    setMessage(`${currentEnemy.variantGuardName||"Special Guard"} reduced the damage!`);
+  }
   currentEnemy.hpNow=Math.max(1,before-finalDmg);
   const dealt=Math.max(0,before-currentEnemy.hpNow);
   const refs=activeEnemyUi();
@@ -6418,6 +6696,22 @@ async function hurtEnemyNonLethal(dmg=1) {
 async function hurtEnemy(dmg) {
   if(!currentEnemy) return;
   let finalDmg=Math.max(1,Math.round(dmg));
+
+  if(currentEnemy.variantDodgeReady){
+    currentEnemy.variantDodgeReady=false;
+    const cooldown=Math.max(1,Number(currentEnemy.variantSpecial?.cooldownTurns)||3);
+    currentEnemy.variantDodgeCooldown=cooldown+1;
+    setMessage(`${currentEnemy.name}'s Cloud Dodge made the attack miss completely!`);
+    await sleep(360);
+    return 0;
+  }
+
+  if(Number(currentEnemy.variantGuardHitsRemaining||0)>0){
+    finalDmg=Math.max(1,Math.ceil(finalDmg*Math.max(.10,Number(currentEnemy.variantGuardMultiplier)||1)));
+    currentEnemy.variantGuardHitsRemaining=Math.max(0,Number(currentEnemy.variantGuardHitsRemaining||0)-1);
+    setMessage(`${currentEnemy.variantGuardName||"Special Guard"} reduced the damage!`);
+  }
+
   if(Number(currentEnemy.shellHitsRemaining||0)>0){
     finalDmg=Math.max(1,Math.ceil(finalDmg*.75));
     currentEnemy.shellHitsRemaining--;
@@ -6449,7 +6743,16 @@ async function performEnemyAttack(multiplier=1,label="",lifeDrainHeal=0){
   const attackDebuff=skillState.enemyAttackDownTurns>0?skillState.enemyAttackMultiplier:1;
   const weakened=Math.max(.1,Number(skillState.enemyNextAttackMultiplier)||1);
   skillState.enemyNextAttackMultiplier=1;
-  let dmg=Math.max(1,Math.round((currentEnemy.attackNow*attackDebuff-(stats.defense*.55))*(.85+Math.random()*.25)*multiplier*weakened));
+  const variantNextBoost=Math.max(.1,Number(currentEnemy.variantNextAttackMultiplier)||1);
+  const variantTimedBoost=Number(currentEnemy.variantAttackBoostTurns||0)>0
+    ? Math.max(.1,Number(currentEnemy.variantAttackBoostMultiplier)||1)
+    : 1;
+  currentEnemy.variantNextAttackMultiplier=1;
+  if(Number(currentEnemy.variantAttackBoostTurns||0)>0){
+    currentEnemy.variantAttackBoostTurns=Math.max(0,Number(currentEnemy.variantAttackBoostTurns||0)-1);
+    if(currentEnemy.variantAttackBoostTurns<=0) currentEnemy.variantAttackBoostMultiplier=1;
+  }
+  let dmg=Math.max(1,Math.round((currentEnemy.attackNow*attackDebuff-(stats.defense*.55))*(.85+Math.random()*.25)*multiplier*weakened*variantNextBoost*variantTimedBoost));
   if(crit) dmg=Math.round(dmg*1.5);
   if(skillState.heroGuardTurns>0) dmg=Math.max(1,Math.round(dmg*Math.max(.1,Number(skillState.heroGuardMultiplier)||1)));
   if(Number(skillState.heroNextDamageMultiplier||1)<1){
@@ -6474,6 +6777,10 @@ async function performEnemyAttack(multiplier=1,label="",lifeDrainHeal=0){
 
 async function enemyTurn() {
   if(!currentEnemy || currentEnemy.hpNow<=0) return;
+
+  if(Number(currentEnemy.variantDodgeCooldown||0)>0){
+    currentEnemy.variantDodgeCooldown=Math.max(0,Number(currentEnemy.variantDodgeCooldown||0)-1);
+  }
 
   if(Number(skillState.enemyStunTurns||0)>0){
     skillState.enemyStunTurns=Math.max(0,Number(skillState.enemyStunTurns||0)-1);
@@ -6511,6 +6818,12 @@ async function enemyTurn() {
     const gained=currentEnemy.hpNow-before; setMessage(`${currentEnemy.name} used ${currentEnemy.healMoveName||"Recovery!"}`);
     const refs=activeEnemyUi(); refs.sprite?.classList.add("attack-pop");showFloat(`+${gained}`,"heal","enemy");renderEnemyHp();await sleep(650);
     refs.sprite?.classList.remove("attack-pop");if(await finishEnemyBuddyTurn()) return; setMessage(`${heroDisplayName()} is ready!`);return;
+  }
+
+  // New color-specific special variants.
+  if(await tryEnemySpecialVariantMove()){
+    if(await finishEnemyBuddyTurn()) return;
+    return;
   }
 
   // Pink Sea Turtle: protects itself from the next two player attacks.
@@ -7010,6 +7323,7 @@ async function openPendingChest() {
   if(rewards.iconBorderColor) textParts.push(`${rewards.iconBorderColor.label} Border Color`);
   if(rewards.items.length) textParts.push(rewards.items.map(x=>`${x.name} ×${x.qty}`).join(", "));
   if(rewards.charmTreasureBonus) textParts.push("Treasure Charm bonus!");
+  if(rewards.luckyFluffBonus) textParts.push(`Lucky Fluff +${rewards.luckyFluffBonus} Coins!`);
   if(rewards.tradingCardResults?.length) textParts.push(rewards.tradingCardResults.map(result=>`${result.card.name} Card${result.isNew?" ✨":""}`).join(", "));
 
   ui.chestCaption.textContent=pendingChest.hiddenTreasure
@@ -7054,6 +7368,19 @@ function finalizeCharmRewards(reward,chest){
   const treasure=activeCharmByFamily("treasure");
   reward.coins=Math.max(0,Math.round((Number(reward.coins)||0)*(1+Math.max(0,Number(fortune?.coinBonus)||0))));
   reward.exp=Math.max(0,Math.round((Number(reward.exp)||0)*(1+Math.max(0,Number(training?.expBonus)||0))));
+
+  // Red Plushbun — Lucky Fluff: +5–12 coins when the special Plushbun was
+  // defeated/caught, or when a Red Plushbun Buddy was active/used in the fight.
+  const battleFoes=Array.isArray(chest?.enemies) && chest.enemies.length
+    ? chest.enemies
+    : (chest?.enemy ? [chest.enemy] : []);
+  const redPlushbunFoe=battleFoes.some(enemy=>enemy?.id==="plushbun" && enemyVariantId(enemy)==="red");
+  const activeBuddy=activeBattleBuddyRecord();
+  const redPlushbunBuddy=activeBuddy?.enemyId==="plushbun" && activeBuddy?.variantId==="red";
+  if(battleFoes.length && (redPlushbunFoe || redPlushbunBuddy || currentRun?.luckyFluffUsedThisEncounter)){
+    reward.luckyFluffBonus=randInt(5,12);
+  }
+
   const treasureChance=Math.max(0,Math.min(1,Number(treasure?.treasureChance)||0));
   if(treasureChance>0&&Math.random()<treasureChance){ addRewardItem(reward.items,jackpotItem(),1); reward.charmTreasureBonus=true; }
   return reward;
@@ -7208,6 +7535,8 @@ function applyRewards(rewards) {
   const affectionMultiplier=affectionRewardMultiplier();
   rewards.coins=Math.max(0,Math.round((Number(rewards.coins)||0)*affectionMultiplier));
   rewards.exp=Math.max(0,Math.round((Number(rewards.exp)||0)*affectionMultiplier));
+  // Lucky Fluff is a flat +5–12 coin bonus, so charms/affection do not inflate it.
+  if(rewards.luckyFluffBonus) rewards.coins+=Math.max(0,Math.round(Number(rewards.luckyFluffBonus)||0));
   hubSave.coins=Math.max(0,Number(hubSave.coins)||0)+rewards.coins;
   if(!hubSave.stats || typeof hubSave.stats!=="object") hubSave.stats={};
   hubSave.stats.coinsEarnedTotal=Math.max(0,Number(hubSave.stats.coinsEarnedTotal)||0)+Math.max(0,Number(rewards.coins)||0);
@@ -8296,7 +8625,7 @@ setInterval(()=>{
   const oldSituationTitle=situationTitle;situationTitle=function(type){if(type==='mysterious-merchant')return'Mysterious Merchant';if(type==='sibling-spat')return'Sibling Spat';return oldSituationTitle(type)};
   const oldHeader=updateEncounterHeader;updateEncounterHeader=function(encounter=currentEncounterData()){oldHeader(encounter);if(encounter?.type==='mysterious-merchant')ui.encounterLabel.textContent+=' · MERCHANT';else if(encounter?.type==='sibling-spat')ui.encounterLabel.textContent+=' · SIBLING SPAT'};
   const oldStartEncounter=startEncounter;startEncounter=function(){const encounter=currentRun?.mode==='endless'?currentRun.endlessEncounter:currentRun?.plan?.[currentRun?.index];if(encounter?.type!=='mysterious-merchant'&&encounter?.type!=='sibling-spat')return oldStartEncounter();
-    clearAnimations();actionLocked=false;pendingChest=null;pendingDefeatedEnemy=null;befriendAttempted=false;ui.befriendPanel?.classList.add('hidden');ui.ponPurchasePanel?.classList.add('hidden');quickHealUses=0;skillState={cooldowns:{},onceUsed:{},attackBuffTurns:0,attackBuffMultiplier:1.30,activeBuffSkillId:null,heartRayCount:0,ioRainbowUses:0,buddyCooldown:0,buddyAttackBuffTurns:0,buddyAttackMultiplier:1.15,heroGuardTurns:0,heroGuardMultiplier:1,heroNextDamageMultiplier:1,enemyAttackDownTurns:0,enemyAttackMultiplier:1,enemyDefenseDownTurns:0,enemyDefenseMultiplier:1,enemyAccuracyDownTurns:0,enemyMissChance:0,enemyBurnTurns:0,enemyBurnDamagePercent:0,heroMissTurns:0,heroMissChance:0,enemyNextAttackMultiplier:1,enemyStunned:false,enemyStunTurns:0};buddyUsedThisHeroTurn=false;activeBattleBuddySlot=firstAssignedBattleBuddySlot();buddySwitchUsedThisEncounter=false;renderBattleCharmStrip();resetDoubleBattleUi();hideEventChoices();ui.postFloorActions?.classList.add('hidden');ui.leaveEndlessButton?.classList.add('hidden');setPostFloorLayout(false);
+    clearAnimations();actionLocked=false;pendingChest=null;pendingDefeatedEnemy=null;befriendAttempted=false;ui.befriendPanel?.classList.add('hidden');ui.ponPurchasePanel?.classList.add('hidden');quickHealUses=0;skillState={cooldowns:{},onceUsed:{},attackBuffTurns:0,attackBuffMultiplier:1.30,activeBuffSkillId:null,heartRayCount:0,ioRainbowUses:0,buddyCooldown:0,buddyAttackBuffTurns:0,buddyAttackMultiplier:1.15,heroGuardTurns:0,heroGuardMultiplier:1,heroNextDamageMultiplier:1,enemyAttackDownTurns:0,enemyAttackMultiplier:1,enemyDefenseDownTurns:0,enemyDefenseMultiplier:1,enemyAccuracyDownTurns:0,enemyMissChance:0,enemyBurnTurns:0,enemyBurnDamagePercent:0,heroMissTurns:0,heroMissChance:0,heroNextAttackMultiplier:1,heroAttackDownTurns:0,heroAttackDownMultiplier:1,heroStunTurns:0,heroSleepTurns:0,heroParalysisMoves:0,heroParalysisFailChance:0,enemyNextAttackMultiplier:1,enemyStunned:false,enemyStunTurns:0};specialHeroAttackScale=1;if(currentRun)currentRun.luckyFluffUsedThisEncounter=false;buddyUsedThisHeroTurn=false;activeBattleBuddySlot=firstAssignedBattleBuddySlot();buddySwitchUsedThisEncounter=false;renderBattleCharmStrip();resetDoubleBattleUi();hideEventChoices();ui.postFloorActions?.classList.add('hidden');ui.leaveEndlessButton?.classList.add('hidden');setPostFloorLayout(false);
     const endless=currentRun.mode==='endless';if(endless){currentRun.rank=endlessEffectiveRank(currentRun.floor);if(!currentRun.floorBackground)currentRun.floorBackground=chooseEndlessBackground();ui.battleBg.src=currentRun.floorBackground}else{const cfg=currentAreaConfig();ui.battleBg.src=cfg.backgrounds[currentRun.index]}updateEncounterHeader(encounter);ui.peepLevelCombat.textContent=`Lv. ${activeHeroProgress().level}`;renderPeepHp();startPeepIdle();if(encounter.type==='mysterious-merchant')showMerchantEvent();else showSiblingEvent();};
 
   // Fountain + Picnic keep their custom art throughout the event.

@@ -1,0 +1,4 @@
+Duckie Days v24.280 — Special Enemy Variants
+
+Adds the finalized color-specific enemy powers across Meadow, Ocean, Candyland, and Cloud Garden.
+Includes Lucky Fluff rewards, Deep Drain, paralysis/sleep/stun effects, attack debuffs, guards, recoil, multi-hit attacks, and Cloud Dodge cooldown behavior.
