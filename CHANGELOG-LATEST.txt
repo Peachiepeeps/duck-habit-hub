@@ -1,12 +1,8 @@
-Duckie Days 24.291
+Duckie Days 24.292
 
-Luv & Birdie layout fix
+Gift box reward display polish
 
-- Luv & Birdie are now centered together in the battlefield.
-- Miko's battle sprite is hidden while the Luv & Birdie event is active.
-- Love-interest choices now live below the event text in the lower cream dialogue box.
-- All 9 love-interest buttons are shown in a clean 3x3 grid.
-- Selecting a love interest no longer immediately removes Luv & Birdie.
-- Luv & Birdie stay visible while the result text is shown.
-- A dedicated Continue / Next Floor button appears after the choice.
-- The event is only cleaned up when the player presses Continue.
+- Gift box card rewards now render much smaller.
+- Reward cards and card packs are centered in the middle of the battlefield.
+- Card reward visuals no longer stretch across the pink enemy panel.
+- Mobile sizing is tightened so the reward sits like a popup reward.

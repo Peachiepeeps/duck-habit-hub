@@ -1,0 +1,82 @@
+/* Duckie Days v24.292 — Gift box reward visual sizing */
+
+#chestLayer.gift-box-active-v262{
+  overflow:visible!important;
+}
+
+#chestLayer.gift-box-active-v262 #giftRewardVisualV264{
+  position:absolute!important;
+  left:50%!important;
+  top:50%!important;
+  transform:translate(-50%,-50%)!important;
+  z-index:12!important;
+}
+
+#chestLayer.gift-box-active-v262 #giftRewardVisualV264.gift-reward-visual-v264{
+  min-height:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:10px!important;
+  width:auto!important;
+  max-width:min(240px,78vw)!important;
+  pointer-events:none!important;
+}
+
+#chestLayer.gift-box-active-v262 .gift-reward-card-v264{
+  width:70px!important;
+  flex:0 0 70px!important;
+  animation:giftRewardBumpV264 .42s cubic-bezier(.2,.86,.25,1.2) var(--gift-delay,0ms) both!important;
+}
+
+#chestLayer.gift-box-active-v262 .gift-reward-card-v264 > .tc-face{
+  width:70px!important;
+  max-width:70px!important;
+  min-width:70px!important;
+  margin:0!important;
+}
+
+#chestLayer.gift-box-active-v262 .gift-reward-pack-v264{
+  width:72px!important;
+  height:95px!important;
+  flex:0 0 72px!important;
+}
+
+#chestLayer.gift-box-active-v262 .gift-reward-pack-v264 img{
+  width:72px!important;
+  height:95px!important;
+}
+
+#chestLayer.gift-box-active-v262 .gift-reward-pack-v264 strong{
+  right:-6px!important;
+  bottom:-4px!important;
+}
+
+@media (max-width: 600px){
+  #chestLayer.gift-box-active-v262 #giftRewardVisualV264.gift-reward-visual-v264{
+    gap:8px!important;
+    max-width:min(210px,84vw)!important;
+  }
+
+  #chestLayer.gift-box-active-v262 .gift-reward-card-v264{
+    width:58px!important;
+    flex-basis:58px!important;
+  }
+
+  #chestLayer.gift-box-active-v262 .gift-reward-card-v264 > .tc-face{
+    width:58px!important;
+    max-width:58px!important;
+    min-width:58px!important;
+  }
+
+  #chestLayer.gift-box-active-v262 .gift-reward-pack-v264{
+    width:60px!important;
+    height:79px!important;
+    flex-basis:60px!important;
+  }
+
+  #chestLayer.gift-box-active-v262 .gift-reward-pack-v264 img{
+    width:60px!important;
+    height:79px!important;
+  }
+}
