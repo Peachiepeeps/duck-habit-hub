@@ -277,7 +277,7 @@
 
   async function openGiftBox(){
     if(!pendingChest||pendingChest.kind!=="gift-box"||ui.openChest.disabled)return;
-    actionLocked=true;ui.openChest.disabled=true;stopGiftAnimation();ui.chestSprite.classList.add("opening");await sleep(260);
+    actionLocked=true;ui.openChest.disabled=true;stopGiftAnimation();ui.chestSprite.classList.remove("opening");await sleep(260);
     const info={...pendingChest,giftReward:{...pendingChest.giftReward}};
     ui.chestSprite.src=giftArt(info.giftStyle,"open");await sleep(180);
     if(info.revealGiftMimic){

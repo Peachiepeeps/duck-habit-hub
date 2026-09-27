@@ -1,0 +1,36 @@
+/* Duckie Days v24.296 — Gift Box card art layering + static chest/event props */
+
+/* Correct card-book layer order: frame behind, art above. */
+#chestLayer.gift-box-active-v262 .gift-reward-card-v264 .tc-frame{
+  z-index:1!important;
+}
+#chestLayer.gift-box-active-v262 .gift-reward-card-v264 .tc-art{
+  z-index:2!important;
+}
+#chestLayer.gift-box-active-v262 .gift-reward-card-v264 .tc-shine{
+  z-index:4!important;
+}
+#chestLayer.gift-box-active-v262 .gift-reward-card-v264 .tc-name{
+  z-index:5!important;
+}
+#chestLayer.gift-box-active-v262 .gift-reward-card-v264 .tc-number{
+  z-index:6!important;
+}
+
+/* Hard-stop unwanted sway/hop on ordinary chest-layer props.
+   Intentional positioned special characters are excluded. */
+#chestSprite{
+  animation:none!important;
+  transition:none!important;
+}
+#chestSprite:not(.luv-birdie-art-v262):not(.gimmick-art-v288):not(.gimmick-egg-art-v288){
+  transform:none!important;
+}
+
+/* Reward cards/packs should simply appear, not bump/sway. */
+#giftRewardVisualV264 .gift-reward-card-v264,
+#giftRewardVisualV264 .gift-reward-pack-v264{
+  animation:none!important;
+  transition:none!important;
+  transform:none!important;
+}

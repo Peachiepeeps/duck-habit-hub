@@ -1,12 +1,10 @@
-Duckie Days 24.295
+Duckie Days 24.296
 
-Artist Friend + chest polish
+Gift Box card art + static chest/event props
 
-- Artist Friend recolor rows now show how many of each Buddy variant are already owned.
-- Missing variants are explicitly marked as Owned: 0 · Missing.
-- The selected/current Buddy list also shows its owned quantity.
-- 75 Pink Coins and Paint payment buttons are now large, equal-width buttons.
-- Paint buttons also show how many matching paints are currently owned.
-- Added a Back button after choosing a Buddy to recolor.
-- Removed the treasure/reward chest opening animation class in JavaScript.
-- Added a final CSS safety rule so treasure chests cannot sway/hop even if the opening class is present.
+- Fixed Gift Box reward card layer order so Buddy/enemy artwork appears over the card frame.
+- Correct card layer order now matches the Trading Card book.
+- Removed the remaining Gift Box opening bounce class.
+- Hard-disabled CSS animation/transition sway on ordinary chest-layer props.
+- Treasure chests, picnic baskets, fountains, and Gift Boxes now stay still.
+- Gift reward cards and packs no longer bump/sway when they appear.
