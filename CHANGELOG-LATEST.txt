@@ -1,11 +1,11 @@
-Duckie Days 24.293
+Duckie Days 24.294
 
-Gift Box trading-card render fix
+Gimmick encounter layout + Sibling Spat fixes
 
-- Fixed the actual cause of the giant right-shifted Gift Box card.
-- Duck Quest was rendering the Trading Card face without the Trading Card stylesheet.
-- The card's frame/art images were therefore staying at their natural size and overflowing the small wrapper.
-- Gift Box cards now have fully scoped card-face styling and render as a small complete card centered in the battlefield.
-- Mobile reward card width is 60px.
-- Duplicate reward caption in the battlefield is hidden; the lower message still names the reward.
-- Gift Box card-pack rewards use the same small centered layout.
+- Fixed the Strange Egg event becoming impossible to use on mobile.
+- All six gimmick encounter choices now live in the lower cream battle panel.
+- Special encounter artwork stays centered and unobstructed in the battlefield.
+- Fixed Artist Friend disappearing when its idle animation started.
+- Artist Friend no longer treats Dash Carts as inspiration items.
+- Artist Friend supply/recolor lists now scroll in the lower panel instead of covering the battlefield.
+- Removed the vertical floating/bobbing from Miko and Miho during Sibling Spat dialogue.

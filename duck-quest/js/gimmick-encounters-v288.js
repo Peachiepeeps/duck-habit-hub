@@ -2,7 +2,7 @@
 (function(){
   "use strict";
   const TC=window.DuckieTradingCards;
-  const VERSION="24.288";
+  const VERSION="24.294";
   const GIMMICK_RATE=.04;
   function currentGimmickRate(){
     try{
@@ -57,17 +57,54 @@
   }
   function cardText(result){return result?` · ${result.isNew?"NEW ":""}${result.card.name} card!`:"";}
 
-  function clearScene(){if(sceneTimer){clearInterval(sceneTimer);sceneTimer=null;}ui.chestLayer?.querySelector('#gimmickMenuV288')?.remove();ui.chestLayer?.classList.remove('gimmick-active-v288');ui.chestSprite?.classList.remove('gimmick-art-v288');}
-  function animateScene(frames,speed=470){clearScene();if(!ui.chestSprite||!frames?.length)return;let i=0;ui.chestSprite.src=frames[0];sceneTimer=setInterval(()=>{i=(i+1)%frames.length;if(ui.chestSprite)ui.chestSprite.src=frames[i];},speed);}
+  function stopSceneAnimation(){if(sceneTimer){clearInterval(sceneTimer);sceneTimer=null;}}
+  function clearScene(){
+    stopSceneAnimation();
+    ui.chestLayer?.querySelector('#gimmickMenuV288')?.remove();
+    ui.eventChoiceActions?.querySelector('#gimmickMenuV288')?.remove();
+    ui.chestLayer?.classList.remove('gimmick-active-v288');
+    ui.chestSprite?.classList.remove('gimmick-art-v288','gimmick-egg-art-v288');
+    ui.battlefield?.classList.remove('gimmick-scene-v294');
+    ui.battleUi?.classList.remove('gimmick-ui-v294');
+    if(ui.eventChoiceActions){
+      ui.eventChoiceActions.classList.remove('gimmick-choice-panel-v294');
+      ui.eventChoiceActions.innerHTML='';
+      ui.eventChoiceActions.classList.add('hidden');
+    }
+  }
+  function animateScene(frames,speed=470){
+    stopSceneAnimation();
+    if(!ui.chestSprite||!frames?.length)return;
+    ui.chestSprite.classList.remove('gimmick-egg-art-v288');
+    ui.chestSprite.classList.add('gimmick-art-v288');
+    let i=0;
+    ui.chestSprite.src=frames[0];
+    sceneTimer=setInterval(()=>{i=(i+1)%frames.length;if(ui.chestSprite)ui.chestSprite.src=frames[i];},speed);
+  }
   function prep(encounter){
     try{clearAnimations();}catch{}clearScene();actionLocked=false;pendingChest=null;pendingDefeatedEnemy=null;befriendAttempted=false;
     ui.befriendPanel?.classList.add('hidden');ui.ponPurchasePanel?.classList.add('hidden');try{resetDoubleBattleUi();}catch{}try{hideEventChoices();}catch{}
     ui.enemyCombatant?.classList.add('hidden');ui.enemyCombatant2?.classList.add('hidden');ui.buddyCombatant?.classList.add('hidden');ui.commandGrid?.classList.add('hidden');try{closeCommandWindow();}catch{}
+    ui.battlefield?.classList.add('gimmick-scene-v294');ui.battleUi?.classList.add('gimmick-ui-v294');
     ui.chestLayer?.classList.remove('hidden');ui.chestLayer?.classList.add('gimmick-active-v288');ui.chestSprite?.classList.add('gimmick-art-v288');ui.openChest?.classList.add('hidden');ui.postFloorActions?.classList.add('hidden');ui.leaveEndlessButton?.classList.add('hidden');try{setPostFloorLayout(false);}catch{}
     if(currentRun?.mode==='endless'){currentRun.rank=endlessEffectiveRank(currentRun.floor);if(!currentRun.floorBackground)currentRun.floorBackground=chooseEndlessBackground();ui.battleBg.src=currentRun.floorBackground;}else if(currentRun){const cfg=currentAreaConfig();ui.battleBg.src=cfg.backgrounds[currentRun.index];}
     updateEncounterHeader(encounter);if(ui.peepLevelCombat)ui.peepLevelCombat.textContent=`Lv. ${activeHeroProgress().level}`;try{renderPeepHp();startPeepIdle();}catch{}
   }
-  function menu(title,copy){let m=ui.chestLayer.querySelector('#gimmickMenuV288');if(m)m.remove();m=document.createElement('div');m.id='gimmickMenuV288';m.className='gimmick-menu-v288';m.innerHTML=`<strong>${title}</strong><p>${copy}</p><div class="gimmick-actions-v288"></div>`;ui.chestLayer.append(m);return m;}
+  function menu(title,copy){
+    ui.chestLayer?.querySelector('#gimmickMenuV288')?.remove();
+    const holder=ui.eventChoiceActions;
+    if(!holder)return document.createElement('div');
+    holder.innerHTML='';
+    holder.classList.add('gimmick-choice-panel-v294');
+    holder.classList.remove('hidden');
+    ui.battleUi?.classList.add('gimmick-ui-v294');
+    const m=document.createElement('div');
+    m.id='gimmickMenuV288';
+    m.className='gimmick-menu-v288';
+    m.innerHTML=`<strong>${title}</strong><p>${copy}</p><div class="gimmick-actions-v288"></div>`;
+    holder.append(m);
+    return m;
+  }
   function button(parent,label,fn,cls=''){const b=document.createElement('button');b.type='button';b.className=`pixel-button ${cls}`.trim();b.textContent=label;b.addEventListener('click',fn);parent.querySelector('.gimmick-actions-v288')?.append(b);return b;}
   function finish(message){
     clearScene();ui.chestLayer?.classList.add('hidden');ui.openChest?.classList.add('hidden');ui.enemyCombatant?.classList.add('hidden');ui.enemyCombatant2?.classList.add('hidden');ui.buddyCombatant?.classList.add('hidden');ui.commandGrid?.classList.add('hidden');setMessage(message);
@@ -115,7 +152,7 @@
     persistAll();return true;
   }
   function artistInspiration(m){
-    m.querySelector('p').textContent='Give Artist Friend one item from the Hub Shop Supplies category for inspiration. They will give you 3 random Paints!';const owned=SUPPLIES.filter(s=>qty(s.id)>0);const a=m.querySelector('.gimmick-actions-v288');a.innerHTML='';if(!owned.length){const n=document.createElement('small');n.className='gimmick-empty-v288';n.textContent='You do not have any Supplies right now.';a.append(n);}else{const grid=document.createElement('div');grid.className='gimmick-item-grid-v288';owned.forEach(s=>{const b=document.createElement('button');b.type='button';b.className='gimmick-item-v288';b.innerHTML=`<img src="${s.image}" alt=""><span>${s.name}</span><small>×${qty(s.id)}</small>`;b.addEventListener('click',()=>{if(!removeInventory(s.id,1))return;const rewards=[pick(PAINTS),pick(PAINTS),pick(PAINTS)];rewards.forEach(p=>addInventory(p.id,1));ui.chestSprite.src='assets/gimmicks/artist-friend/happy.png';const card=maybeGrantCard('artist-friend','r-gimmick-artist-friend');finish(`Artist Friend is inspired! You received ${rewards.map(x=>x.name).join(', ')}.${cardText(card)}`);});grid.append(b);});a.append(grid);}const leave=document.createElement('button');leave.type='button';leave.className='pixel-button';leave.textContent='Leave';leave.addEventListener('click',()=>finish('Artist Friend waves goodbye, still thinking about colors.'));a.append(leave);
+    m.querySelector('p').textContent='Give Artist Friend one regular item from the Hub Shop Supplies category for inspiration. Dash Carts are not accepted. They will give you 3 random Paints!';const owned=SUPPLIES.filter(s=>!String(s.id).startsWith('dash-cart-')&&qty(s.id)>0);const a=m.querySelector('.gimmick-actions-v288');a.innerHTML='';if(!owned.length){const n=document.createElement('small');n.className='gimmick-empty-v288';n.textContent='You do not have any Supplies right now.';a.append(n);}else{const grid=document.createElement('div');grid.className='gimmick-item-grid-v288';owned.forEach(s=>{const b=document.createElement('button');b.type='button';b.className='gimmick-item-v288';b.innerHTML=`<img src="${s.image}" alt=""><span>${s.name}</span><small>×${qty(s.id)}</small>`;b.addEventListener('click',()=>{if(!removeInventory(s.id,1))return;const rewards=[pick(PAINTS),pick(PAINTS),pick(PAINTS)];rewards.forEach(p=>addInventory(p.id,1));ui.chestSprite.src='assets/gimmicks/artist-friend/happy.png';const card=maybeGrantCard('artist-friend','r-gimmick-artist-friend');finish(`Artist Friend is inspired! You received ${rewards.map(x=>x.name).join(', ')}.${cardText(card)}`);});grid.append(b);});a.append(grid);}const leave=document.createElement('button');leave.type='button';leave.className='pixel-button';leave.textContent='Leave';leave.addEventListener('click',()=>finish('Artist Friend waves goodbye, still thinking about colors.'));a.append(leave);
   }
   function artistRecolor(m){
     m.querySelector('p').textContent='Artist Friend can recolor one ordinary enemy or boss Buddy. Shinies and special Buddies are never eligible.';const entries=eligibleRecolorEntries();const a=m.querySelector('.gimmick-actions-v288');a.innerHTML='';if(!entries.length){const n=document.createElement('small');n.className='gimmick-empty-v288';n.textContent='You do not have an eligible Buddy with another ordinary color available, so Artist Friend offers the inspiration trade instead.';a.append(n);const swap=document.createElement('button');swap.type='button';swap.className='pixel-button primary';swap.textContent='Trade a Supply for Paint';swap.addEventListener('click',()=>artistInspiration(m));a.append(swap);return;}

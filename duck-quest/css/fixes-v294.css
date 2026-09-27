@@ -1,0 +1,173 @@
+/* Duckie Days v24.294 — Gimmick encounter layout + Sibling Spat polish */
+
+/* SPECIAL / GIMMICK ENCOUNTERS
+   Keep the character/egg in the battlefield and put ALL choices in the lower
+   cream battle panel, where they remain reachable on mobile. */
+#battlefield.gimmick-scene-v294 > .peep-combatant{
+  display:none!important;
+}
+
+#chestLayer.gimmick-active-v288{
+  display:block!important;
+  background:transparent!important;
+  padding:0!important;
+  overflow:hidden!important;
+  pointer-events:none!important;
+}
+
+#chestLayer.gimmick-active-v288 #chestCaption{
+  display:none!important;
+}
+
+#chestLayer.gimmick-active-v288 .gimmick-art-v288{
+  position:absolute!important;
+  left:50%!important;
+  top:53%!important;
+  width:min(190px,45vw)!important;
+  height:min(190px,45vw)!important;
+  max-width:48%!important;
+  max-height:78%!important;
+  object-fit:contain!important;
+  transform:translate(-50%,-50%)!important;
+  z-index:3!important;
+  image-rendering:pixelated!important;
+}
+
+#chestLayer.gimmick-active-v288 .gimmick-egg-art-v288{
+  position:absolute!important;
+  left:50%!important;
+  top:53%!important;
+  width:min(150px,36vw)!important;
+  height:min(150px,36vw)!important;
+  max-width:40%!important;
+  max-height:70%!important;
+  object-fit:contain!important;
+  transform:translate(-50%,-50%)!important;
+  z-index:3!important;
+  image-rendering:pixelated!important;
+}
+
+#battleScreen .battle-ui.gimmick-ui-v294{
+  grid-template-rows:auto minmax(0,1fr)!important;
+  align-content:stretch!important;
+  min-height:300px!important;
+}
+
+#battleScreen .battle-ui.gimmick-ui-v294 #commandStage,
+#battleScreen .battle-ui.gimmick-ui-v294 #postFloorActions{
+  display:none!important;
+}
+
+#eventChoiceActions.gimmick-choice-panel-v294{
+  display:block!important;
+  min-height:0!important;
+  height:100%!important;
+  overflow:hidden!important;
+  padding:0!important;
+  margin:0!important;
+}
+
+#eventChoiceActions.gimmick-choice-panel-v294.hidden{
+  display:none!important;
+}
+
+#eventChoiceActions.gimmick-choice-panel-v294 .gimmick-menu-v288{
+  width:100%!important;
+  height:100%!important;
+  max-height:none!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  display:grid!important;
+  grid-template-rows:auto auto minmax(0,1fr)!important;
+  gap:7px!important;
+  padding:4px 2px 2px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  text-align:center!important;
+}
+
+#eventChoiceActions.gimmick-choice-panel-v294 .gimmick-menu-v288 > strong{
+  font-size:.92rem!important;
+  color:#7c5666!important;
+}
+
+#eventChoiceActions.gimmick-choice-panel-v294 .gimmick-menu-v288 > p{
+  margin:0!important;
+  font-size:.70rem!important;
+  line-height:1.32!important;
+  color:#735f69!important;
+}
+
+#eventChoiceActions.gimmick-choice-panel-v294 .gimmick-actions-v288{
+  min-height:0!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+  align-content:start!important;
+  padding:2px 1px 5px!important;
+}
+
+#eventChoiceActions.gimmick-choice-panel-v294 .gimmick-actions-v288 > .pixel-button{
+  min-height:44px!important;
+}
+
+#eventChoiceActions.gimmick-choice-panel-v294 .gimmick-item-grid-v288{
+  max-height:none!important;
+  min-height:0!important;
+  overflow:visible!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+}
+
+/* SIBLING SPAT
+   Keep their sprite-frame animation, but remove the vertical bob/floating. */
+.sibling-scene.sibling-spat-v224 .sibling-left-v224{
+  animation:none!important;
+  transform:none!important;
+}
+
+.sibling-scene.sibling-spat-v224 .sibling-right-v224{
+  animation:none!important;
+  transform:scaleX(-1)!important;
+}
+
+@media(max-width:600px){
+  #chestLayer.gimmick-active-v288 .gimmick-art-v288{
+    width:min(158px,40vw)!important;
+    height:min(158px,40vw)!important;
+    top:54%!important;
+  }
+
+  #chestLayer.gimmick-active-v288 .gimmick-egg-art-v288{
+    width:min(128px,32vw)!important;
+    height:min(128px,32vw)!important;
+    top:54%!important;
+  }
+
+  #battleScreen .battle-ui.gimmick-ui-v294{
+    min-height:292px!important;
+  }
+
+  #eventChoiceActions.gimmick-choice-panel-v294 .gimmick-menu-v288 > strong{
+    font-size:.82rem!important;
+  }
+
+  #eventChoiceActions.gimmick-choice-panel-v294 .gimmick-menu-v288 > p{
+    font-size:.60rem!important;
+  }
+
+  #eventChoiceActions.gimmick-choice-panel-v294 .gimmick-item-grid-v288{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+
+  #eventChoiceActions.gimmick-choice-panel-v294 .gimmick-item-v288{
+    grid-template-columns:34px minmax(0,1fr)!important;
+    padding:5px!important;
+  }
+
+  #eventChoiceActions.gimmick-choice-panel-v294 .gimmick-item-v288 img{
+    width:32px!important;
+    height:32px!important;
+  }
+}
