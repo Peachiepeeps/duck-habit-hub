@@ -1,11 +1,12 @@
-Duckie Days 24.294
+Duckie Days 24.295
 
-Gimmick encounter layout + Sibling Spat fixes
+Artist Friend + chest polish
 
-- Fixed the Strange Egg event becoming impossible to use on mobile.
-- All six gimmick encounter choices now live in the lower cream battle panel.
-- Special encounter artwork stays centered and unobstructed in the battlefield.
-- Fixed Artist Friend disappearing when its idle animation started.
-- Artist Friend no longer treats Dash Carts as inspiration items.
-- Artist Friend supply/recolor lists now scroll in the lower panel instead of covering the battlefield.
-- Removed the vertical floating/bobbing from Miko and Miho during Sibling Spat dialogue.
+- Artist Friend recolor rows now show how many of each Buddy variant are already owned.
+- Missing variants are explicitly marked as Owned: 0 · Missing.
+- The selected/current Buddy list also shows its owned quantity.
+- 75 Pink Coins and Paint payment buttons are now large, equal-width buttons.
+- Paint buttons also show how many matching paints are currently owned.
+- Added a Back button after choosing a Buddy to recolor.
+- Removed the treasure/reward chest opening animation class in JavaScript.
+- Added a final CSS safety rule so treasure chests cannot sway/hop even if the opening class is present.

@@ -1,0 +1,81 @@
+/* Duckie Days v24.295 — Artist Friend recolor UI + chest motion cleanup */
+
+#chestSprite.opening,
+.chest-sprite.opening{
+  animation:none!important;
+  transform:none!important;
+  transition:none!important;
+}
+
+.gimmick-recolor-row-v288{
+  grid-template-columns:44px minmax(0,1fr)!important;
+  gap:6px 8px!important;
+  align-items:center!important;
+}
+
+.gimmick-recolor-row-v288 > img{
+  grid-column:1!important;
+  grid-row:1!important;
+}
+
+.gimmick-recolor-row-v288 > span{
+  grid-column:2!important;
+  grid-row:1!important;
+  min-width:0!important;
+}
+
+.gimmick-recolor-row-v288 > span small{
+  display:block!important;
+  margin-top:2px!important;
+  font-size:.58rem!important;
+  color:#9a7d88!important;
+}
+
+.gimmick-recolor-row-v288.missing-variant-v295 > span small{
+  color:#b85f80!important;
+  font-weight:900!important;
+}
+
+.gimmick-recolor-actions-v295{
+  grid-column:1/-1!important;
+  grid-row:2!important;
+  width:100%!important;
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:7px!important;
+}
+
+.gimmick-recolor-actions-v295.single{
+  grid-template-columns:1fr!important;
+}
+
+.gimmick-recolor-actions-v295 .pixel-button{
+  width:100%!important;
+  min-width:0!important;
+  min-height:46px!important;
+  padding:7px 9px!important;
+  white-space:normal!important;
+  line-height:1.2!important;
+  text-align:center!important;
+}
+
+@media(max-width:600px){
+  .gimmick-recolor-row-v288{
+    grid-template-columns:40px minmax(0,1fr)!important;
+    padding:7px!important;
+  }
+
+  .gimmick-recolor-actions-v295{
+    gap:6px!important;
+  }
+
+  .gimmick-recolor-actions-v295 .pixel-button{
+    min-height:44px!important;
+    font-size:.58rem!important;
+    padding:6px!important;
+  }
+
+  .gimmick-recolor-row-v288 > span small{
+    font-size:.52rem!important;
+  }
+}

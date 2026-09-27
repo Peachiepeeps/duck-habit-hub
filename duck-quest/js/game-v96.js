@@ -7368,7 +7368,7 @@ async function openPendingChest() {
   if(ui.openChest.disabled) return;
   actionLocked=true;
   ui.openChest.disabled=true;
-  ui.chestSprite.classList.add("opening");
+  ui.chestSprite.classList.remove("opening");
   await sleep(260);
 
   if(pendingChest.eventType){
@@ -9364,7 +9364,7 @@ setInterval(()=>{
     if(ui.openChest.disabled) return;
     actionLocked=true;
     ui.openChest.disabled=true;
-    ui.chestSprite.classList.add('opening');
+    ui.chestSprite.classList.remove('opening');
     await sleep(260);
     const chestVariant=chestVariantFor(pendingChest);
 

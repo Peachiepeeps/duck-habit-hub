@@ -2,7 +2,7 @@
 (function(){
   "use strict";
   const TC=window.DuckieTradingCards;
-  const VERSION="24.294";
+  const VERSION="24.295";
   const GIMMICK_RATE=.04;
   function currentGimmickRate(){
     try{
@@ -144,6 +144,7 @@
   function boxEntries(){return Array.isArray(hubSave.buddyBoxV265?.entries)?hubSave.buddyBoxV265.entries:[];}
   function eligibleRecolorEntries(){return boxEntries().filter(e=>e&&!e.shiny&&!SPECIAL_BUDDY_IDS.has(e.enemyId)&&ordinaryRecolorForms(e.enemyId).some(f=>f.key!==e.key));}
   function paintForVariant(v){const id=String(v||'').toLowerCase();return PAINTS.find(p=>p.id===`${id}-paint`)||null;}
+  function ownedBuddyCount(key){return Math.max(0,Math.floor(Number(hubSave.buddies?.collection?.[key]?.quantity)||0));}
   function recolorInstance(entry,target){
     if(!entry||!target||entry.key===target.key)return false;const oldKey=entry.key;ensureBuddySave();const old=hubSave.buddies.collection?.[oldKey];if(old){old.quantity=Math.max(0,Number(old.quantity)||0)-1;if(old.quantity<=0)delete hubSave.buddies.collection[oldKey];}
     const targetRecord=hubSave.buddies.collection?.[target.key];if(targetRecord)targetRecord.quantity=Math.max(1,Number(targetRecord.quantity)||1)+1;else hubSave.buddies.collection[target.key]={key:target.key,enemyId:target.enemyId,variantId:target.variantId,name:target.name,image:target.image,idle:target.idle.slice(),shiny:false,boss:Boolean(target.boss),quantity:1,capturedAt:Date.now()};
@@ -155,8 +156,110 @@
     m.querySelector('p').textContent='Give Artist Friend one regular item from the Hub Shop Supplies category for inspiration. Dash Carts are not accepted. They will give you 3 random Paints!';const owned=SUPPLIES.filter(s=>!String(s.id).startsWith('dash-cart-')&&qty(s.id)>0);const a=m.querySelector('.gimmick-actions-v288');a.innerHTML='';if(!owned.length){const n=document.createElement('small');n.className='gimmick-empty-v288';n.textContent='You do not have any Supplies right now.';a.append(n);}else{const grid=document.createElement('div');grid.className='gimmick-item-grid-v288';owned.forEach(s=>{const b=document.createElement('button');b.type='button';b.className='gimmick-item-v288';b.innerHTML=`<img src="${s.image}" alt=""><span>${s.name}</span><small>×${qty(s.id)}</small>`;b.addEventListener('click',()=>{if(!removeInventory(s.id,1))return;const rewards=[pick(PAINTS),pick(PAINTS),pick(PAINTS)];rewards.forEach(p=>addInventory(p.id,1));ui.chestSprite.src='assets/gimmicks/artist-friend/happy.png';const card=maybeGrantCard('artist-friend','r-gimmick-artist-friend');finish(`Artist Friend is inspired! You received ${rewards.map(x=>x.name).join(', ')}.${cardText(card)}`);});grid.append(b);});a.append(grid);}const leave=document.createElement('button');leave.type='button';leave.className='pixel-button';leave.textContent='Leave';leave.addEventListener('click',()=>finish('Artist Friend waves goodbye, still thinking about colors.'));a.append(leave);
   }
   function artistRecolor(m){
-    m.querySelector('p').textContent='Artist Friend can recolor one ordinary enemy or boss Buddy. Shinies and special Buddies are never eligible.';const entries=eligibleRecolorEntries();const a=m.querySelector('.gimmick-actions-v288');a.innerHTML='';if(!entries.length){const n=document.createElement('small');n.className='gimmick-empty-v288';n.textContent='You do not have an eligible Buddy with another ordinary color available, so Artist Friend offers the inspiration trade instead.';a.append(n);const swap=document.createElement('button');swap.type='button';swap.className='pixel-button primary';swap.textContent='Trade a Supply for Paint';swap.addEventListener('click',()=>artistInspiration(m));a.append(swap);return;}
-    const grid=document.createElement('div');grid.className='gimmick-item-grid-v288';entries.forEach(entry=>{const b=document.createElement('button');b.type='button';b.className='gimmick-item-v288';b.innerHTML=`<img src="${entry.image}" alt=""><span>${entry.nickname||entry.name}</span><small>${entry.variantId}</small>`;b.addEventListener('click',()=>{a.innerHTML='';const forms=ordinaryRecolorForms(entry.enemyId).filter(f=>f.key!==entry.key);forms.forEach(target=>{const row=document.createElement('div');row.className='gimmick-recolor-row-v288';row.innerHTML=`<img src="${target.image}" alt=""><span><strong>${target.name}</strong><small>${target.variantId}</small></span>`;const coin=document.createElement('button');coin.type='button';coin.className='pixel-button small';coin.textContent='75 Coins';coin.disabled=(Number(hubSave.coins)||0)<75;coin.addEventListener('click',()=>{if((Number(hubSave.coins)||0)<75)return;hubSave.coins-=75;if(!recolorInstance(entry,target)){hubSave.coins+=75;return;}const card=maybeGrantCard('artist-friend','r-gimmick-artist-friend');finish(`Artist Friend recolored your Buddy into ${target.name}!${cardText(card)}`);});row.append(coin);const paint=paintForVariant(target.variantId);if(paint){const pb=document.createElement('button');pb.type='button';pb.className='pixel-button small';pb.textContent=`Use ${paint.name}`;pb.disabled=qty(paint.id)<1;pb.addEventListener('click',()=>{if(!removeInventory(paint.id,1))return;if(!recolorInstance(entry,target)){addInventory(paint.id,1);return;}const card=maybeGrantCard('artist-friend','r-gimmick-artist-friend');finish(`Artist Friend used ${paint.name} to recolor your Buddy into ${target.name}!${cardText(card)}`);});row.append(pb);}a.append(row);});});grid.append(b);});a.append(grid);const leave=document.createElement('button');leave.type='button';leave.className='pixel-button';leave.textContent='Leave';leave.addEventListener('click',()=>finish('Artist Friend packs up their paints and waves goodbye.'));a.append(leave);
+    m.querySelector('p').textContent='Artist Friend can recolor one ordinary enemy or boss Buddy. Shinies and special Buddies are never eligible.';
+    const entries=eligibleRecolorEntries();
+    const a=m.querySelector('.gimmick-actions-v288');
+    a.innerHTML='';
+
+    if(!entries.length){
+      const n=document.createElement('small');
+      n.className='gimmick-empty-v288';
+      n.textContent='You do not have an eligible Buddy with another ordinary color available, so Artist Friend offers the inspiration trade instead.';
+      a.append(n);
+      const swap=document.createElement('button');
+      swap.type='button';
+      swap.className='pixel-button primary';
+      swap.textContent='Trade a Supply for Paint';
+      swap.addEventListener('click',()=>artistInspiration(m));
+      a.append(swap);
+      return;
+    }
+
+    const grid=document.createElement('div');
+    grid.className='gimmick-item-grid-v288';
+
+    entries.forEach(entry=>{
+      const b=document.createElement('button');
+      b.type='button';
+      b.className='gimmick-item-v288';
+      b.innerHTML=`<img src="${entry.image}" alt=""><span>${entry.nickname||entry.name}</span><small>${entry.variantId} · Owned: ${ownedBuddyCount(entry.key)}</small>`;
+
+      b.addEventListener('click',()=>{
+        a.innerHTML='';
+        const forms=ordinaryRecolorForms(entry.enemyId).filter(f=>f.key!==entry.key);
+
+        forms.forEach(target=>{
+          const owned=ownedBuddyCount(target.key);
+          const row=document.createElement('div');
+          row.className='gimmick-recolor-row-v288';
+          if(owned===0)row.classList.add('missing-variant-v295');
+
+          row.innerHTML=`<img src="${target.image}" alt=""><span><strong>${target.name}</strong><small>${target.variantId} · Owned: ${owned}${owned===0?' · Missing':''}</small></span>`;
+
+          const actions=document.createElement('div');
+          actions.className='gimmick-recolor-actions-v295';
+
+          const coin=document.createElement('button');
+          coin.type='button';
+          coin.className='pixel-button small';
+          coin.textContent='75 Pink Coins';
+          coin.disabled=(Number(hubSave.coins)||0)<75;
+          coin.addEventListener('click',()=>{
+            if((Number(hubSave.coins)||0)<75)return;
+            hubSave.coins-=75;
+            if(!recolorInstance(entry,target)){
+              hubSave.coins+=75;
+              return;
+            }
+            const card=maybeGrantCard('artist-friend','r-gimmick-artist-friend');
+            finish(`Artist Friend recolored your Buddy into ${target.name}!${cardText(card)}`);
+          });
+          actions.append(coin);
+
+          const paint=paintForVariant(target.variantId);
+          if(paint){
+            const pb=document.createElement('button');
+            pb.type='button';
+            pb.className='pixel-button small';
+            pb.textContent=`Use ${paint.name} (×${qty(paint.id)})`;
+            pb.disabled=qty(paint.id)<1;
+            pb.addEventListener('click',()=>{
+              if(!removeInventory(paint.id,1))return;
+              if(!recolorInstance(entry,target)){
+                addInventory(paint.id,1);
+                return;
+              }
+              const card=maybeGrantCard('artist-friend','r-gimmick-artist-friend');
+              finish(`Artist Friend used ${paint.name} to recolor your Buddy into ${target.name}!${cardText(card)}`);
+            });
+            actions.append(pb);
+          }else{
+            actions.classList.add('single');
+          }
+
+          row.append(actions);
+          a.append(row);
+        });
+
+        const back=document.createElement('button');
+        back.type='button';
+        back.className='pixel-button';
+        back.textContent='Back';
+        back.addEventListener('click',()=>artistRecolor(m));
+        a.append(back);
+      });
+
+      grid.append(b);
+    });
+
+    a.append(grid);
+
+    const leave=document.createElement('button');
+    leave.type='button';
+    leave.className='pixel-button';
+    leave.textContent='Leave';
+    leave.addEventListener('click',()=>finish('Artist Friend packs up their paints and waves goodbye.'));
+    a.append(leave);
   }
   function artistFriend(){animateScene(['assets/gimmicks/artist-friend/idle-1.png','assets/gimmicks/artist-friend/idle-2.png']);ui.chestCaption.textContent='Artist Friend';setMessage('Artist Friend appears with an armful of paints and supplies!');const m=menu('Artist Friend','They have an idea!');const recolor=eligibleRecolorEntries().length>0&&Math.random()<.50;if(recolor)artistRecolor(m);else artistInspiration(m);}
   function angyDuck(){const shiny=Math.random()<currentShinyRate(),variant=shiny?'shiny':pick(NORMAL_VARIANTS['angy-duck']);const path=shiny?'shiny':variant;animateScene([`assets/gimmicks/angy-duck/${path}/idle-1.png`,`assets/gimmicks/angy-duck/${path}/idle-2.png`],360);ui.chestCaption.textContent=shiny?'Shiny Angy Duck ✨':'Angy Duck';setMessage('An extremely angry duck stomps into your path. It wants to fight!');const m=menu(shiny?'A SHINY Angy Duck is furious!':'Angy Duck wants beef!','Defeat it to calm it down and receive a random duck. Or befriend it during battle and keep Angy Duck instead.');button(m,'Bring it on!',()=>beginBattle('angy-duck',shiny?'base':variant,shiny,'angy-duck'),'primary');button(m,'Back away slowly',()=>finish('Angy Duck quacks furiously as you retreat.'));
