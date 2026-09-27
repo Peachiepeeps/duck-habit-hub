@@ -1,15 +1,17 @@
-Duckie Days 24.287
+Duckie Days 24.288 — Gimmick Encounters
 
-Repository consolidation / developer cleanup.
+Adds six equally weighted rare Duck Quest gimmick encounter families: Rotten Egg, Lucky Cat, Ghost Girl, Pippa, Artist Friend, and Angy Duck.
 
-Current root code files are now intentionally simple:
-- app.js / app.css — main hub application
-- hub.js / hub.css / hub-boosts.js — home-room and hub features
-- tasks.js / tasks.css — tasks and collectible shelf
-- task-reminders.js / task-reminders.css / firebase-reminders.mjs — reminders
-- trading-cards-base.js / .css — shared card core also used by mini-games
-- trading-cards-extra.js / .css — newer card additions
-- trading-cards-ui.js — card book/workshop UI
-- sw.js — complete service worker (no extra sw-v### file)
+Highlights:
+- 4% chance when an eligible normal enemy encounter is generated, then a 4-normal-encounter cooldown.
+- 5-completed-encounter card pity per gimmick family.
+- 12 new Uncommon cards (U-014 through U-025) and 6 new Rare cards (R-041 through R-046).
+- Rotten Egg Incubate gamble: 50% instant friendly normal Buddy, 44% Rotten Egg battle, 3% Shiny Egg, 3% Shiny Rotten Egg battle.
+- Shiny Egg takes 24 hours and guarantees a random Shiny Buddy.
+- Lucky Cat coin battle/capture rewards and 10-coin gamble: 55% 10, 30% 50, 14% 100, 1% 1,000.
+- Ghost Girl accepts any Food; higher-value food improves card chance.
+- Pippa delivers OC-specific Love Letters; gifting the matching OC grants +50 Happiness.
+- Artist Friend accepts Shop Supplies for 3 random Paints and can offer ordinary Buddy recoloring for 75 coins or matching Paint.
+- Angy Duck uses Loud Quack and Got Beef?! (+50% Attack for 2 attacks, once per battle). Defeating it grants a random regular duck; Shiny Angy can also grant already-unlocked special ducks.
 
-The old numbered source files remain recoverable through Git history, but are no longer kept in the live root.
+The current consolidated root layout is preserved. hub.css is intentionally NOT included in this update, so the user's manual Book/shelf positioning stays untouched.

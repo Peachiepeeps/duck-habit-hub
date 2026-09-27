@@ -834,6 +834,21 @@ const ENEMIES = {
     hurt: "assets/items/chests/treasure/closed.webp",
     speed: 700
   },
+  "rotten-egg": {
+    name:"Rotten Egg", hp:28, attack:5, exp:34, coinMin:8, coinMax:14,
+    idle:["assets/gimmicks/rotten-egg/base/idle-1.png","assets/gimmicks/rotten-egg/base/idle-2.png"],
+    hurt:"assets/gimmicks/rotten-egg/base/hurt.png", speed:420
+  },
+  "lucky-cat": {
+    name:"Lucky Cat", hp:30, attack:5, exp:34, coinMin:0, coinMax:0,
+    idle:["assets/gimmicks/lucky-cat/base/idle-1.png","assets/gimmicks/lucky-cat/base/idle-2.png"],
+    hurt:"assets/gimmicks/lucky-cat/base/hurt.png", speed:390
+  },
+  "angy-duck": {
+    name:"Angy Duck", hp:34, attack:7, exp:38, coinMin:0, coinMax:0,
+    idle:["assets/gimmicks/angy-duck/base/idle-1.png","assets/gimmicks/angy-duck/base/idle-2.png"],
+    hurt:"assets/gimmicks/angy-duck/base/hurt.png", speed:330
+  },
   "mushroom-cat": {
     name: "Big Mushroom Cat",
     hp: 48,
@@ -1909,6 +1924,32 @@ function normalizeCharmSave(raw){
   return {owned,equippedByCharacter};
 }
 
+const GIMMICK_ENEMY_VARIANTS=Object.freeze({
+  "rotten-egg":Object.freeze({
+    base:{id:"base",name:"Rotten Egg",idle:["assets/gimmicks/rotten-egg/base/idle-1.png","assets/gimmicks/rotten-egg/base/idle-2.png"],hurt:"assets/gimmicks/rotten-egg/base/hurt.png"},
+    rare:{id:"rare",name:"Rare Rotten Egg",idle:["assets/gimmicks/rotten-egg/rare/idle-1.png","assets/gimmicks/rotten-egg/rare/idle-2.png"],hurt:"assets/gimmicks/rotten-egg/rare/hurt.png"}
+  }),
+  "lucky-cat":Object.freeze({
+    base:{id:"base",name:"Lucky Cat",idle:["assets/gimmicks/lucky-cat/base/idle-1.png","assets/gimmicks/lucky-cat/base/idle-2.png"],hurt:"assets/gimmicks/lucky-cat/base/hurt.png"},
+    blue:{id:"blue",name:"Blue Lucky Cat",idle:["assets/gimmicks/lucky-cat/blue/idle-1.png","assets/gimmicks/lucky-cat/blue/idle-2.png"],hurt:"assets/gimmicks/lucky-cat/blue/hurt.png"},
+    green:{id:"green",name:"Green Lucky Cat",idle:["assets/gimmicks/lucky-cat/green/idle-1.png","assets/gimmicks/lucky-cat/green/idle-2.png"],hurt:"assets/gimmicks/lucky-cat/green/hurt.png"},
+    pink:{id:"pink",name:"Pink Lucky Cat",idle:["assets/gimmicks/lucky-cat/pink/idle-1.png","assets/gimmicks/lucky-cat/pink/idle-2.png"],hurt:"assets/gimmicks/lucky-cat/pink/hurt.png"},
+    purple:{id:"purple",name:"Purple Lucky Cat",idle:["assets/gimmicks/lucky-cat/purple/idle-1.png","assets/gimmicks/lucky-cat/purple/idle-2.png"],hurt:"assets/gimmicks/lucky-cat/purple/hurt.png"}
+  }),
+  "angy-duck":Object.freeze({
+    base:{id:"base",name:"Angy Duck",idle:["assets/gimmicks/angy-duck/base/idle-1.png","assets/gimmicks/angy-duck/base/idle-2.png"],hurt:"assets/gimmicks/angy-duck/base/hurt.png"},
+    blue:{id:"blue",name:"Blue Angy Duck",idle:["assets/gimmicks/angy-duck/blue/idle-1.png","assets/gimmicks/angy-duck/blue/idle-2.png"],hurt:"assets/gimmicks/angy-duck/blue/hurt.png"},
+    green:{id:"green",name:"Green Angy Duck",idle:["assets/gimmicks/angy-duck/green/idle-1.png","assets/gimmicks/angy-duck/green/idle-2.png"],hurt:"assets/gimmicks/angy-duck/green/hurt.png"},
+    pink:{id:"pink",name:"Pink Angy Duck",idle:["assets/gimmicks/angy-duck/pink/idle-1.png","assets/gimmicks/angy-duck/pink/idle-2.png"],hurt:"assets/gimmicks/angy-duck/pink/hurt.png"},
+    purple:{id:"purple",name:"Purple Angy Duck",idle:["assets/gimmicks/angy-duck/purple/idle-1.png","assets/gimmicks/angy-duck/purple/idle-2.png"],hurt:"assets/gimmicks/angy-duck/purple/hurt.png"}
+  })
+});
+function applyGimmickEnemyVariant(enemyId,base,forcedId=""){
+  const table=GIMMICK_ENEMY_VARIANTS[enemyId];if(!table)return base;
+  const ids=Object.keys(table),id=table[forcedId]?forcedId:(ids[Math.floor(Math.random()*ids.length)]||ids[0]);
+  const v=table[id];return {...base,name:v.name,idle:v.idle.slice(),hurt:v.hurt,gimmickVariant:id};
+}
+
 // One rare recolor per enemy family. The special family variant replaces any
 // normal recolor at a charm-adjusted rate (base 1/500) and is guaranteed to befriend with any Buddy Pon.
 // Amethyst Mimic is intentionally different: it only reveals itself from the
@@ -2001,7 +2042,10 @@ const SHINY_VARIANTS = Object.freeze({
   "gingerlolly": {id:"shiny",name:"Shiny Gingerlolly",idle:["assets/enemies/gingerlolly/base/shiny-idle-1.webp","assets/enemies/gingerlolly/base/shiny-idle-2.webp"],hurt:"assets/enemies/gingerlolly/base/shiny-hurt.webp"},
   "candycane-deer": {id:"shiny",name:"Shiny Candycane Deer",idle:["assets/enemies/candycane-deer/base/shiny-idle-1.webp","assets/enemies/candycane-deer/base/shiny-idle-2.webp"],hurt:"assets/enemies/candycane-deer/base/shiny-hurt.webp"},
   "gummy-shark": {id:"shiny",name:"Shiny Gummy Shark",idle:["assets/bosses/gummy-shark/base/shiny-idle-1.webp","assets/bosses/gummy-shark/base/shiny-idle-2.webp"],hurt:"assets/bosses/gummy-shark/base/shiny-hurt.webp"},
-  "cream-fox": {id:"shiny",name:"Shiny Cream Fox",idle:["assets/bosses/cream-fox/base/shiny-idle-1.webp","assets/bosses/cream-fox/base/shiny-idle-2.webp"],hurt:"assets/bosses/cream-fox/base/shiny-hurt.webp"}
+  "cream-fox": {id:"shiny",name:"Shiny Cream Fox",idle:["assets/bosses/cream-fox/base/shiny-idle-1.webp","assets/bosses/cream-fox/base/shiny-idle-2.webp"],hurt:"assets/bosses/cream-fox/base/shiny-hurt.webp"},
+  "rotten-egg": {id:"shiny",name:"Shiny Rotten Egg",idle:["assets/gimmicks/rotten-egg/shiny/idle-1.png","assets/gimmicks/rotten-egg/shiny/idle-2.png"],hurt:"assets/gimmicks/rotten-egg/shiny/hurt.png"},
+  "lucky-cat": {id:"shiny",name:"Shiny Lucky Cat",idle:["assets/gimmicks/lucky-cat/shiny/idle-1.png","assets/gimmicks/lucky-cat/shiny/idle-2.png"],hurt:"assets/gimmicks/lucky-cat/shiny/hurt.png"},
+  "angy-duck": {id:"shiny",name:"Shiny Angy Duck",idle:["assets/gimmicks/angy-duck/shiny/idle-1.png","assets/gimmicks/angy-duck/shiny/idle-2.png"],hurt:"assets/gimmicks/angy-duck/shiny/hurt.png"}
 });
 
 const ENDLESS_NORMAL_ENEMIES = Object.freeze([
@@ -2060,7 +2104,10 @@ const BUDDY_SKILLS = Object.freeze({
   "candycane-deer":{name:"Peppermint Dash",description:"Heal 10% HP and raise Attack by 15% for 2 turns.",type:"heal-attack-up",healPercent:.10,attackBoost:.15,duration:2},
   "gummy-shark":{name:"Gummy Chomp",description:"Deal 1.4× damage with a 30% chance to weaken the enemy's next attack.",type:"damage-weaken",multiplier:1.40,weakenChance:.30,nextAttackMultiplier:.65,boss:true},
   "cream-fox":{name:"Creamy Comfort",description:"Heal 20% HP and reduce damage taken by 20% for 2 turns.",type:"heal-guard",healPercent:.20,damageReduction:.20,duration:2,boss:true},
-  "mimic":{name:"Jackpot Bite",description:"A gamble: strong damage, a heal, or bonus Pink Coins!",type:"jackpot",boss:false}
+  "mimic":{name:"Jackpot Bite",description:"A gamble: strong damage, a heal, or bonus Pink Coins!",type:"jackpot",boss:false},
+  "rotten-egg":{name:"Eggshell Bonk",description:"A sturdy little bonk with a chance to crit.",type:"crit-damage",multiplier:.90,critChance:.25,critMultiplier:1.7},
+  "lucky-cat":{name:"Lucky Paw",description:"A lucky gamble: damage, healing, or bonus Pink Coins!",type:"jackpot",boss:false},
+  "angy-duck":{name:"Loud Quack",description:"A loud quack that deals solid damage.",type:"crit-damage",multiplier:1.0,critChance:.15,critMultiplier:1.5}
 });
 
 function buddySkillForEnemyId(enemyId){
@@ -2191,6 +2238,9 @@ function buildBuddyCatalog() {
   addTable("lunar-moth",LUNAR_MOTH_VARIANTS,false);
   addTable("aries",ARIES_VARIANTS,true);
   addTable("cherub-duck",CHERUB_DUCK_VARIANTS,true);
+  addTable("rotten-egg",GIMMICK_ENEMY_VARIANTS["rotten-egg"],false);
+  addTable("lucky-cat",GIMMICK_ENEMY_VARIANTS["lucky-cat"],false);
+  addTable("angy-duck",GIMMICK_ENEMY_VARIANTS["angy-duck"],false);
   return entries;
 }
 
@@ -2273,7 +2323,7 @@ function enemyVariantId(enemy) {
   if(enemy.id==="mimic" && enemy.mimicChestStyle) return String(enemy.mimicChestStyle)==="regular" ? "base" : String(enemy.mimicChestStyle);
   return String(
     enemy.catSlimeVariant || enemy.beeVariant || enemy.flowerVariant || enemy.acornMouseVariant || enemy.mushroomVariant || enemy.treeSquirrelVariant || enemy.oceanVariant || enemy.seaunicornVariant || enemy.jellybunVariant ||
-    enemy.catterpillarVariant || enemy.seaStarVariant || enemy.appleBabyVariant || enemy.gummyWormVariant || enemy.puddingPigVariant || enemy.gingerlollyVariant || enemy.candycaneDeerVariant || enemy.gummySharkVariant || enemy.creamFoxVariant || enemy.starMouseVariant || enemy.puffFairyVariant || enemy.tulipaVariant || enemy.snoudVariant || enemy.cloudBunnyVariant || enemy.lunarMothVariant || enemy.ariesVariant || enemy.cherubDuckVariant || enemy.plushbunVariant || "base"
+    enemy.gimmickVariant || enemy.catterpillarVariant || enemy.seaStarVariant || enemy.appleBabyVariant || enemy.gummyWormVariant || enemy.puddingPigVariant || enemy.gingerlollyVariant || enemy.candycaneDeerVariant || enemy.gummySharkVariant || enemy.creamFoxVariant || enemy.starMouseVariant || enemy.puffFairyVariant || enemy.tulipaVariant || enemy.snoudVariant || enemy.cloudBunnyVariant || enemy.lunarMothVariant || enemy.ariesVariant || enemy.cherubDuckVariant || enemy.plushbunVariant || "base"
   );
 }
 
@@ -2299,11 +2349,17 @@ const SPECIAL_VARIANT_POWERS = Object.freeze({
   "cloud-bunny:black": {name:"Cloud Dodge!",type:"dodge",chance:.30,maxUses:99,cooldownTurns:3},
   "lunar-moth:golden": {name:"Moon Shine!",type:"heal-attack-up",chance:.30,maxUses:2,healPercent:.10,attackMultiplier:1.15,duration:2},
   "aries:galaxy": {name:"Ram Rush!",type:"attack-hero-next-down",chance:.28,maxUses:2,multiplier:1.30,heroAttackMultiplier:.80},
-  "cherub-duck:aqua": {name:"Cherub Blessing!",type:"heal-guard",chance:.30,maxUses:2,healPercent:.18,guardMultiplier:.80,guardHits:1}
+  "cherub-duck:aqua": {name:"Cherub Blessing!",type:"heal-guard",chance:.30,maxUses:2,healPercent:.18,guardMultiplier:.80,guardHits:1},
+  "angy-duck:base": {name:"Got Beef?!",type:"attack-up",chance:.32,maxUses:1,attackMultiplier:1.50,duration:2},
+  "angy-duck:blue": {name:"Got Beef?!",type:"attack-up",chance:.32,maxUses:1,attackMultiplier:1.50,duration:2},
+  "angy-duck:green": {name:"Got Beef?!",type:"attack-up",chance:.32,maxUses:1,attackMultiplier:1.50,duration:2},
+  "angy-duck:pink": {name:"Got Beef?!",type:"attack-up",chance:.32,maxUses:1,attackMultiplier:1.50,duration:2},
+  "angy-duck:purple": {name:"Got Beef?!",type:"attack-up",chance:.32,maxUses:1,attackMultiplier:1.50,duration:2},
+  "angy-duck:shiny": {name:"Got Beef?!",type:"attack-up",chance:.32,maxUses:1,attackMultiplier:1.50,duration:2}
 });
 
 function configureEnemySpecialVariant(enemy){
-  if(!enemy || enemy.shiny) return enemy;
+  if(!enemy || (enemy.shiny && enemy.id!=="angy-duck")) return enemy;
   const key=`${String(enemy.id||"")}:${enemyVariantId(enemy)}`;
   const power=SPECIAL_VARIANT_POWERS[key];
   if(!power) return enemy;
@@ -2500,6 +2556,12 @@ async function tryEnemySpecialVariantMove(){
     currentEnemy.variantAttackBoostTurns=Math.max(Number(currentEnemy.variantAttackBoostTurns||0),Number(power.duration)||2);
     currentEnemy.variantAttackBoostMultiplier=Math.max(Number(currentEnemy.variantAttackBoostMultiplier||1),Number(power.attackMultiplier)||1.15);
     setMessage(`${currentEnemy.name} used ${power.name} ${healed>0?`Recovered ${healed} HP and `:""}Attack rose by 15% for ${Number(power.duration)||2} attacks.`);
+    await pop(); return true;
+  }
+  if(power.type==="attack-up"){
+    currentEnemy.variantAttackBoostTurns=Math.max(Number(currentEnemy.variantAttackBoostTurns||0),Number(power.duration)||2);
+    currentEnemy.variantAttackBoostMultiplier=Math.max(Number(currentEnemy.variantAttackBoostMultiplier||1),Number(power.attackMultiplier)||1.50);
+    setMessage(`${currentEnemy.name} used ${power.name} Its Attack rose by ${Math.round(((Number(power.attackMultiplier)||1.50)-1)*100)}%!`);
     await pop(); return true;
   }
   return false;
@@ -5502,6 +5564,9 @@ function startEnemy(enemyId, options={}) {
     enemyId==="lunar-moth" ? applyLunarMothVariant(baseTemplate,variantRank) :
     enemyId==="aries" ? applyAriesVariant(baseTemplate,variantRank) :
     enemyId==="cherub-duck" ? applyCherubDuckVariant(baseTemplate,variantRank) :
+    enemyId==="rotten-egg" ? applyGimmickEnemyVariant(enemyId,baseTemplate,options.gimmickVariant) :
+    enemyId==="lucky-cat" ? applyGimmickEnemyVariant(enemyId,baseTemplate,options.gimmickVariant) :
+    enemyId==="angy-duck" ? applyGimmickEnemyVariant(enemyId,baseTemplate,options.gimmickVariant) :
     enemyId==="mimic" ? applyMimicProfile(baseTemplate,variantRank) : baseTemplate;
   const template=maybeApplyShinyVariant(enemyId,normalTemplate,Boolean(options.forceShiny));
 
@@ -6880,7 +6945,7 @@ async function enemyTurn() {
 
   const boosted=Boolean(currentEnemy.zoomiesBoost);
   if(boosted) currentEnemy.zoomiesBoost=false;
-  await performEnemyAttack(boosted?1.25:1,boosted?`${currentEnemy.name}'s Zoomies-powered attack!`:"");
+  await performEnemyAttack(boosted?1.25:1,boosted?`${currentEnemy.name}'s Zoomies-powered attack!`:(currentEnemy.id==="angy-duck"?`${currentEnemy.name} used Loud Quack!`:""));
   if(await finishEnemyBuddyTurn()) return;
   if(currentRun.hp>0) setMessage(`${heroDisplayName()} is ready!`);
 }
@@ -8056,6 +8121,7 @@ setInterval(()=>{
   window.DUCKIE_BOOST_CORE='24.213-candy-blanket-time-hearts';
   const COMMON_EGG_MS=60*60*1000;
   const RARE_EGG_MS=24*60*60*1000;
+  const SHINY_EGG_MS=24*60*60*1000;
   const RARE_EGG_SHINY_RATE=1/100;
   const DASH_CARTS=[
     {id:'default',name:'Default Cart',image:'assets/dash/carts/Duck-car-default.png',kind:'default'},
@@ -8078,7 +8144,8 @@ setInterval(()=>{
   const SPECIAL_REWARD_ITEMS={
     token:{id:'jump-token',name:'Jump Token',image:'assets/dash/Jump-Token.png'},
     commonEgg:{id:'common-egg',name:'Common Egg',image:'assets/eggs/Common-egg.png'},
-    rareEgg:{id:'rare-egg',name:'Rare Egg',image:'assets/eggs/Rare-egg.png'}
+    rareEgg:{id:'rare-egg',name:'Rare Egg',image:'assets/eggs/Rare-egg.png'},
+    shinyEgg:{id:'shiny-egg',name:'Shiny Egg',image:'assets/gimmicks/shiny-egg.png'}
   };
   const EVENT_ART={
     'lucky-picnic':'assets/events/Picnic.png',
@@ -8309,7 +8376,7 @@ setInterval(()=>{
     questSave.eggs.incubators=Array.from({length:3},(_,i)=>{
       const x=questSave.eggs.incubators[i];
       if(!x || typeof x!=='object') return null;
-      return {type:x.type==='rare'?'rare':'common',startAt:Math.max(0,Number(x.startAt)||0),endAt:Math.max(0,Number(x.endAt)||0)};
+      return {type:x.type==='shiny'?'shiny':x.type==='rare'?'rare':'common',startAt:Math.max(0,Number(x.startAt)||0),endAt:Math.max(0,Number(x.endAt)||0)};
     });
     if(!questSave.eggs.lastHatch || typeof questSave.eggs.lastHatch!=='object') questSave.eggs.lastHatch=null;
   }
@@ -8364,17 +8431,17 @@ setInterval(()=>{
   }
 
   // ----- Hatching Area -----
-  function eggDefinition(type){return type==='rare'?{type:'rare',name:'Rare Egg',image:'assets/eggs/Rare-egg.png',ms:RARE_EGG_MS}:{type:'common',name:'Common Egg',image:'assets/eggs/Common-egg.png',ms:COMMON_EGG_MS};}
+  function eggDefinition(type){return type==='shiny'?{type:'shiny',name:'Shiny Egg',image:'assets/gimmicks/shiny-egg.png',ms:SHINY_EGG_MS}:type==='rare'?{type:'rare',name:'Rare Egg',image:'assets/eggs/Rare-egg.png',ms:RARE_EGG_MS}:{type:'common',name:'Common Egg',image:'assets/eggs/Common-egg.png',ms:COMMON_EGG_MS};}
   function fmtRemaining(ms){const sec=Math.max(0,Math.ceil(ms/1000));const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;if(h)return `${h}h ${String(m).padStart(2,'0')}m`;return `${m}m ${String(s).padStart(2,'0')}s`;}
   function emptyIncubator(){ensureExpansionSave();return questSave.eggs.incubators.findIndex(x=>!x);}
   function startEgg(type,preferredSlot=null,replace=false){const def=eggDefinition(type);const target=Number.isInteger(preferredSlot)&&preferredSlot>=0&&preferredSlot<3?preferredSlot:emptyIncubator();if(target<0){setMessage('All three nests are busy!');return false;}const existing=questSave.eggs.incubators[target];if(existing&&!replace){setMessage('That nest already has an egg.');return false;}if(specialQty(`${type}-egg`)<=0){setMessage(`You do not have a ${def.name}.`);return false;}if(!useInventory(`${type}-egg`,1))return false;if(existing&&replace)addInventory(`${existing.type}-egg`,1);const now=Date.now();questSave.eggs.incubators[target]={type,startAt:now,endAt:now+def.ms};persistAll();renderHatchery();refreshFeatureBadges();closeEggInventory();openHatchDetail(target);return true;}
-  function baseEggCandidates(type){const normals=BUDDY_CATALOG.filter(e=>!e.shiny&&e.enemyId!=='mimic');if(type==='common')return normals.filter(e=>!e.boss);const bosses=normals.filter(e=>e.boss),nonboss=normals.filter(e=>!e.boss);return Math.random()<.65?bosses:nonboss;}
-  function rollEggBuddy(type){const pool=baseEggCandidates(type);let entry=pool[Math.floor(Math.random()*pool.length)]||BUDDY_CATALOG.find(e=>!e.shiny&&!e.boss);const shinyRate=type==='rare'?RARE_EGG_SHINY_RATE:BASE_SHINY_RATE;if(entry&&Math.random()<shinyRate){const shiny=BUDDY_CATALOG.find(e=>e.enemyId===entry.enemyId&&e.shiny);if(shiny)entry=shiny;}return entry;}
+  function baseEggCandidates(type){const excluded=new Set(['mimic','rotten-egg','lucky-cat','angy-duck','plushbun','gift-mimic']);if(type==='shiny')return BUDDY_CATALOG.filter(e=>e.shiny&&!excluded.has(e.enemyId));const normals=BUDDY_CATALOG.filter(e=>!e.shiny&&!excluded.has(e.enemyId));if(type==='common')return normals.filter(e=>!e.boss);const bosses=normals.filter(e=>e.boss),nonboss=normals.filter(e=>!e.boss);return Math.random()<.65?bosses:nonboss;}
+  function rollEggBuddy(type){const pool=baseEggCandidates(type);let entry=pool[Math.floor(Math.random()*pool.length)]||BUDDY_CATALOG.find(e=>!e.shiny&&!e.boss);if(type==='shiny')return entry;const shinyRate=type==='rare'?RARE_EGG_SHINY_RATE:BASE_SHINY_RATE;if(entry&&Math.random()<shinyRate){const shiny=BUDDY_CATALOG.find(e=>e.enemyId===entry.enemyId&&e.shiny);if(shiny)entry=shiny;}return entry;}
   function grantCatalogBuddy(entry){ensureBuddySave();const existing=hubSave.buddies.collection[entry.key];if(existing){existing.quantity=Math.max(1,Number(existing.quantity)||1)+1;return existing;}const record={key:entry.key,enemyId:entry.enemyId,variantId:entry.variantId,name:entry.name,image:entry.image,idle:Array.isArray(entry.idle)?entry.idle.slice():[entry.image].filter(Boolean),shiny:Boolean(entry.shiny),boss:Boolean(entry.boss),quantity:1,capturedAt:Date.now()};hubSave.buddies.collection[entry.key]=record;return record;}
   let selectedHatchSlot=null,inventoryTargetSlot=null,inventoryReplacing=false,hatchAnimating=false;
   function closeHatchDetail(){if(hatchAnimating)return;selectedHatchSlot=null;const modal=document.querySelector('#hatchDetailModal');modal?.classList.add('hidden');modal?.setAttribute('aria-hidden','true');}
   function closeEggInventory(){inventoryTargetSlot=null;inventoryReplacing=false;const modal=document.querySelector('#eggInventoryModal');modal?.classList.add('hidden');modal?.setAttribute('aria-hidden','true');}
-  function renderEggInventory(){const grid=document.querySelector('#eggInventoryGrid');if(!grid)return;grid.innerHTML='';['common','rare'].forEach(type=>{const d=eggDefinition(type),qty=specialQty(`${type}-egg`);const card=document.createElement('div');card.className='egg-inventory-card';card.innerHTML=`<img src="${d.image}" alt="${d.name}"><strong>${d.name}</strong><span class="egg-count">Owned ×${qty}</span><small>${type==='common'?'1 hour · Non-boss Buddies · normal Shiny chance':'24 hours · Bosses favored · 1 / 100 Shiny chance'}</small>`;const b=document.createElement('button');b.type='button';b.className='pixel-button primary';const noSlot=inventoryTargetSlot===null&&emptyIncubator()<0;b.disabled=qty<=0||noSlot;b.textContent=qty<=0?'None Owned':inventoryReplacing?`Switch to ${d.name}`:'Incubate';b.addEventListener('click',()=>startEgg(type,inventoryTargetSlot,inventoryReplacing));card.appendChild(b);grid.appendChild(card);});const note=document.querySelector('#eggInventoryNote');if(note){if(inventoryReplacing)note.textContent='Switching returns the current egg to your inventory and restarts the new egg timer.';else if(inventoryTargetSlot!==null)note.textContent=`This egg will go into Nest ${inventoryTargetSlot+1}.`;else if(emptyIncubator()<0)note.textContent='All three nests are occupied. Tap an incubating egg and choose Switch Egg if you want to replace one.';else note.textContent='Only three eggs can incubate at once. Your extra eggs stay safely in inventory.';}const title=document.querySelector('#eggInventoryTitle');if(title)title.textContent=inventoryReplacing?'Switch Egg':'Choose an Egg';}
+  function renderEggInventory(){const grid=document.querySelector('#eggInventoryGrid');if(!grid)return;grid.innerHTML='';['common','rare','shiny'].forEach(type=>{const d=eggDefinition(type),qty=specialQty(`${type}-egg`);const card=document.createElement('div');card.className='egg-inventory-card';const detail=type==='common'?'1 hour · Non-boss Buddies · normal Shiny chance':type==='rare'?'24 hours · Bosses favored · 1 / 100 Shiny chance':'24 hours · Guaranteed random Shiny Buddy ✨';card.innerHTML=`<img src="${d.image}" alt="${d.name}"><strong>${d.name}</strong><span class="egg-count">Owned ×${qty}</span><small>${detail}</small>`;const b=document.createElement('button');b.type='button';b.className='pixel-button primary';const noSlot=inventoryTargetSlot===null&&emptyIncubator()<0;b.disabled=qty<=0||noSlot;b.textContent=qty<=0?'None Owned':inventoryReplacing?`Switch to ${d.name}`:'Incubate';b.addEventListener('click',()=>startEgg(type,inventoryTargetSlot,inventoryReplacing));card.appendChild(b);grid.appendChild(card);});const note=document.querySelector('#eggInventoryNote');if(note){if(inventoryReplacing)note.textContent='Switching returns the current egg to your inventory and restarts the new egg timer.';else if(inventoryTargetSlot!==null)note.textContent=`This egg will go into Nest ${inventoryTargetSlot+1}.`;else if(emptyIncubator()<0)note.textContent='All three nests are occupied. Tap an incubating egg and choose Switch Egg if you want to replace one.';else note.textContent='Only three eggs can incubate at once. Your extra eggs stay safely in inventory.';}const title=document.querySelector('#eggInventoryTitle');if(title)title.textContent=inventoryReplacing?'Switch Egg':'Choose an Egg';}
   function openEggInventory(targetSlot=null,replace=false){inventoryTargetSlot=Number.isInteger(targetSlot)?targetSlot:null;inventoryReplacing=Boolean(replace);renderEggInventory();const modal=document.querySelector('#eggInventoryModal');modal?.classList.remove('hidden');modal?.setAttribute('aria-hidden','false');}
   function updateHatchDetailTimer(){if(selectedHatchSlot===null||hatchAnimating)return;const slot=questSave.eggs.incubators[selectedHatchSlot];if(!slot)return;const ready=Date.now()>=slot.endAt;const status=document.querySelector('#hatchDetailStatus');if(status)status.textContent=ready?'Oh?':`${fmtRemaining(slot.endAt-Date.now())} until hatch`;if(ready&&!document.querySelector('#hatchNowButton'))openHatchDetail(selectedHatchSlot);}
   function warmBlanketQtyV213(){return Math.max(0,Math.floor(Number(hubSave?.inventory?.['warm-blanket'])||0));}
@@ -8395,7 +8462,7 @@ setInterval(()=>{
     const egg=document.querySelector('#hatchDetailEgg');if(egg){egg.src=d.image;egg.alt=d.name;egg.className='hatch-window-egg';egg.classList.remove('hidden');}
     const title=document.querySelector('#hatchDetailTitle');if(title)title.textContent=d.name;
     const kicker=document.querySelector('#hatchDetailKicker');if(kicker)kicker.textContent=`NEST ${index+1}`;
-    const sub=document.querySelector('#hatchDetailSubtitle');if(sub)sub.textContent=ready?'It is wiggling... it wants out!':slot.type==='rare'?'A rare little surprise is warming up.':'Warm and cozy.';
+    const sub=document.querySelector('#hatchDetailSubtitle');if(sub)sub.textContent=ready?'It is wiggling... it wants out!':slot.type==='shiny'?'Something sparkling is warming up... ✨':slot.type==='rare'?'A rare little surprise is warming up.':'Warm and cozy.';
     const status=document.querySelector('#hatchDetailStatus');if(status)status.textContent=ready?'Oh?':`${fmtRemaining(slot.endAt-Date.now())} until hatch`;
     const actions=document.querySelector('#hatchDetailActions');if(actions){
       actions.innerHTML='';
@@ -8412,7 +8479,7 @@ setInterval(()=>{
     }
   }
   async function hatchSlot(index){const slot=questSave.eggs.incubators[index];if(!slot||Date.now()<slot.endAt||hatchAnimating)return;hatchAnimating=true;const egg=document.querySelector('#hatchDetailEgg'),glow=document.querySelector('#hatchGlow'),actions=document.querySelector('#hatchDetailActions'),status=document.querySelector('#hatchDetailStatus');if(actions)actions.querySelectorAll('button').forEach(b=>b.disabled=true);if(status)status.textContent='Something is happening...!';egg?.classList.add('hatching');glow?.classList.add('active');await sleep(1380);const entry=rollEggBuddy(slot.type);if(!entry){hatchAnimating=false;return;}const owned=grantCatalogBuddy(entry),eggDef=eggDefinition(slot.type);questSave.eggs.incubators[index]=null;questSave.eggs.lastHatch={name:entry.name,image:entry.image,shiny:Boolean(entry.shiny),boss:Boolean(entry.boss),eggName:eggDef.name,quantity:owned.quantity};persistAll();refreshFeatureBadges();renderBuddyHomeCount();renderHatchery();if(egg)egg.classList.add('hidden');const result=document.querySelector('#hatchResult');if(result){result.className=`hatch-result${entry.shiny?' shiny':''}`;result.innerHTML=`<div><img src="${entry.image}" alt="${entry.name}"><strong>${entry.name}${entry.shiny?' ✨':''}</strong><small>${entry.boss?'Boss Buddy · ':''}${entry.shiny?'Shiny · ':''}Owned ×${owned.quantity}</small></div>`;}const title=document.querySelector('#hatchDetailTitle');if(title)title.textContent='It hatched!';const sub=document.querySelector('#hatchDetailSubtitle');if(sub)sub.textContent=`Your ${eggDef.name} became a new Buddy!`;if(status)status.textContent=`Meet ${entry.name}${entry.shiny?' ✨':''}!`;if(actions){actions.innerHTML='';const done=document.createElement('button');done.type='button';done.className='pixel-button primary';done.textContent='Yay! ♡';done.addEventListener('click',()=>{hatchAnimating=false;closeHatchDetail();renderHatchery();});actions.appendChild(done);}}
-  function renderHatchery(){ensureExpansionSave();const total=specialQty('common-egg')+specialQty('rare-egg');const count=document.querySelector('#hatchInventoryCount');if(count)count.textContent=String(total);const ready=readyEggs(),flag=document.querySelector('#hatchWorldReady');if(flag){flag.classList.toggle('hidden',ready<=0);flag.textContent=ready===1?'An egg is ready! ✨':`${ready} eggs are ready! ✨`;}const slots=document.querySelector('#hatchNestSlots');if(slots){slots.innerHTML='';questSave.eggs.incubators.forEach((slot,i)=>{const b=document.createElement('button');b.type='button';b.className='hatch-nest-slot';b.setAttribute('aria-label',slot?`Nest ${i+1}, ${eggDefinition(slot.type).name}`:`Nest ${i+1}, empty`);if(!slot){b.innerHTML=`<span class="hatch-empty-plus" aria-hidden="true">＋</span><span class="hatch-slot-status">Empty Nest</span>`;b.addEventListener('click',()=>openEggInventory(i,false));}else{const d=eggDefinition(slot.type),isReady=Date.now()>=slot.endAt;b.classList.toggle('ready',isReady);b.innerHTML=`<img class="hatch-main-egg" src="${d.image}" alt="${d.name}"><span class="hatch-slot-status">${isReady?'Ready! Tap to hatch':fmtRemaining(slot.endAt-Date.now())}</span>`;b.addEventListener('click',()=>openHatchDetail(i));}slots.appendChild(b);});}if(!document.querySelector('#eggInventoryModal')?.classList.contains('hidden'))renderEggInventory();refreshFeatureBadges();updateHatchDetailTimer();}
+  function renderHatchery(){ensureExpansionSave();const total=specialQty('common-egg')+specialQty('rare-egg')+specialQty('shiny-egg');const count=document.querySelector('#hatchInventoryCount');if(count)count.textContent=String(total);const ready=readyEggs(),flag=document.querySelector('#hatchWorldReady');if(flag){flag.classList.toggle('hidden',ready<=0);flag.textContent=ready===1?'An egg is ready! ✨':`${ready} eggs are ready! ✨`;}const slots=document.querySelector('#hatchNestSlots');if(slots){slots.innerHTML='';questSave.eggs.incubators.forEach((slot,i)=>{const b=document.createElement('button');b.type='button';b.className='hatch-nest-slot';b.setAttribute('aria-label',slot?`Nest ${i+1}, ${eggDefinition(slot.type).name}`:`Nest ${i+1}, empty`);if(!slot){b.innerHTML=`<span class="hatch-empty-plus" aria-hidden="true">＋</span><span class="hatch-slot-status">Empty Nest</span>`;b.addEventListener('click',()=>openEggInventory(i,false));}else{const d=eggDefinition(slot.type),isReady=Date.now()>=slot.endAt;b.classList.toggle('ready',isReady);b.innerHTML=`<img class="hatch-main-egg" src="${d.image}" alt="${d.name}"><span class="hatch-slot-status">${isReady?'Ready! Tap to hatch':fmtRemaining(slot.endAt-Date.now())}</span>`;b.addEventListener('click',()=>openHatchDetail(i));}slots.appendChild(b);});}if(!document.querySelector('#eggInventoryModal')?.classList.contains('hidden'))renderEggInventory();refreshFeatureBadges();updateHatchDetailTimer();}
   setInterval(()=>{refreshFeatureBadges();if(!document.querySelector('#hatcheryScreen')?.classList.contains('hidden'))renderHatchery();},1000);
 
   // ----- Duckie Dash -----
