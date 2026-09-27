@@ -1,0 +1,113 @@
+/* Duckie Days v24.291 — Luv & Birdie scene layout */
+
+#battlefield.luv-birdie-scene-v291 > .peep-combatant{
+  display:none!important;
+}
+#chestLayer.luv-birdie-active-v262{
+  display:block!important;
+  background:transparent!important;
+  padding:0!important;
+  overflow:hidden!important;
+  pointer-events:none!important;
+}
+#chestLayer.luv-birdie-active-v262 #chestCaption{
+  display:none!important;
+}
+#chestLayer.luv-birdie-active-v262 .luv-birdie-art-v262{
+  position:absolute!important;
+  left:50%!important;
+  top:52%!important;
+  width:min(220px,54vw)!important;
+  height:min(220px,54vw)!important;
+  max-width:none!important;
+  max-height:none!important;
+  object-fit:contain!important;
+  image-rendering:pixelated!important;
+  transform:translate(-50%,-50%)!important;
+  filter:drop-shadow(0 5px 0 rgba(74,52,48,.16))!important;
+}
+
+#battleScreen .battle-ui.luv-birdie-ui-v291{
+  min-height:0!important;
+  height:auto!important;
+  flex:0 0 auto!important;
+  grid-template-rows:auto auto!important;
+  align-content:start!important;
+  gap:9px!important;
+  padding:10px!important;
+}
+#battleScreen .battle-ui.luv-birdie-ui-v291 #commandStage,
+#battleScreen .battle-ui.luv-birdie-ui-v291 #postFloorActions{
+  display:none!important;
+}
+#battleScreen .battle-ui.luv-birdie-ui-v291 .battle-message{
+  min-height:66px!important;
+  padding:10px 12px!important;
+  font-size:.82rem!important;
+  line-height:1.42!important;
+}
+#eventChoiceActions.luv-birdie-choice-panel-v291{
+  display:grid!important;
+  gap:8px!important;
+  width:100%!important;
+  padding:0!important;
+  margin:0!important;
+}
+#eventChoiceActions.luv-birdie-choice-panel-v291.hidden{
+  display:none!important;
+}
+.luv-birdie-prompt-v291{
+  display:grid;
+  gap:3px;
+  text-align:center;
+  color:#674d59;
+}
+.luv-birdie-prompt-v291 strong{font-size:.78rem}
+.luv-birdie-prompt-v291 small{
+  font-size:.56rem;
+  line-height:1.35;
+  color:#826b75;
+}
+.luv-birdie-grid-v291{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:7px;
+}
+.luv-birdie-choice-v291{
+  min-width:0!important;
+  min-height:44px!important;
+  padding:7px 4px!important;
+  font-size:.64rem!important;
+}
+.luv-birdie-leave-v291{
+  width:100%!important;
+  min-height:42px!important;
+}
+.luv-birdie-result-v291{
+  display:flex;
+  justify-content:center;
+  width:100%;
+}
+.luv-birdie-continue-v291{
+  width:min(260px,82%)!important;
+  min-height:48px!important;
+  margin:0 auto!important;
+}
+
+@media(max-width:600px){
+  #chestLayer.luv-birdie-active-v262 .luv-birdie-art-v262{
+    width:min(190px,50vw)!important;
+    height:min(190px,50vw)!important;
+    top:53%!important;
+  }
+  #battleScreen .battle-ui.luv-birdie-ui-v291 .battle-message{
+    min-height:62px!important;
+    font-size:.76rem!important;
+  }
+  .luv-birdie-prompt-v291 strong{font-size:.72rem}
+  .luv-birdie-prompt-v291 small{font-size:.51rem}
+  .luv-birdie-choice-v291{
+    min-height:42px!important;
+    font-size:.58rem!important;
+  }
+}

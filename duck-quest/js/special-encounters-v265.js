@@ -67,28 +67,107 @@
     ui.chestSprite.src=LUV_FRAMES[0];
     luvTimer=setInterval(()=>{i=(i+1)%2;if(ui.chestSprite)ui.chestSprite.src=LUV_FRAMES[i];},430);
   }
+  function clearLuvBirdieSceneV291(){
+    stopLuvAnimation();
+    ui.battlefield?.classList.remove("luv-birdie-scene-v291");
+    ui.battleUi?.classList.remove("luv-birdie-ui-v291");
+    ui.chestLayer?.classList.remove("merchant-active-v197","luv-birdie-active-v262");
+    ui.chestSprite?.classList.remove("event-scene-art","merchant-duck","luv-birdie-art-v262");
+    ui.chestLayer?.querySelector("#luvBirdieMenuV262")?.remove();
+    ui.openChest?.classList.add("hidden");
+    ui.chestLayer?.classList.add("hidden");
+    if(ui.eventChoiceActions){
+      ui.eventChoiceActions.innerHTML="";
+      ui.eventChoiceActions.classList.add("hidden");
+      ui.eventChoiceActions.classList.remove("luv-birdie-choice-panel-v291");
+    }
+    pendingChest=null;
+  }
+
+  function holdLuvBirdieUntilContinueV291(message){
+    setMessage(message);
+    if(currentRun?.mode==="endless") markEndlessFloorComplete();
+    persist();
+    actionLocked=true;
+
+    const holder=ui.eventChoiceActions;
+    if(!holder)return;
+    holder.innerHTML="";
+    holder.classList.add("luv-birdie-choice-panel-v291");
+    holder.classList.remove("hidden");
+
+    const row=document.createElement("div");
+    row.className="luv-birdie-result-v291";
+    const next=document.createElement("button");
+    next.type="button";
+    next.className="pixel-button primary luv-birdie-continue-v291";
+    next.textContent=currentRun?.mode==="endless"?"Next Floor":"Continue";
+    next.addEventListener("click",()=>{
+      next.disabled=true;
+      clearLuvBirdieSceneV291();
+      actionLocked=false;
+      nextEncounter();
+    },{once:true});
+    row.appendChild(next);
+    holder.appendChild(row);
+  }
+
   function showLuvBirdie(){
     clearGiftRewardVisual();
-    ui.chestLayer?.classList.remove("gift-box-active-v262");
-    ui.chestSprite?.classList.remove("gift-box-art-v262");
+    ui.chestLayer?.classList.remove("gift-box-active-v262","merchant-active-v197");
+    ui.chestSprite?.classList.remove("gift-box-art-v262","merchant-duck");
     pendingChest={kind:"event",eventType:"luv-birdie"};
+
+    ui.battlefield?.classList.add("luv-birdie-scene-v291");
+    ui.battleUi?.classList.add("luv-birdie-ui-v291");
+    ui.postFloorActions?.classList.add("hidden");
+    ui.leaveEndlessButton?.classList.add("hidden");
+
     ui.chestLayer.classList.remove("hidden");
-    ui.chestLayer.classList.add("merchant-active-v197","luv-birdie-active-v262");
-    ui.chestSprite.classList.add("event-scene-art","merchant-duck","luv-birdie-art-v262");
-    ui.chestSprite.alt="Luv and Birdie"; startLuvAnimation();
+    ui.chestLayer.classList.add("luv-birdie-active-v262");
+    ui.chestSprite.classList.add("event-scene-art","luv-birdie-art-v262");
+    ui.chestSprite.alt="Luv and Birdie";
+    startLuvAnimation();
     ui.openChest.classList.add("hidden");
     ui.chestCaption.textContent="Luv & Birdie";
+
     setMessage("Luv and Birdie snuggle together, both chirping sweet chirps to each other. It makes Miko think of someone… but who..?");
-    let menu=ui.chestLayer.querySelector("#luvBirdieMenuV262");
-    if(!menu){menu=document.createElement("div");menu.id="luvBirdieMenuV262";menu.className="merchant-shop-v197 luv-birdie-menu-v262";ui.chestLayer.appendChild(menu);}
-    menu.innerHTML='<div class="luv-birdie-copy-v262"><strong>Who is Miko thinking of?</strong><small>Choose someone to give them a 3× encounter weight for the next 3 eligible character-event rolls.</small></div>';
-    const grid=document.createElement("div");grid.className="luv-birdie-grid-v262";
-    LUV_IDS.forEach(([id,name])=>{const b=document.createElement("button");b.type="button";b.className="pixel-button luv-birdie-choice-v262";b.textContent=name;b.addEventListener("click",()=>{
-      hubSave.luvBirdieFocusV262={characterId:id,name,rollsRemaining:3,weight:3}; persist();
-      finishSpecial(`Luv and Birdie chirp happily! ${name} will be much more likely to appear for Miko's next few character encounters.`);
-    });grid.appendChild(b);});
-    menu.appendChild(grid);
-    const leave=document.createElement("button");leave.type="button";leave.className="pixel-button merchant-leave-v197";leave.textContent="Maybe another time";leave.addEventListener("click",()=>finishSpecial("Luv and Birdie cuddle close as Miko continues onward."));menu.appendChild(leave);
+
+    const holder=ui.eventChoiceActions;
+    if(!holder)return;
+    holder.innerHTML="";
+    holder.classList.add("luv-birdie-choice-panel-v291");
+    holder.classList.remove("hidden");
+
+    const prompt=document.createElement("div");
+    prompt.className="luv-birdie-prompt-v291";
+    prompt.innerHTML="<strong>Who is Miko thinking of?</strong><small>Choose someone to make them 3× more likely during the next 3 eligible character-event rolls.</small>";
+    holder.appendChild(prompt);
+
+    const grid=document.createElement("div");
+    grid.className="luv-birdie-grid-v291";
+    LUV_IDS.forEach(([id,name])=>{
+      const button=document.createElement("button");
+      button.type="button";
+      button.className="pixel-button luv-birdie-choice-v291";
+      button.textContent=name;
+      button.addEventListener("click",()=>{
+        hubSave.luvBirdieFocusV262={characterId:id,name,rollsRemaining:3,weight:3};
+        persist();
+        holdLuvBirdieUntilContinueV291(`Luv and Birdie chirp happily! ${name} will be much more likely to appear for Miko's next few character encounters.`);
+      },{once:true});
+      grid.appendChild(button);
+    });
+    holder.appendChild(grid);
+
+    const leave=document.createElement("button");
+    leave.type="button";
+    leave.className="pixel-button luv-birdie-leave-v291";
+    leave.textContent="Maybe another time";
+    leave.addEventListener("click",()=>{
+      holdLuvBirdieUntilContinueV291("Luv and Birdie cuddle close as Miko continues onward.");
+    },{once:true});
+    holder.appendChild(leave);
   }
 
   // Add Luv & Birdie at the same special-event weight as Merchant (Miko only).
@@ -226,6 +305,9 @@
       if(encounter?.type==="luv-birdie"){prepSpecial(encounter);showLuvBirdie();return;}
       if(encounter?.type==="gift-box"){prepSpecial(encounter);showGiftBox();return;}
       stopLuvAnimation();stopGiftAnimation();clearGiftRewardVisual();
+      ui.battlefield?.classList.remove("luv-birdie-scene-v291");
+      ui.battleUi?.classList.remove("luv-birdie-ui-v291");
+      ui.eventChoiceActions?.classList.remove("luv-birdie-choice-panel-v291");
       ui.chestLayer?.classList.remove("gift-box-active-v262","luv-birdie-active-v262");
       ui.chestSprite?.classList.remove("gift-box-art-v262","luv-birdie-art-v262","event-scene-art","merchant-duck");
       return oldStartEncounterV262();

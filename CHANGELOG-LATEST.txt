@@ -1,13 +1,12 @@
-Duckie Days 24.290
+Duckie Days 24.291
 
-Scene + Gift Box polish
+Luv & Birdie layout fix
 
-- Reward chests no longer hop/sway when opening.
-- Lucky Gift Boxes now remain on lucky-closed.png until opened.
-- A non-Mimic Lucky Gift Box goes closed -> open -> reward.
-- A Mimic Gift Box goes closed -> open -> Mimic reveal -> battle.
-- All 13 love-interest/reunion scenes no longer bob the character sprites up and down.
-- Only the ending heart floats, using a stepped pixel-style animation.
-- Every one of the 13 scenes now ends with the same Obtained! reward popup and an explicit Continue button.
-- Individual scenes list their Duck + Miko outfit rewards; Lukio also lists his card.
-- Reunion scenes list both Trading Cards.
+- Luv & Birdie are now centered together in the battlefield.
+- Miko's battle sprite is hidden while the Luv & Birdie event is active.
+- Love-interest choices now live below the event text in the lower cream dialogue box.
+- All 9 love-interest buttons are shown in a clean 3x3 grid.
+- Selecting a love interest no longer immediately removes Luv & Birdie.
+- Luv & Birdie stay visible while the result text is shown.
+- A dedicated Continue / Next Floor button appears after the choice.
+- The event is only cleaned up when the player presses Continue.
