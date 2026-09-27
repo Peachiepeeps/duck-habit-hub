@@ -1,0 +1,20 @@
+/* Duckie Days v24.289 — Wonder Charm + Gift Box transition safety */
+
+/* Gift Box used display:grid!important, which could beat the generic hidden rule.
+   An ID-scoped hidden rule guarantees that the encounter overlay actually leaves. */
+#chestLayer.hidden{
+  display:none!important;
+}
+
+/* Wonder Charm palette: dreamy pink/blue/yellow, using the existing charm layers. */
+.charm-art.family-wonder{
+  --duck:#f2b9dc;
+  --beak:#efb47e;
+  --heart:#9fd4e7;
+  --sparkle:#fff1a8;
+}
+.charm-art.family-wonder.tier-rose-gold{
+  --duck:#f7cce5;
+  --heart:#b5dff0;
+  --sparkle:#fff5bd;
+}

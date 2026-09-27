@@ -4,6 +4,12 @@
   const TC=window.DuckieTradingCards;
   const VERSION="24.288";
   const GIMMICK_RATE=.04;
+  function currentGimmickRate(){
+    try{
+      const wonder=typeof activeCharmByFamily==="function"?activeCharmByFamily("wonder"):null;
+      return Math.max(GIMMICK_RATE,Math.min(.10,Number(wonder?.eventRate)||GIMMICK_RATE));
+    }catch(error){return GIMMICK_RATE;}
+  }
   const COOLDOWN_NORMAL_ENCOUNTERS=4;
   const BASE_CARD_CHANCE=.08;
   const PITY=5;
@@ -122,7 +128,7 @@
 
   if(typeof buildEncounterFromPool==='function'){
     const oldBuild=buildEncounterFromPool;buildEncounterFromPool=function(enemyPool,mode='stage'){
-      const result=oldBuild.apply(this,arguments);if(result?.type!=='enemy')return result;if(generationCooldown>0){generationCooldown--;return result;}if(Math.random()>=GIMMICK_RATE)return result;generationCooldown=COOLDOWN_NORMAL_ENCOUNTERS;return {type:'gimmick',gimmick:pick(GIMMICKS)};
+      const result=oldBuild.apply(this,arguments);if(result?.type!=='enemy')return result;if(generationCooldown>0){generationCooldown--;return result;}if(Math.random()>=currentGimmickRate())return result;generationCooldown=COOLDOWN_NORMAL_ENCOUNTERS;return {type:'gimmick',gimmick:pick(GIMMICKS)};
     };
   }
   if(typeof situationTitle==='function'){const old=situationTitle;situationTitle=function(type){if(type==='gimmick')return'Gimmick Encounter';return old.apply(this,arguments);};}

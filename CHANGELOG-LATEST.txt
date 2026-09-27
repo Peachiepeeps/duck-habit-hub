@@ -1,17 +1,13 @@
-Duckie Days 24.288 — Gimmick Encounters
+Duckie Days 24.289
 
-Adds six equally weighted rare Duck Quest gimmick encounter families: Rotten Egg, Lucky Cat, Ghost Girl, Pippa, Artist Friend, and Angy Duck.
+Wonder Charm + encounter fixes
 
-Highlights:
-- 4% chance when an eligible normal enemy encounter is generated, then a 4-normal-encounter cooldown.
-- 5-completed-encounter card pity per gimmick family.
-- 12 new Uncommon cards (U-014 through U-025) and 6 new Rare cards (R-041 through R-046).
-- Rotten Egg Incubate gamble: 50% instant friendly normal Buddy, 44% Rotten Egg battle, 3% Shiny Egg, 3% Shiny Rotten Egg battle.
-- Shiny Egg takes 24 hours and guarantees a random Shiny Buddy.
-- Lucky Cat coin battle/capture rewards and 10-coin gamble: 55% 10, 30% 50, 14% 100, 1% 1,000.
-- Ghost Girl accepts any Food; higher-value food improves card chance.
-- Pippa delivers OC-specific Love Letters; gifting the matching OC grants +50 Happiness.
-- Artist Friend accepts Shop Supplies for 3 random Paints and can offer ordinary Buddy recoloring for 75 coins or matching Paint.
-- Angy Duck uses Loud Quack and Got Beef?! (+50% Attack for 2 attacks, once per battle). Defeating it grants a random regular duck; Shiny Angy can also grant already-unlocked special ducks.
-
-The current consolidated root layout is preserved. hub.css is intentionally NOT included in this update, so the user's manual Book/shelf positioning stays untouched.
+- Added Bronze Wonder Charm: 5% rare encounter target (300 Pink Coins)
+- Added Silver Wonder Charm: 6% rare encounter target (750 Pink Coins)
+- Added Gold Wonder Charm: 8% rare encounter target (1,300 Pink Coins)
+- Added Rose-Gold Wonder Charm: 10% rare encounter target (2,000 Pink Coins)
+- Wonder also gently raises Gift Box and existing random-event appearances.
+- Fixed Miko/other hero cooldown and per-battle state carrying into Mimics.
+- The same fresh-battle reset now applies to Gift Mimic, Rotten Egg, Lucky Cat, and Angy Duck battles.
+- Fixed Gift Box UI staying visible when it becomes a Mimic.
+- Fixed stale Gift Box layout corrupting the reward screen after catching/defeating Gift Mimic.

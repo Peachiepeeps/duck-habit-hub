@@ -1870,14 +1870,15 @@ function updateEncounterHeader(encounter=currentEncounterData()){
 
 const CHARM_SLOT_LIMIT = 3;
 const CURRENT_DUCKIPEDIA_TOTAL = 74;
-const CHARM_FAMILY_ORDER = Object.freeze(["shimmer","fortune","best-friend","training","vitality","treasure"]);
+const CHARM_FAMILY_ORDER = Object.freeze(["shimmer","fortune","best-friend","training","vitality","treasure","wonder"]);
 const CHARM_FAMILIES = Object.freeze({
   shimmer:{name:"Shimmer Charm",description:"Raises Shiny odds above the normal 1 / 500 rate.",family:"shimmer"},
   fortune:{name:"Fortune Charm",description:"Earn more Pink Coins and improve ordinary item quality.",family:"fortune"},
   "best-friend":{name:"Best Friend Charm",description:"Adds percentage points to compatible Buddy Pon catch chances.",family:"best-friend"},
   training:{name:"Training Charm",description:"Earn more EXP from Duck Quest rewards.",family:"training"},
   vitality:{name:"Vitality Charm",description:"Raises this OC's maximum HP for the entire run.",family:"vitality"},
-  treasure:{name:"Treasure Charm",description:"Sometimes adds an extra rare-leaning item to a treasure chest.",family:"treasure"}
+  treasure:{name:"Treasure Charm",description:"Sometimes adds an extra rare-leaning item to a treasure chest.",family:"treasure"},
+  wonder:{name:"Wonder Charm",description:"Makes rare and unusual Duck Quest encounters a little easier to find.",family:"wonder"}
 });
 const CHARM_DEFS = Object.freeze({
   "shimmer-bronze":{id:"shimmer-bronze",family:"shimmer",tier:"bronze",name:"Bronze Shimmer Charm",price:350,shinyRate:1/400,effect:"Shiny chance: 1 / 400"},
@@ -1898,7 +1899,11 @@ const CHARM_DEFS = Object.freeze({
   "vitality-gold":{id:"vitality-gold",family:"vitality",tier:"gold",name:"Gold Vitality Charm",price:2200,hpBonus:.35,effect:"+35% Max HP"},
   "treasure-bronze":{id:"treasure-bronze",family:"treasure",tier:"bronze",name:"Bronze Treasure Charm",price:275,treasureChance:.15,effect:"15% chance for a bonus rare-leaning chest item"},
   "treasure-silver":{id:"treasure-silver",family:"treasure",tier:"silver",name:"Silver Treasure Charm",price:850,treasureChance:.30,effect:"30% chance for a bonus rare-leaning chest item"},
-  "treasure-gold":{id:"treasure-gold",family:"treasure",tier:"gold",name:"Gold Treasure Charm",price:2750,treasureChance:.50,effect:"50% chance for a bonus rare-leaning chest item"}
+  "treasure-gold":{id:"treasure-gold",family:"treasure",tier:"gold",name:"Gold Treasure Charm",price:2750,treasureChance:.50,effect:"50% chance for a bonus rare-leaning chest item"},
+  "wonder-bronze":{id:"wonder-bronze",family:"wonder",tier:"bronze",name:"Bronze Wonder Charm",price:300,eventRate:.05,effect:"Rare encounter chance: 5%"},
+  "wonder-silver":{id:"wonder-silver",family:"wonder",tier:"silver",name:"Silver Wonder Charm",price:750,eventRate:.06,effect:"Rare encounter chance: 6%"},
+  "wonder-gold":{id:"wonder-gold",family:"wonder",tier:"gold",name:"Gold Wonder Charm",price:1300,eventRate:.08,effect:"Rare encounter chance: 8%"},
+  "wonder-rose-gold":{id:"wonder-rose-gold",family:"wonder",tier:"rose-gold",name:"Rose-Gold Wonder Charm",price:2000,eventRate:.10,effect:"Rare encounter chance: 10%"}
 });
 
 function defaultCharmSave(){
