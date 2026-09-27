@@ -1,0 +1,61 @@
+/* Duckie Days v24.290 — reward chest + love-interest scene polish */
+
+.chest-sprite.opening{
+  animation:none!important;
+  transform:none!important;
+}
+
+.love-interest-battle-left{
+  animation:none!important;
+  transform:none!important;
+}
+.love-interest-battle-right{
+  animation:none!important;
+  transform:scaleX(-1)!important;
+}
+
+.love-interest-battle-heart{
+  animation:loveInterestHeartPixelV290 .72s steps(1,end) infinite!important;
+}
+@keyframes loveInterestHeartPixelV290{
+  0%,49%{transform:translateX(-50%) translateY(0)}
+  50%,100%{transform:translateX(-50%) translateY(-4px)}
+}
+
+#battleScreen .battle-ui.love-interest-dialogue-active .battle-message.love-interest-reward-message-hidden-v290{
+  display:none!important;
+}
+.love-interest-reward-popup-v290{
+  width:min(460px,96%);
+  margin:0 auto;
+  display:grid;
+  gap:10px;
+  justify-items:center;
+  padding:14px 16px;
+  border:3px solid #c892a5;
+  border-radius:14px;
+  background:#fff8eb;
+  box-shadow:0 5px 0 rgba(95,66,71,.18);
+  text-align:center;
+}
+.love-interest-reward-popup-v290 .mini-label{color:#a76d84}
+.love-interest-reward-popup-v290 h3{margin:0;font-size:1.08rem}
+.love-interest-reward-list-v290{width:100%;display:grid;gap:6px}
+.love-interest-reward-item-v290{
+  padding:7px 9px;
+  border:2px solid #e4becb;
+  border-radius:9px;
+  background:#fff;
+  font-size:.76rem;
+  font-weight:900;
+}
+.love-interest-reward-popup-v290 .pixel-button{
+  width:min(220px,80%)!important;
+  min-height:48px!important;
+}
+
+@media(max-width:600px){
+  .love-interest-reward-popup-v290{padding:12px;gap:8px}
+  .love-interest-reward-popup-v290 h3{font-size:.98rem}
+  .love-interest-reward-item-v290{font-size:.7rem}
+}

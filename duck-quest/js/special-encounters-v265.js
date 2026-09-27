@@ -176,9 +176,8 @@
     ui.chestSprite.classList.remove("merchant-duck","event-scene-art","luv-birdie-art-v262","mystery-chest-sprite","opening");ui.chestSprite.classList.add("gift-box-art-v262");
     ui.chestSprite.alt=style==="shiny"?"Shiny Gift Box":style==="lucky"?"Lucky Gift Box":"Gift Box";
     ui.chestSprite.src=giftArt(style,"closed");
-    if(style==="lucky"){
-      let frame=0; giftTimer=setInterval(()=>{if(!pendingChest||pendingChest.kind!=="gift-box"){stopGiftAnimation();return;} frame=(frame+1)%2;ui.chestSprite.src=GIFT_BASE+`lucky-idle-${frame+1}.png`;},430);
-    }
+    // v24.290: Lucky Gift Boxes stay on their closed-box sprite until opened.
+    // The lucky idle frames belong to the Mimic presentation, not the unopened gift.
     ui.chestCaption.textContent=style==="shiny"?"A sparkling Gift Box appeared!":style==="lucky"?"A Lucky Gift Box appeared!":"A Gift Box appeared!";
     ui.openChest.classList.remove("hidden");ui.openChest.disabled=false;ui.openChest.textContent="Open";
     setMessage("A mysterious present is waiting for you. Maybe it has cards inside…?");
@@ -203,8 +202,14 @@
     const info={...pendingChest,giftReward:{...pendingChest.giftReward}};
     ui.chestSprite.src=giftArt(info.giftStyle,"open");await sleep(180);
     if(info.revealGiftMimic){
-      ui.chestCaption.textContent="Oh no… it moved!";setMessage("The Gift Box was a Mimic!");await sleep(360);ui.chestLayer.classList.add("hidden");actionLocked=false;
-      startEnemy("gift-mimic",{giftStyle:info.giftStyle,giftReward:info.giftReward});return;
+      ui.chestSprite.src=info.giftStyle==="shiny"?GIFT_BASE+"mimic-shiny-idle-1.png":GIFT_BASE+"mimic-idle-1.png";
+      ui.chestCaption.textContent="Oh no… it moved!";
+      setMessage("The Gift Box was a Mimic!");
+      await sleep(360);
+      ui.chestLayer.classList.add("hidden");
+      actionLocked=false;
+      startEnemy("gift-mimic",{giftStyle:info.giftStyle,giftReward:info.giftReward});
+      return;
     }
     const granted=grantCardPackReward(info.giftReward);
     lastGiftGrantV264=granted;

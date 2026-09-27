@@ -621,10 +621,38 @@
     }, 520);
   }
 
-  function sceneRewardMessage(scene){
-    if (scene.id.includes("-")) return "Both Trading Cards unlocked! ♡";
-    if (scene.id === "lukio") return "Lukio Duck, Miko's Lukio outfit, and Lukio's card unlocked! ♡";
-    return `${scene.title} Duck and Miko's ${scene.title} outfit unlocked! ♡`;
+  function sceneRewardItems(scene){
+    if (scene.id.includes("-")) {
+      return scene.title.split(" + ").map(name => `${name} Trading Card`);
+    }
+    const items=[`${scene.title} Duck`, `Miko's ${scene.title} Outfit`];
+    if(scene.id==="lukio") items.push("Lukio Trading Card");
+    return items;
+  }
+
+  function buildSceneRewardPopup(scene,onContinue){
+    const popup=document.createElement("div");
+    popup.className="love-interest-reward-popup-v290";
+    const label=document.createElement("span");
+    label.className="mini-label";
+    label.textContent="OBTAINED!";
+    const title=document.createElement("h3");
+    title.textContent=scene.id.includes("-")?"Reunion Rewards!":`${scene.title} Rewards!`;
+    const list=document.createElement("div");
+    list.className="love-interest-reward-list-v290";
+    sceneRewardItems(scene).forEach(item=>{
+      const row=document.createElement("div");
+      row.className="love-interest-reward-item-v290";
+      row.textContent=item;
+      list.append(row);
+    });
+    const button=document.createElement("button");
+    button.type="button";
+    button.className="pixel-button primary";
+    button.textContent="Continue";
+    button.addEventListener("click",onContinue,{once:true});
+    popup.append(label,title,list,button);
+    return popup;
   }
 
   function markSceneUi(active){
@@ -700,11 +728,13 @@
           return;
         }
         next.disabled = true;
+        stopSceneAnimation();
         state.heart.classList.remove("hidden");
         scene.reward();
-        message.textContent = sceneRewardMessage(scene);
-        setTimeout(() => {
-          stopSceneAnimation();
+        message.classList.add("love-interest-reward-message-hidden-v290");
+        actions.innerHTML = "";
+
+        const closeScene = () => {
           if (state.resizeHandler) window.removeEventListener("resize", state.resizeHandler);
           state.left.onload = null;
           state.right.onload = null;
@@ -713,13 +743,17 @@
           el.setAttribute("aria-hidden", "true");
           actions.innerHTML = "";
           actions.classList.add("hidden");
+          message.classList.remove("love-interest-reward-message-hidden-v290");
           markSceneUi(false);
           open = false;
           if (typeof onFinished === "function") {
             bypassNextRoll = true;
             onFinished();
           }
-        }, 1350);
+        };
+
+        actions.append(buildSceneRewardPopup(scene,closeScene));
+        actions.classList.remove("hidden");
       });
       row.append(next);
       actions.append(row);
