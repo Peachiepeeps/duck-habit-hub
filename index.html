@@ -1,18 +1,18 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="duck-habit-build" content="24.292" />
+  <meta name="duck-habit-build" content="24.293" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta id="appThemeColor" name="theme-color" content="#f7dbe5" />
   <title>Duckie Days</title>
   <!-- v24.107 tall-phone room anchor + CSS wallpaper geometry fix -->
-  <link rel="stylesheet" href="app.css?v=24.292" />
-  <link rel="stylesheet" href="trading-cards-base.css?v=24.292" />
-  <link rel="stylesheet" href="trading-cards-extra.css?v=24.292" />
-  <link rel="stylesheet" href="tasks.css?v=24.292" />
-  <link rel="stylesheet" href="hub.css?v=24.292" />
-  <link rel="stylesheet" href="task-reminders.css?v=24.292" />
+  <link rel="stylesheet" href="app.css?v=24.293" />
+  <link rel="stylesheet" href="trading-cards-base.css?v=24.293" />
+  <link rel="stylesheet" href="trading-cards-extra.css?v=24.293" />
+  <link rel="stylesheet" href="tasks.css?v=24.293" />
+  <link rel="stylesheet" href="hub.css?v=24.293" />
+  <link rel="stylesheet" href="task-reminders.css?v=24.293" />
 
   <link rel="manifest" href="manifest.webmanifest?v=24-287">
   <link rel="apple-touch-icon" href="apple-touch-icon-v5.png">
@@ -1154,23 +1154,23 @@
       </section>
     </section>
   </main>
-  <script src="trading-cards-base.js?v=24.292"></script>
-  <script src="trading-cards-extra.js?v=24.292"></script>
-  <script src="trading-cards-gimmicks-v288.js?v=24.292"></script>
-  <script src="app.js?v=24.292"></script>
-  <script src="gimmick-hub-v288.js?v=24.292"></script>
-  <script src="hub-boosts.js?v=24.292"></script>
-  <script src="trading-cards-ui.js?v=24.292"></script>
-  <script src="tasks.js?v=24.292"></script>
-  <script type="module" src="firebase-reminders.mjs?v=24.292"></script>
-  <script src="task-reminders.js?v=24.292"></script>
-  <script src="hub.js?v=24.292"></script>
+  <script src="trading-cards-base.js?v=24.293"></script>
+  <script src="trading-cards-extra.js?v=24.293"></script>
+  <script src="trading-cards-gimmicks-v288.js?v=24.293"></script>
+  <script src="app.js?v=24.293"></script>
+  <script src="gimmick-hub-v288.js?v=24.293"></script>
+  <script src="hub-boosts.js?v=24.293"></script>
+  <script src="trading-cards-ui.js?v=24.293"></script>
+  <script src="tasks.js?v=24.293"></script>
+  <script type="module" src="firebase-reminders.mjs?v=24.293"></script>
+  <script src="task-reminders.js?v=24.293"></script>
+  <script src="hub.js?v=24.293"></script>
 
   <script>
     // v24.84: use a stable service-worker URL and actively check the deployed
     // build when the installed PWA is opened/resumed. This prevents Android
     // from keeping an already-open standalone app on an older app shell.
-    const DUCK_HUB_BUILD = "24.292";
+    const DUCK_HUB_BUILD = "24.293";
     let duckHubReloadingForUpdate = false;
 
     function duckHubReloadFresh(version) {
@@ -1234,7 +1234,7 @@
       window.addEventListener("load", async () => {
         try {
           await duckHubClearOldCodeCaches();
-          const registration = await navigator.serviceWorker.register("./sw.js?v=24-292", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("./sw.js?v=24-293", { updateViaCache: "none" });
           await registration.update();
           if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
           await duckHubCheckForUpdate(registration);

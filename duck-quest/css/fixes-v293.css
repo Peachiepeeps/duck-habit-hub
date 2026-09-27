@@ -1,0 +1,176 @@
+/* Duckie Days v24.293 — properly render Gift Box trading-card rewards.
+   Duck Quest loads the Trading Card JS, but not the full Trading Card stylesheet.
+   The previous patch sized the outer .tc-face only, while its natural-size child
+   images still overflowed to the right. These rules fully style the card INSIDE
+   the Gift Box reward only. */
+
+#chestLayer.gift-box-active-v262 #giftRewardVisualV264{
+  position:absolute!important;
+  left:50%!important;
+  top:50%!important;
+  width:auto!important;
+  max-width:88%!important;
+  min-height:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:9px!important;
+  transform:translate(-50%,-50%)!important;
+  z-index:20!important;
+  pointer-events:none!important;
+}
+
+/* The lower battle message already names the reward, so don't show the
+   duplicate chest-caption label beneath the card. */
+#giftRewardVisualV264 + #chestCaption{
+  display:none!important;
+}
+
+#chestLayer.gift-box-active-v262 .gift-reward-card-v264{
+  width:72px!important;
+  flex:0 0 72px!important;
+  margin:0!important;
+}
+
+#chestLayer.gift-box-active-v262 .gift-reward-card-v264 > .tc-face{
+  position:relative!important;
+  display:block!important;
+  width:72px!important;
+  max-width:72px!important;
+  min-width:72px!important;
+  height:auto!important;
+  aspect-ratio:365/512!important;
+  overflow:hidden!important;
+  border-radius:3.2%!important;
+  isolation:isolate!important;
+  margin:0!important;
+  filter:drop-shadow(0 3px 3px rgba(84,49,69,.2))!important;
+}
+
+/* These were the pieces overflowing at their natural pixel size. */
+#chestLayer.gift-box-active-v262 .gift-reward-card-v264 .tc-frame{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  max-height:none!important;
+  object-fit:contain!important;
+  z-index:3!important;
+  image-rendering:pixelated!important;
+}
+
+#chestLayer.gift-box-active-v262 .gift-reward-card-v264 .tc-art{
+  position:absolute!important;
+  z-index:2!important;
+  left:14%!important;
+  top:18%!important;
+  width:72%!important;
+  height:57%!important;
+  max-width:none!important;
+  max-height:none!important;
+  object-fit:contain!important;
+  image-rendering:pixelated!important;
+}
+
+#chestLayer.gift-box-active-v262 .gift-reward-card-v264 .tc-name{
+  position:absolute!important;
+  z-index:5!important;
+  left:14%!important;
+  right:14%!important;
+  width:auto!important;
+  margin:0!important;
+  text-align:center!important;
+  text-transform:uppercase!important;
+  color:#503842!important;
+  font-size:4.4px!important;
+  line-height:1!important;
+  letter-spacing:.02em!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+#chestLayer.gift-box-active-v262 .gift-reward-card-v264 .tc-name-top{
+  top:5.2%!important;
+}
+#chestLayer.gift-box-active-v262 .gift-reward-card-v264 .tc-name-bottom{
+  bottom:6%!important;
+}
+
+#chestLayer.gift-box-active-v262 .gift-reward-card-v264 .tc-number{
+  position:absolute!important;
+  z-index:6!important;
+  left:5%!important;
+  bottom:2%!important;
+  font-size:3.2px!important;
+  font-weight:900!important;
+  color:#60414d!important;
+}
+
+#chestLayer.gift-box-active-v262 .gift-reward-card-v264 .tc-shine{
+  position:absolute!important;
+  z-index:4!important;
+  inset:-40%!important;
+  pointer-events:none!important;
+}
+
+/* Fabled cards use one full-art image instead of the normal frame/art pieces. */
+#chestLayer.gift-box-active-v262 .gift-reward-card-v264 .tc-fabled-image{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  max-height:none!important;
+  object-fit:contain!important;
+  image-rendering:pixelated!important;
+}
+
+/* Card-pack rewards should use the same small centered presentation. */
+#chestLayer.gift-box-active-v262 .gift-reward-pack-v264{
+  width:70px!important;
+  height:92px!important;
+  flex:0 0 70px!important;
+  margin:0!important;
+}
+#chestLayer.gift-box-active-v262 .gift-reward-pack-v264 img{
+  width:70px!important;
+  height:92px!important;
+  max-width:none!important;
+  max-height:none!important;
+  object-fit:contain!important;
+}
+
+@media(max-width:600px){
+  #chestLayer.gift-box-active-v262 #giftRewardVisualV264{
+    gap:7px!important;
+    max-width:82%!important;
+  }
+
+  #chestLayer.gift-box-active-v262 .gift-reward-card-v264{
+    width:60px!important;
+    flex-basis:60px!important;
+  }
+  #chestLayer.gift-box-active-v262 .gift-reward-card-v264 > .tc-face{
+    width:60px!important;
+    max-width:60px!important;
+    min-width:60px!important;
+  }
+  #chestLayer.gift-box-active-v262 .gift-reward-card-v264 .tc-name{
+    font-size:3.7px!important;
+  }
+  #chestLayer.gift-box-active-v262 .gift-reward-card-v264 .tc-number{
+    font-size:2.7px!important;
+  }
+
+  #chestLayer.gift-box-active-v262 .gift-reward-pack-v264{
+    width:58px!important;
+    height:77px!important;
+    flex-basis:58px!important;
+  }
+  #chestLayer.gift-box-active-v262 .gift-reward-pack-v264 img{
+    width:58px!important;
+    height:77px!important;
+  }
+}

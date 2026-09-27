@@ -1,8 +1,11 @@
-Duckie Days 24.292
+Duckie Days 24.293
 
-Gift box reward display polish
+Gift Box trading-card render fix
 
-- Gift box card rewards now render much smaller.
-- Reward cards and card packs are centered in the middle of the battlefield.
-- Card reward visuals no longer stretch across the pink enemy panel.
-- Mobile sizing is tightened so the reward sits like a popup reward.
+- Fixed the actual cause of the giant right-shifted Gift Box card.
+- Duck Quest was rendering the Trading Card face without the Trading Card stylesheet.
+- The card's frame/art images were therefore staying at their natural size and overflowing the small wrapper.
+- Gift Box cards now have fully scoped card-face styling and render as a small complete card centered in the battlefield.
+- Mobile reward card width is 60px.
+- Duplicate reward caption in the battlefield is hidden; the lower message still names the reward.
+- Gift Box card-pack rewards use the same small centered layout.
