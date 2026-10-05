@@ -1,6 +1,7 @@
-v24.300 Bao Cafe polish patch
-- improved layout and alignment
-- fixed customer sprite visibility with fallback
-- improved speech bubble order placement
-- added recipe hint text
-- reduced ingredient art size and centered it
+v24.301 Bao Cafe reference-layout + loading patch
+- counter/table layer now fills the full portrait scene so the light pink table line matches the reference
+- customer and bear rest on the table line
+- requested drink moved left and slightly lower inside the bubble
+- customers now use Duck Quest battle idle sprites at reference-like scale
+- compressed large cafe art to WebP and preload critical scene layers for much faster rendering
+- centered/reduced supply art further

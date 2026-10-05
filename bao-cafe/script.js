@@ -17,25 +17,25 @@
     frappe:{name:'Frappe',idle:['assets/Frappe-idle-1.png','assets/Frappe-idle-2.png'],happy:'assets/Frappe-amused.png'}
   };
   const INGREDIENTS={
-    water:{name:'Water',art:'../assets/food/Water.webp'},sugar:{name:'Sugar',art:'assets/Sugar.png'},lemon:{name:'Lemon',art:'../assets/food/Lemon.webp'},
-    lime:{name:'Lime',art:'../assets/food/Lime.webp'},strawberry:{name:'Strawberry',art:'../assets/food/Strawberry.webp'},matcha:{name:'Matcha',art:'assets/Matcha.png'},
+    water:{name:'Water',art:'../assets/food/Water.webp'},sugar:{name:'Sugar',art:'assets/Sugar.webp'},lemon:{name:'Lemon',art:'../assets/food/Lemon.webp'},
+    lime:{name:'Lime',art:'../assets/food/Lime.webp'},strawberry:{name:'Strawberry',art:'../assets/food/Strawberry.webp'},matcha:{name:'Matcha',art:'assets/Matcha.webp'},
     milk:{name:'Milk',art:'../assets/food/Milk.webp'},'milk-tea':{name:'Milk Tea',art:'../assets/food/Milk-tea.webp'},cupcake:{name:'Cupcake',art:'../assets/food/Cupcake.webp'}
   };
   const RECIPES={
-    lemonade:{name:'Lemonade',art:'assets/Lemonade.png',needs:['lemon','water','sugar']},
-    limeade:{name:'Limeade',art:'assets/Limeade.png',needs:['lime','water','sugar']},
-    'strawberry-lemonade':{name:'Strawberry Lemonade',art:'assets/Strawberry-lemonade.png',needs:['strawberry','lemon','water','sugar']},
-    'matcha-milk-tea':{name:'Matcha Milk Tea',art:'assets/Matchaboba.png',needs:['matcha','milk-tea','milk']},
-    'strawberry-milk-tea':{name:'Strawberry Milk Tea',art:'assets/StrawberryBoba.png',needs:['strawberry','milk-tea','milk']},
+    lemonade:{name:'Lemonade',art:'assets/Lemonade.webp',needs:['lemon','water','sugar']},
+    limeade:{name:'Limeade',art:'assets/Limeade.webp',needs:['lime','water','sugar']},
+    'strawberry-lemonade':{name:'Strawberry Lemonade',art:'assets/Strawberry-lemonade.webp',needs:['strawberry','lemon','water','sugar']},
+    'matcha-milk-tea':{name:'Matcha Milk Tea',art:'assets/Matchaboba.webp',needs:['matcha','milk-tea','milk']},
+    'strawberry-milk-tea':{name:'Strawberry Milk Tea',art:'assets/StrawberryBoba.webp',needs:['strawberry','milk-tea','milk']},
     'fancy-milk-tea':{name:'Fancy Milk Tea',art:'../assets/food/Fancy-milk-tea.webp',needs:['milk-tea','cupcake','milk']}
   };
-  const FALLBACK_CUSTOMER_ART='assets/Miko-base.webp';
+  const FALLBACK_CUSTOMER_ART='../duck-quest/assets/characters/miko/base/idle-1.webp';
   const CUSTOMERS=[
-    {name:'Peep',art:'../assets/peep/Peep-base.webp'},
-    {name:'Miko',art:'../assets/miko/Miko-base.webp'},
-    {name:'Io',art:'../assets/io/Io-base.webp'},
-    {name:'Miho',art:'../assets/miho/Miho-base.webp'},
-    {name:'Annika',art:'../assets/annika/Annika-base.webp'}
+    {name:'Peep',art:'../duck-quest/assets/characters/peep/base/idle-1.webp'},
+    {name:'Miko',art:'../duck-quest/assets/characters/miko/base/idle-1.webp'},
+    {name:'Io',art:'../duck-quest/assets/characters/io/base/idle-1.webp'},
+    {name:'Miho',art:'../duck-quest/assets/characters/miho/base/idle-1.webp'},
+    {name:'Annika',art:'../duck-quest/assets/characters/annika/base/idle-1.webp'}
   ];
   let selectedBear=fixedBear,score=0,timeLeft=60,ordersDone=0,perfectStreak=0,bestStreak=0,parfaitProgress=0,slots=[],order=[],orderIndex=0,timer=null,bearAnim=null,active=true;
   const pick=a=>a[Math.floor(Math.random()*a.length)];
@@ -64,7 +64,7 @@
   function begin(){score=0;timeLeft=60;ordersDone=0;perfectStreak=0;bestStreak=0;parfaitProgress=0;active=true;scoreText.textContent='0';timerText.textContent='60';pickScreen.classList.add('hidden');resultScreen.classList.add('hidden');gameScreen.classList.remove('hidden');startBearAnimation();nextCustomer();clearInterval(timer);timer=setInterval(()=>{if(!active)return;timeLeft--;timerText.textContent=timeLeft;if(timeLeft<=0)finish(!questMode);},1000);}
   function rewardHub(){const coins=Math.min(75,Math.max(5,Math.floor(score/100)*3));addCoins(coins);return `${coins} Pink Coins added to your Hub!`}
   function finish(cleared=true){if(!active)return;active=false;clearInterval(timer);clearInterval(bearAnim);gameScreen.classList.add('hidden');resultScreen.classList.remove('hidden');resultBear.src=BEARS[selectedBear].happy;resultBear.alt=BEARS[selectedBear].name;resultScore.textContent=score.toLocaleString();resultOrders.textContent=ordersDone;resultBest.textContent=bestStreak;resultEyebrow.textContent=questMode?(cleared?'CHALLENGE CLEAR!':'SHIFT ENDED'):'SHIFT COMPLETE!';resultTitle.textContent=cleared?`${BEARS[selectedBear].name} is impressed!`:'Time ran out!';if(questMode){const s=readSave(),c=s[QUEST_KEY]||{};c.status='return';c.cleared=Boolean(cleared);c.score=score;c.orders=ordersDone;c.bestStreak=bestStreak;c.bear=selectedBear;c.finishedAt=Date.now();s[QUEST_KEY]=c;writeSave(s);resultReward.textContent=cleared?'Your Duck Quest run is safe. Return for your reward!':'You can retry, or return safely with no encounter reward.';playAgain.textContent='Retry Challenge';resultBack.textContent='Return to Duck Quest';}else{resultReward.textContent=rewardHub();playAgain.textContent='Play Again';resultBack.textContent='Back to Hub';}}
-  function goBack(){if(questMode){location.href='../duck-quest/?bao-cafe-return=1&v=24-300';}else location.href='../';}
+  function goBack(){if(questMode){location.href='../duck-quest/?bao-cafe-return=1&v=24-301';}else location.href='../';}
   document.querySelectorAll('.bear-pick').forEach(b=>b.addEventListener('click',()=>{selectedBear=b.dataset.bear;document.querySelectorAll('.bear-pick').forEach(x=>x.classList.toggle('selected',x===b));startShift.disabled=false;}));
   startShift.addEventListener('click',()=>{if(selectedBear)begin();});backHomePick.addEventListener('click',()=>location.href='../');playAgain.addEventListener('click',()=>{if(questMode){begin();}else{selectedBear=null;resultScreen.classList.add('hidden');pickScreen.classList.remove('hidden');document.querySelectorAll('.bear-pick').forEach(x=>x.classList.remove('selected'));startShift.disabled=true;}});resultBack.addEventListener('click',goBack);mixButton.addEventListener('click',mix);clearButton.addEventListener('click',()=>{slots=[];renderSlots();setFeedback('Prep spots cleared.');});
   renderIngredients();renderSlots();

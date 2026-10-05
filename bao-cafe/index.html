@@ -5,7 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="theme-color" content="#ef9dbb" />
   <title>Bao Cafe · Duckie Days</title>
-  <link rel="stylesheet" href="style.css?v=24.300" />
+  <link rel="preload" as="image" href="assets/Background-cafe.webp" fetchpriority="high" />
+  <link rel="preload" as="image" href="assets/Cafe-counter.webp" fetchpriority="high" />
+  <link rel="preload" as="image" href="assets/Request-Bubble.webp" fetchpriority="high" />
+  <link rel="stylesheet" href="style.css?v=24.301" />
 </head>
 <body>
   <main class="cafe-shell">
@@ -37,7 +40,7 @@
 
     <section id="gameScreen" class="game-screen hidden" aria-label="Bao Cafe minigame">
       <div class="cafe-stage">
-        <img class="cafe-bg" src="assets/Background-cafe.png" alt="" aria-hidden="true" />
+        <img class="cafe-bg" src="assets/Background-cafe.webp" fetchpriority="high" decoding="async" alt="" aria-hidden="true" />
         <div class="top-hud">
           <div class="hud-pill"><span>TIME</span><strong id="timerText">60</strong></div>
           <div class="hud-pill"><span>SCORE</span><strong id="scoreText">0</strong></div>
@@ -45,11 +48,11 @@
         </div>
 
         <div class="scene-zone">
-          <img class="request-bubble" src="assets/Request-Bubble.png" alt="" aria-hidden="true" />
+          <img class="request-bubble" src="assets/Request-Bubble.webp" fetchpriority="high" decoding="async" alt="" aria-hidden="true" />
           <div id="orderContents" class="order-contents" aria-label="Customer order"></div>
           <div class="customer-wrap"><img id="customerSprite" class="customer-sprite" alt="Customer" /></div>
           <div class="bear-wrap"><img id="bearSprite" class="bear-sprite pixel" alt="Cafe bear" /></div>
-          <img class="counter-art" src="assets/Cafe-counter.png" alt="" aria-hidden="true" />
+          <img class="counter-art" src="assets/Cafe-counter.webp" fetchpriority="high" decoding="async" alt="" aria-hidden="true" />
           <div id="customerName" class="customer-name">Customer</div>
         </div>
 
@@ -87,6 +90,6 @@
       </div>
     </section>
   </main>
-  <script src="script.js?v=24.300"></script>
+  <script src="script.js?v=24.301"></script>
 </body>
 </html>
