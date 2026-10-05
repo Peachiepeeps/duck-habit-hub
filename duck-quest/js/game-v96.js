@@ -849,6 +849,11 @@ const ENEMIES = {
     idle:["assets/gimmicks/angy-duck/base/idle-1.png","assets/gimmicks/angy-duck/base/idle-2.png"],
     hurt:"assets/gimmicks/angy-duck/base/hurt.png", speed:330
   },
+  "porcupin": {
+    name:"Porcupin", hp:27, attack:5, exp:30, coinMin:8, coinMax:14,
+    idle:["assets/enemies/porcupin/base/idle-1.png","assets/enemies/porcupin/base/idle-2.png"],
+    hurt:"assets/enemies/porcupin/base/hurt.png", speed:380
+  },
   "mushroom-cat": {
     name: "Big Mushroom Cat",
     hp: 48,
@@ -1560,6 +1565,20 @@ function applyFamilyVariant(template, table, ids, rank, variantProperty, ocean=f
   };
 }
 
+const PORCUPIN_VARIANTS=Object.freeze({
+  base:{id:"base",name:"Porcupin",idle:["assets/enemies/porcupin/base/idle-1.png","assets/enemies/porcupin/base/idle-2.png"],hurt:"assets/enemies/porcupin/base/hurt.png"},
+  white:{id:"white",name:"White Porcupin",idle:["assets/enemies/porcupin/white/idle-1.png","assets/enemies/porcupin/white/idle-2.png"],hurt:"assets/enemies/porcupin/white/hurt.png"},
+  black:{id:"black",name:"Black Porcupin",idle:["assets/enemies/porcupin/black/idle-1.png","assets/enemies/porcupin/black/idle-2.png"],hurt:"assets/enemies/porcupin/black/hurt.png"},
+  green:{id:"green",name:"Green Porcupin",idle:["assets/enemies/porcupin/green/idle-1.png","assets/enemies/porcupin/green/idle-2.png"],hurt:"assets/enemies/porcupin/green/hurt.png"},
+  gold:{id:"gold",name:"Gold Porcupin",idle:["assets/enemies/porcupin/gold/idle-1.png","assets/enemies/porcupin/gold/idle-2.png"],hurt:"assets/enemies/porcupin/gold/hurt.png"}
+});
+function applyPorcupinVariant(template){
+  const r=Math.random();
+  const id=r<.45?"base":r<.65?"white":r<.80?"black":r<.93?"green":"gold";
+  const v=PORCUPIN_VARIANTS[id];
+  return {...template,name:v.name,idle:v.idle.slice(),hurt:v.hurt,porcupinVariant:id};
+}
+
 const ACORN_MOUSE_VARIANTS=Object.freeze({
   base:{id:"base",name:"Acorn Mouse",hp:1,atk:1,exp:1,coin:1,idle:["assets/enemies/acorn-mouse/base/acorn-mouse-idle-1.webp","assets/enemies/acorn-mouse/base/acorn-mouse-idle-2.webp"],hurt:"assets/enemies/acorn-mouse/base/acorn-mouse-hurt.webp"},
   blue:{id:"blue",name:"Blue Acorn Mouse",hp:1.15,atk:1.08,exp:1.15,coin:1.15,idle:["assets/enemies/acorn-mouse/base/blue-idle-1.webp","assets/enemies/acorn-mouse/base/blue-idle-2.webp"],hurt:"assets/enemies/acorn-mouse/base/blue-hurt.webp"},
@@ -1869,7 +1888,7 @@ function updateEncounterHeader(encounter=currentEncounterData()){
 }
 
 const CHARM_SLOT_LIMIT = 3;
-const CURRENT_DUCKIPEDIA_TOTAL = 74;
+const CURRENT_DUCKIPEDIA_TOTAL = 75;
 const CHARM_FAMILY_ORDER = Object.freeze(["shimmer","fortune","best-friend","training","vitality","treasure","wonder"]);
 const CHARM_FAMILIES = Object.freeze({
   shimmer:{name:"Shimmer Charm",description:"Raises Shiny odds above the normal 1 / 500 rate.",family:"shimmer"},
@@ -1960,6 +1979,11 @@ function applyGimmickEnemyVariant(enemyId,base,forcedId=""){
 // Amethyst Mimic is intentionally different: it only reveals itself from the
 // purple Mystery Chest so the chest keeps its surprise.
 const SHINY_VARIANTS = Object.freeze({
+  "porcupin": {
+    id:"shiny", name:"Shiny Porcupin",
+    idle:["assets/enemies/porcupin/shiny/idle-1.png","assets/enemies/porcupin/shiny/idle-2.png"],
+    hurt:"assets/enemies/porcupin/shiny/hurt.png"
+  },
   "cat-slime": {
     id:"rainbow", name:"Rainbow Slime Kitty",
     idle:[
@@ -2057,7 +2081,7 @@ const ENDLESS_NORMAL_ENEMIES = Object.freeze([
   "cat-slime","bee","flower","acorn-mouse","catterpillar",
   "cool-seagull","sea-turtle","catfish","seaunicorn","sea-star",
   "apple-baby","gummy-worm","pudding-pig","gingerlolly","candycane-deer",
-  "star-mouse","puff-fairy","tulipa","snoud","cloud-bunny","lunar-moth"
+  "star-mouse","puff-fairy","tulipa","snoud","cloud-bunny","lunar-moth","porcupin"
 ]);
 const ENDLESS_BOSSES = Object.freeze(["mushroom-cat","tree-squirrel","vampire-squid","jellybun","gummy-shark","cream-fox","aries","cherub-duck"]);
 const ENDLESS_BACKGROUNDS = Object.freeze(
@@ -2199,6 +2223,7 @@ function buildBuddyCatalog() {
     const shiny=SHINY_VARIANTS[enemyId];
     if(shiny) entries.push(catalogEntry(enemyId,"shiny",shiny,boss,true));
   };
+  addTable("porcupin",PORCUPIN_VARIANTS,false);
   addTable("cat-slime",CAT_SLIME_VARIANTS,false);
   addTable("bee",BEE_VARIANTS,false);
   addTable("flower",FLOWER_VARIANTS,false);
@@ -2328,7 +2353,7 @@ function enemyVariantId(enemy) {
   if(enemy.id==="mimic" && enemy.mimicChestStyle) return String(enemy.mimicChestStyle)==="regular" ? "base" : String(enemy.mimicChestStyle);
   return String(
     enemy.catSlimeVariant || enemy.beeVariant || enemy.flowerVariant || enemy.acornMouseVariant || enemy.mushroomVariant || enemy.treeSquirrelVariant || enemy.oceanVariant || enemy.seaunicornVariant || enemy.jellybunVariant ||
-    enemy.gimmickVariant || enemy.catterpillarVariant || enemy.seaStarVariant || enemy.appleBabyVariant || enemy.gummyWormVariant || enemy.puddingPigVariant || enemy.gingerlollyVariant || enemy.candycaneDeerVariant || enemy.gummySharkVariant || enemy.creamFoxVariant || enemy.starMouseVariant || enemy.puffFairyVariant || enemy.tulipaVariant || enemy.snoudVariant || enemy.cloudBunnyVariant || enemy.lunarMothVariant || enemy.ariesVariant || enemy.cherubDuckVariant || enemy.plushbunVariant || "base"
+    enemy.gimmickVariant || enemy.porcupinVariant || enemy.catterpillarVariant || enemy.seaStarVariant || enemy.appleBabyVariant || enemy.gummyWormVariant || enemy.puddingPigVariant || enemy.gingerlollyVariant || enemy.candycaneDeerVariant || enemy.gummySharkVariant || enemy.creamFoxVariant || enemy.starMouseVariant || enemy.puffFairyVariant || enemy.tulipaVariant || enemy.snoudVariant || enemy.cloudBunnyVariant || enemy.lunarMothVariant || enemy.ariesVariant || enemy.cherubDuckVariant || enemy.plushbunVariant || "base"
   );
 }
 
@@ -4855,7 +4880,7 @@ function assignBuddyFromBook(entry,characterId,slotIndex){
 }
 
 const BUDDY_AREA_FAMILIES = Object.freeze({
-  meadow:["cat-slime","bee","flower","acorn-mouse","catterpillar","plushbun","mushroom-cat","tree-squirrel","mimic"],
+  meadow:["cat-slime","bee","flower","acorn-mouse","catterpillar","porcupin","sock-gremlin","ufono","plushbun","mushroom-cat","tree-squirrel","mimic"],
   ocean:["cool-seagull","sea-turtle","catfish","seaunicorn","sea-star","vampire-squid","jellybun"],
   candy:["apple-baby","gummy-worm","pudding-pig","gingerlolly","candycane-deer","gummy-shark","cream-fox"],
   cloud:["star-mouse","puff-fairy","tulipa","snoud","cloud-bunny","lunar-moth","aries","cherub-duck"]
@@ -5215,6 +5240,7 @@ function renderMenuSkills() {
 }
 
 function makeStageEncounter(enemyPool){
+  if(Math.random()<.07) return {type:"enemy",enemyId:"porcupin"};
   return buildEncounterFromPool(enemyPool,"stage");
 }
 
@@ -5572,6 +5598,7 @@ function startEnemy(enemyId, options={}) {
     enemyId==="rotten-egg" ? applyGimmickEnemyVariant(enemyId,baseTemplate,options.gimmickVariant) :
     enemyId==="lucky-cat" ? applyGimmickEnemyVariant(enemyId,baseTemplate,options.gimmickVariant) :
     enemyId==="angy-duck" ? applyGimmickEnemyVariant(enemyId,baseTemplate,options.gimmickVariant) :
+    enemyId==="porcupin" ? applyPorcupinVariant(baseTemplate) :
     enemyId==="mimic" ? applyMimicProfile(baseTemplate,variantRank) : baseTemplate;
   const template=maybeApplyShinyVariant(enemyId,normalTemplate,Boolean(options.forceShiny));
 

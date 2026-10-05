@@ -1,0 +1,18 @@
+/* Duckie Days v24.298 — Universal enemies + plush shelf polish */
+
+/* Task collectible plushes: a little larger on the shelf, while keeping the same seated baseline. */
+#taskCollectibleWing #taskCollectibleSlots.wing-duck-slots .wing-duck-slot img,
+#taskCollectibleWing #taskCollectibleSlots.wing-duck-slots .wing-duck-slot:nth-child(n+13):nth-child(-n+16) img,
+#taskCollectibleWing #taskCollectibleSlots.wing-duck-slots .wing-duck-slot:nth-child(n+17):nth-child(-n+20) img,
+#taskCollectibleWing #taskCollectibleSlots.wing-duck-slots .wing-duck-slot:nth-child(n+21):nth-child(-n+24) img{
+  width:84%!important;
+  height:88%!important;
+}
+.special-catch-v298{display:grid;gap:8px;margin-top:10px;padding-top:10px;border-top:2px dashed rgba(128,94,108,.18)}
+.special-catch-v298>strong{font-size:.83rem;color:#6e4f5b}.special-catch-v298>small{font-size:.64rem;line-height:1.35;color:#8f7480}
+.special-catch-choices-v298{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.special-catch-choices-v298 button{min-width:0;display:grid;grid-template-columns:28px minmax(0,1fr);align-items:center;gap:5px;padding:6px!important;font-size:.62rem!important}
+.special-catch-choices-v298 button img{width:26px;height:26px;object-fit:contain}.special-catch-choices-v298 button span{display:grid;min-width:0}.special-catch-choices-v298 button b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.special-catch-choices-v298 button small{font-size:.52rem;white-space:normal}.special-catch-continue-v298{width:100%}
+.ufono-result-v298{display:grid;gap:7px;text-align:center}.ufono-result-v298>strong{font-size:1rem}.ufono-result-v298>small{color:#8e7580;font-size:.64rem}.ufono-result-v298>p{margin:0;padding:7px;border-radius:10px;background:#fff6fb;color:#704e5c;font-weight:800;font-size:.7rem}
+#chestLayer.ufono-return-v298 .ufono-art-v298{width:min(48%,210px)!important;height:auto!important;object-fit:contain!important;animation:none!important}
+@media(max-width:430px){.special-catch-choices-v298{grid-template-columns:1fr}.special-catch-choices-v298 button{grid-template-columns:32px minmax(0,1fr)}}

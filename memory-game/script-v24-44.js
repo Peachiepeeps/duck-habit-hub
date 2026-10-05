@@ -1,4 +1,5 @@
 const STORAGE_KEY = 'duckHabitHubSave_v1';
+const UFONO_MODE = new URLSearchParams(window.location.search).get('ufono') === '1';
 const DUCK_LIBRARY = [{"id": "alien-duck", "name": "Alien Duck", "file": "Alien-duck.PNG"}, {"id": "angel-duck", "name": "Angel Duck", "file": "Angel-duck.PNG"}, {"id": "aqua-duck", "name": "Aqua Duck", "file": "Aqua-duck.PNG"}, {"id": "artist-duck", "name": "Artist Duck", "file": "Artist-duck.PNG"}, {"id": "black-duck", "name": "Black Duck", "file": "Black-duck.PNG"}, {"id": "blue-duck", "name": "Blue Duck", "file": "Blue-duck.PNG"}, {"id": "bow-duck", "name": "Bow Duck", "file": "Bow-duck.PNG"}, {"id": "bronze-duck", "name": "Bronze Duck", "file": "Bronze-duck.PNG"}, {"id": "bunny-duck", "name": "Bunny Duck", "file": "Bunny-duck.PNG"}, {"id": "burger-duck", "name": "Burger Duck", "file": "Burger-duck.PNG"}, {"id": "cat-duck", "name": "Cat Duck", "file": "Cat-duck.PNG"}, {"id": "cool-duck", "name": "Cool Duck", "file": "Cool-duck.PNG"}, {"id": "cosmic-duck", "name": "Cosmic Duck", "file": "Cosmic-duck.PNG"}, {"id": "cupcake-duck", "name": "Cupcake Duck", "file": "Cupcake-duck.PNG"}, {"id": "dark-red-duck", "name": "Dark Red Duck", "file": "Dark-red-duck.PNG"}, {"id": "demon-duck", "name": "Demon Duck", "file": "Demon-duck.PNG"}, {"id": "doctor-duck", "name": "Doctor Duck", "file": "Doctor-duck.PNG"}, {"id": "duck-with-a-knife", "name": "Duck With A Knife", "file": "Duck-with-a-knife.PNG"}, {"id": "duckvee", "name": "Duckvee", "file": "Duckvee.PNG"}, {"id": "fancy-duck", "name": "Fancy Duck", "file": "Fancy-duck.PNG"}, {"id": "flower-duck", "name": "Flower Duck", "file": "Flower-duck.PNG"}, {"id": "gamer-duck", "name": "Gamer Duck", "file": "Gamer-duck.PNG"}, {"id": "ghost-duck", "name": "Ghost Duck", "file": "Ghost-duck.PNG"}, {"id": "glitter-duck", "name": "Glitter Duck", "file": "Glitter-duck.PNG"}, {"id": "golden-duck", "name": "Golden Duck", "file": "Golden-duck.PNG"}, {"id": "goose", "name": "Goose", "file": "Goose.PNG"}, {"id": "green-duck", "name": "Green Duck", "file": "Green-duck.PNG"}, {"id": "grey-duck", "name": "Grey Duck", "file": "Grey-duck.PNG"}, {"id": "gummy-duck", "name": "Gummy Duck", "file": "Gummy-duck.PNG"}, {"id": "hold", "name": "Hold", "file": "Hold"}, {"id": "jester-duck", "name": "Jester Duck", "file": "Jester-duck.PNG"}, {"id": "kidcore-duck", "name": "Kidcore Duck", "file": "Kidcore-duck.PNG"}, {"id": "king-duck", "name": "King Duck", "file": "King-duck.PNG"}, {"id": "knitted-duck", "name": "Knitted Duck", "file": "Knitted-duck.PNG"}, {"id": "lemon-duck", "name": "Lemon Duck", "file": "Lemon-duck.PNG"}, {"id": "lime-duck", "name": "Lime Duck", "file": "Lime-duck.PNG"}, {"id": "magical-girl-duck", "name": "Magical Girl Duck", "file": "Magical-girl-duck.PNG"}, {"id": "mint-duck", "name": "Mint Duck", "file": "Mint-duck.PNG"}, {"id": "mushroom-duck", "name": "Mushroom Duck", "file": "Mushroom-duck.PNG"}, {"id": "orange-duck", "name": "Orange Duck", "file": "Orange-duck.PNG"}, {"id": "party-hat-duck", "name": "Party Hat Duck", "file": "Party-hat-duck.PNG"}, {"id": "peach-duck", "name": "Peach Duck", "file": "Peach-duck.PNG"}, {"id": "periwinkle-duck", "name": "Periwinkle Duck", "file": "Periwinkle-duck.PNG"}, {"id": "pink-duck", "name": "Pink Duck", "file": "Pink-duck.PNG"}, {"id": "pizza-duck", "name": "Pizza Duck", "file": "Pizza-duck.PNG"}, {"id": "plush-duck", "name": "Plush Duck", "file": "Plush-duck.PNG"}, {"id": "pompompurin-duck", "name": "Pompompurin Duck", "file": "Pompompurin-duck.PNG"}, {"id": "purple-duck", "name": "Purple Duck", "file": "Purple-duck.PNG"}, {"id": "rainbow-duck", "name": "Rainbow Duck", "file": "Rainbow-duck.PNG"}, {"id": "red-duck", "name": "Red Duck", "file": "Red-duck.PNG"}, {"id": "silver-duck", "name": "Silver Duck", "file": "Silver-duck.PNG"}, {"id": "sky-blue-duck", "name": "Sky Blue Duck", "file": "Sky-blue-duck.PNG"}, {"id": "sleepy-time-duck", "name": "Sleepy Time Duck", "file": "Sleepy-time-duck.PNG"}, {"id": "standard-duck", "name": "Standard Duck", "file": "Standard-duck.PNG"}, {"id": "strawberry-duck", "name": "Strawberry Duck", "file": "Strawberry-duck.PNG"}, {"id": "tiny-duck-stack", "name": "Tiny Duck Stack", "file": "Tiny-duck-stack.PNG"}, {"id": "tiny-duck", "name": "Tiny Duck", "file": "Tiny-duck.PNG"}, {"id": "top-hat-duck", "name": "Top Hat Duck", "file": "Top-hat-duck.PNG"}, {"id": "violet-duck", "name": "Violet Duck", "file": "Violet-duck.PNG"}, {"id": "watermelon-duck", "name": "Watermelon Duck", "file": "Watermelon-duck.PNG"}, {"id": "white-duck", "name": "White Duck", "file": "White-duck.PNG"}, {"id": "angry-duck", "name": "Angry Duck", "file": "angry-duck.png"}, {"id": "apple-duck", "name": "Apple Duck", "file": "apple-duck.png"}, {"id": "bathtime-duck", "name": "Bathtime Duck", "file": "bathtime-duck.png"}, {"id": "duck-on-skateboard", "name": "Duck On Skateboard", "file": "duck-on-skateboard.png"}, {"id": "googly-eye-duck", "name": "Googly Eye Duck", "file": "googly-eye-duck.png"}, {"id": "long-hair-duck", "name": "Long Hair Duck", "file": "long-hair-duck.png"}, {"id": "magenta-duck", "name": "Magenta Duck", "file": "magenta-duck.png"}, {"id": "miko-duck", "name": "Miko Duck", "file": "miko-duck.png"}, {"id": "peep-duck", "name": "Peep Duck", "file": "peep-duck.png"}, {"id": "pile-of-tiny-ducks", "name": "Pile Of Tiny Ducks", "file": "pile-of-tiny-ducks.png"}, {"id": "scarf-duck", "name": "Scarf Duck", "file": "scarf-duck.png"}, {"id": "vampire-duck", "name": "Vampire Duck", "file": "vampire-duck.png"}];
 
 let save = loadSave();
@@ -60,7 +61,22 @@ backButton.addEventListener('click', () => { if (history.length > 1) history.bac
 renderCoins();
 syncModeButtons();
 updateStats();
-setBoardMessage('Pick a board size to begin! Unlocking more ducks gives you more variety here. ♡');
+if(UFONO_MODE){activePairs=6;startOverlay.classList.add('hidden');syncModeButtons();setBoardMessage('UFONO Challenge · Match all 6 pairs!');setTimeout(startRound,0);}else{setBoardMessage('Pick a board size to begin! Unlocking more ducks gives you more variety here. ♡');}
+
+
+function completeUfonoChallenge(result={}) {
+  if(!UFONO_MODE) return false;
+  try{
+    const state=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}');
+    const c=state.ufonoChallengeV298;
+    if(!c||c.status!=='minigame'||c.game!=='memory') return false;
+    c.status='return';c.completedAt=Date.now();c.gameResult={game:'memory',...result};state.ufonoChallengeV298=c;
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+    setBoardMessage('UFONO challenge cleared! Beaming back to Duck Quest…');
+    window.setTimeout(()=>{window.location.href='../duck-quest/?ufono-return=1';},850);
+    return true;
+  }catch(error){return false;}
+}
 
 function loadSave() {
   try {
@@ -206,6 +222,7 @@ function computeReward() {
 }
 function finishRound() {
   roundActive = false; clearTimer();
+  if(UFONO_MODE){ completeUfonoChallenge({pairs:activePairs,moves,seconds:secondsElapsed}); return; }
   const reward = computeReward();
   save.coins = Number(save.coins || 0) + reward;
   if (!save.stats || typeof save.stats !== 'object') save.stats = {};

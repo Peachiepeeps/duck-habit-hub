@@ -1,13 +1,14 @@
-Duckie Days 24.297
+Duckie Days 24.298
 
-Sock Gremlin Fashion Battle
+Porcupin + UFONO + post-minigame catches + bigger plush shelf
 
-- Added Sock Gremlin as a seventh equal-weight gimmick encounter while playing Duck Quest as Miko.
-- Sock Gremlin can appear in any normal stage through the existing rare gimmick roll and shared cooldown.
-- Added Base, Blue, Pink, Black, Gold, and Shiny Sock Gremlin art.
-- Accepting its challenge safely suspends the current Duck Quest run and transports the player to Miko's Closet.
-- The challenge generates three basic style prompts only from Miko wardrobe tags that are achievable with currently owned clothing.
-- A Done button scores the finished outfit from 1–3 hearts and returns to the exact Duck Quest run.
-- Higher ratings grant better Pink Coin rewards, better EXP Candy chances, and better odds for the Sock Gremlin Trading Card.
-- The judge screen requires Continue before advancing to the next encounter/floor, so the run is never discarded.
-- Added Rare card R-047: Sock Gremlin.
+- Porcupin can appear as a universal normal enemy in any stage, with base/white/black/green/gold/shiny forms.
+- Porcupin can be befriended normally and leaves an extra cozy drop after the encounter.
+- UFONO is a new rare gimmick encounter with base/blue/pink/gray/gold/shiny forms.
+- UFONO randomly beams the player into Memory Match, Duck Sort, or Duck Crane.
+- Clearing the assigned minigame restores the exact Duck Quest run and advances normally after rewards.
+- UFONO rewards: Pink Coins, Small/Large EXP Candy, Alien Duck, Cosmic Duck, or its Trading Card.
+- Sock Gremlin and UFONO now offer one Buddy Pon catch attempt after their minigame/reward scene.
+- Captured universal event Buddies are visible in the Meadow Buddy Book tab for now.
+- Task Shop plushes display a little larger on the collectible shelf.
+- New cards: R-048 Porcupin and R-049 UFONO.

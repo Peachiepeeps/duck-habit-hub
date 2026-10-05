@@ -1,4 +1,5 @@
 const HUB_SAVE_KEY = "duckHabitHubSave_v1";
+const UFONO_MODE = new URLSearchParams(window.location.search).get("ufono") === "1";
 const CRANE_SAVE_KEY = "duckHabitHubCrane_v1";
 
 const PLAY_COST = 10;
@@ -355,6 +356,12 @@ function saveHubSave(data){
   localStorage.setItem(HUB_SAVE_KEY, JSON.stringify(data));
 }
 
+
+function completeUfonoChallenge(result={}){
+  if(!UFONO_MODE)return false;
+  try{const data=loadHubSave(),c=data.ufonoChallengeV298;if(!c||c.status!=="minigame"||c.game!=="crane")return false;c.status="return";c.completedAt=Date.now();c.gameResult={game:"crane",...result};data.ufonoChallengeV298=c;saveHubSave(data);setMessage("UFONO challenge cleared! Beaming back to Duck Quest…");setTimeout(()=>{window.location.href="../duck-quest/?ufono-return=1";},850);return true;}catch(e){return false;}
+}
+
 function getCoins(){
   return Math.max(0, Math.floor(Number(loadHubSave().coins) || 0));
 }
@@ -407,7 +414,9 @@ function pulseCoinBox(){
 function getUnlockedDuckIds(){
   const data = loadHubSave();
   const unlocked = Array.isArray(data.unlockedDucks) ? data.unlockedDucks : [];
-  return [...new Set(unlocked)].filter(id => DUCK_CATALOG[id]);
+  const ids=[...new Set(unlocked)].filter(id => DUCK_CATALOG[id]);
+  if(UFONO_MODE&&!ids.length&&DUCK_CATALOG['standard-duck']) return ['standard-duck'];
+  return ids;
 }
 
 function updateAvailability(){
@@ -856,6 +865,7 @@ async function dropClaw(){
   prizes = prizes.filter(p=>p.uid!==target.uid);
   const machineCleared = prizes.length===0;
 
+  if(UFONO_MODE){saveCraneState();completeUfonoChallenge({prize:target.name});return;}
   const owned = target.kind==="card-pack" ? awardCardPack() : awardDuckCopy(target.duckId);
   saveCraneState();
   await showWinToast(target,machineCleared,owned);
