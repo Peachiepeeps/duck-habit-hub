@@ -1,0 +1,62 @@
+name: Install Duckie Days v24.299 Bao Cafe
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - "Duckie-Days-v24.299-bao-cafe-playable.zip"
+      - ".github/workflows/install-v24-299-bao-cafe-playable.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: install-v24-299-bao-cafe-playable
+  cancel-in-progress: false
+
+jobs:
+  install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install update
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.299-bao-cafe-playable.zip"
+          if [ ! -f "$ZIP" ]; then
+            echo "Waiting for $ZIP"
+            exit 0
+          fi
+          TMP=".bao299-install"
+          rm -rf "$TMP"
+          mkdir -p "$TMP"
+          unzip -tq "$ZIP"
+          unzip -q "$ZIP" -d "$TMP"
+          test -f "$TMP/payload/bao-cafe/index.html"
+          test -f "$TMP/payload/bao-cafe/script.js"
+          test -f "$TMP/payload/duck-quest/js/bao-cafe-v299.js"
+          test -f "$TMP/payload/trading-cards-bao-cafe-v299.js"
+          test -f "$TMP/payload/version.json"
+          cp -a "$TMP/payload/." .
+          grep -q '"24.299"' version.json
+          grep -q 'openBaoCafeGame' index.html
+          grep -q 'launchBaoCafe' app.js
+          grep -q 'bao-cafe-v299.js' duck-quest/index.html
+          rm -rf "$TMP"
+          rm -f "$ZIP"
+          rm -f ".github/workflows/install-v24-299-bao-cafe-playable.yml"
+      - name: Commit update
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No install changes to commit."
+            exit 0
+          fi
+          git commit -m "Add playable Bao Cafe v24.299"
+          git push
