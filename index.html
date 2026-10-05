@@ -287,6 +287,20 @@
             <span class='game-card-play'>Play ›</span>
           </button>
 
+
+          <button id="openBaoCafeGame" class="game-card bao-cafe-game-card" type="button">
+            <span class="game-card-preview bao-cafe-card-preview">
+              <img src="bao-cafe/assets/Background-cafe.png" class="game-card-bg" alt="" loading="lazy" decoding="async" />
+              <img src="bao-cafe/assets/Cheese-idle-1.png" class="game-card-feature" alt="" loading="lazy" decoding="async" style="image-rendering:pixelated;object-fit:contain;" />
+            </span>
+            <span class="game-card-copy">
+              <span class="game-card-kicker">CAFE GAME</span>
+              <strong>Bao Cafe</strong>
+              <span>Build cute drinks for random customers with Cheese, Parfait, or Frappe!</span>
+            </span>
+            <span class="game-card-play">Play ›</span>
+          </button>
+
           <button id="openDuckQuestGame" class="game-card duck-quest-game-card" type="button">
             <span class="game-card-preview duck-quest-card-preview">
               <img src="duck-quest/assets/backgrounds/meadow/stage-1-tree.webp" class="game-card-bg" alt="" loading="lazy" decoding="async" />
@@ -1161,6 +1175,7 @@
   <script src="trading-cards-gimmicks-v288.js?v=24.296"></script>
   <script src="trading-cards-sock-gremlin-v297.js?v=24.297"></script>
   <script src="trading-cards-universal-v298.js?v=24.298"></script>
+  <script src="trading-cards-bao-cafe-v299.js?v=24.299"></script>
   <script src="app.js?v=24.296"></script>
   <script src="gimmick-hub-v288.js?v=24.296"></script>
   <script src="hub-boosts.js?v=24.296"></script>
@@ -1239,7 +1254,7 @@
       window.addEventListener("load", async () => {
         try {
           await duckHubClearOldCodeCaches();
-          const registration = await navigator.serviceWorker.register("./sw.js?v=24-297", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("./sw.js?v=24-299", { updateViaCache: "none" });
           await registration.update();
           if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
           await duckHubCheckForUpdate(registration);

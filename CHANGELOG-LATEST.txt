@@ -1,3 +1,15 @@
+Duckie Days v24.299 — Bao Cafe
+
+- Added the playable portrait Bao Cafe minigame to the Hub Games menu.
+- Choose Cheese (combo scoring), Parfait (time boosts), or Frappe (double-order hard mode).
+- Added six drink recipes, four ingredient prep slots, responsive portrait UI, timer, score, and amplifier HUD.
+- Added random OC customers using Duck Quest character sprites.
+- Hub rounds award Pink Coins based on performance.
+- Added rare Bao Cafe Duck Quest NPC encounters for Cheese, Parfait, and Frappe.
+- Duck Quest challenges preserve and restore the exact active run.
+- Added Rare cards R-050 Cheese, R-051 Parfait, and R-052 Frappe.
+- Cheese, Parfait, and Frappe are NPCs only: no shinies, no Buddy capture flow.
+
 Duckie Days 24.298
 
 Porcupin + UFONO + post-minigame catches + bigger plush shelf

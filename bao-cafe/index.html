@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#ef9dbb" />
+  <title>Bao Cafe · Duckie Days</title>
+  <link rel="stylesheet" href="style.css?v=24.299" />
+</head>
+<body>
+  <main class="cafe-shell">
+    <section id="pickScreen" class="pick-screen">
+      <div class="pick-card">
+        <p class="eyebrow">DUCKIE DAYS</p>
+        <h1>Bao Cafe</h1>
+        <p class="intro">Pick your cafe helper! Each bear changes the way your shift plays.</p>
+        <div class="bear-picks">
+          <button class="bear-pick" data-bear="cheese" type="button">
+            <img src="assets/Cheese-idle-1.png" alt="Cheese" />
+            <strong>Cheese</strong><span>Combo scoring</span><small>Perfect orders build a bigger score multiplier.</small>
+          </button>
+          <button class="bear-pick" data-bear="parfait" type="button">
+            <img src="assets/Parfait-idle-1.png" alt="Parfait" />
+            <strong>Parfait</strong><span>Time boosts</span><small>Every 3 perfect orders adds 5 seconds.</small>
+          </button>
+          <button class="bear-pick" data-bear="frappe" type="button">
+            <img src="assets/Frappe-idle-1.png" alt="Frappe" />
+            <strong>Frappe</strong><span>Hard mode</span><small>Customers can ask for two drinks at once!</small>
+          </button>
+        </div>
+        <div class="pick-actions">
+          <button id="startShift" class="primary-button" type="button" disabled>Start Shift!</button>
+          <button id="backHomePick" class="soft-button" type="button">Back to Hub</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="gameScreen" class="game-screen hidden" aria-label="Bao Cafe minigame">
+      <div class="cafe-stage">
+        <img class="cafe-bg" src="assets/Background-cafe.png" alt="" aria-hidden="true" />
+        <div class="top-hud">
+          <div class="hud-pill"><span>TIME</span><strong id="timerText">60</strong></div>
+          <div class="hud-pill"><span>SCORE</span><strong id="scoreText">0</strong></div>
+          <div class="hud-pill amplifier"><span id="ampLabel">BONUS</span><strong id="ampText">Ready!</strong></div>
+        </div>
+
+        <div class="scene-zone">
+          <img class="request-bubble" src="assets/Request-Bubble.png" alt="" aria-hidden="true" />
+          <div id="orderContents" class="order-contents" aria-label="Customer order"></div>
+          <div class="customer-wrap"><img id="customerSprite" class="customer-sprite" alt="Customer" /></div>
+          <div class="bear-wrap"><img id="bearSprite" class="bear-sprite pixel" alt="Cafe bear" /></div>
+          <img class="counter-art" src="assets/Cafe-counter.png" alt="" aria-hidden="true" />
+          <div id="customerName" class="customer-name">Customer</div>
+        </div>
+
+        <section class="build-zone">
+          <div id="slots" class="ingredient-slots" aria-label="Selected ingredients"></div>
+          <div class="build-actions">
+            <button id="mixButton" class="mix-button" type="button">Mix!</button>
+            <button id="clearButton" class="clear-button" type="button">Clear</button>
+          </div>
+          <div id="feedback" class="feedback" aria-live="polite">Pick ingredients for the order!</div>
+        </section>
+
+        <section class="supplies-zone">
+          <div class="section-title"><span>SUPPLIES</span><small>Tap to add · tap a filled slot to remove</small></div>
+          <div id="ingredientGrid" class="ingredient-grid"></div>
+        </section>
+      </div>
+    </section>
+
+    <section id="resultScreen" class="result-screen hidden">
+      <div class="result-card">
+        <img id="resultBear" class="result-bear pixel" alt="" />
+        <p class="eyebrow" id="resultEyebrow">SHIFT COMPLETE!</p>
+        <h2 id="resultTitle">Great work!</h2>
+        <div class="result-stats">
+          <div><span>Score</span><strong id="resultScore">0</strong></div>
+          <div><span>Orders</span><strong id="resultOrders">0</strong></div>
+          <div><span>Perfect Streak</span><strong id="resultBest">0</strong></div>
+        </div>
+        <p id="resultReward" class="result-reward"></p>
+        <div class="result-actions">
+          <button id="playAgain" class="primary-button" type="button">Play Again</button>
+          <button id="resultBack" class="soft-button" type="button">Back to Hub</button>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="script.js?v=24.299"></script>
+</body>
+</html>

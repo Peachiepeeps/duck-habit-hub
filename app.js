@@ -4666,6 +4666,7 @@ const openBakeryGameButton = document.querySelector("#openBakeryGame");
 const openDuckSortGameButton = document.querySelector("#openDuckSortGame");
 const openCraneGameButton = document.querySelector("#openCraneGame");
 const openMemoryGameButton = document.querySelector("#openMemoryGame");
+const openBaoCafeGameButton = document.querySelector("#openBaoCafeGame");
 const openDuckQuestGameButton = document.querySelector("#openDuckQuestGame");
 
 const crafterPanel = document.querySelector("#crafterPanel");
@@ -8992,6 +8993,10 @@ function launchCraneGame() {
 
 function launchMemoryGame() {
   window.location.href = "memory-game/?v=24-44";
+}
+
+function launchBaoCafe(){
+  window.location.href = "bao-cafe/?v=24-299";
 }
 
 function launchDuckQuestGame() {
@@ -14350,6 +14355,7 @@ openBakeryGameButton.addEventListener("click", launchBakery);
 if (openDuckSortGameButton) openDuckSortGameButton.addEventListener("click", launchDuckSort);
 if (openCraneGameButton) openCraneGameButton.addEventListener("click", launchCraneGame);
 if (openMemoryGameButton) openMemoryGameButton.addEventListener("click", launchMemoryGame);
+if (openBaoCafeGameButton) openBaoCafeGameButton.addEventListener("click", launchBaoCafe);
 if (openDuckQuestGameButton) openDuckQuestGameButton.addEventListener("click", launchDuckQuestGame);
 
 document.querySelector("#closeCrafter").addEventListener("click", closeCrafterToBook);
