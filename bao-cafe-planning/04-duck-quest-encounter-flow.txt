@@ -1,0 +1,47 @@
+BAO CAFE - DUCK QUEST ENCOUNTER FLOW
+====================================
+
+GENERAL STRUCTURE
+- A Duck Quest run triggers a Bao Cafe encounter
+- The bear encountered is whichever one appears in the event:
+  - Cheese
+  - Parfait
+  - Frappe
+- The player does not choose the bear during a Duck Quest encounter
+- The minigame launches with that bear’s mode automatically active
+- After the short challenge, the player returns to the exact saved Duck Quest run
+
+CHEESE ENCOUNTER
+- Challenge suggestion: complete 5 correct orders
+- Combo/scoring rules remain active during the challenge
+- Better performance can influence final reward flavor or result messaging if desired
+
+PARFAIT ENCOUNTER
+- Challenge suggestion: complete 5 correct orders before time expires
+- Parfait’s time-extension mechanic remains active
+- Performance focus is on consistency and time management
+
+FRAPPE ENCOUNTER
+- Challenge suggestion: complete 4 customer orders
+- Some customers may request double orders
+- Hardest of the three encounter modes
+- Slightly richer reward weighting is reasonable if desired
+
+RETURN FLOW
+1. Encounter launches Bao Cafe minigame
+2. Player clears the short challenge
+3. Reward/result screen appears
+4. Player returns to the preserved Duck Quest run
+5. Run continues normally
+
+NO CATCH PHASE
+- No Buddy Pon prompt
+- No buddy capture flow
+- No shiny handling
+
+REWARD CATEGORIES
+Possible reward categories:
+- Pink Coins
+- themed item(s)
+- possible furniture reward (if implemented)
+- rare trading card for the bear encountered

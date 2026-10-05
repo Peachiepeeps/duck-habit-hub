@@ -1,0 +1,62 @@
+BAO CAFE - RECIPES AND BEAR MECHANICS
+=====================================
+
+CURRENT DRINK RECIPES
+1. Lemonade
+- Lemon + Water + Sugar
+
+2. Limeade
+- Lime + Water + Sugar
+
+3. Strawberry Lemonade
+- Strawberry + Lemonade
+- For easier first implementation, this may also be validated internally as:
+  Strawberry + Lemon + Water + Sugar
+
+4. Matcha Milk Tea
+- Matcha + Milk Tea + Milk
+
+5. Strawberry Milk Tea
+- Strawberry + Milk Tea + Milk
+
+6. Fancy Milk Tea
+- Milk Tea + Cupcake + Milk
+
+CURRENT INGREDIENT SET
+- Water
+- Sugar
+- Lemon
+- Lime
+- Strawberry
+- Matcha
+- Milk
+- Milk Tea
+- Cupcake
+
+BEAR PLAY MODIFIERS
+CHEESE
+- Playable in Hub mode
+- Rare Bao Cafe encounter in Duck Quest
+- Special rule: more points for consecutive correct orders without mistakes
+
+PARFAIT
+- Playable in Hub mode
+- Rare Bao Cafe encounter in Duck Quest
+- Special rule: gives more time after a certain number of perfect orders in a row
+
+FRAPPE
+- Playable in Hub mode
+- Rare Bao Cafe encounter in Duck Quest
+- Special rule: sometimes convinces customers to order two drinks instead of one
+
+IMPORTANT DESIGN STATUS
+- Cheese, Parfait, and Frappe are NOT buddies
+- They do NOT have shiny variants
+- They do NOT trigger Buddy Pon catch prompts
+- They are special NPC encounters similar to Mysterious Merchant / Ghost Girl / Artist Friend
+- Their trading cards should feel special; Rare rarity is recommended
+
+SUGGESTED CARD SET
+- R-050 Cheese
+- R-051 Parfait
+- R-052 Frappe

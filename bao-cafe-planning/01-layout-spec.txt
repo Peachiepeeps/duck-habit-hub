@@ -1,0 +1,94 @@
+BAO CAFE - PORTRAIT LAYOUT SPEC
+================================
+
+Recommended canvas:
+- 1080 x 1920 px
+- portrait, 9:16
+
+Overall structure:
+1. Top HUD bar
+2. Customer / bear scene area
+3. Build area (ingredient slots + action buttons)
+4. Ingredient tray area
+
+A. TOP HUD BAR
+- Position: x 40, y 30, w 1000, h 150
+- Three rounded panels:
+  - Left: Timer
+  - Center: Score
+  - Right: Amplifier / bear effect / streak status
+- Style: cream fill, soft pink border, warm mauve/brown text, rounded corners, subtle shadow
+
+B. SCENE AREA
+- Position: x 40, y 200, w 1000, h 520
+- Holds request bubble, customer sprite, and bear sprite
+
+C. REQUEST BUBBLE AREA
+- Position: x 70, y 220, w 560, h 300
+- Use the supplied bubble art as the main frame
+- Show one finished drink icon for normal orders
+- Show two finished drink icons side by side for Frappe double orders
+
+D. CUSTOMER SPRITE AREA
+- Position: x 70, y 470, w 280, h 230
+- Random OC or NPC customer sprite appears here
+- Scale each sprite proportionally to fit within roughly:
+  - max width 260 px
+  - max height 220 px
+- Anchor sprite feet/base to the counter line so all customers feel grounded
+- Goal scale should match the Miko reference image closely
+
+E. BEAR SPRITE AREA
+- Position: x 760, y 450, w 220, h 260
+- Active bear (Cheese / Parfait / Frappe) stands behind or on the counter
+- Scale bear proportionally to fit within roughly:
+  - max width 200 px
+  - max height 240 px
+- Anchor to counter line for visual consistency
+
+F. COUNTER / BUILD STRIP
+- Position: x 40, y 720, w 1000, h 320
+- Contains four ingredient slots and action buttons
+
+G. INGREDIENT SLOTS
+- Four slots in a row, centered horizontally
+- Suggested slot size: 140 x 140 each
+- Suggested positions:
+  - slot 1: x 100, y 760
+  - slot 2: x 290, y 760
+  - slot 3: x 480, y 760
+  - slot 4: x 670, y 760
+- Slots should look like cute prep wells using cream/pink UI styling rather than rough blue circles
+- Empty slots are valid and should not imply an error
+
+H. ACTION BUTTONS
+- Mix button: x 220, y 930, w 300, h 90
+- Clear button: x 560, y 930, w 220, h 90
+- Suggested labels:
+  - Mix!
+  - Clear
+- Style: rounded pill buttons, pink/cream styling, darker rose outline, bold readable text
+
+I. INGREDIENT TRAY AREA
+- Position: x 40, y 1070, w 1000, h 790
+- Displays all available ingredient buttons at once
+
+J. INGREDIENT GRID
+- Use a 3 x 3 grid for the current ingredient set
+- Ingredient tiles: 290 x 210 each (approx.)
+- Suggested order:
+  Row 1: Water / Sugar / Lemon
+  Row 2: Lime / Strawberry / Matcha
+  Row 3: Milk / Milk Tea / Cupcake
+- Tile style: cream card, pink border, centered ingredient art, small label
+
+COLOR / STYLE NOTES
+- Main tone should feel like Duckie Days: cozy, soft, plush, sweet
+- Recommended palette family:
+  - cream / blush / pale pink / dusty rose / warm mauve-brown
+- Avoid harsh blue sketch lines in final art
+- Use rounded panels and soft shadows
+
+OPTIONAL FEEDBACK POLISH
+- Valid mix: sparkle pop, little success bounce, happy customer reaction
+- Invalid mix: gentle shake, soft “Oops!” feedback, auto-clear or allow manual clear

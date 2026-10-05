@@ -1,0 +1,103 @@
+BAO CAFE - GAMEPLAY LOGIC SPEC
+==============================
+
+HUB VERSION OVERVIEW
+- Player opens Bao Cafe
+- Player chooses one playable bear:
+  - Cheese
+  - Parfait
+  - Frappe
+- Round begins
+- Serve as many orders as possible before time runs out
+
+CORE ROUND FLOW
+1. Start round
+2. Timer begins
+3. Random customer sprite appears
+4. Requested drink is shown in speech bubble
+5. Player clicks ingredients from the tray
+6. Each selected ingredient fills the next empty slot
+7. Player presses Mix
+8. Recipe is validated
+9. If correct:
+   - score / bonus applied
+   - order cleared
+   - next customer appears
+10. If incorrect:
+   - soft failure feedback
+   - combo or streak effects may reset depending on bear mode
+   - slots clear or can be manually cleared
+
+INGREDIENT SLOT RULES
+- Up to 4 ingredient slots
+- Not all 4 are required
+- Recipes may use 2, 3, or 4 ingredients
+- Empty slots are allowed
+- Player should be able to remove mis-clicked ingredients by:
+  - tapping a filled slot, and/or
+  - pressing Clear
+
+RECIPE VALIDATION
+When Mix is pressed:
+1. Read ingredients currently in slots
+2. Remove empty slots
+3. Compare the ingredient set against known recipes
+4. If the set matches a valid recipe, output that drink
+5. If not, show an invalid recipe response
+
+RECOMMENDED FIRST-PASS VALIDATION STYLE
+- Use flat recipes internally for easier implementation
+- Example: treat Strawberry Lemonade as a direct ingredient combination rather than requiring a prior Lemonade mix step
+- This allows the game to remain smooth and simple for players
+
+SUGGESTED ROUND TIMER
+- Default Hub round: 60 seconds
+
+BASE SCORE SUGGESTION
+- Correct single drink order: 100 points
+- Frappe double order: about 200 points base (or slightly more)
+
+SUCCESS FEEDBACK
+- Show finished drink briefly
+- Customer reacts happily
+- Give points
+- Advance to next order
+
+FAIL FEEDBACK
+- Use gentle feedback only (not punishing)
+- Example text:
+  - “Oops!”
+  - “That’s not quite right!”
+- Auto-clearing the slots after a failed mix is recommended for smoother play
+
+CHEESE MODE
+- Identity: score / combo specialist
+- Consecutive correct orders increase score multiplier
+- Example multiplier ladder:
+  - 1-2 correct: x1.0
+  - 3-4 correct: x1.25
+  - 5-7 correct: x1.5
+  - 8+ correct: x2.0
+- Wrong drink resets combo
+- HUD examples:
+  - Combo x1.5
+  - Perfect Streak 5
+
+PARFAIT MODE
+- Identity: time extension / endurance specialist
+- Every 3 correct orders without a mistake grants +5 seconds
+- Wrong drink resets the progress toward the next time bonus
+- HUD examples:
+  - 2 / 3 Perfect
+  - +5 sec soon
+
+FRAPPE MODE
+- Identity: harder / more chaotic mode
+- Some customers order two drinks instead of one
+- Suggested chance of double order: 25% to 35%
+- Double-order bubble shows two drink icons side by side
+- Player must complete both drinks to finish that customer
+- Frappe mode should award more points because of the higher difficulty
+- HUD examples:
+  - Hard Mode
+  - Double Order!

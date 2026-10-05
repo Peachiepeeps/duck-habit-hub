@@ -1,0 +1,38 @@
+BAO CAFE - SUGGESTED FILE / FOLDER PLAN
+=======================================
+
+PLANNING FOLDER
+- bao-cafe-planning/
+  - README.md
+  - 01-layout-spec.txt
+  - 02-gameplay-logic.txt
+  - 03-recipes-and-bears.txt
+  - 04-duck-quest-encounter-flow.txt
+  - 05-file-folder-plan.txt
+  - reference/
+    - Background-cafe.png
+    - Cafe-counter.png
+    - Request-Bubble.png
+    - Reference-Cafe.png
+
+FUTURE FEATURE IMPLEMENTATION (SUGGESTED)
+- bao-cafe/
+  - index.html
+  - style.css
+  - script.js
+  - assets/
+    - ui/
+    - ingredients/
+    - drinks/
+    - npc/
+    - bears/
+
+POSSIBLE FUTURE RELATED FILES
+- duck-quest/js/bao-cafe-encounter-v299.js
+- trading-cards-bao-cafe-v299.js
+- sw.js updates for caching new files
+- hub navigation / minigame launcher updates
+
+NOTES
+- This planning pack does not yet implement the playable feature
+- It stores design and logic references so the full Bao Cafe feature can be built cleanly next
