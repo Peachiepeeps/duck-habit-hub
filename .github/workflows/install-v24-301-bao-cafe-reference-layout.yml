@@ -1,0 +1,84 @@
+name: Install Duckie Days v24.301 Bao Cafe Reference Layout
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - "Duckie-Days-v24.301-bao-cafe-reference-layout.zip"
+      - ".github/workflows/install-v24-301-bao-cafe-reference-layout.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bao-cafe-v24-301
+  cancel-in-progress: false
+
+jobs:
+  install-pack:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Confirm patch zip exists
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.301-bao-cafe-reference-layout.zip"
+          if [ -f "$ZIP" ]; then
+            echo "PATCH_READY=1" >> "$GITHUB_ENV"
+          else
+            echo "PATCH_READY=0" >> "$GITHUB_ENV"
+            echo "Workflow installed. Waiting for $ZIP"
+          fi
+
+      - name: Install patch
+        if: env.PATCH_READY == '1'
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.301-bao-cafe-reference-layout.zip"
+          TMP=".bao-cafe-v24-301"
+          rm -rf "$TMP"
+          mkdir -p "$TMP"
+          unzip -tq "$ZIP"
+          unzip -q "$ZIP" -d "$TMP"
+          test -d "$TMP/payload"
+          cp -a "$TMP/payload/." .
+          test -f "bao-cafe/index.html"
+          test -f "bao-cafe/style.css"
+          test -f "bao-cafe/script.js"
+          test -f "bao-cafe/assets/Background-cafe.webp"
+          test -f "bao-cafe/assets/Cafe-counter.webp"
+          test -f "bao-cafe/assets/Request-Bubble.webp"
+          test -f "version.json"
+          grep -q '24.301' version.json
+          grep -q '../duck-quest/assets/characters/io/base/idle-1.webp' bao-cafe/script.js
+          grep -q 'Background-cafe.webp' bao-cafe/index.html
+
+      - name: Clean installer files
+        if: env.PATCH_READY == '1'
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf ".bao-cafe-v24-301"
+          rm -f "Duckie-Days-v24.301-bao-cafe-reference-layout.zip"
+          rm -f ".github/workflows/install-v24-301-bao-cafe-reference-layout.yml"
+          rm -f "BAO-CAFE-v24.300-README.txt"
+
+      - name: Commit patch
+        if: env.PATCH_READY == '1'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "ERROR: No changes were staged."
+            exit 1
+          fi
+          git commit -m "Align Bao Cafe to reference and speed loading v24.301"
+          git push
