@@ -15,7 +15,7 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-296';
+const APP_CACHE='duck-habit-hub-app-v24-297';
 const APP_SHELL=[
  './',
  './index.html',
@@ -28,9 +28,11 @@ const APP_SHELL=[
  './tasks.css?v=24.296',
  './hub.css?v=24.296',
  './task-reminders.css?v=24.296',
+ './sock-gremlin-v297.css?v=24.297',
  './trading-cards-base.js?v=24.296',
  './trading-cards-extra.js?v=24.296',
  './trading-cards-gimmicks-v288.js?v=24.296',
+ './trading-cards-sock-gremlin-v297.js?v=24.297',
  './app.js?v=24.296',
  './gimmick-hub-v288.js?v=24.296',
  './hub-boosts.js?v=24.296',
@@ -39,6 +41,7 @@ const APP_SHELL=[
  './firebase-reminders.mjs?v=24.296',
  './task-reminders.js?v=24.296',
  './hub.js?v=24.296',
+ './sock-gremlin-fashion-v297.js?v=24.297',
  './duck-quest/index.html',
  './duck-quest/css/gimmick-encounters-v288.css?v=24-296',
  './duck-quest/css/fixes-v289.css?v=24-296',
@@ -62,7 +65,8 @@ const APP_SHELL=[
  './duck-quest/js/quest-v265.js?v=24-283',
  './duck-quest/js/quest-v269.js?v=24-269',
  './duck-quest/js/quest-v270.js?v=24-284',
- './duck-quest/js/gimmick-encounters-v288.js?v=24-296',
+ './duck-quest/js/gimmick-encounters-v288.js?v=24-297',
+ './duck-quest/js/sock-gremlin-v297.js?v=24-297',
  './duck-quest/js/fixes-v289.js?v=24-296',
  './assets/ingredients/Sparkle.webp',
  './assets/gifts/Love-letter.webp',
@@ -132,7 +136,25 @@ const APP_SHELL=[
  './duck-quest/assets/gimmicks/rotten-egg/shiny/hurt.png',
  './duck-quest/assets/gimmicks/rotten-egg/shiny/idle-1.png',
  './duck-quest/assets/gimmicks/rotten-egg/shiny/idle-2.png',
- './duck-quest/assets/gimmicks/shiny-egg.png'
+ './duck-quest/assets/gimmicks/shiny-egg.png',
+ './duck-quest/assets/gimmicks/sock-gremlin/base/idle-1.png',
+ './duck-quest/assets/gimmicks/sock-gremlin/base/idle-2.png',
+ './duck-quest/assets/gimmicks/sock-gremlin/base/hurt.png',
+ './duck-quest/assets/gimmicks/sock-gremlin/blue/idle-1.png',
+ './duck-quest/assets/gimmicks/sock-gremlin/blue/idle-2.png',
+ './duck-quest/assets/gimmicks/sock-gremlin/blue/hurt.png',
+ './duck-quest/assets/gimmicks/sock-gremlin/pink/idle-1.png',
+ './duck-quest/assets/gimmicks/sock-gremlin/pink/idle-2.png',
+ './duck-quest/assets/gimmicks/sock-gremlin/pink/hurt.png',
+ './duck-quest/assets/gimmicks/sock-gremlin/black/idle-1.png',
+ './duck-quest/assets/gimmicks/sock-gremlin/black/idle-2.png',
+ './duck-quest/assets/gimmicks/sock-gremlin/black/hurt.png',
+ './duck-quest/assets/gimmicks/sock-gremlin/gold/idle-1.png',
+ './duck-quest/assets/gimmicks/sock-gremlin/gold/idle-2.png',
+ './duck-quest/assets/gimmicks/sock-gremlin/gold/hurt.png',
+ './duck-quest/assets/gimmicks/sock-gremlin/shiny/idle-1.png',
+ './duck-quest/assets/gimmicks/sock-gremlin/shiny/idle-2.png',
+ './duck-quest/assets/gimmicks/sock-gremlin/shiny/hurt.png',
 ];
 self.addEventListener('message',e=>{if(e.data?.type==='SKIP_WAITING')self.skipWaiting();});
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(APP_CACHE).then(c=>c.addAll(APP_SHELL)));});

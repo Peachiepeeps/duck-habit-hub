@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="duck-habit-build" content="24.296" />
+  <meta name="duck-habit-build" content="24.297" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta id="appThemeColor" name="theme-color" content="#f7dbe5" />
@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="tasks.css?v=24.296" />
   <link rel="stylesheet" href="hub.css?v=24.296" />
   <link rel="stylesheet" href="task-reminders.css?v=24.296" />
+  <link rel="stylesheet" href="sock-gremlin-v297.css?v=24.297" />
 
   <link rel="manifest" href="manifest.webmanifest?v=24-287">
   <link rel="apple-touch-icon" href="apple-touch-icon-v5.png">
@@ -1157,6 +1158,7 @@
   <script src="trading-cards-base.js?v=24.296"></script>
   <script src="trading-cards-extra.js?v=24.296"></script>
   <script src="trading-cards-gimmicks-v288.js?v=24.296"></script>
+  <script src="trading-cards-sock-gremlin-v297.js?v=24.297"></script>
   <script src="app.js?v=24.296"></script>
   <script src="gimmick-hub-v288.js?v=24.296"></script>
   <script src="hub-boosts.js?v=24.296"></script>
@@ -1165,12 +1167,13 @@
   <script type="module" src="firebase-reminders.mjs?v=24.296"></script>
   <script src="task-reminders.js?v=24.296"></script>
   <script src="hub.js?v=24.296"></script>
+  <script src="sock-gremlin-fashion-v297.js?v=24.297"></script>
 
   <script>
     // v24.84: use a stable service-worker URL and actively check the deployed
     // build when the installed PWA is opened/resumed. This prevents Android
     // from keeping an already-open standalone app on an older app shell.
-    const DUCK_HUB_BUILD = "24.296";
+    const DUCK_HUB_BUILD = "24.297";
     let duckHubReloadingForUpdate = false;
 
     function duckHubReloadFresh(version) {
@@ -1234,7 +1237,7 @@
       window.addEventListener("load", async () => {
         try {
           await duckHubClearOldCodeCaches();
-          const registration = await navigator.serviceWorker.register("./sw.js?v=24-296", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("./sw.js?v=24-297", { updateViaCache: "none" });
           await registration.update();
           if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
           await duckHubCheckForUpdate(registration);

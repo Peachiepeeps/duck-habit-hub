@@ -1,10 +1,13 @@
-Duckie Days 24.296
+Duckie Days 24.297
 
-Gift Box card art + static chest/event props
+Sock Gremlin Fashion Battle
 
-- Fixed Gift Box reward card layer order so Buddy/enemy artwork appears over the card frame.
-- Correct card layer order now matches the Trading Card book.
-- Removed the remaining Gift Box opening bounce class.
-- Hard-disabled CSS animation/transition sway on ordinary chest-layer props.
-- Treasure chests, picnic baskets, fountains, and Gift Boxes now stay still.
-- Gift reward cards and packs no longer bump/sway when they appear.
+- Added Sock Gremlin as a seventh equal-weight gimmick encounter while playing Duck Quest as Miko.
+- Sock Gremlin can appear in any normal stage through the existing rare gimmick roll and shared cooldown.
+- Added Base, Blue, Pink, Black, Gold, and Shiny Sock Gremlin art.
+- Accepting its challenge safely suspends the current Duck Quest run and transports the player to Miko's Closet.
+- The challenge generates three basic style prompts only from Miko wardrobe tags that are achievable with currently owned clothing.
+- A Done button scores the finished outfit from 1–3 hearts and returns to the exact Duck Quest run.
+- Higher ratings grant better Pink Coin rewards, better EXP Candy chances, and better odds for the Sock Gremlin Trading Card.
+- The judge screen requires Continue before advancing to the next encounter/floor, so the run is never discarded.
+- Added Rare card R-047: Sock Gremlin.
