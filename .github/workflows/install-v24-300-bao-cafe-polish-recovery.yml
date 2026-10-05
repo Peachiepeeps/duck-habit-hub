@@ -1,0 +1,71 @@
+name: Install Duckie Days v24.300 Bao Cafe Polish Patch - Recovery
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - "Duckie-Days-v24.300-bao-cafe-polish-patch.zip"
+      - ".github/workflows/install-v24-300-bao-cafe-polish-recovery.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bao-cafe-polish-v24-300-recovery
+  cancel-in-progress: false
+
+jobs:
+  install-pack:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.300-bao-cafe-polish-patch.zip"
+          TMP=".bao-cafe-polish-patch"
+          test -f "$ZIP"
+          rm -rf "$TMP"
+          mkdir -p "$TMP"
+          unzip -tq "$ZIP"
+          unzip -q "$ZIP" -d "$TMP"
+
+          # The patch ZIP contains the repo-relative files at its root.
+          cp -a "$TMP/." .
+
+          test -f "bao-cafe/index.html"
+          test -f "bao-cafe/style.css"
+          test -f "bao-cafe/script.js"
+          test -f "bao-cafe/assets/Miko-base.webp"
+          test -f "sw.js"
+          test -f "version.json"
+          grep -q '24.300' version.json
+          grep -q 'assets/Miko-base.webp' bao-cafe/script.js
+
+      - name: Clean installer files
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf ".bao-cafe-polish-patch"
+          rm -f "Duckie-Days-v24.300-bao-cafe-polish-patch.zip"
+          rm -f ".github/workflows/install-v24-300-bao-cafe-polish-patch.yml"
+          rm -f ".github/workflows/install-v24-300-bao-cafe-polish-recovery.yml"
+          rm -f "BAO-CAFE-v24.299-README.txt"
+
+      - name: Commit patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "ERROR: No changes were staged."
+            exit 1
+          fi
+          git commit -m "Polish Bao Cafe layout and hints v24.300"
+          git push
