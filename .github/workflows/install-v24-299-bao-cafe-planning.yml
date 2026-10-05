@@ -1,0 +1,83 @@
+name: Install Bao Cafe Planning Pack
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - "Duckie-Days-v24.299-bao-cafe-planning-pack.zip"
+      - ".github/workflows/install-v24-299-bao-cafe-planning.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bao-cafe-planning-pack
+  cancel-in-progress: false
+
+jobs:
+  install-pack:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Check bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.299-bao-cafe-planning-pack.zip"
+          if [ -f "$ZIP" ]; then
+            echo "PACK_READY=1" >> "$GITHUB_ENV"
+          else
+            echo "PACK_READY=0" >> "$GITHUB_ENV"
+            echo "Workflow installed. Waiting for the Bao Cafe planning pack ZIP."
+          fi
+
+      - name: Install planning pack
+        if: env.PACK_READY == '1'
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.299-bao-cafe-planning-pack.zip"
+          TMP=".bao-cafe-planning-pack"
+          rm -rf "$TMP"
+          mkdir -p "$TMP"
+          unzip -tq "$ZIP"
+          unzip -q "$ZIP" -d "$TMP"
+          test -d "$TMP/payload/bao-cafe-planning"
+          cp -a "$TMP/payload/." .
+          test -f "bao-cafe-planning/README.md"
+          test -f "bao-cafe-planning/01-layout-spec.txt"
+          test -f "bao-cafe-planning/02-gameplay-logic.txt"
+          test -f "bao-cafe-planning/03-recipes-and-bears.txt"
+          test -f "bao-cafe-planning/04-duck-quest-encounter-flow.txt"
+          test -f "bao-cafe-planning/05-file-folder-plan.txt"
+          test -f "bao-cafe-planning/reference/Background-cafe.png"
+          test -f "bao-cafe-planning/reference/Cafe-counter.png"
+          test -f "bao-cafe-planning/reference/Request-Bubble.png"
+          test -f "bao-cafe-planning/reference/Reference-Cafe.png"
+
+      - name: Clean installer files
+        if: env.PACK_READY == '1'
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf ".bao-cafe-planning-pack"
+          rm -f "Duckie-Days-v24.299-bao-cafe-planning-pack.zip"
+          rm -f ".github/workflows/install-v24-299-bao-cafe-planning.yml"
+
+      - name: Commit planning pack
+        if: env.PACK_READY == '1'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "ERROR: No changes were staged."
+            exit 1
+          fi
+          git commit -m "Add Bao Cafe planning pack"
+          git push
