@@ -1,26 +1,6 @@
-Duckie Days v24.299 — Bao Cafe
-
-- Added the playable portrait Bao Cafe minigame to the Hub Games menu.
-- Choose Cheese (combo scoring), Parfait (time boosts), or Frappe (double-order hard mode).
-- Added six drink recipes, four ingredient prep slots, responsive portrait UI, timer, score, and amplifier HUD.
-- Added random OC customers using Duck Quest character sprites.
-- Hub rounds award Pink Coins based on performance.
-- Added rare Bao Cafe Duck Quest NPC encounters for Cheese, Parfait, and Frappe.
-- Duck Quest challenges preserve and restore the exact active run.
-- Added Rare cards R-050 Cheese, R-051 Parfait, and R-052 Frappe.
-- Cheese, Parfait, and Frappe are NPCs only: no shinies, no Buddy capture flow.
-
-Duckie Days 24.298
-
-Porcupin + UFONO + post-minigame catches + bigger plush shelf
-
-- Porcupin can appear as a universal normal enemy in any stage, with base/white/black/green/gold/shiny forms.
-- Porcupin can be befriended normally and leaves an extra cozy drop after the encounter.
-- UFONO is a new rare gimmick encounter with base/blue/pink/gray/gold/shiny forms.
-- UFONO randomly beams the player into Memory Match, Duck Sort, or Duck Crane.
-- Clearing the assigned minigame restores the exact Duck Quest run and advances normally after rewards.
-- UFONO rewards: Pink Coins, Small/Large EXP Candy, Alien Duck, Cosmic Duck, or its Trading Card.
-- Sock Gremlin and UFONO now offer one Buddy Pon catch attempt after their minigame/reward scene.
-- Captured universal event Buddies are visible in the Meadow Buddy Book tab for now.
-- Task Shop plushes display a little larger on the collectible shelf.
-- New cards: R-048 Porcupin and R-049 UFONO.
+v24.300 Bao Cafe polish patch
+- improved layout and alignment
+- fixed customer sprite visibility with fallback
+- improved speech bubble order placement
+- added recipe hint text
+- reduced ingredient art size and centered it
