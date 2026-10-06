@@ -1,0 +1,74 @@
+name: Install Duckie Days v24.302 Bao Cafe Placement Polish - Recovery
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/install-v24-302-bao-cafe-placement-recovery.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bao-cafe-v24-302-recovery
+  cancel-in-progress: false
+
+jobs:
+  install-pack:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install v24.302 patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.302-bao-cafe-placement-polish.zip"
+          TMP=".bao-cafe-v24-302-recovery"
+
+          test -f "$ZIP"
+          rm -rf "$TMP"
+          mkdir -p "$TMP"
+
+          unzip -tq "$ZIP"
+          unzip -q "$ZIP" -d "$TMP"
+
+          # This ZIP already contains repo-relative files at its root.
+          cp -a "$TMP/." .
+
+          test -f "bao-cafe/index.html"
+          test -f "bao-cafe/style.css"
+          test -f "bao-cafe/script.js"
+          test -f "version.json"
+
+          grep -q '24.302' version.json
+          grep -q 'max-width:94%' bao-cafe/style.css
+          grep -q 'max-width:112%' bao-cafe/style.css
+
+      - name: Clean installer files
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf ".bao-cafe-v24-302-recovery"
+          rm -f "Duckie-Days-v24.302-bao-cafe-placement-polish.zip"
+          rm -f ".github/workflows/install-v24-302-bao-cafe-placement-polish.yml"
+          rm -f ".github/workflows/install-v24-302-bao-cafe-placement-recovery.yml"
+          rm -f "BAO-CAFE-v24.301-README.txt"
+
+      - name: Commit patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "ERROR: No changes were staged."
+            exit 1
+          fi
+
+          git commit -m "Polish Bao Cafe character and order placement v24.302"
+          git push
