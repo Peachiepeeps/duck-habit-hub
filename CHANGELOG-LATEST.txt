@@ -1,4 +1,4 @@
-v24.303 Bao Cafe placement polish
-- order art raised into speech bubble center
-- customer scaled much larger under counter
-- bear lowered more
+v24.304 Bao Cafe bigger customer polish
+- customer sprite scaled much bigger
+- customer name plate raised
+- requested drink raised higher in bubble
