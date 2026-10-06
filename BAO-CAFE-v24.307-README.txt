@@ -1,0 +1,6 @@
+Bao Cafe v24.307
+
+Tweaks in this patch:
+- makes the OC/customer a bit smaller again
+- makes the four mixing ingredient circles smaller
+- enlarges the supplies area and supply button tap targets

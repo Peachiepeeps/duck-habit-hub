@@ -1,5 +1,0 @@
-Bao Cafe v24.306
-
-Tweaks in this patch:
-- reduces the OC/customer to a more reasonable size after v24.305 overscaled it
-- moves the ingredient circle mixer area upward, closer to the light pink block

@@ -1,3 +1,4 @@
-v24.306 Bao Cafe sprite size correction
-- reduced customer sprite from oversized transform scaling
-- moved ingredient circle/mixer box upward
+v24.307 Bao Cafe tap-target polish
+- slightly reduces the customer sprite again
+- makes the 4 mixing circles smaller
+- makes supply buttons larger and easier to tap
