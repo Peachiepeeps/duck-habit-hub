@@ -1,4 +1,6 @@
-v24.304 Bao Cafe bigger customer polish
-- customer sprite scaled much bigger
+v24.305 Bao Cafe deeper sprite and layout polish
+- customer sprite now uses transform scaling with visible overflow to compensate for transparent padding
 - customer name plate raised
-- requested drink raised higher in bubble
+- requested drink bigger and higher in bubble
+- mixer box thinner
+- supplies box taller with roomier buttons

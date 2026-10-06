@@ -1,6 +1,0 @@
-Bao Cafe v24.304
-
-Tweaks in this patch:
-- makes the OC/customer much larger
-- raises the customer name window
-- raises the requested item higher into the speech bubble
