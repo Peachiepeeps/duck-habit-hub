@@ -1,4 +1,5 @@
-v24.308 Bao Cafe final spacing polish
-- customer slightly smaller again
-- ingredient circle window moved upward
-- supply buttons enlarged and labels nudged upward
+v24.309 Bao Cafe mixer window compacting
+- shortens the 4-slot mixing window substantially
+- shrinks the 4 circles to fit cleanly
+- keeps the supplies window unchanged
+- prevents Mix/Clear from being covered by the supplies panel
