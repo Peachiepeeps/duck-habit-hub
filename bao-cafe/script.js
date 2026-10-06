@@ -1,7 +1,7 @@
 (function(){
   'use strict';
   const STORAGE_KEY='duckHabitHubSave_v1';
-  const QUEST_KEY='baoCafeChallengeV307';
+  const QUEST_KEY='baoCafeChallengeV308';
   const params=new URLSearchParams(location.search);
   const questMode=params.get('duckquest')==='1';
   const fixedBear=['cheese','parfait','frappe'].includes(params.get('bear'))?params.get('bear'):null;
@@ -64,7 +64,7 @@
   function begin(){score=0;timeLeft=60;ordersDone=0;perfectStreak=0;bestStreak=0;parfaitProgress=0;active=true;scoreText.textContent='0';timerText.textContent='60';pickScreen.classList.add('hidden');resultScreen.classList.add('hidden');gameScreen.classList.remove('hidden');startBearAnimation();nextCustomer();clearInterval(timer);timer=setInterval(()=>{if(!active)return;timeLeft--;timerText.textContent=timeLeft;if(timeLeft<=0)finish(!questMode);},1000);}
   function rewardHub(){const coins=Math.min(75,Math.max(5,Math.floor(score/100)*3));addCoins(coins);return `${coins} Pink Coins added to your Hub!`}
   function finish(cleared=true){if(!active)return;active=false;clearInterval(timer);clearInterval(bearAnim);gameScreen.classList.add('hidden');resultScreen.classList.remove('hidden');resultBear.src=BEARS[selectedBear].happy;resultBear.alt=BEARS[selectedBear].name;resultScore.textContent=score.toLocaleString();resultOrders.textContent=ordersDone;resultBest.textContent=bestStreak;resultEyebrow.textContent=questMode?(cleared?'CHALLENGE CLEAR!':'SHIFT ENDED'):'SHIFT COMPLETE!';resultTitle.textContent=cleared?`${BEARS[selectedBear].name} is impressed!`:'Time ran out!';if(questMode){const s=readSave(),c=s[QUEST_KEY]||{};c.status='return';c.cleared=Boolean(cleared);c.score=score;c.orders=ordersDone;c.bestStreak=bestStreak;c.bear=selectedBear;c.finishedAt=Date.now();s[QUEST_KEY]=c;writeSave(s);resultReward.textContent=cleared?'Your Duck Quest run is safe. Return for your reward!':'You can retry, or return safely with no encounter reward.';playAgain.textContent='Retry Challenge';resultBack.textContent='Return to Duck Quest';}else{resultReward.textContent=rewardHub();playAgain.textContent='Play Again';resultBack.textContent='Back to Hub';}}
-  function goBack(){if(questMode){location.href='../duck-quest/?bao-cafe-return=1&v=24-307';}else location.href='../';}
+  function goBack(){if(questMode){location.href='../duck-quest/?bao-cafe-return=1&v=24-308';}else location.href='../';}
   document.querySelectorAll('.bear-pick').forEach(b=>b.addEventListener('click',()=>{selectedBear=b.dataset.bear;document.querySelectorAll('.bear-pick').forEach(x=>x.classList.toggle('selected',x===b));startShift.disabled=false;}));
   startShift.addEventListener('click',()=>{if(selectedBear)begin();});backHomePick.addEventListener('click',()=>location.href='../');playAgain.addEventListener('click',()=>{if(questMode){begin();}else{selectedBear=null;resultScreen.classList.add('hidden');pickScreen.classList.remove('hidden');document.querySelectorAll('.bear-pick').forEach(x=>x.classList.remove('selected'));startShift.disabled=true;}});resultBack.addEventListener('click',goBack);mixButton.addEventListener('click',mix);clearButton.addEventListener('click',()=>{slots=[];renderSlots();setFeedback('Prep spots cleared.');});
   renderIngredients();renderSlots();
