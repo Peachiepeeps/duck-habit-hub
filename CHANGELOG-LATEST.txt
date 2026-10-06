@@ -1,7 +1,5 @@
-v24.301 Bao Cafe reference-layout + loading patch
-- counter/table layer now fills the full portrait scene so the light pink table line matches the reference
-- customer and bear rest on the table line
-- requested drink moved left and slightly lower inside the bubble
-- customers now use Duck Quest battle idle sprites at reference-like scale
-- compressed large cafe art to WebP and preload critical scene layers for much faster rendering
-- centered/reduced supply art further
+v24.302 Bao Cafe placement polish
+- larger customer sprite behind counter
+- lowered bear alignment
+- bigger centered order art in bubble
+- ingredient icons raised within supply tiles
