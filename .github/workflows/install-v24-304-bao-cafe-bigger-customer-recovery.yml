@@ -1,0 +1,75 @@
+name: Install Duckie Days v24.304 Bao Cafe Bigger Customer - Recovery
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/install-v24-304-bao-cafe-bigger-customer-recovery.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bao-cafe-v24-304-recovery
+  cancel-in-progress: false
+
+jobs:
+  install-pack:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install v24.304 patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.304-bao-cafe-bigger-customer.zip"
+          TMP=".bao-cafe-v24-304-recovery"
+
+          test -f "$ZIP"
+          rm -rf "$TMP"
+          mkdir -p "$TMP"
+
+          unzip -tq "$ZIP"
+          unzip -q "$ZIP" -d "$TMP"
+
+          # This patch ZIP already contains repo-relative files at its root.
+          cp -a "$TMP/." .
+
+          test -f "bao-cafe/index.html"
+          test -f "bao-cafe/style.css"
+          test -f "bao-cafe/script.js"
+          test -f "version.json"
+
+          grep -q '24.304' version.json
+          grep -q 'max-width:285%' bao-cafe/style.css
+          grep -q 'bottom:49.8%' bao-cafe/style.css
+          grep -q 'top:4.8%' bao-cafe/style.css
+
+      - name: Clean installer files
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf ".bao-cafe-v24-304-recovery"
+          rm -f "Duckie-Days-v24.304-bao-cafe-bigger-customer.zip"
+          rm -f ".github/workflows/install-v24-304-bao-cafe-bigger-customer.yml"
+          rm -f ".github/workflows/install-v24-304-bao-cafe-bigger-customer-recovery.yml"
+          rm -f "BAO-CAFE-v24.303-README.txt"
+
+      - name: Commit patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "ERROR: No changes were staged."
+            exit 1
+          fi
+
+          git commit -m "Polish Bao Cafe bigger customer and bubble placement v24.304"
+          git push
