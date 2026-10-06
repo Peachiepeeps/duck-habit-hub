@@ -1,7 +1,0 @@
-Bao Cafe v24.305
-
-Deeper fix in this patch:
-- the OC sprite wrapper was clipping the art and simple max-width increases were not giving a visible size change
-- the customer now uses transform-based scaling plus visible overflow
-- the order art is larger and higher in the speech bubble
-- the ingredient mixer box is thinner and the supplies box is taller
