@@ -1,5 +1,4 @@
-v24.302 Bao Cafe placement polish
-- larger customer sprite behind counter
-- lowered bear alignment
-- bigger centered order art in bubble
-- ingredient icons raised within supply tiles
+v24.303 Bao Cafe placement polish
+- order art raised into speech bubble center
+- customer scaled much larger under counter
+- bear lowered more

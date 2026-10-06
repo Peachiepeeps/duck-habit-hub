@@ -1,0 +1,6 @@
+Bao Cafe v24.303
+
+Tweaks in this patch:
+- moved requested drink upward into the middle of the speech bubble
+- scaled the OC/customer up roughly 2x while keeping them tucked under the counter
+- lowered the bear so it rests more naturally on the same horizontal axis

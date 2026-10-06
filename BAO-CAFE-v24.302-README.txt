@@ -1,7 +1,0 @@
-Bao Cafe v24.302
-
-Tweaks in this patch:
-- scales the customer sprite much larger and tucks it under the counter
-- lowers the bear so its feet align with the name/counter axis better
-- enlarges and recenters the requested drink inside the speech bubble
-- raises the ingredient art so it is not cut off in the supply buttons
