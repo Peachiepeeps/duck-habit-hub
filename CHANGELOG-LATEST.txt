@@ -1,20 +1,5 @@
-v24.311 Universal Clothing + app fixes
-
-UNIVERSAL CLOTHING
-- 11 universal clothing families for all five OCs
-- Multiple purchasable copies per item
-- Every copy starts White and stores its own paint colors
-- Bunny Outfit and Maid Outfit have independently paintable Main / Secondary / Accent regions
-- Bow Dress uses Small art for Miko + Io and Large art for Peep + Miho + Annika
-- Big Hoodie / Big Cardigan automatically add the supplied hand for Miko + Io
-- Miko's original raised arm is hidden while a universal Big Hoodie / Big Cardigan is equipped
-- Universal socks are independently layerable and each copy supports Off / L / R / LR
-- Universal socks can layer on top of existing stockings and on top of other universal socks
-- Universal clothing is integrated into existing Closet sections rather than a separate Universal tab
-- Universal clothing is repeat-buy in the Shop
-- Sock Gremlin fashion wins can drop universal clothing
-
-MERGED FIXES
-- Duck Quest card rewards get a reliable framed Trading Card preview
-- Sock Gremlin fashion challenge starts from a temporary bare Miko look and restores the normal outfit afterward
-- Lucky orange/green Gift Box Mimics retain their Lucky appearance in battle
+v24.312 Miko fashion-battle recovery
+- adds a one-tap recovery control for Miko outfits stuck from older Sock Gremlin challenges
+- preserves unlocked/purchased wardrobe items
+- restores captured pre-challenge looks when available; otherwise resets only Miko's equipped look to the starter baseline
+- strengthens temporary challenge outfit restore for future Sock Gremlin fashion battles

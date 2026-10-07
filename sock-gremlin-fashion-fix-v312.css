@@ -1,0 +1,30 @@
+/* Duckie Days v24.312 — Miko stuck fashion outfit recovery */
+.miko-fashion-recovery-v312{
+  grid-column:1/-1;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin:2px 0 10px;
+  padding:12px;
+  border:2px solid #e5a0bb;
+  border-radius:16px;
+  background:#fff2f7;
+  color:#704c5c;
+  box-shadow:0 3px 0 rgba(100,65,80,.08)
+}
+.miko-fashion-recovery-v312>div{display:grid;gap:3px}
+.miko-fashion-recovery-v312 strong{font-size:.78rem}
+.miko-fashion-recovery-v312 small{font-size:.62rem;line-height:1.3;opacity:.75}
+.miko-fashion-recovery-v312 button{
+  flex:0 0 auto;
+  border:2px solid #d77fa1;
+  border-radius:999px;
+  background:#ef9fbe;
+  color:#fff;
+  font:inherit;
+  font-size:.68rem;
+  font-weight:950;
+  padding:8px 12px;
+  min-height:38px
+}

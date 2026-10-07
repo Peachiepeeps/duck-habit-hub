@@ -15,7 +15,7 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-311';
+const APP_CACHE='duck-habit-hub-app-v24-312';
 const APP_SHELL=[
  './',
  './index.html',
@@ -31,6 +31,7 @@ const APP_SHELL=[
  './sock-gremlin-v297.css?v=24.297',
  './universal-enemies-v298.css?v=24.298',
  './universal-clothing-v311.css?v=24.311',
+ './sock-gremlin-fashion-fix-v312.css?v=24.312',
  './trading-cards-base.js?v=24.296',
  './trading-cards-extra.js?v=24.296',
  './trading-cards-gimmicks-v288.js?v=24.296',
@@ -65,7 +66,7 @@ const APP_SHELL=[
  './task-reminders.js?v=24.296',
  './hub.js?v=24.296',
  './sock-gremlin-fashion-v297.js?v=24.297',
- './sock-gremlin-fashion-fix-v311.js?v=24.311',
+ './sock-gremlin-fashion-fix-v312.js?v=24.312',
  './duck-quest/index.html',
  './duck-quest/css/gimmick-encounters-v288.css?v=24-296',
  './duck-quest/css/fixes-v289.css?v=24-296',
