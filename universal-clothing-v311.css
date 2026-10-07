@@ -1,0 +1,40 @@
+/* Duckie Days v24.311 — Universal Clothing */
+.uc-section-heading-v311{grid-column:1/-1;display:flex;align-items:end;justify-content:space-between;gap:10px;margin:16px 2px 6px;padding:10px 12px;border:2px solid rgba(211,145,173,.38);border-radius:15px;background:rgba(255,244,248,.84);color:#7b5364}
+.uc-section-heading-v311 strong{font-size:.86rem}
+.uc-section-heading-v311 small{font-size:.65rem;opacity:.72;text-align:right}
+.uc-family-label-v311{grid-column:1/-1;margin:7px 4px 2px;font-size:.72rem;font-weight:950;letter-spacing:.04em;text-transform:uppercase;color:#9b677d}
+.uc-copy-card-v311{grid-column:1/-1;display:grid;grid-template-columns:86px minmax(0,1fr);grid-template-areas:"preview info" "preview actions";gap:5px 10px;align-items:center;padding:9px 10px;border:2px solid rgba(213,163,184,.5);border-radius:16px;background:rgba(255,252,250,.9);box-shadow:0 3px 0 rgba(113,75,91,.07)}
+.uc-copy-card-v311.equipped{border-color:#e986ae;background:#fff1f7;box-shadow:0 0 0 2px rgba(241,147,183,.13)}
+.uc-copy-card-v311.locked{opacity:.72}
+.uc-copy-preview-v311{grid-area:preview;width:82px;height:82px;display:grid;place-items:center;border:1.5px solid rgba(216,165,185,.42);border-radius:13px;background:#fff}
+.uc-copy-preview-v311 img{width:92%;height:92%;object-fit:contain}
+.uc-copy-info-v311{grid-area:info;display:grid;gap:3px;min-width:0;color:#6f4d5c}
+.uc-copy-info-v311 strong{font-size:.82rem}
+.uc-copy-info-v311 small{font-size:.64rem;line-height:1.25;opacity:.75}
+.uc-copy-actions-v311{grid-area:actions;display:flex;flex-wrap:wrap;gap:5px}
+.uc-copy-actions-v311 button,.uc-copy-card-v311>button{border:1.5px solid #dc9db7;border-radius:999px;background:#fff8fb;color:#7a5264;font:inherit;font-size:.68rem;font-weight:900;padding:6px 10px;min-height:31px}
+.uc-equip-button-v311{background:#ffd7e7!important}
+.uc-paint-button-v311{background:#f5efff!important}
+.uc-side-button-v311.active,.uc-region-button-v311.active{background:#efa0bf!important;color:#fff!important;border-color:#d96e99!important}
+.uc-paint-layer-v311{position:fixed;z-index:14000;inset:0;display:grid;place-items:center;padding:18px}
+.uc-paint-backdrop-v311{position:absolute;inset:0;border:0;background:rgba(54,35,48,.58);backdrop-filter:blur(3px)}
+.uc-paint-card-v311{position:relative;z-index:1;width:min(94vw,520px);max-height:90vh;overflow:auto;padding:20px;border:3px solid #eba5c0;border-radius:22px;background:#fff9fc;color:#694959;box-shadow:0 18px 55px rgba(56,30,47,.35)}
+.uc-paint-card-v311 h2{margin:0 42px 4px 0;font-size:1.15rem}
+.uc-paint-copy-v311{margin:0 0 12px;font-size:.72rem;opacity:.78}
+.uc-paint-close-v311{position:absolute;right:11px;top:10px;width:35px;height:35px;border:2px solid #dfa0b9;border-radius:50%;background:#fff;font-size:20px;color:#754f60}
+.uc-paint-regions-v311{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 12px}
+.uc-paint-regions-v311.hidden{display:none}
+.uc-region-button-v311{border:2px solid #dda0b8;border-radius:999px;background:#fff;padding:7px 12px;color:#704d5e;font-weight:900}
+.uc-paint-colors-v311{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.uc-color-button-v311{display:grid;grid-template-columns:34px 1fr;align-items:center;gap:8px;text-align:left;border:2px solid rgba(218,160,184,.52);border-radius:13px;background:#fff;padding:7px;color:#694959}
+.uc-color-button-v311.active{border-color:#df78a2;background:#fff0f6}
+.uc-color-button-v311:disabled{opacity:.4}
+.uc-color-swatch-v311{width:31px;height:31px;border:2px solid rgba(95,61,76,.2);border-radius:50%;box-shadow:inset 0 0 0 2px rgba(255,255,255,.4)}
+.uc-color-button-v311 span:last-child{display:grid;gap:1px}
+.uc-color-button-v311 strong{font-size:.72rem}
+.uc-color-button-v311 small{font-size:.59rem;opacity:.7}
+.uc-paint-note-v311{display:block;margin-top:10px;font-size:.62rem;opacity:.72}
+@media(min-width:760px){
+  .uc-copy-card-v311{grid-column:span 2}
+  .uc-paint-colors-v311{grid-template-columns:repeat(3,minmax(0,1fr))}
+}

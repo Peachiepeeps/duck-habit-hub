@@ -15,7 +15,7 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-309';
+const APP_CACHE='duck-habit-hub-app-v24-311';
 const APP_SHELL=[
  './',
  './index.html',
@@ -30,6 +30,7 @@ const APP_SHELL=[
  './task-reminders.css?v=24.296',
  './sock-gremlin-v297.css?v=24.297',
  './universal-enemies-v298.css?v=24.298',
+ './universal-clothing-v311.css?v=24.311',
  './trading-cards-base.js?v=24.296',
  './trading-cards-extra.js?v=24.296',
  './trading-cards-gimmicks-v288.js?v=24.296',
@@ -55,6 +56,7 @@ const APP_SHELL=[
  './duck-quest/css/bao-cafe-v299.css?v=24-309',
  './duck-quest/js/bao-cafe-v299.js?v=24-309',
  './app.js?v=24.296',
+ './universal-clothing-v311.js?v=24.311',
  './gimmick-hub-v288.js?v=24.296',
  './hub-boosts.js?v=24.296',
  './trading-cards-ui.js?v=24.296',
@@ -63,6 +65,7 @@ const APP_SHELL=[
  './task-reminders.js?v=24.296',
  './hub.js?v=24.296',
  './sock-gremlin-fashion-v297.js?v=24.297',
+ './sock-gremlin-fashion-fix-v311.js?v=24.311',
  './duck-quest/index.html',
  './duck-quest/css/gimmick-encounters-v288.css?v=24-296',
  './duck-quest/css/fixes-v289.css?v=24-296',
@@ -99,11 +102,24 @@ const APP_SHELL=[
  './crane-game/play-v24-40.html',
  './crane-game/script-v24-40.js?v=24-298',
  './duck-quest/js/fixes-v289.js?v=24-296',
+ './duck-quest/js/universal-clothing-drops-v311.js?v=24.311',
+ './duck-quest/js/fixes-v311.js?v=24.311',
  './assets/ingredients/Sparkle.webp',
  './assets/gifts/Love-letter.webp',
  './duck-quest/assets/enemies/mimic/base/open-1.webp',
  './duck-quest/assets/enemies/mimic/lucky/open.webp',
  './duck-quest/assets/enemies/mimic/healthy/open.webp',
+ './assets/universal-clothing/previews/big-hoodie.webp',
+ './assets/universal-clothing/previews/big-cardigan.webp',
+ './assets/universal-clothing/previews/bow-dress-large.webp',
+ './assets/universal-clothing/previews/bunny-outfit.webp',
+ './assets/universal-clothing/previews/maid-outfit.webp',
+ './assets/universal-clothing/previews/big-bow.webp',
+ './assets/universal-clothing/previews/r-bow.webp',
+ './assets/universal-clothing/previews/glasses.webp',
+ './assets/universal-clothing/previews/short-socks.webp',
+ './assets/universal-clothing/previews/knee-socks.webp',
+ './assets/universal-clothing/previews/thigh-socks.webp',
  './assets/furniture/book-shelves/book-shelf-brown.png',
  './assets/furniture/book-shelves/book-shelf-white.png',
  './assets/furniture/book-shelves/book-shelf-dark.png',

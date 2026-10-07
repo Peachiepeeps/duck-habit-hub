@@ -1,5 +1,20 @@
-v24.309 Bao Cafe mixer window compacting
-- shortens the 4-slot mixing window substantially
-- shrinks the 4 circles to fit cleanly
-- keeps the supplies window unchanged
-- prevents Mix/Clear from being covered by the supplies panel
+v24.311 Universal Clothing + app fixes
+
+UNIVERSAL CLOTHING
+- 11 universal clothing families for all five OCs
+- Multiple purchasable copies per item
+- Every copy starts White and stores its own paint colors
+- Bunny Outfit and Maid Outfit have independently paintable Main / Secondary / Accent regions
+- Bow Dress uses Small art for Miko + Io and Large art for Peep + Miho + Annika
+- Big Hoodie / Big Cardigan automatically add the supplied hand for Miko + Io
+- Miko's original raised arm is hidden while a universal Big Hoodie / Big Cardigan is equipped
+- Universal socks are independently layerable and each copy supports Off / L / R / LR
+- Universal socks can layer on top of existing stockings and on top of other universal socks
+- Universal clothing is integrated into existing Closet sections rather than a separate Universal tab
+- Universal clothing is repeat-buy in the Shop
+- Sock Gremlin fashion wins can drop universal clothing
+
+MERGED FIXES
+- Duck Quest card rewards get a reliable framed Trading Card preview
+- Sock Gremlin fashion challenge starts from a temporary bare Miko look and restores the normal outfit afterward
+- Lucky orange/green Gift Box Mimics retain their Lucky appearance in battle

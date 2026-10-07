@@ -1,3 +1,0 @@
-Bao Cafe v24.309
-
-This patch makes the four-ingredient mixer panel much shorter while leaving the supplies panel at the same size. The four circles and internal spacing are reduced so the Mix and Clear buttons stay fully visible above Supplies.

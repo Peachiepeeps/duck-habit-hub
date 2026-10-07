@@ -20,6 +20,13 @@
   function grantReward(c){
     if(c.rewardGranted&&c.reward)return c.reward;const score=Math.max(1,Math.min(3,Math.floor(Number(c.score)||1)));let coins=score===1?randInt(30,50):score===2?randInt(70,100):randInt(130,170);if(c.shiny)coins=Math.round(coins*1.5);hubSave.coins=Math.max(0,Number(hubSave.coins)||0)+coins;if(currentRun)currentRun.coinsEarned=Math.max(0,Number(currentRun.coinsEarned)||0)+coins;
     const bonus=[];if(score===2&&Math.random()<.35){addInventory("exp-candy-small",1);bonus.push("EXP Candy Small ×1");}if(score===3){if(Math.random()<.20){addInventory("exp-candy-large",1);bonus.push("EXP Candy Large ×1");}else{addInventory("exp-candy-small",1);bonus.push("EXP Candy Small ×1");}}
+    const clothingDrops=window.DuckieUniversalClothingDropsV311;
+    const clothingBaseChance=score===1?.10:score===2?.22:.40;
+    if(clothingDrops?.ids?.length && Math.random()<Math.min(.80,clothingBaseChance+(c.shiny?.15:0))){
+      const clothingId=pick(clothingDrops.ids);
+      addInventory(clothingId,1);
+      bonus.push(`${clothingDrops.names?.[clothingId]||"Universal Clothing"} ×1`);
+    }
     let cardResult=null;const baseChance=score===1?.04:score===2?.12:.30,cardChance=Math.min(.75,baseChance+(c.shiny?.20:0));if(TC?.byId?.["r-sock-gremlin"]&&Math.random()<cardChance){cardResult=TC.grantCard(hubSave,"r-sock-gremlin",1);if(cardResult)bonus.push(`${cardResult.isNew?"NEW ":""}Sock Gremlin Trading Card`);}
     if(currentRun?.mode==="endless"&&!c.endlessMarked){markEndlessFloorComplete();c.endlessMarked=true;}c.reward={coins,bonus,cardNew:Boolean(cardResult?.isNew)};c.rewardGranted=true;c.run=JSON.parse(JSON.stringify(currentRun));hubSave[KEY]=c;persistAll();return c.reward;
   }
