@@ -1,0 +1,48 @@
+/* Duckie Days v24.315 — one Universal Clothing icon per family */
+#closetOptions .uc-grouped-section-v315{grid-column:1/-1;width:100%;display:grid;gap:7px;margin-top:10px;box-sizing:border-box}
+#closetOptions .uc-grouped-heading-v315{display:grid;gap:2px;padding:8px 9px;border:2px solid rgba(211,145,173,.38);border-radius:14px;background:rgba(255,244,248,.88);color:#7b5364;text-align:left}
+#closetOptions .uc-grouped-heading-v315 strong{font-size:.70rem;text-transform:uppercase;letter-spacing:.04em}
+#closetOptions .uc-grouped-heading-v315 small{font-size:.50rem;opacity:.72;line-height:1.2}
+#closetOptions .uc-family-grid-v315{display:grid;grid-template-columns:1fr;gap:7px;width:100%;min-width:0}
+#closetOptions .uc-family-card-v315{width:100%;min-width:0;display:grid;grid-template-columns:62px minmax(0,1fr);gap:8px;align-items:center;padding:7px 8px;border:2px solid rgba(215,166,187,.56);border-radius:15px;background:rgba(255,252,250,.96);color:#704e5d;text-align:left;box-sizing:border-box;box-shadow:0 3px 0 rgba(113,75,91,.06)}
+#closetOptions .uc-family-card-v315.equipped{border-color:#e67fa8;background:#fff0f6;box-shadow:0 0 0 2px rgba(240,141,179,.11)}
+#closetOptions .uc-family-card-v315.locked{opacity:.58}
+#closetOptions .uc-family-card-art-v315{width:60px;height:60px;display:grid;place-items:center;border:1.5px solid rgba(215,166,187,.42);border-radius:12px;background:#fff;overflow:hidden}
+#closetOptions .uc-family-card-art-v315 img{display:block;width:92%;height:92%;object-fit:contain}
+#closetOptions .uc-family-card-copy-v315{display:grid;gap:2px;min-width:0}
+#closetOptions .uc-family-card-copy-v315 strong{font-size:.66rem;line-height:1.12}
+#closetOptions .uc-family-card-copy-v315 small{font-size:.50rem;line-height:1.2;opacity:.76;overflow:hidden;text-overflow:ellipsis}
+#closetOptions .uc-family-card-hint-v315{font-size:.49rem;font-weight:900;color:#b56c89;margin-top:2px}
+
+.uc-family-picker-v315{position:fixed;z-index:22000;inset:0;display:grid;place-items:center;padding:14px;box-sizing:border-box}
+.uc-family-picker-backdrop-v315{position:absolute;inset:0;border:0;background:rgba(58,38,49,.58);backdrop-filter:blur(3px)}
+.uc-family-picker-card-v315{position:relative;z-index:1;width:min(94vw,520px);max-height:min(88dvh,760px);overflow:auto;box-sizing:border-box;padding:15px;border:3px solid #e6a0bb;border-radius:22px;background:#fffafc;color:#6d4a59;box-shadow:0 20px 60px rgba(56,31,45,.35)}
+.uc-family-picker-close-v315{position:absolute;right:10px;top:9px;width:36px;height:36px;border:2px solid #d999b3;border-radius:50%;background:#fff;color:#754f60;font:900 21px/1 sans-serif}
+.uc-family-picker-head-v315{display:grid;grid-template-columns:78px minmax(0,1fr);gap:11px;align-items:center;padding-right:38px;margin-bottom:12px}
+.uc-family-picker-head-v315>img{width:76px;height:76px;object-fit:contain;border:2px solid rgba(216,164,185,.45);border-radius:14px;background:#fff}
+.uc-family-picker-head-v315 h2{margin:0 0 3px;font-size:1.08rem}
+.uc-family-picker-head-v315 p{margin:0;font-size:.66rem;line-height:1.35;opacity:.75}
+.uc-family-picker-options-v315{display:grid;gap:8px}
+.uc-family-picker-option-v315{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;align-items:center;padding:10px;border:2px solid rgba(214,160,183,.46);border-radius:15px;background:#fff}
+.uc-family-picker-option-v315.selected{border-color:#e27ca4;background:#fff1f7}
+.uc-family-picker-option-info-v315{display:grid;gap:4px;min-width:0}
+.uc-family-picker-option-info-v315>strong{font-size:.72rem}
+.uc-family-picker-option-info-v315>small{font-size:.56rem;opacity:.66}
+.uc-picker-swatches-v315{display:flex;flex-wrap:wrap;gap:5px;min-width:0}
+.uc-picker-swatch-chip-v315{display:inline-flex;align-items:center;gap:4px;min-width:0;padding:3px 6px;border-radius:999px;background:#fff7fa;border:1px solid rgba(213,158,181,.38);font-size:.54rem;line-height:1.15}
+.uc-picker-swatch-chip-v315 i{display:block;width:15px;height:15px;flex:0 0 15px;border:1px solid rgba(92,63,75,.23);border-radius:50%;box-shadow:inset 0 0 0 1px rgba(255,255,255,.4)}
+.uc-picker-fixed-v315{font-size:.56rem;opacity:.72}
+.uc-family-picker-actions-v315{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:4px;max-width:155px}
+.uc-family-picker-actions-v315 button,.uc-family-picker-off-v315{min-height:31px;padding:6px 10px;border:1.5px solid #da97b2;border-radius:999px;background:#fff7fa;color:#754f60;font:900 .61rem/1 sans-serif}
+.uc-family-picker-actions-v315 button.active{background:#ed91b5;color:#fff;border-color:#d86d99}
+.uc-family-picker-empty-v315{padding:18px 12px;border:2px dashed rgba(211,155,180,.45);border-radius:14px;text-align:center;font-size:.68rem;line-height:1.4;opacity:.72}
+.uc-family-picker-footer-v315{display:grid;gap:8px;margin-top:11px;padding-top:10px;border-top:1px solid rgba(198,143,167,.27)}
+.uc-family-picker-off-v315{justify-self:start;background:#fff!important}
+.uc-family-picker-footer-v315 small{font-size:.58rem;line-height:1.35;opacity:.7}
+@media(max-width:420px){
+  .uc-family-picker-card-v315{padding:12px;border-radius:19px}
+  .uc-family-picker-head-v315{grid-template-columns:66px minmax(0,1fr);gap:8px}
+  .uc-family-picker-head-v315>img{width:64px;height:64px}
+  .uc-family-picker-option-v315{grid-template-columns:1fr;gap:7px}
+  .uc-family-picker-actions-v315{justify-content:flex-start;max-width:none}
+}
