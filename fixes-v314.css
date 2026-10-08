@@ -1,0 +1,96 @@
+/* Duckie Days v24.314 — Universal Clothing closet cleanup + Crafter clothing UI */
+
+/* Restore a compact, readable single-column card layout in the narrow Closet. */
+#closetOptions .uc-section-heading-v311,
+#closetOptions .uc-family-label-v311,
+#closetOptions .uc-copy-card-v311{
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  box-sizing:border-box!important;
+}
+#closetOptions .uc-section-heading-v311{
+  display:block!important;
+  margin:10px 0 6px!important;
+  padding:8px 9px!important;
+}
+#closetOptions .uc-section-heading-v311 strong,
+#closetOptions .uc-section-heading-v311 small{display:block!important;text-align:left!important}
+#closetOptions .uc-section-heading-v311 small{margin-top:2px!important}
+#closetOptions .uc-family-label-v311{margin:8px 2px 4px!important}
+#closetOptions .uc-copy-card-v311{
+  display:grid!important;
+  grid-template-columns:54px minmax(0,1fr)!important;
+  grid-template-areas:"preview info" "preview actions"!important;
+  gap:5px 7px!important;
+  align-items:center!important;
+  padding:7px!important;
+  min-height:72px!important;
+  border-radius:14px!important;
+  overflow:visible!important;
+}
+#closetOptions .uc-copy-preview-v311{
+  grid-area:preview!important;
+  width:52px!important;
+  height:52px!important;
+  min-width:52px!important;
+  min-height:52px!important;
+  border-radius:11px!important;
+  overflow:hidden!important;
+}
+#closetOptions .uc-copy-preview-v311 img{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+#closetOptions .uc-copy-info-v311{
+  grid-area:info!important;
+  display:grid!important;
+  gap:2px!important;
+  min-width:0!important;
+  text-align:left!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+#closetOptions .uc-copy-info-v311 strong{font-size:.64rem!important;line-height:1.12!important}
+#closetOptions .uc-copy-info-v311 small{font-size:.51rem!important;line-height:1.18!important}
+#closetOptions .uc-copy-actions-v311{
+  grid-area:actions!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  justify-content:flex-start!important;
+  gap:3px!important;
+  min-width:0!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+#closetOptions .uc-copy-actions-v311 button,
+#closetOptions .uc-copy-card-v311>button{
+  min-height:25px!important;
+  padding:4px 7px!important;
+  font-size:.50rem!important;
+  line-height:1!important;
+  border-radius:999px!important;
+}
+
+/* Duck Crafter clothing tab */
+.uc-crafter-v314{display:grid;gap:12px}
+.uc-crafter-intro-v314{display:grid;gap:4px;padding:12px 13px;border:2px solid rgba(210,147,174,.45);border-radius:16px;background:rgba(255,245,249,.94);color:#765060}
+.uc-crafter-intro-v314 strong{font-size:.88rem}
+.uc-crafter-intro-v314 p{margin:0;font-size:.68rem;line-height:1.35;opacity:.78}
+.uc-crafter-family-v314{display:grid;gap:7px}
+.uc-crafter-family-head-v314{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#83586b}
+.uc-crafter-family-head-v314 strong{font-size:.78rem}
+.uc-crafter-family-head-v314 span{font-size:.61rem;opacity:.72}
+.uc-crafter-grid-v314{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.uc-crafter-card-v314{display:grid;grid-template-rows:90px auto auto auto;gap:5px;padding:8px;border:2px solid rgba(211,157,181,.52);border-radius:15px;background:#fffdfc;color:#714e5e;text-align:center;box-shadow:0 3px 0 rgba(103,68,82,.07)}
+.uc-crafter-card-v314 img{width:100%;height:90px;object-fit:contain}
+.uc-crafter-card-v314 strong{font-size:.68rem;line-height:1.15}
+.uc-crafter-card-v314 small{font-size:.55rem;line-height:1.2;opacity:.72;min-height:2.4em}
+.uc-crafter-card-v314 button{min-height:31px;border:2px solid #dc9db7;border-radius:11px;background:#f7efff;color:#704f5e;font:inherit;font-size:.60rem;font-weight:900}
+.uc-crafter-card-v314 button:disabled{opacity:.5}
+.uc-crafter-empty-v314{padding:12px;border:2px dashed rgba(211,157,181,.5);border-radius:14px;text-align:center;font-size:.68rem;color:#80596a;background:rgba(255,250,252,.8)}
+@media(max-width:430px){.uc-crafter-grid-v314{grid-template-columns:1fr 1fr}.uc-crafter-card-v314{grid-template-rows:76px auto auto auto}.uc-crafter-card-v314 img{height:76px}}

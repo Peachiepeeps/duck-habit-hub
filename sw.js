@@ -15,7 +15,7 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-313';
+const APP_CACHE='duck-habit-hub-app-v24-314';
 const APP_SHELL=[
  './',
  './index.html',
@@ -33,6 +33,7 @@ const APP_SHELL=[
  './universal-clothing-v311.css?v=24.311',
  './sock-gremlin-fashion-fix-v312.css?v=24.312',
  './fixes-v313.css?v=24.313',
+ './fixes-v314.css?v=24.314',
  './trading-cards-base.js?v=24.296',
  './trading-cards-extra.js?v=24.296',
  './trading-cards-gimmicks-v288.js?v=24.296',
@@ -69,6 +70,7 @@ const APP_SHELL=[
  './sock-gremlin-fashion-v297.js?v=24.297',
  './sock-gremlin-fashion-fix-v312.js?v=24.312',
  './fixes-v313.js?v=24.313',
+ './fixes-v314.js?v=24.314',
  './duck-quest/index.html',
  './duck-quest/css/gimmick-encounters-v288.css?v=24-296',
  './duck-quest/css/fixes-v289.css?v=24-296',
@@ -109,6 +111,7 @@ const APP_SHELL=[
  './duck-quest/js/fixes-v311.js?v=24.311',
  './duck-quest/js/new-enemies-v313.js?v=24.313',
  './duck-quest/js/fixes-v313.js?v=24.313',
+ './duck-quest/js/fixes-v314.js?v=24.314',
  './assets/ingredients/Sparkle.webp',
  './assets/gifts/Love-letter.webp',
  './duck-quest/assets/enemies/mimic/base/open-1.webp',
