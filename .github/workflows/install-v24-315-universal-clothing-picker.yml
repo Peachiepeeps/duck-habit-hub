@@ -1,0 +1,131 @@
+name: Install Duckie Days v24.315 Universal Clothing Picker
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - "Duckie-Days-v24.315-universal-clothing-picker.zip"
+      - ".github/workflows/install-v24-315-universal-clothing-picker.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-315
+  cancel-in-progress: false
+
+jobs:
+  install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Check for patch ZIP
+        id: patch
+        shell: bash
+        run: |
+          if [ -f "Duckie-Days-v24.315-universal-clothing-picker.zip" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "Workflow is ready. Upload Duckie-Days-v24.315-universal-clothing-picker.zip to the repository root."
+          fi
+
+      - name: Install v24.315
+        if: steps.patch.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.315-universal-clothing-picker.zip"
+          TMP=".duckie-v24-315-install"
+          rm -rf "$TMP"
+          mkdir -p "$TMP"
+          unzip -tq "$ZIP"
+          unzip -q "$ZIP" -d "$TMP"
+          test -d "$TMP/payload"
+          cp -a "$TMP/payload/." .
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, re
+
+          version=Path("version.json")
+          data=json.loads(version.read_text())
+          data["version"]="24.315"
+          version.write_text(json.dumps(data,indent=2)+"\n")
+
+          root=Path("index.html")
+          text=root.read_text()
+          text=re.sub(r'<meta name="duck-habit-build" content="[^"]+"\s*/>',
+                      '<meta name="duck-habit-build" content="24.315" />',text,count=1)
+
+          css_anchor='  <link rel="stylesheet" href="fixes-v314.css?v=24.314" />'
+          css_tag='  <link rel="stylesheet" href="fixes-v315.css?v=24.315" />'
+          if css_tag not in text:
+              if css_anchor not in text:
+                  raise SystemExit("Could not find v24.314 root CSS anchor")
+              text=text.replace(css_anchor,css_anchor+"\n"+css_tag,1)
+
+          js_anchor='  <script src="fixes-v314.js?v=24.314"></script>'
+          js_tag='  <script src="fixes-v315.js?v=24.315"></script>'
+          if js_tag not in text:
+              if js_anchor not in text:
+                  raise SystemExit("Could not find v24.314 root JS anchor")
+              text=text.replace(js_anchor,js_anchor+"\n"+js_tag,1)
+
+          root.write_text(text)
+
+          sw=Path("sw.js")
+          text=sw.read_text()
+          text=re.sub(r"const APP_CACHE='duck-habit-hub-app-v24-\d+';",
+                      "const APP_CACHE='duck-habit-hub-app-v24-315';",text,count=1)
+
+          entries=[
+              (" './fixes-v314.css?v=24.314',"," './fixes-v315.css?v=24.315',"),
+              (" './fixes-v314.js?v=24.314',"," './fixes-v315.js?v=24.315',"),
+          ]
+          for anchor,entry in entries:
+              if entry.strip().rstrip(',') in text:
+                  continue
+              if anchor not in text:
+                  raise SystemExit(f"Could not find service worker anchor: {anchor}")
+              text=text.replace(anchor,anchor+"\n"+entry,1)
+          sw.write_text(text)
+          PY
+
+          test -f "fixes-v315.css"
+          test -f "fixes-v315.js"
+          grep -q '"version": "24.315"' version.json
+          grep -q 'fixes-v315.css?v=24.315' index.html
+          grep -q 'fixes-v315.js?v=24.315' index.html
+          grep -q "duck-habit-hub-app-v24-315" sw.js
+          grep -q 'uc-family-picker-v315' fixes-v315.js
+          grep -q 'DUCKIE_UNIVERSAL_CLOTHING_GROUPED_V315' fixes-v315.js
+          node --check fixes-v315.js
+
+      - name: Clean installer files
+        if: steps.patch.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf ".duckie-v24-315-install"
+          rm -f "Duckie-Days-v24.315-universal-clothing-picker.zip"
+          rm -f ".github/workflows/install-v24-315-universal-clothing-picker.yml"
+
+      - name: Commit patch
+        if: steps.patch.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "ERROR: No changes were staged."
+            exit 1
+          fi
+          git commit -m "Group Universal Clothing into color pickers v24.315"
+          git push
