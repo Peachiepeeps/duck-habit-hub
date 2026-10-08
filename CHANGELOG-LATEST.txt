@@ -1,5 +1,23 @@
-v24.312 Miko fashion-battle recovery
-- adds a one-tap recovery control for Miko outfits stuck from older Sock Gremlin challenges
-- preserves unlocked/purchased wardrobe items
-- restores captured pre-challenge looks when available; otherwise resets only Miko's equipped look to the starter baseline
-- strengthens temporary challenge outfit restore for future Sock Gremlin fashion battles
+v24.313 — Eight New Enemy Families + Polish Fixes
+
+NEW STAGE ENEMIES
+Meadow: Chonk, Feathertail
+Ocean: Puffer, Shrimpie
+Candyland: Licorunt, Pretzette
+Cloud Garden: AsterFox, Star Glider
+
+- 5 normal/recolor forms + 1 Shiny per family
+- Special-powered forms:
+  Gray AsterFox, Gold Chonk, Goth Feathertail, Pink Licorunt,
+  Cookies n’ Cream Pretzette, Dark Puffer, Tempura Shrimpie, Dark Star Glider
+- Two normal enemy moves per family; second move joins at OC Level 25
+- Special recolor abilities implemented
+- All eight families can be befriended and appear in the Buddy Book
+- Base Buddy helper moves plus toned-down special-variant Buddy helper moves
+- Added to normal stage encounter pools and Endless
+- Gold Chonk gives a small bonus Pink Coin reward
+
+EARLIER FIXES INCLUDED
+- Duck Quest card reward preview made much smaller and contained on the reward side
+- Big Bow, R Bow, and Glasses moved from Shop > Clothing to Shop > Accessories
+- Universal Clothing Closet cards rebuilt for the narrow mobile drawer so text/buttons/previews no longer clip

@@ -1,0 +1,17 @@
+Duckie Days v24.313
+
+This update adds 8 new catchable enemy families and includes the three polish fixes requested before implementation.
+
+Special variants:
+- Gold Chonk — Golden Weight!
+- Goth Feathertail — Dark Plumage!
+- Dark Puffer — Pressure Burst!
+- Tempura Shrimpie — Crispy Crunch!
+- Pink Licorunt — Sugar Snare!
+- Cookies n’ Cream Pretzette — Creamy Crunch!
+- Gray AsterFox — Moonlit Veil!
+- Dark Star Glider — Midnight Dive!
+
+Second normal enemy moves begin appearing once the active OC is Level 25.
+
+The supplied enemy artwork is preserved at its original canvas dimensions.

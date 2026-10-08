@@ -1,3 +1,0 @@
-Duckie Days v24.312
-
-Open Miko's Closet after installing. A temporary 'Fashion Battle outfit stuck?' card appears at the top. Tap Clear Stuck Outfit once. If an old pre-challenge snapshot is available it restores that. If the old challenge predates outfit backups, it resets only Miko's equipped look to his starter outfit. Unlocked/purchased clothes, inventory, currency, progress, and Universal Clothing copies are not deleted.
