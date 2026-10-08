@@ -1,0 +1,144 @@
+name: Install Duckie Days v24.316 Universal Clothing Layer Fix
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - "Duckie-Days-v24.316-universal-clothing-layer-fix.zip"
+      - ".github/workflows/install-v24-316-universal-clothing-layer-fix.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-316
+  cancel-in-progress: false
+
+jobs:
+  install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Check for patch ZIP
+        id: patch
+        shell: bash
+        run: |
+          if [ -f "Duckie-Days-v24.316-universal-clothing-layer-fix.zip" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "Workflow is ready. Upload Duckie-Days-v24.316-universal-clothing-layer-fix.zip to the repository root."
+          fi
+
+      - name: Install v24.316
+        if: steps.patch.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.316-universal-clothing-layer-fix.zip"
+          TMP=".duckie-v24-316-install"
+
+          rm -rf "$TMP"
+          mkdir -p "$TMP"
+
+          unzip -tq "$ZIP"
+          unzip -q "$ZIP" -d "$TMP"
+
+          test -d "$TMP/payload"
+          test -f "$TMP/payload/fixes-v316.js"
+
+          cp -a "$TMP/payload/." .
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, re
+
+          # Version
+          version = Path("version.json")
+          data = json.loads(version.read_text())
+          data["version"] = "24.316"
+          version.write_text(json.dumps(data, indent=2) + "\n")
+
+          # Root app hook
+          root = Path("index.html")
+          text = root.read_text()
+
+          text = re.sub(
+              r'<meta name="duck-habit-build" content="[^"]+"\s*/>',
+              '<meta name="duck-habit-build" content="24.316" />',
+              text,
+              count=1
+          )
+
+          js_anchor = '  <script src="fixes-v315.js?v=24.315"></script>'
+          js_tag = '  <script src="fixes-v316.js?v=24.316"></script>'
+
+          if js_tag not in text:
+              if js_anchor not in text:
+                  raise SystemExit("Could not find v24.315 root JS anchor")
+              text = text.replace(js_anchor, js_anchor + "\n" + js_tag, 1)
+
+          root.write_text(text)
+
+          # Service worker cache
+          sw = Path("sw.js")
+          text = sw.read_text()
+
+          text = re.sub(
+              r"const APP_CACHE='duck-habit-hub-app-v24-\d+';",
+              "const APP_CACHE='duck-habit-hub-app-v24-316';",
+              text,
+              count=1
+          )
+
+          anchor = " './fixes-v315.js?v=24.315',"
+          entry = " './fixes-v316.js?v=24.316',"
+
+          if "./fixes-v316.js?v=24.316" not in text:
+              if anchor not in text:
+                  raise SystemExit("Could not find v24.315 service-worker JS anchor")
+              text = text.replace(anchor, anchor + "\n" + entry, 1)
+
+          sw.write_text(text)
+          PY
+
+          test -f "fixes-v316.js"
+          grep -q '"version": "24.316"' version.json
+          grep -q 'fixes-v316.js?v=24.316' index.html
+          grep -q "duck-habit-hub-app-v24-316" sw.js
+          grep -q 'DUCKIE_UNIVERSAL_CLOTHING_LAYER_FIX_V316' fixes-v316.js
+          grep -q 'arm-base' fixes-v316.js
+
+          node --check fixes-v316.js
+
+      - name: Clean installer files
+        if: steps.patch.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf ".duckie-v24-316-install"
+          rm -f "Duckie-Days-v24.316-universal-clothing-layer-fix.zip"
+          rm -f ".github/workflows/install-v24-316-universal-clothing-layer-fix.yml"
+
+      - name: Commit patch
+        if: steps.patch.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "ERROR: No changes were staged."
+            exit 1
+          fi
+
+          git commit -m "Fix Universal Clothing layer order for Miko v24.316"
+          git push
