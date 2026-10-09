@@ -1,0 +1,205 @@
+name: Install Duckie Days v24.317 Io Transformation and Fabled Cards
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - "Duckie-Days-v24.317-io-transformation-and-fabled-cards.zip"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-317
+  cancel-in-progress: false
+
+jobs:
+  install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Verify installer ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f "Duckie-Days-v24.317-io-transformation-and-fabled-cards.zip"
+          unzip -tq "Duckie-Days-v24.317-io-transformation-and-fabled-cards.zip"
+
+      - name: Install v24.317
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ZIP="Duckie-Days-v24.317-io-transformation-and-fabled-cards.zip"
+          TMP=".duckie-v24-317-install"
+
+          rm -rf "$TMP"
+          mkdir -p "$TMP"
+          unzip -q "$ZIP" -d "$TMP"
+
+          test -d "$TMP/payload"
+          test -f "$TMP/payload/trading-cards-v317.js"
+          test -f "$TMP/payload/duck-quest/js/io-transformation-v317.js"
+
+          cp -a "$TMP/payload/." .
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          import re
+
+          VERSION = "24.317"
+
+          version_path = Path("version.json")
+          data = json.loads(version_path.read_text())
+          data["version"] = VERSION
+          version_path.write_text(json.dumps(data, indent=2) + "\n")
+
+          root = Path("index.html")
+          text = root.read_text()
+          text = re.sub(
+              r'<meta name="duck-habit-build" content="[^"]+"\s*/>',
+              f'<meta name="duck-habit-build" content="{VERSION}" />',
+              text,
+              count=1
+          )
+
+          root_card_tag = '  <script src="trading-cards-v317.js?v=24.317"></script>'
+          if root_card_tag not in text:
+              anchors = [
+                  '  <script src="trading-cards-extra.js?v=24.296"></script>',
+                  '  <script src="trading-cards-extra.js?v=24.288"></script>',
+              ]
+              anchor = next((a for a in anchors if a in text), None)
+              if not anchor:
+                  raise SystemExit("Could not find root trading-cards-extra.js anchor")
+              text = text.replace(anchor, anchor + "\n" + root_card_tag, 1)
+          root.write_text(text)
+
+          quest = Path("duck-quest/index.html")
+          q = quest.read_text()
+
+          quest_card_tag = '  <script src="../trading-cards-v317.js?v=24.317"></script>'
+          if quest_card_tag not in q:
+              anchors = [
+                  '  <script src="../trading-cards-extra.js?v=24.288"></script>',
+                  '  <script src="../trading-cards-extra.js?v=24.296"></script>',
+              ]
+              anchor = next((a for a in anchors if a in q), None)
+              if not anchor:
+                  raise SystemExit("Could not find Duck Quest trading-cards-extra.js anchor")
+              q = q.replace(anchor, anchor + "\n" + quest_card_tag, 1)
+
+          io_tag = '  <script src="js/io-transformation-v317.js?v=24.317"></script>'
+          if io_tag not in q:
+              if '  <script src="js/fixes-v314.js?v=24.314"></script>' in q:
+                  anchor = '  <script src="js/fixes-v314.js?v=24.314"></script>'
+                  q = q.replace(anchor, anchor + "\n" + io_tag, 1)
+              elif '</body>' in q:
+                  q = q.replace('</body>', io_tag + "\n</body>", 1)
+              else:
+                  raise SystemExit("Could not find Duck Quest script insertion point")
+          quest.write_text(q)
+
+          sw = Path("sw.js")
+          s = sw.read_text()
+          s = re.sub(
+              r"const APP_CACHE='duck-habit-hub-app-v24-\d+';",
+              "const APP_CACHE='duck-habit-hub-app-v24-317';",
+              s,
+              count=1
+          )
+
+          card_entry = " './trading-cards-v317.js?v=24.317',"
+          if "./trading-cards-v317.js?v=24.317" not in s:
+              anchors = [
+                  " './trading-cards-extra.js?v=24.296',",
+                  " './trading-cards-extra.js?v=24.288',",
+              ]
+              anchor = next((a for a in anchors if a in s), None)
+              if not anchor:
+                  raise SystemExit("Could not find service worker trading card anchor")
+              s = s.replace(anchor, anchor + "\n" + card_entry, 1)
+
+          io_entry = " './duck-quest/js/io-transformation-v317.js?v=24.317',"
+          if "./duck-quest/js/io-transformation-v317.js?v=24.317" not in s:
+              anchor = " './duck-quest/js/fixes-v314.js?v=24.314',"
+              if anchor not in s:
+                  raise SystemExit("Could not find service worker Duck Quest anchor")
+              s = s.replace(anchor, anchor + "\n" + io_entry, 1)
+
+          assets = [
+              " './duck-quest/assets/characters/io/school/idle-1.png',",
+              " './duck-quest/assets/characters/io/school/idle-2.png',",
+              " './duck-quest/assets/characters/io/school/transform-1.png',",
+              " './duck-quest/assets/characters/io/school/transform-2.png',",
+              " './duck-quest/assets/characters/io/school/transform-3.png',",
+              " './duck-quest/assets/trading-cards/fabled/F-pudding-pig.png',",
+              " './duck-quest/assets/trading-cards/fabled/F-shrimpie.png',",
+              " './duck-quest/assets/trading-cards/fabled/F-plushbun.png',",
+          ]
+          for entry in assets:
+              if entry.strip().rstrip(",") not in s:
+                  s = s.replace(io_entry, io_entry + "\n" + entry, 1)
+
+          sw.write_text(s)
+          PY
+
+          test -f "trading-cards-v317.js"
+          test -f "duck-quest/js/io-transformation-v317.js"
+
+          test -f "duck-quest/assets/characters/io/school/idle-1.png"
+          test -f "duck-quest/assets/characters/io/school/idle-2.png"
+          test -f "duck-quest/assets/characters/io/school/transform-1.png"
+          test -f "duck-quest/assets/characters/io/school/transform-2.png"
+          test -f "duck-quest/assets/characters/io/school/transform-3.png"
+
+          test -f "duck-quest/assets/trading-cards/fabled/F-pudding-pig.png"
+          test -f "duck-quest/assets/trading-cards/fabled/F-shrimpie.png"
+          test -f "duck-quest/assets/trading-cards/fabled/F-plushbun.png"
+
+          grep -q '"version": "24.317"' version.json
+          grep -q 'duck-habit-build" content="24.317"' index.html
+          grep -q 'trading-cards-v317.js?v=24.317' index.html
+          grep -q '../trading-cards-v317.js?v=24.317' duck-quest/index.html
+          grep -q 'io-transformation-v317.js?v=24.317' duck-quest/index.html
+          grep -q "duck-habit-hub-app-v24-317" sw.js
+
+          grep -q 'F-021' trading-cards-v317.js
+          grep -q 'F-022' trading-cards-v317.js
+          grep -q 'F-023' trading-cards-v317.js
+          grep -q 'DUCKIE_IO_TRANSFORMATION_V317' duck-quest/js/io-transformation-v317.js
+
+          node --check trading-cards-v317.js
+          node --check duck-quest/js/io-transformation-v317.js
+
+      - name: Clean installer files
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf ".duckie-v24-317-install"
+          rm -f "Duckie-Days-v24.317-io-transformation-and-fabled-cards.zip"
+          rm -f ".github/workflows/install-v24-317-io-transformation-and-fabled-cards.yml"
+          rm -f ".github/workflows/install-v24-317-io-transformation-and-fabled-cards-FIXED.yml"
+
+      - name: Commit patch
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "ERROR: No changes were staged."
+            exit 1
+          fi
+
+          git commit -m "Add Io stage transformation and 3 Fabled cards v24.317"
+          git push
