@@ -15,7 +15,7 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-316';
+const APP_CACHE='duck-habit-hub-app-v24-317';
 const APP_SHELL=[
  './',
  './index.html',
@@ -37,6 +37,7 @@ const APP_SHELL=[
  './fixes-v315.css?v=24.315',
  './trading-cards-base.js?v=24.296',
  './trading-cards-extra.js?v=24.296',
+ './trading-cards-v317.js?v=24.317',
  './trading-cards-gimmicks-v288.js?v=24.296',
  './trading-cards-sock-gremlin-v297.js?v=24.297',
  './trading-cards-universal-v298.js?v=24.298',
@@ -115,6 +116,15 @@ const APP_SHELL=[
  './duck-quest/js/new-enemies-v313.js?v=24.313',
  './duck-quest/js/fixes-v313.js?v=24.313',
  './duck-quest/js/fixes-v314.js?v=24.314',
+ './duck-quest/js/io-transformation-v317.js?v=24.317',
+ './duck-quest/assets/trading-cards/fabled/F-plushbun.png',
+ './duck-quest/assets/trading-cards/fabled/F-shrimpie.png',
+ './duck-quest/assets/trading-cards/fabled/F-pudding-pig.png',
+ './duck-quest/assets/characters/io/school/transform-3.png',
+ './duck-quest/assets/characters/io/school/transform-2.png',
+ './duck-quest/assets/characters/io/school/transform-1.png',
+ './duck-quest/assets/characters/io/school/idle-2.png',
+ './duck-quest/assets/characters/io/school/idle-1.png',
  './assets/ingredients/Sparkle.webp',
  './assets/gifts/Love-letter.webp',
  './duck-quest/assets/enemies/mimic/base/open-1.webp',
