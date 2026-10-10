@@ -1,0 +1,226 @@
+name: Install Duckie Days v24.318 Clothing Card Levels
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - "Duckie-Days-v24.318-clothing-card-levels.zip"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-318
+  cancel-in-progress: false
+
+jobs:
+  install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Verify installer ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f "Duckie-Days-v24.318-clothing-card-levels.zip"
+          unzip -tq "Duckie-Days-v24.318-clothing-card-levels.zip"
+
+      - name: Install v24.318
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ZIP="Duckie-Days-v24.318-clothing-card-levels.zip"
+          TMP=".duckie-v24-318-install"
+
+          rm -rf "$TMP"
+          mkdir -p "$TMP"
+          unzip -q "$ZIP" -d "$TMP"
+
+          test -d "$TMP/payload"
+          test -f "$TMP/payload/fixes-v318.js"
+          test -f "$TMP/payload/duck-quest/js/fixes-v318.js"
+          test -f "$TMP/payload/duck-quest/css/fixes-v318.css"
+
+          cp -a "$TMP/payload/." .
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          import re
+
+          VERSION="24.318"
+
+          # ----------------------------
+          # Version
+          # ----------------------------
+          version_path=Path("version.json")
+          data=json.loads(version_path.read_text())
+          data["version"]=VERSION
+          version_path.write_text(json.dumps(data,indent=2)+"\n")
+
+          # ----------------------------
+          # Root app
+          # ----------------------------
+          root=Path("index.html")
+          text=root.read_text()
+          text=re.sub(
+              r'<meta name="duck-habit-build" content="[^"]+"\s*/>',
+              '<meta name="duck-habit-build" content="24.318" />',
+              text,
+              count=1
+          )
+          root_tag='  <script src="fixes-v318.js?v=24.318"></script>'
+          if root_tag not in text:
+              anchor='  <script src="fixes-v316.js?v=24.316"></script>'
+              if anchor not in text:
+                  raise SystemExit("Could not find v24.316 root script anchor")
+              text=text.replace(anchor,anchor+"\n"+root_tag,1)
+          root.write_text(text)
+
+          # ----------------------------
+          # Duck Quest app
+          # ----------------------------
+          quest=Path("duck-quest/index.html")
+          q=quest.read_text()
+
+          css_tag='  <link rel="stylesheet" href="css/fixes-v318.css?v=24.318">'
+          if css_tag not in q:
+              anchor='  <link rel="stylesheet" href="css/bao-cafe-v299.css?v=24-299" />'
+              if anchor not in q:
+                  raise SystemExit("Could not find Duck Quest CSS anchor")
+              q=q.replace(anchor,anchor+"\n"+css_tag,1)
+
+          # The core level-cap changes live in game-v96.js, so force a fresh URL.
+          q=q.replace('src="js/game-v96.js?v=24-298"','src="js/game-v96.js?v=24-318"')
+
+          js_tag='  <script src="js/fixes-v318.js?v=24.318"></script>'
+          if js_tag not in q:
+              anchor='  <script src="js/io-transformation-v317.js?v=24.317"></script>'
+              if anchor not in q:
+                  raise SystemExit("Could not find v24.317 Duck Quest script anchor")
+              q=q.replace(anchor,anchor+"\n"+js_tag,1)
+          quest.write_text(q)
+
+          # ----------------------------
+          # Duck Quest core: level cap 999
+          # ----------------------------
+          game=Path("duck-quest/js/game-v96.js")
+          g=game.read_text()
+
+          if 'const MAX_LEVEL = 100;' in g:
+              g=g.replace('const MAX_LEVEL = 100;','const MAX_LEVEL = 999;',1)
+          elif 'const MAX_LEVEL = 999;' not in g:
+              raise SystemExit("Could not find MAX_LEVEL declaration")
+
+          old='return Math.max(1,Math.min(160,1+Math.floor((Math.max(1,floor)-1)/2)));'
+          new='return Math.max(1,Math.min(999,1+Math.floor((Math.max(1,floor)-1)/2)));'
+          if old in g:
+              g=g.replace(old,new,1)
+          elif new not in g:
+              raise SystemExit("Could not find Endless effective-level cap")
+
+          old_block='const block=Math.floor((Math.max(1,Number(floor)||1)-1)/5);'
+          new_block='const cappedFloor=Math.min(1997,Math.max(1,Number(floor)||1));\n  const block=Math.floor((cappedFloor-1)/5);'
+          if old_block in g:
+              g=g.replace(old_block,new_block,1)
+          elif new_block not in g:
+              raise SystemExit("Could not find Endless scaling block")
+
+          old_label='? `${enemy.boss?"BOSS · ":""}Floor ${currentRun.floor}`'
+          new_label='? `${enemy.boss?"BOSS · ":""}Lv. ${endlessEffectiveRank(currentRun.floor)} · Floor ${currentRun.floor}`'
+          if old_label in g:
+              g=g.replace(old_label,new_label,1)
+          elif new_label not in g:
+              raise SystemExit("Could not find Endless enemy label")
+
+          game.write_text(g)
+
+          # ----------------------------
+          # Service worker
+          # ----------------------------
+          sw=Path("sw.js")
+          s=sw.read_text()
+          s=re.sub(
+              r"const APP_CACHE='duck-habit-hub-app-v24-\d+';",
+              "const APP_CACHE='duck-habit-hub-app-v24-318';",
+              s,
+              count=1
+          )
+
+          pairs=[
+              (" './fixes-v316.js?v=24.316',"," './fixes-v318.js?v=24.318',"),
+              (" './duck-quest/css/bao-cafe-v299.css?v=24-309',"," './duck-quest/css/fixes-v318.css?v=24.318',"),
+              (" './duck-quest/js/io-transformation-v317.js?v=24.317',"," './duck-quest/js/fixes-v318.js?v=24.318',"),
+          ]
+          for anchor,entry in pairs:
+              if entry.strip().rstrip(',') in s:
+                  continue
+              if anchor not in s:
+                  raise SystemExit(f"Could not find service-worker anchor: {anchor}")
+              s=s.replace(anchor,anchor+"\n"+entry,1)
+
+          s=s.replace(" './duck-quest/js/game-v96.js?v=24-296',"," './duck-quest/js/game-v96.js?v=24-318',")
+          s=s.replace(" './duck-quest/js/game-v96.js?v=24-298',"," './duck-quest/js/game-v96.js?v=24-318',")
+
+          hand_entry=" './assets/universal-clothing/shared/io-miko-hand.webp',"
+          if hand_entry.strip().rstrip(',') not in s:
+              anchor=" './fixes-v318.js?v=24.318',"
+              if anchor not in s:
+                  raise SystemExit("Could not find v24.318 root cache anchor")
+              s=s.replace(anchor,anchor+"\n"+hand_entry,1)
+
+          sw.write_text(s)
+          PY
+
+          # ----------------------------
+          # Verification
+          # ----------------------------
+          test -f "fixes-v318.js"
+          test -f "duck-quest/js/fixes-v318.js"
+          test -f "duck-quest/css/fixes-v318.css"
+          test -f "assets/universal-clothing/shared/io-miko-hand.webp"
+
+          grep -q '"version": "24.318"' version.json
+          grep -q 'duck-habit-build" content="24.318"' index.html
+          grep -q 'fixes-v318.js?v=24.318' index.html
+          grep -q 'css/fixes-v318.css?v=24.318' duck-quest/index.html
+          grep -q 'js/fixes-v318.js?v=24.318' duck-quest/index.html
+          grep -q 'game-v96.js?v=24-318' duck-quest/index.html
+          grep -q 'const MAX_LEVEL = 999;' duck-quest/js/game-v96.js
+          grep -q 'Math.min(999,1+Math.floor' duck-quest/js/game-v96.js
+          grep -q 'cappedFloor=Math.min(1997' duck-quest/js/game-v96.js
+          grep -q 'Lv. ${endlessEffectiveRank(currentRun.floor)} · Floor' duck-quest/js/game-v96.js
+          grep -q 'DUCKIE_UNIVERSAL_OUTER_HAND_V318' fixes-v318.js
+          grep -q 'DuckieAttackMasteryV318' duck-quest/js/fixes-v318.js
+          grep -q 'duck-habit-hub-app-v24-318' sw.js
+
+          node --check fixes-v318.js
+          node --check duck-quest/js/fixes-v318.js
+          node --check duck-quest/js/game-v96.js
+
+      - name: Clean installer files
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf ".duckie-v24-318-install"
+          rm -f "Duckie-Days-v24.318-clothing-card-levels.zip"
+          rm -f ".github/workflows/install-v24-318-clothing-card-levels.yml"
+
+      - name: Commit patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "ERROR: No changes were staged."
+            exit 1
+          fi
+          git commit -m "Fix universal hands, card cleanup, and level progression v24.318"
+          git push
