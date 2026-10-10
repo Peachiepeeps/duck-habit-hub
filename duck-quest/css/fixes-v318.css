@@ -1,0 +1,58 @@
+/* Duckie Days v24.318 — Attack Mastery */
+.attack-mastery-v318{
+  margin-top:14px;
+  padding-top:13px;
+  border-top:3px dashed #d6abb8;
+  display:grid;
+  gap:9px;
+}
+.attack-mastery-heading-v318{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+.attack-mastery-heading-v318>div{display:grid;gap:2px}
+.attack-mastery-heading-v318>div>strong{font-size:.9rem}
+.attack-point-pill-v318{
+  flex:0 0 auto;
+  padding:6px 8px;
+  border:2px solid #b98998;
+  border-radius:8px;
+  background:#ffe7f0;
+  font-size:.62rem;
+}
+.attack-mastery-note-v318{
+  margin:0;
+  padding:7px 8px;
+  border:2px dashed #d6abb8;
+  border-radius:7px;
+  background:#fffaf3;
+  font-size:.62rem;
+  font-weight:800;
+  line-height:1.35;
+}
+.attack-mastery-list-v318{display:grid;gap:7px}
+.attack-mastery-card-v318{
+  min-width:0;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:8px;
+  padding:8px;
+  border:2px solid #c89baa;
+  border-radius:8px;
+  background:#fff8ef;
+}
+.attack-mastery-card-v318.locked{opacity:.58}
+.attack-mastery-copy-v318{min-width:0;display:grid;gap:2px}
+.attack-mastery-copy-v318 strong{font-size:.7rem;line-height:1.15}
+.attack-mastery-copy-v318 small{font-size:.55rem;line-height:1.25;color:#8b6a72;font-weight:800}
+.attack-upgrade-button-v318{min-width:91px!important;font-size:.56rem!important}
+@media(max-width:600px){
+  .attack-mastery-heading-v318{align-items:flex-start}
+  .attack-mastery-card-v318{grid-template-columns:minmax(0,1fr) 82px;gap:5px;padding:6px}
+  .attack-upgrade-button-v318{min-width:0!important;width:82px;padding:5px!important;font-size:.5rem!important}
+  .attack-mastery-copy-v318 strong{font-size:.64rem}
+  .attack-mastery-copy-v318 small,.attack-mastery-note-v318{font-size:.5rem}
+}

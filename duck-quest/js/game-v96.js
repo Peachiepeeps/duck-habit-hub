@@ -1,7 +1,7 @@
 // Duck Quest game-v67 — polished battle UI + six-Buddy battle switching
 const HUB_SAVE_KEY = "duckHabitHubSave_v1";
 window.DUCKIE_DAYS_QUEST_FLOW='24.225-next-level-and-start-picker';
-const MAX_LEVEL = 100;
+const MAX_LEVEL = 999;
 const AREA_CONFIG = Object.freeze({
   meadow: {
     id:"meadow",
@@ -3493,7 +3493,7 @@ function renderEnemyCombatant(enemy,slot=enemySlot(enemy)){
   renderEnemyNameFor(enemy,slot);
   if(refs.rank){
     refs.rank.textContent=currentRun?.mode==="endless"
-      ? `${enemy.boss?"BOSS · ":""}Floor ${currentRun.floor}`
+      ? `${enemy.boss?"BOSS · ":""}Lv. ${endlessEffectiveRank(currentRun.floor)} · Floor ${currentRun.floor}`
       : enemy.boss?`BOSS · Level ${currentRun.rank}`:`Level ${currentRun.rank}`;
   }
   if(refs.sprite){
@@ -5299,11 +5299,12 @@ function endlessProgress(){
 }
 
 function endlessEffectiveRank(floor){
-  return Math.max(1,Math.min(160,1+Math.floor((Math.max(1,floor)-1)/2)));
+  return Math.max(1,Math.min(999,1+Math.floor((Math.max(1,floor)-1)/2)));
 }
 
 function endlessEnemyScaled(template,floor){
-  const block=Math.floor((Math.max(1,Number(floor)||1)-1)/5);
+  const cappedFloor=Math.min(1997,Math.max(1,Number(floor)||1));
+  const block=Math.floor((cappedFloor-1)/5);
   const hpScale=1+block*.05;
   const atkScale=1+block*.04;
   const rewardScale=1+block*.05;

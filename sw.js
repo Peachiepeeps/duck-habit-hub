@@ -15,7 +15,7 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-317';
+const APP_CACHE='duck-habit-hub-app-v24-318';
 const APP_SHELL=[
  './',
  './index.html',
@@ -59,6 +59,7 @@ const APP_SHELL=[
  './bao-cafe/assets/Parfait-idle-1.png',
  './bao-cafe/assets/Frappe-idle-1.png',
  './duck-quest/css/bao-cafe-v299.css?v=24-309',
+ './duck-quest/css/fixes-v318.css?v=24.318',
  './duck-quest/js/bao-cafe-v299.js?v=24-309',
  './app.js?v=24.296',
  './universal-clothing-v311.js?v=24.311',
@@ -75,6 +76,8 @@ const APP_SHELL=[
  './fixes-v314.js?v=24.314',
  './fixes-v315.js?v=24.315',
  './fixes-v316.js?v=24.316',
+ './fixes-v318.js?v=24.318',
+ './assets/universal-clothing/shared/io-miko-hand.webp',
  './duck-quest/index.html',
  './duck-quest/css/gimmick-encounters-v288.css?v=24-296',
  './duck-quest/css/fixes-v289.css?v=24-296',
@@ -92,7 +95,7 @@ const APP_SHELL=[
  './duck-quest/css/quest-v276.css?v=24-276',
  './duck-quest/css/quest-v277.css?v=24-277',
  './duck-quest/css/quest-v278.css?v=24-280',
- './duck-quest/js/game-v96.js?v=24-296',
+ './duck-quest/js/game-v96.js?v=24-318',
  './duck-quest/js/task-buddy-boost-v254.js?v=24-255',
  './duck-quest/js/special-encounters-v265.js?v=24-296',
  './duck-quest/js/quest-v265.js?v=24-283',
@@ -117,6 +120,7 @@ const APP_SHELL=[
  './duck-quest/js/fixes-v313.js?v=24.313',
  './duck-quest/js/fixes-v314.js?v=24.314',
  './duck-quest/js/io-transformation-v317.js?v=24.317',
+ './duck-quest/js/fixes-v318.js?v=24.318',
  './duck-quest/assets/trading-cards/fabled/F-plushbun.png',
  './duck-quest/assets/trading-cards/fabled/F-shrimpie.png',
  './duck-quest/assets/trading-cards/fabled/F-pudding-pig.png',
