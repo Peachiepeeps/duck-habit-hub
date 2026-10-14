@@ -1,0 +1,191 @@
+name: Install Duckie Days v24.319 Duckdoku
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - "Duckie-Days-v24.319-duckdoku.zip"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-319
+  cancel-in-progress: false
+
+jobs:
+  install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Verify installer ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f "Duckie-Days-v24.319-duckdoku.zip"
+          unzip -tq "Duckie-Days-v24.319-duckdoku.zip"
+
+      - name: Install v24.319 Duckdoku
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.319-duckdoku.zip"
+          TMP=".duckie-v24-319-install"
+          rm -rf "$TMP"
+          mkdir -p "$TMP"
+          unzip -q "$ZIP" -d "$TMP"
+
+          test -f "$TMP/payload/duckdoku/index.html"
+          test -f "$TMP/payload/duckdoku/style.css"
+          test -f "$TMP/payload/duckdoku/script.js"
+          test -f "$TMP/payload/fixes-v319.css"
+          test -f "$TMP/payload/fixes-v319.js"
+          cp -a "$TMP/payload/." .
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          import re
+
+          VERSION = "24.319"
+
+          # Version
+          version = Path("version.json")
+          data = json.loads(version.read_text())
+          data["version"] = VERSION
+          version.write_text(json.dumps(data, indent=2) + "\n")
+
+          # Root hub
+          root = Path("index.html")
+          text = root.read_text()
+          text = re.sub(
+              r'<meta name="duck-habit-build" content="[^"]+"\s*/>',
+              '<meta name="duck-habit-build" content="24.319" />',
+              text,
+              count=1,
+          )
+
+          css_tag = '  <link rel="stylesheet" href="fixes-v319.css?v=24.319" />'
+          if css_tag not in text:
+              anchor = '  <link rel="stylesheet" href="fixes-v315.css?v=24.315" />'
+              if anchor not in text:
+                  raise SystemExit("Could not find root CSS anchor")
+              text = text.replace(anchor, anchor + "\n" + css_tag, 1)
+
+          if 'id="openDuckdokuGame"' not in text:
+              anchor = '          <button id="openBaoCafeGame" class="game-card bao-cafe-game-card" type="button">'
+              if anchor not in text:
+                  raise SystemExit("Could not find Bao Cafe card anchor")
+              card = "\n".join([
+                  '          <button id="openDuckdokuGame" class="game-card duckdoku-game-card" type="button">',
+                  '            <span class="game-card-preview duckdoku-card-preview">',
+                  '              <img src="assets/ducks/Standard-duck.webp" class="duckdoku-card-duck" alt="" loading="lazy" decoding="async" />',
+                  '            </span>',
+                  '            <span class="game-card-copy">',
+                  '              <span class="game-card-kicker">LOGIC GAME</span>',
+                  '              <strong>Duckdoku</strong>',
+                  '              <span>Use colors, rows, and columns to find every hidden Duck without letting them touch!</span>',
+                  '            </span>',
+                  '            <span class="game-card-play">Play ›</span>',
+                  '          </button>',
+              ])
+              text = text.replace(anchor, card + "\n" + anchor, 1)
+
+          js_tag = '  <script src="fixes-v319.js?v=24.319"></script>'
+          if js_tag not in text:
+              anchor = '  <script src="fixes-v318.js?v=24.318"></script>'
+              if anchor not in text:
+                  raise SystemExit("Could not find v24.318 root script anchor")
+              text = text.replace(anchor, anchor + "\n" + js_tag, 1)
+
+          text = text.replace(
+              'navigator.serviceWorker.register("./sw.js?v=24-299"',
+              'navigator.serviceWorker.register("./sw.js?v=24-319"',
+          )
+          root.write_text(text)
+
+          # Service worker
+          sw = Path("sw.js")
+          s = sw.read_text()
+          s = re.sub(
+              r"const APP_CACHE='duck-habit-hub-app-v24-\d+';",
+              "const APP_CACHE='duck-habit-hub-app-v24-319';",
+              s,
+              count=1,
+          )
+
+          entries = [
+              " './fixes-v319.css?v=24.319',",
+              " './fixes-v319.js?v=24.319',",
+              " './duckdoku/index.html',",
+              " './duckdoku/style.css?v=24.319',",
+              " './duckdoku/script.js?v=24.319',",
+              " './assets/ducks/Standard-duck.webp',",
+              " './assets/bakery/backgrounds/Bakery-background.webp',",
+              " './assets/bakery/drops/Pink-heart-refill.webp',",
+              " './assets/ui/pink-coin.webp',",
+              " './assets/ingredients/Sparkle.webp',",
+              " './duck-quest/assets/gimmicks/ufono/base/idle-1.png',",
+          ]
+          anchor = " './fixes-v318.js?v=24.318',"
+          if anchor not in s:
+              raise SystemExit("Could not find service-worker v24.318 anchor")
+
+          additions = []
+          for entry in entries:
+              path = entry.strip().rstrip(',')
+              if path not in s:
+                  additions.append(entry)
+          if additions:
+              s = s.replace(anchor, anchor + "\n" + "\n".join(additions), 1)
+
+          sw.write_text(s)
+          PY
+
+          # Verify install
+          test -f duckdoku/index.html
+          test -f duckdoku/style.css
+          test -f duckdoku/script.js
+          test -f fixes-v319.css
+          test -f fixes-v319.js
+          test -f assets/ducks/Standard-duck.webp
+          test -f assets/ingredients/Sparkle.webp
+          test -f assets/ui/pink-coin.webp
+          test -f assets/bakery/drops/Pink-heart-refill.webp
+          test -f duck-quest/assets/gimmicks/ufono/base/idle-1.png
+          grep -q '"version": "24.319"' version.json
+          grep -q 'duck-habit-build" content="24.319"' index.html
+          grep -q 'id="openDuckdokuGame"' index.html
+          grep -q 'fixes-v319.css?v=24.319' index.html
+          grep -q 'fixes-v319.js?v=24.319' index.html
+          grep -q 'duck-habit-hub-app-v24-319' sw.js
+          grep -q './duckdoku/index.html' sw.js
+          node --check fixes-v319.js
+          node --check duckdoku/script.js
+
+      - name: Clean installer files
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf ".duckie-v24-319-install"
+          rm -f "Duckie-Days-v24.319-duckdoku.zip"
+          rm -f ".github/workflows/install-v24-319-duckdoku.yml"
+          rm -f ".github/workflows/install-v24-319-duckdoku-FIXED.yml"
+
+      - name: Commit patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "ERROR: No changes were staged."
+            exit 1
+          fi
+          git commit -m "Add Duckdoku minigame v24.319"
+          git push
