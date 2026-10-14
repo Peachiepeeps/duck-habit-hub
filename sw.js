@@ -15,7 +15,7 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-321';
+const APP_CACHE='duck-habit-hub-app-v24-322';
 const APP_SHELL=[
  './',
  './index.html',
@@ -78,11 +78,13 @@ const APP_SHELL=[
  './fixes-v316.js?v=24.316',
  './fixes-v318.js?v=24.318',
  './fixes-v319.css?v=24.321',
+ './fixes-v322.css?v=24.322',
  './fixes-v319.js?v=24.321',
  './fixes-v321.js?v=24.321',
+ './fixes-v322.js?v=24.322',
  './duckdoku/index.html',
- './duckdoku/style.css?v=24.321',
- './duckdoku/script.js?v=24.321',
+ './duckdoku/style.css?v=24.322',
+ './duckdoku/script.js?v=24.322',
  './assets/ducks/Standard-duck.webp',
  './assets/bakery/backgrounds/Bakery-background.webp',
  './assets/bakery/drops/Pink-heart-refill.webp',
