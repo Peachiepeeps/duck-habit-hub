@@ -1,0 +1,4 @@
+/* v24.319 — Duckdoku Games-card preview */
+.duckdoku-game-card .duckdoku-card-preview{background:#f6e5ea;isolation:isolate}
+.duckdoku-game-card .duckdoku-card-preview::after{content:"";position:absolute;inset:15px 20px;border-radius:12px;background:conic-gradient(from 90deg,#f4c7ce 0 25%,#cce9b8 0 50%,#bfe1e5 0 75%,#cdbde9 0);opacity:.78;box-shadow:inset 0 0 0 2px rgba(255,255,255,.75)}
+.duckdoku-game-card .duckdoku-card-duck{position:relative;z-index:2;width:68px;height:68px;object-fit:contain;filter:drop-shadow(0 3px 4px rgba(99,61,76,.16))}

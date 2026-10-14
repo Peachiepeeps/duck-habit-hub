@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+  <meta name="theme-color" content="#f3dfe8" />
+  <title>Duckdoku · Duckie Days</title>
+  <link rel="preload" as="image" href="../assets/bakery/backgrounds/Bakery-background.webp" />
+  <link rel="preload" as="image" href="../assets/ducks/Standard-duck.webp" />
+  <link rel="stylesheet" href="style.css?v=24.319" />
+</head>
+<body>
+  <main class="duckdoku-shell">
+    <section class="duckdoku-card" aria-label="Duckdoku puzzle">
+      <header class="topbar">
+        <button id="backButton" class="round-button" type="button" aria-label="Back to Duckie Days">‹</button>
+        <button id="levelButton" class="top-stat level-stat" type="button" aria-label="Choose level">
+          <span>LEVEL</span><strong id="levelText">1</strong>
+        </button>
+        <div class="top-stat"><span>SCORE</span><strong id="scoreText">0</strong></div>
+        <button id="settingsButton" class="round-button" type="button" aria-label="Duckdoku settings">⚙</button>
+      </header>
+
+      <section class="life-row" aria-label="Lives">
+        <div id="livesDisplay" class="lives-display"></div>
+        <button id="buyLifeButton" class="buy-life" type="button">+ Life</button>
+        <span class="coin-pill"><img src="../assets/ui/pink-coin.webp" alt="Pink Coins" /> <strong id="coinText">0</strong></span>
+      </section>
+
+      <section class="rule-strip" aria-label="Duckdoku rules">
+        <div class="rule-card"><img src="../assets/ducks/Standard-duck.webp" alt="" /><span>1 Duck<br>per color</span></div>
+        <div class="rule-card row-rule"><span class="mini-grid">↔</span><span>1 per row<br>&amp; column</span></div>
+        <div class="rule-card no-touch"><span class="duck-pair">🦆×🦆</span><span>Ducks can't<br>touch</span></div>
+      </section>
+
+      <section class="board-wrap">
+        <div id="board" class="board" role="grid" aria-label="Duckdoku board"></div>
+        <div id="scanFx" class="scan-fx" aria-hidden="true">
+          <img src="../duck-quest/assets/gimmicks/ufono/base/idle-1.png" alt="" />
+          <span></span>
+        </div>
+      </section>
+
+      <p id="statusText" class="status-text" aria-live="polite">Tap to X · Double tap to place a Duck · Swipe to mark Xs</p>
+
+      <section class="helper-bar" aria-label="Puzzle helpers">
+        <button id="hintButton" class="helper-button" type="button">
+          <span class="helper-icon"><img src="../assets/ingredients/Sparkle.webp" alt="" /></span>
+          <strong>Hint</strong><small id="hintCount">1</small>
+        </button>
+        <button id="revealButton" class="helper-button" type="button">
+          <span class="helper-icon"><img src="../assets/ducks/Standard-duck.webp" alt="" /></span>
+          <strong>Reveal</strong><small id="revealCount">1</small>
+        </button>
+        <button id="scanButton" class="helper-button" type="button">
+          <span class="helper-icon ufono"><img src="../duck-quest/assets/gimmicks/ufono/base/idle-1.png" alt="" /></span>
+          <strong>Scan</strong><small id="scanCount">1</small>
+        </button>
+      </section>
+    </section>
+  </main>
+
+  <div id="modalBackdrop" class="modal-backdrop hidden" aria-hidden="true"></div>
+
+  <section id="levelModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="levelModalTitle">
+    <h2 id="levelModalTitle">Duckdoku Levels</h2>
+    <p>Difficulty wiggles around on purpose — a later puzzle isn't always harder!</p>
+    <div id="levelGrid" class="level-grid"></div>
+    <button class="modal-close" data-close-modal type="button">Close</button>
+  </section>
+
+  <section id="settingsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <h2 id="settingsTitle">How to Play</h2>
+    <div class="howto">
+      <p><b>Tap:</b> add/remove a white X.</p>
+      <p><b>Swipe:</b> quickly paint white Xs.</p>
+      <p><b>Double tap:</b> guess a Duck. A wrong guess costs a life and leaves a red X.</p>
+    </div>
+    <button id="restartButton" class="soft-action" type="button">Restart This Level</button>
+    <button class="modal-close" data-close-modal type="button">Close</button>
+  </section>
+
+  <section id="lifeModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="lifeTitle">
+    <img class="modal-heart" src="../assets/bakery/drops/Pink-heart-refill.webp" alt="" />
+    <h2 id="lifeTitle">Need another life?</h2>
+    <p id="lifeCopy">You can buy up to 3 extra lives during each puzzle.</p>
+    <button id="confirmLifeButton" class="primary-action" type="button">Buy +1 Life</button>
+    <button class="modal-close" data-close-modal type="button">Not now</button>
+  </section>
+
+  <section id="resultModal" class="modal result-modal hidden" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+    <img class="result-duck" src="../assets/ducks/Standard-duck.webp" alt="" />
+    <p class="eyebrow">PUZZLE CLEAR!</p>
+    <h2 id="resultTitle">Duckdoku complete!</h2>
+    <div class="result-stats">
+      <div><span>Score</span><strong id="resultScore">0</strong></div>
+      <div><span>Difficulty</span><strong id="resultDifficulty">—</strong></div>
+    </div>
+    <p id="resultCopy"></p>
+    <button id="nextLevelButton" class="primary-action" type="button">Next Level</button>
+    <button id="replayButton" class="soft-action" type="button">Play Again</button>
+  </section>
+
+  <section id="gameOverModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="gameOverTitle">
+    <h2 id="gameOverTitle">Out of lives!</h2>
+    <p id="gameOverCopy">You can buy another life if you still have an extra-life purchase left.</p>
+    <button id="gameOverBuy" class="primary-action" type="button">Buy +1 Life</button>
+    <button id="retryButton" class="soft-action" type="button">Restart Puzzle</button>
+    <button id="gameOverHome" class="modal-close" type="button">Back to Hub</button>
+  </section>
+
+  <script src="script.js?v=24.319"></script>
+</body>
+</html>
