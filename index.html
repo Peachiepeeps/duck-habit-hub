@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="duck-habit-build" content="24.319" />
+  <meta name="duck-habit-build" content="24.320" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta id="appThemeColor" name="theme-color" content="#f7dbe5" />
@@ -20,7 +20,7 @@
   <link rel="stylesheet" href="fixes-v313.css?v=24.313" />
   <link rel="stylesheet" href="fixes-v314.css?v=24.314" />
   <link rel="stylesheet" href="fixes-v315.css?v=24.315" />
-  <link rel="stylesheet" href="fixes-v319.css?v=24.319" />
+  <link rel="stylesheet" href="fixes-v319.css?v=24.320" />
 
   <link rel="manifest" href="manifest.webmanifest?v=24-287">
   <link rel="apple-touch-icon" href="apple-touch-icon-v5.png">
@@ -1210,7 +1210,7 @@
   <script src="fixes-v315.js?v=24.315"></script>
   <script src="fixes-v316.js?v=24.316"></script>
   <script src="fixes-v318.js?v=24.318"></script>
-  <script src="fixes-v319.js?v=24.319"></script>
+  <script src="fixes-v319.js?v=24.320"></script>
 
   <script>
     // v24.84: use a stable service-worker URL and actively check the deployed
@@ -1280,7 +1280,7 @@
       window.addEventListener("load", async () => {
         try {
           await duckHubClearOldCodeCaches();
-          const registration = await navigator.serviceWorker.register("./sw.js?v=24-319", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("./sw.js?v=24-320", { updateViaCache: "none" });
           await registration.update();
           if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
           await duckHubCheckForUpdate(registration);

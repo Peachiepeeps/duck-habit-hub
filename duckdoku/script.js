@@ -7,7 +7,7 @@
   const EXTRA_LIFE_COSTS=[50,100,200];
   const STARTING_LIVES=3;
   const MAX_EXTRA_LIVES=3;
-  const DOUBLE_TAP_MS=285;
+  const DOUBLE_TAP_MS=360;
   const PUZZLES=[
   {
     "stage": 1,
@@ -1272,8 +1272,8 @@
   let stage=1,puzzle=null,marks=[],lives=STARTING_LIVES,extraLivesBought=0,score=0;
   let helperUses={hint:1,reveal:1,scan:1};
   let complete=false;
-  let pointerDown=false,dragging=false,lastDragIndex=-1,startX=0,startY=0;
-  let tapTimer=null,lastTapIndex=-1,lastTapAt=0;
+  let pointerDown=false,dragging=false,lastDragIndex=-1,pressIndex=-1,startX=0,startY=0;
+  let lastTapIndex=-1,lastTapAt=0,lastTapPreviousMark='';
 
   function readJSON(key,fallback){try{return JSON.parse(localStorage.getItem(key)||'')||fallback;}catch{return fallback;}}
   function writeJSON(key,value){localStorage.setItem(key,JSON.stringify(value));}
@@ -1448,22 +1448,43 @@
   }
 
   function boardIndexFromPoint(x,y){const el=document.elementFromPoint(x,y)?.closest?.('.cell');return el&&board.contains(el)?Number(el.dataset.index):-1;}
+  function resetTapMemory(){lastTapIndex=-1;lastTapAt=0;lastTapPreviousMark='';}
+  function handleBoardTap(idx){
+    const now=Date.now();
+    if(idx===lastTapIndex&&now-lastTapAt<=DOUBLE_TAP_MS){
+      if(marks[idx]!=='red'&&marks[idx]!=='duck'){marks[idx]=lastTapPreviousMark;renderCell(idx);}
+      resetTapMemory();
+      attemptDuck(idx,'player');
+      return;
+    }
+    lastTapIndex=idx;lastTapAt=now;lastTapPreviousMark=marks[idx];
+    toggleX(idx);
+  }
   board.addEventListener('pointerdown',e=>{
     if(complete)return;const cell=e.target.closest('.cell');if(!cell)return;
-    pointerDown=true;dragging=false;lastDragIndex=Number(cell.dataset.index);startX=e.clientX;startY=e.clientY;board.setPointerCapture?.(e.pointerId);
+    pressIndex=Number(cell.dataset.index);pointerDown=true;dragging=false;lastDragIndex=pressIndex;startX=e.clientX;startY=e.clientY;
+    try{board.setPointerCapture?.(e.pointerId);}catch{}
   });
   board.addEventListener('pointermove',e=>{
     if(!pointerDown||complete)return;
-    if(!dragging&&Math.hypot(e.clientX-startX,e.clientY-startY)>8){dragging=true;clearTimeout(tapTimer);addSwipeX(lastDragIndex);}
+    if(!dragging&&Math.hypot(e.clientX-startX,e.clientY-startY)>12){dragging=true;resetTapMemory();addSwipeX(lastDragIndex);}
     if(!dragging)return;const idx=boardIndexFromPoint(e.clientX,e.clientY);if(idx>=0&&idx!==lastDragIndex){lastDragIndex=idx;addSwipeX(idx);}
   });
   board.addEventListener('pointerup',e=>{
-    if(!pointerDown)return;pointerDown=false;if(dragging){dragging=false;lastTapIndex=-1;setStatus('Xs marked!');return;}
-    const cell=e.target.closest('.cell');if(!cell)return;const idx=Number(cell.dataset.index),now=Date.now();
-    if(idx===lastTapIndex&&now-lastTapAt<=DOUBLE_TAP_MS){clearTimeout(tapTimer);tapTimer=null;lastTapIndex=-1;lastTapAt=0;attemptDuck(idx,'player');}
-    else{lastTapIndex=idx;lastTapAt=now;clearTimeout(tapTimer);tapTimer=setTimeout(()=>{toggleX(idx);lastTapIndex=-1;tapTimer=null;},DOUBLE_TAP_MS);}
+    if(!pointerDown)return;
+    pointerDown=false;
+    try{if(board.hasPointerCapture?.(e.pointerId))board.releasePointerCapture(e.pointerId);}catch{}
+    if(dragging){dragging=false;pressIndex=-1;lastDragIndex=-1;resetTapMemory();setStatus('Xs marked!');return;}
+    const pointIndex=boardIndexFromPoint(e.clientX,e.clientY);
+    const idx=pointIndex>=0?pointIndex:pressIndex;
+    pressIndex=-1;lastDragIndex=-1;
+    if(idx<0)return;
+    handleBoardTap(idx);
   });
-  board.addEventListener('pointercancel',()=>{pointerDown=false;dragging=false;});
+  board.addEventListener('pointercancel',e=>{
+    pointerDown=false;dragging=false;pressIndex=-1;lastDragIndex=-1;resetTapMemory();
+    try{if(board.hasPointerCapture?.(e.pointerId))board.releasePointerCapture(e.pointerId);}catch{}
+  });
   board.addEventListener('contextmenu',e=>e.preventDefault());
 
   $('#backButton').addEventListener('click',()=>location.href='../');
