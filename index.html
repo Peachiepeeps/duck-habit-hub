@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="duck-habit-build" content="24.323" />
+  <meta name="duck-habit-build" content="24.324" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta id="appThemeColor" name="theme-color" content="#f7dbe5" />
@@ -23,6 +23,7 @@
   <link rel="stylesheet" href="fixes-v319.css?v=24.321" />
   <link rel="stylesheet" href="fixes-v322.css?v=24.322" />
   <link rel="stylesheet" href="fixes-v323.css?v=24.323" />
+  <link rel="stylesheet" href="fixes-v324.css?v=24.324" />
 
   <link rel="manifest" href="manifest.webmanifest?v=24-287">
   <link rel="apple-touch-icon" href="apple-touch-icon-v5.png">
@@ -1220,7 +1221,7 @@
     // v24.84: use a stable service-worker URL and actively check the deployed
     // build when the installed PWA is opened/resumed. This prevents Android
     // from keeping an already-open standalone app on an older app shell.
-    const DUCK_HUB_BUILD = "24.323";
+    const DUCK_HUB_BUILD = "24.324";
     let duckHubReloadingForUpdate = false;
 
     function duckHubReloadFresh(version) {
@@ -1284,7 +1285,7 @@
       window.addEventListener("load", async () => {
         try {
           await duckHubClearOldCodeCaches();
-          const registration = await navigator.serviceWorker.register("./sw.js?v=24-323", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("./sw.js?v=24-324", { updateViaCache: "none" });
           await registration.update();
           if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
           await duckHubCheckForUpdate(registration);

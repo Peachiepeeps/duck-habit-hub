@@ -1,0 +1,148 @@
+/* Duckie Days v24.324 — single-screen Games menu on phones */
+
+/* Keep all seven game choices visible together on phone-sized screens while
+   preserving complete descriptions. The list becomes a fitted 7-row grid
+   instead of a scrolling stack. */
+@media (max-width: 430px) {
+  .games-panel {
+    top: 4.5%;
+    bottom: 4.5%;
+    padding: 10px 11px 11px;
+  }
+
+  .games-header {
+    margin-bottom: 6px;
+  }
+
+  .games-panel .eyebrow {
+    margin-bottom: 1px;
+    font-size: .62rem;
+    line-height: 1.05;
+  }
+
+  .games-panel h1 {
+    font-size: 1.34rem;
+    line-height: 1.05;
+  }
+
+  .games-panel .close-button {
+    width: 38px;
+    height: 38px;
+    font-size: 1.35rem;
+  }
+
+  .games-list {
+    min-height: 0;
+    overflow: hidden;
+    grid-template-rows: repeat(7, minmax(0, 1fr));
+    align-content: stretch;
+    gap: 6px;
+    padding: 1px 0 2px;
+  }
+
+  .game-card {
+    min-height: 0 !important;
+    height: 100%;
+    grid-template-columns: 92px minmax(0, 1fr);
+    gap: 8px;
+    border-radius: 17px;
+  }
+
+  .game-card-preview {
+    min-height: 0 !important;
+    height: 100%;
+    border-radius: 15px;
+  }
+
+  .game-card-copy {
+    align-content: center;
+    gap: 1px;
+    padding: 4px 7px 4px 0;
+    overflow: visible;
+  }
+
+  .game-card-kicker {
+    font-size: .45rem;
+    line-height: 1.08;
+    letter-spacing: .075em;
+  }
+
+  .game-card-copy strong {
+    font-size: .79rem;
+    line-height: 1.08;
+  }
+
+  .game-card-copy > span:last-child {
+    display: block;
+    overflow: visible;
+    white-space: normal;
+    font-size: .515rem;
+    line-height: 1.22;
+  }
+
+  /* With the cards compact again, center the visible artwork within the
+     thumbnail rather than carrying over v24.323's large upward offset. */
+  .game-card-preview > .game-card-feature {
+    width: 42px !important;
+    height: 42px !important;
+    transform: translateY(-4px) !important;
+  }
+
+  .duck-sort-card-duck {
+    width: 42px !important;
+    height: 42px !important;
+    transform: translateY(-5px) !important;
+  }
+
+  .memory-game-card-back {
+    width: 42px !important;
+    height: 42px !important;
+    border-radius: 11px !important;
+    transform: translateY(-4px) !important;
+  }
+
+  .duckdoku-game-card .duckdoku-card-duck {
+    width: 42px !important;
+    height: 42px !important;
+    transform: translateY(-5px) !important;
+  }
+
+  .duck-quest-card-peep,
+  .duck-quest-card-strawberry {
+    width: 46px !important;
+    height: 46px !important;
+    transform: translateY(-4px) !important;
+  }
+
+  .crane-card-duck {
+    width: 34px !important;
+    height: 34px !important;
+    left: 50% !important;
+    top: 61% !important;
+    transform: translate(-50%, -50%) !important;
+  }
+
+  .crane-card-claw {
+    width: 24px !important;
+    height: 31px !important;
+    left: 50% !important;
+    top: 24% !important;
+    transform: translate(-50%, -50%) !important;
+  }
+}
+
+/* Give very short phone viewports a little extra breathing room without
+   introducing scrolling. */
+@media (max-width: 430px) and (max-height: 760px) {
+  .games-panel {
+    top: 3%;
+    bottom: 3%;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  .games-header { margin-bottom: 4px; }
+  .games-list { gap: 4px; }
+  .game-card { grid-template-columns: 84px minmax(0, 1fr); gap: 6px; }
+  .game-card-copy { padding-right: 5px; }
+  .game-card-copy > span:last-child { font-size: .49rem; line-height: 1.16; }
+}
