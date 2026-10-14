@@ -1,0 +1,15 @@
+/* Duckie Days v24.325 — final Games-card mascot polish */
+
+@media (max-width: 430px) {
+  /* Strawberry Cat Slime sat a little high after the single-screen resize.
+     Lower it without changing the mascot's size. */
+  .duck-quest-card-strawberry {
+    transform: translateY(5px) !important;
+  }
+
+  /* Let the crane housing tuck just behind the top edge of the thumbnail,
+     so the claw feels suspended from outside the frame. */
+  .crane-card-claw {
+    top: 17% !important;
+  }
+}
