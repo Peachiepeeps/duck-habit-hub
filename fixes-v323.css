@@ -1,0 +1,87 @@
+/* Duckie Days v24.323 — Games-card vertical centering + readable descriptions */
+
+/* Give the copy enough vertical room for its full description. */
+.game-card{
+  min-height:126px;
+}
+.game-card-preview{
+  min-height:126px;
+}
+.game-card-copy{
+  align-content:center;
+  overflow:visible;
+  padding:13px 0 14px;
+}
+.game-card-copy > span:last-child{
+  display:block;
+  overflow:visible;
+  white-space:normal;
+}
+
+/* The artwork files visually sit low inside the newly compact thumbnails.
+   Raise the feature art while keeping its smaller v24.322 sizing. */
+.game-card-preview > .game-card-feature{
+  transform:translateY(-20px) !important;
+}
+.duck-sort-card-duck{
+  transform:translateY(-22px) !important;
+}
+.memory-game-card-back{
+  transform:translateY(-20px) !important;
+}
+.duckdoku-game-card .duckdoku-card-duck{
+  transform:translateY(-20px) !important;
+}
+.duck-quest-card-peep,
+.duck-quest-card-strawberry{
+  transform:translateY(-19px) !important;
+}
+
+/* Move the crane illustration as one composition. */
+.crane-card-duck{
+  top:50% !important;
+}
+.crane-card-claw{
+  top:13% !important;
+}
+
+@media(max-width:430px){
+  .game-card{
+    min-height:124px;
+  }
+  .game-card-preview{
+    min-height:124px;
+  }
+  .game-card-copy{
+    align-content:center;
+    gap:4px;
+    padding:11px 0 12px;
+  }
+  .game-card-copy > span:last-child{
+    font-size:.59rem;
+    line-height:1.42;
+  }
+
+  .game-card-preview > .game-card-feature{
+    transform:translateY(-20px) !important;
+  }
+  .duck-sort-card-duck{
+    transform:translateY(-22px) !important;
+  }
+  .memory-game-card-back{
+    transform:translateY(-20px) !important;
+  }
+  .duckdoku-game-card .duckdoku-card-duck{
+    transform:translateY(-20px) !important;
+  }
+  .duck-quest-card-peep,
+  .duck-quest-card-strawberry{
+    transform:translateY(-19px) !important;
+  }
+  .crane-card-duck{
+    top:50% !important;
+  }
+  .crane-card-claw{
+    top:13% !important;
+  }
+}
