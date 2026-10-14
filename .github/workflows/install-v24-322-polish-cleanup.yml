@@ -1,0 +1,78 @@
+name: Install Duckie Days v24.322 Polish + Cleanup
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Duckie-Days-v24.322-polish-cleanup.zip'
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install v24.322 update
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP='Duckie-Days-v24.322-polish-cleanup.zip'
+          test -f "$ZIP"
+          unzip -o "$ZIP" -d .
+
+          test -f fixes-v322.js
+          test -f fixes-v322.css
+          test -f duckdoku/style.css
+          test -f duckdoku/index.html
+          test -f index.html
+          test -f sw.js
+          test -f version.json
+
+          grep -q '24.322' version.json
+          grep -q 'DUCKIE_FIXES_V322' fixes-v322.js
+          grep -q 'immediately BEFORE' fixes-v322.js
+          grep -q 'width:46px' fixes-v322.css
+          grep -q 'background-size:110px auto' duckdoku/style.css
+          grep -q 'duck-habit-hub-app-v24-322' sw.js
+          grep -q 'fixes-v322.css?v=24.322' index.html
+          grep -q 'fixes-v322.js?v=24.322' index.html
+
+      - name: Clean obsolete installer and recovery files
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Old upload/install helpers that are not part of the game itself.
+          rm -f 'Duckie-Days-v24.295-workflow.zip'
+          rm -f 'Duckie-Days-v24.321-WORKFLOW.zip'
+          rm -f 'Duckie-Days-v24.322-WORKFLOW.zip'
+          rm -f 'Duckie-Days-v24.322-UPLOAD-PACK.zip'
+          rm -f 'bao-cafe-recovery-workflow.zip'
+          rm -f 'duck-hub-cache-reset.html'
+
+          # Stale one-off installers. Keep the permanent Hold workflow.
+          rm -f '.github/workflows/install-v24-320-duckdoku-tap-fix.yml'
+          rm -f '.github/workflows/install-v24-321-duckdoku-miko-fix.yml'
+
+          # Current temporary installer payloads clean themselves up too.
+          rm -f 'Duckie-Days-v24.322-polish-cleanup.zip'
+          rm -f '.github/workflows/install-v24-322-polish-cleanup.yml'
+
+      - name: Commit installed update
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'Nothing to commit.'
+            exit 0
+          fi
+          git commit -m 'Polish game cards, Duckdoku background, and Universal hand v24.322'
+          git push
