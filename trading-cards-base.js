@@ -60,6 +60,14 @@
   cards.push({id:"r-love-westley",characterId:"westley",name:"Westley",art:"love-interests/westley/Westley-idle-1.png",rarity:"rare",number:"R-037",category:"Miko Love Interest",hint:"Witness Westley and Yuzuru's reunion while exploring Duck Quest as Miko."});
   cards.push({id:"r-love-circe",characterId:"circe",name:"Circe",art:"love-interests/circe/Circe-idle-1.png",rarity:"rare",number:"R-038",category:"Miko Love Interest",hint:"Witness Circe and Quin's reunion while exploring Duck Quest as Miko."});
   cards.push({id:"r-love-quin",characterId:"quin",name:"Quin",art:"love-interests/quin/Quin-idle-1.png",rarity:"rare",number:"R-039",category:"Miko Love Interest",hint:"Witness Circe and Quin's reunion while exploring Duck Quest as Miko."});
+  cards.push({id:"r-love-kiri",characterId:"kiri",name:"Kiri",art:"love-interests/kiri/Kiri-idle-1.png",rarity:"rare",number:"R-050",category:"Miko Love Interest",hint:"Witness Kiri and Midori's reunion while exploring Duck Quest as Miko."});
+  cards.push({id:"r-love-midori",characterId:"midori",name:"Midori",art:"love-interests/midori/Midori-opened.png",rarity:"rare",number:"R-051",category:"Miko Love Interest",hint:"Witness Kiri and Midori's reunion while exploring Duck Quest as Miko."});
+  cards.push({id:"r-love-luka",characterId:"luka",name:"Luka",art:"love-interests/luka/Luka-idle-1.png",rarity:"rare",number:"R-052",category:"Miko Love Interest",hint:"Witness Luka and Cybil's reunion while exploring Duck Quest as Miko."});
+  cards.push({id:"r-love-cybil",characterId:"cybil",name:"Cybil",art:"love-interests/cybil/Cybil-idle-1.png",rarity:"rare",number:"R-053",category:"Miko Love Interest",hint:"Witness Luka and Cybil's reunion while exploring Duck Quest as Miko."});
+  cards.push({id:"r-love-nico",characterId:"nico",name:"Nico",art:"love-interests/nico/Nico-idle-1.png",rarity:"rare",number:"R-054",category:"Miko Love Interest",hint:"Witness Nico and Nene's reunion while exploring Duck Quest as Miko."});
+  cards.push({id:"r-love-nene",characterId:"nene",name:"Nene",art:"love-interests/nene/Nene-idle-1.png",rarity:"rare",number:"R-055",category:"Miko Love Interest",hint:"Witness Nico and Nene's reunion while exploring Duck Quest as Miko."});
+  cards.push({id:"r-love-moriko",characterId:"moriko",name:"Moriko",art:"love-interests/moriko/Moriko-idle-1.png",rarity:"rare",number:"R-056",category:"Miko Love Interest",hint:"Witness Moriko and Jenson's reunion while exploring Duck Quest as Miko."});
+  cards.push({id:"r-love-jenson",characterId:"jenson",name:"Jenson",art:"love-interests/jenson/Jenson-Sprite-idle-1.png",rarity:"rare",number:"R-057",category:"Miko Love Interest",hint:"Witness Moriko and Jenson's reunion while exploring Duck Quest as Miko."});
   const byId=Object.fromEntries(cards.map(card=>[card.id,card]));
   function basePrefix(){return /\/(duck-quest|memory-game|crane-game)\//.test(location.pathname)?"../":"";}
   function asset(path){return `${basePrefix()}${path}`;}

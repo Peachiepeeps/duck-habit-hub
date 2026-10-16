@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="duck-habit-build" content="24.325" />
+  <meta name="duck-habit-build" content="24.326" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta id="appThemeColor" name="theme-color" content="#f7dbe5" />
@@ -1191,14 +1191,14 @@
       </section>
     </section>
   </main>
-  <script src="trading-cards-base.js?v=24.296"></script>
+  <script src="trading-cards-base.js?v=24.326"></script>
   <script src="trading-cards-extra.js?v=24.296"></script>
   <script src="trading-cards-v317.js?v=24.317"></script>
   <script src="trading-cards-gimmicks-v288.js?v=24.296"></script>
   <script src="trading-cards-sock-gremlin-v297.js?v=24.297"></script>
   <script src="trading-cards-universal-v298.js?v=24.298"></script>
   <script src="trading-cards-bao-cafe-v299.js?v=24.299"></script>
-  <script src="app.js?v=24.296"></script>
+  <script src="app.js?v=24.326"></script>
   <script src="universal-clothing-v311.js?v=24.311"></script>
   <script src="gimmick-hub-v288.js?v=24.296"></script>
   <script src="hub-boosts.js?v=24.296"></script>
@@ -1207,7 +1207,7 @@
   <script type="module" src="firebase-reminders.mjs?v=24.296"></script>
   <script src="task-reminders.js?v=24.296"></script>
   <script src="hub.js?v=24.296"></script>
-  <script src="sock-gremlin-fashion-v297.js?v=24.297"></script>
+  <script src="sock-gremlin-fashion-v297.js?v=24.326"></script>
   <script src="sock-gremlin-fashion-fix-v312.js?v=24.312"></script>
   <script src="fixes-v313.js?v=24.313"></script>
   <script src="fixes-v314.js?v=24.314"></script>
@@ -1217,12 +1217,13 @@
   <script src="fixes-v319.js?v=24.321"></script>
   <script src="fixes-v321.js?v=24.321"></script>
   <script src="fixes-v322.js?v=24.322"></script>
+  <script src="fixes-v326.js?v=24.326"></script>
 
   <script>
     // v24.84: use a stable service-worker URL and actively check the deployed
     // build when the installed PWA is opened/resumed. This prevents Android
     // from keeping an already-open standalone app on an older app shell.
-    const DUCK_HUB_BUILD = "24.325";
+    const DUCK_HUB_BUILD = "24.326";
     let duckHubReloadingForUpdate = false;
 
     function duckHubReloadFresh(version) {
@@ -1286,7 +1287,7 @@
       window.addEventListener("load", async () => {
         try {
           await duckHubClearOldCodeCaches();
-          const registration = await navigator.serviceWorker.register("./sw.js?v=24-325", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("./sw.js?v=24-326", { updateViaCache: "none" });
           await registration.update();
           if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
           await duckHubCheckForUpdate(registration);

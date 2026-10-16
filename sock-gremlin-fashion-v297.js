@@ -16,6 +16,14 @@
     "westley-top":["cool","dark","casual"],"westley-jacket":["cool","dark","fancy"],"westley-pants":["cool","dark"],"westley-boots":["cool","dark"],"westley-face-makeup":["accessory","cool","dark"],
     "circe-tank-top":["romantic","dark","cool"],"circe-sweater":["romantic","fancy","dark"],"circe-shorts":["romantic","cool"],"circe-stockings":["romantic","fancy"],"circe-shoes":["fancy","dark"],"circe-choker":["accessory","romantic","dark"],
     "quin-shirt":["cool","casual","cute"],"quin-jacket":["cool","casual"],"quin-shorts":["casual","sporty"],"quin-boots":["cool","casual"],"quin-hairpins":["accessory","cute","cool"],
+    "kiri-top":["cute","romantic","classic"],"kiri-capris":["casual","classic"],"kiri-socks":["cute","cozy"],"kiri-shoes":["classic","cute"],"kiri-hairpiece":["accessory","cute","romantic"],
+    "midori-suit":["formal","dark","cool"],"midori-shorts":["formal","cool"],"midori-stockings":["dark","formal"],"midori-boots":["dark","cool"],"midori-scarf":["accessory","formal","dark"],"midori-low-ponytail":["accessory","cool"],
+    "luka-shirt":["casual","cool"],"luka-jacket":["cool","casual"],"luka-jeans":["casual","cool"],"luka-sneakers":["casual","sporty"],"luka-back-hair":["cool"],"luka-bangs":["cool"],
+    "cybil-shirt":["classic","formal"],"cybil-shorts":["classic","cute"],"cybil-stockings":["formal","romantic"],"cybil-boots":["classic","formal"],"cybil-ponytail":["accessory","classic"],
+    "nico-shirt":["fancy","bright","cute"],"nico-jacket":["fancy","bright"],"nico-shorts":["fancy","cute"],"nico-socks":["cute","bright"],"nico-shoes":["fancy","classic"],"nico-hat":["accessory","fancy","bright"],"nico-back-bow":["accessory","cute","fancy"],
+    "nene-shirt":["cute","romantic","casual"],"nene-sweater":["cozy","cute","romantic"],"nene-pants":["casual","cozy"],"nene-shoes":["cute","casual"],"nene-glasses":["accessory","classic","cute"],
+    "moriko-hoodie":["cozy","casual","cool"],"moriko-pants":["casual","cool"],"moriko-shoes":["casual","cool"],"moriko-necklace":["accessory","cool"],"moriko-hair":["cool"],"moriko-bangs":["cool"],
+    "jenson-top":["classic","formal","casual"],"jenson-pants":["classic","formal"],"jenson-shoes":["classic","formal"],"jenson-glasses":["accessory","classic","formal"],
     "daisy-crown":["accessory","cute","romantic"],"ocean-sunglasses":["accessory","cool","casual"],"halo":["accessory","cute","fancy"],"candy-hairclip":["accessory","cute","bright"]
   };
   function shuffle(list){const out=[...list];for(let i=out.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]];}return out;}

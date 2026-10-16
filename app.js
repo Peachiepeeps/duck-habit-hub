@@ -1803,6 +1803,46 @@ const FURNITURE_RECIPES = Object.freeze(Object.fromEntries(
 ));
 
 const DUCKS = {
+  "jenson-duck": {
+    "name": "Jenson Duck",
+    "file": "duck-quest/assets/love-interests/jenson/Jenson-duck.png",
+    "acquisition": "love-interest-jenson"
+  },
+  "moriko-duck": {
+    "name": "Moriko Duck",
+    "file": "duck-quest/assets/love-interests/moriko/Moriko-duck.png",
+    "acquisition": "love-interest-moriko"
+  },
+  "nene-duck": {
+    "name": "Nene Duck",
+    "file": "duck-quest/assets/love-interests/nene/Nene-duck.png",
+    "acquisition": "love-interest-nene"
+  },
+  "nico-duck": {
+    "name": "Nico Duck",
+    "file": "duck-quest/assets/love-interests/nico/Nico-duck.png",
+    "acquisition": "love-interest-nico"
+  },
+  "cybil-duck": {
+    "name": "Cybil Duck",
+    "file": "duck-quest/assets/love-interests/cybil/Cybil-duck.png",
+    "acquisition": "love-interest-cybil"
+  },
+  "luka-duck": {
+    "name": "Luka Duck",
+    "file": "duck-quest/assets/love-interests/luka/Luka-duck.png",
+    "acquisition": "love-interest-luka"
+  },
+  "midori-duck": {
+    "name": "Midori Duck",
+    "file": "duck-quest/assets/love-interests/midori/Midori-duck.png",
+    "acquisition": "love-interest-midori"
+  },
+  "kiri-duck": {
+    "name": "Kiri Duck",
+    "file": "duck-quest/assets/love-interests/kiri/Kiri-duck.png",
+    "acquisition": "love-interest-kiri"
+  },
   "quin-duck": {
     "name": "Quin Duck",
     "file": "duck-quest/assets/love-interests/quin/Quin-duck.png",
@@ -2759,10 +2799,121 @@ const MIKO_THUMB_BOUNDS = {
   "Miko-Quin-jacket.png": [386, 1216, 773, 1548],
   "Miko-Quin-shirt.png": [422, 1221, 660, 1494],
   "Miko-Quin-shorts.png": [400, 1408, 669, 1536],
-  "Miko-Quin-sleeve.png": [387, 1168, 535, 1357]
+  "Miko-Quin-sleeve.png": [387, 1168, 535, 1357],
+  "Miko-Kiri-Capri-Pants.png": [391,1395,677,1655],
+  "Miko-Kiri-Hairpiece.png": [680,811,824,977],
+  "Miko-Kiri-Shoes.png": [380,1749,688,1810],
+  "Miko-Kiri-Sleeve.png": [376,1204,497,1360],
+  "Miko-Kiri-Socks.png": [386,1722,688,1795],
+  "Miko-Kiri-Top-shop.png": [376,1204,742,1471],
+  "Miko-Kiri-Top.png": [392,1213,742,1471],
+  "Miko-Midori-Boots.png": [380,1703,691,1806],
+  "Miko-Midori-Low-Ponytail.png": [641,1160,762,1275],
+  "Miko-Midori-Scarf.png": [428,1181,651,1391],
+  "Miko-Midori-Shorts.png": [408,1420,666,1495],
+  "Miko-Midori-Sleeve.png": [379,1202,489,1359],
+  "Miko-Midori-Stockings.png": [383,1512,689,1793],
+  "Miko-Midori-Suit-shop.png": [379,1202,734,1475],
+  "Miko-Midori-Suit.png": [403,1219,734,1475],
+  "Miko-Luka-Back-hair.png": [178,743,898,1218],
+  "Miko-Luka-Bangs.png": [250,766,826,1216],
+  "Miko-Luka-Jacket.png": [385,1214,710,1509],
+  "Miko-Luka-Jeans.png": [405,1411,669,1776],
+  "Miko-Luka-Shirt.png": [415,1218,651,1445],
+  "Miko-Luka-Sneakers.png": [381,1739,688,1809],
+  "Miko-Cybil-Ponytail.png": [677,735,829,892],
+  "Miko-Cybil-Shirt-shop.png": [389,1201,738,1470],
+  "Miko-Cybil-Shirt.png": [399,1214,738,1470],
+  "Miko-Cybil-Shorts.png": [405,1340,662,1497],
+  "Miko-Cybil-Sleeve.png": [389,1201,489,1356],
+  "Miko-Cybil-Vest.png": [433,1217,636,1414],
+  "Miko-Cybil-boots.png": [381,1668,691,1806],
+  "Miko-Cybil-stockings.png": [383,1412,687,1794],
+  "Miko-Nico-Back-Bow.png": [375,1364,697,1658],
+  "Miko-Nico-Hat.png": [510,669,736,844],
+  "Miko-Nico-Jacket-shop.png": [379,1196,745,1475],
+  "Miko-Nico-Jacket.png": [401,1220,745,1475],
+  "Miko-Nico-Shirt.png": [427,1216,662,1442],
+  "Miko-Nico-Shoes.png": [385,1745,687,1808],
+  "Miko-Nico-Shorts.png": [408,1403,659,1491],
+  "Miko-Nico-Sleeve.png": [379,1196,497,1359],
+  "Miko-Nico-Socks.png": [386,1576,686,1794],
+  "Miko-Nene-Glasses.png": [331,964,748,1157],
+  "Miko-Nene-Pants.png": [399,1409,670,1772],
+  "Miko-Nene-Shirt-shop.png": [388,1204,733,1466],
+  "Miko-Nene-Shirt-sleeve.png": [388,1204,487,1367],
+  "Miko-Nene-Shirt.png": [405,1219,733,1466],
+  "Miko-Nene-Shoes.png": [379,1747,692,1811],
+  "Miko-Nene-Sweater-Sleeve.png": [381,1194,492,1364],
+  "Miko-Nene-Sweater-shop.png": [381,1194,739,1472],
+  "Miko-Nene-Sweater.png": [398,1220,739,1472],
+  "Miko-Moriko-Bangs.png": [250,766,826,1216],
+  "Miko-Moriko-Hair.png": [178,743,898,1218],
+  "Miko-Moriko-Hoodie-Shop.png": [378,1202,738,1516],
+  "Miko-Moriko-Hoodie.png": [396,1210,738,1516],
+  "Miko-Moriko-Necklace.png": [511,1217,561,1303],
+  "Miko-Moriko-Pants.png": [409,1426,662,1769],
+  "Miko-Moriko-Shoes.png": [377,1747,690,1809],
+  "Miko-Moriko-Sleeve.png": [378,1202,480,1366],
+  "Miko-Jenson-Glasses.png": [339,1023,737,1142],
+  "Miko-Jenson-Pants.png": [405,1426,662,1768],
+  "Miko-Jenson-Shoes.png": [382,1747,689,1808],
+  "Miko-Jenson-Top.png": [393,1222,684,1487]
 };
 
 const MIKO_ASSETS = {
+  "kiri-top": { label: "Kiri Set · Top", file: "Miko-Kiri-Top.png", previewFile: "Miko-Kiri-Top-shop.png", z: 32 },
+  "kiri-sleeve": { label: "Kiri Set · Sleeve", file: "Miko-Kiri-Sleeve.png", z: 36 },
+  "kiri-capris": { label: "Kiri Set · Capri Pants", file: "Miko-Kiri-Capri-Pants.png", z: 31 },
+  "kiri-socks": { label: "Kiri Set · Socks", file: "Miko-Kiri-Socks.png", z: 29 },
+  "kiri-shoes": { label: "Kiri Set · Shoes", file: "Miko-Kiri-Shoes.png", z: 39 },
+  "kiri-hairpiece": { label: "Kiri Set · Hairpiece", file: "Miko-Kiri-Hairpiece.png", z: 55 },
+  "midori-suit": { label: "Midori Set · Suit", file: "Miko-Midori-Suit.png", previewFile: "Miko-Midori-Suit-shop.png", z: 34 },
+  "midori-sleeve": { label: "Midori Set · Sleeve", file: "Miko-Midori-Sleeve.png", z: 37 },
+  "midori-shorts": { label: "Midori Set · Shorts", file: "Miko-Midori-Shorts.png", z: 31 },
+  "midori-stockings": { label: "Midori Set · Stockings", file: "Miko-Midori-Stockings.png", z: 29 },
+  "midori-boots": { label: "Midori Set · Boots", file: "Miko-Midori-Boots.png", z: 39 },
+  "midori-scarf": { label: "Midori Set · Scarf", file: "Miko-Midori-Scarf.png", z: 55 },
+  "midori-low-ponytail": { label: "Midori Set · Low Ponytail", file: "Miko-Midori-Low-Ponytail.png", z: 49 },
+  "luka-back-hair": { label: "Luka Set · Back Hair", file: "Miko-Luka-Back-hair.png", z: 15 },
+  "luka-bangs": { label: "Luka Set · Bangs", file: "Miko-Luka-Bangs.png", z: 48 },
+  "luka-shirt": { label: "Luka Set · Shirt", file: "Miko-Luka-Shirt.png", z: 32 },
+  "luka-jacket": { label: "Luka Set · Jacket", file: "Miko-Luka-Jacket.png", z: 34 },
+  "luka-jeans": { label: "Luka Set · Jeans", file: "Miko-Luka-Jeans.png", z: 31 },
+  "luka-sneakers": { label: "Luka Set · Sneakers", file: "Miko-Luka-Sneakers.png", z: 39 },
+  "cybil-shirt": { label: "Cybil Set · Shirt", file: "Miko-Cybil-Shirt.png", previewFile: "Miko-Cybil-Shirt-shop.png", z: 32 },
+  "cybil-vest": { label: "Cybil Set · Vest", file: "Miko-Cybil-Vest.png", z: 34 },
+  "cybil-sleeve": { label: "Cybil Set · Sleeve", file: "Miko-Cybil-Sleeve.png", z: 36 },
+  "cybil-shorts": { label: "Cybil Set · Shorts", file: "Miko-Cybil-Shorts.png", z: 31 },
+  "cybil-stockings": { label: "Cybil Set · Stockings", file: "Miko-Cybil-stockings.png", z: 29 },
+  "cybil-boots": { label: "Cybil Set · Boots", file: "Miko-Cybil-boots.png", z: 39 },
+  "cybil-ponytail": { label: "Cybil Set · Ponytail", file: "Miko-Cybil-Ponytail.png", z: 49 },
+  "nico-shirt": { label: "Nico Set · Shirt", file: "Miko-Nico-Shirt.png", z: 32 },
+  "nico-jacket": { label: "Nico Set · Jacket", file: "Miko-Nico-Jacket.png", previewFile: "Miko-Nico-Jacket-shop.png", z: 34 },
+  "nico-sleeve": { label: "Nico Set · Sleeve", file: "Miko-Nico-Sleeve.png", z: 37 },
+  "nico-shorts": { label: "Nico Set · Shorts", file: "Miko-Nico-Shorts.png", z: 31 },
+  "nico-socks": { label: "Nico Set · Socks", file: "Miko-Nico-Socks.png", z: 29 },
+  "nico-shoes": { label: "Nico Set · Shoes", file: "Miko-Nico-Shoes.png", z: 39 },
+  "nico-hat": { label: "Nico Set · Hat", file: "Miko-Nico-Hat.png", z: 55 },
+  "nico-back-bow": { label: "Nico Set · Back Bow", file: "Miko-Nico-Back-Bow.png", z: 22 },
+  "nene-shirt": { label: "Nene Set · Shirt", file: "Miko-Nene-Shirt.png", previewFile: "Miko-Nene-Shirt-shop.png", z: 32 },
+  "nene-shirt-sleeve": { label: "Nene Set · Shirt Sleeve", file: "Miko-Nene-Shirt-sleeve.png", z: 36 },
+  "nene-sweater": { label: "Nene Set · Sweater", file: "Miko-Nene-Sweater.png", previewFile: "Miko-Nene-Sweater-shop.png", z: 34 },
+  "nene-sweater-sleeve": { label: "Nene Set · Sweater Sleeve", file: "Miko-Nene-Sweater-Sleeve.png", z: 37 },
+  "nene-pants": { label: "Nene Set · Pants", file: "Miko-Nene-Pants.png", z: 31 },
+  "nene-shoes": { label: "Nene Set · Shoes", file: "Miko-Nene-Shoes.png", z: 39 },
+  "nene-glasses": { label: "Nene Set · Glasses", file: "Miko-Nene-Glasses.png", z: 55 },
+  "moriko-hair": { label: "Moriko Set · Hair", file: "Miko-Moriko-Hair.png", z: 15 },
+  "moriko-bangs": { label: "Moriko Set · Bangs", file: "Miko-Moriko-Bangs.png", z: 48 },
+  "moriko-hoodie": { label: "Moriko Set · Hoodie", file: "Miko-Moriko-Hoodie.png", previewFile: "Miko-Moriko-Hoodie-Shop.png", z: 34 },
+  "moriko-sleeve": { label: "Moriko Set · Sleeve", file: "Miko-Moriko-Sleeve.png", z: 37 },
+  "moriko-pants": { label: "Moriko Set · Pants", file: "Miko-Moriko-Pants.png", z: 31 },
+  "moriko-shoes": { label: "Moriko Set · Shoes", file: "Miko-Moriko-Shoes.png", z: 39 },
+  "moriko-necklace": { label: "Moriko Set · Necklace", file: "Miko-Moriko-Necklace.png", z: 55 },
+  "jenson-top": { label: "Jenson Set · Top", file: "Miko-Jenson-Top.png", z: 32 },
+  "jenson-pants": { label: "Jenson Set · Pants", file: "Miko-Jenson-Pants.png", z: 31 },
+  "jenson-shoes": { label: "Jenson Set · Shoes", file: "Miko-Jenson-Shoes.png", z: 39 },
+  "jenson-glasses": { label: "Jenson Set · Glasses", file: "Miko-Jenson-Glasses.png", z: 55 },
   "circe-tank-top": { label: "Circe Set · Tank Top", file: "Miko-circe-tank-top.png", z: 24 },
   "circe-sweater": { label: "Circe Set · Sweater", file: "Miko-circe-sweater.png", previewFile: "Miko-circe-sweater-shop.png", z: 34 },
   "circe-sleeve": { label: "Circe Set · Sleeve", file: "Miko-circe-sleeve.png", z: 37 },
@@ -3113,19 +3264,19 @@ const MIKO_CLOSET = [
     id: "hair",
     label: "Hair",
     type: "hair",
-    options: ["hair-main"]
+    options: ["hair-main", "luka-back-hair", "moriko-hair"]
   },
-  { id: "bangsStyle", label: "Bangs", type: "single", options: ["bangs", "bangs-pinned"] },
-  { id: "shirt", label: "Shirts", type: "single", allowNone: true, options: ["top-button", "shirt-blouse", "top-big-shirt", "westley-top", "quin-shirt", "circe-tank-top", "yuzuru-shirt"] },
-  { id: "outer", label: "Layers", type: "single", allowNone: true, options: ["top-hoodie", "top-sweater", "outer-black-blazer", "lukio-hoodie", "shino-sweater", "cheryln-sweater", "hibiki-coat", "devlin-vest", "westley-jacket", "circe-sweater", "quin-jacket"] },
-  { id: "bottom", label: "Bottoms", type: "single", options: ["bottom-capris", "bottom-jeans", "bottom-boxers", "bottom-shorts", "lukio-shorts", "shino-jeans", "cheryln-shorts", "hibiki-shorts", "devlin-pants", "yuzuru-shorts", "westley-pants", "circe-shorts", "quin-shorts"] },
-  { id: "socks", label: "Socks", type: "single", allowNone: true, options: ["socks", "socks-garter", "lukio-socks", "cheryln-tights", "hibiki-stockings", "yuzuru-socks", "circe-stockings"] },
-  { id: "shoes", label: "Shoes", type: "single", allowNone: true, options: ["shoes-loafer", "shoes-fancy-loafers", "lukio-booties", "shino-boots", "cheryln-boots", "hibiki-boots", "devlin-loafers", "yuzuru-shoes", "westley-boots", "circe-shoes", "quin-boots"] },
+  { id: "bangsStyle", label: "Bangs", type: "single", options: ["bangs", "bangs-pinned", "luka-bangs", "moriko-bangs"] },
+  { id: "shirt", label: "Shirts", type: "single", allowNone: true, options: ["top-button", "shirt-blouse", "top-big-shirt", "westley-top", "quin-shirt", "circe-tank-top", "yuzuru-shirt", "kiri-top", "luka-shirt", "cybil-shirt", "nico-shirt", "nene-shirt", "jenson-top"] },
+  { id: "outer", label: "Layers", type: "single", allowNone: true, options: ["top-hoodie", "top-sweater", "outer-black-blazer", "lukio-hoodie", "shino-sweater", "cheryln-sweater", "hibiki-coat", "devlin-vest", "westley-jacket", "circe-sweater", "quin-jacket", "midori-suit", "luka-jacket", "nico-jacket", "nene-sweater", "moriko-hoodie"] },
+  { id: "bottom", label: "Bottoms", type: "single", options: ["bottom-capris", "bottom-jeans", "bottom-boxers", "bottom-shorts", "lukio-shorts", "shino-jeans", "cheryln-shorts", "hibiki-shorts", "devlin-pants", "yuzuru-shorts", "westley-pants", "circe-shorts", "quin-shorts", "kiri-capris", "midori-shorts", "luka-jeans", "cybil-shorts", "nico-shorts", "nene-pants", "moriko-pants", "jenson-pants"] },
+  { id: "socks", label: "Socks", type: "single", allowNone: true, options: ["socks", "socks-garter", "lukio-socks", "cheryln-tights", "hibiki-stockings", "yuzuru-socks", "circe-stockings", "kiri-socks", "midori-stockings", "cybil-stockings", "nico-socks"] },
+  { id: "shoes", label: "Shoes", type: "single", allowNone: true, options: ["shoes-loafer", "shoes-fancy-loafers", "lukio-booties", "shino-boots", "cheryln-boots", "hibiki-boots", "devlin-loafers", "yuzuru-shoes", "westley-boots", "circe-shoes", "quin-boots", "kiri-shoes", "midori-boots", "luka-sneakers", "cybil-boots", "nico-shoes", "nene-shoes", "moriko-shoes", "jenson-shoes"] },
   {
     id: "extras",
     label: "Extras",
     type: "multi",
-    options: ["belt", "headband", "hairpins-black", "lukio-hair-streak", "shino-beret", "cheryln-hairpin", "hibiki-ribbon", "westley-face-makeup", "yuzuru-bracelet", "devlin-belt", "devlin-tie", "circe-choker", "quin-hairpins", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip"]
+    options: ["belt", "headband", "hairpins-black", "lukio-hair-streak", "shino-beret", "cheryln-hairpin", "hibiki-ribbon", "westley-face-makeup", "yuzuru-bracelet", "devlin-belt", "devlin-tie", "circe-choker", "quin-hairpins", "kiri-hairpiece", "midori-scarf", "midori-low-ponytail", "cybil-ponytail", "nico-hat", "nico-back-bow", "nene-glasses", "moriko-necklace", "jenson-glasses", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip"]
   }
 ];
 
@@ -3386,27 +3537,29 @@ function normalizeMikoOutfit(rawOutfit = {}) {
     outer = null;
   }
 
-  if (![null, "top-button", "shirt-blouse", "top-big-shirt", "westley-top", "quin-shirt", "circe-tank-top", "yuzuru-shirt"].includes(shirt)) shirt = "top-button";
-  if (![null, "top-hoodie", "top-sweater", "outer-black-blazer", "lukio-hoodie", "shino-sweater", "cheryln-sweater", "hibiki-coat", "devlin-vest", "westley-jacket", "circe-sweater", "quin-jacket"].includes(outer)) outer = "top-hoodie";
+  if (![null, "top-button", "shirt-blouse", "top-big-shirt", "westley-top", "quin-shirt", "circe-tank-top", "yuzuru-shirt", "kiri-top", "luka-shirt", "cybil-shirt", "nico-shirt", "nene-shirt", "jenson-top"].includes(shirt)) shirt = "top-button";
+  if (![null, "top-hoodie", "top-sweater", "outer-black-blazer", "lukio-hoodie", "shino-sweater", "cheryln-sweater", "hibiki-coat", "devlin-vest", "westley-jacket", "circe-sweater", "quin-jacket", "midori-suit", "luka-jacket", "nico-jacket", "nene-sweater", "moriko-hoodie"].includes(outer)) outer = "top-hoodie";
 
-  const bangsStyle = ["bangs", "bangs-pinned"].includes(incoming.bangsStyle)
+  const hair = ["hair-main", "luka-back-hair", "moriko-hair"].includes(incoming.hair) ? incoming.hair : "hair-main";
+  const bangsStyle = ["bangs", "bangs-pinned", "luka-bangs", "moriko-bangs"].includes(incoming.bangsStyle)
     ? incoming.bangsStyle
     : "bangs";
-  const bottom = ["bottom-capris", "bottom-jeans", "bottom-boxers", "bottom-shorts", "lukio-shorts", "shino-jeans", "cheryln-shorts", "hibiki-shorts", "devlin-pants", "yuzuru-shorts", "westley-pants", "circe-shorts", "quin-shorts"].includes(incoming.bottom)
+  const bottom = ["bottom-capris", "bottom-jeans", "bottom-boxers", "bottom-shorts", "lukio-shorts", "shino-jeans", "cheryln-shorts", "hibiki-shorts", "devlin-pants", "yuzuru-shorts", "westley-pants", "circe-shorts", "quin-shorts", "kiri-capris", "midori-shorts", "luka-jeans", "cybil-shorts", "nico-shorts", "nene-pants", "moriko-pants", "jenson-pants"].includes(incoming.bottom)
     ? incoming.bottom
     : "bottom-capris";
-  const socks = ["socks", "socks-garter", "lukio-socks", "cheryln-tights", "hibiki-stockings", "yuzuru-socks", "circe-stockings"].includes(incoming.socks) ? incoming.socks : null;
-  const shoes = [null, "shoes-loafer", "shoes-fancy-loafers", "lukio-booties", "shino-boots", "cheryln-boots", "hibiki-boots", "devlin-loafers", "yuzuru-shoes", "westley-boots", "circe-shoes", "quin-boots"].includes(incoming.shoes)
+  const socks = [null, "socks", "socks-garter", "lukio-socks", "cheryln-tights", "hibiki-stockings", "yuzuru-socks", "circe-stockings", "kiri-socks", "midori-stockings", "cybil-stockings", "nico-socks"].includes(incoming.socks) ? incoming.socks : null;
+  const shoes = [null, "shoes-loafer", "shoes-fancy-loafers", "lukio-booties", "shino-boots", "cheryln-boots", "hibiki-boots", "devlin-loafers", "yuzuru-shoes", "westley-boots", "circe-shoes", "quin-boots", "kiri-shoes", "midori-boots", "luka-sneakers", "cybil-boots", "nico-shoes", "nene-shoes", "moriko-shoes", "jenson-shoes"].includes(incoming.shoes)
     ? incoming.shoes
     : "shoes-loafer";
 
   const extras = Array.isArray(incoming.extras)
-    ? incoming.extras.filter(id => ["belt", "headband", "hairpins-black", "lukio-hair-streak", "shino-beret", "cheryln-hairpin", "hibiki-ribbon", "westley-face-makeup", "yuzuru-bracelet", "devlin-belt", "devlin-tie", "circe-choker", "quin-hairpins", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip"].includes(id))
+    ? incoming.extras.filter(id => ["belt", "headband", "hairpins-black", "lukio-hair-streak", "shino-beret", "cheryln-hairpin", "hibiki-ribbon", "westley-face-makeup", "yuzuru-bracelet", "devlin-belt", "devlin-tie", "circe-choker", "quin-hairpins", "kiri-hairpiece", "midori-scarf", "midori-low-ponytail", "cybil-ponytail", "nico-hat", "nico-back-bow", "nene-glasses", "moriko-necklace", "jenson-glasses", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip"].includes(id))
     : [];
 
   const normalized = {
     ...structuredClone(DEFAULT_MIKO_OUTFIT),
     ...incoming,
+    hair,
     bangsStyle,
     shirt,
     outer,
@@ -4043,7 +4196,7 @@ const GACHA_RARITY_WEIGHTS = Object.freeze({
 });
 const GACHA_SUPER_DUCKS = new Set(["peep-duck", "miko-duck", "io-duck", "miho-duck", "annika-duck", "goose", "rainbow-duck"]);
 const GACHA_GATED_SUPER_DUCKS = new Set(["peep-duck", "miko-duck", "io-duck", "miho-duck", "annika-duck", "goose"]);
-const GACHA_EXCLUDED_DUCKS = new Set(["tiny-duck", "tiny-duck-stack", "pile-of-tiny-ducks", "lukio-duck", "shinobu-duck", "cheryln-duck", "hibiki-duck", "devlin-duck", "yuzuru-duck", "westley-duck", "circe-duck", "quin-duck"]);
+const GACHA_EXCLUDED_DUCKS = new Set(["tiny-duck", "tiny-duck-stack", "pile-of-tiny-ducks", "lukio-duck", "shinobu-duck", "cheryln-duck", "hibiki-duck", "devlin-duck", "yuzuru-duck", "westley-duck", "circe-duck", "quin-duck", "kiri-duck", "midori-duck", "luka-duck", "cybil-duck", "nico-duck", "nene-duck", "moriko-duck", "jenson-duck"]);
 const DUCK_TROPHY_MILESTONES = Object.freeze([
   { count: 1, tier: "bronze", label: "Bronze" },
   { count: 25, tier: "silver", label: "Silver" },
@@ -5678,7 +5831,7 @@ function getEquippedAssetIds() {
 
 function getMikoEquippedAssetIds() {
   const outfit = getCharacterOutfit("miko");
-  const ids = ["hair-main", "base"];
+  const ids = [outfit.hair || "hair-main", "base"];
 
   // Shirt and outer layer are independent. This allows Button Shirt only,
   // Hoodie/Sweater only, or either outer layer over the Button Shirt.
@@ -5691,6 +5844,12 @@ function getMikoEquippedAssetIds() {
   else if (outfit.shirt === "quin-shirt") ids.push("quin-shirt");
   else if (outfit.shirt === "circe-tank-top") ids.push("circe-tank-top");
   else if (outfit.shirt === "yuzuru-shirt") ids.push("yuzuru-shirt");
+  else if (outfit.shirt === "kiri-top") ids.push("kiri-top");
+  else if (outfit.shirt === "luka-shirt") ids.push("luka-shirt");
+  else if (outfit.shirt === "cybil-shirt") ids.push("cybil-shirt", "cybil-vest");
+  else if (outfit.shirt === "nico-shirt") ids.push("nico-shirt");
+  else if (outfit.shirt === "nene-shirt") ids.push("nene-shirt");
+  else if (outfit.shirt === "jenson-top") ids.push("jenson-top");
 
   // Special Extras (like Belt) sit over shirts and bottoms, but stay under any
   // outer Layers like the Hoodie, Big Shirt, Sweater, or Black Blazer.
@@ -5702,6 +5861,9 @@ function getMikoEquippedAssetIds() {
   // only the sleeve that belongs to it, preserving the correct stack.
   ids.push("arm-base");
   if (outfit.shirt === "top-button") ids.push("top-button-sleeve");
+  else if (outfit.shirt === "kiri-top") ids.push("kiri-sleeve");
+  else if (outfit.shirt === "cybil-shirt") ids.push("cybil-sleeve");
+  else if (outfit.shirt === "nene-shirt") ids.push("nene-shirt-sleeve");
   if (outfit.outer === "top-hoodie") ids.push("top-hoodie-sleeve");
   else if (outfit.outer === "top-sweater") ids.push("top-sweater-sleeve");
   else if (outfit.outer === "outer-black-blazer") ids.push("outer-black-blazer-arm");
@@ -5712,6 +5874,10 @@ function getMikoEquippedAssetIds() {
   else if (outfit.outer === "westley-jacket") ids.push("westley-sleeve");
   else if (outfit.outer === "circe-sweater") ids.push("circe-sleeve");
   else if (outfit.outer === "quin-jacket") ids.push("quin-back-jacket", "quin-sleeve");
+  else if (outfit.outer === "midori-suit") ids.push("midori-sleeve");
+  else if (outfit.outer === "nico-jacket") ids.push("nico-sleeve");
+  else if (outfit.outer === "nene-sweater") ids.push("nene-sweater-sleeve");
+  else if (outfit.outer === "moriko-hoodie") ids.push("moriko-sleeve");
 
   // Socks sit below any equipped shoes. Belt is already inserted earlier so it
   // stays under outer Layers but still above shirts and bottoms.
@@ -6380,12 +6546,19 @@ function chooseSingle(group, id) {
 
 function renderHairOptions(group) {
   if (save.selectedCharacter === "miko") {
-    closetOptions.append(makeOptionCard({
-      assetId: "hair-main",
-      label: "Hair",
-      selected: true,
-      required: true
-    }));
+    const outfit = getCurrentOutfit();
+    for (const id of group.options) {
+      const asset = MIKO_ASSETS[id];
+      if (!asset) continue;
+      const unlocked = id === "hair-main" || isClosetAssetUnlocked(id, "miko");
+      closetOptions.append(makeOptionCard({
+        assetId: id,
+        label: asset.label,
+        selected: (outfit.hair || "hair-main") === id,
+        locked: !unlocked,
+        onClick: unlocked ? () => chooseSingle(group, id) : () => showToast(closetLockedMessage(id, asset))
+      }));
+    }
     return;
   }
 
@@ -7146,7 +7319,15 @@ function closetLockedMessage(id, asset) {
     "yuzuru-shirt":"Yuzuru","yuzuru-shorts":"Yuzuru","yuzuru-socks":"Yuzuru","yuzuru-shoes":"Yuzuru","yuzuru-bracelet":"Yuzuru",
     "westley-top":"Westley","westley-jacket":"Westley","westley-sleeve":"Westley","westley-pants":"Westley","westley-boots":"Westley","westley-face-makeup":"Westley",
     "circe-tank-top":"Circe","circe-sweater":"Circe","circe-sleeve":"Circe","circe-shorts":"Circe","circe-stockings":"Circe","circe-shoes":"Circe","circe-choker":"Circe",
-    "quin-shirt":"Quin","quin-jacket":"Quin","quin-back-jacket":"Quin","quin-sleeve":"Quin","quin-shorts":"Quin","quin-boots":"Quin","quin-hairpins":"Quin"
+    "quin-shirt":"Quin","quin-jacket":"Quin","quin-back-jacket":"Quin","quin-sleeve":"Quin","quin-shorts":"Quin","quin-boots":"Quin","quin-hairpins":"Quin",
+    "kiri-top":"Kiri","kiri-sleeve":"Kiri","kiri-capris":"Kiri","kiri-socks":"Kiri","kiri-shoes":"Kiri","kiri-hairpiece":"Kiri",
+    "midori-suit":"Midori","midori-sleeve":"Midori","midori-shorts":"Midori","midori-stockings":"Midori","midori-boots":"Midori","midori-scarf":"Midori","midori-low-ponytail":"Midori",
+    "luka-shirt":"Luka","luka-jacket":"Luka","luka-jeans":"Luka","luka-sneakers":"Luka","luka-back-hair":"Luka","luka-bangs":"Luka",
+    "cybil-shirt":"Cybil","cybil-vest":"Cybil","cybil-sleeve":"Cybil","cybil-shorts":"Cybil","cybil-stockings":"Cybil","cybil-boots":"Cybil","cybil-ponytail":"Cybil",
+    "nico-shirt":"Nico","nico-jacket":"Nico","nico-sleeve":"Nico","nico-shorts":"Nico","nico-socks":"Nico","nico-shoes":"Nico","nico-hat":"Nico","nico-back-bow":"Nico",
+    "nene-shirt":"Nene","nene-shirt-sleeve":"Nene","nene-sweater":"Nene","nene-sweater-sleeve":"Nene","nene-pants":"Nene","nene-shoes":"Nene","nene-glasses":"Nene",
+    "moriko-hoodie":"Moriko","moriko-sleeve":"Moriko","moriko-pants":"Moriko","moriko-shoes":"Moriko","moriko-necklace":"Moriko","moriko-hair":"Moriko","moriko-bangs":"Moriko",
+    "jenson-top":"Jenson","jenson-pants":"Jenson","jenson-shoes":"Jenson","jenson-glasses":"Jenson"
   };
   if (loveInterestWardrobe[id]) return `${asset.label} is locked — meet ${loveInterestWardrobe[id]} while exploring Duck Quest as Miko!`;
   return questRewardHints[id] || `${asset.label} is locked — unlock it from the Shop!`;
@@ -9860,6 +10041,22 @@ function duckDiscoveryHint(duck) {
   if (duck.recipe) return "Craft this duck in the Duck Crafter to discover it.";
 
   switch (duck.acquisition) {
+    case "love-interest-jenson":
+      return "Meet Jenson while exploring Duck Quest as Miko to unlock this special duck.";
+    case "love-interest-moriko":
+      return "Meet Moriko while exploring Duck Quest as Miko to unlock this special duck.";
+    case "love-interest-nene":
+      return "Meet Nene while exploring Duck Quest as Miko to unlock this special duck.";
+    case "love-interest-nico":
+      return "Meet Nico while exploring Duck Quest as Miko to unlock this special duck.";
+    case "love-interest-cybil":
+      return "Meet Cybil while exploring Duck Quest as Miko to unlock this special duck.";
+    case "love-interest-luka":
+      return "Meet Luka while exploring Duck Quest as Miko to unlock this special duck.";
+    case "love-interest-midori":
+      return "Meet Midori while exploring Duck Quest as Miko to unlock this special duck.";
+    case "love-interest-kiri":
+      return "Meet Kiri while exploring Duck Quest as Miko to unlock this special duck.";
     case "love-interest-quin":
       return "Meet Quin while exploring Duck Quest as Miko to unlock this special duck.";
     case "love-interest-circe":
