@@ -1,0 +1,150 @@
+name: Install Duckie Days v24.326 Remaining Miko Love Interests
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - "Duckie-Days-v24.326-remaining-miko-love-interests-update-only.zip"
+      - ".github/workflows/install-duckie-days-v24-326-remaining-miko-love-interests-REDO.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-326-love-interests
+  cancel-in-progress: false
+
+jobs:
+  install-update:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Check starting version and package
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.326-remaining-miko-love-interests-update-only.zip"
+
+          test -f "$ZIP" || {
+            echo "ERROR: $ZIP is missing from the repository root."
+            echo "Upload the update ZIP to the repository root and this YAML to .github/workflows/."
+            exit 1
+          }
+
+          test -f version.json || {
+            echo "ERROR: version.json is missing."
+            exit 1
+          }
+
+          grep -Fq '"version": "24.325"' version.json || {
+            echo "ERROR: This update expects Duckie Days v24.325 as its starting version."
+            echo "Current version.json is:"
+            cat version.json
+            exit 1
+          }
+
+          unzip -tq "$ZIP"
+
+      - name: Install v24.326
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="Duckie-Days-v24.326-remaining-miko-love-interests-update-only.zip"
+          TMP=".duckie-days-v24-326-install"
+
+          rm -rf "$TMP"
+          mkdir -p "$TMP"
+          unzip -q "$ZIP" -d "$TMP"
+
+          test -d "$TMP/payload" || {
+            echo "ERROR: The update ZIP does not contain its payload folder."
+            exit 1
+          }
+
+          cp -a "$TMP/payload/." ./
+          rm -rf "$TMP"
+
+      - name: Verify v24.326
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Build/version wiring.
+          grep -Fq '"version": "24.326"' version.json
+          grep -Fq 'content="24.326"' index.html
+          grep -Fq 'const DUCK_HUB_BUILD = "24.326";' index.html
+          grep -Fq 'duck-habit-hub-app-v24-326' sw.js
+          grep -Fq 'fixes-v326.js?v=24.326' index.html
+
+          # New Duck Quest scripts.
+          test -f duck-quest/js/love-interests-v326.js
+          test -f duck-quest/js/special-encounters-v326.js
+          grep -Fq 'js/love-interests-v326.js?v=24-326' duck-quest/index.html
+          grep -Fq 'js/special-encounters-v326.js?v=24-326' duck-quest/index.html
+          grep -Fq 'const SHARED_CHANCE = 0.02;' duck-quest/js/love-interests-v326.js
+
+          # All eight remaining Miko love interests, ducks, cards and asset folders.
+          for id in kiri midori luka cybil nico nene moriko jenson; do
+            test -d "duck-quest/assets/love-interests/$id"
+            grep -Fq "\"$id-duck\"" app.js
+            grep -Fq "id:\"r-love-$id\"" trading-cards-base.js
+          done
+
+          # Reaction sprites.
+          test -f duck-quest/assets/love-interests/kiri/Kiri-worried.png
+          test -f duck-quest/assets/love-interests/midori/Midori-opened-smug.png
+          test -f duck-quest/assets/love-interests/luka/Luka-calm.png
+          test -f duck-quest/assets/love-interests/cybil/Cybil-worried.png
+          test -f duck-quest/assets/love-interests/nico/Nico-happy.png
+          test -f duck-quest/assets/love-interests/nene/Nene-happy.png
+          test -f duck-quest/assets/love-interests/moriko/Moriko-chill.png
+          test -f duck-quest/assets/love-interests/jenson/Jenson-Sprite-happy.png
+
+          # Lovers Reunite scenes.
+          grep -Fq '"kiri-midori": {' duck-quest/js/love-interests-v326.js
+          grep -Fq '"luka-cybil": {' duck-quest/js/love-interests-v326.js
+          grep -Fq '"nico-nene": {' duck-quest/js/love-interests-v326.js
+          grep -Fq '"moriko-jenson": {' duck-quest/js/love-interests-v326.js
+
+          # JavaScript syntax checks.
+          node --check app.js
+          node --check trading-cards-base.js
+          node --check sock-gremlin-fashion-v297.js
+          node --check fixes-v326.js
+          node --check sw.js
+          node --check duck-quest/js/love-interests-v326.js
+          node --check duck-quest/js/special-encounters-v326.js
+          node --check duck-quest/js/gimmick-encounters-v288.js
+
+          echo "Verification passed for Duckie Days v24.326."
+
+      - name: Remove update ZIP after installation
+        shell: bash
+        run: |
+          rm -f Duckie-Days-v24.326-remaining-miko-love-interests-update-only.zip
+
+      - name: Commit installed update
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "ERROR: No changes were staged after installation."
+            exit 1
+          fi
+
+          git commit -m "Add remaining Miko love interests (v24.326)"
+          git push
+
+      - name: Success
+        shell: bash
+        run: |
+          echo "SUCCESS: Duckie Days v24.326 installed and verified."
