@@ -89,8 +89,9 @@
   `;
   document.head.appendChild(style);
 
+  let chosenCandyCharacter=null;
   function targetCharacterId(){
-    const requested=String(save?.duckQuest?.activeCharacter || save?.selectedCharacter || 'peep');
+    const requested=String(chosenCandyCharacter || save?.duckQuest?.activeCharacter || save?.selectedCharacter || 'peep');
     return (typeof CHARACTERS==='object' && CHARACTERS?.[requested]) ? requested : 'peep';
   }
   function targetCharacterName(){
@@ -134,7 +135,7 @@
     const characterId=targetCharacterId();
     const who=targetCharacterName();
     const hero=normalizeDuckQuestCharacterProgress(characterId);
-    if(!hero || hero.level>=100){try{showToast(`${who} is already at MAX Level!`);}catch(error){}return;}
+    if(!hero || hero.level>=999){try{showToast(`${who} is already at MAX Level!`);}catch(error){}return;}
 
     const need=Math.max(1,Number(duckQuestExpNeeded(hero.level))||1);
     const amount=Math.max(1,Math.ceil(need*candy.percent));
@@ -142,12 +143,12 @@
 
     const beforeLevel=hero.level;
     hero.exp=Math.max(0,Number(hero.exp)||0)+amount;
-    while(hero.level<100){
+    while(hero.level<999){
       const levelNeed=Math.max(1,Number(duckQuestExpNeeded(hero.level))||1);
       if(hero.exp<levelNeed) break;
       hero.exp-=levelNeed;
       hero.level++;
-      if(hero.level>=100){hero.level=100;hero.exp=0;break;}
+      if(hero.level>=999){hero.level=999;hero.exp=0;break;}
     }
 
     // normalizeDuckQuestCharacterProgress returns the object stored at save.duckQuest[characterId].
@@ -169,6 +170,29 @@
     const who=targetCharacterName();
     const characterId=targetCharacterId();
     const hero=normalizeDuckQuestCharacterProgress(characterId);
+
+    // Choose the OC without needing to enter Duck Quest first.
+    const allowed=Object.keys(CHARACTERS || {}).filter(id =>
+      id==='peep' || (Array.isArray(save.unlockedCharacters) && save.unlockedCharacters.includes(id)));
+    if(allowed.length > 1){
+      const label=document.createElement('label');
+      label.className='exp-candy-use-note-v215';
+      label.textContent='Give candy to: ';
+      const select=document.createElement('select');
+      select.style.cssText='max-width:100%;padding:5px;border:1px solid #d99ab5;border-radius:9px;background:#fff;font:inherit';
+      for(const id of allowed){
+        const option=document.createElement('option');option.value=id;
+        option.textContent=CHARACTERS[id]?.name || id;
+        select.append(option);
+      }
+      select.value=characterId;
+      select.addEventListener('change',()=>{
+        chosenCandyCharacter=select.value;
+        renderInventoryItemSheet();
+      });
+      label.append(select);
+      inventorySheetActions.prepend(label);
+    }
 
     const note=document.createElement('p');
     note.className='exp-candy-use-note-v215';

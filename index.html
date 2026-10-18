@@ -8,7 +8,7 @@
   <title>Duckie Days</title>
   <!-- v24.107 tall-phone room anchor + CSS wallpaper geometry fix -->
   <link rel="stylesheet" href="app.css?v=24.296" />
-  <link rel="stylesheet" href="trading-cards-base.css?v=24.296" />
+  <link rel="stylesheet" href="trading-cards-base.css?v=24.327" />
   <link rel="stylesheet" href="trading-cards-extra.css?v=24.296" />
   <link rel="stylesheet" href="tasks.css?v=24.296" />
   <link rel="stylesheet" href="hub.css?v=24.296" />
@@ -1198,11 +1198,11 @@
   <script src="trading-cards-sock-gremlin-v297.js?v=24.297"></script>
   <script src="trading-cards-universal-v298.js?v=24.298"></script>
   <script src="trading-cards-bao-cafe-v299.js?v=24.299"></script>
-  <script src="app.js?v=24.326"></script>
+  <script src="app.js?v=24.327"></script>
   <script src="universal-clothing-v311.js?v=24.311"></script>
   <script src="gimmick-hub-v288.js?v=24.296"></script>
-  <script src="hub-boosts.js?v=24.296"></script>
-  <script src="trading-cards-ui.js?v=24.296"></script>
+  <script src="hub-boosts.js?v=24.327"></script>
+  <script src="trading-cards-ui.js?v=24.327"></script>
   <script src="tasks.js?v=24.296"></script>
   <script type="module" src="firebase-reminders.mjs?v=24.296"></script>
   <script src="task-reminders.js?v=24.296"></script>
@@ -1287,7 +1287,7 @@
       window.addEventListener("load", async () => {
         try {
           await duckHubClearOldCodeCaches();
-          const registration = await navigator.serviceWorker.register("./sw.js?v=24-326-bao1255", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("./sw.js?v=24-327-qol", { updateViaCache: "none" });
           await registration.update();
           if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
           await duckHubCheckForUpdate(registration);

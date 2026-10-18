@@ -15,15 +15,15 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-326-bao-cafe-1255';
+const APP_CACHE='duck-habit-hub-app-v24-327-qol-bao-cafe';
 const APP_SHELL=[
  './',
  './index.html',
  './version.json',
- './sw.js?v=24.326',
+ './sw.js?v=24.327',
  './manifest.webmanifest?v=24.296',
  './app.css?v=24.296',
- './trading-cards-base.css?v=24.296',
+ './trading-cards-base.css?v=24.327',
  './trading-cards-extra.css?v=24.296',
  './tasks.css?v=24.296',
  './hub.css?v=24.296',
@@ -60,12 +60,12 @@ const APP_SHELL=[
  './bao-cafe/assets/Frappe-idle-1.png',
  './duck-quest/css/bao-cafe-v299.css?v=24-309',
  './duck-quest/css/fixes-v318.css?v=24.318',
- './duck-quest/js/bao-cafe-v299.js?v=24-309',
- './app.js?v=24.326',
+ './duck-quest/js/bao-cafe-v299.js?v=24-327',
+ './app.js?v=24.327',
  './universal-clothing-v311.js?v=24.311',
  './gimmick-hub-v288.js?v=24.296',
- './hub-boosts.js?v=24.296',
- './trading-cards-ui.js?v=24.296',
+ './hub-boosts.js?v=24.327',
+ './trading-cards-ui.js?v=24.327',
  './tasks.js?v=24.296',
  './firebase-reminders.mjs?v=24.296',
  './task-reminders.js?v=24.296',

@@ -5471,7 +5471,7 @@ function normalizeDuckQuestCharacterProgress(characterId = save.selectedCharacte
 
   quest[id] = {
     ...existing,
-    level: Math.max(1, Math.min(100, Number(existing.level) || 1)),
+    level: Math.max(1, Math.min(999, Math.floor(Number(existing.level) || 1))),
     exp: Math.max(0, Number(existing.exp) || 0),
     iconBackground: iconId,
     lastArea: validAreas.includes(requestedLastArea) ? requestedLastArea : "meadow",
@@ -13018,8 +13018,8 @@ function renderStatusCharacter() {
 }
 
 function duckQuestExpNeeded(level) {
-  const safeLevel = Math.max(1, Math.min(100, Number(level) || 1));
-  return safeLevel >= 100 ? 0 : 80 + (safeLevel - 1) * 25;
+  const safeLevel = Math.max(1, Math.min(999, Math.floor(Number(level) || 1)));
+  return safeLevel >= 999 ? 0 : 80 + (safeLevel - 1) * 25;
 }
 
 function totalBuddyCount() {
@@ -13033,7 +13033,7 @@ function renderStatus() {
   const stats = save.stats || DEFAULT_SAVE.stats;
   const happiness = getCharacterHappinessInfo(save.selectedCharacter);
   const questProgress = normalizeDuckQuestCharacterProgress(save.selectedCharacter);
-  const questLevel = Math.max(1, Math.min(100, Number(questProgress.level) || 1));
+  const questLevel = Math.max(1, Math.min(999, Math.floor(Number(questProgress.level) || 1)));
   const questExp = Math.max(0, Number(questProgress.exp) || 0);
   const questNeed = duckQuestExpNeeded(questLevel);
   const meadowRank = Math.max(1, Math.min(40, Number(questProgress.areas?.meadow?.unlockedRank) || 1));
@@ -13052,8 +13052,8 @@ function renderStatus() {
   statusXpFill.style.width = `${happiness.progressPercent}%`;
 
   if (statusQuestLevelLabel) statusQuestLevelLabel.textContent = `Duck Quest Lv. ${questLevel}`;
-  if (statusQuestXpText) statusQuestXpText.textContent = questLevel >= 100 ? "MAX" : `${Math.floor(questExp)} / ${questNeed} EXP`;
-  if (statusQuestXpFill) statusQuestXpFill.style.width = questLevel >= 100 ? "100%" : `${Math.min(100, questNeed ? (questExp / questNeed) * 100 : 0)}%`;
+  if (statusQuestXpText) statusQuestXpText.textContent = questLevel >= 999 ? "MAX" : `${Math.floor(questExp)} / ${questNeed} EXP`;
+  if (statusQuestXpFill) statusQuestXpFill.style.width = questLevel >= 999 ? "100%" : `${Math.min(100, questNeed ? (questExp / questNeed) * 100 : 0)}%`;
 
   statusCoins.textContent = Math.max(0, Number(save.coins) || 0).toLocaleString();
   statusTasksCompleted.textContent = Math.max(0, Number(stats.tasksCompleted) || 0).toLocaleString();

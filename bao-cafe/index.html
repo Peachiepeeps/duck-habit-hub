@@ -1602,12 +1602,115 @@ document.getElementById('again').addEventListener('click',prepareOrder);
 document.getElementById('changeBear').addEventListener('click',goBearPick);
 buildBearPicker();
 </script>
+<style id="duckieCafeBearRewardStyle">
+  #result .resultCard{overflow-y:auto;overscroll-behavior:contain;}
+  .cafe-bear-rewards{margin:6px auto 1px;padding:7px 9px;border:2px solid #e9bfd4;border-radius:13px;background:#fff1f8;text-align:center;color:#805267;max-width:98%;font-size:clamp(.64rem,2.3vw,.79rem);line-height:1.24}
+  .cafe-bear-rewards strong{display:block;margin-bottom:2px;color:#ad5681;font-size:1em}
+  .cafe-bear-rewards .cafe-bear-reward-items{font-weight:800}
+  .cafe-bear-rewards .cafe-bear-reward-items span{display:inline-block;margin:2px 2px 0;padding:3px 6px;border-radius:9px;background:#fff;border:1px solid #f0c7dc}
+</style>
+<script id="duckieCafeBearRewardsV327">
+(() => {
+  'use strict';
+  // Extensible bear-specific pools. Add another bear ID here when one joins.
+  // Each entry is equally likely; a perfect order draws twice, others once.
+  const BEAR_REWARD_POOLS = Object.freeze({
+    cheese: [
+      {item:'standard-duck',name:'Standard Duck'},
+      {item:'eyebrows',name:'Eyebrows'},
+      {item:'pizza',name:'Pizza'},
+      {item:'warm-blanket',name:'Warm Blanket'},
+      {card:'r-bao-cheese',name:'Cheese Trading Card'},
+      {coins:100,name:'100 Pink Coins'}
+    ],
+    parfait: [
+      {item:'bow',name:'Bow'},
+      {item:'magical-girl-pendant',name:'Magical Girl Pendant'},
+      {item:'parfait',name:'Parfait'},
+      {item:'strawberry-shortcake',name:'Strawberry Shortcake'},
+      {item:'buddy-pon',quantity:5,name:'Buddy Pon ×5'},
+      {card:'r-bao-parfait',name:'Parfait Trading Card'},
+      {coins:100,name:'100 Pink Coins'}
+    ],
+    frappe: [
+      {item:'cat-ears',name:'Cat Ears'},
+      {item:'wedding-cake',name:'Wedding Cake'},
+      {item:'exp-candy-small',quantity:5,name:'EXP Candy Small ×5'},
+      {card:'r-bao-frappe',name:'Frappe Trading Card'},
+      {coins:100,name:'100 Pink Coins'}
+    ]
+  });
+  const SAVE_KEY='duckHabitHubSave_v1';
+  const CHALLENGE_KEY='baoCafeChallengeV299';
+  let rewardedOrder=null;
+  function readSave(){try{return JSON.parse(localStorage.getItem(SAVE_KEY)||'{}')||{}}catch(_){return {}}}
+  function grant(save,selection){
+    if(selection.coins){
+      save.coins=Math.max(0,Number(save.coins)||0)+selection.coins;
+      if(save.stats&&typeof save.stats==='object') save.stats.coinsEarnedTotal=Math.max(0,Number(save.stats.coinsEarnedTotal)||0)+selection.coins;
+    }else if(selection.item){
+      if(!save.inventory||typeof save.inventory!=='object')save.inventory={};
+      save.inventory[selection.item]=Math.max(0,Math.floor(Number(save.inventory[selection.item])||0))+(selection.quantity||1);
+    }else if(selection.card){
+      if(!save.tradingCards||typeof save.tradingCards!=='object')save.tradingCards={};
+      const data=save.tradingCards;
+      if(!data.owned||typeof data.owned!=='object')data.owned={};
+      if(!Array.isArray(data.unseen))data.unseen=[];
+      const oldCount=Math.max(0,Number(data.owned[selection.card])||0);
+      data.owned[selection.card]=oldCount+1;
+      if(!oldCount&&!data.unseen.includes(selection.card))data.unseen.push(selection.card);
+    }
+  }
+  function giveBearPrizes(perfect){
+    if(rewardedOrder===order)return;
+    rewardedOrder=order;
+    const bearId=String(selectedBear||'cheese').toLowerCase();
+    const pool=BEAR_REWARD_POOLS[bearId];
+    if(!pool?.length)return;
+    const count=perfect?2:1;
+    const prizes=Array.from({length:count},()=>pool[Math.floor(Math.random()*pool.length)]);
+    const save=readSave();
+    prizes.forEach(prize=>grant(save,prize));
+    // Duck Quest encounter returns with the same save. Mark rewards claimed
+    // so the quest's old random-reward routine cannot grant a second batch.
+    const q=new URLSearchParams(location.search);
+    if(q.get('duckquest')==='1'&&save[CHALLENGE_KEY]){
+      save[CHALLENGE_KEY].bearRewardsGranted=true;
+      save[CHALLENGE_KEY].bearRewardNames=prizes.map(p=>p.name);
+      save[CHALLENGE_KEY].bearRewardCoins=prizes.reduce((n,p)=>n+(p.coins||0),0);
+    }
+    try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){console.warn('Bao Cafe reward could not be saved:',e);}
+    const container=document.getElementById('cafeBearRewardsV327');
+    if(container){
+      container.innerHTML='';
+      const heading=document.createElement('strong');
+      heading.textContent=`🎁 ${BEAR_SPRITES[bearId]?.name||bearId}'s Special Rewards · ${count} ${count===1?'prize':'prizes'}!`;
+      const items=document.createElement('div');items.className='cafe-bear-reward-items';
+      for(const prize of prizes){const el=document.createElement('span');el.textContent=prize.name;items.append(el)}
+      container.append(heading,items);
+      container.hidden=false;
+    }
+  }
+  const rewardDisplay=document.createElement('div');
+  rewardDisplay.id='cafeBearRewardsV327';rewardDisplay.className='cafe-bear-rewards';rewardDisplay.hidden=true;
+  document.querySelector('#result .resultsWindow')?.append(rewardDisplay);
+  const previousShowResult=showResult;
+  showResult=function(...args){
+    const result=previousShowResult.apply(this,args);
+    const perfect=state.base===order.base&&Math.abs(state.sweetness-order.sweetness)<=5&&
+      state.flavor===order.flavor&&state.ice===order.ice&&toppingsMatch(state.toppings,order.toppings);
+    giveBearPrizes(perfect);
+    return result;
+  };
+  window.DuckieCafeBearRewardPools=BEAR_REWARD_POOLS;
+})();
+</script>
 <script id="duckieDaysBaoCafeHubBridge">
 (() => {
   'use strict';
   const query = new URLSearchParams(location.search);
   const quest = query.get('duckquest') === '1';
-  const questKey = 'baoCafeChallengeV309';
+  const questKey = 'baoCafeChallengeV299';
   const hubSaveKey = 'duckHabitHubSave_v1';
   const returnToHub = () => { location.href = '../'; };
   const returnToQuest = () => { location.href = '../duck-quest/?bao-cafe-return=1&v=24-309'; };

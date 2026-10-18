@@ -135,3 +135,13 @@
   opacity:.86;
   filter:none;
 }
+
+/* Bao Café / Cards QoL update: compact 1/10 selection and bonus pack reveal. */
+.tc-pack-bar{display:flex;flex-wrap:wrap;gap:6px}
+.tc-pack-bar>div{margin-right:auto}
+.tc-pack-bar .tc-open-pack{flex:0 0 auto}
+.tc-pack-chances{margin:-5px 4px 0;color:#84566f;font-size:.70rem;line-height:1.35;text-align:center}
+.tc-pack-special .tc-pack-stage{border-color:#d28bda;background:radial-gradient(circle,#fff 0,#f8e8ff 65%,#e7c5ff 100%)}
+.tc-pack-god .tc-pack-stage{border-color:#dfb451;background:radial-gradient(circle,#fffcee 0,#ffecc5 55%,#ead5f7 100%);box-shadow:0 0 42px rgba(255,220,109,.45)}
+.tc-pack-special .tc-pack-title,.tc-pack-god .tc-pack-title{font-size:clamp(1.05rem,4.5vw,1.7rem);text-align:center}
+@media(max-width:560px){.tc-pack-bar .tc-open-pack{font-size:.64rem;padding:7px 9px}.tc-pack-bar>img{width:31px;height:42px}.tc-pack-bar>div{flex:1 1 105px;min-width:0}}
