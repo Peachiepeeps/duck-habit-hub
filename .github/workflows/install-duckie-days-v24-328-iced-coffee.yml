@@ -1,0 +1,108 @@
+name: Install Duckie Days v24.328 Iced Coffee
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Duckie-Days-v24.328-Iced-Coffee-update-only.zip'
+      - '.github/workflows/install-duckie-days-v24-328-iced-coffee.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-iced-coffee-24328-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  install-iced-coffee:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Duckie Days
+        uses: actions/checkout@v4
+
+      - name: Check for update ZIP
+        id: update
+        shell: bash
+        run: |
+          if [ -f Duckie-Days-v24.328-Iced-Coffee-update-only.zip ]; then
+            echo 'present=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'present=false' >> "$GITHUB_OUTPUT"
+            echo 'Update package is not uploaded yet. Upload the ZIP to the repository root to install.'
+          fi
+
+      - name: Install the verified Iced Coffee update
+        if: steps.update.outputs.present == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          from hashlib import sha256
+
+          zip_path = Path('Duckie-Days-v24.328-Iced-Coffee-update-only.zip')
+          before = {
+            'bao-cafe/index.html': '93aa521ddb59309837e691e006f60d6a985b63d9217d1bc2cfcdc089bda69bce',
+            'index.html': 'd5d2b3f0304a73794a62bde0955cf792ff8e4f98e41dac4f924fe9da6106e1bc',
+            'sw.js': 'c5f1236cb791ac4c8e70b0b2b4dd425f70a3e7b4b5e29cd391b02594c7caa082',
+            'version.json': 'e1024613d9f63d9573527dee2d95c5a3a625d4c7b0c3bc4fe0e8d8384a629e36',
+          }
+          after = {
+            'bao-cafe/index.html': 'f8589e64fca4fe79342413877570c6092d68d5c2773a95a13d296babbd57df33',
+            'index.html': 'd31a335231c785827da3fc9ba42cba7d56a4b72c34e838ee444332403987aa04',
+            'sw.js': 'c6855c1f43b35593f1c72da70005efd92ccdee0018f6d9c3d4b0217fa2697f46',
+            'version.json': 'cf476fba20c829c5575cfff104bb70aa72a5210b1ede54242bcafefbfe800d6b',
+          }
+          with ZipFile(zip_path) as archive:
+              members = archive.namelist()
+              expected = ['payload/' + path for path in before]
+              if len(members) != len(expected) or sorted(members) != sorted(expected):
+                  raise SystemExit('Incorrect or duplicate update ZIP contents.')
+              updates = {path: archive.read('payload/' + path) for path in before}
+
+          # Verify the ZIP is authentic before touching files.
+          for path, content in updates.items():
+              if sha256(content).hexdigest() != after[path]:
+                  raise SystemExit('The update ZIP contains an unexpected ' + path)
+
+          # Never overwrite a newer or differently edited Duckie Days build.
+          for path in before:
+              current = Path(path)
+              if not current.is_file():
+                  raise SystemExit('Missing Duckie Days file: ' + path)
+              digest = sha256(current.read_bytes()).hexdigest()
+              if digest not in (before[path], after[path]):
+                  raise SystemExit('File changed since v24.327: ' + path + '. Nothing was updated.')
+          # Allow reruns, but do not install over a mixed/partial version.
+          states = [sha256(Path(path).read_bytes()).hexdigest() == after[path] for path in before]
+          if any(states) and not all(states):
+              raise SystemExit('An incomplete or mixed version exists; no changes were made.')
+
+          for path, content in updates.items():
+              Path(path).write_bytes(content)
+          assert all(sha256(Path(path).read_bytes()).hexdigest() == after[path] for path in after)
+          print('Installed and verified Bao Café Iced Coffee v24.328. Other games were untouched.')
+          PY
+
+      - name: Remove installation ZIP after use
+        if: steps.update.outputs.present == 'true'
+        shell: bash
+        run: rm -f Duckie-Days-v24.328-Iced-Coffee-update-only.zip
+
+      - name: Commit Iced Coffee to Duckie Days
+        if: steps.update.outputs.present == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- bao-cafe/index.html index.html sw.js version.json Duckie-Days-v24.328-Iced-Coffee-update-only.zip
+          if git diff --cached --quiet; then
+            echo 'Iced Coffee is already installed; no commit needed.'
+          else
+            git commit -m 'Add Iced Coffee to Bao Café (Duckie Days v24.328)'
+            git push
+          fi
