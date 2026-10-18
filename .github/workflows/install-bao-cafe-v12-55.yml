@@ -1,0 +1,118 @@
+name: Install Duckie Days Bao Café v12.55
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Duckie-Days-Bao-Cafe-v12.55-update-only.zip'
+      - '.github/workflows/install-bao-cafe-v12-55.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-bao-cafe-v12-55-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  install-bao-cafe:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Duckie Days
+        uses: actions/checkout@v4
+
+      - name: Check the update package
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP='Duckie-Days-Bao-Cafe-v12.55-update-only.zip'
+          test -f "$ZIP" || {
+            echo "Missing $ZIP. Upload it to the repository root." >&2
+            exit 1
+          }
+          test -f index.html && test -f sw.js && test -d bao-cafe || {
+            echo 'Run this in the Duckie Days hub repository root.' >&2
+            exit 1
+          }
+          unzip -tq "$ZIP"
+
+      - name: Install Bao Café v12.55 and refresh hub cache
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib
+          from pathlib import Path
+          from zipfile import ZipFile
+
+          package = Path('Duckie-Days-Bao-Cafe-v12.55-update-only.zip')
+          expected_sha256 = 'b923789e643b0e3ce950ed866c683fe94a56dc1a84aec26f6376b4e53a82673f'
+          with ZipFile(package) as archive:
+              cafe = archive.read('payload/bao-cafe/index.html')
+
+          if hashlib.sha256(cafe).hexdigest() != expected_sha256:
+              raise SystemExit('The café update ZIP does not match the approved v12.55 package.')
+          if b'duckieDaysBaoCafeHubBridge' not in cafe:
+              raise SystemExit('The café is missing its Duckie Days / Duck Quest return bridge.')
+
+          # Preserve every other hub file. Only update the existing SW URL and
+          # cache name, as in the tested complete Duckie Days v12.55 hub ZIP.
+          updates = (
+              (Path('index.html'), b'./sw.js?v=24-326', b'./sw.js?v=24-326-bao1255'),
+              (Path('sw.js'), b"'duck-habit-hub-app-v24-326'", b"'duck-habit-hub-app-v24-326-bao-cafe-1255'"),
+          )
+          changed = []
+          for path, before, after in updates:
+              data = path.read_bytes()
+              if after in data:
+                  changed.append((path, data))  # Already updated; safe to rerun.
+              elif data.count(before) == 1:
+                  changed.append((path, data.replace(before, after, 1)))
+              else:
+                  raise SystemExit(
+                      f'{path} has a different service-worker version. '
+                      'Please check your current hub before installing; no files were changed.'
+                  )
+
+          Path('bao-cafe/index.html').write_bytes(cafe)
+          for path, data in changed:
+              path.write_bytes(data)
+          print('Installed Bao Café v12.55. Other games and assets are untouched.')
+          PY
+
+      - name: Verify the installed update
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib
+          from pathlib import Path
+          cafe = Path('bao-cafe/index.html').read_bytes()
+          expected = 'b923789e643b0e3ce950ed866c683fe94a56dc1a84aec26f6376b4e53a82673f'
+          assert hashlib.sha256(cafe).hexdigest() == expected
+          assert b'duckieDaysBaoCafeHubBridge' in cafe
+          assert b'./sw.js?v=24-326-bao1255' in Path('index.html').read_bytes()
+          assert b'duck-habit-hub-app-v24-326-bao-cafe-1255' in Path('sw.js').read_bytes()
+          print('Verified café, hub return bridge, and cache refresh.')
+          PY
+
+      - name: Remove the uploaded update ZIP
+        shell: bash
+        run: rm -f Duckie-Days-Bao-Cafe-v12.55-update-only.zip
+
+      - name: Commit the update to Duckie Days
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- bao-cafe/index.html index.html sw.js \
+            Duckie-Days-Bao-Cafe-v12.55-update-only.zip
+          if git diff --cached --quiet; then
+            echo 'Bao Café v12.55 is already installed; nothing to commit.'
+            exit 0
+          fi
+          git commit -m 'Install Bao Café v12.55 in Duckie Days'
+          git push
