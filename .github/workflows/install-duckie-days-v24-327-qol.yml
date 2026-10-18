@@ -1,0 +1,108 @@
+name: Install Duckie Days v24.327 QoL
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Duckie-Days-v24.327-QoL-update-only.zip'
+      - '.github/workflows/install-duckie-days-v24-327-qol.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-qol-24327-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  install-qol:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Verify and install v24.327
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import hashlib, json
+
+          PACKAGE=Path('Duckie-Days-v24.327-QoL-update-only.zip')
+          EXPECTED_PACKAGE='90c8f094777eea6beffe642e9befc1e78ee867850bc6775c07a7d388a729fef0'
+          BASE_HASHES={'app.js': '9c8e5d3b22fad4389473a00fc312de8af40b97af0fef031c197ce0bd2f81bbac', 'hub-boosts.js': '7ae358d1ef7a199ad3ae5323672587ba42c5514214d82b3449734646bc07524c', 'trading-cards-ui.js': '904a36d8a7ba0e7e0f5c083b29b1a22676d0c1f80ff2df35d003ff84e439ceec', 'trading-cards-base.css': '804c0b49e3f917c8dfdfbc72886cffaaad82f4d11f13be687dcbb83e3d2fa569', 'bao-cafe/index.html': 'b923789e643b0e3ce950ed866c683fe94a56dc1a84aec26f6376b4e53a82673f', 'duck-quest/js/bao-cafe-v299.js': '11a557536a6005856306818bf618f1513242ae8ccf4ea2d31c884180c5acaea6'}
+          TARGET_HASHES={'app.js': 'd41e72d55b1c9cb27ef7973825cca8c1bfb1b51c084f64cdd9a91eac75bd99f9', 'hub-boosts.js': '53c6f49bbfcdcd0905ab9b79116b54372555efc6ed275cb5d37294b53dd259d3', 'trading-cards-ui.js': '7693ba38e06254fa4c2b5d93cf0fbeac81cf9133b2235f17830060c632b503cb', 'trading-cards-base.css': 'ad12505a90ef70496c7d87d8ecf750e29f26f165cebb0a0365d10cacee8558f0', 'bao-cafe/index.html': '93aa521ddb59309837e691e006f60d6a985b63d9217d1bc2cfcdc089bda69bce', 'duck-quest/js/bao-cafe-v299.js': 'f1806d986f549e7ffc7dccd41f532b9a3865f642fd93227df2f44ed1182f0083'}
+
+          def sha(data):return hashlib.sha256(data).hexdigest()
+          if sha(PACKAGE.read_bytes())!=EXPECTED_PACKAGE:
+              raise SystemExit('The update ZIP does not match the verified v24.327 release.')
+          if not all(Path(x).exists() for x in ('index.html','app.js','sw.js','duck-quest/index.html')):
+              raise SystemExit('Run in the Duckie Days repository root.')
+          with ZipFile(PACKAGE) as z:
+              for path,expected in TARGET_HASHES.items():
+                  content=z.read('payload/'+path)
+                  if sha(content)!=expected:
+                      raise SystemExit('Corrupt update file: '+path)
+                  current=Path(path).read_bytes()
+                  if sha(current) not in (BASE_HASHES[path],expected):
+                      raise SystemExit('Your '+path+' has new edits. Stopping rather than overwriting them.')
+
+              changes={}
+              patches={
+                'index.html':[
+                  ('./sw.js?v=24-326-bao1255','./sw.js?v=24-327-qol'),
+                  ('app.js?v=24.326','app.js?v=24.327'),
+                  ('hub-boosts.js?v=24.296','hub-boosts.js?v=24.327'),
+                  ('trading-cards-ui.js?v=24.296','trading-cards-ui.js?v=24.327'),
+                  ('trading-cards-base.css?v=24.296','trading-cards-base.css?v=24.327')],
+                'duck-quest/index.html':[
+                  ('js/bao-cafe-v299.js?v=24-299','js/bao-cafe-v299.js?v=24-327')],
+                'sw.js':[
+                  ('duck-habit-hub-app-v24-326-bao-cafe-1255','duck-habit-hub-app-v24-327-qol-bao-cafe'),
+                  ('./sw.js?v=24.326','./sw.js?v=24.327'),
+                  ('app.js?v=24.326','app.js?v=24.327'),
+                  ('hub-boosts.js?v=24.296','hub-boosts.js?v=24.327'),
+                  ('trading-cards-ui.js?v=24.296','trading-cards-ui.js?v=24.327'),
+                  ('trading-cards-base.css?v=24.296','trading-cards-base.css?v=24.327'),
+                  ('duck-quest/js/bao-cafe-v299.js?v=24-309','duck-quest/js/bao-cafe-v299.js?v=24-327')]
+              }
+              for path,replacements in patches.items():
+                  text=Path(path).read_text()
+                  for old,new in replacements:
+                      if new in text:continue
+                      if text.count(old)!=1:
+                          raise SystemExit(path+' does not have the expected cache/script reference: '+old)
+                      text=text.replace(old,new,1)
+                  changes[path]=text.encode()
+              currentVersion=json.loads(Path('version.json').read_text()).get('version')
+              if currentVersion not in ('24.326','24.327'):
+                  raise SystemExit('Unexpected hub version '+str(currentVersion)+'; update stopped for safety.')
+              changes['version.json']=z.read('payload/version.json')
+              for path in TARGET_HASHES:
+                  changes[path]=z.read('payload/'+path)
+
+              # All validation occurs before writing any changes.
+              for path,data in changes.items():Path(path).write_bytes(data)
+
+          assert 'sw.js?v=24-327-qol' in Path('index.html').read_text()
+          assert 'duck-habit-hub-app-v24-327-qol-bao-cafe' in Path('sw.js').read_text()
+          assert 'baoCafeChallengeV299' in Path('bao-cafe/index.html').read_text()
+          assert '999' in Path('hub-boosts.js').read_text()
+          print('Installed Duckie Days v24.327 — cards, 999-level hub, bear rewards.')
+          PY
+      - name: Remove installer archive
+        run: rm -f Duckie-Days-v24.327-QoL-update-only.zip
+      - name: Commit v24.327 QoL
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- app.js hub-boosts.js trading-cards-ui.js trading-cards-base.css bao-cafe/index.html duck-quest/js/bao-cafe-v299.js index.html duck-quest/index.html sw.js version.json Duckie-Days-v24.327-QoL-update-only.zip
+          if git diff --cached --quiet; then
+            echo 'Duckie Days v24.327 is already installed.'
+            exit 0
+          fi
+          git commit -m 'Install Duckie Days v24.327 quality-of-life update'
+          git push
