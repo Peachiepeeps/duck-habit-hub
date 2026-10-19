@@ -1,0 +1,105 @@
+name: Install Duckie Days v24.334 Bao Cafe Base Favorites
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Duckie-Days-v24.334-Bao-Cafe-Base-Favorites-update-only.zip'
+      - '.github/workflows/install-duckie-days-v24-334-bao-extra-favorites.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-cafe-v24334-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  install-bao-cafe-extra-favorites:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Duckie Days
+        uses: actions/checkout@v4
+
+      - name: Check for update ZIP
+        id: update
+        shell: bash
+        run: |
+          if [ -f 'Duckie-Days-v24.334-Bao-Cafe-Base-Favorites-update-only.zip' ]; then
+            echo 'present=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'present=false' >> "$GITHUB_OUTPUT"
+            echo 'Upload the matching v24.334 ZIP to the repository root, then rerun this workflow.'
+          fi
+
+      - name: Verify and install Bao Cafe v24.334
+        if: steps.update.outputs.present == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          from hashlib import sha256
+          from zipfile import ZipFile
+
+          PACKAGE = 'Duckie-Days-v24.334-Bao-Cafe-Base-Favorites-update-only.zip'
+          PACKAGE_SHA256 = '07c82aa00dae82bb124ecd209264a65452f65f59027589642c9e996ac506eecb'
+          OLD_CAFE = {331: '4cdc729d972337cb54a15e61cbf25d08b714e2c274f3c7bbb2b127e5fe3f3f95', 332: '9506d920c89b459d0671801806a4831317d367550fce159e258f849f8bf87a77', 333: 'ebc716e4693d9923afb562389df7db35f7219568e6f3d6fedd940c158edae8da'}
+          OLD_ROOT = {'bao-cafe/index.html': '4cdc729d972337cb54a15e61cbf25d08b714e2c274f3c7bbb2b127e5fe3f3f95', 'index.html': '69e5c2e6213845c4bca476f30ef597434f530b5e2484c7ca2adca9ea661af086', 'sw.js': 'b77d589c30c621b9314b8f72301136756801ad4cb03a702ad6b44f39611e5b0d', 'version.json': '2abb1903874fe727d140ddc2c45e56cd0abc85166f16e60edf28115790c74acd'}
+          NEW = {'bao-cafe/index.html': 'ab7eaf22d3e83e1eeff50de5b608b706dba8f4c447f3f788096943ac8fb8cc15', 'index.html': '33ad92da5375e1cfe10ac59611b3faabbfc585ec58502abc7564d4ee9c5320f4', 'sw.js': '9ff23c95de78a03aa7e084956fdf074bb270fc6c876ed366f6a1dec563043b8e', 'version.json': '2986560c480473b2cdd6a22abd5a9dee41cc1af907da6a8db97a15e4ac29c85b'}
+
+          def digest(blob):
+              return sha256(blob).hexdigest()
+
+          archive_path = Path(PACKAGE)
+          if digest(archive_path.read_bytes()) != PACKAGE_SHA256:
+              raise SystemExit('ZIP checksum mismatch. Use the matching v24.334 ZIP.')
+          with ZipFile(archive_path) as archive:
+              members = archive.namelist()
+              if sorted(members) != sorted(NEW) or len(members) != len(NEW):
+                  raise SystemExit('Unexpected, missing, or duplicate paths inside update ZIP.')
+              updates = {name: archive.read(name) for name in NEW}
+          for name, payload in updates.items():
+              if digest(payload) != NEW[name]:
+                  raise SystemExit('File checksum mismatch: ' + name)
+
+          for name in NEW:
+              path = Path(name)
+              if not path.is_file():
+                  raise SystemExit('Required file missing in repository: ' + name)
+              current = digest(path.read_bytes())
+              accepted = {NEW[name], OLD_ROOT[name]}
+              if name == 'bao-cafe/index.html':
+                  accepted.update(OLD_CAFE.values())
+              if current not in accepted:
+                  raise SystemExit('File has unrelated edits or an incompatible version; refusing to overwrite: ' + name)
+
+          # A GitHub repo currently on v24.331 is supported directly. The new
+          # Bao Café HTML includes v24.332, v24.333 and v24.334 changes.
+          # Keep all updates in-memory until every checksum has passed.
+          for name, payload in updates.items():
+              Path(name).write_bytes(payload)
+          assert all(digest(Path(name).read_bytes()) == NEW[name] for name in NEW)
+          print('Installed v24.334: Soda/Milkshake/Smoothie favorites, Rainbow/Gray colors, and refreshed game cache.')
+          PYCODE
+
+      - name: Remove used ZIP
+        if: steps.update.outputs.present == 'true'
+        shell: bash
+        run: rm -f 'Duckie-Days-v24.334-Bao-Cafe-Base-Favorites-update-only.zip'
+
+      - name: Commit game update and trigger Pages deployment
+        if: steps.update.outputs.present == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- 'bao-cafe/index.html' 'index.html' 'sw.js' 'version.json' 'Duckie-Days-v24.334-Bao-Cafe-Base-Favorites-update-only.zip'
+          if git diff --cached --quiet; then
+            echo 'Duckie Days v24.334 is already installed.'
+          else
+            git commit -m 'Update Bao Cafe bases, rainbow and gray favorites (v24.334)'
+            git push
+          fi
