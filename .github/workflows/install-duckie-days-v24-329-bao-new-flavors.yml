@@ -1,0 +1,108 @@
+name: Install Duckie Days v24.329 New Bao Flavors
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Duckie-Days-v24.329-Bao-New-Flavors-update-only.zip'
+      - '.github/workflows/install-duckie-days-v24-329-bao-new-flavors.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-new-flavors-24329-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  install-bao-flavors:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Duckie Days
+        uses: actions/checkout@v4
+
+      - name: Check for update ZIP
+        id: update
+        shell: bash
+        run: |
+          if [ -f Duckie-Days-v24.329-Bao-New-Flavors-update-only.zip ]; then
+            echo 'present=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'present=false' >> "$GITHUB_OUTPUT"
+            echo 'Upload the matching ZIP to the repository root, then run this workflow.'
+          fi
+
+      - name: Install and verify all 11 new Bao Café flavors
+        if: steps.update.outputs.present == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          from hashlib import sha256
+
+          PACKAGE = 'Duckie-Days-v24.329-Bao-New-Flavors-update-only.zip'
+          PACKAGE_SHA256 = '6e37b45426d389b82c0eb9454921cc917393904701e6d44bf59e09964b77723f'
+          OLD = {'bao-cafe/index.html': 'f8589e64fca4fe79342413877570c6092d68d5c2773a95a13d296babbd57df33', 'index.html': 'd31a335231c785827da3fc9ba42cba7d56a4b72c34e838ee444332403987aa04', 'sw.js': 'c6855c1f43b35593f1c72da70005efd92ccdee0018f6d9c3d4b0217fa2697f46', 'version.json': 'cf476fba20c829c5575cfff104bb70aa72a5210b1ede54242bcafefbfe800d6b'}
+          NEW = {'bao-cafe/index.html': 'c2370d82554f121effe52a44f788dc6b93ad6b88c7707f96dbe1a2a634a2ed3f', 'index.html': 'a2b84ad8696c084e0b24a6164a38d26ff59a3511683cda972ef948649a4b885e', 'sw.js': '93647ebe2d6f0dc9908ab19a36dd66d202f682d97d81a5d2634361c701923e39', 'version.json': 'aa2828e349cdc4140346ad23dc9fae9c5a021ebba862f3c5b71b179da60b90e2', 'bao-cafe/assets/Apple.png': 'ea26b350071e9b8bf77a1077ebd516f37844d82cb536bf95b215c9c2a87d36e8', 'bao-cafe/assets/Banana.png': '9e1846356cc66d86d11b90ebdb36712b7e771a656ae06be7ba25305f1e07a29d', 'bao-cafe/assets/Cherry.png': 'ca9d0f8fd5e24960ba52ea7d63b8ada55ba87d9ef587dbd8bd5913ddf3eef932', 'bao-cafe/assets/Coconut.png': '06098ebdcaf9984bb73df914f3f64ff92fd7ef634de790520ea9c7a9cde29150', 'bao-cafe/assets/Honey.png': 'e4748670d4067f12acb3dd478f2f89461aa35818a2060c789813932c12edfc6a', 'bao-cafe/assets/Lemon.png': '456c0ae6855359ff30065047ae9fffb93421ff7643e598a3edd05f986cc0b4e2', 'bao-cafe/assets/Lime.png': 'd1f466d2adc83e7c61478ae66752d9041662222861032e89bc29acc4338d484b', 'bao-cafe/assets/Orange.png': '1dcd143a42c3243c621e331baabd47b21f37d75c26a055cdbc1ce205f9c77719', 'bao-cafe/assets/Peppermint.png': 'fd01a4d291af5d26fb505b1333486fa2c9db92004ea8a7dc97a5e3a1ba34ae98', 'bao-cafe/assets/Pumpkin.png': '4c8b11c67adc09df3c817dbe023399fbe503305cf31ca9ff2f5ba359106321dd', 'bao-cafe/assets/Vanilla.png': '961ef3e6672ecc96d853f7787a7bbace7f78f24978bb54d4c7102982a86021ee'}
+
+          def digest(data):
+              return sha256(data).hexdigest()
+
+          zip_path = Path(PACKAGE)
+          if digest(zip_path.read_bytes()) != PACKAGE_SHA256:
+              raise SystemExit('Update ZIP differs from the verified v24.329 package. Please upload the new download.')
+          with ZipFile(zip_path) as archive:
+              members = archive.namelist()
+              expected = list(NEW)
+              if len(members) != len(expected) or sorted(members) != sorted(expected):
+                  raise SystemExit('Update ZIP contains incorrect, extra, or duplicate paths.')
+              updates = {name: archive.read(name) for name in expected}
+
+          for path, payload in updates.items():
+              if digest(payload) != NEW[path]:
+                  raise SystemExit('Unexpected update content for: ' + path)
+
+          # Never overwrite an unrelated edit or a newer Duckie Days release.
+          for name in OLD:
+              path = Path(name)
+              if not path.is_file() or digest(path.read_bytes()) not in (OLD[name], NEW[name]):
+                  raise SystemExit('Existing file is not the verified v24.328 base: ' + name)
+
+          states = [digest(Path(name).read_bytes()) == NEW[name] for name in OLD]
+          if any(states) and not all(states):
+              raise SystemExit('Mixed/partial installation detected. No files were changed.')
+          for name in expected[4:]:
+              path = Path(name)
+              if path.exists() and (not path.is_file() or digest(path.read_bytes()) != NEW[name]):
+                  raise SystemExit('New flavor asset has unrelated edits: ' + name)
+
+          for name, payload in updates.items():
+              path = Path(name)
+              path.parent.mkdir(parents=True, exist_ok=True)
+              path.write_bytes(payload)
+          assert all(digest(Path(name).read_bytes()) == NEW[name] for name in NEW)
+          print('Installed Duckie Days v24.329: 11 new flavor drawings, order options, and fresh app cache.')
+          PY
+
+      - name: Remove used installation ZIP
+        if: steps.update.outputs.present == 'true'
+        shell: bash
+        run: rm -f 'Duckie-Days-v24.329-Bao-New-Flavors-update-only.zip'
+
+      - name: Commit flavor update and trigger Pages deployment
+        if: steps.update.outputs.present == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- 'bao-cafe/index.html' 'index.html' 'sw.js' 'version.json' 'bao-cafe/assets/Apple.png' 'bao-cafe/assets/Banana.png' 'bao-cafe/assets/Cherry.png' 'bao-cafe/assets/Coconut.png' 'bao-cafe/assets/Honey.png' 'bao-cafe/assets/Lemon.png' 'bao-cafe/assets/Lime.png' 'bao-cafe/assets/Orange.png' 'bao-cafe/assets/Peppermint.png' 'bao-cafe/assets/Pumpkin.png' 'bao-cafe/assets/Vanilla.png' 'Duckie-Days-v24.329-Bao-New-Flavors-update-only.zip'
+          if git diff --cached --quiet; then
+            echo 'The new flavors are already installed.'
+          else
+            git commit -m 'Add 11 Bao Café flavors (Duckie Days v24.329)'
+            git push
+          fi
