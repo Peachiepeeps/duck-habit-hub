@@ -1287,7 +1287,7 @@
       window.addEventListener("load", async () => {
         try {
           await duckHubClearOldCodeCaches();
-          const registration = await navigator.serviceWorker.register("./sw.js?v=24-328-iced-coffee", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("./sw.js?v=24-329-new-flavors", { updateViaCache: "none" });
           await registration.update();
           if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
           await duckHubCheckForUpdate(registration);

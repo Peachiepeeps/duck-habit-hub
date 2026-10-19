@@ -15,12 +15,12 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-328-iced-coffee';
+const APP_CACHE='duck-habit-hub-app-v24-329-bao-flavors';
 const APP_SHELL=[
  './',
  './index.html',
  './version.json',
- './sw.js?v=24.328',
+ './sw.js?v=24.329',
  './manifest.webmanifest?v=24.296',
  './app.css?v=24.296',
  './trading-cards-base.css?v=24.327',
@@ -55,6 +55,17 @@ const APP_SHELL=[
  './bao-cafe/assets/StrawberryBoba.webp',
  './bao-cafe/assets/Sugar.webp',
  './bao-cafe/assets/Matcha.webp',
+ './bao-cafe/assets/Apple.png',
+ './bao-cafe/assets/Banana.png',
+ './bao-cafe/assets/Cherry.png',
+ './bao-cafe/assets/Coconut.png',
+ './bao-cafe/assets/Honey.png',
+ './bao-cafe/assets/Lemon.png',
+ './bao-cafe/assets/Lime.png',
+ './bao-cafe/assets/Orange.png',
+ './bao-cafe/assets/Peppermint.png',
+ './bao-cafe/assets/Pumpkin.png',
+ './bao-cafe/assets/Vanilla.png',
  './bao-cafe/assets/Cheese-idle-1.png',
  './bao-cafe/assets/Parfait-idle-1.png',
  './bao-cafe/assets/Frappe-idle-1.png',
