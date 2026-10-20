@@ -1,0 +1,103 @@
+name: Install Duckie Days v24.339 - Cafe Fizz and Lil Guys
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Duckie-Days-v24.339-Cafe-Fizz-Lil-Guy-Box-Token-Shop-Ducks-update-only.zip'
+      - '.github/workflows/install-duckie-days-v24-339-cafe-fizz-lil-guys.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-install-v24339-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out game repository
+        uses: actions/checkout@v4
+      - name: Check for uploaded update ZIP
+        id: package
+        shell: bash
+        run: |
+          if [ -f 'Duckie-Days-v24.339-Cafe-Fizz-Lil-Guy-Box-Token-Shop-Ducks-update-only.zip' ]; then
+            echo 'ready=yes' >> "$GITHUB_OUTPUT"
+          else
+            echo 'ready=no' >> "$GITHUB_OUTPUT"
+            echo 'Upload Duckie-Days-v24.339-Cafe-Fizz-Lil-Guy-Box-Token-Shop-Ducks-update-only.zip at repository root and run again.'
+          fi
+      - name: Verify and install update
+        if: steps.package.outputs.ready == 'yes'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          from hashlib import sha256
+          from zipfile import ZipFile
+
+          PACKAGE='Duckie-Days-v24.339-Cafe-Fizz-Lil-Guy-Box-Token-Shop-Ducks-update-only.zip'
+          PACKAGE_SHA='7e1b1d78b1c61f760c429b887ed8dc5aa4a22352b5a1788100073f223fdf342a'
+          OLD={'app.js': 'a2d824c4755891ed21cbe62f80ed468deca71096e2e869f32d81f8610a8f2362', 'bao-cafe/index.html': 'a30a93a5863eb54df9f2fb449c4386f1da5ca44e84b06515aeade301e742eb51', 'duck-quest/index.html': '4e9e1deab92f4c516681df7779798d395a79f73edf27f584cd78e742cde3161a', 'index.html': '442153b052de5d502c62064bee8c57edb12939b94162c08876534a6e939cb0d1', 'sw.js': '1003f6984ba0498bdc40fbe56db1c683c0998b09f0225d2accff4f9d10ada643', 'version.json': '04ddab6dba9b5fc02143abce05aee8398f16fb862a2ba9f6c5ce992ec876a839'}
+          NEW={'app.js': '5e44dad4b94108b15ab7d411d0bfed15d6d4e4bfdf5c6ce99a5d60265b4db0d0', 'bao-cafe/index.html': 'cbd1568db88ae02bec2f7ac39d75ed3243954ac68b8fc5d01e022f4752ffa37e', 'duck-quest/index.html': '7340bd84701bb306737f147df3b05d6a476ffb21fa976d295e7e1486d15eba89', 'duck-quest/css/lil-guy-box-row-v339.css': 'bab7e7db850f93f31d60e596e9bca7a6b7a8610cfff10b6c36b5fbb56d75466f', 'duck-quest/js/token-shop-card-packs-v339.js': '984fe5933e412ce4edefb9f747bcade7bc2bfe118206d352349e7533ea61f4af', 'index.html': '117e00ba1b716a19b521192903177a6074341da235a923dcb8a3395fd0b73636', 'sw.js': '332128fdc220b9fb952ff7f225aae67b2740b8b7a1066f99e7e3b79c4b2abb05', 'version.json': '3ae6f76675d3710a5a3aad3da91d48fe2128534b648aae5c281eb8e999aa5a35'}
+
+          def digest(blob):
+              return sha256(blob).hexdigest()
+
+          pkg=Path(PACKAGE)
+          if not pkg.is_file():
+              raise SystemExit('Upload the matching v24.339 update ZIP and retry.')
+          if digest(pkg.read_bytes()) != PACKAGE_SHA:
+              raise SystemExit('Update ZIP checksum mismatch; no changes made.')
+          with ZipFile(pkg) as archive:
+              files=archive.namelist()
+              if sorted(files)!=sorted(NEW):
+                  raise SystemExit('Unexpected ZIP contents; no changes made.')
+              updates={name:archive.read(name) for name in NEW}
+          for path,contents in updates.items():
+              if digest(contents)!=NEW[path]:
+                  raise SystemExit('Internal file checksum mismatch: '+path)
+          for path in NEW:
+              target=Path(path)
+              if path in OLD:
+                  if not target.is_file() or digest(target.read_bytes()) not in (OLD[path], NEW[path]):
+                      raise SystemExit('Unrecognized existing game file; refusing overwrite: '+path)
+              elif target.exists() and digest(target.read_bytes())!=NEW[path]:
+                  raise SystemExit('Cannot replace unexpected new file: '+path)
+
+          conditions=[]
+          for path in NEW:
+              target=Path(path)
+              conditions.append(target.is_file() and digest(target.read_bytes())==NEW[path])
+          if all(conditions):
+              print('v24.339 already installed.')
+          elif any(conditions):
+              raise SystemExit('Partial update detected; nothing changed.')
+          else:
+              for path,contents in updates.items():
+                  target=Path(path)
+                  target.parent.mkdir(parents=True,exist_ok=True)
+                  target.write_bytes(contents)
+              assert all(digest(Path(path).read_bytes())==NEW[path] for path in NEW)
+              print('Installed Duckie Days v24.339: contained soda bubbles, trading card shop, Lil Guy Box row, and second head duck save.')
+          pkg.unlink(missing_ok=True)
+          PYCODE
+      - name: Commit installed game files
+        if: steps.package.outputs.ready == 'yes'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- 'Duckie-Days-v24.339-Cafe-Fizz-Lil-Guy-Box-Token-Shop-Ducks-update-only.zip' 'app.js' 'bao-cafe/index.html' 'duck-quest/index.html' 'duck-quest/css/lil-guy-box-row-v339.css' 'duck-quest/js/token-shop-card-packs-v339.js' 'index.html' 'sw.js' 'version.json'
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+          else
+            git commit -m 'Duckie Days v24.339: save head ducks, add card packs, refine cafe fizz'
+            git push
+          fi
