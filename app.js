@@ -3844,6 +3844,7 @@ const DEFAULT_SAVE = {
   unlockedDucks: [],
   duckDisplays: {
     headByCharacter: {},
+    secondHeadByCharacter: {},
     floorByRoom: {},
     furnitureByRoom: {}
   },
@@ -4000,6 +4001,11 @@ function loadSave() {
         headByCharacter: {
           ...structuredClone(DEFAULT_SAVE.duckDisplays.headByCharacter),
           ...(saved.duckDisplays?.headByCharacter || {})
+        },
+        secondHeadByCharacter: {
+          ...structuredClone(DEFAULT_SAVE.duckDisplays.secondHeadByCharacter),
+          ...(saved.duckDisplays?.secondHeadByCharacter && typeof saved.duckDisplays.secondHeadByCharacter === "object" && !Array.isArray(saved.duckDisplays.secondHeadByCharacter)
+             ? saved.duckDisplays.secondHeadByCharacter : {})
         },
         floorByRoom: {
           ...structuredClone(DEFAULT_SAVE.duckDisplays.floorByRoom),
@@ -8088,12 +8094,17 @@ function normalizeDuckDisplays() {
   if (!save.duckDisplays || typeof save.duckDisplays !== "object") {
     save.duckDisplays = {
       headByCharacter: {},
+      secondHeadByCharacter: {},
       floorByRoom: {}
     };
   }
 
   if (!save.duckDisplays.headByCharacter || typeof save.duckDisplays.headByCharacter !== "object") {
     save.duckDisplays.headByCharacter = {};
+  }
+
+  if (!save.duckDisplays.secondHeadByCharacter || typeof save.duckDisplays.secondHeadByCharacter !== "object" || Array.isArray(save.duckDisplays.secondHeadByCharacter)) {
+    save.duckDisplays.secondHeadByCharacter = {};
   }
 
   if (!save.duckDisplays.floorByRoom || typeof save.duckDisplays.floorByRoom !== "object") {

@@ -1,0 +1,16 @@
+/* Duck Quest home — Hatching Area and Lil Guy Box share the second row. */
+#homeScreen .hero-info > #questHomeTools #openHatchery{
+  grid-column:1!important;grid-row:2!important;
+  height:54px!important;min-height:54px!important;max-height:54px!important;
+  width:100%!important;min-width:0!important;max-width:none!important;
+  padding:5px 3px!important;font-size:.55rem!important;gap:3px!important;
+}
+#homeScreen .hero-info > #questHomeTools #openBuddyBoxHomeV269{
+  grid-column:2!important;grid-row:2!important;
+  height:54px!important;min-height:54px!important;max-height:54px!important;
+  width:100%!important;min-width:0!important;max-width:none!important;
+  padding:5px 3px!important;font-size:.55rem!important;gap:3px!important;
+}
+#homeScreen #questHomeTools #openBuddyBoxHomeV269 img,
+#homeScreen #questHomeTools #openHatchery img{width:23px!important;height:23px!important;min-width:23px!important;max-width:23px!important;flex:0 0 23px!important}
+#homeScreen #questHomeTools #openHatchery .home-hatch-label{font-size:inherit!important}
