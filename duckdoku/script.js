@@ -1261,6 +1261,113 @@
   }
 ];
 
+
+  // v24.340: reproducible, validated, on-demand levels. Keep the original
+  // handcrafted levels unchanged; generate a new 6x6 puzzle for every later
+  // level, without an arbitrary level-pack limit or a growing memory cache.
+  const HANDMADE_COUNT=PUZZLES.length;
+  const LEVELS_PER_PAGE=30;
+  const MAX_SAFE_LEVEL=Number.MAX_SAFE_INTEGER-1;
+  const QUEEN_LAYOUTS=(()=>{
+    const layouts=[],columns=[];
+    function visit(r,used){
+      if(r===6){layouts.push(columns.slice());return;}
+      for(let c=0;c<6;c++){
+        if((used&(1<<c)) || (r>0&&Math.abs(columns[r-1]-c)<=1))continue;
+        columns.push(c);visit(r+1,used|(1<<c));columns.pop();
+      }
+    }
+    visit(0,0);
+    return layouts;
+  })();
+  let cachedLevel=0,cachedPuzzle=null;
+  function levelNumber(value){
+    const n=Number(value);
+    return Number.isSafeInteger(n) ? Math.max(1,Math.min(MAX_SAFE_LEVEL,n)) : 1;
+  }
+  function seededRandom(level){
+    // Hash the level before initializing a Mulberry32 generator; do not use
+    // Math.random so retries, saved levels, and page reloads stay identical.
+    let seed=(Math.imul(level>>>0,0x9e3779b1)^Math.imul(Math.floor(level/0x100000000)>>>0,0x85ebca6b)^0x6d2b79f5)>>>0;
+    return ()=>{
+      seed=(seed+0x6d2b79f5)>>>0;
+      let t=seed;
+      t=Math.imul(t^(t>>>15),t|1);
+      t^=t+Math.imul(t^(t>>>7),t|61);
+      return ((t^(t>>>14))>>>0)/4294967296;
+    };
+  }
+  function isUniqueLayout(regions,solution){
+    let solutions=0;
+    for(const candidate of QUEEN_LAYOUTS){
+      let bits=0,valid=true;
+      for(let row=0;row<6;row++){
+        const id=regions[row*6+candidate[row]],bit=1<<id;
+        if(id<0 || bits&bit){valid=false;break;}
+        bits|=bit;
+      }
+      if(valid && ++solutions>1)return false;
+      if(valid && !candidate.every((c,r)=>c===solution[r]))return false;
+    }
+    return solutions===1;
+  }
+  function growDuckRegions(rng,solution){
+    const regions=Array(36).fill(-1),counts=Array(6).fill(1);
+    for(let row=0;row<6;row++)regions[row*6+solution[row]]=row;
+    const singleton=Math.floor(rng()*6);
+    let remaining=30;
+    while(remaining>0){
+      const frontier=[];
+      for(let i=0;i<36;i++){
+        if(regions[i]!==-1)continue;
+        const r=Math.floor(i/6),c=i%6;
+        const neighbors=[r>0?i-6:-1,r<5?i+6:-1,c>0?i-1:-1,c<5?i+1:-1];
+        for(const neighbor of neighbors){
+          if(neighbor<0)continue;
+          const id=regions[neighbor];
+          if(id>=0&&id!==singleton)frontier.push({cell:i,id});
+        }
+      }
+      if(!frontier.length)return null;
+      // Grow smaller neighboring regions first: natural, connected patches
+      // instead of one color swallowing the entire board.
+      const min=Math.min(...frontier.map(p=>counts[p.id]));
+      const options=frontier.filter(p=>counts[p.id]<=min+(rng()<.25?2:1));
+      const pick=options[Math.floor(rng()*options.length)];
+      regions[pick.cell]=pick.id;counts[pick.id]++;remaining--;
+    }
+    return regions;
+  }
+  function puzzleForLevel(level){
+    level=levelNumber(level);
+    if(level<=HANDMADE_COUNT)return PUZZLES[level-1];
+    if(level===cachedLevel)return cachedPuzzle;
+    const rng=seededRandom(level);
+    let chosen=null,regions=null;
+    for(let attempt=0;attempt<220;attempt++){
+      chosen=QUEEN_LAYOUTS[Math.floor(rng()*QUEEN_LAYOUTS.length)];
+      regions=growDuckRegions(rng,chosen);
+      if(regions && isUniqueLayout(regions,chosen))break;
+      regions=null;
+    }
+    if(!regions){
+      // Unlikely fallback: use a proven handcrafted pattern, transformed as
+      // a whole so both its region boundaries and solution stay consistent.
+      const source=PUZZLES[Math.floor(rng()*HANDMADE_COUNT)];
+      const mirrorX=rng()<.5,mirrorY=rng()<.5;
+      regions=Array(36).fill(0);chosen=Array(6).fill(0);
+      for(let r=0;r<6;r++)for(let c=0;c<6;c++){
+        const rr=mirrorY?5-r:r,cc=mirrorX?5-c:c;
+        regions[r*6+c]=source.regions[rr*6+cc];
+      }
+      for(let r=0;r<6;r++)chosen[r]=mirrorX?5-source.solution[mirrorY?5-r:r]:source.solution[mirrorY?5-r:r];
+    }
+    cachedLevel=level;
+    const rating=42+Math.floor(rng()*54);
+    cachedPuzzle={stage:level,size:6,regions,solution:chosen.slice(),rating,difficulty:rating<56?'Cozy':rating<72?'Steady':'Tricky'};
+    return cachedPuzzle;
+  }
+
   const $=s=>document.querySelector(s);
   const board=$('#board'), statusText=$('#statusText'), levelText=$('#levelText'), scoreText=$('#scoreText');
   const livesDisplay=$('#livesDisplay'), coinText=$('#coinText'), buyLifeButton=$('#buyLifeButton');
@@ -1283,7 +1390,12 @@
   function writeHub(hub){writeJSON(HUB_KEY,hub);}
   function readProgress(){
     const p=readJSON(GAME_KEY,{});
-    return {unlocked:Math.max(1,Math.min(PUZZLES.length,Number(p.unlocked)||1)),completed:p.completed&&typeof p.completed==='object'?p.completed:{},best:p.best&&typeof p.best==='object'?p.best:{}};
+    const completed=p.completed&&typeof p.completed==='object'?p.completed:{};
+    let unlocked=levelNumber(p.unlocked||1);
+    // In older versions finishing the last handcrafted level could not
+    // unlock its successor. Recover the player's completed last level.
+    if(completed[String(HANDMADE_COUNT)]&&unlocked<=HANDMADE_COUNT)unlocked=HANDMADE_COUNT+1;
+    return {unlocked,completed,best:p.best&&typeof p.best==='object'?p.best:{}};
   }
   function writeProgress(p){writeJSON(GAME_KEY,p);}
   function setStatus(text,kind=''){statusText.textContent=text;statusText.dataset.kind=kind;}
@@ -1342,8 +1454,10 @@
     });
     marks.forEach((_,i)=>renderCell(i));
   }
+  let levelPageStart=1;
   function resetPuzzle(nextStage=stage){
-    closeModals();stage=Math.max(1,Math.min(PUZZLES.length,nextStage));puzzle=PUZZLES[stage-1];
+    closeModals();stage=levelNumber(nextStage);puzzle=puzzleForLevel(stage);
+    levelPageStart=Math.floor((stage-1)/LEVELS_PER_PAGE)*LEVELS_PER_PAGE+1;
     marks=Array(puzzle.size*puzzle.size).fill('');lives=STARTING_LIVES;extraLivesBought=0;helperUses={hint:1,reveal:1,scan:1};complete=false;
     setScore(0);levelText.textContent=stage;renderBoard();renderLives();renderHelpers();renderCoins();renderLevelGrid();
     setStatus('Tap to X · Double tap to place a Duck · Swipe to mark Xs');
@@ -1375,10 +1489,10 @@
   function finishPuzzle(){
     complete=true;renderHelpers();renderLives();setScore(score+300);
     const progress=readProgress();progress.completed[String(stage)]=true;progress.best[String(stage)]=Math.max(Number(progress.best[String(stage)])||0,score);
-    if(stage<PUZZLES.length)progress.unlocked=Math.max(progress.unlocked,stage+1);writeProgress(progress);renderLevelGrid();
+    progress.unlocked=Math.max(progress.unlocked,Math.min(MAX_SAFE_LEVEL,stage+1));writeProgress(progress);renderLevelGrid();
     $('#resultScore').textContent=score.toLocaleString();$('#resultDifficulty').textContent=puzzle.difficulty;
-    $('#resultCopy').textContent=stage<PUZZLES.length?'Another puzzle is ready! Difficulty can jump up or down from level to level.':'You cleared the first Duckdoku 6×6 set!';
-    $('#nextLevelButton').textContent=stage<PUZZLES.length?'Next Level':'Level Select';
+    $('#resultCopy').textContent=`Level ${stage.toLocaleString()} complete! Another puzzle is ready whenever you are. ♡`;
+    $('#nextLevelButton').textContent='Next Level ♡';
     setTimeout(()=>openModal(resultModal),350);
   }
 
@@ -1446,7 +1560,16 @@
   }
   function renderLevelGrid(){
     const p=readProgress();levelGrid.innerHTML='';
-    PUZZLES.forEach((item,i)=>{const n=i+1,b=document.createElement('button');b.type='button';b.className='level-choice';b.textContent=n;b.disabled=n>p.unlocked;b.classList.toggle('current',n===stage);b.classList.toggle('done',!!p.completed[String(n)]);b.addEventListener('click',()=>resetPuzzle(n));levelGrid.append(b);});
+    for(let n=levelPageStart;n<levelPageStart+LEVELS_PER_PAGE;n++){
+      const b=document.createElement('button');b.type='button';b.className='level-choice';
+      b.textContent=n.toLocaleString();b.disabled=n>p.unlocked;
+      b.classList.toggle('current',n===stage);b.classList.toggle('done',!!p.completed[String(n)]);
+      b.addEventListener('click',()=>resetPuzzle(n));levelGrid.append(b);
+    }
+    $('#levelRange').textContent=`Levels ${levelPageStart.toLocaleString()}–${(levelPageStart+LEVELS_PER_PAGE-1).toLocaleString()} · ${p.unlocked.toLocaleString()} unlocked`;
+    $('#levelPrevious').disabled=levelPageStart===1;
+    $('#levelNext').disabled=levelPageStart+LEVELS_PER_PAGE>p.unlocked;
+    $('#levelLatest').disabled=levelPageStart===Math.floor((p.unlocked-1)/LEVELS_PER_PAGE)*LEVELS_PER_PAGE+1;
   }
 
   function boardIndexFromPoint(x,y){const el=document.elementFromPoint(x,y)?.closest?.('.cell');return el&&board.contains(el)?Number(el.dataset.index):-1;}
@@ -1490,7 +1613,10 @@
   board.addEventListener('contextmenu',e=>e.preventDefault());
 
   $('#backButton').addEventListener('click',()=>location.href='../');
-  $('#levelButton').addEventListener('click',()=>{renderLevelGrid();openModal(levelModal);});
+  $('#levelButton').addEventListener('click',()=>{levelPageStart=Math.floor((stage-1)/LEVELS_PER_PAGE)*LEVELS_PER_PAGE+1;renderLevelGrid();openModal(levelModal);});
+  $('#levelPrevious').addEventListener('click',()=>{levelPageStart=Math.max(1,levelPageStart-LEVELS_PER_PAGE);renderLevelGrid();});
+  $('#levelNext').addEventListener('click',()=>{if(levelPageStart+LEVELS_PER_PAGE<=readProgress().unlocked){levelPageStart+=LEVELS_PER_PAGE;renderLevelGrid();}});
+  $('#levelLatest').addEventListener('click',()=>{levelPageStart=Math.floor((readProgress().unlocked-1)/LEVELS_PER_PAGE)*LEVELS_PER_PAGE+1;renderLevelGrid();});
   $('#settingsButton').addEventListener('click',()=>openModal(settingsModal));
   $('#restartButton').addEventListener('click',()=>resetPuzzle(stage));
   document.querySelectorAll('[data-close-modal]').forEach(b=>b.addEventListener('click',closeModals));
@@ -1502,7 +1628,8 @@
   $('#retryButton').addEventListener('click',()=>resetPuzzle(stage));
   $('#gameOverHome').addEventListener('click',()=>location.href='../');
   $('#replayButton').addEventListener('click',()=>resetPuzzle(stage));
-  $('#nextLevelButton').addEventListener('click',()=>{if(stage<PUZZLES.length)resetPuzzle(stage+1);else{renderLevelGrid();openModal(levelModal);}});
+  $('#nextLevelButton').addEventListener('click',()=>resetPuzzle(Math.min(MAX_SAFE_LEVEL,stage+1)));
 
-  const progress=readProgress();stage=Math.max(1,Math.min(progress.unlocked,Number(new URLSearchParams(location.search).get('level'))||progress.unlocked));resetPuzzle(stage);
+  const progress=readProgress(),requested=levelNumber(new URLSearchParams(location.search).get('level')||progress.unlocked);
+  resetPuzzle(Math.min(progress.unlocked,requested));
 })();

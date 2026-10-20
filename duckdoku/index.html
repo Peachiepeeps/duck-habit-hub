@@ -7,7 +7,7 @@
   <title>Duckdoku · Duckie Days</title>
   <link rel="preload" as="image" href="../assets/bakery/backgrounds/Bakery-background.webp" />
   <link rel="preload" as="image" href="../assets/ducks/Standard-duck.webp" />
-  <link rel="stylesheet" href="style.css?v=24.322" />
+  <link rel="stylesheet" href="style.css?v=24.340" />
 </head>
 <body>
   <main class="duckdoku-shell">
@@ -64,8 +64,14 @@
 
   <section id="levelModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="levelModalTitle">
     <h2 id="levelModalTitle">Duckdoku Levels</h2>
-    <p>Difficulty wiggles around on purpose — a later puzzle isn't always harder!</p>
+    <p>Keep going forever! ♡ New 6×6 puzzles appear as you complete them.</p>
+    <div id="levelRange" class="level-range" aria-live="polite"></div>
     <div id="levelGrid" class="level-grid"></div>
+    <div class="level-pager">
+      <button id="levelPrevious" class="level-pager-button" type="button">‹ Previous</button>
+      <button id="levelLatest" class="level-pager-button" type="button">Latest ♡</button>
+      <button id="levelNext" class="level-pager-button" type="button">Next ›</button>
+    </div>
     <button class="modal-close" data-close-modal type="button">Close</button>
   </section>
 
@@ -109,6 +115,6 @@
     <button id="gameOverHome" class="modal-close" type="button">Back to Hub</button>
   </section>
 
-  <script src="script.js?v=24.322"></script>
+  <script src="script.js?v=24.340"></script>
 </body>
 </html>
