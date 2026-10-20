@@ -1,0 +1,101 @@
+name: Install Duckie Days v24.340 - Endless Duckdoku and Cafe Fixes
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Duckie-Days-v24.340-Endless-Duckdoku-Cafe-Fixes-update-only.zip'
+      - '.github/workflows/install-duckie-days-v24-340-endless-duckdoku.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-install-v24340-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Check uploaded ZIP
+        id: package
+        shell: bash
+        run: |
+          if [ -f 'Duckie-Days-v24.340-Endless-Duckdoku-Cafe-Fixes-update-only.zip' ]; then
+            echo 'ready=yes' >> "$GITHUB_OUTPUT"
+          else
+            echo 'ready=no' >> "$GITHUB_OUTPUT"
+            echo 'Upload Duckie-Days-v24.340-Endless-Duckdoku-Cafe-Fixes-update-only.zip to repository root first.'
+          fi
+      - name: Install v24.340 safely
+        if: steps.package.outputs.ready == 'yes'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          from hashlib import sha256
+          from zipfile import ZipFile
+
+          PACKAGE='Duckie-Days-v24.340-Endless-Duckdoku-Cafe-Fixes-update-only.zip'
+          PACKAGE_SHA='e182bf5868626822f1ef331f39d3aa08ae04aa11854f5a1525b1a76f681b0b60'
+          OLD={'bao-cafe/index.html': 'cbd1568db88ae02bec2f7ac39d75ed3243954ac68b8fc5d01e022f4752ffa37e', 'duckdoku/index.html': '5a7b98e0049b68228c90c1bb4236e4343bcfce4c465dc5c7071285038bbabdab', 'duckdoku/script.js': '136fb3a1473ed6c48e8209c998e35e63ad0ec09eec2445beb8cdebf3ff45d2a3', 'duckdoku/style.css': '6af76545c68021ca1d4f4b8ef00dbff8136a25c55f6fbe7c5929610fcea0e86c', 'index.html': '117e00ba1b716a19b521192903177a6074341da235a923dcb8a3395fd0b73636', 'sw.js': '332128fdc220b9fb952ff7f225aae67b2740b8b7a1066f99e7e3b79c4b2abb05', 'version.json': '3ae6f76675d3710a5a3aad3da91d48fe2128534b648aae5c281eb8e999aa5a35'}
+          NEW={'bao-cafe/index.html': '2165294069c6ab2778b24ac78a831a2a9e4614041d9ee3dd508df2b9066d94c7', 'duckdoku/index.html': '0fa84a1debf286c2d8f7dc50264622423d11a368acf90d9808201a630a221c8d', 'duckdoku/script.js': '6d48e4aa7d32eff6a2d20625acd3f34a2256c43f35bc5dd9ab6f60d1c6490521', 'duckdoku/style.css': 'cded5b17bbb4ecdcbca895b59b5be799af1290da3bd094744db11df3d18b8a2d', 'index.html': '9e6d88576411796585d15b7af83fca9194d19dce8d2e2b10a9fb5794848d2b8c', 'sw.js': 'd5a3d5de0c86aad7bb06595a2c58cf8866709b4ef1952454f4ee953eae8ed2f0', 'version.json': 'c750d4b19d18041f28f57df6279e13ea98e2c30228205cbfecad86d685469d8b'}
+
+          def digest(data):
+              return sha256(data).hexdigest()
+
+          package=Path(PACKAGE)
+          if not package.is_file():
+              raise SystemExit('Please upload the v24.340 update-only ZIP to your repository root first.')
+          if digest(package.read_bytes()) != PACKAGE_SHA:
+              raise SystemExit('ZIP SHA-256 mismatch; no files were changed.')
+          with ZipFile(package) as archive:
+              if sorted(archive.namelist()) != sorted(NEW):
+                  raise SystemExit('Unexpected update ZIP contents; no files were changed.')
+              updates={name:archive.read(name) for name in NEW}
+          for name,blob in updates.items():
+              if digest(blob)!=NEW[name]:
+                  raise SystemExit('Invalid update data for '+name)
+
+          states=[]
+          for name in NEW:
+              dest=Path(name)
+              if not dest.is_file():
+                  raise SystemExit('Missing v24.339 file: '+name)
+              current=digest(dest.read_bytes())
+              if current==OLD[name]:
+                  states.append('old')
+              elif current==NEW[name]:
+                  states.append('new')
+              else:
+                  raise SystemExit('Unexpected file checksum for '+name+'; refusing to overwrite.')
+          if all(state=='new' for state in states):
+              print('Duckie Days v24.340 is already installed.')
+          elif all(state=='old' for state in states):
+              for name,blob in updates.items():
+                  Path(name).write_bytes(blob)
+              assert all(digest(Path(name).read_bytes())==NEW[name] for name in NEW)
+              print('Installed v24.340: endless Duckdoku levels + Bao Cafe bubble/ice fixes.')
+          else:
+              raise SystemExit('Partial installation detected; nothing was changed.')
+          package.unlink(missing_ok=True)
+          PYCODE
+      - name: Commit installed changes
+        if: steps.package.outputs.ready == 'yes'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- 'Duckie-Days-v24.340-Endless-Duckdoku-Cafe-Fixes-update-only.zip' 'bao-cafe/index.html' 'duckdoku/index.html' 'duckdoku/script.js' 'duckdoku/style.css' 'index.html' 'sw.js' 'version.json'
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+          else
+            git commit -m 'Duckie Days v24.340: endless Duckdoku and cafe fixes'
+            git push
+          fi
