@@ -1,0 +1,104 @@
+name: Install Duckie Days v24.335 Bao Cafe Startup Repair
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Duckie-Days-v24.335-Bao-Cafe-Startup-Repair-update-only.zip'
+      - '.github/workflows/install-duckie-days-v24-335-bao-cafe-startup-repair.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-cafe-v24335-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  install-bao-cafe-repair:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Duckie Days
+        uses: actions/checkout@v4
+
+      - name: Check for matching update ZIP
+        id: update
+        shell: bash
+        run: |
+          if [ -f 'Duckie-Days-v24.335-Bao-Cafe-Startup-Repair-update-only.zip' ]; then
+            echo 'present=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'present=false' >> "$GITHUB_OUTPUT"
+            echo 'Upload Duckie-Days-v24.335-Bao-Cafe-Startup-Repair-update-only.zip to the repository root, then rerun.'
+          fi
+
+      - name: Verify and install v24.335
+        if: steps.update.outputs.present == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          from hashlib import sha256
+          from zipfile import ZipFile
+
+          PACKAGE='Duckie-Days-v24.335-Bao-Cafe-Startup-Repair-update-only.zip'
+          PACKAGE_SHA256='8b1b251778707a1b1c8c99cc7b6c1348440c31536bf6df7d24284062148f403e'
+          EXPECTED_OLD={'bao-cafe/index.html': 'ab7eaf22d3e83e1eeff50de5b608b706dba8f4c447f3f788096943ac8fb8cc15', 'index.html': '33ad92da5375e1cfe10ac59611b3faabbfc585ec58502abc7564d4ee9c5320f4', 'sw.js': '9ff23c95de78a03aa7e084956fdf074bb270fc6c876ed366f6a1dec563043b8e', 'version.json': '2986560c480473b2cdd6a22abd5a9dee41cc1af907da6a8db97a15e4ac29c85b'}
+          EXPECTED_NEW={'bao-cafe/index.html': 'cf9370c488942abb43db60750d0eb0519bccb6328a7f24bde1a29e49e4b0414b', 'index.html': '8fd2715759e51d8ce99f001f3a0757f8cf98fccd12cdbd9523f093d3e42d3990', 'sw.js': '8eef79f83482dceb785a7f66dc2b6db5f62f246cdc10581b6ea5e3f3238a973c', 'version.json': '217d4af604887c7695bec459ecbf9dba97430832ee22a8df7301e63d25ce4cbe'}
+
+          def digest(data):
+              return sha256(data).hexdigest()
+
+          package=Path(PACKAGE)
+          if digest(package.read_bytes()) != PACKAGE_SHA256:
+              raise SystemExit('Update ZIP checksum mismatch: download the matching v24.335 ZIP.')
+          with ZipFile(package) as archive:
+              names=archive.namelist()
+              if len(names)!=len(EXPECTED_NEW) or sorted(names)!=sorted(EXPECTED_NEW):
+                  raise SystemExit('Unexpected or missing ZIP paths. Refusing to install.')
+              updates={name:archive.read(name) for name in EXPECTED_NEW}
+          for name,content in updates.items():
+              if digest(content)!=EXPECTED_NEW[name]:
+                  raise SystemExit('Checksum mismatch inside ZIP: '+name)
+
+          before={}
+          for name in EXPECTED_NEW:
+              path=Path(name)
+              if not path.is_file():
+                  raise SystemExit('Required game file is missing: '+name)
+              before[name]=digest(path.read_bytes())
+              if before[name] not in (EXPECTED_OLD[name], EXPECTED_NEW[name]):
+                  raise SystemExit('Unexpected edits or version: refusing to overwrite '+name)
+
+          if all(before[name]==EXPECTED_NEW[name] for name in EXPECTED_NEW):
+              print('v24.335 already installed; no changes needed.')
+          elif all(before[name]==EXPECTED_OLD[name] for name in EXPECTED_OLD):
+              for name,content in updates.items():
+                  Path(name).write_bytes(content)
+              assert all(digest(Path(name).read_bytes())==EXPECTED_NEW[name] for name in EXPECTED_NEW)
+              print('Installed v24.335. Fixed JavaScript startup, Base Station choices, finishing effects, and Rainbow lid/straw fills.')
+          else:
+              raise SystemExit('Mixed installed versions detected. Refusing partial overwrite; request a custom repair.')
+          PYCODE
+
+      - name: Remove used update ZIP
+        if: steps.update.outputs.present == 'true'
+        shell: bash
+        run: rm -f 'Duckie-Days-v24.335-Bao-Cafe-Startup-Repair-update-only.zip'
+
+      - name: Commit repaired game
+        if: steps.update.outputs.present == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- 'bao-cafe/index.html' 'index.html' 'sw.js' 'version.json' 'Duckie-Days-v24.335-Bao-Cafe-Startup-Repair-update-only.zip'
+          if git diff --cached --quiet; then
+            echo 'Duckie Days v24.335 already installed.'
+          else
+            git commit -m 'Fix Bao Cafe v24.334 startup and Rainbow visuals (v24.335)'
+            git push
+          fi
