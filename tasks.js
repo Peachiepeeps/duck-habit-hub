@@ -833,9 +833,10 @@
   function splitHeadDuckPlacement(base, slot){
     const anchor = base || {left:50, top:38.7, width:18};
     const width = Math.max(10, Number(anchor.width || 18) * 0.82);
-    const offset = Math.max(4.6, width * 0.52);
+    const leftOffset = Math.max(4.6, width * 0.52);
+    const rightOffset = Math.max(3.0, width * 0.38);
     return {
-      left: Number(anchor.left || 50) + (slot === 0 ? -offset : offset),
+      left: Number(anchor.left || 50) + (slot === 0 ? -leftOffset : rightOffset),
       top: Number(anchor.top || 38.7) + 0.35,
       width
     };
