@@ -1014,22 +1014,38 @@ kiri: {
     if (img.complete) sizeSceneSprite(img);
   }
 
+  function sceneSpriteFrame(charId, pose, step){
+    const frames = spriteFrames(charId, pose);
+    if (!frames.length) return "";
+    const normalized = String(pose || (charId === "miko" ? "idle" : "idle1")).toLowerCase();
+    if (charId === "midori" && ["idle", "idle1", "idle2", "neutral"].includes(normalized)) {
+      const opened = CHARACTERS.midori?.sprites?.idle1 || frames[0];
+      const closed = CHARACTERS.midori?.sprites?.idle2 || frames[frames.length - 1] || frames[0];
+      const sequence = [closed, closed, closed, closed, closed, opened, closed, closed];
+      return sequence[step % sequence.length] || closed;
+    }
+    return frames[step % frames.length];
+  }
+
   function updateSceneSprites(state){
     if (!state?.el) return;
-    const leftFrames = spriteFrames(state.scene.leftId, state.leftPose);
-    const rightFrames = spriteFrames(state.scene.rightId, state.rightPose);
-    if (leftFrames.length) setSceneSpriteSource(state.left, leftFrames[sceneFrameIndex % leftFrames.length]);
-    if (rightFrames.length) setSceneSpriteSource(state.right, rightFrames[sceneFrameIndex % rightFrames.length]);
+    const step = Math.max(0, Number(sceneFrameIndex) || 0);
+    const leftSrc = sceneSpriteFrame(state.scene.leftId, state.leftPose, step);
+    const rightSrc = sceneSpriteFrame(state.scene.rightId, state.rightPose, step);
+    if (leftSrc) setSceneSpriteSource(state.left, leftSrc);
+    if (rightSrc) setSceneSpriteSource(state.right, rightSrc);
   }
 
   function startSceneAnimation(state){
     stopSceneAnimation();
     sceneFrameIndex = 0;
     updateSceneSprites(state);
+    const hasMidori = state?.scene?.leftId === "midori" || state?.scene?.rightId === "midori";
+    const interval = hasMidori ? 700 : 520;
     sceneFrameTimer = setInterval(() => {
-      sceneFrameIndex = (sceneFrameIndex + 1) % 2;
+      sceneFrameIndex += 1;
       updateSceneSprites(state);
-    }, 520);
+    }, interval);
   }
 
   function sceneRewardItems(scene){
@@ -1070,7 +1086,7 @@ kiri: {
     // Hide the entire normal battle layer while the scene portraits are on the
     // battlefield. In particular, hiding the whole commandStage removes the
     // giant empty mobile command area and guarantees there is only ONE Miko.
-    const selectors = ["#battlefield > .peep-combatant", "#enemyCombatant", "#enemyCombatant2", "#buddyCombatant", "#chestLayer", "#commandStage", "#postFloorActions"];
+    const selectors = ["#battlefield > .peep-combatant", "#enemyCombatant", "#enemyCombatant2", "#buddyCombatant", "#chestLayer", "#commandStage", "#postFloorActions", "#questCardRewardV311"];
     selectors.forEach(selector => {
       const node = document.querySelector(selector);
       if (!node) return;
@@ -1092,6 +1108,7 @@ kiri: {
   function showScene(sceneId, onFinished){
     const scene = SCENES[sceneId];
     if (!scene || open) return false;
+    document.querySelector("#questCardRewardV311")?.remove();
     const el = sceneLayer();
     const message = document.querySelector("#battleMessage");
     const actions = document.querySelector("#eventChoiceActions");
