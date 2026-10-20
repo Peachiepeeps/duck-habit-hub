@@ -36,6 +36,26 @@
     <div class="tc-toolbar"><strong id="tcCollectionCount">0 / ${TC.cards.length} Cards</strong><label>Rarity <select id="tcRarity"><option value="all">All</option><option value="common">Common</option><option value="uncommon">Uncommon</option><option value="rare">Rare</option><option value="fabled">Fabled</option></select></label><label class="tc-toggle"><input id="tcMissing" type="checkbox"> Show Missing</label></div>
     <div id="tcGrid" class="tc-grid"></div>`;
   tabs.insertAdjacentElement("afterend",panel);
+  const dustBar=document.createElement('div');dustBar.className='tc-lilguys-dustbar';
+  const dustButton=document.createElement('button');dustButton.type='button';
+  const dustNote=document.createElement('small');dustNote.textContent='Keeps one of every owned variant, including shinies and Fabled cards.';
+  dustBar.append(dustButton,dustNote);panel.querySelector('.tc-toolbar').after(dustBar);
+  function dustSummary(){
+    const values={common:5,uncommon:12,rare:25,fabled:60};let copies=0,dust=0;
+    for(const card of TC.cards){const amount=TC.variantExtras?.(state,card.id)||0;copies+=amount;dust+=amount*(values[card.rarity]||5);}
+    return {copies,dust};
+  }
+  function refreshDustButton(){const result=dustSummary();dustButton.disabled=result.copies===0;dustButton.textContent=`Convert All Duplicates · ${result.copies} cards → ${result.dust} Dust`;}
+  dustButton.addEventListener('click',()=>{
+    syncCardState();const check=dustSummary();if(!check.copies)return;
+    if(!window.confirm(`Convert ${check.copies} duplicate cards into ${check.dust} Power Up Dust?\n\nOne copy of EVERY collected variant will be kept. This cannot be undone.`))return;
+    const d=TC.readSave(),cards=TC.cardCraft.ensure(d);let count=0,dust=0;
+    for(const card of TC.cards){const removed=TC.convertVariantDuplicates(cards,card.id);count+=removed;dust+=removed*({common:5,uncommon:12,rare:25,fabled:60}[card.rarity]||5);}
+    cards.powerUpDust=Math.max(0,Number(cards.powerUpDust)||0)+dust;
+    TC.writeSave(d);save.tradingCards=d.tradingCards;persist();renderCards();
+    window.dispatchEvent(new CustomEvent('duckie-card-workshop-updated',{detail:{cardId:null}}));
+    if(typeof showToast==='function')showToast(`Converted ${count} duplicates into ${dust} Power Up Dust! ♡`);
+  });
 
   const detail=document.createElement("div");detail.className="tc-detail-layer hidden";detail.innerHTML='<section class="tc-detail-card"><button class="tc-detail-close" type="button" aria-label="Close">×</button><div id="tcDetailBody"></div></section>';document.body.append(detail);
   const packLayer=document.createElement("div");packLayer.className="tc-pack-layer hidden";packLayer.innerHTML=`<section class="tc-pack-stage"><p class="tc-pack-kicker">TRADING CARDS</p><h2 class="tc-pack-title">Open a Pack!</h2><div class="tc-pack-rip" role="button" tabindex="0" aria-label="Swipe or click to rip open this Card Pack"><img class="tc-pack-body" src="${TC.packAsset("card-pack-unopened.png")}" alt="Card Pack"><img class="tc-pack-top" src="${TC.packAsset("card-pack-torn-top.png")}" alt=""><span class="tc-swipe-hint" aria-hidden="true">↔</span></div><p class="tc-pack-instruction">Swipe across or click the pack to rip it!</p><div class="tc-reveal-grid" aria-live="polite"></div><button class="tc-pack-close tc-pack-close-bottom hidden" type="button" aria-label="Close Card Pack">Close</button></section>`;document.body.append(packLayer);
@@ -57,7 +77,7 @@
   function sortedCards(){return [...TC.cards].filter(card=>rarityFilter==="all"||card.rarity===rarityFilter).filter(card=>showMissing||Number(state.owned[card.id]||0)>0).sort((a,b)=>TC.order[a.rarity]-TC.order[b.rarity]||Number(isFavorite(b.id))-Number(isFavorite(a.id))||a.number.localeCompare(b.number));}
   function renderCards(){
     syncCardState();const ownedCount=TC.cards.filter(card=>Number(state.owned[card.id]||0)>0).length;
-    panel.querySelector("#tcCollectionCount").textContent=`${ownedCount} / ${TC.cards.length} Cards`;
+    panel.querySelector("#tcCollectionCount").textContent=`${ownedCount} / ${TC.cards.length} Cards`;refreshDustButton();
     panel.querySelector("#tcPackCount").textContent=state.unopenedPacks;panel.querySelector("#tcOpenPack").disabled=state.unopenedPacks<1;panel.querySelector("#tcOpenTenPacks").disabled=state.unopenedPacks<10;
     const grid=panel.querySelector("#tcGrid");grid.innerHTML="";const list=sortedCards();
     if(!list.length){const empty=document.createElement("div");empty.className="tc-empty";empty.innerHTML=showMissing?"<strong>No cards in this rarity yet.</strong>":"<strong>No cards collected here yet!</strong><br>Try your Starter Pack, Duck Quest, or the Daily Shop. ♡";grid.append(empty);return;}
@@ -71,6 +91,31 @@
     const meta=document.createElement("p");const displayRarity=TC.effectiveRarity?.(card,save)||card.rarity;meta.innerHTML=`<strong>${TC.labels[displayRarity]||displayRarity}</strong> · ${card.number}<br>${card.category}`;
     const owned=document.createElement("p");owned.textContent=locked?"Not collected yet":`Owned ×${state.owned[card.id]}`;
     const hint=document.createElement("p");hint.textContent=card.hint;body.append(title,meta,owned,hint);
+    const options=TC.variantOptionsWithShiny?.(card)||[];
+    if(options.length>1){
+      const variants=document.createElement('section');variants.className='tc-lilguys-variants';
+      const heading=document.createElement('strong');heading.textContent='Lil Guy Variants';
+      const chips=document.createElement('div');chips.className='tc-lilguys-variant-grid';
+      const countMap=TC.variantCounts?.(save,card.id)||{};
+      const unlocked=TC.cardCraft.craftFor(card.id,save).unlocked;
+      for(const item of options){
+        const separate=item.linkedCardId;
+        const quantity=separate?Math.max(0,Number(state.owned[separate])||0):Math.max(0,Number(countMap[item.id])||0);
+        const cosmetic=!separate&&unlocked.includes(item.id);
+        const chip=document.createElement('button');chip.type='button';chip.className='tc-lilguys-variant-chip';
+        chip.disabled=quantity<1&&!cosmetic;
+        const img=document.createElement('img');img.src=TC.cardArt({...card,art:item.art});img.alt='';img.loading='lazy';
+        const label=document.createElement('span');label.textContent=item.label;
+        const qty=document.createElement('small');qty.textContent=quantity?`×${quantity}`:(cosmetic?'Dust unlocked':'Not found');
+        chip.append(img,label,qty);
+        chip.addEventListener('click',()=>{if(separate){openDetail(TC.byId[separate],quantity<1);return;}
+          const d=TC.readSave(),cs=TC.cardCraft.ensure(d);cs.crafting.displayVariant[card.id]=item.id;
+          TC.writeSave(d);save.tradingCards=d.tradingCards;persist();openDetail(card,false);
+        });
+        chips.append(chip);
+      }
+      variants.append(heading,chips);body.append(variants);
+    }
     if(!locked){
       const actions=document.createElement("div");actions.className="tc-detail-actions-v264";
       const fav=document.createElement("button");fav.className="tc-detail-fav";fav.type="button";fav.textContent=isFavorite(card.id)?"♥ Favorited":"♡ Add to Favorites";fav.addEventListener("click",()=>{toggleFavorite(card.id);openDetail(card,false)});
@@ -149,13 +194,13 @@
     // One swipe spends the entire selected batch. Every draw and all thirty
     // cards are saved immediately, even if the reveal screen is closed early.
     packSessionResults=Array.from({length:packSessionTotal},()=>rollSessionPack());
-    const draw=packSessionResults[0],results=draw.cards;
+    const draw=packSessionResults[0];
     state.unopenedPacks-=packSessionTotal;
     state.stats.packsOpened+=packSessionTotal;
     packSessionOpened=1;
     packSessionSpecials=packSessionResults.filter(p=>p.kind==='special').length;
     packSessionGods=packSessionResults.filter(p=>p.kind==='god').length;
-    for(const pack of packSessionResults){for(const card of pack.cards)TC.grantCard(save,card.id,1)}
+    for(const pack of packSessionResults){pack.cards=pack.cards.map(card=>{const variantId=TC.pickRandomVariant?.(card)||'default';TC.grantCard(save,card.id,1,{variantId,source:'pack'});return {...card,packVariantId:variantId};});}
     persist();syncCardState();renderCards();
     const rip=packLayer.querySelector('.tc-pack-rip'),body=rip.querySelector('.tc-pack-body');
     const note=packLayer.querySelector('.tc-pack-instruction');
@@ -165,7 +210,7 @@
     setTimeout(()=>{
       if(sequence!==packSequence)return;
       body.src=TC.packAsset('card-pack-ripped.png');rip.className='tc-pack-rip opened';
-      setTimeout(()=>buildPackCards(results,sequence,draw.kind),720);
+      setTimeout(()=>buildPackCards(draw.cards,sequence,draw.kind),720);
     },430);
   }
   function closePack(){
@@ -250,7 +295,7 @@
     console.info(message);
   }
   function dustValue(card){return DUST_VALUES[card?.rarity]||5;}
-  function extras(state,cardId){return Math.max(0,Math.floor(Number(state?.owned?.[cardId])||0)-1);}
+  function extras(state,cardId){return TC.variantExtras?.(state,cardId)??Math.max(0,Math.floor(Number(state?.owned?.[cardId])||0)-1);}
   function notifyUpdated(cardId){
     ensureDustLine();
     window.dispatchEvent(new CustomEvent("duckie-card-workshop-updated",{detail:{cardId}}));
@@ -301,8 +346,8 @@
     duplicate.innerHTML=`<div><strong>Extra Copies</strong><small>Your first copy is always protected. Turn extras into Power Up Dust.</small><span class="tc-craft-status-v262">${extraCount} extra · ${per} Dust each</span></div>`;
     const dupActions=document.createElement("div");dupActions.className="tc-craft-actions-v262";
     dupActions.append(
-      button(`Convert 1 → ${per} Dust`,extraCount<1,()=>{const d=dataRef(),s=TC.cardCraft.ensure(d);if(extras(s,card.id)<1)return;s.owned[card.id]-=1;s.powerUpDust+=per;commit(d);rerender(card.id,`+${per} Power Up Dust!`);}),
-      button(`Convert All → ${extraCount*per} Dust`,extraCount<1,()=>{const d=dataRef(),s=TC.cardCraft.ensure(d),count=extras(s,card.id);if(count<1)return;s.owned[card.id]-=count;s.powerUpDust+=count*per;commit(d);rerender(card.id,`Converted ${count} extras into ${count*per} Power Up Dust!`);},"secondary")
+      button(`Convert 1 → ${per} Dust`,extraCount<1,()=>{const d=dataRef(),s=TC.cardCraft.ensure(d);if(extras(s,card.id)<1)return;TC.convertVariantDuplicates(s,card.id,1);s.powerUpDust+=per;commit(d);rerender(card.id,`+${per} Power Up Dust!`);}),
+      button(`Convert All → ${extraCount*per} Dust`,extraCount<1,()=>{const d=dataRef(),s=TC.cardCraft.ensure(d),count=extras(s,card.id);if(count<1)return;TC.convertVariantDuplicates(s,card.id,count);s.powerUpDust+=count*per;commit(d);rerender(card.id,`Converted ${count} extras into ${count*per} Power Up Dust!`);},"secondary")
     );duplicate.append(dupActions);panel.append(duplicate);
 
     const rarity=document.createElement("div");rarity.className="tc-craft-section-v262";
@@ -321,12 +366,12 @@
     else{
       holo.innerHTML=`<div><strong>Holo Finish</strong><small>Uses ${HOLO_EXTRAS} extra copies plus ${HOLO_DUST} Power Up Dust. Your first copy stays protected.</small></div>`;
       const can=extras(state,card.id)>=HOLO_EXTRAS&&state.powerUpDust>=HOLO_DUST;
-      holo.append(button(`Apply Holo · ${HOLO_DUST} Dust + ${HOLO_EXTRAS} Extras`,!can,()=>{const d=dataRef(),s=TC.cardCraft.ensure(d);if(extras(s,card.id)<HOLO_EXTRAS||s.powerUpDust<HOLO_DUST)return;s.owned[card.id]-=HOLO_EXTRAS;s.powerUpDust-=HOLO_DUST;s.crafting.holo[card.id]=true;commit(d);rerender(card.id,`${card.name} is now Holo! ✨`);}));
+      holo.append(button(`Apply Holo · ${HOLO_DUST} Dust + ${HOLO_EXTRAS} Extras`,!can,()=>{const d=dataRef(),s=TC.cardCraft.ensure(d);if(extras(s,card.id)<HOLO_EXTRAS||s.powerUpDust<HOLO_DUST)return;TC.convertVariantDuplicates(s,card.id,HOLO_EXTRAS);s.powerUpDust-=HOLO_DUST;s.crafting.holo[card.id]=true;commit(d);rerender(card.id,`${card.name} is now Holo! ✨`);}));
     }panel.append(holo);
 
     const variants=TC.variantOptions(card);
     if(variants.length>1){
-      const variant=document.createElement("div");variant.className="tc-craft-section-v262 tc-variant-section-v262";variant.innerHTML='<div><strong>Color Variant</strong><small>Unlock normal color variants with Power Up Dust. Shinies stay encounter-only.</small></div>';
+      const variant=document.createElement("div");variant.className="tc-craft-section-v262 tc-variant-section-v262";variant.innerHTML='<div><strong>Color Variant</strong><small>Catch variants in Duck Quest or find them in packs. You can still unlock display colors with Dust.</small></div>';
       const grid=document.createElement("div");grid.className="tc-variant-grid-v262";
       for(const option of variants){
         const unlocked=craft.unlocked.includes(option.id),selected=craft.displayVariant===option.id||(option.id==="default"&&!variants.some(v=>v.id===craft.displayVariant));

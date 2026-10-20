@@ -898,13 +898,14 @@
       const secondDuck = DUCKS[secondId];
       setHeadDuckImage(headDuckDisplay, firstDuck, splitHeadDuckPlacement(base,0));
       headDuckDisplay.classList.remove('double-head-duck-secondary');
+      headDuckDisplay.classList.add('double-head-duck-primary');
       setHeadDuckImage(secondaryImg, secondDuck, splitHeadDuckPlacement(base,1));
       secondaryImg.classList.add('double-head-duck-secondary');
       placeMainHeadDuckLayer(headDuckDisplay, character.id);
       placeMainHeadDuckLayer(secondaryImg, character.id);
     }else{
       setHeadDuckImage(headDuckDisplay, firstDuck, base);
-      headDuckDisplay.classList.remove('double-head-duck-secondary');
+      headDuckDisplay.classList.remove('double-head-duck-secondary','double-head-duck-primary');
       hideHeadDuckImage(secondaryImg);
       placeMainHeadDuckLayer(headDuckDisplay, character.id);
     }
@@ -928,7 +929,7 @@
       img.decoding = 'async';
       img.loading = 'eager';
       img.fetchPriority = 'high';
-      img.className = `${isStatus ? 'status-head-duck' : 'profile-head-duck'}${flipped ? ' double-head-duck-secondary' : ''}`;
+      img.className = `${isStatus ? 'status-head-duck' : 'profile-head-duck'}${flipped === 'primary' ? ' double-head-duck-primary' : flipped === 'secondary' ? ' double-head-duck-secondary' : ''}`;
       img.src = DUCKS[duckId].file;
       img.alt = '';
       img.style.left = `${placement.left}%`;
@@ -938,8 +939,8 @@
     };
 
     if(secondId && DUCKS[secondId]){
-      addImg(firstId, splitHeadDuckPlacement(base,0), false);
-      addImg(secondId, splitHeadDuckPlacement(base,1), true);
+      addImg(firstId, splitHeadDuckPlacement(base,0), 'primary');
+      addImg(secondId, splitHeadDuckPlacement(base,1), 'secondary');
     }else{
       addImg(firstId, base, false);
     }

@@ -99,7 +99,7 @@
 
           <div class="hero-quick-actions" aria-label="Hero information">
             <button id="openCharmScreen" class="pixel-button hero-info-button" type="button">Equip Charm</button>
-            <button id="openBuddyCollection" class="pixel-button hero-info-button" type="button">Buddy Book</button>
+            <button id="openBuddyCollection" class="pixel-button hero-info-button" type="button">Lil Guy Book</button>
             <button id="openUiThemes" class="pixel-button hero-info-button hero-theme-button" type="button">UI Themes</button>
           </div>
           <button id="openSkillBook" class="pixel-button hero-info-button home-skills-hidden-v269" type="button" tabindex="-1" aria-hidden="true">OC Skills</button>
@@ -123,7 +123,7 @@
           <div id="questHomeTools" class="quest-home-tools" aria-label="Duck Quest tools">
             <button id="openBuddyBoxHomeV269" class="pixel-button quest-home-tool-button" type="button">
               <img src="assets/enemies/cat-slime/base/Strawberry-idle-1-neutral.webp" alt="">
-              <span>Buddy Box</span>
+              <span>Lil Guy Box</span>
             </button>
             <button id="openHatchery" class="pixel-button quest-home-tool-button" type="button">
               <img class="home-hatch-icon" src="assets/eggs/Common-egg.png" alt="">
@@ -140,7 +140,7 @@
           <div>
             <span class="mini-label">ENDLESS QUEST</span>
             <h2>Endless Run</h2>
-            <small>Random stages, enemies, bosses, Buddies, and Shiny hunting.</small>
+            <small>Random stages, enemies, bosses, Lil Guys, and Shiny hunting.</small>
           </div>
           <span class="endless-symbol" aria-hidden="true">∞</span>
         </div>
@@ -272,10 +272,10 @@
     <section id="buddyScreen" class="screen hidden">
       <section class="buddy-book-card">
         <div class="buddy-book-heading">
-          <button id="backFromBuddies" class="pixel-button small" type="button">← Quest Menu</button>
+          <button id="backFromLil Guys" class="pixel-button small" type="button">← Quest Menu</button>
           <div>
-            <span class="mini-label">BUDDY BOOK</span>
-            <h2>Buddy Collection</h2>
+            <span class="mini-label">LIL GUY BOOK</span>
+            <h2>Lil Guy Collection</h2>
           </div>
           <strong id="buddyCollectionCount" class="buddy-count-pill">0 / 0</strong>
         </div>
@@ -287,41 +287,41 @@
           <button class="buddy-filter" data-buddy-filter="shiny" type="button">Shiny ✨</button>
         </div>
         <div id="buddyCollectionGrid" class="buddy-collection-grid"></div>
-        <p id="buddyCollectionEmpty" class="buddy-collection-empty hidden">No Buddies match this filter yet.</p>
+        <p id="buddyCollectionEmpty" class="buddy-collection-empty hidden">No Lil Guys match this filter yet.</p>
       </section>
 
       <section id="buddyDetail" class="buddy-detail hidden" aria-hidden="true">
         <div class="buddy-detail-card" role="dialog" aria-modal="true" aria-labelledby="buddyDetailName">
-          <button id="closeBuddyDetail" class="buddy-detail-close" type="button" aria-label="Close Buddy details">×</button>
+          <button id="closeBuddyDetail" class="buddy-detail-close" type="button" aria-label="Close Lil Guy details">×</button>
           <div id="buddyDetailArt" class="buddy-detail-art"></div>
           <div id="buddyDetailVariants" class="buddy-detail-variants" aria-label="Buddy forms"></div>
-          <span id="buddyDetailTag" class="mini-label">BUDDY</span>
+          <span id="buddyDetailTag" class="mini-label">LIL GUY</span>
           <h2 id="buddyDetailName">Buddy</h2>
           <p id="buddyDetailStatus">Not befriended yet.</p>
           <div class="buddy-detail-stats">
             <div><span>Owned</span><strong id="buddyDetailOwned">×0</strong></div>
             <div><span>Type</span><strong id="buddyDetailType">Normal</strong></div>
           </div>
-          <p id="buddyDetailSkill" class="buddy-skill-preview"><strong>Buddy Skill:</strong> Select a Buddy to see its helper skill. ♡</p>
+          <p id="buddyDetailSkill" class="buddy-skill-preview"><strong>Lil Guy Skill:</strong> Select a Buddy to see its helper skill. ♡</p>
           <div id="buddyFamilyIconActions" class="buddy-family-icon-actions hidden">
             <button id="setBuddyFamilyIcon" class="pixel-button small" type="button">Use as Book Icon</button>
             <small id="buddyFamilyIconStatus">Choose which befriended form represents this Buddy family in the Book.</small>
           </div>
           <button id="buddyAssignOpen" class="pixel-button primary buddy-assign-open hidden" type="button">Assign to OC</button>
-          <section id="buddyAssignPanel" class="buddy-assign-panel hidden" aria-label="Assign Buddy to OC">
+          <section id="buddyAssignPanel" class="buddy-assign-panel hidden" aria-label="Assign Lil Guy to OC">
             <div class="buddy-assign-heading">
-              <strong>Assign Buddy</strong>
-              <small id="buddyAssignAvailability">Choose an OC and Buddy slot.</small>
+              <strong>Assign Lil Guy</strong>
+              <small id="buddyAssignAvailability">Choose an OC and Lil Guy slot.</small>
             </div>
             <div id="buddyAssignCharacters" class="buddy-assign-characters" role="group" aria-label="Choose OC"></div>
-            <div id="buddyAssignSlots" class="buddy-assign-slots" aria-label="Choose Buddy slot"></div>
+            <div id="buddyAssignSlots" class="buddy-assign-slots" aria-label="Choose Lil Guy slot"></div>
             <p id="buddyAssignMessage" class="buddy-assign-message" aria-live="polite"></p>
             <section id="buddyPersonalizePanel" class="buddy-personalize-panel hidden" aria-label="Personalize assigned Buddy">
               <strong>Personalize this Buddy</strong>
               <small id="buddyPersonalizeSpecies">Assign a Buddy copy to personalize it.</small>
               <label class="buddy-name-field">
                 <span>Name</span>
-                <input id="buddyNicknameInput" type="text" maxlength="20" autocomplete="off" placeholder="Buddy name" />
+                <input id="buddyNicknameInput" type="text" maxlength="20" autocomplete="off" placeholder="Lil Guy name" />
               </label>
               <div class="buddy-gender-group" role="group" aria-label="Choose Buddy gender">
                 <button class="buddy-gender-button" type="button" data-buddy-gender="female">Girl ♀</button>
@@ -362,9 +362,9 @@
           <div id="battleHeroComposite" class="battle-hero-composite fighter hidden" aria-hidden="true"></div>
         </div>
 
-        <div id="buddyCombatant" class="buddy-combatant hidden" aria-label="Main Buddy helper">
+        <div id="buddyCombatant" class="buddy-combatant hidden" aria-label="Main Lil Guy helper">
           <span id="buddyBattleName" class="buddy-battle-name">Buddy</span>
-          <img id="buddyBattleSprite" class="pixel-sprite buddy-battle-sprite" src="" alt="Main Buddy" />
+          <img id="buddyBattleSprite" class="pixel-sprite buddy-battle-sprite" src="" alt="Main Lil Guy" />
           <span id="buddyBattleSparkle" class="buddy-battle-sparkle hidden" aria-hidden="true">✨</span>
         </div>
 
@@ -427,13 +427,13 @@
             </button>
             <button id="buddyMenuButton" class="pixel-button command-button buddy-command" type="button">
               <strong>Buddy</strong>
-              <span id="buddyCommandText">No Main Buddy</span>
+              <span id="buddyCommandText">No Main Lil Guy</span>
             </button>
             <button id="itemMenuButton" class="pixel-button command-button item-command" type="button">
               <strong>Item</strong>
             </button>
             <button id="switchBuddyMenuButton" class="pixel-button command-button switch-buddy-command" type="button">
-              <strong>Switch Buddy</strong>
+              <strong>Switch Lil Guy</strong>
               <span id="switchBuddyCommandText">6-slot battle team</span>
             </button>
             <button id="escapeButton" class="pixel-button command-button escape-command" type="button">
@@ -451,7 +451,7 @@
             <section id="buddySwitchPanel" class="buddy-switch-panel hidden" aria-label="Switch active Buddy">
               <div class="buddy-switch-heading">
                 <strong>Choose Buddy!</strong>
-                <small>Switching Buddies uses your turn. One switch per encounter.</small>
+                <small>Switching Lil Guys uses your turn. One switch per encounter.</small>
               </div>
               <div id="buddySwitchGrid" class="buddy-switch-grid"></div>
             </section>
@@ -461,7 +461,7 @@
               <button id="purchasePonButton" class="pixel-button purchase-pon-button" type="button">Purchase Pons</button>
               <section id="ponPurchasePanel" class="pon-purchase-panel hidden" aria-live="polite">
                 <div class="pon-purchase-heading">
-                  <strong>Buddy Pon Shop</strong>
+                  <strong>Lil Pon Shop</strong>
                   <span id="ponPurchaseCoins">0 Pink Coins</span>
                 </div>
                 <p id="ponPurchaseMessage">Buy Pons here and use them immediately in this battle.</p>
@@ -516,6 +516,7 @@
 
   <script src="../trading-cards-base.js?v=24.288"></script>
   <script src="../trading-cards-extra.js?v=24.288"></script>
+  <script src="../trading-cards-lil-guys-v336.js?v=24.336"></script>
   <script src="../trading-cards-v317.js?v=24.317"></script>
   <script src="../trading-cards-gimmicks-v288.js?v=24.288"></script>
   <script src="../trading-cards-sock-gremlin-v297.js?v=24.297"></script>
@@ -559,5 +560,6 @@
   <script src="js/fixes-v314.js?v=24.314"></script>
   <script src="js/io-transformation-v317.js?v=24.317"></script>
   <script src="js/fixes-v318.js?v=24.318"></script>
+  <script src="js/lil-guys-capture-v336.js?v=24.336"></script>
 </body>
 </html>

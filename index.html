@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="duck-habit-build" content="24.326" />
+  <meta name="duck-habit-build" content="24.336" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta id="appThemeColor" name="theme-color" content="#f7dbe5" />
@@ -10,7 +10,8 @@
   <link rel="stylesheet" href="app.css?v=24.296" />
   <link rel="stylesheet" href="trading-cards-base.css?v=24.327" />
   <link rel="stylesheet" href="trading-cards-extra.css?v=24.296" />
-  <link rel="stylesheet" href="tasks.css?v=24.296" />
+  <link rel="stylesheet" href="trading-cards-lil-guys-v336.css?v=24.336" />
+  <link rel="stylesheet" href="tasks.css?v=24.336" />
   <link rel="stylesheet" href="hub.css?v=24.296" />
   <link rel="stylesheet" href="task-reminders.css?v=24.296" />
   <link rel="stylesheet" href="sock-gremlin-v297.css?v=24.297" />
@@ -673,8 +674,8 @@
               <strong id="statusCoinsEarnedTotal">0</strong>
             </div>
             <div>
-              <span>Number of Buddies</span>
-              <strong id="statusBuddies">0</strong>
+              <span>Number of Lil Guys</span>
+              <strong id="statusLil Guys">0</strong>
             </div>
           </section>
 
@@ -903,14 +904,14 @@
             <div class="profile-buddies-card">
               <div class="profile-buddies-heading">
                 <div>
-                  <span>Buddies</span>
-                  <small>Slot 1 is your ★ Main Buddy for Duck Quest.</small>
+                  <span>Lil Guys</span>
+                  <small>Slot 1 is your ★ Main Lil Guy for Duck Quest.</small>
                 </div>
                 <strong id="profileBuddyCount">0 / 6</strong>
               </div>
               <div id="profileBuddySlots" class="profile-buddy-slots" aria-label="Equipped buddies"></div>
-              <p class="profile-buddies-note">Tap a circle to choose from Buddies you’ve befriended.</p>
-              <button id="viewBuddyCollection" class="profile-buddy-collection-link" type="button">View Buddy Collection</button>
+              <p class="profile-buddies-note">Tap a circle to choose from Lil Guys you’ve befriended.</p>
+              <button id="viewBuddyCollection" class="profile-buddy-collection-link" type="button">View Lil Guy Collection</button>
 
               <div id="profileBuddyPicker" class="profile-buddy-picker hidden">
                 <div class="profile-buddy-picker-heading">
@@ -1193,17 +1194,18 @@
   </main>
   <script src="trading-cards-base.js?v=24.326"></script>
   <script src="trading-cards-extra.js?v=24.296"></script>
+  <script src="trading-cards-lil-guys-v336.js?v=24.336"></script>
   <script src="trading-cards-v317.js?v=24.317"></script>
   <script src="trading-cards-gimmicks-v288.js?v=24.296"></script>
   <script src="trading-cards-sock-gremlin-v297.js?v=24.297"></script>
   <script src="trading-cards-universal-v298.js?v=24.298"></script>
   <script src="trading-cards-bao-cafe-v299.js?v=24.299"></script>
-  <script src="app.js?v=24.327"></script>
+  <script src="app.js?v=24.336"></script>
   <script src="universal-clothing-v311.js?v=24.311"></script>
   <script src="gimmick-hub-v288.js?v=24.296"></script>
   <script src="hub-boosts.js?v=24.327"></script>
-  <script src="trading-cards-ui.js?v=24.327"></script>
-  <script src="tasks.js?v=24.296"></script>
+  <script src="trading-cards-ui.js?v=24.336"></script>
+  <script src="tasks.js?v=24.336"></script>
   <script type="module" src="firebase-reminders.mjs?v=24.296"></script>
   <script src="task-reminders.js?v=24.296"></script>
   <script src="hub.js?v=24.296"></script>
@@ -1223,7 +1225,7 @@
     // v24.84: use a stable service-worker URL and actively check the deployed
     // build when the installed PWA is opened/resumed. This prevents Android
     // from keeping an already-open standalone app on an older app shell.
-    const DUCK_HUB_BUILD = "24.326";
+    const DUCK_HUB_BUILD = "24.336";
     let duckHubReloadingForUpdate = false;
 
     function duckHubReloadFresh(version) {
@@ -1287,7 +1289,7 @@
       window.addEventListener("load", async () => {
         try {
           await duckHubClearOldCodeCaches();
-          const registration = await navigator.serviceWorker.register("./sw.js?v=24-335-bao-cafe-startup-repair", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("./sw.js?v=24-336-lil-guys", { updateViaCache: "none" });
           await registration.update();
           if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
           await duckHubCheckForUpdate(registration);

@@ -794,12 +794,17 @@
 }
 
 /* Second head-duck visuals. */
-.double-head-duck-secondary{
+/* Original duck sprites face left. Flip the LEFT duck to face inward;
+   keep the RIGHT duck's normal direction so their beaks meet. */
+.double-head-duck-primary,
+.profile-head-duck.double-head-duck-primary,
+.status-head-duck.double-head-duck-primary{
   transform:translate(-50%, -50%) scaleX(-1) !important;
 }
+.double-head-duck-secondary,
 .profile-head-duck.double-head-duck-secondary,
 .status-head-duck.double-head-duck-secondary{
-  transform:translate(-50%, -50%) scaleX(-1) !important;
+  transform:translate(-50%, -50%) !important;
 }
 
 /* Secondary duck assignment button styling. */

@@ -1,4 +1,4 @@
-// Duck Quest game-v67 — polished battle UI + six-Buddy battle switching
+// Duck Quest game-v67 — polished battle UI + six-Lil Guy battle switching
 const HUB_SAVE_KEY = "duckHabitHubSave_v1";
 window.DUCKIE_DAYS_QUEST_FLOW='24.225-next-level-and-start-picker';
 const MAX_LEVEL = 999;
@@ -1893,7 +1893,7 @@ const CHARM_FAMILY_ORDER = Object.freeze(["shimmer","fortune","best-friend","tra
 const CHARM_FAMILIES = Object.freeze({
   shimmer:{name:"Shimmer Charm",description:"Raises Shiny odds above the normal 1 / 500 rate.",family:"shimmer"},
   fortune:{name:"Fortune Charm",description:"Earn more Pink Coins and improve ordinary item quality.",family:"fortune"},
-  "best-friend":{name:"Best Friend Charm",description:"Adds percentage points to compatible Buddy Pon catch chances.",family:"best-friend"},
+  "best-friend":{name:"Best Friend Charm",description:"Adds percentage points to compatible Lil Pon catch chances.",family:"best-friend"},
   training:{name:"Training Charm",description:"Earn more EXP from Duck Quest rewards.",family:"training"},
   vitality:{name:"Vitality Charm",description:"Raises this OC's maximum HP for the entire run.",family:"vitality"},
   treasure:{name:"Treasure Charm",description:"Sometimes adds an extra rare-leaning item to a treasure chest.",family:"treasure"},
@@ -1975,7 +1975,7 @@ function applyGimmickEnemyVariant(enemyId,base,forcedId=""){
 }
 
 // One rare recolor per enemy family. The special family variant replaces any
-// normal recolor at a charm-adjusted rate (base 1/500) and is guaranteed to befriend with any Buddy Pon.
+// normal recolor at a charm-adjusted rate (base 1/500) and is guaranteed to befriend with any Lil Pon.
 // Amethyst Mimic is intentionally different: it only reveals itself from the
 // purple Mystery Chest so the chest keeps its surprise.
 const SHINY_VARIANTS = Object.freeze({
@@ -2090,15 +2090,15 @@ const ENDLESS_BACKGROUNDS = Object.freeze(
 
 const BUDDY_PONS = Object.freeze([
   {
-    id:"buddy-pon", name:"Buddy Pon", image:"../assets/items/buddy-pons/buddy-pon.webp",
+    id:"buddy-pon", name:"Lil Pon", image:"../assets/items/buddy-pons/buddy-pon.webp",
     price:50, normalRate:.50, bossRate:0, className:""
   },
   {
-    id:"super-buddy-pon", name:"Super Buddy Pon", image:"../assets/items/buddy-pons/super-buddy-pon.webp",
+    id:"super-buddy-pon", name:"Super Lil Pon", image:"../assets/items/buddy-pons/super-buddy-pon.webp",
     price:100, normalRate:.75, bossRate:.35, className:"super"
   },
   {
-    id:"boss-buddy-pon", name:"Boss Buddy Pon", image:"../assets/items/buddy-pons/boss-buddy-pon.webp",
+    id:"boss-buddy-pon", name:"Boss Lil Pon", image:"../assets/items/buddy-pons/boss-buddy-pon.webp",
     price:175, normalRate:1, bossRate:.70, className:"boss"
   }
 ]);
@@ -2208,7 +2208,7 @@ function catalogEntry(enemyId, variantId, variant, boss=false, shiny=false) {
     key:`${enemyId}:${shiny ? "shiny" : variantId}`,
     enemyId,
     variantId:shiny ? "shiny" : variantId,
-    name:String(variant?.name || ENEMIES[enemyId]?.name || "Buddy"),
+    name:String(variant?.name || ENEMIES[enemyId]?.name || "Lil Guy"),
     image:String(variant?.portrait || idleFrames[0] || ""),
     idle:idleFrames,
     boss:Boolean(boss),
@@ -2289,7 +2289,7 @@ function normalizeBuddyCollection(raw) {
         key,
         enemyId:String(value.enemyId || ""),
         variantId:String(value.variantId || "base"),
-        name:String(value.name || "Buddy"),
+        name:String(value.name || "Lil Guy"),
         image:String(value.image || ""),
         idle:Array.isArray(value.idle) ? value.idle.map(String).filter(Boolean) : [],
         shiny:Boolean(value.shiny),
@@ -2607,7 +2607,7 @@ function buddyRecordFromEnemy(enemy) {
     key,
     enemyId:String(enemy?.id || ""),
     variantId:enemy?.shiny ? "shiny" : enemyVariantId(enemy),
-    name:String(enemy?.name || "Buddy"),
+    name:String(enemy?.name || "Lil Guy"),
     image:String(enemy?.idle?.[0] || enemy?.hurt || ""),
     idle:Array.isArray(enemy?.idle) ? enemy.idle.map(String).filter(Boolean) : [String(enemy?.idle?.[0] || enemy?.hurt || "")].filter(Boolean),
     shiny:Boolean(enemy?.shiny),
@@ -2665,9 +2665,9 @@ const REWARD_ITEMS = [
   { id:"rainbow-paint", name:"Rainbow Paint", image:"../assets/paint/Rainbow-paint.webp", weight:1 },
   { id:"pink-heart-refill", name:"Pink Heart Refill", image:"../assets/bakery/drops/Pink-heart-refill.webp", weight:5 },
   { id:"gold-heart-refill", name:"Gold Heart Refill", image:"../assets/bakery/drops/Gold-heart-refill.webp", weight:1 },
-  { id:"buddy-pon", name:"Buddy Pon", image:"../assets/items/buddy-pons/buddy-pon.webp", weight:6 },
-  { id:"super-buddy-pon", name:"Super Buddy Pon", image:"../assets/items/buddy-pons/super-buddy-pon.webp", weight:2.4 },
-  { id:"boss-buddy-pon", name:"Boss Buddy Pon", image:"../assets/items/buddy-pons/boss-buddy-pon.webp", weight:.65 }
+  { id:"buddy-pon", name:"Lil Pon", image:"../assets/items/buddy-pons/buddy-pon.webp", weight:6 },
+  { id:"super-buddy-pon", name:"Super Lil Pon", image:"../assets/items/buddy-pons/super-buddy-pon.webp", weight:2.4 },
+  { id:"boss-buddy-pon", name:"Boss Lil Pon", image:"../assets/items/buddy-pons/boss-buddy-pon.webp", weight:.65 }
 ];
 
 function currentAreaConfig(){ return getAreaConfig(currentRun?.area || selectedArea); }
@@ -4729,7 +4729,7 @@ function openBuddyPersonalization(entry,characterId,slotIndex){
   buddyPersonalizeSlotIndex=slotIndex;
   const personal=buddySlotPersonalization(characterId,slotIndex);
   buddyPersonalizeGender=String(personal?.gender||"");
-  if(ui.buddyPersonalizeSpecies) ui.buddyPersonalizeSpecies.textContent=`${BUDDY_ASSIGN_CHARACTER_NAMES[characterId]}'s ${slotIndex===0?"★ Main Buddy":`Buddy ${slotIndex+1}`} · ${entry.name}`;
+  if(ui.buddyPersonalizeSpecies) ui.buddyPersonalizeSpecies.textContent=`${BUDDY_ASSIGN_CHARACTER_NAMES[characterId]}'s ${slotIndex===0?"★ Main Lil Guy":`Lil Guy ${slotIndex+1}`} · ${entry.name}`;
   if(ui.buddyNicknameInput) ui.buddyNicknameInput.value=String(personal?.nickname||"");
   ui.buddyGenderButtons?.forEach(button=>button.classList.toggle("selected",button.dataset.buddyGender===buddyPersonalizeGender));
   if(ui.buddyPersonalizeMessage) ui.buddyPersonalizeMessage.textContent="";
@@ -4747,7 +4747,7 @@ function saveBuddyPersonalization(){
   hubSave.buddies.personalizationByCharacter[buddyPersonalizeCharacterId][buddyPersonalizeSlotIndex]=nickname||gender?{nickname,gender}:null;
   persistAll();
   const species=buddyRecordByKey(key);
-  const shownName=nickname || species?.name || "Buddy";
+  const shownName=nickname || species?.name || "Lil Guy";
   const entry=buddyRecordByKey(buddyDetailEntryKey);
   if(entry) renderBuddyAssignPanel(entry);
   // Re-open after rerender so the editor remains visible.
@@ -4810,7 +4810,7 @@ function renderBuddyAssignPanel(entry){
     button.type="button";
     button.className=`buddy-assign-slot${index===0?" main":""}${currentBuddy?" occupied":""}${alreadyHere?" assigned":""}`;
     button.disabled=!canAssign;
-    button.setAttribute("aria-label",`${index===0?"Main Buddy":`Buddy slot ${index+1}`}: ${currentBuddy?.name || "Empty"}`);
+    button.setAttribute("aria-label",`${index===0?"Main Lil Guy":`Lil Guy slot ${index+1}`}: ${currentBuddy?.name || "Empty"}`);
 
     const badge=document.createElement("span");
     badge.className="buddy-assign-slot-badge";
@@ -4873,7 +4873,7 @@ function assignBuddyFromBook(entry,characterId,slotIndex){
   hubSave.buddies.equippedByCharacter[characterId]=slots;
   persistAll();
   if(ui.buddyAssignMessage){
-    ui.buddyAssignMessage.textContent=`Assigned ${entry.name} to ${BUDDY_ASSIGN_CHARACTER_NAMES[characterId]}'s ${index===0?"★ Main Buddy":"Buddy "+(index+1)} slot! ♡`;
+    ui.buddyAssignMessage.textContent=`Assigned ${entry.name} to ${BUDDY_ASSIGN_CHARACTER_NAMES[characterId]}'s ${index===0?"★ Main Lil Guy":"Lil Guy "+(index+1)} slot! ♡`;
   }
   renderBuddyAssignPanel(entry);
   openBuddyPersonalization(entry,characterId,index);
@@ -4952,13 +4952,13 @@ function openBuddyDetail(entry) {
   ui.buddyDetailName.textContent=caught?entry.name:"???";
   ui.buddyDetailStatus.textContent=caught
     ? `Befriended! You currently own ${owned} ${owned===1?"copy":"copies"}.`
-    : "Not befriended yet. Find this form in Duck Quest and use a Buddy Pon!";
+    : "Not befriended yet. Find this form in Duck Quest and use a Lil Pon!";
   ui.buddyDetailOwned.textContent=`×${owned}`;
   ui.buddyDetailType.textContent=entry.shiny?(entry.boss?"Shiny Boss":"Shiny"):entry.boss?"Boss":"Normal";
   const buddySkill=buddySkillForEnemyId(entry.enemyId);
   if(ui.buddyDetailSkill) ui.buddyDetailSkill.innerHTML=buddySkill
-    ? `<strong>Buddy Skill: ${buddySkill.name}</strong><br>${buddySkill.description}`
-    : `<strong>Buddy Skill:</strong> No skill assigned yet.`;
+    ? `<strong>Lil Guy Skill: ${buddySkill.name}</strong><br>${buddySkill.description}`
+    : `<strong>Lil Guy Skill:</strong> No skill assigned yet.`;
 
   if(ui.buddyFamilyIconActions){
     ui.buddyFamilyIconActions.classList.toggle("hidden",!caught);
@@ -4969,8 +4969,8 @@ function openBuddyDetail(entry) {
         ui.setBuddyFamilyIcon.textContent=isMain?(entry.shiny?"✓ Shiny Book Icon":"✓ Book Icon"):(entry.shiny?"Use as Shiny Icon":"Use as Book Icon");
       }
       if(ui.buddyFamilyIconStatus) ui.buddyFamilyIconStatus.textContent=isMain
-        ? "This form currently represents the family in your Buddy Book."
-        : "Use this befriended form as the family portrait in your Buddy Book.";
+        ? "This form currently represents the family in your Lil Guy Book."
+        : "Use this befriended form as the family portrait in your Lil Guy Book.";
     }
   }
 
@@ -5022,7 +5022,7 @@ function renderBuddyCollection() {
     if(!representative) return;
     const caughtEntries=relevant.filter(entry=>buddyOwnedQuantity(entry.key)>0);
     const caughtAny=caughtEntries.length>0;
-    const familyName=String(ENEMIES[enemyId]?.name || representative.name || "Buddy");
+    const familyName=String(ENEMIES[enemyId]?.name || representative.name || "Lil Guy");
     const button=document.createElement("button");
     button.type="button";
     button.className=`buddy-tile buddy-family-tile${caughtAny?" caught":" unknown"}${representative.boss?" boss":""}${shinyTab?" shiny":""}`;
@@ -5056,7 +5056,7 @@ function renderBuddyCollection() {
 
   const empty=!ui.buddyCollectionGrid.children.length;
   ui.buddyCollectionEmpty?.classList.toggle("hidden",!empty);
-  if(empty && ui.buddyCollectionEmpty) ui.buddyCollectionEmpty.textContent="No Buddy families are available in this tab yet.";
+  if(empty && ui.buddyCollectionEmpty) ui.buddyCollectionEmpty.textContent="No Lil Guy families are available in this tab yet.";
 }
 
 function closeRoutePicker(){
@@ -5623,7 +5623,7 @@ function startEnemy(enemyId, options={}) {
     ui.commandGrid.classList.remove("hidden"); closeCommandWindow(); renderBattleItems(); renderCommandButtons();
   }
   if(!options.suppressIntro){
-    if(currentEnemy.shiny) setMessage(`${currentEnemy.name} ✨ appeared! A super-rare Shiny Buddy!`);
+    if(currentEnemy.shiny) setMessage(`${currentEnemy.name} ✨ appeared! A super-rare Shiny Lil Guy!`);
     else if(enemyId==="vampire-squid") setMessage(`${currentEnemy.name} rises from the depths!`);
     else if(enemyId==="jellybun") setMessage(`${currentEnemy.name} bounces in to guard the Ocean Floor!`);
     else if(enemyId==="tree-squirrel") setMessage(`${currentEnemy.name} drops down to guard the clearing!`);
@@ -5704,7 +5704,7 @@ function renderBattleBuddy(){
     ui.buddyCombatant.classList.add("hidden");
     return;
   }
-  const buddyLabel=`${buddy.name || "Buddy"}${buddy.genderSymbol?` ${buddy.genderSymbol}`:""}`;
+  const buddyLabel=`${buddy.name || "Lil Guy"}${buddy.genderSymbol?` ${buddy.genderSymbol}`:""}`;
   ui.buddyBattleName.textContent=buddyLabel;
   ui.buddyBattleSprite.alt=buddyLabel;
   ui.buddyCombatant.classList.toggle("boss-buddy",Boolean(buddy.boss));
@@ -5735,8 +5735,8 @@ function animateBuddyAction(){
 }
 
 function tickPlayerBuddyEffects(){
-  // Buddy is a bonus action. The cooldown begins AFTER the OC finishes the
-  // turn in which the Buddy was used, so "3 turns" means three full OC turns.
+  // Lil Guy is a bonus action. The cooldown begins AFTER the OC finishes the
+  // turn in which the Lil Guy was used, so "3 turns" means three full OC turns.
   if(skillState.buddyCooldown>0 && !buddyUsedThisHeroTurn) skillState.buddyCooldown--;
   buddyUsedThisHeroTurn=false;
   if(skillState.buddyAttackBuffTurns>0) skillState.buddyAttackBuffTurns--;
@@ -6084,7 +6084,7 @@ function renderCommandButtons() {
     ui.buddyMenuButton.disabled=disabled || !buddy || !buddySkill || buddyCooldown>0 || buddyUsedThisHeroTurn;
     if(ui.buddyCommandText){
       ui.buddyCommandText.textContent=!buddy
-        ? "No Main Buddy"
+        ? "No Main Lil Guy"
         : !buddySkill
           ? "No helper skill"
           : buddyUsedThisHeroTurn
@@ -6103,8 +6103,8 @@ function renderCommandButtons() {
       ui.switchBuddyCommandText.textContent=buddySwitchUsedThisEncounter
         ? "Switch used this encounter"
         : assignedBuddyCount<=1
-          ? "Assign 2+ Buddies in Profiles"
-          : `${assignedBuddyCount} Buddies ready`;
+          ? "Assign 2+ Lil Guys in Profiles"
+          : `${assignedBuddyCount} Lil Guys ready`;
     }
   }
 
@@ -6123,7 +6123,7 @@ function renderBuddySkillMenu(){
   if(!buddy || !skill){
     const empty=document.createElement("p");
     empty.className="no-battle-items";
-    empty.textContent="Choose a Main Buddy from Profiles to use a helper skill.";
+    empty.textContent="Choose a Main Lil Guy from Profiles to use a helper skill.";
     ui.skillButtons.appendChild(empty);
     return;
   }
@@ -6151,7 +6151,7 @@ function renderBattleBuddySwitchMenu(){
 
     if(!buddy){
       card.disabled=true;
-      card.innerHTML=`<span class="buddy-switch-empty-art">${slotIndex+1}</span><span class="buddy-switch-copy"><strong>Empty Slot ${slotIndex+1}</strong><small>Assign a Buddy in Profiles.</small></span>`;
+      card.innerHTML=`<span class="buddy-switch-empty-art">${slotIndex+1}</span><span class="buddy-switch-copy"><strong>Empty Slot ${slotIndex+1}</strong><small>Assign a Lil Guy in Profiles.</small></span>`;
       ui.buddySwitchGrid.appendChild(card);
       return;
     }
@@ -6159,8 +6159,8 @@ function renderBattleBuddySwitchMenu(){
     const skill=buddySkillForEnemyId(buddy.enemyId);
     const displayName=`${buddy.shiny?"✨ ":""}${escapeHtml(buddy.name)}${buddy.genderSymbol?` ${buddy.genderSymbol}`:""}`;
     const species=buddy.nickname && buddy.speciesName && buddy.speciesName!==buddy.name ? ` · ${escapeHtml(buddy.speciesName)}` : "";
-    const detail=skill?.description || "This Buddy does not have a helper move yet.";
-    card.innerHTML=`<span class="buddy-switch-portrait"><img src="${escapeHtml(buddy.image)}" alt=""></span><span class="buddy-switch-copy"><strong>${displayName}${species}</strong><em>${escapeHtml(skill?.name||"Buddy")}</em><small>${escapeHtml(detail)}</small></span>${isCurrent?'<span class="buddy-switch-current">CURRENT</span>':''}`;
+    const detail=skill?.description || "This Lil Guy does not have a helper move yet.";
+    card.innerHTML=`<span class="buddy-switch-portrait"><img src="${escapeHtml(buddy.image)}" alt=""></span><span class="buddy-switch-copy"><strong>${displayName}${species}</strong><em>${escapeHtml(skill?.name||"Lil Guy")}</em><small>${escapeHtml(detail)}</small></span>${isCurrent?'<span class="buddy-switch-current">CURRENT</span>':''}`;
     card.disabled=isCurrent || buddySwitchUsedThisEncounter || actionLocked || !currentEnemy;
     if(!card.disabled) card.addEventListener("click",()=>switchBattleBuddy(slotIndex));
     ui.buddySwitchGrid.appendChild(card);
@@ -6212,11 +6212,11 @@ function openCommandWindow(kind) {
     renderSkills();
     ui.skillButtons.classList.remove("hidden");
   } else if(kind === "buddy") {
-    ui.commandWindowTitle.textContent = "Buddy";
+    ui.commandWindowTitle.textContent = "Lil Guy";
     renderBuddySkillMenu();
     ui.skillButtons.classList.remove("hidden");
   } else if(kind === "switch-buddy") {
-    ui.commandWindowTitle.textContent = "Switch Buddy";
+    ui.commandWindowTitle.textContent = "Switch Lil Guy";
     renderBattleBuddySwitchMenu();
     ui.buddySwitchPanel?.classList.remove("hidden");
   } else {
@@ -6284,7 +6284,7 @@ function renderBattleItems() {
     ui.itemButtons.appendChild(button);
   });
 
-  // v37: Buddy Pons are now battle items. They are always shown so the
+  // v37: Lil Pons are now battle items. They are always shown so the
   // player can see their current quantity and exact catch chance.
   BUDDY_PONS.forEach(pon => {
     const qty=hubInventoryQty(pon.id);
@@ -7151,7 +7151,7 @@ async function attemptBattleCapture(ponId,targetOverride=null) {
     const buddy=captureBuddy(target);
     renderEnemyName(target);
     renderBuddyHomeCount();
-    setMessage(`${target.name}${target.shiny?" ✨":""} became your Buddy! You now own ×${buddy.quantity}.`);
+    setMessage(`${target.name}${target.shiny?" ✨":""} became your Lil Guy! You now own ×${buddy.quantity}.`);
     await sleep(520);
     const encounterDone=await enemyDefeated({captured:true});
     if(encounterDone) return;
@@ -7200,11 +7200,11 @@ function showBefriendPanel(enemy) {
   ui.befriendTitle.textContent=`Befriend ${enemy.name}${enemy.shiny?" ✨":""}?`;
   const hasPon=hasCompatibleBuddyPon(enemy);
   if(enemy.shiny) {
-    ui.befriendText.textContent=`Shiny Buddy! Any Buddy Pon is a guaranteed catch. Owned so far: ×${owned}.${hasPon?"":" No Pon? Purchase one below before continuing!"}`;
+    ui.befriendText.textContent=`Shiny Lil Guy! Any Lil Pon is a guaranteed catch. Owned so far: ×${owned}.${hasPon?"":" No Pon? Purchase one below before continuing!"}`;
   } else if(enemy.boss) {
-    ui.befriendText.textContent=`Boss Buddies are tougher to befriend. Owned so far: ×${owned}.${hasPon?"":" You can purchase a compatible Pon below."}`;
+    ui.befriendText.textContent=`Boss Lil Guys are tougher to befriend. Owned so far: ×${owned}.${hasPon?"":" You can purchase a compatible Pon below."}`;
   } else {
-    ui.befriendText.textContent=`Choose one Buddy Pon for a chance to befriend it. Owned so far: ×${owned}.${hasPon?"":" You can purchase one below."}`;
+    ui.befriendText.textContent=`Choose one Lil Pon for a chance to befriend it. Owned so far: ×${owned}.${hasPon?"":" You can purchase one below."}`;
   }
   ui.skipBefriend.textContent="Continue to Chest";
   if(ui.purchasePonButton) {
@@ -7212,7 +7212,7 @@ function showBefriendPanel(enemy) {
     ui.purchasePonButton.textContent="Purchase Pon";
   }
   ui.ponPurchasePanel?.classList.add("hidden");
-  if(ui.ponPurchaseMessage) ui.ponPurchaseMessage.textContent="Buy a Buddy Pon without leaving this encounter.";
+  if(ui.ponPurchaseMessage) ui.ponPurchaseMessage.textContent="Buy a Lil Pon without leaving this encounter.";
   ui.befriendPanel.classList.remove("hidden");
   renderBefriendChoices();
 }
@@ -7245,13 +7245,13 @@ async function attemptBefriend(ponId) {
   if(success) {
     const buddy=captureBuddy(pendingDefeatedEnemy);
     renderEnemyName(pendingDefeatedEnemy);
-    ui.befriendTitle.textContent=`${pendingDefeatedEnemy.name}${pendingDefeatedEnemy.shiny?" ✨":""} became your Buddy!`;
+    ui.befriendTitle.textContent=`${pendingDefeatedEnemy.name}${pendingDefeatedEnemy.shiny?" ✨":""} became your Lil Guy!`;
     ui.befriendText.textContent=`Befriended! You now own ×${buddy.quantity}.`;
-    setMessage(`${pendingDefeatedEnemy.name}${pendingDefeatedEnemy.shiny?" ✨":""} became your Buddy!`);
+    setMessage(`${pendingDefeatedEnemy.name}${pendingDefeatedEnemy.shiny?" ✨":""} became your Lil Guy!`);
     renderBuddyHomeCount();
   } else {
     ui.befriendTitle.textContent=`Almost! ${pendingDefeatedEnemy.name} slipped away.`;
-    ui.befriendText.textContent="That Buddy Pon was used up. You can try again next time you meet this Buddy!";
+    ui.befriendText.textContent="That Lil Pon was used up. You can try again next time you meet this Lil Guy!";
     setMessage(`${pendingDefeatedEnemy.name} slipped away this time!`);
   }
   ui.skipBefriend.textContent="Continue to Chest";
@@ -7494,7 +7494,7 @@ function finalizeCharmRewards(reward,chest){
   reward.exp=Math.max(0,Math.round((Number(reward.exp)||0)*(1+Math.max(0,Number(training?.expBonus)||0))));
 
   // Red Plushbun — Lucky Fluff: +5–12 coins when the special Plushbun was
-  // defeated/caught, or when a Red Plushbun Buddy was active/used in the fight.
+  // defeated/caught, or when a Red Plushbun Lil Guy was active/used in the fight.
   const battleFoes=Array.isArray(chest?.enemies) && chest.enemies.length
     ? chest.enemies
     : (chest?.enemy ? [chest.enemy] : []);
@@ -8142,7 +8142,7 @@ setInterval(()=>{
 },560);
 
 
-// v24.166 — Duckie Dash, Buddy Eggs, Mysterious Merchant, and Sibling Spat
+// v24.166 — Duckie Dash, Lil Guy Eggs, Mysterious Merchant, and Sibling Spat
 (function(){
   const DASH_RUN_OPTIONS={30:{duration:30,cost:3},60:{duration:60,cost:5}};
   const DASH_GROUND_RATIO=.05;
@@ -8369,11 +8369,11 @@ setInterval(()=>{
             <button id="hatchDetailBackdrop" class="hatch-modal-backdrop" type="button" aria-label="Close egg window"></button>
             <section class="hatch-modal-card" role="dialog" aria-modal="true" aria-labelledby="hatchDetailTitle">
               <button id="closeHatchDetail" class="hatch-modal-close" type="button" aria-label="Close">×</button>
-              <div class="hatch-modal-heading"><span id="hatchDetailKicker" class="mini-label">INCUBATOR</span><h2 id="hatchDetailTitle">Buddy Egg</h2><small id="hatchDetailSubtitle">Warm and cozy.</small></div>
+              <div class="hatch-modal-heading"><span id="hatchDetailKicker" class="mini-label">INCUBATOR</span><h2 id="hatchDetailTitle">Lil Guy Egg</h2><small id="hatchDetailSubtitle">Warm and cozy.</small></div>
               <div class="hatch-window">
                 <div id="hatchGlow" class="hatch-window-glow" aria-hidden="true"></div>
                 <img class="hatch-window-nest" src="assets/eggs/Hatch-nest.png" alt="">
-                <img id="hatchDetailEgg" class="hatch-window-egg" src="assets/eggs/Common-egg.png" alt="Buddy egg">
+                <img id="hatchDetailEgg" class="hatch-window-egg" src="assets/eggs/Common-egg.png" alt="Lil Guy egg">
                 <div id="hatchResult" class="hatch-result hidden" aria-live="polite"></div>
               </div>
               <div id="hatchDetailStatus" class="hatch-detail-status">Incubating...</div>
@@ -8474,7 +8474,7 @@ setInterval(()=>{
   let selectedHatchSlot=null,inventoryTargetSlot=null,inventoryReplacing=false,hatchAnimating=false;
   function closeHatchDetail(){if(hatchAnimating)return;selectedHatchSlot=null;const modal=document.querySelector('#hatchDetailModal');modal?.classList.add('hidden');modal?.setAttribute('aria-hidden','true');}
   function closeEggInventory(){inventoryTargetSlot=null;inventoryReplacing=false;const modal=document.querySelector('#eggInventoryModal');modal?.classList.add('hidden');modal?.setAttribute('aria-hidden','true');}
-  function renderEggInventory(){const grid=document.querySelector('#eggInventoryGrid');if(!grid)return;grid.innerHTML='';['common','rare','shiny'].forEach(type=>{const d=eggDefinition(type),qty=specialQty(`${type}-egg`);const card=document.createElement('div');card.className='egg-inventory-card';const detail=type==='common'?'1 hour · Non-boss Buddies · normal Shiny chance':type==='rare'?'24 hours · Bosses favored · 1 / 100 Shiny chance':'24 hours · Guaranteed random Shiny Buddy ✨';card.innerHTML=`<img src="${d.image}" alt="${d.name}"><strong>${d.name}</strong><span class="egg-count">Owned ×${qty}</span><small>${detail}</small>`;const b=document.createElement('button');b.type='button';b.className='pixel-button primary';const noSlot=inventoryTargetSlot===null&&emptyIncubator()<0;b.disabled=qty<=0||noSlot;b.textContent=qty<=0?'None Owned':inventoryReplacing?`Switch to ${d.name}`:'Incubate';b.addEventListener('click',()=>startEgg(type,inventoryTargetSlot,inventoryReplacing));card.appendChild(b);grid.appendChild(card);});const note=document.querySelector('#eggInventoryNote');if(note){if(inventoryReplacing)note.textContent='Switching returns the current egg to your inventory and restarts the new egg timer.';else if(inventoryTargetSlot!==null)note.textContent=`This egg will go into Nest ${inventoryTargetSlot+1}.`;else if(emptyIncubator()<0)note.textContent='All three nests are occupied. Tap an incubating egg and choose Switch Egg if you want to replace one.';else note.textContent='Only three eggs can incubate at once. Your extra eggs stay safely in inventory.';}const title=document.querySelector('#eggInventoryTitle');if(title)title.textContent=inventoryReplacing?'Switch Egg':'Choose an Egg';}
+  function renderEggInventory(){const grid=document.querySelector('#eggInventoryGrid');if(!grid)return;grid.innerHTML='';['common','rare','shiny'].forEach(type=>{const d=eggDefinition(type),qty=specialQty(`${type}-egg`);const card=document.createElement('div');card.className='egg-inventory-card';const detail=type==='common'?'1 hour · Non-boss Lil Guys · normal Shiny chance':type==='rare'?'24 hours · Bosses favored · 1 / 100 Shiny chance':'24 hours · Guaranteed random Shiny Lil Guy ✨';card.innerHTML=`<img src="${d.image}" alt="${d.name}"><strong>${d.name}</strong><span class="egg-count">Owned ×${qty}</span><small>${detail}</small>`;const b=document.createElement('button');b.type='button';b.className='pixel-button primary';const noSlot=inventoryTargetSlot===null&&emptyIncubator()<0;b.disabled=qty<=0||noSlot;b.textContent=qty<=0?'None Owned':inventoryReplacing?`Switch to ${d.name}`:'Incubate';b.addEventListener('click',()=>startEgg(type,inventoryTargetSlot,inventoryReplacing));card.appendChild(b);grid.appendChild(card);});const note=document.querySelector('#eggInventoryNote');if(note){if(inventoryReplacing)note.textContent='Switching returns the current egg to your inventory and restarts the new egg timer.';else if(inventoryTargetSlot!==null)note.textContent=`This egg will go into Nest ${inventoryTargetSlot+1}.`;else if(emptyIncubator()<0)note.textContent='All three nests are occupied. Tap an incubating egg and choose Switch Egg if you want to replace one.';else note.textContent='Only three eggs can incubate at once. Your extra eggs stay safely in inventory.';}const title=document.querySelector('#eggInventoryTitle');if(title)title.textContent=inventoryReplacing?'Switch Egg':'Choose an Egg';}
   function openEggInventory(targetSlot=null,replace=false){inventoryTargetSlot=Number.isInteger(targetSlot)?targetSlot:null;inventoryReplacing=Boolean(replace);renderEggInventory();const modal=document.querySelector('#eggInventoryModal');modal?.classList.remove('hidden');modal?.setAttribute('aria-hidden','false');}
   function updateHatchDetailTimer(){if(selectedHatchSlot===null||hatchAnimating)return;const slot=questSave.eggs.incubators[selectedHatchSlot];if(!slot)return;const ready=Date.now()>=slot.endAt;const status=document.querySelector('#hatchDetailStatus');if(status)status.textContent=ready?'Oh?':`${fmtRemaining(slot.endAt-Date.now())} until hatch`;if(ready&&!document.querySelector('#hatchNowButton'))openHatchDetail(selectedHatchSlot);}
   function warmBlanketQtyV213(){return Math.max(0,Math.floor(Number(hubSave?.inventory?.['warm-blanket'])||0));}
@@ -8511,7 +8511,7 @@ setInterval(()=>{
       const close=document.createElement('button');close.type='button';close.className='pixel-button';close.textContent=ready?'Not Yet':'Close';close.addEventListener('click',closeHatchDetail);actions.appendChild(close);
     }
   }
-  async function hatchSlot(index){const slot=questSave.eggs.incubators[index];if(!slot||Date.now()<slot.endAt||hatchAnimating)return;hatchAnimating=true;const egg=document.querySelector('#hatchDetailEgg'),glow=document.querySelector('#hatchGlow'),actions=document.querySelector('#hatchDetailActions'),status=document.querySelector('#hatchDetailStatus');if(actions)actions.querySelectorAll('button').forEach(b=>b.disabled=true);if(status)status.textContent='Something is happening...!';egg?.classList.add('hatching');glow?.classList.add('active');await sleep(1380);const entry=rollEggBuddy(slot.type);if(!entry){hatchAnimating=false;return;}const owned=grantCatalogBuddy(entry),eggDef=eggDefinition(slot.type);questSave.eggs.incubators[index]=null;questSave.eggs.lastHatch={name:entry.name,image:entry.image,shiny:Boolean(entry.shiny),boss:Boolean(entry.boss),eggName:eggDef.name,quantity:owned.quantity};persistAll();refreshFeatureBadges();renderBuddyHomeCount();renderHatchery();if(egg)egg.classList.add('hidden');const result=document.querySelector('#hatchResult');if(result){result.className=`hatch-result${entry.shiny?' shiny':''}`;result.innerHTML=`<div><img src="${entry.image}" alt="${entry.name}"><strong>${entry.name}${entry.shiny?' ✨':''}</strong><small>${entry.boss?'Boss Buddy · ':''}${entry.shiny?'Shiny · ':''}Owned ×${owned.quantity}</small></div>`;}const title=document.querySelector('#hatchDetailTitle');if(title)title.textContent='It hatched!';const sub=document.querySelector('#hatchDetailSubtitle');if(sub)sub.textContent=`Your ${eggDef.name} became a new Buddy!`;if(status)status.textContent=`Meet ${entry.name}${entry.shiny?' ✨':''}!`;if(actions){actions.innerHTML='';const done=document.createElement('button');done.type='button';done.className='pixel-button primary';done.textContent='Yay! ♡';done.addEventListener('click',()=>{hatchAnimating=false;closeHatchDetail();renderHatchery();});actions.appendChild(done);}}
+  async function hatchSlot(index){const slot=questSave.eggs.incubators[index];if(!slot||Date.now()<slot.endAt||hatchAnimating)return;hatchAnimating=true;const egg=document.querySelector('#hatchDetailEgg'),glow=document.querySelector('#hatchGlow'),actions=document.querySelector('#hatchDetailActions'),status=document.querySelector('#hatchDetailStatus');if(actions)actions.querySelectorAll('button').forEach(b=>b.disabled=true);if(status)status.textContent='Something is happening...!';egg?.classList.add('hatching');glow?.classList.add('active');await sleep(1380);const entry=rollEggBuddy(slot.type);if(!entry){hatchAnimating=false;return;}const owned=grantCatalogBuddy(entry),eggDef=eggDefinition(slot.type);questSave.eggs.incubators[index]=null;questSave.eggs.lastHatch={name:entry.name,image:entry.image,shiny:Boolean(entry.shiny),boss:Boolean(entry.boss),eggName:eggDef.name,quantity:owned.quantity};persistAll();refreshFeatureBadges();renderBuddyHomeCount();renderHatchery();if(egg)egg.classList.add('hidden');const result=document.querySelector('#hatchResult');if(result){result.className=`hatch-result${entry.shiny?' shiny':''}`;result.innerHTML=`<div><img src="${entry.image}" alt="${entry.name}"><strong>${entry.name}${entry.shiny?' ✨':''}</strong><small>${entry.boss?'Boss Lil Guy · ':''}${entry.shiny?'Shiny · ':''}Owned ×${owned.quantity}</small></div>`;}const title=document.querySelector('#hatchDetailTitle');if(title)title.textContent='It hatched!';const sub=document.querySelector('#hatchDetailSubtitle');if(sub)sub.textContent=`Your ${eggDef.name} became a new Lil Guy!`;if(status)status.textContent=`Meet ${entry.name}${entry.shiny?' ✨':''}!`;if(actions){actions.innerHTML='';const done=document.createElement('button');done.type='button';done.className='pixel-button primary';done.textContent='Yay! ♡';done.addEventListener('click',()=>{hatchAnimating=false;closeHatchDetail();renderHatchery();});actions.appendChild(done);}}
   function renderHatchery(){ensureExpansionSave();const total=specialQty('common-egg')+specialQty('rare-egg')+specialQty('shiny-egg');const count=document.querySelector('#hatchInventoryCount');if(count)count.textContent=String(total);const ready=readyEggs(),flag=document.querySelector('#hatchWorldReady');if(flag){flag.classList.toggle('hidden',ready<=0);flag.textContent=ready===1?'An egg is ready! ✨':`${ready} eggs are ready! ✨`;}const slots=document.querySelector('#hatchNestSlots');if(slots){slots.innerHTML='';questSave.eggs.incubators.forEach((slot,i)=>{const b=document.createElement('button');b.type='button';b.className='hatch-nest-slot';b.setAttribute('aria-label',slot?`Nest ${i+1}, ${eggDefinition(slot.type).name}`:`Nest ${i+1}, empty`);if(!slot){b.innerHTML=`<span class="hatch-empty-plus" aria-hidden="true">＋</span><span class="hatch-slot-status">Empty Nest</span>`;b.addEventListener('click',()=>openEggInventory(i,false));}else{const d=eggDefinition(slot.type),isReady=Date.now()>=slot.endAt;b.classList.toggle('ready',isReady);b.innerHTML=`<img class="hatch-main-egg" src="${d.image}" alt="${d.name}"><span class="hatch-slot-status">${isReady?'Ready! Tap to hatch':fmtRemaining(slot.endAt-Date.now())}</span>`;b.addEventListener('click',()=>openHatchDetail(i));}slots.appendChild(b);});}if(!document.querySelector('#eggInventoryModal')?.classList.contains('hidden'))renderEggInventory();refreshFeatureBadges();updateHatchDetailTimer();}
   setInterval(()=>{refreshFeatureBadges();if(!document.querySelector('#hatcheryScreen')?.classList.contains('hidden'))renderHatchery();},1000);
 
@@ -8661,11 +8661,11 @@ setInterval(()=>{
   function finishNonBattleEvent(message){clearMerchantUi();hideEventChoices();ui.openChest?.classList.add('hidden');ui.chestLayer?.classList.add('hidden');setMessage(message);if(currentRun){refillActiveHeroHpV210();markEndlessFloorComplete();}ui.continueButton.textContent=currentRun?.mode==='endless'?'Next Floor':'Continue';ui.postFloorActions?.classList.remove('hidden');ui.leaveEndlessButton?.classList.toggle('hidden',currentRun?.mode!=='endless');setPostFloorLayout(true);actionLocked=false;persistAll();refreshFeatureBadges();}
   function merchantStock(){
     const options=[
-      {kind:'item',id:'buddy-pon',name:'Buddy Pon',image:'../assets/items/buddy-pons/buddy-pon.webp',price:40,normalPrice:50,detail:'A basic Buddy Pon.'},
-      {kind:'item',id:'super-buddy-pon',name:'Super Buddy Pon',image:'../assets/items/buddy-pons/super-buddy-pon.webp',price:80,normalPrice:100,detail:'A stronger Buddy Pon.'},
-      {kind:'item',id:'boss-buddy-pon',name:'Boss Buddy Pon',image:'../assets/items/buddy-pons/boss-buddy-pon.webp',price:140,normalPrice:175,detail:'Made for tougher Buddies.'},
+      {kind:'item',id:'buddy-pon',name:'Lil Pon',image:'../assets/items/buddy-pons/buddy-pon.webp',price:40,normalPrice:50,detail:'A basic Lil Pon.'},
+      {kind:'item',id:'super-buddy-pon',name:'Super Lil Pon',image:'../assets/items/buddy-pons/super-buddy-pon.webp',price:80,normalPrice:100,detail:'A stronger Lil Pon.'},
+      {kind:'item',id:'boss-buddy-pon',name:'Boss Lil Pon',image:'../assets/items/buddy-pons/boss-buddy-pon.webp',price:140,normalPrice:175,detail:'Made for tougher Lil Guys.'},
       {kind:'item',id:'jump-token',name:'Jump Token',image:'assets/dash/Jump-Token.png',price:64,normalPrice:80,detail:'One token toward Duckie Dash.'},
-      {kind:'item',id:'common-egg',name:'Common Egg',image:'assets/eggs/Common-egg.png',price:128,normalPrice:160,detail:'Hatches a non-boss Buddy.'},
+      {kind:'item',id:'common-egg',name:'Common Egg',image:'assets/eggs/Common-egg.png',price:128,normalPrice:160,detail:'Hatches a non-boss Lil Guy.'},
       {kind:'item',id:'rare-egg',name:'Rare Egg',image:'assets/eggs/Rare-egg.png',price:340,normalPrice:425,detail:'Bosses favored + better Shiny chance.'}
     ];
     const craft=REWARD_ITEMS.filter(x=>!String(x.id).includes('buddy-pon')&&!String(x.id).includes('heart-refill'));if(craft.length){const x=craft[Math.floor(Math.random()*craft.length)],normalPrice=70+Math.floor(Math.random()*51);options.push({kind:'item',id:x.id,name:x.name,image:x.image,price:Math.max(1,Math.round(normalPrice*.8)),normalPrice,detail:'A random crafting supply.'});}
@@ -8800,6 +8800,8 @@ setInterval(()=>{
     renderHatchery, openEggInventory, closeEggInventory, closeHatchDetail,
     openHatchDetail, refreshFeatureBadges
   };
+  window.refreshFeatureBadges=refreshFeatureBadges;
+  window.renderDashSelectors=renderDashSelectors;
   refreshFeatureBadges();renderDashSelectors();renderHatchery();
 })();
 
@@ -9487,7 +9489,7 @@ setInterval(()=>{
       actions.className='dash-title-actions';
       actions.innerHTML=`<span class="dash-title-cost">Cost 3 Tokens <img src="assets/dash/Jump-Token.png" alt=""></span><button id="dashStartInline" class="pixel-button primary" type="button">Play Duckie Dash</button>`;
       titleCol.append(actions);
-      actions.querySelector('#dashStartInline')?.addEventListener('click',startDash);
+      actions.querySelector('#dashStartInline')?.addEventListener('click',()=>window.DUCKIE_DASH_API_V269?.start?.());
     }
     const mini=screen.querySelector('.dq-mini-grid');
     const cartTile=mini?.querySelector('div:last-child');
@@ -10334,11 +10336,11 @@ setInterval(()=>{
       <button id="hatchDetailBackdrop" class="hatch-modal-backdrop" type="button" aria-label="Close egg window"></button>
       <section class="hatch-modal-card" role="dialog" aria-modal="true" aria-labelledby="hatchDetailTitle">
         <button id="closeHatchDetail" class="hatch-modal-close" type="button" aria-label="Close">×</button>
-        <div class="hatch-modal-heading"><span id="hatchDetailKicker" class="mini-label">INCUBATOR</span><h2 id="hatchDetailTitle">Buddy Egg</h2><small id="hatchDetailSubtitle">Warm and cozy.</small></div>
+        <div class="hatch-modal-heading"><span id="hatchDetailKicker" class="mini-label">INCUBATOR</span><h2 id="hatchDetailTitle">Lil Guy Egg</h2><small id="hatchDetailSubtitle">Warm and cozy.</small></div>
         <div class="hatch-window">
           <div id="hatchGlow" class="hatch-window-glow" aria-hidden="true"></div>
           <img class="hatch-window-nest" src="assets/eggs/Hatch-nest.png" alt="">
-          <img id="hatchDetailEgg" class="hatch-window-egg" src="assets/eggs/Common-egg.png" alt="Buddy egg">
+          <img id="hatchDetailEgg" class="hatch-window-egg" src="assets/eggs/Common-egg.png" alt="Lil Guy egg">
           <div id="hatchResult" class="hatch-result hidden" aria-live="polite"></div>
         </div>
         <div id="hatchDetailStatus" class="hatch-detail-status">Incubating...</div>
@@ -10499,7 +10501,7 @@ window.DUCKIE_DAYS_BUILD='24.203';
 
 
 /* v24.203 — Mimic buddy key recovery.
-   Lucky/Healthy Mimics are separate Buddy variants instead of overwriting the regular pink Mimic.
+   Lucky/Healthy Mimics are separate Lil Guy variants instead of overwriting the regular pink Mimic.
    This intentionally does not alter the chest -> Open -> Mimic reveal -> battlefield sequence. */
 (function(){
   function restoreOverwrittenMimicBuddyV203(){

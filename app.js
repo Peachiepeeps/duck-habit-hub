@@ -547,21 +547,21 @@ const ITEMS = {
     "sellValue": 0
   },
   "buddy-pon": {
-    "name": "Buddy Pon",
+    "name": "Lil Pon",
     "category": "battle",
     "image": "assets/items/buddy-pons/buddy-pon.webp",
     "icon": "♡",
     "sellValue": 15
   },
   "super-buddy-pon": {
-    "name": "Super Buddy Pon",
+    "name": "Super Lil Pon",
     "category": "battle",
     "image": "assets/items/buddy-pons/super-buddy-pon.webp",
     "icon": "✦",
     "sellValue": 30
   },
   "boss-buddy-pon": {
-    "name": "Boss Buddy Pon",
+    "name": "Boss Lil Pon",
     "category": "battle",
     "image": "assets/items/buddy-pons/boss-buddy-pon.webp",
     "icon": "★",
@@ -1490,7 +1490,7 @@ const SHOP_CATEGORIES = {
   },
   battle: {
     label: "Battle Items",
-    subtitle: "Stock up for Duck Quest. Buddy Pons befriend defeated enemies; Pink and Gold Hearts restore HP."
+    subtitle: "Stock up for Duck Quest. Lil Pons befriend defeated enemies; Pink and Gold Hearts restore HP."
   },
   profiles: {
     label: "Invitations",
@@ -3729,7 +3729,7 @@ function normalizeBuddyRecord(record, fallbackKey = "") {
   }
 
   const image = String(record.image || "").trim();
-  const name = String(record.name || "Buddy").trim() || "Buddy";
+  const name = String(record.name || "Lil Guy").trim() || "Lil Guy";
 
   return {
     key,
@@ -12383,7 +12383,7 @@ function buddyCollectionEntries() {
     .sort((a, b) => {
       if (Boolean(a.shiny) !== Boolean(b.shiny)) return a.shiny ? -1 : 1;
       if (Boolean(a.boss) !== Boolean(b.boss)) return a.boss ? -1 : 1;
-      return String(a.name || "Buddy").localeCompare(String(b.name || "Buddy"));
+      return String(a.name || "Lil Guy").localeCompare(String(b.name || "Lil Guy"));
     });
 }
 
@@ -12525,9 +12525,9 @@ function getBuddySlots(characterId = save.selectedCharacter) {
     let key = typeof source[index] === "string" ? source[index] : null;
 
     // v24.282:
-    // Buddy Box owns the individual Buddy copy. If an older aggregate Mimic
+    // Lil Guy Box owns the individual Buddy copy. If an older aggregate Mimic
     // key disagrees with the actual mapped Mimic instance, trust the instance.
-    // This repairs Peep's stale mimic:lucky Main Buddy -> mimic:base without
+    // This repairs Peep's stale mimic:lucky Main Lil Guy -> mimic:base without
     // changing unrelated Buddy families.
     const mappedEntry = buddyBoxMappedEntry(characterId, index);
     const keyIsMimic = typeof key === "string" && key.startsWith("mimic:");
@@ -12703,7 +12703,7 @@ function assignBuddyToProfile(characterId, slotIndex, buddyKey) {
 
   save.buddies.equippedByCharacter[characterId] = slots;
 
-  // Keep the newer individual Buddy Box assignment synchronized when a
+  // Keep the newer individual Lil Guy Box assignment synchronized when a
   // profile Buddy circle is changed. Duck Quest already syncs the reverse
   // direction, so after v24.282 both screens use the same Buddy copy.
   syncProfileBuddyInstanceAssignment(characterId, index, slots[index]);
@@ -12719,7 +12719,7 @@ function renderProfileBuddyPicker(characterId, slotIndex) {
   const slots = getBuddySlots(characterId);
   const buddies = buddyCollectionEntries();
   selectedBuddySlotIndex = slotIndex;
-  profileBuddyPickerTitle.textContent = slotIndex === 0 ? "Choose Main Buddy" : `Choose Buddy ${slotIndex + 1}`;
+  profileBuddyPickerTitle.textContent = slotIndex === 0 ? "Choose Main Lil Guy" : `Choose Lil Guy ${slotIndex + 1}`;
   profileBuddyPickerGrid.innerHTML = "";
 
   const remove = document.createElement("button");
@@ -12732,7 +12732,7 @@ function renderProfileBuddyPicker(characterId, slotIndex) {
   if (!buddies.length) {
     const empty = document.createElement("p");
     empty.className = "profile-buddy-picker-empty";
-    empty.textContent = "No Buddies befriended yet. Visit Duck Quest, defeat an enemy, and try a Buddy Pon! ♡";
+    empty.textContent = "No Lil Guys befriended yet. Visit Duck Quest, defeat an enemy, and try a Lil Pon! ♡";
     profileBuddyPickerGrid.append(empty);
   } else {
     buddies.forEach(buddy => {
@@ -12773,14 +12773,14 @@ function renderProfileBuddies(characterId = selectedProfileCharacterId) {
   slots.forEach((buddyKey, index) => {
     const buddy = buddyByKey(buddyKey);
     const personalization = getBuddySlotPersonalization(characterId, index);
-    const buddyDisplayName = personalization?.nickname || buddy?.name || "Buddy";
+    const buddyDisplayName = personalization?.nickname || buddy?.name || "Lil Guy";
     const genderMark = buddyGenderSymbol(personalization?.gender);
     const button = document.createElement("button");
     button.type = "button";
     button.className = `profile-buddy-slot${index === 0 ? " main" : ""}${buddy ? " filled" : ""}`;
     button.setAttribute("aria-label", buddy
-      ? `${index === 0 ? "Main Buddy" : `Buddy slot ${index + 1}`}: ${buddyDisplayName}${genderMark ? ` ${genderMark}` : ""}`
-      : `${index === 0 ? "Main Buddy" : `Buddy slot ${index + 1}`}, empty`);
+      ? `${index === 0 ? "Main Lil Guy" : `Lil Guy slot ${index + 1}`}: ${buddyDisplayName}${genderMark ? ` ${genderMark}` : ""}`
+      : `${index === 0 ? "Main Lil Guy" : `Lil Guy slot ${index + 1}`}, empty`);
 
     const art = document.createElement("span");
     art.className = "profile-buddy-slot-art";
