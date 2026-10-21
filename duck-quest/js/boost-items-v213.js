@@ -76,8 +76,29 @@
     try{window.DuckieHatchApiV178?.refreshFeatureBadges?.();}catch(error){}
   }
 
+  const LARGE_CANDY_RECOVERY_KEY='expCandyLargeRecoveryV342';
   let message=null;
   function say(text){if(message)message.textContent=text||'';}
+  function offerCandyRecovery(){
+    const holder=document.querySelector('#tokenShopBoostRowsV213');
+    if(!holder) return;
+    document.querySelector('#candyRecoveryV342')?.remove();
+    if(hubSave[LARGE_CANDY_RECOVERY_KEY] || qty('exp-candy-large')>0) return;
+    const button=document.createElement('button');
+    button.id='candyRecoveryV342';button.type='button';button.className='pixel-button';
+    button.style.cssText='grid-column:1/-1;width:100%;min-height:38px;font-size:.72rem;white-space:normal;';
+    button.textContent='Missing 4 Large EXP Candies? Recover once ♡';
+    button.addEventListener('click',()=>{
+      if(hubSave[LARGE_CANDY_RECOVERY_KEY] || qty('exp-candy-large')>0) return;
+      if(!window.confirm('Only for four Large EXP Candies you purchased but lost before v24.342. Restore 4 candies to your inventory once?')) return;
+      add('exp-candy-large',4);
+      hubSave[LARGE_CANDY_RECOVERY_KEY]=true;
+      persist();
+      say('Restored 4 Large EXP Candies! They are now visible in Hub → Inventory → Battle Items. ♡');
+      renderBoostShop();
+    });
+    holder.append(button);
+  }
 
   function useCandy(boost){
     if(!boost?.expPercent) return;
@@ -153,6 +174,7 @@
       const boost=BOOSTS.find(x=>x.id===button.dataset.v213Use);if(boost)useCandy(boost);
     }));
     const balance=document.querySelector('#tokenShopTokensV200');if(balance)balance.textContent=String(qty('jump-token'));
+    offerCandyRecovery();
   }
 
   const open=document.querySelector('#openTokenShopV200');

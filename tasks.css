@@ -811,3 +811,12 @@
 #assignDuckToOcSecond .duck-placement-button-icon{
   font-size:1rem;
 }
+
+/* v24.342: lift both room arrows together by a little. */
+#roomWingButton,#taskShelfButton{
+  top:auto!important;
+  bottom:9.3%!important;
+}
+@media(max-width:600px){
+  #roomWingButton,#taskShelfButton{bottom:9.3%!important;}
+}

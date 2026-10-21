@@ -497,6 +497,15 @@ function makePaintableFurnitureItems() {
 }
 
 const ITEMS = {
+  "exp-candy-small": {
+    "name": "EXP Candy Small", "category": "battle", "image": "assets/items/quest-boosts/Exp-candy-small.png", "icon": "🍬", "sellValue": 0
+  },
+  "exp-candy-large": {
+    "name": "EXP Candy Large", "category": "battle", "image": "assets/items/quest-boosts/Exp-candy-large.png", "icon": "🍬", "sellValue": 0
+  },
+  "warm-blanket": {
+    "name": "Warm Blanket", "category": "battle", "image": "assets/items/quest-boosts/Warm-blanket.png", "icon": "🧣", "sellValue": 0
+  },
   "jump-token": {
     "name": "Jump Token",
     "category": "special",
@@ -2532,8 +2541,11 @@ function migrateLegacyInventory(saved) {
       : {};
 
   for (const [key, quantity] of Object.entries(source)) {
-    const id = normalizeItemId(key);
-    const qty = Math.max(0, Number(quantity) || 0);
+    const normalizedId = normalizeItemId(key);
+    // Do not erase inventory introduced by a newer minigame or Quest shop.
+    // Unknown safe keys stay in storage, ready for the catalog to recognize them.
+    const id = normalizedId || (/^[a-z0-9][a-z0-9_.:-]{0,100}$/i.test(key) ? key : null);
+    const qty = Math.max(0, Math.floor(Number(quantity) || 0));
     if (!id || !qty) continue;
     inventory[id] = (inventory[id] || 0) + qty;
   }
@@ -7660,6 +7672,12 @@ function renderInventoryItemSheet() {
     ? `You have ×${quantity} total · ${furnitureFamilyOwnedColors(item.furnitureFamily).length} color${furnitureFamilyOwnedColors(item.furnitureFamily).length === 1 ? "" : "s"}`
     : `You have ×${quantity}`;
   inventorySheetActions.innerHTML = "";
+  if(itemId==='exp-candy-large'||itemId==='exp-candy-small'){
+    const info=document.createElement('div');
+    info.className='inventory-furniture-placement';
+    info.textContent='Use EXP Candies from Duck Quest → Token Shop to boost your active OC.';
+    inventorySheetActions.append(info);
+  }
   inventoryGiftPreference.classList.add("hidden");
   inventoryGiftPreference.innerHTML = "";
 

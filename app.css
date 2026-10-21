@@ -7850,3 +7850,13 @@ body[data-quest-theme="midnight-pixel"] .secondary-button,body[data-quest-theme=
     transform:none;
   }
 }
+
+/* v24.342: raise the active OC noticeably without moving shelf art. */
+.stage:not(.closet-open):not(.room-wing-view):not(.task-shelf-view) #peepWrap {
+  inset: -2% 0 2% 0;
+}
+@media (max-width:600px){
+  .stage:not(.closet-open):not(.room-wing-view):not(.task-shelf-view) #peepWrap{
+    inset:auto 0 10% 0!important;
+  }
+}
