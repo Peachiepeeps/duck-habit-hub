@@ -5472,6 +5472,8 @@ function normalizeDuckQuestCharacterProgress(characterId = save.selectedCharacte
   const rawCandyLast = Number(existing.areas?.candy?.lastRank ?? legacyAreas.candy?.lastRank) || 1;
   const rawCloudUnlocked = Number(existing.areas?.cloud?.unlockedRank ?? legacyAreas.cloud?.unlockedRank) || 1;
   const rawCloudLast = Number(existing.areas?.cloud?.lastRank ?? legacyAreas.cloud?.lastRank) || 1;
+  const rawCityUnlocked = Number(existing.areas?.city?.unlockedRank ?? legacyAreas.city?.unlockedRank) || 1;
+  const rawCityLast = Number(existing.areas?.city?.lastRank ?? legacyAreas.city?.lastRank) || 1;
 
   const meadowUnlocked = Math.max(1, Math.min(40, rawMeadowUnlocked));
   const meadowLast = Math.max(1, Math.min(meadowUnlocked, rawMeadowLast));
@@ -5481,6 +5483,8 @@ function normalizeDuckQuestCharacterProgress(characterId = save.selectedCharacte
   const candyLast = Math.max(1, Math.min(candyUnlocked, rawCandyLast));
   const cloudUnlocked = Math.max(1, Math.min(160, rawCloudUnlocked));
   const cloudLast = Math.max(1, Math.min(cloudUnlocked, rawCloudLast));
+  const cityUnlocked = Math.max(1, Math.min(200, Math.floor(rawCityUnlocked)));
+  const cityLast = Math.max(1, Math.min(cityUnlocked, Math.floor(rawCityLast)));
 
   const inheritedIcon = id === "peep" ? quest.iconBackground : null;
   const iconId = PROFILE_ICON_BACKGROUNDS.some(background => background.id === existing.iconBackground)
@@ -5490,7 +5494,7 @@ function normalizeDuckQuestCharacterProgress(characterId = save.selectedCharacte
       : "white";
 
   const requestedLastArea = existing.lastArea ?? (id === "peep" ? quest.lastArea : null);
-  const validAreas = ["meadow", "ocean", "candy", "cloud"];
+  const validAreas = ["meadow", "ocean", "candy", "cloud", "city"];
 
   quest[id] = {
     ...existing,
@@ -5502,7 +5506,8 @@ function normalizeDuckQuestCharacterProgress(characterId = save.selectedCharacte
       meadow: { unlockedRank: meadowUnlocked, lastRank: meadowLast },
       ocean: { unlockedRank: oceanUnlocked, lastRank: oceanLast },
       candy: { unlockedRank: candyUnlocked, lastRank: candyLast },
-      cloud: { unlockedRank: cloudUnlocked, lastRank: cloudLast }
+      cloud: { unlockedRank: cloudUnlocked, lastRank: cloudLast },
+      city: { unlockedRank: cityUnlocked, lastRank: cityLast }
     },
     clearedAreas: {
       meadow: Boolean(existing.clearedAreas?.meadow || rawMeadowLast >= 40 || rawMeadowUnlocked >= 40),
@@ -5510,7 +5515,8 @@ function normalizeDuckQuestCharacterProgress(characterId = save.selectedCharacte
       // new clears are written by Duck Quest itself at 80/160.
       ocean: Boolean(existing.clearedAreas?.ocean || rawOceanLast >= 100 || rawOceanUnlocked >= 100),
       candy: Boolean(existing.clearedAreas?.candy),
-      cloud: Boolean(existing.clearedAreas?.cloud || rawCloudLast >= 150 || rawCloudUnlocked >= 150)
+      cloud: Boolean(existing.clearedAreas?.cloud || rawCloudLast >= 150 || rawCloudUnlocked >= 150),
+      city: Boolean(existing.clearedAreas?.city)
     },
     endless: {
       record: Math.max(0, Math.floor(Number(existing.endless?.record) || 0)),

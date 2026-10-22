@@ -5116,6 +5116,34 @@ function populateStartingPointPicker(progress){
   syncStartingPointButton();
 }
 
+// v24.349: opt-in restoration of Miko's previously documented City Level 4.
+// No automatic grants to fresh saves; never lower an existing City level.
+function offerMikoCityRecoveryV349(){
+  const card=ui.routePickerModal?.querySelector('.route-picker-modal-card');
+  if(!card)return;
+  card.querySelector('[data-city-recovery-v349]')?.remove();
+  if(selectedArea!=='city'||activeCharacterId!=='miko')return;
+  const city=areaProgress('city');
+  if((Number(city?.unlockedRank)||1)>=4||questSave.mikoCityLevel4RecoveryV349)return;
+  const button=document.createElement('button');
+  button.type='button';
+  button.className='pixel-button';
+  button.dataset.cityRecoveryV349='1';
+  button.style.cssText='width:100%;margin-top:9px;min-height:44px;white-space:normal;padding:8px;font-size:.73rem;';
+  button.textContent='Restore Miko’s City Level 4 ♡';
+  button.addEventListener('click',()=>{
+    if(currentRun||selectedArea!=='city'||activeCharacterId!=='miko')return;
+    const progress=areaProgress('city');
+    progress.unlockedRank=Math.max(4,Number(progress.unlockedRank)||1);
+    progress.lastRank=Math.max(4,Math.min(progress.unlockedRank,Number(progress.lastRank)||1));
+    activeHeroProgress().lastArea='city';
+    questSave.mikoCityLevel4RecoveryV349=true;
+    persistAll();
+    openRoutePicker('city');
+  });
+  card.appendChild(button);
+}
+
 function openRoutePicker(areaId){
   if(!AREA_CONFIG[areaId] || currentRun) return;
   selectedArea=areaId;
@@ -5128,6 +5156,7 @@ function openRoutePicker(areaId){
   if(ui.routeModalRange) ui.routeModalRange.textContent=`Levels 1–${cfg.maxRank}`;
   if(ui.routeModalCurrentRank) ui.routeModalCurrentRank.textContent=String(progress.unlockedRank||1);
   populateStartingPointPicker(progress);
+  offerMikoCityRecoveryV349();
   ui.routeStartLevelPicker?.classList.add("hidden");
   ui.startBeginningRoute?.setAttribute("aria-expanded","false");
   persistAll();

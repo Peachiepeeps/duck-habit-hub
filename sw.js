@@ -15,12 +15,12 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-348-owl-light-nudge';
+const APP_CACHE='duck-habit-hub-app-v24-349-city-progression-owl-alignment';
 const APP_SHELL=[
  './',
  './index.html',
  './version.json',
- './sw.js?v=24.348',
+ './sw.js?v=24.349',
  './manifest.webmanifest?v=24.296',
  './app.css?v=24.345',
  './trading-cards-base.css?v=24.327',
@@ -74,7 +74,7 @@ const APP_SHELL=[
  './duck-quest/css/bao-cafe-v299.css?v=24-309',
  './duck-quest/css/fixes-v318.css?v=24.318',
  './duck-quest/js/bao-cafe-v299.js?v=24-327',
- './app.js?v=24.345',
+ './app.js?v=24.349',
  './universal-clothing-v311.js?v=24.311',
  './gimmick-hub-v288.js?v=24.296',
  './hub-boosts.js?v=24.346',
@@ -127,7 +127,7 @@ const APP_SHELL=[
  './duck-quest/css/quest-v276.css?v=24-276',
  './duck-quest/css/quest-v277.css?v=24-277',
  './duck-quest/css/quest-v278.css?v=24-280',
- './duck-quest/js/game-v96.js?v=24-345',
+ './duck-quest/js/game-v96.js?v=24-349',
  './duck-quest/js/hatchery-v179.js?v=24-345',
  './duck-quest/js/hatchery-egg-position-v192.js?v=24-343',
  './duck-quest/assets/eggs/Hatching-background-six-v343.png',
@@ -153,7 +153,7 @@ const APP_SHELL=[
  './duck-quest/js/universal-clothing-drops-v311.js?v=24.311',
  './duck-quest/js/fixes-v311.js?v=24.311',
  './duck-quest/js/new-enemies-v313.js?v=24.313',
- './duck-quest/js/fixes-v347.js?v=24.348',
+ './duck-quest/js/fixes-v347.js?v=24.349',
  './duck-quest/js/fixes-v313.js?v=24.313',
  './duck-quest/js/fixes-v314.js?v=24.314',
  './duck-quest/js/io-transformation-v317.js?v=24.317',

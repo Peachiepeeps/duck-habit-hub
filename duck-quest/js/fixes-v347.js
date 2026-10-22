@@ -24,17 +24,17 @@
       opacity:0;
     }
     .city-owl-lights-v347 .red{
-      left:27%; top:56.4%; width:10%;
+      left:26.5%; top:55.455%; width:10%;
       background:#ff4d4d;
       box-shadow:0 0 7px 3px rgba(255,120,120,.95), inset 0 0 0 1px #ffd3d3;
     }
     .city-owl-lights-v347 .yellow{
-      left:27%; top:70%; width:10%;
+      left:26.5%; top:69.091%; width:10%;
       background:#ffe05a;
       box-shadow:0 0 7px 3px rgba(255,236,128,.95), inset 0 0 0 1px #fff5c5;
     }
     .city-owl-lights-v347 .green{
-      left:32%; top:82.7%; width:10%;
+      left:31.5%; top:81.818%; width:10%;
       background:#56f45f;
       box-shadow:0 0 7px 3px rgba(144,255,156,.95), inset 0 0 0 1px #d4ffda;
     }
@@ -87,10 +87,15 @@
     const spriteBox=refs.sprite.getBoundingClientRect();
     const hostBox=refs.combatant.getBoundingClientRect();
     if(spriteBox.width>0 && spriteBox.height>0){
-      overlay.style.left=(spriteBox.left-hostBox.left)+'px';
-      overlay.style.top=(spriteBox.top-hostBox.top+1)+'px';
-      overlay.style.width=spriteBox.width+'px';
-      overlay.style.height=spriteBox.height+'px';
+      const nativeW=Math.max(1,Number(refs.sprite.naturalWidth)||100);
+      const nativeH=Math.max(1,Number(refs.sprite.naturalHeight)||110);
+      const scale=Math.min(spriteBox.width/nativeW,spriteBox.height/nativeH);
+      const drawnW=nativeW*scale,drawnH=nativeH*scale;
+      overlay.style.left=(spriteBox.left-hostBox.left+(spriteBox.width-drawnW)/2)+'px';
+      const idleFrameNudge=/idle-2(?:\.|$)/i.test(String(refs.sprite.currentSrc||refs.sprite.src||'')) ? scale : 0;
+      overlay.style.top=(spriteBox.top-hostBox.top+(spriteBox.height-drawnH)/2+idleFrameNudge)+'px';
+      overlay.style.width=drawnW+'px';
+      overlay.style.height=drawnH+'px';
     }
 
     overlay.dataset.signal = legacy?.dataset?.signal || 'green';
@@ -128,7 +133,11 @@
   }
 
   window.addEventListener('resize',()=>requestAnimationFrame(syncVisualFixes));
-  setInterval(syncVisualFixes,60);
+  function followSpritesEveryFrameV349(){
+    syncVisualFixes();
+    requestAnimationFrame(followSpritesEveryFrameV349);
+  }
+  requestAnimationFrame(followSpritesEveryFrameV349);
   requestAnimationFrame(syncVisualFixes);
 })();
 
