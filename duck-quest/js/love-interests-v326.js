@@ -130,6 +130,7 @@ kiri: {
       sprites: {
         idle1: "assets/love-interests/midori/Midori-opened.png",
         idle2: "assets/love-interests/midori/Midori-closed.png",
+        closed: "assets/love-interests/midori/Midori-closed.png",
         smug: "assets/love-interests/midori/Midori-opened-smug.png"
       },
       outfitIds: ["midori-suit", "midori-sleeve", "midori-shorts", "midori-stockings", "midori-boots", "midori-scarf", "midori-low-ponytail"]
@@ -1010,8 +1011,10 @@ kiri: {
       if (img.complete) sizeSceneSprite(img);
       return;
     }
+    img.style.visibility = "hidden"; // Never show the prior lover while loading a new portrait.
+    img.onload = () => { sizeSceneSprite(img); img.style.visibility = "visible"; };
     img.src = src;
-    if (img.complete) sizeSceneSprite(img);
+    if (img.complete && img.naturalWidth){ sizeSceneSprite(img); img.style.visibility = "visible"; }
   }
 
   function sceneSpriteFrame(charId, pose, step){
@@ -1021,8 +1024,7 @@ kiri: {
     if (charId === "midori" && ["idle", "idle1", "idle2", "neutral"].includes(normalized)) {
       const opened = CHARACTERS.midori?.sprites?.idle1 || frames[0];
       const closed = CHARACTERS.midori?.sprites?.idle2 || frames[frames.length - 1] || frames[0];
-      const sequence = [closed, closed, closed, closed, closed, opened, closed, closed];
-      return sequence[step % sequence.length] || closed;
+      return opened; // Midori stays visible after the initial surprise.
     }
     return frames[step % frames.length];
   }
@@ -1048,7 +1050,8 @@ kiri: {
     }, interval);
   }
 
-  function sceneRewardItems(scene){
+  function sceneRewardItems(scene,isRepeat=false){
+    if(isRepeat && !scene.id.includes("-")) return [`${scene.title} Duck ×1`, `${scene.title} Trading Card ×1`];
     if (scene.id.includes("-")) {
       return scene.title.split(" + ").map(name => `${name} Trading Card`);
     }
@@ -1057,7 +1060,7 @@ kiri: {
     return items;
   }
 
-  function buildSceneRewardPopup(scene,onContinue){
+  function buildSceneRewardPopup(scene,onContinue,isRepeat=false){
     const popup=document.createElement("div");
     popup.className="love-interest-reward-popup-v290";
     const label=document.createElement("span");
@@ -1067,7 +1070,7 @@ kiri: {
     title.textContent=scene.id.includes("-")?"Reunion Rewards!":`${scene.title} Rewards!`;
     const list=document.createElement("div");
     list.className="love-interest-reward-list-v290";
-    sceneRewardItems(scene).forEach(item=>{
+    sceneRewardItems(scene,isRepeat).forEach(item=>{
       const row=document.createElement("div");
       row.className="love-interest-reward-item-v290";
       row.textContent=item;
@@ -1138,6 +1141,9 @@ kiri: {
       const step = scene.dialogue[index];
       state.leftPose = step.leftPose || state.leftPose;
       state.rightPose = step.rightPose || state.rightPose;
+      if(scene.id === "midori"){
+        state.rightPose = index===0 ? "closed" : (state.rightPose==="idle2" ? "idle1" : state.rightPose);
+      }
       updateSceneSprites(state);
       const clean = cleanDialogueText(step.text);
       message.textContent = step.speaker === "Narrator" ? clean : `${step.speaker}: ${clean}`;
@@ -1158,7 +1164,17 @@ kiri: {
         next.disabled = true;
         stopSceneAnimation();
         state.heart.classList.remove("hidden");
+        const isRepeat = !scene.id.includes("-") && Boolean(load().loveInterests?.[scene.id]?.encountered);
         scene.reward();
+        if(isRepeat){
+          const cfg=CHARACTERS[scene.id], data=load();
+          if(cfg){
+            ensureAll(data);
+            data.duckCollectionCounts[cfg.duckId]=Math.max(1,Math.floor(Number(data.duckCollectionCounts[cfg.duckId])||1))+1;
+            grantCard(data,cfg.cardId,1);
+            save(data);
+          }
+        }
         message.classList.add("love-interest-reward-message-hidden-v290");
         actions.innerHTML = "";
 
@@ -1180,7 +1196,7 @@ kiri: {
           }
         };
 
-        actions.append(buildSceneRewardPopup(scene,closeScene));
+        actions.append(buildSceneRewardPopup(scene,closeScene,isRepeat));
         actions.classList.remove("hidden");
       });
       row.append(next);
@@ -1192,8 +1208,8 @@ kiri: {
     el.setAttribute("aria-hidden", "false");
     state.resizeHandler = () => { sizeSceneSprite(state.left); sizeSceneSprite(state.right); };
     window.addEventListener("resize", state.resizeHandler);
-    startSceneAnimation(state);
     render();
+    startSceneAnimation(state);
     return true;
   }
 

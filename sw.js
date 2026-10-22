@@ -15,12 +15,12 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-351-card-variants-artwork-mimic-fix';
+const APP_CACHE='duck-habit-hub-app-v24-352-love-egg-sweetheart';
 const APP_SHELL=[
  './',
  './index.html',
  './version.json',
- './sw.js?v=24.351',
+ './sw.js?v=24.352',
  './manifest.webmanifest?v=24.296',
  './app.css?v=24.345',
  './trading-cards-base.css?v=24.327',
@@ -131,13 +131,13 @@ const APP_SHELL=[
  './duck-quest/js/hatchery-v179.js?v=24-345',
  './duck-quest/js/hatchery-egg-position-v192.js?v=24-343',
  './duck-quest/assets/eggs/Hatching-background-six-v343.png',
- './duck-quest/js/love-interests-v326.js?v=24-326',
+ './duck-quest/js/love-interests-v326.js?v=24-352',
  './duck-quest/js/task-buddy-boost-v254.js?v=24-255',
  './duck-quest/js/special-encounters-v326.js?v=24-326',
  './duck-quest/js/quest-v265.js?v=24-283',
  './duck-quest/js/quest-v269.js?v=24-269',
  './duck-quest/js/quest-v270.js?v=24-284',
- './duck-quest/js/gimmick-encounters-v288.js?v=24-326',
+ './duck-quest/js/gimmick-encounters-v288.js?v=24-352',
  './duck-quest/js/sock-gremlin-v297.js?v=24-298',
  './duck-quest/js/special-catch-v298.js?v=24-298',
  './duck-quest/js/ufono-v298.js?v=24-298',
@@ -151,7 +151,8 @@ const APP_SHELL=[
  './crane-game/script-v24-40.js?v=24-298',
  './duck-quest/js/fixes-v289.js?v=24-296',
  './duck-quest/js/universal-clothing-drops-v311.js?v=24.311',
- './duck-quest/js/fixes-v311.js?v=24.351',
+ './duck-quest/js/fixes-v311.js?v=24.352',
+ './duck-quest/js/sweetheart-v352.js?v=24.352',
  './duck-quest/js/trading-card-drops-v235.js?v=24.351',
  './duck-quest/js/new-enemies-v313.js?v=24.313',
  './duck-quest/js/fixes-v347.js?v=24.349',

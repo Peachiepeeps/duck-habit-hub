@@ -111,6 +111,7 @@
     if(currentRun?.mode==='endless')markEndlessFloorComplete();ui.continueButton.textContent=currentRun?.mode==='endless'?"Next Floor":"Continue";ui.postFloorActions?.classList.remove('hidden');ui.leaveEndlessButton?.classList.toggle('hidden',currentRun?.mode!=='endless');try{setPostFloorLayout(true);}catch{}actionLocked=false;activeBattle=null;persistAll();try{renderMeta();renderBuddyHomeCount();refreshFeatureBadges();}catch{}
   }
   function beginBattle(enemyId,variantId,forceShiny,kind){
+    document.querySelector('#eggFriendRevealV352')?.remove();
     clearScene();ui.chestLayer?.classList.add('hidden');activeBattle={kind,enemyId,variantId,forceShiny:Boolean(forceShiny)};startEnemy(enemyId,{gimmickVariant:variantId,forceShiny:Boolean(forceShiny)});
   }
 
@@ -119,10 +120,21 @@
     const enemy={id:entry.enemyId,name:entry.name,idle:Array.isArray(entry.idle)?entry.idle.slice():[entry.image],hurt:entry.image,shiny:false,boss:false,gimmickVariant:entry.variantId};
     try{animateBuddyPon(BUDDY_PONS[0]);}catch{}const buddy=captureBuddy(enemy);renderBuddyHomeCount();return {entry,buddy};
   }
+  function showHatchedFriendV352(got){
+    if(!got?.entry || !ui.battlefield)return;
+    document.querySelector('#eggFriendRevealV352')?.remove();
+    const wrap=document.createElement('div');wrap.id='eggFriendRevealV352';
+    wrap.style.cssText='position:absolute;left:50%;bottom:21%;transform:translateX(-50%);z-index:15;display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none;padding:7px 12px;background:#fff1f3f0;border:3px solid #976b73;border-radius:14px;box-shadow:0 5px 12px #4e293955';
+    const sprite=document.createElement('img');sprite.src=got.entry.image;sprite.alt=got.entry.name;
+    sprite.style.cssText='height:clamp(72px,22vw,125px);max-width:135px;object-fit:contain;image-rendering:pixelated';
+    const name=document.createElement('strong');name.textContent=`${got.entry.name} ♡`;
+    name.style.cssText='font-size:.8rem;color:#6b3d53;text-align:center';
+    wrap.append(sprite,name);ui.battlefield.append(wrap);
+  }
   function rottenEgg(){
     ui.chestCaption.textContent='A strange egg is sitting here...';ui.chestSprite.src='assets/eggs/Common-egg.png';ui.chestSprite.classList.remove('gimmick-art-v288');ui.chestSprite.classList.add('gimmick-egg-art-v288');
     setMessage('There is an egg sitting all by itself. It feels... a little suspicious.');const m=menu('A Strange Egg','Do you want to incubate it right now, or leave it alone and take a regular egg with you?');
-    button(m,'Incubate it!',async()=>{m.querySelectorAll('button').forEach(b=>b.disabled=true);const r=Math.random();if(r<.50){const got=grantFriendlyBuddy();finish(got?`The egg hatched instantly! ${got.entry.name} popped out in a Basic Buddy Pon and became your Buddy!`:'The egg gave a little wiggle... but nothing happened.');return;}if(r<.94){const variant=Math.random()<.20?'rare':'base';beginBattle('rotten-egg',variant,false,'rotten-egg');return;}if(r<.97){addInventory('shiny-egg',1);finish('The egg glowed brilliantly... You found a Shiny Egg! ✨ It will hatch a guaranteed random Shiny Buddy after 24 hours.');return;}beginBattle('rotten-egg','base',true,'rotten-egg');});
+    button(m,'Incubate it!',async()=>{m.querySelectorAll('button').forEach(b=>b.disabled=true);const r=Math.random();if(r<.50){const got=grantFriendlyBuddy();finish(got?`The egg hatched instantly! ${got.entry.name} emerged, and a Lil Pon befriended them!`:'The egg gave a little wiggle... but nothing happened.');if(got)showHatchedFriendV352(got);return;}if(r<.94){const variant=Math.random()<.20?'rare':'base';beginBattle('rotten-egg',variant,false,'rotten-egg');return;}if(r<.97){addInventory('shiny-egg',1);finish('The egg glowed brilliantly... You found a Shiny Egg! ✨ It will hatch a guaranteed random Shiny Buddy after 24 hours.');return;}beginBattle('rotten-egg','base',true,'rotten-egg');});
     button(m,'Leave it!',()=>{addInventory('common-egg',1);finish('You decide not to risk it. A Common Egg was safely added to your inventory.');});
   }
   function luckyCat(){

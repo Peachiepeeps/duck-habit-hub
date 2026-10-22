@@ -32,7 +32,13 @@
     results.slice(0,3).forEach(result=>{
       if(!result?.card)return;
       const holder=document.createElement("div");holder.className="quest-card-reward-item-v311";
-      holder.append(TC.createFace(result.card,{locked:false,variantId:result.variantId||'default'}));stack.append(holder);
+      const face=TC.createFace(result.card,{locked:false,variantId:result.variantId||'default'});
+      const form=String(result?.variantId||'');
+      if(result?.card?.enemyId==='mimic' && (form==='lucky'||form==='healthy')){
+        const art=face.querySelector('.tc-art');
+        if(art)art.src=TC.asset(`duck-quest/assets/enemies/mimic/${form}/idle-2.webp`);
+      }
+      holder.append(face);stack.append(holder);
     });
     if(!stack.childElementCount)return;
     wrap.append(stack);battlefield.append(wrap);
