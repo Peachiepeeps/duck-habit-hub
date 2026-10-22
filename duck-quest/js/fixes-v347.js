@@ -88,7 +88,7 @@
     const hostBox=refs.combatant.getBoundingClientRect();
     if(spriteBox.width>0 && spriteBox.height>0){
       overlay.style.left=(spriteBox.left-hostBox.left)+'px';
-      overlay.style.top=(spriteBox.top-hostBox.top)+'px';
+      overlay.style.top=(spriteBox.top-hostBox.top+1)+'px';
       overlay.style.width=spriteBox.width+'px';
       overlay.style.height=spriteBox.height+'px';
     }
