@@ -1,0 +1,163 @@
+name: Install Ducky Days v24.352 Quest and Sweetheart Fixes
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/install-duckie-days-v24-352-egg-love-sweetheart.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-352-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch gameplay and verify scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY_FIX352'
+          from pathlib import Path
+          import json
+          root=Path('.')
+          SWEETHEART_SOURCE="// Ducky Days v24.352 — Rare Sweetheart Battles: one automatic love-interest ally.\n(()=>{\n  'use strict';\n  if(window.DuckieSweetheartBattlesV352)return;\n  const TC=window.DuckieTradingCards;\n  const chance=.012; // 1.2% per eligible non-boss encounter, after Miko has met a love interest.\n  const bosses={meadow:'scarrie',ocean:'bottle-fairy',candy:'cream-fox',cloud:'cherub-duck',city:'stoplight-owl'};\n  let currentSweetheart=null;\n  const CSS=`\n    #battlefield.sweetheart-battle-v352 #buddyCombatant{\n      display:flex!important;left:33%!important;bottom:8%!important;z-index:5!important;\n      transform:translateX(-50%)!important;pointer-events:none;\n    }\n    #battlefield.sweetheart-battle-v352 #buddyBattleSprite{\n      height:min(30vh,125px)!important;width:auto!important;max-width:115px!important;\n      object-fit:contain!important;image-rendering:pixelated!important;\n    }\n    #battlefield.sweetheart-battle-v352 #buddyBattleName{\n      background:#fff1f7!important;color:#815070!important;border-radius:10px;\n    }\n    #battlefield.sweetheart-battle-v352 #battleHeroComposite,\n    #battlefield.sweetheart-battle-v352 #peepSprite{position:relative;z-index:6!important;}\n  `;\n  const style=document.createElement('style');style.textContent=CSS;document.head.appendChild(style);\n  function eligible(){\n    if(activeCharacterId!=='miko'||!currentRun||currentRun.mode==='endless')return [];\n    let data;\n    try{data=JSON.parse(localStorage.getItem(HUB_SAVE_KEY)||'{}');}catch(_){return [];}\n    return Object.entries(data.loveInterests||{}).filter(([id,state])=>state?.encountered&&TC?.byId?.['r-love-'+id]).map(([id])=>id);\n  }\n  function leave(){\n    currentSweetheart=null;\n    ui.battlefield?.classList.remove('sweetheart-battle-v352');\n    ui.buddyCombatant?.classList.remove('sweetheart-ally-v352');\n  }\n  function renderPartner(){\n    const active=currentSweetheart&&currentEnemy?.sweetheartV352?.id===currentSweetheart.id;\n    if(!active||!ui.buddyCombatant||!ui.buddyBattleSprite)return;\n    clearInterval(buddyIdleTimer);buddyIdleTimer=null;\n    ui.buddyCombatant.classList.remove('hidden');\n    ui.buddyCombatant.classList.add('sweetheart-ally-v352');\n    ui.battlefield?.classList.add('sweetheart-battle-v352');\n    ui.buddyBattleName.textContent=currentSweetheart.name+' ♡';\n    ui.buddyBattleSprite.alt=currentSweetheart.name;\n    ui.buddyBattleSprite.src=currentSweetheart.art;\n    ui.buddyBattleSparkle?.classList.add('hidden');\n  }\n  const beforeStart=startEncounter;\n  startEncounter=function(...args){\n    document.querySelector('#eggFriendRevealV352')?.remove();\n    leave();\n    const encounter=currentRun?.mode==='endless'?currentRun?.endlessEncounter:currentRun?.plan?.[currentRun.index];\n    if(currentRun?.mode!=='endless' && encounter && currentRun.index<3 &&\n       (encounter.type==='enemy'||encounter.type==='double-enemy') && Math.random()<chance){\n      const lovers=eligible();\n      const boss=bosses[currentRun.area];\n      if(lovers.length && ENEMIES[boss]){\n        const id=lovers[Math.floor(Math.random()*lovers.length)];\n        const card=TC.byId['r-love-'+id];\n        currentSweetheart={id,name:card?.name||id,art:TC.cardArt(card)};\n        currentRun.plan[currentRun.index]={type:'enemy',enemyId:boss,sweetheartV352:{id}};\n      }\n    }\n    const result=beforeStart.apply(this,args);\n    if(currentSweetheart&&currentEnemy){\n      currentEnemy.sweetheartV352={id:currentSweetheart.id};\n      const challengeLevel=Math.max(1,currentRun.rank)+Math.max(6,Math.round(currentRun.rank*.28));\n      const scaled=enemyScaled(currentEnemy,challengeLevel,currentRun.area);\n      currentEnemy.maxHp=Math.max(1,Math.round(scaled.maxHp*1.25));\n      currentEnemy.hpNow=currentEnemy.maxHp;\n      currentEnemy.attackNow=Math.max(1,Math.round(scaled.attackNow*1.12));\n      currentEnemy.name='Sweetheart Challenge · '+currentEnemy.name;\n      renderEnemyCombatant(currentEnemy);\n      if(ui.enemyRank)ui.enemyRank.textContent=`BOSS · Level ${challengeLevel} ♡`;\n      renderEnemyHp();\n      renderPartner();\n      setMessage(`${currentSweetheart.name} joins Miko! A much stronger boss approaches! ♡`);\n      renderCommandButtons();\n    }\n    return result;\n  };\n  const beforeRenderBuddy=renderBattleBuddy;\n  renderBattleBuddy=function(...args){const result=beforeRenderBuddy.apply(this,args);renderPartner();return result;};\n  const beforeRenderCommands=renderCommandButtons;\n  renderCommandButtons=function(...args){\n    const result=beforeRenderCommands.apply(this,args);\n    if(currentEnemy?.sweetheartV352){\n      if(ui.buddyMenuButton)ui.buddyMenuButton.disabled=true;\n      if(ui.switchBuddyMenuButton)ui.switchBuddyMenuButton.disabled=true;\n      if(ui.buddyCommandText)ui.buddyCommandText.textContent='Sweetheart assists automatically ♡';\n      if(ui.switchBuddyCommandText)ui.switchBuddyCommandText.textContent='Sweetheart Battle';\n    }\n    return result;\n  };\n  const beforeEnemyTurnSequence=enemyTurnSequence;\n  enemyTurnSequence=async function(...args){\n    if(currentSweetheart && currentEnemy?.sweetheartV352 && currentEnemy.hpNow>0 && currentRun?.hp>0){\n      if(currentRun.hp<currentRun.maxHp*.55 && Math.random()<.30){\n        const healed=Math.min(currentRun.maxHp-currentRun.hp,Math.max(1,Math.round(currentRun.maxHp*.14)));\n        currentRun.hp+=healed;\n        renderPeepHp();showFloat('+'+healed,'heal','peep');\n        setMessage(`${currentSweetheart.name} used Tender Care! +${healed} HP ♡`);\n      } else {\n        const damage=Math.max(1,Math.round(peepStats().attack*(.78+Math.random()*.35)));\n        currentEnemy.hpNow=Math.max(0,currentEnemy.hpNow-damage);\n        renderEnemyHp();showFloat('-'+damage,'damage','enemy');\n        setMessage(`${currentSweetheart.name} used Heart Burst! ${damage} damage! ♡`);\n      }\n      await sleep(470);\n      if(currentEnemy?.hpNow<=0){await enemyDefeated();return;}\n    }\n    return beforeEnemyTurnSequence.apply(this,args);\n  };\n  const beforeGenerate=generateRewards;\n  generateRewards=function(chest){\n    const reward=beforeGenerate(chest);\n    const id=chest?.enemy?.sweetheartV352?.id;\n    if(id){\n      reward.coins=(Number(reward.coins)||0)+Math.max(250,Math.round((Number(currentRun?.rank)||1)*4+200));\n      if(!Array.isArray(reward.items))reward.items=[];\n      const candy=reward.items.find(x=>x.id==='exp-candy-large');\n      if(candy)candy.qty+=2;\n      else reward.items.push({id:'exp-candy-large',name:'EXP Candy Large',image:'../assets/items/quest-boosts/Exp-candy-large.png',qty:2});\n      reward.sweetheartCardV352='r-love-'+id;\n    }\n    return reward;\n  };\n  const beforeApply=applyRewards;\n  applyRewards=function(rewards){\n    const result=beforeApply.apply(this,arguments);\n    if(rewards?.sweetheartCardV352 && TC?.byId?.[rewards.sweetheartCardV352]){\n      const awarded=TC.grantCard(hubSave,rewards.sweetheartCardV352,1,{source:'sweetheart-battle'});\n      persistAll();\n      if(awarded) setMessage(`Sweetheart Victory! ${awarded.card.name} Trading Card, +2 Large EXP Candies and bonus coins! ♡`);\n    }\n    return result;\n  };\n  window.DuckieSweetheartBattlesV352={chance};\n})();\n"
+          def read(p):return (root/p).read_text(encoding='utf-8')
+          def write(p,s):(root/p).write_text(s,encoding='utf-8')
+          def once(s,old,new,label):
+            n=s.count(old)
+            if n!=1:raise RuntimeError(f'{label}: expected one match, got {n}')
+            return s.replace(old,new,1)
+          ver=json.loads(read('version.json'))
+          if ver['version']!='24.351':raise RuntimeError(f'Expected 24.351, found {ver["version"]}')
+
+          # Midori never ducks back inside the dumpster after first popping out.
+          p='duck-quest/js/love-interests-v326.js';s=read(p)
+          s=once(s,'idle2: "assets/love-interests/midori/Midori-closed.png",','idle2: "assets/love-interests/midori/Midori-closed.png",\n        closed: "assets/love-interests/midori/Midori-closed.png",','midori closed pose alias')
+          old='''      const sequence = [closed, closed, closed, closed, closed, opened, closed, closed];
+                return sequence[step % sequence.length] || closed;'''
+          s=once(s,old,'      return opened; // Midori stays visible after the initial surprise.','midori idle cycling')
+          s=once(s,'''    img.src = src;
+              if (img.complete) sizeSceneSprite(img);''','''    img.style.visibility = "hidden"; // Never show the prior lover while loading a new portrait.
+              img.onload = () => { sizeSceneSprite(img); img.style.visibility = "visible"; };
+              img.src = src;
+              if (img.complete && img.naturalWidth){ sizeSceneSprite(img); img.style.visibility = "visible"; }''','portrait preload crossfade')
+          s=once(s,'''      state.rightPose = step.rightPose || state.rightPose;
+                updateSceneSprites(state);''','''      state.rightPose = step.rightPose || state.rightPose;
+                if(scene.id === "midori"){
+                  state.rightPose = index===0 ? "closed" : (state.rightPose==="idle2" ? "idle1" : state.rightPose);
+                }
+                updateSceneSprites(state);''','midori one-time entrance scene')
+          s=once(s,'''    startSceneAnimation(state);
+              render();''','''    render();
+              startSceneAnimation(state);''','show correct first dialogue frame')
+          s=once(s,'''  function sceneRewardItems(scene){
+              if (scene.id.includes("-")) {''','''  function sceneRewardItems(scene,isRepeat=false){
+              if(isRepeat && !scene.id.includes("-")) return [`${scene.title} Duck ×1`, `${scene.title} Trading Card ×1`];
+              if (scene.id.includes("-")) {''','repeat scene popup contents')
+          s=once(s,'''  function buildSceneRewardPopup(scene,onContinue){''','''  function buildSceneRewardPopup(scene,onContinue,isRepeat=false){''','repeat scene popup signature')
+          s=once(s,'''    sceneRewardItems(scene).forEach(item=>{''','''    sceneRewardItems(scene,isRepeat).forEach(item=>{''','repeat scene popup display')
+          s=once(s,'''        scene.reward();
+                  message.classList.add("love-interest-reward-message-hidden-v290");''','''        const isRepeat = !scene.id.includes("-") && Boolean(load().loveInterests?.[scene.id]?.encountered);
+                  scene.reward();
+                  if(isRepeat){
+                    const cfg=CHARACTERS[scene.id], data=load();
+                    if(cfg){
+                      ensureAll(data);
+                      data.duckCollectionCounts[cfg.duckId]=Math.max(1,Math.floor(Number(data.duckCollectionCounts[cfg.duckId])||1))+1;
+                      grantCard(data,cfg.cardId,1);
+                      save(data);
+                    }
+                  }
+                  message.classList.add("love-interest-reward-message-hidden-v290");''','repeat gives duck and card once')
+          s=once(s,'''        actions.append(buildSceneRewardPopup(scene,closeScene));''','''        actions.append(buildSceneRewardPopup(scene,closeScene,isRepeat));''','repeat popup invocation')
+          write(p,s)
+
+          # Egg random scene: display new Lil Guy and use new Pon naming.
+          p='duck-quest/js/gimmick-encounters-v288.js';s=read(p)
+          needle='''  function rottenEgg(){'''
+          helper='''  function showHatchedFriendV352(got){
+              if(!got?.entry || !ui.battlefield)return;
+              document.querySelector('#eggFriendRevealV352')?.remove();
+              const wrap=document.createElement('div');wrap.id='eggFriendRevealV352';
+              wrap.style.cssText='position:absolute;left:50%;bottom:21%;transform:translateX(-50%);z-index:15;display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none;padding:7px 12px;background:#fff1f3f0;border:3px solid #976b73;border-radius:14px;box-shadow:0 5px 12px #4e293955';
+              const sprite=document.createElement('img');sprite.src=got.entry.image;sprite.alt=got.entry.name;
+              sprite.style.cssText='height:clamp(72px,22vw,125px);max-width:135px;object-fit:contain;image-rendering:pixelated';
+              const name=document.createElement('strong');name.textContent=`${got.entry.name} ♡`;
+              name.style.cssText='font-size:.8rem;color:#6b3d53;text-align:center';
+              wrap.append(sprite,name);ui.battlefield.append(wrap);
+            }
+          '''
+          s=once(s,needle,helper+needle,'egg friend reveal helper')
+          s=once(s,'''if(r<.50){const got=grantFriendlyBuddy();finish(got?`The egg hatched instantly! ${got.entry.name} popped out in a Basic Buddy Pon and became your Buddy!`:'The egg gave a little wiggle... but nothing happened.');return;}''','''if(r<.50){const got=grantFriendlyBuddy();finish(got?`The egg hatched instantly! ${got.entry.name} emerged, and a Lil Pon befriended them!`:'The egg gave a little wiggle... but nothing happened.');if(got)showHatchedFriendV352(got);return;}''','egg hatch description and reveal')
+          # Reclaim only the visual when the next scene begins (not before showing the egg result).
+          s=once(s,'''  function beginBattle(enemyId,variantId,forceShiny,kind){''','''  function beginBattle(enemyId,variantId,forceShiny,kind){
+              document.querySelector('#eggFriendRevealV352')?.remove();''','egg reveal battle cleanup')
+          write(p,s)
+
+          # Battle drop overlay uses peeking art; card database and Duckipedia untouched.
+          p='duck-quest/js/fixes-v311.js';s=read(p)
+          s=once(s,'''holder.append(TC.createFace(result.card,{locked:false,variantId:result.variantId||'default'}));stack.append(holder);''','''const face=TC.createFace(result.card,{locked:false,variantId:result.variantId||'default'});
+                const form=String(result?.variantId||'');
+                if(result?.card?.enemyId==='mimic' && (form==='lucky'||form==='healthy')){
+                  const art=face.querySelector('.tc-art');
+                  if(art)art.src=TC.asset(`duck-quest/assets/enemies/mimic/${form}/idle-2.webp`);
+                }
+                holder.append(face);stack.append(holder);''','battle reward mimic appearance')
+          write(p,s)
+
+          p='duck-quest/js/sweetheart-v352.js';write(p,SWEETHEART_SOURCE)
+
+          p='duck-quest/index.html';s=read(p)
+          s=once(s,'js/love-interests-v326.js?v=24-326','js/love-interests-v326.js?v=24-352','scene script cache bust')
+          s=once(s,'js/gimmick-encounters-v288.js?v=24-326','js/gimmick-encounters-v288.js?v=24-352','egg script cache bust')
+          s=once(s,'js/fixes-v311.js?v=24.351','js/fixes-v311.js?v=24.352','mimic result cache bust')
+          s=once(s,'</body>','  <script src="js/sweetheart-v352.js?v=24.352"></script>\n</body>','load sweetheart last')
+          write(p,s)
+          p='index.html';s=read(p)
+          s=once(s,'const DUCK_HUB_BUILD = "24.351";','const DUCK_HUB_BUILD = "24.352";','hub version')
+          s=once(s,'sw.js?v=24-351-card-variants-artwork-mimic-fix','sw.js?v=24-352-love-egg-sweetheart','service worker registration')
+          write(p,s)
+          p='sw.js';s=read(p)
+          s=once(s,"const APP_CACHE='duck-habit-hub-app-v24-351-card-variants-artwork-mimic-fix';","const APP_CACHE='duck-habit-hub-app-v24-352-love-egg-sweetheart';",'SW cache version')
+          s=once(s,"'./sw.js?v=24.351',","'./sw.js?v=24.352',",'SW self')
+          for old,new,label in [
+           ("'./duck-quest/js/love-interests-v326.js?v=24-326',","'./duck-quest/js/love-interests-v326.js?v=24-352',",'SW scene'),
+           ("'./duck-quest/js/gimmick-encounters-v288.js?v=24-326',","'./duck-quest/js/gimmick-encounters-v288.js?v=24-352',",'SW gimmick'),
+           ("'./duck-quest/js/fixes-v311.js?v=24.351',","'./duck-quest/js/fixes-v311.js?v=24.352',",'SW battle reward')]:s=once(s,old,new,label)
+          s=once(s,"'./duck-quest/js/fixes-v311.js?v=24.352',","'./duck-quest/js/fixes-v311.js?v=24.352',\n './duck-quest/js/sweetheart-v352.js?v=24.352',",'SW sweetheart')
+          write(p,s)
+          ver['version']='24.352';write('version.json',json.dumps(ver,indent=2)+'\n')
+          print('Patched 24.352 and checked all expected anchors.')
+          PY_FIX352
+          for script in duck-quest/js/love-interests-v326.js duck-quest/js/gimmick-encounters-v288.js duck-quest/js/fixes-v311.js duck-quest/js/sweetheart-v352.js sw.js; do
+            node --check "$script"
+          done
+          python3 - <<'PY_CHECK352'
+          import json
+          from pathlib import Path
+          assert json.loads(Path('version.json').read_text())['version']=='24.352'
+          html=Path('duck-quest/index.html').read_text()
+          sw=Path('sw.js').read_text()
+          for q in ('love-interests-v326.js?v=24-352','gimmick-encounters-v288.js?v=24-352','fixes-v311.js?v=24.352','sweetheart-v352.js?v=24.352'):
+            assert q in html, q
+            assert q in sw, q
+          assert Path('duck-quest/js/sweetheart-v352.js').is_file()
+          print('All v24.352 script, version, and cache validations passed.')
+          PY_CHECK352
+      - name: Commit Ducky Days v24.352
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add duck-quest/js/love-interests-v326.js duck-quest/js/gimmick-encounters-v288.js duck-quest/js/fixes-v311.js duck-quest/js/sweetheart-v352.js duck-quest/index.html index.html sw.js version.json
+          if git diff --cached --quiet; then echo 'No changes to commit'; exit 0; fi
+          git commit -m "Ducky Days v24.352: egg hatch, love scenes, mimic, and Sweetheart Battles"
+          git push
