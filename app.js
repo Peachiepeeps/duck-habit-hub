@@ -2663,7 +2663,8 @@ const ASSETS = {
   "daisy-crown": { label: "Daisy Crown", file: "Daisy-Crown.png", z: 53 },
   "ocean-sunglasses": { label: "Sunglasses", file: "Sunglasses.png", z: 54 },
   "halo": { label: "Halo", file: "Halo.png", z: 55 },
-  "candy-hairclip": { label: "Candy Hairclip", file: "Candy-Hairclip.webp", z: 56 }
+  "candy-hairclip": { label: "Candy Hairclip", file: "Candy-Hairclip.webp", z: 56 },
+  "city-crown": { label: "City Crown", file: "City-Crown-Base.png", z: 57 }
 };
 
 // Alpha bounds from the 1080×1920 source canvases. They let us make useful cropped
@@ -3018,7 +3019,8 @@ const MIKO_ASSETS = {
   "daisy-crown": { label: "Daisy Crown", file: "Daisy-Crown.png", z: 53 },
   "ocean-sunglasses": { label: "Sunglasses", file: "Sunglasses.png", z: 54 },
   "halo": { label: "Halo", file: "Halo.png", z: 55 },
-  "candy-hairclip": { label: "Candy Hairclip", file: "Candy-Hairclip.webp", z: 56 }
+  "candy-hairclip": { label: "Candy Hairclip", file: "Candy-Hairclip.webp", z: 56 },
+  "city-crown": { label: "City Crown", file: "City-Crown-Base.png", z: 57 }
 };
 
 const IO_THUMB_BOUNDS = {
@@ -3129,7 +3131,8 @@ const IO_ASSETS = {
   "daisy-crown": { label: "Daisy Crown", file: "Daisy-Crown.png", z: 53 },
   "ocean-sunglasses": { label: "Sunglasses", file: "Sunglasses.png", z: 54 },
   "halo": { label: "Halo", file: "Halo.png", z: 55 },
-  "candy-hairclip": { label: "Candy Hairclip", file: "Candy-Hairclip.webp", z: 56 }
+  "candy-hairclip": { label: "Candy Hairclip", file: "Candy-Hairclip.webp", z: 56 },
+  "city-crown": { label: "City Crown", file: "City-Crown-Base.png", z: 57 }
 };
 
 const IO_CLOSET = [
@@ -3140,7 +3143,7 @@ const IO_CLOSET = [
   { id: "dress", label: "Dresses", type: "single", allowNone: true, options: ["dress-magical", "dress-mew"] },
   { id: "socks", label: "Socks", type: "socks" },
   { id: "shoes", label: "Shoes", type: "single", allowNone: true, options: ["shoes-school", "shoes-magical", "shoes-mew"] },
-  { id: "extras", label: "Extras", type: "multi", options: ["ahoge", "heart-pin", "sheep-ears", "crown", "mew-garter", "mew-jacket", "mew-collar", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip"] }
+  { id: "extras", label: "Extras", type: "multi", options: ["ahoge", "heart-pin", "sheep-ears", "crown", "mew-garter", "mew-jacket", "mew-collar", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip", "city-crown"] }
 ];
 
 const MIHO_ASSETS = {
@@ -3172,7 +3175,8 @@ const MIHO_ASSETS = {
   "daisy-crown": { label: "Daisy Crown", file: "Daisy-Crown.png", z: 53 },
   "ocean-sunglasses": { label: "Sunglasses", file: "Sunglasses.png", z: 54 },
   "halo": { label: "Halo", file: "Halo.png", z: 55 },
-  "candy-hairclip": { label: "Candy Hairclip", file: "Candy-Hairclip.webp", z: 56 }
+  "candy-hairclip": { label: "Candy Hairclip", file: "Candy-Hairclip.webp", z: 56 },
+  "city-crown": { label: "City Crown", file: "City-Crown-Base.png", z: 57 }
 };
 
 const MIHO_CLOSET = [
@@ -3184,7 +3188,7 @@ const MIHO_CLOSET = [
   { id: "dress", label: "Dresses", type: "single", allowNone: true, options: ["dress-black"] },
   { id: "legwear", label: "Legwear", type: "single", allowNone: true, options: ["legwear-stockings", "legwear-stockings-laceup"] },
   { id: "shoes", label: "Shoes", type: "single", allowNone: true, options: ["shoes-boots", "shoes-booties"] },
-  { id: "extras", label: "Extras", type: "multi", options: ["belt", "neck-bow", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip"] }
+  { id: "extras", label: "Extras", type: "multi", options: ["belt", "neck-bow", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip", "city-crown"] }
 ];
 
 const ANNIKA_THUMB_BOUNDS = {
@@ -3254,7 +3258,8 @@ const ANNIKA_ASSETS = {
   "daisy-crown": { label: "Daisy Crown", file: "Daisy-Crown.png", z: 53 },
   "ocean-sunglasses": { label: "Sunglasses", file: "Sunglasses.png", z: 54 },
   "halo": { label: "Halo", file: "Halo.png", z: 55 },
-  "candy-hairclip": { label: "Candy Hairclip", file: "Candy-Hairclip.webp", z: 56 }
+  "candy-hairclip": { label: "Candy Hairclip", file: "Candy-Hairclip.webp", z: 56 },
+  "city-crown": { label: "City Crown", file: "City-Crown-Base.png", z: 57 }
 };
 
 const ANNIKA_CLOSET = [
@@ -3268,7 +3273,7 @@ const ANNIKA_CLOSET = [
   { id: "dress", label: "Dresses", type: "single", allowNone: true, options: ["dress-leotard"] },
   { id: "legwear", label: "Legwear", type: "annika-legwear", allowNone: true, options: ["legwear-black", "legwear-circus"] },
   { id: "shoes", label: "Shoes", type: "single", allowNone: true, options: ["shoes-sneakers", "shoes-booties", "shoes-folded-booties"] },
-  { id: "extras", label: "Extras", type: "multi", options: ["neck-bow", "scarf", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip"] }
+  { id: "extras", label: "Extras", type: "multi", options: ["neck-bow", "scarf", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip", "city-crown"] }
 ];
 
 const MIKO_CLOSET = [
@@ -3288,7 +3293,7 @@ const MIKO_CLOSET = [
     id: "extras",
     label: "Extras",
     type: "multi",
-    options: ["belt", "headband", "hairpins-black", "lukio-hair-streak", "shino-beret", "cheryln-hairpin", "hibiki-ribbon", "westley-face-makeup", "yuzuru-bracelet", "devlin-belt", "devlin-tie", "circe-choker", "quin-hairpins", "kiri-hairpiece", "midori-scarf", "midori-low-ponytail", "cybil-ponytail", "nico-hat", "nico-back-bow", "nene-glasses", "moriko-necklace", "jenson-glasses", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip"]
+    options: ["belt", "headband", "hairpins-black", "lukio-hair-streak", "shino-beret", "cheryln-hairpin", "hibiki-ribbon", "westley-face-makeup", "yuzuru-bracelet", "devlin-belt", "devlin-tie", "circe-choker", "quin-hairpins", "kiri-hairpiece", "midori-scarf", "midori-low-ponytail", "cybil-ponytail", "nico-hat", "nico-back-bow", "nene-glasses", "moriko-necklace", "jenson-glasses", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip", "city-crown"]
   }
 ];
 
@@ -3311,7 +3316,7 @@ const CLOSET = [
     id: "extras",
     label: "Extras",
     type: "multi",
-    options: ["jacket", "cardigan-white", "collar", "leg-bandage", "horns", "cheek-bandage", "left-bow", "right-bow", "bow-white", "hair-side-ribbon", "large-back-bow", "beret", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip"]
+    options: ["jacket", "cardigan-white", "collar", "leg-bandage", "horns", "cheek-bandage", "left-bow", "right-bow", "bow-white", "hair-side-ribbon", "large-back-bow", "beret", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip", "city-crown"]
   }
 
 ];
@@ -3428,7 +3433,7 @@ function normalizeMihoOutfit(rawOutfit = {}) {
   if (![null, "legwear-stockings", "legwear-stockings-laceup"].includes(normalized.legwear)) normalized.legwear = "legwear-stockings";
   if (![null, "shoes-boots", "shoes-booties"].includes(normalized.shoes)) normalized.shoes = "shoes-boots";
   normalized.extras = Array.isArray(normalized.extras)
-    ? normalized.extras.filter(id => ["belt", "neck-bow", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip"].includes(id))
+    ? normalized.extras.filter(id => ["belt", "neck-bow", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip", "city-crown"].includes(id))
     : [...DEFAULT_MIHO_OUTFIT.extras];
   return normalized;
 }
@@ -3462,7 +3467,7 @@ function normalizeAnnikaOutfit(rawOutfit = {}) {
   if (![null, "legwear-black", "legwear-bow-left", "legwear-bow-right", "legwear-bow-both", "legwear-circus"].includes(normalized.legwear)) normalized.legwear = "legwear-bow-both";
   if (![null, "shoes-sneakers", "shoes-booties", "shoes-folded-booties"].includes(normalized.shoes)) normalized.shoes = "shoes-sneakers";
   normalized.extras = Array.isArray(normalized.extras)
-    ? normalized.extras.filter(id => ["neck-bow", "scarf", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip"].includes(id))
+    ? normalized.extras.filter(id => ["neck-bow", "scarf", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip", "city-crown"].includes(id))
     : [...DEFAULT_ANNIKA_OUTFIT.extras];
   delete normalized.back;
   delete normalized.shirt;
@@ -3492,7 +3497,7 @@ function normalizeIoOutfit(rawOutfit = {}) {
   if (!validRightSocks.includes(normalized.rightSock)) normalized.rightSock = "sock-right-school";
   if (![null, "shoes-school", "shoes-magical", "shoes-mew"].includes(normalized.shoes)) normalized.shoes = "shoes-school";
   normalized.extras = Array.isArray(normalized.extras)
-    ? normalized.extras.filter(id => ["ahoge", "heart-pin", "sheep-ears", "crown", "mew-garter", "mew-jacket", "mew-collar", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip"].includes(id))
+    ? normalized.extras.filter(id => ["ahoge", "heart-pin", "sheep-ears", "crown", "mew-garter", "mew-jacket", "mew-collar", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip", "city-crown"].includes(id))
     : ["heart-pin"];
   return normalized;
 }
@@ -3565,7 +3570,7 @@ function normalizeMikoOutfit(rawOutfit = {}) {
     : "shoes-loafer";
 
   const extras = Array.isArray(incoming.extras)
-    ? incoming.extras.filter(id => ["belt", "headband", "hairpins-black", "lukio-hair-streak", "shino-beret", "cheryln-hairpin", "hibiki-ribbon", "westley-face-makeup", "yuzuru-bracelet", "devlin-belt", "devlin-tie", "circe-choker", "quin-hairpins", "kiri-hairpiece", "midori-scarf", "midori-low-ponytail", "cybil-ponytail", "nico-hat", "nico-back-bow", "nene-glasses", "moriko-necklace", "jenson-glasses", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip"].includes(id))
+    ? incoming.extras.filter(id => ["belt", "headband", "hairpins-black", "lukio-hair-streak", "shino-beret", "cheryln-hairpin", "hibiki-ribbon", "westley-face-makeup", "yuzuru-bracelet", "devlin-belt", "devlin-tie", "circe-choker", "quin-hairpins", "kiri-hairpiece", "midori-scarf", "midori-low-ponytail", "cybil-ponytail", "nico-hat", "nico-back-bow", "nene-glasses", "moriko-necklace", "jenson-glasses", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip", "city-crown"].includes(id))
     : [];
 
   const normalized = {
@@ -6086,7 +6091,27 @@ function renderCharacterInto(container, characterId = save.selectedCharacter) {
     img.dataset.asset = asset.id;
     if (character.id === "io" && asset.id === "crown") img.style.transform = "translateY(0.25%)";
     if (asset.id.startsWith("expression-")) img.dataset.expressionLayer = "true";
+    img.style.zIndex=String(index*3+1);
     container.append(img);
+    if(asset.id === "city-crown"){
+      const heartColor=save.cityCrownHeartColors?.[character.id]||"#ed78a4";
+      const tint=document.createElement("span");
+      tint.className="peep-layer";
+      tint.dataset.asset="city-crown-heart";
+      tint.style.zIndex=String(index*3+2);
+      tint.style.backgroundColor=heartColor;
+      tint.style.webkitMaskImage='url("duck-quest/assets/backgrounds/city/crown-heart-color.png")';
+      tint.style.maskImage=tint.style.webkitMaskImage;
+      tint.style.webkitMaskRepeat="no-repeat";tint.style.maskRepeat="no-repeat";
+      tint.style.webkitMaskSize="100% 100%";tint.style.maskSize="100% 100%";
+      container.append(tint);
+      const lines=document.createElement("img");
+      lines.className="peep-layer";
+      lines.dataset.asset="city-crown-heart-lines";
+      lines.src="duck-quest/assets/backgrounds/city/crown-heart-lines.png";
+      lines.alt="";lines.style.zIndex=String(index*3+3);
+      container.append(lines);
+    }
   }
 }
 
@@ -7326,7 +7351,8 @@ function closetLockedMessage(id, asset) {
     "daisy-crown": "Daisy Crown is locked — complete Meadow Level 40 with this OC in Duck Quest!",
     "ocean-sunglasses": "Sunglasses are locked — complete Ocean Level 80 with this OC in Duck Quest!",
     "candy-hairclip": "Candy Hairclip is locked — complete Candyland Level 120 with this OC in Duck Quest!",
-    "halo": "Halo is locked — complete Cloud Garden Level 160 with this OC in Duck Quest!"
+    "halo": "Halo is locked — complete Cloud Garden Level 160 with this OC in Duck Quest!",
+    "city-crown": "City Crown is locked — complete City Streets Level 200 with this OC in Duck Quest!"
   };
   const loveInterestWardrobe = {
     "lukio-hair-streak":"Lukio","lukio-hoodie":"Lukio","lukio-shorts":"Lukio","lukio-socks":"Lukio","lukio-booties":"Lukio",
@@ -7425,6 +7451,19 @@ function renderClosetOptions() {
         }
       }));
     }
+  }
+  if(group.id==='extras' && isClosetAssetUnlocked('city-crown')){
+    const picker=document.createElement('label');picker.className='city-crown-picker-v345';
+    picker.textContent='City Crown heart color ♡ ';
+    const color=document.createElement('input');color.type='color';color.id='cityCrownHeartColorV345';
+    color.value=save.cityCrownHeartColors?.[save.selectedCharacter]||'#ed78a4';
+    color.setAttribute('aria-label','City Crown heart color');
+    color.addEventListener('input',()=>{
+      if(!save.cityCrownHeartColors || typeof save.cityCrownHeartColors!=='object')save.cityCrownHeartColors={};
+      save.cityCrownHeartColors[save.selectedCharacter]=color.value;
+      persist();renderPeep();
+    });
+    picker.append(color);closetOptions.append(picker);
   }
 }
 

@@ -3,7 +3,7 @@
 // a late legacy hatchery patch inside the large game file throws or conflicts.
 (function(){
   'use strict';
-  const BUILD='24.179';
+  const BUILD='24.345';
   const HATCH_BG='assets/eggs/Hatching-background-six-v343.png';
   const api=window.DuckieHatchApiV178 || null;
 
@@ -24,7 +24,7 @@
       width:100vw!important;height:auto!important;min-height:0!important;max-height:none!important;
       margin:0!important;padding:0!important;display:block!important;overflow:hidden!important;
       background-color:#9ee78f!important;background-image:url("${HATCH_BG}");
-      background-position:center center!important;background-repeat:no-repeat!important;background-size:cover!important;
+      background-position:center top!important;background-repeat:no-repeat!important;background-size:100% 92%!important;
       image-rendering:pixelated!important;transform:none!important;
     }
     #hatcheryScreenV179.hidden{display:none!important;}
@@ -57,20 +57,18 @@
       border:0!important;border-radius:999px!important;background:transparent!important;box-shadow:none!important;
       padding:0!important;margin:0!important;pointer-events:auto!important;cursor:pointer!important;
     }
-    #hatcheryScreenV179 .hatch-nest-slot:nth-child(1){top:35%!important;}
-    #hatcheryScreenV179 .hatch-nest-slot:nth-child(2){top:64%!important;}
-    #hatcheryScreenV179 .hatch-nest-slot:nth-child(3){top:89%!important;}
-    /* v24.343: two tidy columns of three; use the entire background instead of a tall stack. */
-    #hatcheryScreenV179 .hatch-nest-slot{width:min(44%,160px)!important;height:25%!important;min-height:0!important;left:25%!important;top:34%!important;}
-    #hatcheryScreenV179 .hatch-nest-slot:nth-child(2){top:58%!important;left:25%!important;}
-    #hatcheryScreenV179 .hatch-nest-slot:nth-child(3){top:82%!important;left:25%!important;}
-    #hatcheryScreenV179 .hatch-nest-slot:nth-child(4){top:34%!important;left:75%!important;}
-    #hatcheryScreenV179 .hatch-nest-slot:nth-child(5){top:58%!important;left:75%!important;}
-    #hatcheryScreenV179 .hatch-nest-slot:nth-child(6){top:82%!important;left:75%!important;}
+    /* v24.345: separate each egg location; nest artwork is scaled to leave a bottom button area. */
+    #hatcheryScreenV179 .hatch-nest-slot{width:42%!important;height:16%!important;min-height:0!important;left:24%!important;top:32%!important;}
+    #hatcheryScreenV179 .hatch-nest-slot:nth-child(1){left:23%!important;top:31.5%!important;}
+    #hatcheryScreenV179 .hatch-nest-slot:nth-child(2){left:24%!important;top:57.5%!important;}
+    #hatcheryScreenV179 .hatch-nest-slot:nth-child(3){left:24%!important;top:82%!important;}
+    #hatcheryScreenV179 .hatch-nest-slot:nth-child(4){left:76%!important;top:31%!important;}
+    #hatcheryScreenV179 .hatch-nest-slot:nth-child(5){left:75%!important;top:57.5%!important;}
+    #hatcheryScreenV179 .hatch-nest-slot:nth-child(6){left:75%!important;top:82%!important;}
     #hatcheryScreenV179 .hatch-nest-slot .hatch-main-egg{width:clamp(35px,11vw,62px)!important;height:clamp(35px,11vw,62px)!important;top:44%!important;}
     #hatcheryScreenV179 .hatch-nest-slot .hatch-slot-status{font-size:clamp(.48rem,1.55vw,.61rem)!important;max-width:94%!important;overflow-wrap:anywhere!important;white-space:normal!important;text-align:center!important;top:78%!important;}
-    #hatcheryScreenV179 .hatchery-v179-topbar{grid-template-columns:minmax(0,1fr) auto auto!important;}
-    #hatchAllButtonV343{min-height:34px!important;padding:5px 9px!important;border:2px solid #8c625d!important;border-radius:10px!important;background:#ffecaf!important;color:#72534a!important;font-weight:900!important;white-space:nowrap!important;}
+    #hatcheryScreenV179 .hatchery-v179-topbar{grid-template-columns:minmax(0,1fr) auto!important;}
+    #hatcheryScreenV179 #hatchAllButtonV343{position:absolute!important;z-index:58!important;left:50%!important;bottom:max(10px,env(safe-area-inset-bottom))!important;transform:translateX(-50%)!important;min-width:160px!important;min-height:39px!important;padding:7px 14px!important;border:2px solid #8c625d!important;border-radius:10px!important;background:#ffecaf!important;color:#72534a!important;font-weight:900!important;white-space:nowrap!important;}
     #hatchAllButtonV343:disabled{opacity:.56;cursor:default;}
     #hatchAllResultsV343{position:absolute;z-index:2147483500;inset:0;display:grid;place-items:center;background:rgba(43,28,42,.48);padding:14px;}
     #hatchAllResultsV343[hidden]{display:none!important;}
@@ -110,10 +108,10 @@
   screen.innerHTML=`
     <div class="hatchery-v179-topbar">
       <div class="hatchery-v179-title">Hatching Area</div>
-      <button id="hatchAllButtonV343" type="button" disabled>Hatch All ♡</button>
       <button id="hatchInventoryButton" class="hatch-inventory-button" type="button">Inventory <span id="hatchInventoryCount" class="count">0</span></button>
     </div>
     <div id="hatchWorldReady" class="hatch-world-ready hidden">An egg is ready! ✨</div>
+    <button id="hatchAllButtonV343" type="button" disabled>Hatch All ♡</button>
     <div id="hatchAllResultsV343" hidden role="dialog" aria-modal="true" aria-label="Hatched Lil Guys"><div class="bulk-card"><h2>All hatched! ♡</h2><div class="bulk-entries"></div><button class="bulk-close" type="button">Yay! ♡</button></div></div>
     <div id="hatchNestSlots" class="hatch-nest-slots hatch-nest-slots-v179" aria-label="Incubating eggs"></div>
     <div id="hatchDetailModal" class="hatch-modal hidden" aria-hidden="true">

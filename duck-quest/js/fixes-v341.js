@@ -14,9 +14,9 @@
     }
     #homeScreen .hero-info .hero-quick-actions .hero-info-button{
       min-width:0!important;
-      min-height:54px!important;
+      min-height:37px!important;
       height:auto!important;
-      padding:8px 10px!important;
+      padding:5px 10px!important;
       font-size:.74rem!important;
       line-height:1.12!important;
       white-space:normal!important;

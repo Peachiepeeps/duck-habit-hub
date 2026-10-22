@@ -3725,7 +3725,8 @@ const AREA_CLEAR_CLOSET_REWARDS = Object.freeze({
   meadow:{id:"daisy-crown",name:"Daisy Crown",image:"../assets/ui/daisy-crown-reward.png"},
   ocean:{id:"ocean-sunglasses",name:"Sunglasses",image:"../assets/ui/sunglasses-reward.png"},
   candy:{id:"candy-hairclip",name:"Candy Hairclip",image:"../assets/ui/candy-hairclip-reward.webp"},
-  cloud:{id:"halo",name:"Halo",image:"../assets/ui/halo-reward.png"}
+  cloud:{id:"halo",name:"Halo",image:"../assets/ui/halo-reward.png"},
+  city:{id:"city-crown",name:"City Crown",image:"assets/backgrounds/city/crown-base.png"}
 });
 
 function characterClosetUnlocks(characterId){
@@ -3783,6 +3784,14 @@ function migrateAreaRewardsV24124(){
 }
 
 migrateAreaRewardsV24124();
+// v24.345: grant the City reward retroactively if an OC had already cleared City
+// before the crown was added. No other area/unlock is modified.
+for(const characterId of QUEST_CHARACTER_IDS){
+  const hero=questSave[characterId];
+  if(hero?.clearedAreas?.city && unlockCharacterClosetReward(characterId,'city-crown')){
+    try{localStorage.setItem(HUB_SAVE_KEY,JSON.stringify(hubSave));}catch(error){}
+  }
+}
 
 function persistAll() {
   const peep=questSave.peep||defaultCharacterQuestProgress();

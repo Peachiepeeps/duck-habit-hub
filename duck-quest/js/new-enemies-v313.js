@@ -2,7 +2,7 @@
 (function(){
   "use strict";
 
-  const VERSION="24.344";
+  const VERSION="24.345";
   const NEW_IDS=["chonk","feathertail","puffer","shrimpie","licorunt","pretzette","asterfox","star-glider","skater-squirrel","bearista","cool-dee","traffic-cone-witch","horse","three-mice-trench-coat","stoplight-owl","lil-king","scarrie","bottle-fairy"];
   const ROOT="assets/enemies/";
 
@@ -672,21 +672,65 @@
     return rewards;
   };
 
-  // City boss specialty: Stoplight Owl's signal changes on its powered attack.
-  // CSS lights are drawn during the move, so the provided sprite stays unmodified.
+  // Stoplight Owl: actual lights on the chest, not a floating traffic-signal emoji.
+  // The supplied sprite is unchanged; the light overlay darkens inactive lamps.
   const signalStyle=document.createElement('style');
-  signalStyle.textContent=`.citySignalV344{position:relative}.citySignalV344::after{content:"●";position:absolute;right:-8px;top:-24px;width:22px;height:42px;display:flex;justify-content:center;align-items:center;background:#292b39;border:2px solid #e5bdd0;border-radius:7px;padding:2px 4px;font:bold 19px/1 sans-serif;box-shadow:0 2px 8px #201f3350;animation:cityBlink344 .25s steps(1) 3 alternate}.citySignalV344[data-city-signal="red"]::after{content:"🔴"}.citySignalV344[data-city-signal="yellow"]::after{content:"🟡"}.citySignalV344[data-city-signal="green"]::after{content:"🟢"}@keyframes cityBlink344{from{filter:brightness(.6)}to{filter:brightness(1.5)}}`;
+  signalStyle.id='cityOwlSignalV345Style';
+  signalStyle.textContent=`
+    .city-owl-lights-v345{position:absolute;pointer-events:none;z-index:8;aspect-ratio:100 / 110;overflow:visible;}
+    .city-owl-lights-v345 i{position:absolute;left:29%;width:8%;aspect-ratio:1;border-radius:50%;background:#372624;box-shadow:inset 0 0 0 1px #241616;}
+    .city-owl-lights-v345 .red{top:57.4%;}
+    .city-owl-lights-v345 .yellow{top:70.2%;}
+    .city-owl-lights-v345 .green{top:83.2%;}
+    .city-owl-lights-v345[data-signal="green"] .green{background:#4cf04c;box-shadow:0 0 5px 2px #80ff80,inset 0 0 0 1px #b4ffc1;}
+    .city-owl-lights-v345[data-signal="yellow"] .yellow{background:#ffe24b;box-shadow:0 0 6px 2px #ffeb80,inset 0 0 0 1px #fff4ae;}
+    .city-owl-lights-v345[data-signal="red"] .red{background:#ff4848;box-shadow:0 0 6px 2px #ff8585,inset 0 0 0 1px #ffc3c3;}
+  `;
   document.head.appendChild(signalStyle);
-  const oldCityEnemyAttack=performEnemyAttack;
-  performEnemyAttack=async function(multiplier=1,label="",lifeDrainHeal=0){
-    if(!label && currentEnemy?.id==="stoplight-owl" && Math.random()<.29){
-      const refs=activeEnemyUi();refs.combatant?.classList.add('citySignalV344');
-      const color=["RED · Stop!","YELLOW · Caution!","GREEN · Go!"][randInt(0,2)];
-      if(refs.combatant)refs.combatant.dataset.citySignal=color.split(' ')[0].toLowerCase();
-      try{return await oldCityEnemyAttack.call(this,color.startsWith('RED')?1.35:color.startsWith('YELLOW')?.72:1.08,`${currentEnemy.name} used Signal Shift! ${color}`,lifeDrainHeal);}
-      finally{refs.combatant?.classList.remove('citySignalV344');if(refs.combatant)delete refs.combatant.dataset.citySignal;}
+  function syncOwlLights(refs){
+    if(!refs?.combatant || !refs.sprite)return null;
+    let overlay=refs.combatant.querySelector('.city-owl-lights-v345');
+    if(currentEnemy?.id!=='stoplight-owl' || !refs.sprite.src.includes('stoplight-owl') || refs.combatant.classList.contains('hidden')){
+      overlay?.remove();return null;
     }
-    return oldCityEnemyAttack.apply(this,arguments);
+    if(!overlay){
+      overlay=document.createElement('div');overlay.className='city-owl-lights-v345';overlay.dataset.signal='green';
+      overlay.innerHTML='<i class="red"></i><i class="yellow"></i><i class="green"></i>';
+      refs.combatant.appendChild(overlay);
+    }
+    const im=refs.sprite.getBoundingClientRect(),host=refs.combatant.getBoundingClientRect();
+    if(im.width>0 && im.height>0){
+      overlay.style.left=(im.left-host.left)+'px';overlay.style.top=(im.top-host.top)+'px';
+      overlay.style.width=im.width+'px';overlay.style.height=im.height+'px';
+    }
+    return overlay;
+  }
+  // Light position stays aligned through idle frames, image loads and viewport changes.
+  const owlSprites=[ui.enemySprite,ui.enemySprite2].filter(Boolean);
+  for(const sprite of owlSprites){
+    sprite.addEventListener('load',()=>{if(currentEnemy?.id==='stoplight-owl')syncOwlLights(activeEnemyUi());});
+  }
+  window.addEventListener('resize',()=>{if(currentEnemy?.id==='stoplight-owl')syncOwlLights(activeEnemyUi());});
+  setInterval(()=>{
+    const refs=activeEnemyUi();
+    if(currentEnemy?.id==='stoplight-owl')syncOwlLights(refs);
+    else for(const sprite of owlSprites)sprite?.closest('.enemy-combatant')?.querySelector('.city-owl-lights-v345')?.remove();
+  },220);
+  const oldCityEnemyAttack=performEnemyAttack;
+  performEnemyAttack=async function(multiplier=1,label='',lifeDrainHeal=0){
+    if(currentEnemy?.id!=='stoplight-owl') return oldCityEnemyAttack.apply(this,arguments);
+    const refs=activeEnemyUi();
+    const setSignal=color=>{const el=syncOwlLights(refs);if(el)el.dataset.signal=color;};
+    setSignal('yellow');
+    await sleep(280);
+    setSignal('red');
+    const special=!label && Math.random()<.29;
+    try{
+      return await oldCityEnemyAttack.call(this,special?multiplier*1.35:multiplier,
+        special?`${currentEnemy.name} used Signal Shift! RED · Stop!`:label,lifeDrainHeal);
+    }finally{
+      setSignal('green');
+    }
   };
 
   window.DUCKIE_NEW_ENEMIES_V313={

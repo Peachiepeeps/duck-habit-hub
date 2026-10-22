@@ -7860,3 +7860,7 @@ body[data-quest-theme="midnight-pixel"] .secondary-button,body[data-quest-theme=
     inset:auto 0 10% 0!important;
   }
 }
+
+/* v24.345 City Crown color customization */
+.city-crown-picker-v345{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:12px;padding:10px;border:2px solid #e2aec5;border-radius:12px;background:#fff5f9;color:#865269;font-size:.85rem;font-weight:800;}
+.city-crown-picker-v345 input{width:60px;height:34px;border:1px solid #c990a7;border-radius:8px;background:white;cursor:pointer;}

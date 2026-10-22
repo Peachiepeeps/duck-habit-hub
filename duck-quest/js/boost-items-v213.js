@@ -12,7 +12,7 @@
     {
       id:'exp-candy-large', name:'EXP Candy Large', cost:10,
       image:'../assets/items/quest-boosts/Exp-candy-large.png',
-      detail:'Adds 50% of the active OC’s current EXP bar.', expPercent:.50
+      detail:'Raises the active OC by one level (up to Lv. 999).', expPercent:.50, nextLevel:true
     },
     {
       id:'warm-blanket', name:'Warm Blanket', cost:7,
@@ -106,7 +106,7 @@
     if(!hero || hero.level>=MAX_LEVEL){say(`${QUEST_CHARACTER_NAMES?.[activeCharacterId]||'This OC'} is already at MAX Level!`);return;}
     if(qty(boost.id)<1){say(`You don't have an ${boost.name}.`);return;}
     const need=Math.max(1,Number(expNeeded(hero.level))||1);
-    const amount=Math.max(1,Math.ceil(need*boost.expPercent));
+    const amount=boost.nextLevel?Math.max(1,need-Math.max(0,Number(hero.exp)||0)):Math.max(1,Math.ceil(need*boost.expPercent));
     if(!spend(boost.id,1)) return;
     const before=hero.level;
     const levels=grantExp(amount);
@@ -114,7 +114,8 @@
     questSave.totalExpEarned=Math.max(0,Number(questSave.totalExpEarned)||0)+amount;
     persist();
     const who=QUEST_CHARACTER_NAMES?.[activeCharacterId]||'Your OC';
-    say(levels.length?`${who} gained +${amount} EXP and reached Lv. ${hero.level}!`:`${who} gained +${amount} EXP!`);
+    const afterNeed=expNeeded(hero.level);
+    say(levels.length?`${who} gained +${amount} EXP and reached Lv. ${hero.level}!`:`${who} gained +${amount} EXP! Lv. ${hero.level}: ${Math.floor(hero.exp)} / ${afterNeed} EXP to next level.`);
     renderBoostShop();
   }
 
