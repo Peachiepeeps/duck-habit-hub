@@ -2,13 +2,13 @@
 (function(){
   "use strict";
 
-  const VERSION="24.313";
-  const NEW_IDS=["chonk","feathertail","puffer","shrimpie","licorunt","pretzette","asterfox","star-glider"];
+  const VERSION="24.344";
+  const NEW_IDS=["chonk","feathertail","puffer","shrimpie","licorunt","pretzette","asterfox","star-glider","skater-squirrel","bearista","cool-dee","traffic-cone-witch","horse","three-mice-trench-coat","stoplight-owl","lil-king","scarrie","bottle-fairy"];
   const ROOT="assets/enemies/";
 
   const DEFINITIONS=Object.freeze({
     chonk:{
-      area:"meadow",maxRank:40,name:"Chonk",base:{hp:26,attack:4,exp:25,coinMin:7,coinMax:12,speed:420},
+      area:"city",maxRank:200,name:"Chonk",base:{hp:26,attack:4,exp:25,coinMin:7,coinMax:12,speed:420},
       order:["base","blue","green","pink","gold"],special:"gold",
       variants:{
         base:["Chonk","base"],blue:["Blue Chonk","blue"],green:["Green Chonk","green"],pink:["Pink Chonk","pink"],gold:["Gold Chonk","gold"]
@@ -70,11 +70,72 @@
         base:["Star Glider","base"],green:["Green Star Glider","green"],pink:["Pink Star Glider","pink"],gold:["Gold Star Glider","gold"],dark:["Dark Star Glider","dark"]
       },
       shiny:["Shiny Star Glider","shiny"]
+    },
+    "skater-squirrel":{
+      area:"city",maxRank:200,boss:false,name:"Skater Squirrel",
+      base:{hp:52,attack:9,exp:56,coinMin:14,coinMax:24,speed:380},
+      order:["base", "red", "dark", "orange", "blue"],special:"blue",
+      variants:{"base":["Skater Squirrel","base"], "red":["Red Skater Squirrel","red"], "dark":["Dark Skater Squirrel","dark"], "orange":["Orange Skater Squirrel","orange"], "blue":["Blue Skater Squirrel","blue"]},shiny:["Shiny Skater Squirrel","shiny"]
+    },
+    "bearista":{
+      area:"city",maxRank:200,boss:false,name:"Bearista",
+      base:{hp:52,attack:9,exp:56,coinMin:14,coinMax:24,speed:380},
+      order:["base", "brown", "pink", "blue", "purple"],special:"purple",
+      variants:{"base":["Bearista","base"], "brown":["Brown Bearista","brown"], "pink":["Pink Bearista","pink"], "blue":["Blue Bearista","blue"], "purple":["Purple Bearista","purple"]},shiny:["Shiny Bearista","shiny"]
+    },
+    "cool-dee":{
+      area:"city",maxRank:200,boss:false,name:"Cool-dee",
+      base:{hp:52,attack:9,exp:56,coinMin:14,coinMax:24,speed:380},
+      order:["base", "pink", "blue", "green", "yellow"],special:"yellow",
+      variants:{"base":["Cool-dee","base"], "pink":["Pink Cool-dee","pink"], "blue":["Blue Cool-dee","blue"], "green":["Green Cool-dee","green"], "yellow":["Yellow Cool-dee","yellow"]},shiny:["Shiny Cool-dee","shiny"]
+    },
+    "traffic-cone-witch":{
+      area:"city",maxRank:200,boss:false,name:"Traffic Cone Witch",
+      base:{hp:52,attack:9,exp:56,coinMin:14,coinMax:24,speed:380},
+      order:["base", "green", "yellow", "pink", "blue"],special:"blue",
+      variants:{"base":["Traffic Cone Witch","base"], "green":["Green Traffic Cone Witch","green"], "yellow":["Yellow Traffic Cone Witch","yellow"], "pink":["Pink Traffic Cone Witch","pink"], "blue":["Blue Traffic Cone Witch","blue"]},shiny:["Shiny Traffic Cone Witch","shiny"]
+    },
+    "horse":{
+      area:"cloud",maxRank:160,boss:false,name:"Horse",
+      base:{hp:46,attack:8,exp:56,coinMin:14,coinMax:24,speed:380},
+      order:["base", "funny", "pretty", "timid", "apple"],special:"apple",
+      variants:{"base":["Horse","base"], "funny":["Funny Horse","funny"], "pretty":["Pretty Horse","pretty"], "timid":["Timid Horse","timid"], "apple":["Apple Horse","apple"]},shiny:["Shiny Horse","shiny"]
+    },
+    "three-mice-trench-coat":{
+      area:"city",maxRank:200,boss:true,name:"Three Mice in a Trench Coat",
+      base:{hp:100,attack:13,exp:115,coinMin:38,coinMax:57,speed:410},
+      order:["base", "pink", "blue", "green", "red"],special:"red",
+      variants:{"base":["Three Mice in a Trench Coat","base"], "pink":["Pink Three Mice in a Trench Coat","pink"], "blue":["Blue Three Mice in a Trench Coat","blue"], "green":["Green Three Mice in a Trench Coat","green"], "red":["Red Three Mice in a Trench Coat","red"]},shiny:["Shiny Three Mice in a Trench Coat","shiny"]
+    },
+    "stoplight-owl":{
+      area:"city",maxRank:200,boss:true,name:"Stoplight Owl",
+      base:{hp:100,attack:13,exp:115,coinMin:38,coinMax:57,speed:410},
+      order:["base", "dark", "pink", "indigo", "avocado", "teal"],special:"teal",
+      variants:{"base":["Stoplight Owl","base"], "dark":["Dark Stoplight Owl","dark"], "pink":["Pink Stoplight Owl","pink"], "indigo":["Indigo Stoplight Owl","indigo"], "avocado":["Avocado Stoplight Owl","avocado"], "teal":["Teal Stoplight Owl","teal"]},shiny:["Shiny Stoplight Owl","shiny"]
+    },
+    "lil-king":{
+      area:"city",maxRank:200,boss:true,name:"Lil King",
+      base:{hp:100,attack:13,exp:115,coinMin:38,coinMax:57,speed:410},
+      order:["base", "topaz", "ruby", "sapphire", "amethyst"],special:"amethyst",
+      variants:{"base":["Lil King","base"], "topaz":["Topaz Lil King","topaz"], "ruby":["Ruby Lil King","ruby"], "sapphire":["Sapphire Lil King","sapphire"], "amethyst":["Amethyst Lil King","amethyst"]},shiny:["Shiny Lil King","shiny"]
+    },
+    "scarrie":{
+      area:"meadow",maxRank:40,boss:true,name:"Scarrie",
+      base:{hp:75,attack:10,exp:115,coinMin:38,coinMax:57,speed:410},
+      order:["base", "red", "purple", "teal", "gray"],special:"gray",
+      variants:{"base":["Scarrie","base"], "red":["Red Scarrie","red"], "purple":["Purple Scarrie","purple"], "teal":["Teal Scarrie","teal"], "gray":["Gray Scarrie","gray"]},shiny:["Shiny Scarrie","shiny"]
+    },
+    "bottle-fairy":{
+      area:"ocean",maxRank:80,boss:true,name:"Bottle Fairy",
+      base:{hp:75,attack:10,exp:115,coinMin:38,coinMax:57,speed:410},
+      order:["base", "red", "gold", "green", "purple"],special:"purple",
+      variants:{"base":["Bottle Fairy","base"], "red":["Red Bottle Fairy","red"], "gold":["Gold Bottle Fairy","gold"], "green":["Green Bottle Fairy","green"], "purple":["Purple Bottle Fairy","purple"]},shiny:["Shiny Bottle Fairy","shiny"]
     }
   });
 
   function art(id,variant,file){
-    return `${ROOT}${id}/base/${variant==="base"?"":variant+"-"}${file}.png`;
+    const folder=DEFINITIONS[id]?.boss?'bosses':'enemies';
+    return `assets/${folder}/${id}/base/${variant==="base"?"":variant+"-"}${file}.png`;
   }
 
   function variantTableFor(id){
@@ -82,13 +143,13 @@
     const out={};
     def.order.forEach((variantId,index)=>{
       const [name,folderId]=def.variants[variantId];
-      const mult=[1,1.12,1.24,1.40,1.62][index]||1;
+      const mult=[1,1.12,1.24,1.40,1.54,1.70][index]||1;
       out[variantId]={
         id:variantId,name,
         hp:mult,atk:index===4?1.28:index===3?1.19:index===2?1.11:index===1?1.06:1,
         exp:index===4?1.58:index===3?1.38:index===2?1.23:index===1?1.12:1,
         coin:index===4?1.62:index===3?1.38:index===2?1.23:index===1?1.12:1,
-        elite:index===4,
+        elite:index===def.order.length-1,
         idle:[art(id,folderId,"idle-1"),art(id,folderId,"idle-2")],
         hurt:art(id,folderId,"hurt")
       };
@@ -139,7 +200,17 @@
     "star-glider":[
       {name:"Star Swoop!",multiplier:.96},
       {name:"Cosmic Glide!",multiplier:.95,effect:"weaken-next",chance:.30,nextAttackMultiplier:.80}
-    ]
+    ],
+    "skater-squirrel":[{name:"Skater Squirrel Dash!",multiplier:1},{name:"Skater Squirrel Dash Encore!",multiplier:1.15}],
+    "bearista":[{name:"Bearista Dash!",multiplier:1},{name:"Bearista Dash Encore!",multiplier:1.15}],
+    "cool-dee":[{name:"Cool Dee Dash!",multiplier:1},{name:"Cool Dee Dash Encore!",multiplier:1.15}],
+    "traffic-cone-witch":[{name:"Traffic Cone Witch Dash!",multiplier:1},{name:"Traffic Cone Witch Dash Encore!",multiplier:1.15}],
+    "horse":[{name:"Cloud Gallop!",multiplier:1},{name:"Cloud Gallop Encore!",multiplier:1.15}],
+    "three-mice-trench-coat":[{name:"Trench Coat Tumble!",multiplier:1},{name:"Trench Coat Tumble Encore!",multiplier:1.15}],
+    "stoplight-owl":[{name:"Signal Shift!",multiplier:1},{name:"Signal Shift Encore!",multiplier:1.15}],
+    "lil-king":[{name:"Royal Rumble!",multiplier:1},{name:"Royal Rumble Encore!",multiplier:1.15}],
+    "scarrie":[{name:"Scarrie Scare!",multiplier:1},{name:"Scarrie Scare Encore!",multiplier:1.15}],
+    "bottle-fairy":[{name:"Bottle Sparkle!",multiplier:1},{name:"Bottle Sparkle Encore!",multiplier:1.15}]
   });
 
   const SPECIAL_POWERS=Object.freeze({
@@ -161,7 +232,17 @@
     licorunt:{name:"Sticky Twist!",description:"Solid damage with a 30% chance to weaken the enemy's next attack.",type:"damage-weaken",multiplier:1.00,weakenChance:.30,nextAttackMultiplier:.70},
     pretzette:{name:"Salty Spin!",description:"Moderate damage with a 25% critical-hit chance.",type:"crit-damage",multiplier:.95,critChance:.25,critMultiplier:1.70},
     asterfox:{name:"Aster Spark!",description:"Moderate damage with a 25% critical-hit chance.",type:"crit-damage",multiplier:.95,critChance:.25,critMultiplier:1.70},
-    "star-glider":{name:"Cosmic Glide!",description:"Solid damage with a 30% chance to weaken the enemy's next attack.",type:"damage-weaken",multiplier:1.00,weakenChance:.30,nextAttackMultiplier:.70}
+    "star-glider":{name:"Cosmic Glide!",description:"Solid damage with a 30% chance to weaken the enemy's next attack.",type:"damage-weaken",multiplier:1.00,weakenChance:.30,nextAttackMultiplier:.70},
+    "skater-squirrel":{name:"Friendly Boost!",description:"Moderate damage with a 25% chance of a critical hit.",type:"crit-damage",multiplier:.95,critChance:.25,critMultiplier:1.7},
+    "bearista":{name:"Friendly Boost!",description:"Moderate damage with a 25% chance of a critical hit.",type:"crit-damage",multiplier:.95,critChance:.25,critMultiplier:1.7},
+    "cool-dee":{name:"Friendly Boost!",description:"Moderate damage with a 25% chance of a critical hit.",type:"crit-damage",multiplier:.95,critChance:.25,critMultiplier:1.7},
+    "traffic-cone-witch":{name:"Friendly Boost!",description:"Moderate damage with a 25% chance of a critical hit.",type:"crit-damage",multiplier:.95,critChance:.25,critMultiplier:1.7},
+    "horse":{name:"Friendly Boost!",description:"Moderate damage with a 25% chance of a critical hit.",type:"crit-damage",multiplier:.95,critChance:.25,critMultiplier:1.7},
+    "three-mice-trench-coat":{name:"Friendly Boost!",description:"Moderate damage with a 25% chance of a critical hit.",type:"crit-damage",multiplier:.95,critChance:.25,critMultiplier:1.7},
+    "stoplight-owl":{name:"Street Spark!",description:"Moderate damage with a 25% chance of a critical hit.",type:"crit-damage",multiplier:.95,critChance:.25,critMultiplier:1.7},
+    "lil-king":{name:"Friendly Boost!",description:"Moderate damage with a 25% chance of a critical hit.",type:"crit-damage",multiplier:.95,critChance:.25,critMultiplier:1.7},
+    "scarrie":{name:"Friendly Boost!",description:"Moderate damage with a 25% chance of a critical hit.",type:"crit-damage",multiplier:.95,critChance:.25,critMultiplier:1.7},
+    "bottle-fairy":{name:"Friendly Boost!",description:"Moderate damage with a 25% chance of a critical hit.",type:"crit-damage",multiplier:.95,critChance:.25,critMultiplier:1.7}
   });
 
   const SPECIAL_BUDDY_SKILLS=Object.freeze({
@@ -182,7 +263,7 @@
       name:def.name,
       hp:def.base.hp,attack:def.base.attack,exp:def.base.exp,
       coinMin:def.base.coinMin,coinMax:def.base.coinMax,
-      idle:v.idle.slice(),hurt:v.hurt,speed:def.base.speed
+      idle:v.idle.slice(),hurt:v.hurt,speed:def.base.speed,boss:Boolean(def.boss)
     };
   }
 
@@ -370,6 +451,17 @@
 
   // Put the two new families into each stage's 3 regular encounter pools.
   makeEncounterPlan=function(rank,areaId=selectedArea){
+    if(areaId==="city"){
+      const stagePools=[
+        ["chonk","skater-squirrel"],
+        ["bearista","cool-dee","chonk"],
+        ["traffic-cone-witch","skater-squirrel","cool-dee","bearista"]
+      ];
+      const encounters=stagePools.map(pool=>makeStageEncounter(pool));
+      const bosses=["three-mice-trench-coat","stoplight-owl","lil-king"];
+      encounters.push({type:"boss",enemyId:bosses[randInt(0,bosses.length-1)]});
+      return encounters;
+    }
     if(areaId==="candy"){
       const stagePools=[
         ["apple-baby","gummy-worm","licorunt"],
@@ -383,8 +475,8 @@
     }
     if(areaId==="cloud"){
       const stagePools=[
-        ["star-mouse","puff-fairy","asterfox"],
-        ["tulipa","snoud","star-glider"],
+        ["star-mouse","puff-fairy","asterfox","horse"],
+        ["tulipa","snoud","star-glider","horse"],
         ["cloud-bunny","lunar-moth","asterfox","star-glider"]
       ];
       const encounters=stagePools.map(pool=>makeStageEncounter(pool));
@@ -399,18 +491,18 @@
         ["catfish","sea-turtle","seaunicorn","sea-star","puffer","shrimpie"]
       ];
       const encounters=stagePools.map(pool=>makeStageEncounter(pool));
-      const bosses=["vampire-squid","jellybun"];
+      const bosses=["vampire-squid","jellybun","bottle-fairy"];
       encounters.push({type:"boss",enemyId:bosses[randInt(0,bosses.length-1)]});
       return encounters;
     }
 
     const stagePools=[
-      ["bee","cat-slime","acorn-mouse","catterpillar","chonk"],
+      ["bee","cat-slime","acorn-mouse","catterpillar"],
       ["cat-slime","flower","acorn-mouse","catterpillar","feathertail"],
-      ["bee","flower","cat-slime","acorn-mouse","catterpillar","chonk","feathertail"]
+      ["bee","flower","cat-slime","acorn-mouse","catterpillar","feathertail"]
     ];
     const encounters=stagePools.map(pool=>makeStageEncounter(pool));
-    const bosses=["mushroom-cat","tree-squirrel"];
+    const bosses=["mushroom-cat","tree-squirrel","scarrie"];
     encounters.push({type:"boss",enemyId:bosses[randInt(0,bosses.length-1)]});
     return encounters;
   };
@@ -421,7 +513,7 @@
     "cat-slime","bee","flower","acorn-mouse","catterpillar","chonk","feathertail",
     "cool-seagull","sea-turtle","catfish","seaunicorn","sea-star","puffer","shrimpie",
     "apple-baby","gummy-worm","pudding-pig","gingerlolly","candycane-deer","licorunt","pretzette",
-    "star-mouse","puff-fairy","tulipa","snoud","cloud-bunny","lunar-moth","asterfox","star-glider","porcupin"
+    "star-mouse","puff-fairy","tulipa","snoud","cloud-bunny","lunar-moth","asterfox","star-glider","horse","skater-squirrel","bearista","cool-dee","traffic-cone-witch","porcupin"
   ];
   buildEncounterFromPool=function(enemyPool,mode="stage"){
     if(mode!=="endless")return previousBuildEncounterFromPoolV313.apply(this,arguments);
@@ -441,13 +533,13 @@
     for(const v of Object.values(TABLES[id])){
       NEW_BUDDY_CATALOG.push({
         key:`${id}:${v.id}`,enemyId:id,variantId:v.id,name:v.name,
-        image:v.idle[0],idle:v.idle.slice(),boss:false,shiny:false
+        image:v.idle[0],idle:v.idle.slice(),boss:Boolean(DEFINITIONS[id].boss),shiny:false
       });
     }
     const s=SHINIES[id];
     NEW_BUDDY_CATALOG.push({
       key:`${id}:shiny`,enemyId:id,variantId:"shiny",name:s.name,
-      image:s.idle[0],idle:s.idle.slice(),boss:false,shiny:true
+      image:s.idle[0],idle:s.idle.slice(),boss:Boolean(DEFINITIONS[id].boss),shiny:true
     });
   }
 
@@ -462,6 +554,18 @@
     return [...byKey.values()];
   };
 
+  // Include new variants in the lookup used by the six active Lil Guys.
+  // Core egg pools use BUDDY_CATALOG directly; registering here ensures
+  // Common, Rare and Shiny eggs can hatch the new Lil Guys as well.
+  const existingEggKeys=new Set(BUDDY_CATALOG.map(entry=>entry.key));
+  NEW_BUDDY_CATALOG.forEach(entry=>{
+    BUDDY_CATALOG_BY_KEY.set(entry.key,entry);
+    if(!existingEggKeys.has(entry.key)){
+      BUDDY_CATALOG.push(entry);
+      existingEggKeys.add(entry.key);
+    }
+  });
+
   // Object.freeze is shallow: safely add families to the existing area arrays.
   function insertBeforeBoss(array,bossId,ids){
     if(!Array.isArray(array))return;
@@ -470,10 +574,13 @@
     const at=array.indexOf(bossId);
     array.splice(at>=0?at:array.length,0,...fresh);
   }
-  insertBeforeBoss(BUDDY_AREA_FAMILIES.meadow,"mushroom-cat",["chonk","feathertail"]);
-  insertBeforeBoss(BUDDY_AREA_FAMILIES.ocean,"vampire-squid",["puffer","shrimpie"]);
+  insertBeforeBoss(BUDDY_AREA_FAMILIES.meadow,"mushroom-cat",["feathertail","scarrie"]);
+  const oldChonkIndex=BUDDY_AREA_FAMILIES.meadow.indexOf("chonk");
+  if(oldChonkIndex>=0)BUDDY_AREA_FAMILIES.meadow.splice(oldChonkIndex,1);
+  insertBeforeBoss(BUDDY_AREA_FAMILIES.ocean,"vampire-squid",["puffer","shrimpie","bottle-fairy"]);
   insertBeforeBoss(BUDDY_AREA_FAMILIES.candy,"gummy-shark",["licorunt","pretzette"]);
-  insertBeforeBoss(BUDDY_AREA_FAMILIES.cloud,"aries",["asterfox","star-glider"]);
+  insertBeforeBoss(BUDDY_AREA_FAMILIES.cloud,"aries",["asterfox","star-glider","horse"]);
+  BUDDY_AREA_FAMILIES.city.push("chonk","skater-squirrel","bearista","cool-dee","traffic-cone-witch","three-mice-trench-coat","stoplight-owl","lil-king");
 
   // The core Shiny tab gets its family IDs from frozen SHINY_VARIANTS, so append
   // the eight new shiny-family tiles after the normal renderer finishes.
@@ -563,6 +670,23 @@
       rewards.goldChonkBonus=bonus;
     }
     return rewards;
+  };
+
+  // City boss specialty: Stoplight Owl's signal changes on its powered attack.
+  // CSS lights are drawn during the move, so the provided sprite stays unmodified.
+  const signalStyle=document.createElement('style');
+  signalStyle.textContent=`.citySignalV344{position:relative}.citySignalV344::after{content:"●";position:absolute;right:-8px;top:-24px;width:22px;height:42px;display:flex;justify-content:center;align-items:center;background:#292b39;border:2px solid #e5bdd0;border-radius:7px;padding:2px 4px;font:bold 19px/1 sans-serif;box-shadow:0 2px 8px #201f3350;animation:cityBlink344 .25s steps(1) 3 alternate}.citySignalV344[data-city-signal="red"]::after{content:"🔴"}.citySignalV344[data-city-signal="yellow"]::after{content:"🟡"}.citySignalV344[data-city-signal="green"]::after{content:"🟢"}@keyframes cityBlink344{from{filter:brightness(.6)}to{filter:brightness(1.5)}}`;
+  document.head.appendChild(signalStyle);
+  const oldCityEnemyAttack=performEnemyAttack;
+  performEnemyAttack=async function(multiplier=1,label="",lifeDrainHeal=0){
+    if(!label && currentEnemy?.id==="stoplight-owl" && Math.random()<.29){
+      const refs=activeEnemyUi();refs.combatant?.classList.add('citySignalV344');
+      const color=["RED · Stop!","YELLOW · Caution!","GREEN · Go!"][randInt(0,2)];
+      if(refs.combatant)refs.combatant.dataset.citySignal=color.split(' ')[0].toLowerCase();
+      try{return await oldCityEnemyAttack.call(this,color.startsWith('RED')?1.35:color.startsWith('YELLOW')?.72:1.08,`${currentEnemy.name} used Signal Shift! ${color}`,lifeDrainHeal);}
+      finally{refs.combatant?.classList.remove('citySignalV344');if(refs.combatant)delete refs.combatant.dataset.citySignal;}
+    }
+    return oldCityEnemyAttack.apply(this,arguments);
   };
 
   window.DUCKIE_NEW_ENEMIES_V313={

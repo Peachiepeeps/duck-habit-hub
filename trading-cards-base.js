@@ -68,6 +68,47 @@
   cards.push({id:"r-love-nene",characterId:"nene",name:"Nene",art:"love-interests/nene/Nene-idle-1.png",rarity:"rare",number:"R-055",category:"Miko Love Interest",hint:"Witness Nico and Nene's reunion while exploring Duck Quest as Miko."});
   cards.push({id:"r-love-moriko",characterId:"moriko",name:"Moriko",art:"love-interests/moriko/Moriko-idle-1.png",rarity:"rare",number:"R-056",category:"Miko Love Interest",hint:"Witness Moriko and Jenson's reunion while exploring Duck Quest as Miko."});
   cards.push({id:"r-love-jenson",characterId:"jenson",name:"Jenson",art:"love-interests/jenson/Jenson-Sprite-idle-1.png",rarity:"rare",number:"R-057",category:"Miko Love Interest",hint:"Witness Moriko and Jenson's reunion while exploring Duck Quest as Miko."});
+  // City Streets and newly introduced boss/enemy cards. Add at the end so
+  // all existing IDs/numbers and saved quantities remain unchanged.
+  const additionalCardFamilies=[
+    ['chonk','Chonk','City Streets',false],
+    ['feathertail','Feathertail','Meadow',false],
+    ['puffer','Puffer','Ocean',false],
+    ['shrimpie','Shrimpie','Ocean',false],
+    ['licorunt','Licorunt','Candyland',false],
+    ['pretzette','Pretzette','Candyland',false],
+    ['asterfox','AsterFox','Cloud Garden',false],
+    ['star-glider','Star Glider','Cloud Garden',false],
+    ['skater-squirrel','Skater Squirrel','City Streets',false],
+    ['bearista','Bearista','City Streets',false],
+    ['cool-dee','Cool-dee','City Streets',false],
+    ['traffic-cone-witch','Traffic Cone Witch','City Streets',false],
+    ['horse','Horse','Cloud Garden',false],
+    ['three-mice-trench-coat','Three Mice in a Trench Coat','City Streets',true],
+    ['stoplight-owl','Stoplight Owl','City Streets',true],
+    ['lil-king','Lil King','City Streets',true],
+    ['scarrie','Scarrie','Meadow',true],
+    ['bottle-fairy','Bottle Fairy','Ocean',true]
+  ];
+  additionalCardFamilies.forEach(([enemyId,name,area,boss],index)=>{
+    const rarity=boss?'uncommon':'common';
+    const folder=boss?'bosses':'enemies';
+    const art=`${folder}/${enemyId}/base/idle-1.png`;
+    const cardId=(boss?'u-':'c-')+enemyId;
+    if(!cards.some(c=>c.id===cardId))cards.push({
+      id:cardId,enemyId,name,art,rarity,
+      number:`${boss?'U':'C'}-${String(100+index).padStart(3,'0')}`,
+      category:area+(boss?' Boss':''),hint:`Meet ${name} in Duck Quest or find it in a Card Pack.`
+    });
+    const shinyId='r-'+enemyId;
+    if(!cards.some(c=>c.id===shinyId))cards.push({
+      id:shinyId,enemyId,name:'Shiny '+name,
+      art:`${folder}/${enemyId}/base/shiny-idle-1.png`,
+      rarity:'rare',number:`R-${String(100+index).padStart(3,'0')}`,
+      category:area+' Shiny',hint:`Find Shiny ${name} in Duck Quest or a Card Pack.`
+    });
+    if(boss && !bosses.some(x=>x[0]===enemyId))bosses.push([enemyId,name,art]);
+  });
   const byId=Object.fromEntries(cards.map(card=>[card.id,card]));
   function basePrefix(){return /\/(duck-quest|memory-game|crane-game)\//.test(location.pathname)?"../":"";}
   function asset(path){return `${basePrefix()}${path}`;}

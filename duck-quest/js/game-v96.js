@@ -58,6 +58,17 @@ const AREA_CONFIG = Object.freeze({
     ],
     stageNames:["Cloud Stairs","Pillar Garden","Cloud Top","Star Sanctuary"],
     resultTitle:"The Cloud Garden is Clear!"
+  },
+  city: {
+    id:"city",name:"City Streets",label:"CITY STREETS",maxRank:200,
+    backgrounds:[
+      "assets/backgrounds/city/stage-1.png",
+      "assets/backgrounds/city/stage-2.png",
+      "assets/backgrounds/city/stage-3.png",
+      "assets/backgrounds/city/stage-boss.png"
+    ],
+    stageNames:["Neighborhood Lane","Apartment Row","Corner Store","City Crossroads"],
+    resultTitle:"City Streets is Clear!"
   }
 });
 
@@ -2083,7 +2094,7 @@ const ENDLESS_NORMAL_ENEMIES = Object.freeze([
   "apple-baby","gummy-worm","pudding-pig","gingerlolly","candycane-deer",
   "star-mouse","puff-fairy","tulipa","snoud","cloud-bunny","lunar-moth","porcupin"
 ]);
-const ENDLESS_BOSSES = Object.freeze(["mushroom-cat","tree-squirrel","vampire-squid","jellybun","gummy-shark","cream-fox","aries","cherub-duck"]);
+const ENDLESS_BOSSES = Object.freeze(["mushroom-cat","tree-squirrel","scarrie","vampire-squid","jellybun","bottle-fairy","gummy-shark","cream-fox","aries","cherub-duck","three-mice-trench-coat","stoplight-owl","lil-king"]);
 const ENDLESS_BACKGROUNDS = Object.freeze(
   Object.values(AREA_CONFIG).flatMap(area=>area.backgrounds)
 );
@@ -2274,7 +2285,8 @@ function buildBuddyCatalog() {
   return entries;
 }
 
-const BUDDY_CATALOG = Object.freeze(buildBuddyCatalog());
+// Mutable catalog: new enemy families register here for egg hatch and collections.
+const BUDDY_CATALOG = buildBuddyCatalog();
 const BUDDY_CATALOG_BY_KEY = new Map(BUDDY_CATALOG.map(entry=>[entry.key,entry]));
 
 function normalizeBuddyCollection(raw) {
@@ -3057,9 +3069,10 @@ function defaultCharacterQuestProgress(){
       meadow:{unlockedRank:1,lastRank:1},
       ocean:{unlockedRank:1,lastRank:1},
       candy:{unlockedRank:1,lastRank:1},
-      cloud:{unlockedRank:1,lastRank:1}
+      cloud:{unlockedRank:1,lastRank:1},
+      city:{unlockedRank:1,lastRank:1}
     },
-    clearedAreas:{meadow:false,ocean:false,candy:false,cloud:false},
+    clearedAreas:{meadow:false,ocean:false,candy:false,cloud:false,city:false},
     affectionMilestonesSeen:{five:false,ten:false},
     endless:{record:0,checkpoint:1}
   };
@@ -3083,6 +3096,8 @@ function normalizeCharacterQuestProgress(raw, legacy={}){
   const candyLast=clampInt(q.areas?.candy?.lastRank ?? legacyAreas.candy?.lastRank,1,candyUnlocked,1);
   const cloudUnlocked=clampInt(rawCloudUnlocked,1,160,1);
   const cloudLast=clampInt(rawCloudLast,1,cloudUnlocked,1);
+  const cityUnlocked=clampInt(q.areas?.city?.unlockedRank ?? legacyAreas.city?.unlockedRank,1,200,1);
+  const cityLast=clampInt(q.areas?.city?.lastRank ?? legacyAreas.city?.lastRank,1,cityUnlocked,1);
   const incomingIcon=q.iconBackground ?? legacy.iconBackground;
   return {
     ...d,...q,
@@ -3096,13 +3111,15 @@ function normalizeCharacterQuestProgress(raw, legacy={}){
       meadow:{unlockedRank:meadowUnlocked,lastRank:Math.min(meadowLast,meadowUnlocked)},
       ocean:{unlockedRank:oceanUnlocked,lastRank:Math.min(oceanLast,oceanUnlocked)},
       candy:{unlockedRank:candyUnlocked,lastRank:Math.min(candyLast,candyUnlocked)},
-      cloud:{unlockedRank:cloudUnlocked,lastRank:Math.min(cloudLast,cloudUnlocked)}
+      cloud:{unlockedRank:cloudUnlocked,lastRank:Math.min(cloudLast,cloudUnlocked)},
+      city:{unlockedRank:cityUnlocked,lastRank:Math.min(cityLast,cityUnlocked)}
     },
     clearedAreas:{
       meadow:Boolean(q.clearedAreas?.meadow || rawMeadowLast>=40 || rawMeadowUnlocked>=40),
       ocean:Boolean(q.clearedAreas?.ocean || rawOceanLast>=100 || rawOceanUnlocked>=100),
       candy:Boolean(q.clearedAreas?.candy),
-      cloud:Boolean(q.clearedAreas?.cloud || rawCloudLast>=150 || rawCloudUnlocked>=150)
+      cloud:Boolean(q.clearedAreas?.cloud || rawCloudLast>=150 || rawCloudUnlocked>=150),
+      city:Boolean(q.clearedAreas?.city)
     },
     affectionMilestonesSeen:{
       five:Boolean(q.affectionMilestonesSeen?.five),
@@ -3932,6 +3949,8 @@ function peepStats(level = activeHeroProgress().level) {
 function enemyScaled(template, rank, areaId="meadow") {
   const tuning=areaId==="cloud"
     ? {hp:.028,atk:.017,exp:.021,reward:.016}
+    : areaId==="city"
+      ? {hp:.024,atk:.015,exp:.022,reward:.017}
     : areaId==="candy"
       ? {hp:.031,atk:.0195,exp:.024,reward:.018}
       : areaId==="ocean"
@@ -4883,7 +4902,8 @@ const BUDDY_AREA_FAMILIES = Object.freeze({
   meadow:["cat-slime","bee","flower","acorn-mouse","catterpillar","porcupin","sock-gremlin","ufono","plushbun","mushroom-cat","tree-squirrel","mimic"],
   ocean:["cool-seagull","sea-turtle","catfish","seaunicorn","sea-star","vampire-squid","jellybun"],
   candy:["apple-baby","gummy-worm","pudding-pig","gingerlolly","candycane-deer","gummy-shark","cream-fox"],
-  cloud:["star-mouse","puff-fairy","tulipa","snoud","cloud-bunny","lunar-moth","aries","cherub-duck"]
+  cloud:["star-mouse","puff-fairy","tulipa","snoud","cloud-bunny","lunar-moth","aries","cherub-duck"],
+    city:[]
 });
 
 const BUDDY_AREA_BY_ENEMY = Object.freeze(Object.fromEntries(
@@ -5195,6 +5215,11 @@ function rankWord(rank) {
 }
 
 function rankDescription(rank,areaId=selectedArea) {
+  if(areaId==="city"){
+    if(rank<=1)return "City Streets Level 1 · The neighborhood is full of surprises!";
+    if(rank<200)return `City Streets Level ${rank} · Something curious is stirring along the sidewalks.`;
+    return "City Streets Level 200 · The City Crossroads finale is here!";
+  }
   if(areaId==="cloud"){
     if(rank<=1) return "Cloud Garden Level 1 · The stairs are soft and sparkly.";
     if(rank<=35) return `Cloud Garden Level ${rank} · New celestial colors are drifting in.`;
@@ -8172,7 +8197,8 @@ setInterval(()=>{
     meadow:{name:'Meadow',dashBackground:'assets/dash/backgrounds/DD-Meadow-3x.png',backgrounds:['assets/dash/backgrounds/DD-Meadow-3x.png'],obstacle:'assets/dash/Obstacle-mushroom.png'},
     ocean:{name:'Ocean',dashBackground:'assets/dash/backgrounds/DD-Ocean-3x.png',backgrounds:['assets/dash/backgrounds/DD-Ocean-3x.png'],obstacle:'assets/dash/Obstacle-rock.png'},
     candy:{name:'Candyland',dashBackground:'assets/dash/backgrounds/DD-Candyland-3x.png',backgrounds:['assets/dash/backgrounds/DD-Candyland-3x.png'],obstacle:'assets/dash/Obstacle-gumdrop.png'},
-    cloud:{name:'Cloud Garden',dashBackground:'assets/dash/backgrounds/DD-CloudGarden-3x.png',backgrounds:['assets/dash/backgrounds/DD-CloudGarden-3x.png'],obstacle:'assets/dash/Obstacle-cloud.png'}
+    cloud:{name:'Cloud Garden',dashBackground:'assets/dash/backgrounds/DD-CloudGarden-3x.png',backgrounds:['assets/dash/backgrounds/DD-CloudGarden-3x.png'],obstacle:'assets/dash/Obstacle-cloud.png'},
+    city:{name:'City Streets',dashBackground:'assets/backgrounds/city/duckie-dash.png',backgrounds:['assets/backgrounds/city/duckie-dash.png'],obstacle:'assets/dash/Obstacle-rock.png'}
   };
   const SPECIAL_REWARD_ITEMS={
     token:{id:'jump-token',name:'Jump Token',image:'assets/dash/Jump-Token.png'},
