@@ -15,7 +15,7 @@
     'exp-candy-large':{
       name:'EXP Candy Large', category:'battle',
       image:'assets/items/quest-boosts/Exp-candy-large.png', icon:'✦', sellValue:0,
-      description:'Use in Duck Quest to gain 50% of the active OC’s current EXP bar.'
+      description:'Raises the active Duck Quest OC by one level (up to Lv. 999).'
     },
     'warm-blanket':{
       name:'Warm Blanket', category:'battle',
@@ -53,7 +53,8 @@
 // Duckie Days v24.215 — safe EXP Candy inventory use + one-time Large Candy recovery.
 (function(){
   'use strict';
-  window.DUCKIE_HUB_EXP_CANDY_USE='24.215-safe-use-and-large-candy-recovery';
+  window.DUCKIE_HUB_EXP_CANDY_USE='24.346-inventory-level-999-fix';
+  const QUEST_MAX_LEVEL=999;
 
   const CANDIES={
     'exp-candy-small':{
@@ -62,9 +63,9 @@
         description:'Use on the active Duck Quest OC to gain 20% of the current EXP bar.'}
     },
     'exp-candy-large':{
-      name:'EXP Candy Large',percent:.50,
+      name:'EXP Candy Large',percent:.50,nextLevel:true,
       item:{name:'EXP Candy Large',category:'battle',image:'assets/items/quest-boosts/Exp-candy-large.png',icon:'✦',sellValue:0,
-        description:'Use on the active Duck Quest OC to gain 50% of the current EXP bar.'}
+        description:'Raises an unlocked Duck Quest OC by one level (up to Lv. 999).'}
     }
   };
 
@@ -135,20 +136,22 @@
     const characterId=targetCharacterId();
     const who=targetCharacterName();
     const hero=normalizeDuckQuestCharacterProgress(characterId);
-    if(!hero || hero.level>=999){try{showToast(`${who} is already at MAX Level!`);}catch(error){}return;}
+    if(!hero || hero.level>=QUEST_MAX_LEVEL){try{showToast(`${who} is already at MAX Level!`);}catch(error){}return;}
 
     const need=Math.max(1,Number(duckQuestExpNeeded(hero.level))||1);
-    const amount=Math.max(1,Math.ceil(need*candy.percent));
+    const amount=candy.nextLevel
+      ? Math.max(1,need-Math.max(0,Number(hero.exp)||0))
+      : Math.max(1,Math.ceil(need*candy.percent));
     if(!spend(itemId)) return;
 
     const beforeLevel=hero.level;
     hero.exp=Math.max(0,Number(hero.exp)||0)+amount;
-    while(hero.level<999){
+    while(hero.level<QUEST_MAX_LEVEL){
       const levelNeed=Math.max(1,Number(duckQuestExpNeeded(hero.level))||1);
       if(hero.exp<levelNeed) break;
       hero.exp-=levelNeed;
       hero.level++;
-      if(hero.level>=999){hero.level=999;hero.exp=0;break;}
+      if(hero.level>=QUEST_MAX_LEVEL){hero.level=QUEST_MAX_LEVEL;hero.exp=0;break;}
     }
 
     // normalizeDuckQuestCharacterProgress returns the object stored at save.duckQuest[characterId].
@@ -196,14 +199,18 @@
 
     const note=document.createElement('p');
     note.className='exp-candy-use-note-v215';
-    note.textContent=`Adds ${Math.round(candy.percent*100)}% of ${who}'s current Duck Quest EXP bar.`;
+    note.textContent=candy.nextLevel
+      ? `Raises ${who} by one Duck Quest level (up to Lv. ${QUEST_MAX_LEVEL}).`
+      : `Adds ${Math.round(candy.percent*100)}% of ${who}'s current Duck Quest EXP bar.`;
+    const oldInstruction=inventorySheetActions.querySelector('.inventory-furniture-placement');
+    if(oldInstruction) oldInstruction.textContent='Choose an unlocked OC and use your EXP Candy here.';
 
     const button=document.createElement('button');
     button.type='button';
     button.className='inventory-action primary exp-candy-use-v215';
     button.dataset.expCandyUseV215=itemId;
-    button.textContent=hero?.level>=100?`${who} is MAX Level`:`Use on ${who}`;
-    button.disabled=Boolean(hero?.level>=100);
+    button.textContent=hero?.level>=QUEST_MAX_LEVEL?`${who} is MAX Level`:`Use on ${who}`;
+    button.disabled=Boolean(hero?.level>=QUEST_MAX_LEVEL);
     button.addEventListener('click',()=>useCandy(itemId));
     inventorySheetActions.prepend(note,button);
   }

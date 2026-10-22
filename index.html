@@ -1203,7 +1203,7 @@
   <script src="app.js?v=24.345"></script>
   <script src="universal-clothing-v311.js?v=24.311"></script>
   <script src="gimmick-hub-v288.js?v=24.296"></script>
-  <script src="hub-boosts.js?v=24.327"></script>
+  <script src="hub-boosts.js?v=24.346"></script>
   <script src="trading-cards-ui.js?v=24.343"></script>
   <script src="tasks.js?v=24.336"></script>
   <script type="module" src="firebase-reminders.mjs?v=24.296"></script>
@@ -1225,7 +1225,7 @@
     // v24.84: use a stable service-worker URL and actively check the deployed
     // build when the installed PWA is opened/resumed. This prevents Android
     // from keeping an already-open standalone app on an older app shell.
-    const DUCK_HUB_BUILD = "24.336";
+    const DUCK_HUB_BUILD = "24.346";
     let duckHubReloadingForUpdate = false;
 
     function duckHubReloadFresh(version) {
@@ -1289,7 +1289,7 @@
       window.addEventListener("load", async () => {
         try {
           await duckHubClearOldCodeCaches();
-          const registration = await navigator.serviceWorker.register("./sw.js?v=24-345-city-polish", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("./sw.js?v=24-346-inventory-candy-fix", { updateViaCache: "none" });
           await registration.update();
           if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
           await duckHubCheckForUpdate(registration);
