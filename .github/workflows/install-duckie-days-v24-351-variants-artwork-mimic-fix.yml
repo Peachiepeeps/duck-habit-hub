@@ -1,0 +1,236 @@
+name: Install Duckie Days v24.351 Card Variants, Sprite Loading, and Mimic TCG Fix
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/install-duckie-days-v24-351-variants-artwork-mimic-fix.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-351-variants-artwork-mimic-fix-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch card rewards, sprite preloading, and mimic TCG art
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY_INSTALL'
+          from pathlib import Path
+          import json
+          
+          root = Path('.')
+          
+          def load(rel):
+              return (root / rel).read_text(encoding='utf-8')
+          
+          def save(rel, contents):
+              (root / rel).write_text(contents, encoding='utf-8')
+          
+          def replace_once(contents, original, replacement, label):
+              hits = contents.count(original)
+              if hits != 1:
+                  raise RuntimeError(f'Expected 1 match for {label}, found {hits}. No game files committed.')
+              return contents.replace(original, replacement, 1)
+          
+          version = json.loads(load('version.json'))
+          if str(version.get('version')) != '24.350':
+              raise RuntimeError('This update targets v24.350 only. Found version: ' + str(version.get('version')))
+          
+          # Battle-dropped cards keep the variant of the defeated enemy, without
+          # changing the long-standing tradingCardDrops array of card IDs.
+          path = 'duck-quest/js/trading-card-drops-v235.js'
+          s = load(path)
+          s = replace_once(s,
+              'const rewards=originalGenerate(chest);rewards.tradingCardDrops=[];',
+              'const rewards=originalGenerate(chest);rewards.tradingCardDrops=[];rewards.tradingCardVariantsV351=[];',
+              'initialize per-drop variants')
+          s = replace_once(s,
+              'if(Math.random()<chance) rewards.tradingCardDrops.push(id);',
+              '''if(Math.random()<chance){
+                  rewards.tradingCardDrops.push(id);
+                  const form=enemy.shiny?'default':(typeof enemyVariantId==='function'?enemyVariantId(enemy):'base');
+                  rewards.tradingCardVariantsV351.push(String(form||'base'));
+                }''',
+              'collect each defeated enemy form')
+          s = replace_once(s,
+              '''(rewards.tradingCardDrops||[]).map(id=>{const result=TC.grantCard(hubSave,id,1);if(id.startsWith("r-"))cardState.stats.shinyQuestDrops[id]=true;return result;})''',
+              '''(rewards.tradingCardDrops||[]).map((id,index)=>{
+                const variantId=rewards.tradingCardVariantsV351?.[index]||'default';
+                const result=TC.grantCard(hubSave,id,1,{variantId,source:'quest-battle'});
+                if(id.startsWith("r-"))cardState.stats.shinyQuestDrops[id]=true;
+                return result;
+              })''',
+              'grant actual battle variant')
+          s = replace_once(s,
+              'window.DUCKIE_TRADING_CARD_DROPS_BUILD="24.235";',
+              'window.DUCKIE_TRADING_CARD_DROPS_BUILD="24.351-variant-match";',
+              'drop feature build ID')
+          save(path, s)
+          
+          # Show the same color form in the on-field card reward popup.
+          path = 'duck-quest/js/fixes-v311.js'
+          s = load(path)
+          s = replace_once(s,
+              'holder.append(TC.createFace(result.card,{locked:false}));stack.append(holder);',
+              "holder.append(TC.createFace(result.card,{locked:false,variantId:result.variantId||'default'}));stack.append(holder);",
+              'on-field card art follows variant')
+          save(path, s)
+          
+          # Existing battle preloader kept image objects indefinitely (thousands of
+          # potential sprite paths). Keep a bounded recently-used warm cache instead.
+          path = 'duck-quest/js/game-v96.js'
+          s = load(path)
+          old_warm = '''const questImageWarmCache = new Map();
+          function warmQuestImage(src){
+            if(!src || questImageWarmCache.has(src)) return;
+            const img=new Image();
+            img.decoding="async";
+            img.src=src;
+            questImageWarmCache.set(src,img);
+            if(typeof img.decode==="function") img.decode().catch(()=>{});
+          }'''
+          new_warm = '''const questImageWarmCache = new Map();
+          const QUEST_WARM_IMAGE_LIMIT = 96;
+          function warmQuestImage(src){
+            if(!src) return;
+            const key=String(src);
+            if(questImageWarmCache.has(key)){
+              const existing=questImageWarmCache.get(key);
+              questImageWarmCache.delete(key);
+              questImageWarmCache.set(key,existing); // Recently used sprites stay warm.
+              return;
+            }
+            const img=new Image();
+            img.decoding="async";
+            img.onerror=()=>{if(questImageWarmCache.get(key)===img)questImageWarmCache.delete(key);};
+            questImageWarmCache.set(key,img);
+            img.src=key;
+            if(typeof img.decode==="function")img.decode().catch(()=>{});
+            while(questImageWarmCache.size>QUEST_WARM_IMAGE_LIMIT){
+              const oldest=questImageWarmCache.keys().next().value;
+              questImageWarmCache.delete(oldest);
+            }
+          }'''
+          s = replace_once(s, old_warm, new_warm, 'bounded image preloader')
+          
+          # Stage plan is known once a run begins; prewarm only the NEXT stage's
+          # background and one enemy idle frame in browser idle time. Do not preload
+          # whole stages, all variants, or thousands of assets.
+          old_call = '  sources.forEach(warmQuestImage);\n}\n\nfunction warmQuestMenuAssets(){'
+          new_call = '''  sources.forEach(warmQuestImage);
+            const nextIndex=(currentRun?.index??-1)+1;
+            const upcoming=currentRun?.mode==="normal"?currentRun.plan?.[nextIndex]:null;
+            if(upcoming){
+              const prewarmNext=()=>{
+                const nextBg=currentAreaConfig()?.backgrounds?.[nextIndex];
+                if(nextBg)warmQuestImage(nextBg);
+                const ids=Array.isArray(upcoming.enemyIds)?upcoming.enemyIds:[upcoming.enemyId].filter(Boolean);
+                ids.slice(0,2).forEach(id=>{
+                  const template=ENEMIES[id];
+                  const preview=template?.idle?.[0]||template?.image;
+                  if(preview)warmQuestImage(preview);
+                });
+              };
+              if(typeof requestIdleCallback==="function")requestIdleCallback(prewarmNext,{timeout:1800});
+              else setTimeout(prewarmNext,700);
+            }
+          }
+          
+          function warmQuestMenuAssets(){'''
+          s = replace_once(s, old_call, new_call, 'targeted next-encounter preloading')
+          save(path, s)
+
+          # Duckipedia TCG / Workshop mimic thumbnails: Lucky and Healthy should use
+          # the living mimic peek art instead of chest placeholder states.
+          path = 'trading-cards-ui.js'
+          s = load(path)
+          inject_after = '  function isFavorite(id){return state.favorites.includes(id);}\n'
+          helper = '''  function cardThumbSrc(card,item){
+            if(card?.enemyId==='mimic' && (item?.id==='lucky' || item?.id==='healthy')){
+              return TC.asset('duck-quest/assets/events/gift-box/mimic-idle-1.png');
+            }
+            return TC.cardArt({...card,art:item?.art||card?.art});
+          }
+'''
+          s = replace_once(s, inject_after, inject_after + helper, 'inject mimic TCG thumb helper')
+          s = replace_once(s,
+              "const img=document.createElement('img');img.src=TC.cardArt({...card,art:item.art});img.alt='';img.loading='lazy';",
+              "const img=document.createElement('img');img.src=cardThumbSrc(card,item);img.alt='';img.loading='lazy';",
+              'detail variant chip thumb')
+          s = replace_once(s,
+              "      art.src=TC.cardArt({...card,art:option.art});",
+              "      art.src=cardThumbSrc(card,option);",
+              'workshop preview thumb')
+          save(path, s)
+          
+          # Versioned asset requests so installed Android PWA gets new scripts and cache.
+          path = 'duck-quest/index.html'
+          s = load(path)
+          for old,new,label in [
+            ('js/game-v96.js?v=24-349','js/game-v96.js?v=24-351','game battle image cache'),
+            ('js/trading-card-drops-v235.js?v=24-255','js/trading-card-drops-v235.js?v=24-351','new drop script'),
+            ('js/fixes-v311.js?v=24.311','js/fixes-v311.js?v=24.351','variant-aware reward popup')
+          ]:
+              s = replace_once(s, old, new, label)
+          save(path, s)
+          
+          path='index.html'
+          s=load(path)
+          s=replace_once(s,'const DUCK_HUB_BUILD = "24.350";','const DUCK_HUB_BUILD = "24.351";','home build number')
+          s=replace_once(s,'sw.js?v=24-350-safe-trading-card-purchases','sw.js?v=24-351-card-variants-artwork-mimic-fix','registered service worker version')
+          save(path,s)
+          
+          path='sw.js'
+          s=load(path)
+          s=replace_once(s,"const APP_CACHE='duck-habit-hub-app-v24-350-safe-trading-card-purchases';", "const APP_CACHE='duck-habit-hub-app-v24-351-card-variants-artwork-mimic-fix';",'service worker cache name')
+          s=replace_once(s,"'./sw.js?v=24.350',","'./sw.js?v=24.351',",'service worker self cache')
+          s=replace_once(s,"'./duck-quest/js/game-v96.js?v=24-349',","'./duck-quest/js/game-v96.js?v=24-351',",'game cache')
+          s=replace_once(s,"'./duck-quest/js/fixes-v311.js?v=24.311',","'./duck-quest/js/fixes-v311.js?v=24.351',",'reward fix cache')
+          if "'./duck-quest/js/trading-card-drops-v235.js?v=24.351'," not in s:
+              s=replace_once(s,
+                "'./duck-quest/js/fixes-v311.js?v=24.351',",
+                "'./duck-quest/js/fixes-v311.js?v=24.351',\n './duck-quest/js/trading-card-drops-v235.js?v=24.351',",
+                'offline drop script cache')
+          save(path,s)
+          
+          version['version']='24.351'
+          save('version.json',json.dumps(version,indent=2)+'\n')
+          print('Updated battle card variants, reward popup, image warm cache, future-stage preloads, mimic TCG thumbs, and PWA to v24.351.')
+          PY_INSTALL
+          node --check duck-quest/js/game-v96.js
+          node --check duck-quest/js/trading-card-drops-v235.js
+          node --check duck-quest/js/fixes-v311.js
+          node --check trading-cards-ui.js
+          node --check sw.js
+          python3 - <<'PY_VERIFY'
+          import json
+          from pathlib import Path
+          assert json.loads(Path('version.json').read_text())['version']=='24.351'
+          html=Path('duck-quest/index.html').read_text()
+          sw=Path('sw.js').read_text()
+          ui=Path('trading-cards-ui.js').read_text()
+          for ref in ('game-v96.js?v=24-351','trading-card-drops-v235.js?v=24-351','fixes-v311.js?v=24.351'):
+            assert ref in html, ref
+            assert ref in sw, ref
+          assert 'cardThumbSrc(card,item)' in ui
+          assert "duck-quest/assets/events/gift-box/mimic-idle-1.png" in ui
+          PY_VERIFY
+      - name: Commit Duckie Days v24.351
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add duck-quest/js/trading-card-drops-v235.js duck-quest/js/fixes-v311.js duck-quest/js/game-v96.js trading-cards-ui.js duck-quest/index.html index.html sw.js version.json
+          git diff --cached --quiet && { echo 'No changes to commit.'; exit 0; }
+          git commit -m "Duckie Days v24.351: card variants, sprite loading, and mimic TCG art"
+          git push
