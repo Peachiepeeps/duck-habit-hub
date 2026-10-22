@@ -1,0 +1,73 @@
+name: Duckie Days v24.346 safe repository cleanup
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/cleanup-duckie-days-v24-346.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-safe-cleanup-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate and remove retired files
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY_CLEANUP'
+          from pathlib import Path
+          from hashlib import sha256
+          import json
+          
+          EXPECTED=json.loads("{\".github/workflows/install-duckie-days-v24-336-lil-guys-cards-snuggle.yml\": \"4a884e44d740eef374b81d950206e083a454032b3c1a83ef0f006cae7b733945\", \".github/workflows/install-duckie-days-v24-337-bao-soda-flavor-cleanup.yml\": \"ddc9404143ced95ba227ee1920869cc3129ad2dc0be91260e3c9f6615f8fdf3e\", \".github/workflows/install-duckie-days-v24-338-flavor-station-head-duck-fix 2.yml\": \"3523bd06f828a1937b217d63f6ea8d034a3702dd5d6e0fc4c2baaf0c77c3eb22\", \".github/workflows/install-duckie-days-v24-338-flavor-station-head-duck-fix.yml\": \"b08d32d7a56f9adade5747299149ed3c961dd16130d72f801e9df1a710b98bb3\", \".github/workflows/install-duckie-days-v24-339-cafe-fizz-lil-guys.yml\": \"b5169b5906251d209af8151ad1583e13f4b4a5cdff81558def0b02a027b5aafb\", \".github/workflows/install-duckie-days-v24-340-endless-duckdoku.yml\": \"c8d4f6c2b4259abc188f98abccc5c3a83f5a355ffdfed846b2e72837381bbe6f\", \".github/workflows/install-duckie-days-v24-341-quest-polish.yml\": \"c2282639cff4a213783ed38c301a44a85319a16d9656252c32593cfb8c171276\", \".github/workflows/install-duckie-days-v24-342-bao-candy-oc.yml\": \"aba22972877167068d0ff273e21ecfdf4a6f8b0292fcd0c2b5b48e5bdf2c1b76\", \".github/workflows/install-duckie-days-v24-343-shop-cards-six-nests.yml\": \"0cebba7a8f0f9f962c826c436e3fa42ce4532bc4984d5bd76081afc437e5c926\", \".github/workflows/install-duckie-days-v24-344-city-streets-expansion.yml\": \"a50bb1cf120855302f859cbd4b1075719606954db0056e8cd611f4d7e15cf5e2\", \".github/workflows/install-duckie-days-v24-345-city-quest-polish.yml\": \"972f325901f99f7ec415b98c78d528de3d4c99f18c2bcb33ef8b95c1b5f3b7ef\", \".github/workflows/install-duckie-days-v24-346-inventory-candy-fix.yml\": \"83f70aaaf7a5fd9e66e5e09aa40ca76029a5cd067f79938b8b6e0b29e076c7b7\", \"Duckie-Days-v24.338-Corrected-Installer-YAML.zip\": \"dd24cee9fd5f083d0ea28258ab1c1f2d10a4fad561ef5fde14d848fe4f97973d\", \"duck-quest/css/love-interest-lukio-v243.css\": \"1cdd5b5b434a30e1e36c6618a8003c8c50f84cf176bcebe6d1bd1244438cb084\", \"duck-quest/css/love-interest-lukio-v244.css\": \"1cdd5b5b434a30e1e36c6618a8003c8c50f84cf176bcebe6d1bd1244438cb084\", \"duck-quest/css/love-interests-v246.css\": \"700a174915c1e2c32cdc7678e828a2def7cb0d3fc925765ac0519c2dec4800e2\", \"duck-quest/css/love-interests-v247.css\": \"700a174915c1e2c32cdc7678e828a2def7cb0d3fc925765ac0519c2dec4800e2\", \"duck-quest/css/love-interests-v248.css\": \"700a174915c1e2c32cdc7678e828a2def7cb0d3fc925765ac0519c2dec4800e2\", \"duck-quest/css/quest-v266.css\": \"b5d33886ff96cf87df24818edaceb8abd8e5f7dfb835c7986ffab97bc6df52b1\", \"duck-quest/css/quest-v267.css\": \"12c6cfeb9e26a8cd6464527a7c2934364c8531d4cf2b5780da7a895c2d268f4a\", \"duck-quest/css/quest-v268.css\": \"e7e2a2850119425c86cf3c84f4ecaa5eca5a9f4fac90648af8b932790a47e874\", \"duck-quest/css/special-encounters-v262.css\": \"30ad79e3a62cc90e6fd1fd4fc0b4a5791a6dcca30c55d7fde740b0f7367a072f\", \"duck-quest/js/boost-labels-v214.js\": \"ad51acf5f8dd56e86452a5980ee2e04ca9ad4c3149da20d64022ee81f791533c\", \"duck-quest/js/dash-screen-v183.js\": \"ec832a0ccbc5f33bb580badc45b1cbcd5af45af11987e9d273b0437f32235571\", \"duck-quest/js/game-v95.js\": \"05b898246889fb307ad22c3745e888e9e543f9318444ba6c0f6ac18de55bcd43\", \"duck-quest/js/love-interest-lukio-v243.js\": \"8a992b3d1adfa39d6aabcd98c5bdc89f4273a82c7c25c6731bd92cbe0323f171\", \"duck-quest/js/love-interest-lukio-v244.js\": \"c837a477f95ac8ef0218c1bd0397a0d0a5344d590ffff42d462e4c7658522e40\", \"duck-quest/js/love-interests-v246.js\": \"6567b8a362366f566ddda6276495eb3f9ac07b551d9f1316b0f60a173c693e1a\", \"duck-quest/js/love-interests-v247.js\": \"fcfc6acc6e1aaec5fc33d1aa6d7267a337b9983e602aeb2978d14a6de53f7ac1\", \"duck-quest/js/love-interests-v248.js\": \"04442ae375d384fce9fd1c3934713f2a694da8cb00151a72cf7cd58ee08b7221\", \"duck-quest/js/love-interests-v252.js\": \"cd8e0a29d10fe5819b89669a7a86b3637982df31f573ff21f45ba9a99425238e\", \"duck-quest/js/quest-fixes-v205.js\": \"ae8055fb6e00450b007c32f08ea9595ff1ee64e16919730e6a9206533dfe8dd5\", \"duck-quest/js/quest-fixes-v206.js\": \"18ea637bbb178a3d36b2fc95206de5a25e882b28d72cf86a22cd80ee58cd59b7\", \"duck-quest/js/quest-v266.js\": \"98cf0abd9fa14a0bfef75fedf5444c271f5422535c09b2b4115b13754c18689b\", \"duck-quest/js/quest-v267.js\": \"1223d65137b707ec79b5d9d44b078c9ae2f3fea887ffa79e7fd9f27492831cd3\", \"duck-quest/js/quest-v268.js\": \"0499fbddb4f928194ebda13e49adc5804d898610e08c05a7bed5fd1fef8c1557\", \"duck-quest/js/special-encounters-v262.js\": \"ba2e6cb2024b3ad735cb8dc0b4e12c5e6e1399997900265a2420e735fe83f9de\", \"duck-quest/js/special-encounters-v264.js\": \"ae9b25244d57251edb92e1b716ffd0d71130cac93388170fb52f786e350fc8a2\", \"duck-quest/js/special-encounters-v265.js\": \"44b837986f8044ac5742ecd542bd67b1581579477d2b8bc3def828e99e7d0dfe\"}")
+          README_EXPECTED='8a5734f0260fac24592773f750e3df6fae5b64c559699c53bcab89b963a524b0'
+          README_TEXT="# Duckie Days — v24.346 🦆\n\nA cozy duck game and habit hub, featuring original characters, Duck Quest, Buddy collecting, the closet, card collecting, room decorating, and minigames.\n\n## Project structure\n\n| Location | Contents |\n| --- | --- |\n| `index.html`, `app.js`, `app.css` | Main game, UI, and styling |\n| `hub.js`, `hub.css`, `hub-boosts.js` | Home, room, Shop, and inventory boosts |\n| `duck-quest/` | Duck Quest, battles, hatchery, encounters, and their active add-on scripts |\n| `assets/` | Shared character, item, furniture, and collectible art |\n| `bao-cafe/`, `bakery/`, `crane-game/`, `memory-game/`, `sort-game/`, `duckdoku/` | Playable minigames |\n| `trading-cards-*.js`, `trading-cards-*.css` | Trading Card collection and UI |\n| `tasks.js`, `tasks.css`, `task-reminders.*`, `firebase-reminders.mjs` | Tasks and reminders |\n| `firebase-backend/` | Push notification backend materials |\n| `sw.js`, `manifest.webmanifest`, `version.json` | Offline/app metadata and versioning |\n| `bao-cafe-planning/` | Design notes and references retained for future work |\n| `.github/workflows/` | One maintenance cleanup workflow; GitHub Pages builds are managed by GitHub |\n\n## Maintaining the game\n\n- Keep the active version-numbered `fixes-*.js` / `fixes-*.css` files: these are **loaded by the current HTML** and may still change behavior or style.\n- When installing a new game release, update the HTML references, cache manifest, and `version.json` together.\n- Don't delete assets solely because their name is not visible in HTML; many are selected dynamically by JavaScript.\n- Historical versions and completed installer workflows remain recoverable from Git history. The v24.346 cleanup intentionally removes only unreferenced old code and completed installers.\n- Refer to `CLEANUP-AUDIT.md` for the full deletion list and verification results.\n\nThis cleanup does not alter player saves, character assets, game mechanics, or the deployed base URL.\n"
+          AUDIT_TEXT='# Duckie Days v24.346 — repository cleanup audit\n\nSource: uploaded `duck-habit-hub-main 32.zip`; version.json: `24.346`.\n\n## Scope\n- Reviewed 3,473 file entries, with 77 retained JavaScript files.\n- Removed 12 completed historical installer workflows, 26 superseded, unreferenced Quest JavaScript/CSS versions, and 1 outdated upload ZIP.\n- Preserved the running HTML entry pages, referenced JS/CSS, all artwork/assets, saves/backend, service worker, and planning/reference assets.\n- This is a **conservative dead-file cleanup**, not a wholesale JavaScript/CSS consolidation.\n\n## Validation methodology\n- Compared candidate filenames against all other runtime HTML, JS, CSS, and the service worker. Only versioned source files with **zero references** qualified for deletion.\n- Checked **425** service-worker app-shell references: **0 missing**.\n- Checked **269** static local HTML resource references: **0 missing**.\n- Did **not** delete image duplicates: visually similar/identical assets may be distinct character keys or be dynamically loaded.\n- Installer workflow checks source-file SHA-256 hashes before deleting anything; unexpected edits cause the job to stop.\n- The original uploaded ZIP and a separate retired-files ZIP provide additional recovery copies; Git history also retains removed files.\n\n## Files removed\n\n### Completed workflows\n- `.github/workflows/install-duckie-days-v24-336-lil-guys-cards-snuggle.yml`\n- `.github/workflows/install-duckie-days-v24-337-bao-soda-flavor-cleanup.yml`\n- `.github/workflows/install-duckie-days-v24-338-flavor-station-head-duck-fix 2.yml`\n- `.github/workflows/install-duckie-days-v24-338-flavor-station-head-duck-fix.yml`\n- `.github/workflows/install-duckie-days-v24-339-cafe-fizz-lil-guys.yml`\n- `.github/workflows/install-duckie-days-v24-340-endless-duckdoku.yml`\n- `.github/workflows/install-duckie-days-v24-341-quest-polish.yml`\n- `.github/workflows/install-duckie-days-v24-342-bao-candy-oc.yml`\n- `.github/workflows/install-duckie-days-v24-343-shop-cards-six-nests.yml`\n- `.github/workflows/install-duckie-days-v24-344-city-streets-expansion.yml`\n- `.github/workflows/install-duckie-days-v24-345-city-quest-polish.yml`\n- `.github/workflows/install-duckie-days-v24-346-inventory-candy-fix.yml`\n\n### Unreferenced prior Quest versions\n- `duck-quest/css/love-interest-lukio-v243.css`\n- `duck-quest/css/love-interest-lukio-v244.css`\n- `duck-quest/css/love-interests-v246.css`\n- `duck-quest/css/love-interests-v247.css`\n- `duck-quest/css/love-interests-v248.css`\n- `duck-quest/css/quest-v266.css`\n- `duck-quest/css/quest-v267.css`\n- `duck-quest/css/quest-v268.css`\n- `duck-quest/css/special-encounters-v262.css`\n- `duck-quest/js/boost-labels-v214.js`\n- `duck-quest/js/dash-screen-v183.js`\n- `duck-quest/js/game-v95.js`\n- `duck-quest/js/love-interest-lukio-v243.js`\n- `duck-quest/js/love-interest-lukio-v244.js`\n- `duck-quest/js/love-interests-v246.js`\n- `duck-quest/js/love-interests-v247.js`\n- `duck-quest/js/love-interests-v248.js`\n- `duck-quest/js/love-interests-v252.js`\n- `duck-quest/js/quest-fixes-v205.js`\n- `duck-quest/js/quest-fixes-v206.js`\n- `duck-quest/js/quest-v266.js`\n- `duck-quest/js/quest-v267.js`\n- `duck-quest/js/quest-v268.js`\n- `duck-quest/js/special-encounters-v262.js`\n- `duck-quest/js/special-encounters-v264.js`\n- `duck-quest/js/special-encounters-v265.js`\n\n### Outdated release upload\n- `Duckie-Days-v24.338-Corrected-Installer-YAML.zip`\n\n## What stayed (intentionally)\n- All numbered `fixes` scripts/styles referenced by current HTML, including Quest and Hub patches. Removing these solely based on age would cause regressions.\n- All art, even duplicate binaries (sprite paths are treated as independent).\n- Bao Café planning notes, reference images, and Firebase backend configuration.\n\n## Optional future phase (requires gameplay testing)\nConsolidate overlapping live patch scripts/styles into tested modules, adjust all HTML and cache references, and verify functionality across Hub, Quest, minigames, inventory, hatchery, costumes, trading cards, and offline mode. This cleanup deliberately leaves that riskier work for another pass.\n'
+          
+          def digest(p):
+              return sha256(p.read_bytes()).hexdigest()
+          
+          version=Path('version.json')
+          if not version.is_file() or json.loads(version.read_text(encoding='utf-8')).get('version')!='24.346':
+              raise SystemExit('Expected Duckie Days v24.346; no cleanup performed.')
+          if Path('README.md').is_symlink() or not Path('README.md').is_file() or digest(Path('README.md'))!=README_EXPECTED:
+              raise SystemExit('README was updated since export; no cleanup performed.')
+          if Path('CLEANUP-AUDIT.md').exists():
+              raise SystemExit('CLEANUP-AUDIT.md already exists; refusing overwrite.')
+          for rel,expected_sha in EXPECTED.items():
+              p=Path(rel)
+              if p.is_symlink() or (p.exists() and (not p.is_file() or digest(p)!=expected_sha)):
+                  raise SystemExit('An outdated file changed since export; no cleanup performed: '+rel)
+          
+          removed=[]
+          for rel in EXPECTED:
+              p=Path(rel)
+              if p.exists():
+                  p.unlink()
+                  removed.append(rel)
+          Path('README.md').write_text(README_TEXT,encoding='utf-8')
+          Path('CLEANUP-AUDIT.md').write_text(AUDIT_TEXT,encoding='utf-8')
+          print(f'Removed {len(removed)} inactive files; all active game files preserved.')
+          PY_CLEANUP
+      - name: Commit cleaned repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'No changes needed.'
+          else
+            git commit -m 'Duckie Days v24.346: retire old workflows and unused scripts'
+            git push
+          fi
