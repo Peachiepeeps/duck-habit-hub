@@ -8386,7 +8386,7 @@ setInterval(()=>{
               <button id="closeEggInventory" class="hatch-modal-close" type="button" aria-label="Close">×</button>
               <div class="hatch-modal-heading"><span class="mini-label">EGG INVENTORY</span><h2 id="eggInventoryTitle">Choose an Egg</h2><small>You can keep as many eggs as you find.</small></div>
               <div id="eggInventoryGrid" class="egg-inventory-summary"></div>
-              <p id="eggInventoryNote" class="egg-inventory-note">Only three eggs can incubate at once.</p>
+              <p id="eggInventoryNote" class="egg-inventory-note">Up to six eggs can incubate at once.</p>
             </section>
           </div>
         </section>
@@ -8406,7 +8406,7 @@ setInterval(()=>{
     questSave.dash.freeRuns=Math.max(0,Math.floor(Number(questSave.dash.freeRuns)||0));
     if(!questSave.eggs || typeof questSave.eggs!=='object') questSave.eggs={};
     if(!Array.isArray(questSave.eggs.incubators)) questSave.eggs.incubators=[];
-    questSave.eggs.incubators=Array.from({length:3},(_,i)=>{
+    questSave.eggs.incubators=Array.from({length:6},(_,i)=>{
       const x=questSave.eggs.incubators[i];
       if(!x || typeof x!=='object') return null;
       return {type:x.type==='shiny'?'shiny':x.type==='rare'?'rare':'common',startAt:Math.max(0,Number(x.startAt)||0),endAt:Math.max(0,Number(x.endAt)||0)};
@@ -8467,14 +8467,14 @@ setInterval(()=>{
   function eggDefinition(type){return type==='shiny'?{type:'shiny',name:'Shiny Egg',image:'assets/gimmicks/shiny-egg.png',ms:SHINY_EGG_MS}:type==='rare'?{type:'rare',name:'Rare Egg',image:'assets/eggs/Rare-egg.png',ms:RARE_EGG_MS}:{type:'common',name:'Common Egg',image:'assets/eggs/Common-egg.png',ms:COMMON_EGG_MS};}
   function fmtRemaining(ms){const sec=Math.max(0,Math.ceil(ms/1000));const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;if(h)return `${h}h ${String(m).padStart(2,'0')}m`;return `${m}m ${String(s).padStart(2,'0')}s`;}
   function emptyIncubator(){ensureExpansionSave();return questSave.eggs.incubators.findIndex(x=>!x);}
-  function startEgg(type,preferredSlot=null,replace=false){const def=eggDefinition(type);const target=Number.isInteger(preferredSlot)&&preferredSlot>=0&&preferredSlot<3?preferredSlot:emptyIncubator();if(target<0){setMessage('All three nests are busy!');return false;}const existing=questSave.eggs.incubators[target];if(existing&&!replace){setMessage('That nest already has an egg.');return false;}if(specialQty(`${type}-egg`)<=0){setMessage(`You do not have a ${def.name}.`);return false;}if(!useInventory(`${type}-egg`,1))return false;if(existing&&replace)addInventory(`${existing.type}-egg`,1);const now=Date.now();questSave.eggs.incubators[target]={type,startAt:now,endAt:now+def.ms};persistAll();renderHatchery();refreshFeatureBadges();closeEggInventory();openHatchDetail(target);return true;}
+  function startEgg(type,preferredSlot=null,replace=false){const def=eggDefinition(type);const target=Number.isInteger(preferredSlot)&&preferredSlot>=0&&preferredSlot<6?preferredSlot:emptyIncubator();if(target<0){setMessage('All six nests are busy!');return false;}const existing=questSave.eggs.incubators[target];if(existing&&!replace){setMessage('That nest already has an egg.');return false;}if(specialQty(`${type}-egg`)<=0){setMessage(`You do not have a ${def.name}.`);return false;}if(!useInventory(`${type}-egg`,1))return false;if(existing&&replace)addInventory(`${existing.type}-egg`,1);const now=Date.now();questSave.eggs.incubators[target]={type,startAt:now,endAt:now+def.ms};persistAll();renderHatchery();refreshFeatureBadges();closeEggInventory();closeHatchDetail();return true;}
   function baseEggCandidates(type){const excluded=new Set(['mimic','rotten-egg','lucky-cat','angy-duck','plushbun','gift-mimic']);if(type==='shiny')return BUDDY_CATALOG.filter(e=>e.shiny&&!excluded.has(e.enemyId));const normals=BUDDY_CATALOG.filter(e=>!e.shiny&&!excluded.has(e.enemyId));if(type==='common')return normals.filter(e=>!e.boss);const bosses=normals.filter(e=>e.boss),nonboss=normals.filter(e=>!e.boss);return Math.random()<.65?bosses:nonboss;}
   function rollEggBuddy(type){const pool=baseEggCandidates(type);let entry=pool[Math.floor(Math.random()*pool.length)]||BUDDY_CATALOG.find(e=>!e.shiny&&!e.boss);if(type==='shiny')return entry;const shinyRate=type==='rare'?RARE_EGG_SHINY_RATE:BASE_SHINY_RATE;if(entry&&Math.random()<shinyRate){const shiny=BUDDY_CATALOG.find(e=>e.enemyId===entry.enemyId&&e.shiny);if(shiny)entry=shiny;}return entry;}
   function grantCatalogBuddy(entry){ensureBuddySave();const existing=hubSave.buddies.collection[entry.key];if(existing){existing.quantity=Math.max(1,Number(existing.quantity)||1)+1;return existing;}const record={key:entry.key,enemyId:entry.enemyId,variantId:entry.variantId,name:entry.name,image:entry.image,idle:Array.isArray(entry.idle)?entry.idle.slice():[entry.image].filter(Boolean),shiny:Boolean(entry.shiny),boss:Boolean(entry.boss),quantity:1,capturedAt:Date.now()};hubSave.buddies.collection[entry.key]=record;return record;}
   let selectedHatchSlot=null,inventoryTargetSlot=null,inventoryReplacing=false,hatchAnimating=false;
   function closeHatchDetail(){if(hatchAnimating)return;selectedHatchSlot=null;const modal=document.querySelector('#hatchDetailModal');modal?.classList.add('hidden');modal?.setAttribute('aria-hidden','true');}
   function closeEggInventory(){inventoryTargetSlot=null;inventoryReplacing=false;const modal=document.querySelector('#eggInventoryModal');modal?.classList.add('hidden');modal?.setAttribute('aria-hidden','true');}
-  function renderEggInventory(){const grid=document.querySelector('#eggInventoryGrid');if(!grid)return;grid.innerHTML='';['common','rare','shiny'].forEach(type=>{const d=eggDefinition(type),qty=specialQty(`${type}-egg`);const card=document.createElement('div');card.className='egg-inventory-card';const detail=type==='common'?'1 hour · Non-boss Lil Guys · normal Shiny chance':type==='rare'?'24 hours · Bosses favored · 1 / 100 Shiny chance':'24 hours · Guaranteed random Shiny Lil Guy ✨';card.innerHTML=`<img src="${d.image}" alt="${d.name}"><strong>${d.name}</strong><span class="egg-count">Owned ×${qty}</span><small>${detail}</small>`;const b=document.createElement('button');b.type='button';b.className='pixel-button primary';const noSlot=inventoryTargetSlot===null&&emptyIncubator()<0;b.disabled=qty<=0||noSlot;b.textContent=qty<=0?'None Owned':inventoryReplacing?`Switch to ${d.name}`:'Incubate';b.addEventListener('click',()=>startEgg(type,inventoryTargetSlot,inventoryReplacing));card.appendChild(b);grid.appendChild(card);});const note=document.querySelector('#eggInventoryNote');if(note){if(inventoryReplacing)note.textContent='Switching returns the current egg to your inventory and restarts the new egg timer.';else if(inventoryTargetSlot!==null)note.textContent=`This egg will go into Nest ${inventoryTargetSlot+1}.`;else if(emptyIncubator()<0)note.textContent='All three nests are occupied. Tap an incubating egg and choose Switch Egg if you want to replace one.';else note.textContent='Only three eggs can incubate at once. Your extra eggs stay safely in inventory.';}const title=document.querySelector('#eggInventoryTitle');if(title)title.textContent=inventoryReplacing?'Switch Egg':'Choose an Egg';}
+  function renderEggInventory(){const grid=document.querySelector('#eggInventoryGrid');if(!grid)return;grid.innerHTML='';['common','rare','shiny'].forEach(type=>{const d=eggDefinition(type),qty=specialQty(`${type}-egg`);const card=document.createElement('div');card.className='egg-inventory-card';const detail=type==='common'?'1 hour · Non-boss Lil Guys · normal Shiny chance':type==='rare'?'24 hours · Bosses favored · 1 / 100 Shiny chance':'24 hours · Guaranteed random Shiny Lil Guy ✨';card.innerHTML=`<img src="${d.image}" alt="${d.name}"><strong>${d.name}</strong><span class="egg-count">Owned ×${qty}</span><small>${detail}</small>`;const b=document.createElement('button');b.type='button';b.className='pixel-button primary';const noSlot=inventoryTargetSlot===null&&emptyIncubator()<0;b.disabled=qty<=0||noSlot;b.textContent=qty<=0?'None Owned':inventoryReplacing?`Switch to ${d.name}`:'Incubate';b.addEventListener('click',()=>startEgg(type,inventoryTargetSlot,inventoryReplacing));card.appendChild(b);grid.appendChild(card);});const note=document.querySelector('#eggInventoryNote');if(note){if(inventoryReplacing)note.textContent='Switching returns the current egg to your inventory and restarts the new egg timer.';else if(inventoryTargetSlot!==null)note.textContent=`This egg will go into Nest ${inventoryTargetSlot+1}.`;else if(emptyIncubator()<0)note.textContent='All six nests are occupied. Tap an incubating egg and choose Switch Egg if you want to replace one.';else note.textContent='Up to six eggs can incubate at once. Your extras stay safely in inventory.';}const title=document.querySelector('#eggInventoryTitle');if(title)title.textContent=inventoryReplacing?'Switch Egg':'Choose an Egg';}
   function openEggInventory(targetSlot=null,replace=false){inventoryTargetSlot=Number.isInteger(targetSlot)?targetSlot:null;inventoryReplacing=Boolean(replace);renderEggInventory();const modal=document.querySelector('#eggInventoryModal');modal?.classList.remove('hidden');modal?.setAttribute('aria-hidden','false');}
   function updateHatchDetailTimer(){if(selectedHatchSlot===null||hatchAnimating)return;const slot=questSave.eggs.incubators[selectedHatchSlot];if(!slot)return;const ready=Date.now()>=slot.endAt;const status=document.querySelector('#hatchDetailStatus');if(status)status.textContent=ready?'Oh?':`${fmtRemaining(slot.endAt-Date.now())} until hatch`;if(ready&&!document.querySelector('#hatchNowButton'))openHatchDetail(selectedHatchSlot);}
   function warmBlanketQtyV213(){return Math.max(0,Math.floor(Number(hubSave?.inventory?.['warm-blanket'])||0));}
@@ -8512,6 +8512,25 @@ setInterval(()=>{
     }
   }
   async function hatchSlot(index){const slot=questSave.eggs.incubators[index];if(!slot||Date.now()<slot.endAt||hatchAnimating)return;hatchAnimating=true;const egg=document.querySelector('#hatchDetailEgg'),glow=document.querySelector('#hatchGlow'),actions=document.querySelector('#hatchDetailActions'),status=document.querySelector('#hatchDetailStatus');if(actions)actions.querySelectorAll('button').forEach(b=>b.disabled=true);if(status)status.textContent='Something is happening...!';egg?.classList.add('hatching');glow?.classList.add('active');await sleep(1380);const entry=rollEggBuddy(slot.type);if(!entry){hatchAnimating=false;return;}const owned=grantCatalogBuddy(entry),eggDef=eggDefinition(slot.type);questSave.eggs.incubators[index]=null;questSave.eggs.lastHatch={name:entry.name,image:entry.image,shiny:Boolean(entry.shiny),boss:Boolean(entry.boss),eggName:eggDef.name,quantity:owned.quantity};persistAll();refreshFeatureBadges();renderBuddyHomeCount();renderHatchery();if(egg)egg.classList.add('hidden');const result=document.querySelector('#hatchResult');if(result){result.className=`hatch-result${entry.shiny?' shiny':''}`;result.innerHTML=`<div><img src="${entry.image}" alt="${entry.name}"><strong>${entry.name}${entry.shiny?' ✨':''}</strong><small>${entry.boss?'Boss Lil Guy · ':''}${entry.shiny?'Shiny · ':''}Owned ×${owned.quantity}</small></div>`;}const title=document.querySelector('#hatchDetailTitle');if(title)title.textContent='It hatched!';const sub=document.querySelector('#hatchDetailSubtitle');if(sub)sub.textContent=`Your ${eggDef.name} became a new Lil Guy!`;if(status)status.textContent=`Meet ${entry.name}${entry.shiny?' ✨':''}!`;if(actions){actions.innerHTML='';const done=document.createElement('button');done.type='button';done.className='pixel-button primary';done.textContent='Yay! ♡';done.addEventListener('click',()=>{hatchAnimating=false;closeHatchDetail();renderHatchery();});actions.appendChild(done);}}
+  function hatchAllReadyV343(){
+    ensureExpansionSave();
+    if(hatchAnimating)return [];
+    const ready=questSave.eggs.incubators.map((slot,i)=>slot&&Date.now()>=slot.endAt?i:-1).filter(i=>i>=0);
+    if(!ready.length)return [];
+    const out=[];
+    for(const index of ready){
+      const slot=questSave.eggs.incubators[index];
+      if(!slot||Date.now()<slot.endAt)continue;
+      const entry=rollEggBuddy(slot.type);
+      if(!entry)continue;
+      const owned=grantCatalogBuddy(entry);
+      questSave.eggs.incubators[index]=null;
+      questSave.eggs.lastHatch={name:entry.name,image:entry.image,shiny:Boolean(entry.shiny),boss:Boolean(entry.boss),eggName:eggDefinition(slot.type).name,quantity:owned.quantity};
+      out.push({name:entry.name,shiny:Boolean(entry.shiny),image:entry.image});
+    }
+    if(out.length){persistAll();renderBuddyHomeCount();renderHatchery();refreshFeatureBadges();}
+    return out;
+  }
   function renderHatchery(){ensureExpansionSave();const total=specialQty('common-egg')+specialQty('rare-egg')+specialQty('shiny-egg');const count=document.querySelector('#hatchInventoryCount');if(count)count.textContent=String(total);const ready=readyEggs(),flag=document.querySelector('#hatchWorldReady');if(flag){flag.classList.toggle('hidden',ready<=0);flag.textContent=ready===1?'An egg is ready! ✨':`${ready} eggs are ready! ✨`;}const slots=document.querySelector('#hatchNestSlots');if(slots){slots.innerHTML='';questSave.eggs.incubators.forEach((slot,i)=>{const b=document.createElement('button');b.type='button';b.className='hatch-nest-slot';b.setAttribute('aria-label',slot?`Nest ${i+1}, ${eggDefinition(slot.type).name}`:`Nest ${i+1}, empty`);if(!slot){b.innerHTML=`<span class="hatch-empty-plus" aria-hidden="true">＋</span><span class="hatch-slot-status">Empty Nest</span>`;b.addEventListener('click',()=>openEggInventory(i,false));}else{const d=eggDefinition(slot.type),isReady=Date.now()>=slot.endAt;b.classList.toggle('ready',isReady);b.innerHTML=`<img class="hatch-main-egg" src="${d.image}" alt="${d.name}"><span class="hatch-slot-status">${isReady?'Ready! Tap to hatch':fmtRemaining(slot.endAt-Date.now())}</span>`;b.addEventListener('click',()=>openHatchDetail(i));}slots.appendChild(b);});}if(!document.querySelector('#eggInventoryModal')?.classList.contains('hidden'))renderEggInventory();refreshFeatureBadges();updateHatchDetailTimer();}
   setInterval(()=>{refreshFeatureBadges();if(!document.querySelector('#hatcheryScreen')?.classList.contains('hidden'))renderHatchery();},1000);
 
@@ -8798,7 +8817,8 @@ setInterval(()=>{
 
   window.DuckieHatchApiV178={
     renderHatchery, openEggInventory, closeEggInventory, closeHatchDetail,
-    openHatchDetail, refreshFeatureBadges
+    openHatchDetail, refreshFeatureBadges, hatchAllReadyV343,
+    readyEggCount:readyEggs
   };
   window.refreshFeatureBadges=refreshFeatureBadges;
   window.renderDashSelectors=renderDashSelectors;
@@ -10353,7 +10373,7 @@ setInterval(()=>{
         <button id="closeEggInventory" class="hatch-modal-close" type="button" aria-label="Close">×</button>
         <div class="hatch-modal-heading"><span class="mini-label">EGG INVENTORY</span><h2 id="eggInventoryTitle">Choose an Egg</h2><small>You can keep as many eggs as you find.</small></div>
         <div id="eggInventoryGrid" class="egg-inventory-summary"></div>
-        <p id="eggInventoryNote" class="egg-inventory-note">Only three eggs can incubate at once.</p>
+        <p id="eggInventoryNote" class="egg-inventory-note">Up to six eggs can incubate at once.</p>
       </section>
     </div>`;
   document.body.appendChild(screen);

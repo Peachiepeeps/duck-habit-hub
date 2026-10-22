@@ -8,18 +8,7 @@
   const style=document.createElement('style');
   style.id=id;
   style.textContent=`
-    /* Top slot: keep the current working position */
-    #hatcheryScreenV179 .hatch-nest-slot:nth-child(1) .hatch-main-egg{
-      top:32.4%!important;
-    }
-    /* Middle slot: keep the current working position */
-    #hatcheryScreenV179 .hatch-nest-slot:nth-child(2) .hatch-main-egg{
-      top:25.1%!important;
-    }
-    /* Bottom slot: keep the current perfect position */
-    #hatcheryScreenV179 .hatch-nest-slot:nth-child(3) .hatch-main-egg{
-      top:33.5%!important;
-    }
+    /* All six nests use the same aligned egg position in v24.343. */
     /* Egg detail window: bring the egg back up slightly from v24.191. */
 #hatcheryScreenV179 .hatch-window-egg{
   top:0!important;

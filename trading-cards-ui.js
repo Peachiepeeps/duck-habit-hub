@@ -38,23 +38,44 @@
   tabs.insertAdjacentElement("afterend",panel);
   const dustBar=document.createElement('div');dustBar.className='tc-lilguys-dustbar';
   const dustButton=document.createElement('button');dustButton.type='button';
-  const dustNote=document.createElement('small');dustNote.textContent='Keeps one of every owned variant, including shinies and Fabled cards.';
+  const dustNote=document.createElement('small');dustNote.textContent='Protects 1 card + 3 extras for Holo, for EVERY variant and shiny.';
   dustBar.append(dustButton,dustNote);panel.querySelector('.tc-toolbar').after(dustBar);
+  const HOLO_SAFE_COPIES=4;
+  function safeExtraCounts(st,cardId){
+    const group=st?.variantOwned?.[cardId];
+    if(group && typeof group==='object') return Object.values(group).reduce((sum,n)=>sum+Math.max(0,Math.floor(Number(n)||0)-HOLO_SAFE_COPIES),0);
+    // For older saves without variant counters, treat copies as Original.
+    return Math.max(0,Math.floor(Number(st?.owned?.[cardId])||0)-HOLO_SAFE_COPIES);
+  }
   function dustSummary(){
     const values={common:5,uncommon:12,rare:25,fabled:60};let copies=0,dust=0;
-    for(const card of TC.cards){const amount=TC.variantExtras?.(state,card.id)||0;copies+=amount;dust+=amount*(values[card.rarity]||5);}
+    for(const card of TC.cards){const amount=safeExtraCounts(state,card.id);copies+=amount;dust+=amount*(values[card.rarity]||5);}
     return {copies,dust};
   }
-  function refreshDustButton(){const result=dustSummary();dustButton.disabled=result.copies===0;dustButton.textContent=`Convert All Duplicates · ${result.copies} cards → ${result.dust} Dust`;}
+  function refreshDustButton(){const result=dustSummary();dustButton.disabled=result.copies===0;dustButton.textContent=`Convert Duplicates After 3 Extras · ${result.copies} cards → ${result.dust} Dust`;}
   dustButton.addEventListener('click',()=>{
     syncCardState();const check=dustSummary();if(!check.copies)return;
-    if(!window.confirm(`Convert ${check.copies} duplicate cards into ${check.dust} Power Up Dust?\n\nOne copy of EVERY collected variant will be kept. This cannot be undone.`))return;
+    if(!window.confirm(`Convert ${check.copies} extra cards into ${check.dust} Power Up Dust?\n\nFor each collected variant, KEEP 1 card plus 3 extra copies for Holo (4 total). This cannot be undone.`))return;
     const d=TC.readSave(),cards=TC.cardCraft.ensure(d);let count=0,dust=0;
-    for(const card of TC.cards){const removed=TC.convertVariantDuplicates(cards,card.id);count+=removed;dust+=removed*({common:5,uncommon:12,rare:25,fabled:60}[card.rarity]||5);}
+    for(const card of TC.cards){
+      const grouped=cards.variantOwned?.[card.id];
+      let removed=0;
+      if(grouped && typeof grouped==='object'){
+        for(const key of Object.keys(grouped)){
+          const old=Math.max(0,Math.floor(Number(grouped[key])||0));
+          const take=Math.max(0,old-HOLO_SAFE_COPIES);
+          if(take){grouped[key]=old-take;removed+=take;}
+        }
+      }else{
+        const old=Math.max(0,Math.floor(Number(cards.owned?.[card.id])||0));
+        removed=Math.max(0,old-HOLO_SAFE_COPIES);
+      }
+      if(removed){cards.owned[card.id]=Math.max(0,(Number(cards.owned[card.id])||0)-removed);count+=removed;dust+=removed*({common:5,uncommon:12,rare:25,fabled:60}[card.rarity]||5);}
+    }
     cards.powerUpDust=Math.max(0,Number(cards.powerUpDust)||0)+dust;
     TC.writeSave(d);save.tradingCards=d.tradingCards;persist();renderCards();
     window.dispatchEvent(new CustomEvent('duckie-card-workshop-updated',{detail:{cardId:null}}));
-    if(typeof showToast==='function')showToast(`Converted ${count} duplicates into ${dust} Power Up Dust! ♡`);
+    if(typeof showToast==='function')showToast(`Converted ${count} extra cards into ${dust} Dust, protecting Holo copies! ♡`);
   });
 
   const detail=document.createElement("div");detail.className="tc-detail-layer hidden";detail.innerHTML='<section class="tc-detail-card"><button class="tc-detail-close" type="button" aria-label="Close">×</button><div id="tcDetailBody"></div></section>';document.body.append(detail);
@@ -251,7 +272,31 @@
   window.addEventListener("storage",event=>{if(event.key===TC.SAVE_KEY&&!panel.classList.contains("hidden"))renderCards();});
 
   function dayKey(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;}
-  function dailyOffers(){const daily=state.dailyShop;if(daily.dayKey!==dayKey()||daily.offers.length!==3){const first=TC.rollCard("common"),second=TC.rollCard(Math.random()<.72?"common":"uncommon"),third=TC.rollCard(TC.rollRarity({common:.575,uncommon:.37,rare:.05,fabled:.005}));daily.dayKey=dayKey();daily.offers=[first,second,third].map(card=>({id:card.id,sold:false}));persist();}return daily.offers;}
+  // Read the persisted shop offers every time. The shop and album can hold
+  // separate in-memory snapshots; a stale snapshot must never reroll offers.
+  function dailyOffers(){
+    const day=dayKey();
+    const disk=TC.readSave();
+    const diskShop=TC.ensureState(disk).dailyShop;
+    const valid=d=>d&&d.dayKey===day&&Array.isArray(d.offers)&&d.offers.length===3&&d.offers.every(o=>o&&TC.byId[o.id]);
+    const current=TC.ensureState(save).dailyShop;
+    let chosen;
+    if(valid(diskShop)) chosen=diskShop;
+    else if(valid(current)) chosen=current;
+    else {
+      const first=TC.rollCard('common');
+      const second=TC.rollCard(Math.random()<.72?'common':'uncommon');
+      const third=TC.rollCard(TC.rollRarity({common:.575,uncommon:.37,rare:.05,fabled:.005}));
+      chosen={dayKey:day,offers:[first,second,third].map(card=>({id:card.id,sold:false}))};
+    }
+    const ours=TC.ensureState(save);
+    ours.dailyShop={dayKey:day,offers:chosen.offers.map(o=>({id:o.id,sold:!!o.sold}))};
+    state=ours;
+    if(!valid(diskShop) || JSON.stringify(diskShop.offers)!==JSON.stringify(ours.dailyShop.offers)){
+      persist();
+    }
+    return ours.dailyShop.offers;
+  }
   function renderCardShop(){
     shopCoinCount.textContent=Number(save.coins||0).toLocaleString();document.querySelectorAll("[data-shop-tab]").forEach(b=>{const active=b.dataset.shopTab==="cards";b.classList.toggle("active",active);b.setAttribute("aria-selected",String(active));});shopGrid.innerHTML="";const wrap=document.createElement("div");wrap.className="tc-shop-grid";
     const prices={common:40,uncommon:100,rare:300,fabled:750};dailyOffers().forEach((offer,index)=>{const card=TC.byId[offer.id],price=prices[card.rarity];const item=document.createElement("article");item.className=`tc-shop-card${offer.sold?" sold":""}`;item.append(TC.createFace(card));const name=document.createElement("strong");name.textContent=card.name;const priceLine=document.createElement("span");priceLine.className="tc-shop-price";priceLine.innerHTML=`<img src="assets/ui/pink-coin.webp" alt=""> ${price}`;const buy=document.createElement("button");buy.type="button";buy.className="tc-shop-buy";buy.disabled=offer.sold;buy.textContent=offer.sold?"Sold Today":"Buy Card";buy.addEventListener("click",()=>{if(Number(save.coins||0)<price){showToast(`You need ${price} Pink Coins for this card!`);return;}save.coins-=price;TC.grantCard(save,card.id,1);state.dailyShop.offers[index].sold=true;persist();renderRoom();renderCardShop();showToast(`${card.name} was added to your Trading Cards! ♡`);});item.append(name,priceLine,buy);wrap.append(item);});shopGrid.append(wrap);
@@ -415,8 +460,7 @@
   const TC=window.DuckieTradingCards;
   if(!TC)return;
 
-  const PACK_PRICE=150;
-  const DAILY_LIMIT=3;
+  const PACK_PRICE=500;
 
   function dataRef(){
     try{
@@ -440,21 +484,6 @@
     }catch(error){}
     console.info(message);
   }
-  function todayKey(){
-    const d=new Date();
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  }
-  function packDaily(state){
-    if(!state.dailyPackShopV268 || typeof state.dailyPackShopV268!=='object'){
-      state.dailyPackShopV268={dayKey:todayKey(),bought:0};
-    }
-    if(state.dailyPackShopV268.dayKey!==todayKey()){
-      state.dailyPackShopV268.dayKey=todayKey();
-      state.dailyPackShopV268.bought=0;
-    }
-    state.dailyPackShopV268.bought=Math.max(0,Math.min(DAILY_LIMIT,Math.floor(Number(state.dailyPackShopV268.bought)||0)));
-    return state.dailyPackShopV268;
-  }
   function updateVisibleCoins(value){
     document.querySelectorAll('#shopCoinCount,#coinCount').forEach(el=>{
       el.textContent=Math.max(0,Number(value)||0).toLocaleString();
@@ -463,24 +492,13 @@
   }
   function buyPack(){
     const data=dataRef();
-    const state=TC.ensureState(data);
-    const daily=packDaily(state);
-    if(daily.bought>=DAILY_LIMIT){
-      toast('You already bought all 3 Card Packs for today! ♡');
-      enhanceShop();
-      return;
-    }
     const coins=Math.max(0,Number(data.coins)||0);
-    if(coins<PACK_PRICE){
-      toast(`You need ${PACK_PRICE} Pink Coins for a Card Pack!`);
-      return;
-    }
+    if(coins<PACK_PRICE){toast(`You need ${PACK_PRICE} Pink Coins for a Card Pack!`);return;}
     data.coins=coins-PACK_PRICE;
     TC.grantPack(data,1);
-    daily.bought+=1;
     commit(data);
     updateVisibleCoins(data.coins);
-    toast(`Card Pack purchased! ${DAILY_LIMIT-daily.bought} left in today’s Shop. ♡`);
+    toast('Card Pack added to Duckipedia! ♡');
     enhanceShop();
   }
   function enhanceShop(){
@@ -490,8 +508,6 @@
 
     const data=dataRef();
     const state=TC.ensureState(data);
-    const daily=packDaily(state);
-    commit(data);
 
     let tile=grid.querySelector('.tc-pack-shop-v268');
     if(!tile){
@@ -500,7 +516,6 @@
       grid.append(tile);
     }
 
-    const remaining=Math.max(0,DAILY_LIMIT-daily.bought);
     tile.innerHTML='';
     const art=document.createElement('img');
     art.className='tc-pack-shop-art-v268';
@@ -509,13 +524,13 @@
 
     const copy=document.createElement('div');
     copy.className='tc-pack-shop-copy-v268';
-    copy.innerHTML=`<strong>Card Pack</strong><small>3 cards per pack · ${PACK_PRICE} Pink Coins<br>${daily.bought} / ${DAILY_LIMIT} bought today</small>`;
+    copy.innerHTML=`<strong>Card Pack</strong><small>3 cards per pack · ${PACK_PRICE} Pink Coins<br>Unlimited purchases ♡</small>`;
 
     const buy=document.createElement('button');
     buy.type='button';
     buy.className='tc-shop-buy';
-    buy.disabled=remaining<=0;
-    buy.textContent=remaining>0?`Buy Pack (${remaining} left)`:'Sold Out Today';
+    buy.disabled=Number(data.coins||0)<PACK_PRICE;
+    buy.textContent='Buy Pack';
     buy.addEventListener('click',buyPack);
 
     tile.append(art,copy,buy);
