@@ -15,12 +15,12 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-346-inventory-candy-fix';
+const APP_CACHE='duck-habit-hub-app-v24-347-stoplight-owl-chonk-fix';
 const APP_SHELL=[
  './',
  './index.html',
  './version.json',
- './sw.js?v=24.346',
+ './sw.js?v=24.347',
  './manifest.webmanifest?v=24.296',
  './app.css?v=24.345',
  './trading-cards-base.css?v=24.327',
@@ -153,6 +153,7 @@ const APP_SHELL=[
  './duck-quest/js/universal-clothing-drops-v311.js?v=24.311',
  './duck-quest/js/fixes-v311.js?v=24.311',
  './duck-quest/js/new-enemies-v313.js?v=24.313',
+ './duck-quest/js/fixes-v347.js?v=24.347',
  './duck-quest/js/fixes-v313.js?v=24.313',
  './duck-quest/js/fixes-v314.js?v=24.314',
  './duck-quest/js/io-transformation-v317.js?v=24.317',
