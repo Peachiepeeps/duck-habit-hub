@@ -270,6 +270,7 @@
   document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!panel.classList.contains("hidden"))renderCards();});
   window.addEventListener("focus",()=>{if(!panel.classList.contains("hidden"))renderCards();});
   window.addEventListener("storage",event=>{if(event.key===TC.SAVE_KEY&&!panel.classList.contains("hidden"))renderCards();});
+  window.addEventListener("duckie-trading-packs-updated",()=>{if(!panel.classList.contains("hidden"))renderCards();});
 
   function dayKey(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;}
   // Read the persisted shop offers every time. The shop and album can hold
@@ -454,103 +455,184 @@
 })();
 ;
 
-// ===== Source: trading-cards-ui-v268.js =====
+// ===== Source: trading-cards-ui-v350.js =====
 (function(){
   'use strict';
   const TC=window.DuckieTradingCards;
-  if(!TC)return;
+  if(!TC?.ensureState || !TC?.grantPack)return;
 
-  const PACK_PRICE=500;
+  const PRICE_ONE=500;
+  const PRICE_TEN=4500; // Save 500 Pink Coins (10%).
+  const MAX_RECOVERY=5;
+  let purchasing=false;
 
   function dataRef(){
     try{
-      if(typeof save!=='undefined' && save && typeof save==='object') return save;
+      if(typeof save!=='undefined' && save && typeof save==='object')return save;
     }catch(error){}
     return TC.readSave();
   }
   function commit(data){
     TC.ensureState(data);
-    try{
-      if(typeof save!=='undefined' && data===save && typeof persist==='function'){
-        persist();
-        return;
-      }
-    }catch(error){}
-    TC.writeSave(data);
+    if(typeof save!=='undefined' && data===save && typeof persist==='function')persist();
+    else TC.writeSave(data);
   }
   function toast(message){
-    try{
-      if(typeof showToast==='function'){showToast(message);return;}
-    }catch(error){}
+    try{if(typeof showToast==='function'){showToast(message);return;}}catch(error){}
     console.info(message);
+  }
+  function notifyPackView(){
+    window.dispatchEvent(new CustomEvent('duckie-trading-packs-updated'));
   }
   function updateVisibleCoins(value){
     document.querySelectorAll('#shopCoinCount,#coinCount').forEach(el=>{
       el.textContent=Math.max(0,Number(value)||0).toLocaleString();
     });
-    try{ if(typeof renderRoom==='function')renderRoom(); }catch(error){}
+    try{if(typeof renderRoom==='function')renderRoom();}catch(error){}
   }
-  function buyPack(){
+  function packCount(data){
+    return Math.max(0,Math.floor(Number(TC.ensureState(data)?.unopenedPacks)||0));
+  }
+  function shopSnapshot(){
+    // Duckipedia reads the saved inventory, not the Hub's potentially stale reference.
+    const disk=TC.readSave();
     const data=dataRef();
-    const coins=Math.max(0,Number(data.coins)||0);
-    if(coins<PACK_PRICE){toast(`You need ${PACK_PRICE} Pink Coins for a Card Pack!`);return;}
-    data.coins=coins-PACK_PRICE;
-    TC.grantPack(data,1);
-    commit(data);
-    updateVisibleCoins(data.coins);
-    toast('Card Pack added to Duckipedia! ♡');
-    enhanceShop();
+    return {disk,data,owned:packCount(disk)};
+  }
+  function purchasePacks(quantity,{recovery=false}={}){
+    if(purchasing)return;
+    const qty=Math.floor(Number(quantity));
+    if(!Number.isSafeInteger(qty)||qty<1||qty>(recovery?MAX_RECOVERY:10))return;
+    const cost=recovery?0:qty===10?PRICE_TEN:PRICE_ONE;
+    purchasing=true;
+    try{
+      const {data,disk,owned}=shopSnapshot();
+      const diskState=TC.ensureState(disk);
+      const balance=Math.floor(Number(data.coins)||0);
+      const diskBalance=Math.floor(Number(disk.coins)||0);
+      if(!Number.isFinite(balance)||balance!==diskBalance){
+        toast('Your shop balance changed. Close and reopen the shop before buying. No coins spent.');
+        return;
+      }
+      if(recovery){
+        if(diskState.packRecoveryV350){toast('Your missing-pack recovery has already been used. ♡');return;}
+      }else if(balance<cost){
+        toast(`You need ${cost.toLocaleString()} Pink Coins for ${qty} Card Pack${qty===1?'':'s'}!`);
+        return;
+      }
+      const priorCoins=data.coins;
+      const priorCards=data.tradingCards;
+      const priorStorage=localStorage.getItem(TC.SAVE_KEY);
+      const pendingCards=JSON.parse(JSON.stringify(disk.tradingCards));
+      data.tradingCards=pendingCards;
+      data.coins=balance-cost;
+      TC.grantPack(data,qty);
+      if(recovery)pendingCards.packRecoveryV350=true;
+      const receipt={kind:recovery?'recovery':'purchase',packs:qty,coinsSpent:cost,
+        before:owned,after:owned+qty,at:new Date().toISOString()};
+      pendingCards.packPurchaseHistoryV350=[
+        ...(Array.isArray(pendingCards.packPurchaseHistoryV350)?pendingCards.packPurchaseHistoryV350:[]).slice(-24),
+        receipt
+      ];
+      let confirmed=false;
+      try{
+        commit(data);
+        const saved=TC.readSave();
+        const savedState=TC.ensureState(saved);
+        confirmed=packCount(saved)===owned+qty && Math.floor(Number(saved.coins)||0)===balance-cost
+          && (!recovery||savedState.packRecoveryV350===true);
+      }catch(error){console.error('Card pack purchase save error',error);}
+      if(!confirmed){
+        data.coins=priorCoins;
+        data.tradingCards=priorCards;
+        try{
+          if(priorStorage===null)localStorage.removeItem(TC.SAVE_KEY);
+          else localStorage.setItem(TC.SAVE_KEY,priorStorage);
+          toast('The purchase could not be saved, so it was cancelled. Your coins were restored.');
+        }catch(error){
+          console.error('Card pack purchase rollback error',error);
+          toast('Card pack save error. Please back up your game and check your balance before buying again.');
+        }
+        return;
+      }
+      updateVisibleCoins(data.coins);
+      notifyPackView();
+      toast(recovery
+        ? `Restored ${qty} missing Card Pack${qty===1?'':'s'}! ♡`
+        : `Bought ${qty} Card Pack${qty===1?'':'s'}! You own ×${owned+qty} ♡`);
+      enhanceShop();
+    }finally{purchasing=false;}
+  }
+  function recoverMissingPacks(){
+    const current=shopSnapshot();
+    if(TC.ensureState(current.disk).packRecoveryV350)return;
+    const typed=window.prompt('How many Card Packs did you pay for but never receive? Enter 1–5. Only restore packs that are truly missing.','5');
+    if(typed===null)return;
+    const n=Number(String(typed).trim());
+    if(!Number.isInteger(n)||n<1||n>MAX_RECOVERY){toast('Enter a whole number from 1 to 5.');return;}
+    if(!window.confirm(`Restore ${n} missing Card Pack${n===1?'':'s'} once? This is only for packs already paid for that never appeared.`))return;
+    purchasePacks(n,{recovery:true});
   }
   function enhanceShop(){
     const grid=document.querySelector('.shop-grid > .tc-shop-grid');
     const cardsTab=document.querySelector('[data-shop-tab="cards"]');
-    if(!grid || (cardsTab && !cardsTab.classList.contains('active'))) return;
-
-    const data=dataRef();
-    const state=TC.ensureState(data);
-
+    if(!grid || (cardsTab&&!cardsTab.classList.contains('active')))return;
+    const {data,disk,owned}=shopSnapshot();
+    const coins=Math.max(0,Math.floor(Number(data.coins)||0));
     let tile=grid.querySelector('.tc-pack-shop-v268');
     if(!tile){
       tile=document.createElement('article');
       tile.className='tc-shop-card tc-pack-shop-v268';
       grid.append(tile);
     }
-
     tile.innerHTML='';
     const art=document.createElement('img');
     art.className='tc-pack-shop-art-v268';
     art.src=TC.packAsset('card-pack-unopened.png');
     art.alt='Card Pack';
-
     const copy=document.createElement('div');
     copy.className='tc-pack-shop-copy-v268';
-    copy.innerHTML=`<strong>Card Pack</strong><small>3 cards per pack · ${PACK_PRICE} Pink Coins<br>Unlimited purchases ♡</small>`;
-
-    const buy=document.createElement('button');
-    buy.type='button';
-    buy.className='tc-shop-buy';
-    buy.disabled=Number(data.coins||0)<PACK_PRICE;
-    buy.textContent='Buy Pack';
-    buy.addEventListener('click',buyPack);
-
-    tile.append(art,copy,buy);
+    copy.innerHTML='<strong>Card Pack</strong><small>3 cards per pack · Unlimited purchases ♡</small>';
+    const ownedLine=document.createElement('small');
+    ownedLine.className='tc-pack-owned-v350';
+    ownedLine.style.cssText='display:block;font-weight:900;margin-top:5px;color:#98556e;';
+    ownedLine.textContent=`You own ×${owned}`;
+    copy.append(ownedLine);
+    const actions=document.createElement('div');
+    actions.className='tc-pack-shop-actions-v350';
+    actions.style.cssText='display:flex;flex-direction:column;gap:6px;width:100%;min-width:0;';
+    const buyOne=document.createElement('button');
+    buyOne.type='button';buyOne.className='tc-shop-buy';
+    buyOne.disabled=purchasing||coins<PRICE_ONE;
+    buyOne.textContent=`Buy 1 · ${PRICE_ONE.toLocaleString()}`;
+    buyOne.addEventListener('click',()=>purchasePacks(1));
+    const buyTen=document.createElement('button');
+    buyTen.type='button';buyTen.className='tc-shop-buy';
+    buyTen.disabled=purchasing||coins<PRICE_TEN;
+    buyTen.textContent=`Buy 10 · ${PRICE_TEN.toLocaleString()} (10% off)`;
+    buyTen.style.cssText='white-space:normal;min-height:36px;';
+    buyTen.addEventListener('click',()=>purchasePacks(10));
+    actions.append(buyOne,buyTen);
+    if(!TC.ensureState(disk).packRecoveryV350){
+      const recovery=document.createElement('button');
+      recovery.type='button';
+      recovery.className='tc-pack-recovery-v350';
+      recovery.style.cssText='border:0;background:none;color:#8f6475;text-decoration:underline;font-size:.71rem;cursor:pointer;padding:3px;white-space:normal;';
+      recovery.textContent='Missing paid packs? Recover once ♡';
+      recovery.addEventListener('click',recoverMissingPacks);
+      actions.append(recovery);
+    }
+    tile.append(art,copy,actions);
   }
-
   function scheduleEnhance(){requestAnimationFrame(()=>requestAnimationFrame(enhanceShop));}
-
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',scheduleEnhance,{once:true});
-  }else{
-    scheduleEnhance();
-  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',scheduleEnhance,{once:true});
+  else scheduleEnhance();
   document.addEventListener('click',scheduleEnhance,true);
   window.addEventListener('focus',scheduleEnhance);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)scheduleEnhance();});
-
-  window.DUCKIE_TRADING_CARD_UI_V268='24.268';
+  window.DUCKIE_TRADING_CARD_UI_V350='24.350-safe-pack-purchases';
 })();
 ;
-
 // ===== Source: trading-cards-ui-v270.js =====
 (function(){
   'use strict';

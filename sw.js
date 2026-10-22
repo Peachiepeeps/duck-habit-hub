@@ -15,12 +15,12 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-349-city-progression-owl-alignment';
+const APP_CACHE='duck-habit-hub-app-v24-350-safe-trading-card-purchases';
 const APP_SHELL=[
  './',
  './index.html',
  './version.json',
- './sw.js?v=24.349',
+ './sw.js?v=24.350',
  './manifest.webmanifest?v=24.296',
  './app.css?v=24.345',
  './trading-cards-base.css?v=24.327',
@@ -78,7 +78,7 @@ const APP_SHELL=[
  './universal-clothing-v311.js?v=24.311',
  './gimmick-hub-v288.js?v=24.296',
  './hub-boosts.js?v=24.346',
- './trading-cards-ui.js?v=24.343',
+ './trading-cards-ui.js?v=24.350',
  './tasks.js?v=24.336',
  './firebase-reminders.mjs?v=24.296',
  './task-reminders.js?v=24.296',
