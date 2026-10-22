@@ -1,0 +1,90 @@
+name: Install Duckie Days v24.350 Safe Trading Card Packs
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/install-duckie-days-v24-350-trading-card-shop.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-350-card-shop-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install safe card-pack transactions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY_PATCH'
+          from pathlib import Path
+          import json
+          
+          root=Path('.')
+          
+          def take(name):
+              return (root/name).read_text('utf-8')
+          def change_once(s,old,new,label):
+              n=s.count(old)
+              if n!=1:raise SystemExit(f'{label}: expected 1 occurrence, found {n}; no files changed')
+              return s.replace(old,new,1)
+          
+          js=take('trading-cards-ui.js')
+          a='// ===== Source: trading-cards-ui-v268.js ====='
+          b='// ===== Source: trading-cards-ui-v270.js ====='
+          if js.count(a)!=1 or js.count(b)!=1 or js.index(b)<js.index(a):
+              raise SystemExit('Could not safely locate original trading-card Shop code; no files changed')
+          old=js[js.index(a):js.index(b)]
+          if "const PACK_PRICE=500;" not in old or "TC.grantPack(data,1);" not in old:
+              raise SystemExit('Unexpected Shop implementation; refusing overwrite')
+          # This exact original block from v24.349 gets replaced, leaving card-opening odds & UI untouched.
+          new_section='// ===== Source: trading-cards-ui-v350.js =====\n(function(){\n  \'use strict\';\n  const TC=window.DuckieTradingCards;\n  if(!TC?.ensureState || !TC?.grantPack)return;\n\n  const PRICE_ONE=500;\n  const PRICE_TEN=4500; // Save 500 Pink Coins (10%).\n  const MAX_RECOVERY=5;\n  let purchasing=false;\n\n  function dataRef(){\n    try{\n      if(typeof save!==\'undefined\' && save && typeof save===\'object\')return save;\n    }catch(error){}\n    return TC.readSave();\n  }\n  function commit(data){\n    TC.ensureState(data);\n    if(typeof save!==\'undefined\' && data===save && typeof persist===\'function\')persist();\n    else TC.writeSave(data);\n  }\n  function toast(message){\n    try{if(typeof showToast===\'function\'){showToast(message);return;}}catch(error){}\n    console.info(message);\n  }\n  function notifyPackView(){\n    window.dispatchEvent(new CustomEvent(\'duckie-trading-packs-updated\'));\n  }\n  function updateVisibleCoins(value){\n    document.querySelectorAll(\'#shopCoinCount,#coinCount\').forEach(el=>{\n      el.textContent=Math.max(0,Number(value)||0).toLocaleString();\n    });\n    try{if(typeof renderRoom===\'function\')renderRoom();}catch(error){}\n  }\n  function packCount(data){\n    return Math.max(0,Math.floor(Number(TC.ensureState(data)?.unopenedPacks)||0));\n  }\n  function shopSnapshot(){\n    // Duckipedia reads the saved inventory, not the Hub\'s potentially stale reference.\n    const disk=TC.readSave();\n    const data=dataRef();\n    return {disk,data,owned:packCount(disk)};\n  }\n  function purchasePacks(quantity,{recovery=false}={}){\n    if(purchasing)return;\n    const qty=Math.floor(Number(quantity));\n    if(!Number.isSafeInteger(qty)||qty<1||qty>(recovery?MAX_RECOVERY:10))return;\n    const cost=recovery?0:qty===10?PRICE_TEN:PRICE_ONE;\n    purchasing=true;\n    try{\n      const {data,disk,owned}=shopSnapshot();\n      const diskState=TC.ensureState(disk);\n      const balance=Math.floor(Number(data.coins)||0);\n      const diskBalance=Math.floor(Number(disk.coins)||0);\n      if(!Number.isFinite(balance)||balance!==diskBalance){\n        toast(\'Your shop balance changed. Close and reopen the shop before buying. No coins spent.\');\n        return;\n      }\n      if(recovery){\n        if(diskState.packRecoveryV350){toast(\'Your missing-pack recovery has already been used. ♡\');return;}\n      }else if(balance<cost){\n        toast(`You need ${cost.toLocaleString()} Pink Coins for ${qty} Card Pack${qty===1?\'\':\'s\'}!`);\n        return;\n      }\n      const priorCoins=data.coins;\n      const priorCards=data.tradingCards;\n      const priorStorage=localStorage.getItem(TC.SAVE_KEY);\n      const pendingCards=JSON.parse(JSON.stringify(disk.tradingCards));\n      data.tradingCards=pendingCards;\n      data.coins=balance-cost;\n      TC.grantPack(data,qty);\n      if(recovery)pendingCards.packRecoveryV350=true;\n      const receipt={kind:recovery?\'recovery\':\'purchase\',packs:qty,coinsSpent:cost,\n        before:owned,after:owned+qty,at:new Date().toISOString()};\n      pendingCards.packPurchaseHistoryV350=[\n        ...(Array.isArray(pendingCards.packPurchaseHistoryV350)?pendingCards.packPurchaseHistoryV350:[]).slice(-24),\n        receipt\n      ];\n      let confirmed=false;\n      try{\n        commit(data);\n        const saved=TC.readSave();\n        const savedState=TC.ensureState(saved);\n        confirmed=packCount(saved)===owned+qty && Math.floor(Number(saved.coins)||0)===balance-cost\n          && (!recovery||savedState.packRecoveryV350===true);\n      }catch(error){console.error(\'Card pack purchase save error\',error);}\n      if(!confirmed){\n        data.coins=priorCoins;\n        data.tradingCards=priorCards;\n        try{\n          if(priorStorage===null)localStorage.removeItem(TC.SAVE_KEY);\n          else localStorage.setItem(TC.SAVE_KEY,priorStorage);\n          toast(\'The purchase could not be saved, so it was cancelled. Your coins were restored.\');\n        }catch(error){\n          console.error(\'Card pack purchase rollback error\',error);\n          toast(\'Card pack save error. Please back up your game and check your balance before buying again.\');\n        }\n        return;\n      }\n      updateVisibleCoins(data.coins);\n      notifyPackView();\n      toast(recovery\n        ? `Restored ${qty} missing Card Pack${qty===1?\'\':\'s\'}! ♡`\n        : `Bought ${qty} Card Pack${qty===1?\'\':\'s\'}! You own ×${owned+qty} ♡`);\n      enhanceShop();\n    }finally{purchasing=false;}\n  }\n  function recoverMissingPacks(){\n    const current=shopSnapshot();\n    if(TC.ensureState(current.disk).packRecoveryV350)return;\n    const typed=window.prompt(\'How many Card Packs did you pay for but never receive? Enter 1–5. Only restore packs that are truly missing.\',\'5\');\n    if(typed===null)return;\n    const n=Number(String(typed).trim());\n    if(!Number.isInteger(n)||n<1||n>MAX_RECOVERY){toast(\'Enter a whole number from 1 to 5.\');return;}\n    if(!window.confirm(`Restore ${n} missing Card Pack${n===1?\'\':\'s\'} once? This is only for packs already paid for that never appeared.`))return;\n    purchasePacks(n,{recovery:true});\n  }\n  function enhanceShop(){\n    const grid=document.querySelector(\'.shop-grid > .tc-shop-grid\');\n    const cardsTab=document.querySelector(\'[data-shop-tab="cards"]\');\n    if(!grid || (cardsTab&&!cardsTab.classList.contains(\'active\')))return;\n    const {data,disk,owned}=shopSnapshot();\n    const coins=Math.max(0,Math.floor(Number(data.coins)||0));\n    let tile=grid.querySelector(\'.tc-pack-shop-v268\');\n    if(!tile){\n      tile=document.createElement(\'article\');\n      tile.className=\'tc-shop-card tc-pack-shop-v268\';\n      grid.append(tile);\n    }\n    tile.innerHTML=\'\';\n    const art=document.createElement(\'img\');\n    art.className=\'tc-pack-shop-art-v268\';\n    art.src=TC.packAsset(\'card-pack-unopened.png\');\n    art.alt=\'Card Pack\';\n    const copy=document.createElement(\'div\');\n    copy.className=\'tc-pack-shop-copy-v268\';\n    copy.innerHTML=\'<strong>Card Pack</strong><small>3 cards per pack · Unlimited purchases ♡</small>\';\n    const ownedLine=document.createElement(\'small\');\n    ownedLine.className=\'tc-pack-owned-v350\';\n    ownedLine.style.cssText=\'display:block;font-weight:900;margin-top:5px;color:#98556e;\';\n    ownedLine.textContent=`You own ×${owned}`;\n    copy.append(ownedLine);\n    const actions=document.createElement(\'div\');\n    actions.className=\'tc-pack-shop-actions-v350\';\n    actions.style.cssText=\'display:flex;flex-direction:column;gap:6px;width:100%;min-width:0;\';\n    const buyOne=document.createElement(\'button\');\n    buyOne.type=\'button\';buyOne.className=\'tc-shop-buy\';\n    buyOne.disabled=purchasing||coins<PRICE_ONE;\n    buyOne.textContent=`Buy 1 · ${PRICE_ONE.toLocaleString()}`;\n    buyOne.addEventListener(\'click\',()=>purchasePacks(1));\n    const buyTen=document.createElement(\'button\');\n    buyTen.type=\'button\';buyTen.className=\'tc-shop-buy\';\n    buyTen.disabled=purchasing||coins<PRICE_TEN;\n    buyTen.textContent=`Buy 10 · ${PRICE_TEN.toLocaleString()} (10% off)`;\n    buyTen.style.cssText=\'white-space:normal;min-height:36px;\';\n    buyTen.addEventListener(\'click\',()=>purchasePacks(10));\n    actions.append(buyOne,buyTen);\n    if(!TC.ensureState(disk).packRecoveryV350){\n      const recovery=document.createElement(\'button\');\n      recovery.type=\'button\';\n      recovery.className=\'tc-pack-recovery-v350\';\n      recovery.style.cssText=\'border:0;background:none;color:#8f6475;text-decoration:underline;font-size:.71rem;cursor:pointer;padding:3px;white-space:normal;\';\n      recovery.textContent=\'Missing paid packs? Recover once ♡\';\n      recovery.addEventListener(\'click\',recoverMissingPacks);\n      actions.append(recovery);\n    }\n    tile.append(art,copy,actions);\n  }\n  function scheduleEnhance(){requestAnimationFrame(()=>requestAnimationFrame(enhanceShop));}\n  if(document.readyState===\'loading\')document.addEventListener(\'DOMContentLoaded\',scheduleEnhance,{once:true});\n  else scheduleEnhance();\n  document.addEventListener(\'click\',scheduleEnhance,true);\n  window.addEventListener(\'focus\',scheduleEnhance);\n  document.addEventListener(\'visibilitychange\',()=>{if(!document.hidden)scheduleEnhance();});\n  window.DUCKIE_TRADING_CARD_UI_V350=\'24.350-safe-pack-purchases\';\n})();\n;\n'
+          js=js.replace(old,new_section,1)
+          js=change_once(js,
+            '  window.addEventListener("storage",event=>{if(event.key===TC.SAVE_KEY&&!panel.classList.contains("hidden"))renderCards();});',
+            '  window.addEventListener("storage",event=>{if(event.key===TC.SAVE_KEY&&!panel.classList.contains("hidden"))renderCards();});\n  window.addEventListener("duckie-trading-packs-updated",()=>{if(!panel.classList.contains("hidden"))renderCards();});',
+            'Duckipedia pack count live refresh')
+          
+          index=take('index.html')
+          index=change_once(index, '<script src="trading-cards-ui.js?v=24.343"></script>', '<script src="trading-cards-ui.js?v=24.350"></script>', 'Shop script cache bust')
+          index=change_once(index, 'const DUCK_HUB_BUILD = "24.349";', 'const DUCK_HUB_BUILD = "24.350";', 'hub build number')
+          index=change_once(index, 'register("./sw.js?v=24-349-city-progression-owl-alignment",', 'register("./sw.js?v=24-350-safe-trading-card-purchases",', 'service worker update URL')
+          
+          sw=take('sw.js')
+          sw=change_once(sw, "const APP_CACHE='duck-habit-hub-app-v24-349-city-progression-owl-alignment';", "const APP_CACHE='duck-habit-hub-app-v24-350-safe-trading-card-purchases';", 'service worker cache name')
+          sw=change_once(sw, "'./sw.js?v=24.349',", "'./sw.js?v=24.350',", 'service worker self cache')
+          sw=change_once(sw, "'./trading-cards-ui.js?v=24.343',", "'./trading-cards-ui.js?v=24.350',", 'service worker trading cards script')
+          
+          version=json.loads(take('version.json'))
+          if version.get('version')!='24.349':
+              raise SystemExit(f"Expected v24.349, found {version.get('version')}; no files changed")
+          version['version']='24.350'
+          
+          # All guards have passed, now perform writes.
+          (root/'trading-cards-ui.js').write_text(js,'utf-8')
+          (root/'index.html').write_text(index,'utf-8')
+          (root/'sw.js').write_text(sw,'utf-8')
+          (root/'version.json').write_text(json.dumps(version,indent=2)+'\n','utf-8')
+          print('v24.350: safe pack purchases, owner count, discounted 10-pack, optional one-time recovery')
+          PY_PATCH
+          node --check trading-cards-ui.js
+      - name: Commit v24.350 game files
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add trading-cards-ui.js index.html sw.js version.json
+          if git diff --cached --quiet; then
+            echo 'Already installed.'
+          else
+            git commit -m 'Duckie Days v24.350: safe card packs, own counter, Buy 10 discount'
+            git push
+          fi
