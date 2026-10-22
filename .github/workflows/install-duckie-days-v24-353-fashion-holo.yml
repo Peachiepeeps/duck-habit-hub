@@ -1,0 +1,287 @@
+name: Install Ducky Days v24.353 Fashion and Variant Holo Fixes
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/install-duckie-days-v24-353-fashion-holo.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-353-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install fashion and Holo fixes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY_INSTALL'
+          #!/usr/bin/env python3
+          """Duckie Days 24.353 source-only incremental installer."""
+          from pathlib import Path
+          import json
+
+          root=Path('.')
+          def read(p): return (root/p).read_text(encoding='utf-8')
+          def write(p,s): (root/p).write_text(s,encoding='utf-8')
+          def rep(s,old,new,label):
+              n=s.count(old)
+              if n != 1: raise RuntimeError(f'{label}: expected one occurrence, found {n}; repository unchanged until commit')
+              return s.replace(old,new,1)
+
+          version=json.loads(read('version.json'))
+          if str(version.get('version'))!='24.352': raise RuntimeError('Expected 24.352, found '+str(version.get('version')))
+
+          p='app.js';s=read(p)
+          s=rep(s,'"nico-back-bow": { label: "Nico Set · Back Bow", file: "Miko-Nico-Back-Bow.png", z: 22 }',
+                  '"nico-back-bow": { label: "Nico Set · Back Bow", file: "Miko-Nico-Back-Bow.png", z: 0 }','Nico bow bottom layer')
+          s=rep(s,'"westley-face-makeup": { label: "Westley Set · Face Makeup", file: "Miko-Westley-Face-makeup.png", z: 52 }',
+                  '"westley-face-makeup": { label: "Westley Set · Face Makeup", file: "Miko-Westley-Face-makeup.png", z: 43 }','Westley paint behind expressions')
+          write(p,s)
+
+          p='universal-clothing-v311.js';s=read(p)
+          s=rep(s,'    if(document.body.classList.contains("sock-fashion-mode-v297"))return;\n',
+                '    // v24.353: Universal items remain available for the Sock Gremlin fashion battle.\n','Sock Gremlin universal clothing visibility')
+          write(p,s)
+
+          p='sock-gremlin-fashion-v297.js';s=read(p)
+          s=rep(s,'  function shuffle(list){', '''  // v24.353: Universal Clothing copies can participate in fashion scoring too.
+            // Only the equipped copies contribute; owning an item never scores by itself.
+            const UNIVERSAL_STYLE_TAGS={
+              "big-hoodie":["cozy","casual","cute"],"big-cardigan":["cozy","classic","cute"],
+              "bow-dress-small":["cute","romantic","fancy"],"bow-dress-large":["cute","romantic","fancy"],
+              "bunny-outfit":["cute","silly","cozy"],"maid-outfit":["classic","formal","cute"],
+              "big-bow":["accessory","cute","romantic"],"r-bow":["accessory","cute"],
+              "glasses":["accessory","classic"],"short-socks":["cozy","casual"],
+              "knee-socks":["cute","classic"],"thigh-socks":["cute","fancy"]
+            };
+            function universalEquippedFamilies(){
+              const state=save?.universalClothingV311;
+              const look=state?.loadouts?.miko;
+              if(!look)return [];
+              const worn=[look.dress,look.outer,...(Array.isArray(look.extras)?look.extras:[]),
+                ...Object.keys(look.socks||{}).filter(id=>look.socks[id]&&look.socks[id]!=="OFF")].filter(Boolean);
+              const byId=new Map();
+              for(const copies of Object.values(state.copies||{})){
+                if(Array.isArray(copies))for(const copy of copies)if(copy?.id&&copy.familyId)byId.set(copy.id,copy.familyId);
+              }
+              return [...new Set(worn.map(id=>byId.get(id)).filter(Boolean))];
+            }
+            function shuffle(list){''','universal fashion family tags')
+          s=rep(s,'''function currentOutfitIds(){const outfit=save?.characterOutfits?.miko||{};return [outfit.shirt,outfit.outer,outfit.bottom,outfit.socks,outfit.shoes,outfit.bangsStyle,...(Array.isArray(outfit.extras)?outfit.extras:[])].filter(Boolean);}''',
+          '''function currentOutfitIds(){const outfit=save?.characterOutfits?.miko||{};return [outfit.shirt,outfit.outer,outfit.bottom,outfit.socks,outfit.shoes,outfit.bangsStyle,...(Array.isArray(outfit.extras)?outfit.extras:[]),...universalEquippedFamilies()].filter(Boolean);}''','current fashion look includes universal')
+          s=rep(s,'''(TAGS[id]||[]).forEach(tag=>wornTags.add(tag))''',
+          '''(TAGS[id]||UNIVERSAL_STYLE_TAGS[id]||[]).forEach(tag=>wornTags.add(tag))''','universal scores based on style')
+          write(p,s)
+
+          # Card crafting migration: old Holo per card becomes default-color Holo, never
+          # blindly multiplied across owned recolors. Other card traits stay per family.
+          p='trading-cards-extra.js';s=read(p)
+          s=rep(s,'''    if(!c.holo || typeof c.holo!=="object" || Array.isArray(c.holo)) c.holo={};''', '''    if(!c.holo || typeof c.holo!=="object" || Array.isArray(c.holo)) c.holo={};
+              if(!c.holoVariants || typeof c.holoVariants!=="object" || Array.isArray(c.holoVariants))c.holoVariants={};
+              // Existing family-wide Holo finishes are retained on Original only.
+              // Never assume a different color was upgraded: historical saves have no record.
+              if(!c.holoVariantMigrationV353){
+                for(const [id,oldHolo] of Object.entries(c.holo)){
+                  if(oldHolo){
+                    const colors=c.holoVariants[id]||{};
+                    colors.default=true;
+                    c.holoVariants[id]=colors;
+                  }
+                }
+                c.holoVariantMigrationV353=true;
+              }''','migrate legacy Holo status')
+          s=rep(s,'''      holo:Boolean(c.holo[cardId]),''',
+          '''      holo:Boolean(c.holoVariants?.[cardId]?.[c.displayVariant?.[cardId]||"default"]),''','holo follows displayed color')
+          write(p,s)
+
+          # A single helper is used by both workshop and global Dust recycler.
+          p='trading-cards-lil-guys-v336.js';s=read(p)
+          start=s.index('  TC.variantExtras=function(state,id){')
+          end=s.index('  const oldFace=TC.createFace;',start)
+          old=s[start:end]
+          new='''  function isHolo(state,id,variant="default"){
+              return Boolean(state?.crafting?.holoVariants?.[id]?.[variant]);
+            }
+            function colorCounts(state,id){
+              const tracked=state?.variantOwned?.[id];
+              return tracked&&typeof tracked==='object'&&Object.keys(tracked).length
+                ?tracked:{default:count(state?.owned?.[id])};
+            }
+            function reserve(state,id,key){return isHolo(state,id,key)?1:4;}
+            TC.isColorHolo=isHolo;
+            TC.variantColorCount=function(state,id,key="default"){
+              return count(colorCounts(state,id)[key]);
+            };
+            // Unupgraded colors retain four cards (one card + 3 for Holo);
+            // finished colors only need their last copy protected.
+            TC.variantExtras=function(state,id){
+              return Object.entries(colorCounts(state,id)).reduce((sum,[key,n])=>
+                sum+Math.max(0,count(n)-reserve(state,id,key)),0);
+            };
+            TC.convertVariantDuplicates=function(state,id,requested=Infinity){
+              const counts=colorCounts(state,id);
+              let left=Number.isFinite(requested)?count(requested):Infinity,removed=0;
+              for(const [key,value] of Object.entries(counts)){
+                const take=Math.min(left,Math.max(0,count(value)-reserve(state,id,key)));
+                if(!take)continue;
+                counts[key]=count(value)-take;removed+=take;left-=take;
+                if(left<=0)break;
+              }
+              if(removed)state.owned[id]=Math.max(0,count(state.owned[id])-removed);
+              return removed;
+            };
+            TC.upgradeColorHolo=function(state,id,variant="default",required=3){
+              if(!state?.crafting || isHolo(state,id,variant))return false;
+              const counts=colorCounts(state,id);
+              const total=count(counts[variant]);
+              if(total<required+1)return false;
+              // Only the selected color pays for its own finish.
+              counts[variant]=total-required;
+              state.owned[id]=Math.max(0,count(state.owned[id])-required);
+              if(!state.crafting.holoVariants||typeof state.crafting.holoVariants!=="object")state.crafting.holoVariants={};
+              if(!state.crafting.holoVariants[id])state.crafting.holoVariants[id]={};
+              state.crafting.holoVariants[id][variant]=true;
+              return true;
+            };
+          '''
+          s=s[:start]+new+s[end:]
+          s=rep(s,'''    return face;
+            };
+            window.DuckieLilGuysCardsV336''','''    if(!opts.locked){
+                const shown=String(variantId||TC.cardCraft?.craftFor?.(card.id,TC.readSave())?.displayVariant||'default');
+                const state=TC.cardCraft?.ensure?.(TC.readSave());
+                const holo=TC.isColorHolo(state,card.id,shown);
+                face.classList.toggle('tc-holo-v262',holo);
+                face.querySelectorAll('.tc-holo-overlay-v262').forEach(el=>el.remove());
+                if(holo){const overlay=document.createElement('i');overlay.className='tc-holo-overlay-v262';overlay.setAttribute('aria-hidden','true');face.append(overlay);}
+              }
+              return face;
+            };
+            window.DuckieLilGuysCardsV336''','per-card face holographic correctness')
+          write(p,s)
+
+          p='trading-cards-ui.js';s=read(p)
+          old='''  const HOLO_SAFE_COPIES=4;
+            function safeExtraCounts(st,cardId){
+              const group=st?.variantOwned?.[cardId];
+              if(group && typeof group==='object') return Object.values(group).reduce((sum,n)=>sum+Math.max(0,Math.floor(Number(n)||0)-HOLO_SAFE_COPIES),0);
+              // For older saves without variant counters, treat copies as Original.
+              return Math.max(0,Math.floor(Number(st?.owned?.[cardId])||0)-HOLO_SAFE_COPIES);
+            }'''
+          new='''  function colorReserved(st,id,color){return TC.isColorHolo?.(st,id,color)?1:4;}
+            function safeExtraCounts(st,cardId){
+              const group=st?.variantOwned?.[cardId];
+              if(group && typeof group==='object')return Object.entries(group).reduce((sum,[color,n])=>
+                sum+Math.max(0,Math.floor(Number(n)||0)-colorReserved(st,cardId,color)),0);
+              return Math.max(0,Math.floor(Number(st?.owned?.[cardId])||0)-colorReserved(st,cardId,'default'));
+            }'''
+          s=rep(s,old,new,'bulk Dust Holo-aware protection')
+          s=rep(s,'''dustButton.textContent=`Convert Duplicates After 3 Extras · ${result.copies} cards → ${result.dust} Dust`;''',
+          '''dustButton.textContent=`Convert Safe Duplicates · ${result.copies} cards → ${result.dust} Dust`;''','Dust button label')
+          s=rep(s,'''For each collected variant, KEEP 1 card plus 3 extra copies for Holo (4 total). This cannot be undone.''',
+          '''For colors without Holo, keep 4 copies. For colors already Holo, keep 1 copy. This cannot be undone.''','safe dust confirmation')
+          s=rep(s,'''const take=Math.max(0,old-HOLO_SAFE_COPIES);''',
+          '''const take=Math.max(0,old-colorReserved(cards,card.id,key));''','bulk color-aware dust conversion')
+          s=rep(s,'''removed=Math.max(0,old-HOLO_SAFE_COPIES);''',
+          '''removed=Math.max(0,old-colorReserved(cards,card.id,'default'));''','bulk fallback color-aware conversion')
+          s=rep(s,'''const holo=document.createElement("div");holo.className="tc-craft-section-v262";
+              if(craft.holo){holo.innerHTML='<div><strong>Holo Finish ✨</strong><small>This card has its permanent Holo finish.</small></div><span class="tc-craft-max-v262">HOLO</span>';}
+              else{
+                holo.innerHTML=`<div><strong>Holo Finish</strong><small>Uses ${HOLO_EXTRAS} extra copies plus ${HOLO_DUST} Power Up Dust. Your first copy stays protected.</small></div>`;
+                const can=extras(state,card.id)>=HOLO_EXTRAS&&state.powerUpDust>=HOLO_DUST;
+                holo.append(button(`Apply Holo · ${HOLO_DUST} Dust + ${HOLO_EXTRAS} Extras`,!can,()=>{const d=dataRef(),s=TC.cardCraft.ensure(d);if(extras(s,card.id)<HOLO_EXTRAS||s.powerUpDust<HOLO_DUST)return;TC.convertVariantDuplicates(s,card.id,HOLO_EXTRAS);s.powerUpDust-=HOLO_DUST;s.crafting.holo[card.id]=true;commit(d);rerender(card.id,`${card.name} is now Holo! ✨`);}));
+              }panel.append(holo);''',
+          '''const holo=document.createElement("div");holo.className="tc-craft-section-v262";
+              const chosenColor=craft.displayVariant||'default';
+              const chosenLabel=TC.variantOptions(card).find(v=>v.id===chosenColor)?.label||'Original';
+              const colorCopies=TC.variantColorCount(state,card.id,chosenColor);
+              if(TC.isColorHolo(state,card.id,chosenColor)){
+                holo.innerHTML=`<div><strong>${chosenLabel} Holo Finish ✨</strong><small>Only the ${chosenLabel} color is Holo. Other variants can be upgraded separately.</small></div><span class="tc-craft-max-v262">HOLO</span>`;
+              }else{
+                holo.innerHTML=`<div><strong>${chosenLabel} Holo Finish</strong><small>Requires 4 copies of this same color (currently ${colorCopies}) and ${HOLO_DUST} Power Up Dust. Three copies are used; one is kept.</small></div>`;
+                const can=colorCopies>=HOLO_EXTRAS+1&&state.powerUpDust>=HOLO_DUST;
+                holo.append(button(`Apply ${chosenLabel} Holo · ${HOLO_DUST} Dust + ${HOLO_EXTRAS} matching copies`,!can,()=>{
+                  const d=dataRef(),s=TC.cardCraft.ensure(d),variant=s.crafting.displayVariant?.[card.id]||'default';
+                  if(s.powerUpDust<HOLO_DUST||!TC.upgradeColorHolo(s,card.id,variant,HOLO_EXTRAS))return;
+                  s.powerUpDust-=HOLO_DUST;commit(d);rerender(card.id,`${chosenLabel} ${card.name} is now Holo! ✨`);
+                }));
+              }panel.append(holo);''','per-variant Holo workshop')
+          s=rep(s,'''const label=option.id==="default"?option.label:(unlocked?option.label:`${option.label} · ${VARIANT_DUST}`);''',
+          '''const baseLabel=option.id==="default"?option.label:(unlocked?option.label:`${option.label} · ${VARIANT_DUST}`);
+                  const label=baseLabel+(TC.isColorHolo(state,card.id,option.id)?' ✨':'');''','variant tabs show holo state')
+          write(p,s)
+
+          p='index.html';s=read(p)
+          s=rep(s,'const DUCK_HUB_BUILD = "24.352";','const DUCK_HUB_BUILD = "24.353";','hub build version')
+          s=rep(s,'sw.js?v=24-352-love-egg-sweetheart','sw.js?v=24-353-fashion-holo-fixes','service worker registration')
+          for old,new,label in [
+          ('app.js?v=24.349','app.js?v=24.353','app layer version'),
+          ('universal-clothing-v311.js?v=24.311','universal-clothing-v311.js?v=24.353','universal closet version'),
+          ('sock-gremlin-fashion-v297.js?v=24.326','sock-gremlin-fashion-v297.js?v=24.353','fashion scoring version'),
+          ('trading-cards-ui.js?v=24.351','trading-cards-ui.js?v=24.353','holo workshop version'),
+          ('trading-cards-extra.js?v=24.344','trading-cards-extra.js?v=24.353','holo core version'),
+          ('trading-cards-lil-guys-v336.js?v=24.336','trading-cards-lil-guys-v336.js?v=24.353','holo color-variants version')
+          ]:s=rep(s,old,new,label)
+          write(p,s)
+
+          p='sw.js';s=read(p)
+          s=rep(s,"const APP_CACHE='duck-habit-hub-app-v24-352-love-egg-sweetheart';","const APP_CACHE='duck-habit-hub-app-v24-353-fashion-holo-fixes';",'cache name')
+          s=rep(s,"'./sw.js?v=24.352',","'./sw.js?v=24.353',",'sw cache version')
+          for old,new,label in [
+          ('app.js?v=24.349','app.js?v=24.353','cached app version'),
+          ('universal-clothing-v311.js?v=24.311','universal-clothing-v311.js?v=24.353','cached universal version'),
+          ('sock-gremlin-fashion-v297.js?v=24.326','sock-gremlin-fashion-v297.js?v=24.353','cached gremlin version'),
+          ('trading-cards-ui.js?v=24.351','trading-cards-ui.js?v=24.353','cached trading UI version'),
+          ('trading-cards-extra.js?v=24.296','trading-cards-extra.js?v=24.353','cached Holo core version'),
+          ('trading-cards-lil-guys-v336.js?v=24.336','trading-cards-lil-guys-v336.js?v=24.353','cached Holo variants version')
+          ]:s=rep(s,old,new,label)
+          write(p,s)
+          version['version']='24.353';write('version.json',json.dumps(version,indent=2)+'\n')
+          print('Patched version 24.353: outfit stacking, fashion universal items, safe per-variant Holo + Dust.')
+          PY_INSTALL
+          for file in app.js universal-clothing-v311.js sock-gremlin-fashion-v297.js trading-cards-extra.js trading-cards-lil-guys-v336.js trading-cards-ui.js sw.js; do
+            node --check "$file"
+          done
+          python3 - <<'PY_VERIFY'
+          import json
+          from pathlib import Path
+          assert json.loads(Path('version.json').read_text())['version']=='24.353'
+          html=Path('index.html').read_text()
+          sw=Path('sw.js').read_text()
+          assert 'const DUCK_HUB_BUILD = "24.353";' in html
+          for path in ['app.js','universal-clothing-v311.js','sock-gremlin-fashion-v297.js','trading-cards-extra.js','trading-cards-lil-guys-v336.js','trading-cards-ui.js']:
+            assert path+'?v=24.353' in html, path+' index'
+            assert path+'?v=24.353' in sw, path+' service worker'
+          assert 'const QUEST_WARM_IMAGE_LIMIT' not in Path('app.js').read_text()
+          app=Path('app.js').read_text()
+          assert '"nico-back-bow": { label: "Nico Set · Back Bow", file: "Miko-Nico-Back-Bow.png", z: 0 }' in app
+          assert '"westley-face-makeup": { label: "Westley Set · Face Makeup", file: "Miko-Westley-Face-makeup.png", z: 43 }' in app
+          clothing=Path('universal-clothing-v311.js').read_text()
+          assert 'if(document.body.classList.contains("sock-fashion-mode-v297"))return;' not in clothing
+          tc=Path('trading-cards-extra.js').read_text()
+          assert 'holoVariantMigrationV353' in tc
+          assert 'holoVariants?.[cardId]' in tc
+          print('v24.353 verification passed.')
+          PY_VERIFY
+      - name: Commit Ducky Days v24.353
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app.js universal-clothing-v311.js sock-gremlin-fashion-v297.js trading-cards-extra.js trading-cards-lil-guys-v336.js trading-cards-ui.js index.html sw.js version.json
+          if git diff --cached --quiet; then
+            echo 'No source changes found.'
+            exit 0
+          fi
+          git commit -m "Ducky Days v24.353: Miko outfit order, fashion items, and per-color Holo"
+          git push
