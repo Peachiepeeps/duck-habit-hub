@@ -1,0 +1,219 @@
+name: Install Duckie Days v24.347 Stoplight Owl + Chonk Fix
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/install-duckie-days-v24-347-stoplight-owl-chonk-fix.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-347-stoplight-owl-chonk-fix-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Apply v24.347 Stoplight Owl + Chonk Fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, re
+
+          ROOT = Path('.')
+
+          def read(path):
+            return (ROOT / path).read_text(encoding='utf-8')
+
+          def write(path, content):
+            (ROOT / path).write_text(content, encoding='utf-8')
+
+          def replace_once(text, old, new, label):
+            count = text.count(old)
+            if count != 1:
+              raise SystemExit(f"Expected exactly one match for {label!r}, found {count}")
+            return text.replace(old, new, 1)
+
+          fix_js = r'''// Duckie Days v24.347 — Stoplight Owl light alignment + Chonk battle facing fix.
+          (function(){
+            'use strict';
+            if(window.DUCKIE_DAYS_OWL_CHONK_FIX_V347) return;
+            window.DUCKIE_DAYS_OWL_CHONK_FIX_V347='24.347-stoplight-owl-chonk-fix';
+
+            const style=document.createElement('style');
+            style.id='duckieStoplightOwlChonkFixV347Style';
+            style.textContent=`
+              .city-owl-lights-v345{display:none !important;}
+              .city-owl-lights-v347{
+                position:absolute;
+                pointer-events:none;
+                z-index:9;
+                overflow:visible;
+                background:url("assets/bosses/stoplight-owl/base/dim-lights.png") center / contain no-repeat;
+                image-rendering:pixelated;
+                transform-origin:center bottom;
+              }
+              .city-owl-lights-v347 i{
+                position:absolute;
+                aspect-ratio:1;
+                border-radius:50%;
+                opacity:0;
+              }
+              .city-owl-lights-v347 .red{
+                left:21.1%; top:48.4%; width:7.85%;
+                background:#ff4d4d;
+                box-shadow:0 0 7px 3px rgba(255,120,120,.95), inset 0 0 0 1px #ffd3d3;
+              }
+              .city-owl-lights-v347 .yellow{
+                left:21.1%; top:60.15%; width:7.85%;
+                background:#ffe05a;
+                box-shadow:0 0 7px 3px rgba(255,236,128,.95), inset 0 0 0 1px #fff5c5;
+              }
+              .city-owl-lights-v347 .green{
+                left:25.0%; top:71.1%; width:7.85%;
+                background:#56f45f;
+                box-shadow:0 0 7px 3px rgba(144,255,156,.95), inset 0 0 0 1px #d4ffda;
+              }
+              .city-owl-lights-v347[data-signal="red"] .red,
+              .city-owl-lights-v347[data-signal="yellow"] .yellow,
+              .city-owl-lights-v347[data-signal="green"] .green{opacity:1;}
+              .city-owl-lights-v347.attack-pop{animation:attackPop .34s steps(2,end);}
+              .city-owl-lights-v347.hurt-pop{animation:hurtPop .3s steps(2,end);}
+              .enemy-fighter.chonk-facing-left-v347{
+                scale:-1 1;
+                transform-origin:center bottom;
+              }
+            `;
+            document.head.appendChild(style);
+
+            function enemyRefs(){
+              const refs=[];
+              try{
+                if(window.ui?.enemyCombatant && window.ui?.enemySprite){
+                  refs.push({combatant:ui.enemyCombatant,sprite:ui.enemySprite});
+                }
+                if(window.ui?.enemyCombatant2 && window.ui?.enemySprite2){
+                  refs.push({combatant:ui.enemyCombatant2,sprite:ui.enemySprite2});
+                }
+              }catch(error){}
+              return refs;
+            }
+
+            function ensureOwlOverlay(refs){
+              if(!refs?.combatant || !refs?.sprite) return null;
+              const legacy=refs.combatant.querySelector('.city-owl-lights-v345');
+              if(legacy) legacy.style.display='none';
+
+              let overlay=refs.combatant.querySelector('.city-owl-lights-v347');
+              const isOwl = /stoplight-owl/i.test(String(refs.sprite.src||''))
+                && !refs.combatant.classList.contains('hidden');
+              if(!isOwl){
+                overlay?.remove();
+                return null;
+              }
+
+              if(!overlay){
+                overlay=document.createElement('div');
+                overlay.className='city-owl-lights-v347';
+                overlay.dataset.signal='green';
+                overlay.innerHTML='<i class="red"></i><i class="yellow"></i><i class="green"></i>';
+                refs.combatant.appendChild(overlay);
+              }
+
+              const spriteBox=refs.sprite.getBoundingClientRect();
+              const hostBox=refs.combatant.getBoundingClientRect();
+              if(spriteBox.width>0 && spriteBox.height>0){
+                overlay.style.left=(spriteBox.left-hostBox.left)+'px';
+                overlay.style.top=(spriteBox.top-hostBox.top)+'px';
+                overlay.style.width=spriteBox.width+'px';
+                overlay.style.height=spriteBox.height+'px';
+              }
+
+              overlay.dataset.signal = legacy?.dataset?.signal || 'green';
+              overlay.classList.toggle('attack-pop', refs.sprite.classList.contains('attack-pop'));
+              overlay.classList.toggle('hurt-pop', refs.sprite.classList.contains('hurt-pop'));
+              return overlay;
+            }
+
+            function syncVisualFixes(){
+              for(const refs of enemyRefs()){
+                const sprite=refs.sprite;
+                if(!sprite) continue;
+                const isChonk=/\/chonk\//i.test(String(sprite.src||'')) && !refs.combatant?.classList.contains('hidden');
+                sprite.classList.toggle('chonk-facing-left-v347', isChonk);
+                ensureOwlOverlay(refs);
+              }
+            }
+
+            if(typeof renderEnemyCombatant==='function'){
+              const oldRenderEnemyCombatant=renderEnemyCombatant;
+              renderEnemyCombatant=function(){
+                const result=oldRenderEnemyCombatant.apply(this,arguments);
+                requestAnimationFrame(syncVisualFixes);
+                return result;
+              };
+            }
+
+            if(typeof beginBattle==='function'){
+              const oldBeginBattle=beginBattle;
+              beginBattle=function(){
+                const result=oldBeginBattle.apply(this,arguments);
+                requestAnimationFrame(()=>requestAnimationFrame(syncVisualFixes));
+                return result;
+              };
+            }
+
+            window.addEventListener('resize',()=>requestAnimationFrame(syncVisualFixes));
+            setInterval(syncVisualFixes,60);
+            requestAnimationFrame(syncVisualFixes);
+          })();
+          '''
+
+          write('duck-quest/js/fixes-v347.js', fix_js + '\n')
+
+          dq_index = read('duck-quest/index.html')
+          script_tag = '  <script src="js/fixes-v347.js?v=24.347"></script>'
+          if script_tag not in dq_index:
+            dq_index = replace_once(
+              dq_index,
+              '  <script src="js/fixes-v341.js?v=24.345"></script>',
+              '  <script src="js/fixes-v341.js?v=24.345"></script>\n' + script_tag,
+              'duck-quest fixes-v347 script insertion'
+            )
+          write('duck-quest/index.html', dq_index)
+
+          root_index = read('index.html')
+          root_index = replace_once(root_index, 'const DUCK_HUB_BUILD = "24.346";', 'const DUCK_HUB_BUILD = "24.347";', 'DUCK_HUB_BUILD')
+          root_index = replace_once(root_index, 'register("./sw.js?v=24-346-inventory-candy-fix",', 'register("./sw.js?v=24-347-stoplight-owl-chonk-fix",', 'service worker query')
+          write('index.html', root_index)
+
+          sw = read('sw.js')
+          sw = replace_once(sw, "const APP_CACHE='duck-habit-hub-app-v24-346-inventory-candy-fix';", "const APP_CACHE='duck-habit-hub-app-v24-347-stoplight-owl-chonk-fix';", 'APP_CACHE')
+          sw = replace_once(sw, "'./sw.js?v=24.346',", "'./sw.js?v=24.347',", 'sw self cache entry')
+          if "'./duck-quest/js/fixes-v347.js?v=24.347'," not in sw:
+            sw = replace_once(sw, "'./duck-quest/js/fixes-v341.js?v=24.345',", "'./duck-quest/js/fixes-v341.js?v=24.345',\n './duck-quest/js/fixes-v347.js?v=24.347',", 'sw fixes-v347 cache entry')
+          write('sw.js', sw)
+
+          version = json.loads(read('version.json'))
+          version['version'] = '24.347'
+          write('version.json', json.dumps(version, indent=2) + '\n')
+          PY
+
+      - name: Commit v24.347 Stoplight Owl + Chonk Fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add duck-quest/js/fixes-v347.js duck-quest/index.html index.html sw.js version.json
+          git diff --cached --quiet && { echo "No changes to commit."; exit 0; }
+          git commit -m "Duckie Days v24.347: fix owl lights and flip Chonk in battle"
+          git push
