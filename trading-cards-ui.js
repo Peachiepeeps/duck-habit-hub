@@ -40,22 +40,22 @@
   const dustButton=document.createElement('button');dustButton.type='button';
   const dustNote=document.createElement('small');dustNote.textContent='Protects 1 card + 3 extras for Holo, for EVERY variant and shiny.';
   dustBar.append(dustButton,dustNote);panel.querySelector('.tc-toolbar').after(dustBar);
-  const HOLO_SAFE_COPIES=4;
+  function colorReserved(st,id,color){return TC.isColorHolo?.(st,id,color)?1:4;}
   function safeExtraCounts(st,cardId){
     const group=st?.variantOwned?.[cardId];
-    if(group && typeof group==='object') return Object.values(group).reduce((sum,n)=>sum+Math.max(0,Math.floor(Number(n)||0)-HOLO_SAFE_COPIES),0);
-    // For older saves without variant counters, treat copies as Original.
-    return Math.max(0,Math.floor(Number(st?.owned?.[cardId])||0)-HOLO_SAFE_COPIES);
+    if(group && typeof group==='object')return Object.entries(group).reduce((sum,[color,n])=>
+      sum+Math.max(0,Math.floor(Number(n)||0)-colorReserved(st,cardId,color)),0);
+    return Math.max(0,Math.floor(Number(st?.owned?.[cardId])||0)-colorReserved(st,cardId,'default'));
   }
   function dustSummary(){
     const values={common:5,uncommon:12,rare:25,fabled:60};let copies=0,dust=0;
     for(const card of TC.cards){const amount=safeExtraCounts(state,card.id);copies+=amount;dust+=amount*(values[card.rarity]||5);}
     return {copies,dust};
   }
-  function refreshDustButton(){const result=dustSummary();dustButton.disabled=result.copies===0;dustButton.textContent=`Convert Duplicates After 3 Extras · ${result.copies} cards → ${result.dust} Dust`;}
+  function refreshDustButton(){const result=dustSummary();dustButton.disabled=result.copies===0;dustButton.textContent=`Convert Safe Duplicates · ${result.copies} cards → ${result.dust} Dust`;}
   dustButton.addEventListener('click',()=>{
     syncCardState();const check=dustSummary();if(!check.copies)return;
-    if(!window.confirm(`Convert ${check.copies} extra cards into ${check.dust} Power Up Dust?\n\nFor each collected variant, KEEP 1 card plus 3 extra copies for Holo (4 total). This cannot be undone.`))return;
+    if(!window.confirm(`Convert ${check.copies} extra cards into ${check.dust} Power Up Dust?\n\nFor colors without Holo, keep 4 copies. For colors already Holo, keep 1 copy. This cannot be undone.`))return;
     const d=TC.readSave(),cards=TC.cardCraft.ensure(d);let count=0,dust=0;
     for(const card of TC.cards){
       const grouped=cards.variantOwned?.[card.id];
@@ -63,12 +63,12 @@
       if(grouped && typeof grouped==='object'){
         for(const key of Object.keys(grouped)){
           const old=Math.max(0,Math.floor(Number(grouped[key])||0));
-          const take=Math.max(0,old-HOLO_SAFE_COPIES);
+          const take=Math.max(0,old-colorReserved(cards,card.id,key));
           if(take){grouped[key]=old-take;removed+=take;}
         }
       }else{
         const old=Math.max(0,Math.floor(Number(cards.owned?.[card.id])||0));
-        removed=Math.max(0,old-HOLO_SAFE_COPIES);
+        removed=Math.max(0,old-colorReserved(cards,card.id,'default'));
       }
       if(removed){cards.owned[card.id]=Math.max(0,(Number(cards.owned[card.id])||0)-removed);count+=removed;dust+=removed*({common:5,uncommon:12,rare:25,fabled:60}[card.rarity]||5);}
     }
@@ -424,11 +424,19 @@ function tcGalleryFace(card,opts={}){
     }panel.append(rarity);
 
     const holo=document.createElement("div");holo.className="tc-craft-section-v262";
-    if(craft.holo){holo.innerHTML='<div><strong>Holo Finish ✨</strong><small>This card has its permanent Holo finish.</small></div><span class="tc-craft-max-v262">HOLO</span>';}
-    else{
-      holo.innerHTML=`<div><strong>Holo Finish</strong><small>Uses ${HOLO_EXTRAS} extra copies plus ${HOLO_DUST} Power Up Dust. Your first copy stays protected.</small></div>`;
-      const can=extras(state,card.id)>=HOLO_EXTRAS&&state.powerUpDust>=HOLO_DUST;
-      holo.append(button(`Apply Holo · ${HOLO_DUST} Dust + ${HOLO_EXTRAS} Extras`,!can,()=>{const d=dataRef(),s=TC.cardCraft.ensure(d);if(extras(s,card.id)<HOLO_EXTRAS||s.powerUpDust<HOLO_DUST)return;TC.convertVariantDuplicates(s,card.id,HOLO_EXTRAS);s.powerUpDust-=HOLO_DUST;s.crafting.holo[card.id]=true;commit(d);rerender(card.id,`${card.name} is now Holo! ✨`);}));
+    const chosenColor=craft.displayVariant||'default';
+    const chosenLabel=TC.variantOptions(card).find(v=>v.id===chosenColor)?.label||'Original';
+    const colorCopies=TC.variantColorCount(state,card.id,chosenColor);
+    if(TC.isColorHolo(state,card.id,chosenColor)){
+      holo.innerHTML=`<div><strong>${chosenLabel} Holo Finish ✨</strong><small>Only the ${chosenLabel} color is Holo. Other variants can be upgraded separately.</small></div><span class="tc-craft-max-v262">HOLO</span>`;
+    }else{
+      holo.innerHTML=`<div><strong>${chosenLabel} Holo Finish</strong><small>Requires 4 copies of this same color (currently ${colorCopies}) and ${HOLO_DUST} Power Up Dust. Three copies are used; one is kept.</small></div>`;
+      const can=colorCopies>=HOLO_EXTRAS+1&&state.powerUpDust>=HOLO_DUST;
+      holo.append(button(`Apply ${chosenLabel} Holo · ${HOLO_DUST} Dust + ${HOLO_EXTRAS} matching copies`,!can,()=>{
+        const d=dataRef(),s=TC.cardCraft.ensure(d),variant=s.crafting.displayVariant?.[card.id]||'default';
+        if(s.powerUpDust<HOLO_DUST||!TC.upgradeColorHolo(s,card.id,variant,HOLO_EXTRAS))return;
+        s.powerUpDust-=HOLO_DUST;commit(d);rerender(card.id,`${chosenLabel} ${card.name} is now Holo! ✨`);
+      }));
     }panel.append(holo);
 
     const variants=TC.variantOptions(card);
@@ -437,7 +445,8 @@ function tcGalleryFace(card,opts={}){
       const grid=document.createElement("div");grid.className="tc-variant-grid-v262";
       for(const option of variants){
         const unlocked=craft.unlocked.includes(option.id),selected=craft.displayVariant===option.id||(option.id==="default"&&!variants.some(v=>v.id===craft.displayVariant));
-        const label=option.id==="default"?option.label:(unlocked?option.label:`${option.label} · ${VARIANT_DUST}`);
+        const baseLabel=option.id==="default"?option.label:(unlocked?option.label:`${option.label} · ${VARIANT_DUST}`);
+        const label=baseLabel+(TC.isColorHolo(state,card.id,option.id)?' ✨':'');
         const b=button(label,!unlocked&&state.powerUpDust<VARIANT_DUST,()=>{const d=dataRef(),s=TC.cardCraft.ensure(d),c=s.crafting;if(!Array.isArray(c.variantsUnlocked[card.id]))c.variantsUnlocked[card.id]=["default"];if(!c.variantsUnlocked[card.id].includes(option.id)){if(s.powerUpDust<VARIANT_DUST)return;s.powerUpDust-=VARIANT_DUST;c.variantsUnlocked[card.id].push(option.id);}c.displayVariant[card.id]=option.id;commit(d);rerender(card.id,`${option.label} ${card.name} is now displayed!`);},selected?"selected":"");
         grid.append(b);
       }

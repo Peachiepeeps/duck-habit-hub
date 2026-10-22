@@ -15,12 +15,12 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-352-love-egg-sweetheart';
+const APP_CACHE='duck-habit-hub-app-v24-353-fashion-holo-fixes';
 const APP_SHELL=[
  './',
  './index.html',
  './version.json',
- './sw.js?v=24.352',
+ './sw.js?v=24.353',
  './manifest.webmanifest?v=24.296',
  './app.css?v=24.345',
  './trading-cards-base.css?v=24.327',
@@ -37,8 +37,8 @@ const APP_SHELL=[
  './fixes-v314.css?v=24.314',
  './fixes-v315.css?v=24.315',
  './trading-cards-base.js?v=24.326',
- './trading-cards-extra.js?v=24.296',
- './trading-cards-lil-guys-v336.js?v=24.336',
+ './trading-cards-extra.js?v=24.353',
+ './trading-cards-lil-guys-v336.js?v=24.353',
  './trading-cards-v317.js?v=24.317',
  './trading-cards-gimmicks-v288.js?v=24.296',
  './trading-cards-sock-gremlin-v297.js?v=24.297',
@@ -74,16 +74,16 @@ const APP_SHELL=[
  './duck-quest/css/bao-cafe-v299.css?v=24-309',
  './duck-quest/css/fixes-v318.css?v=24.318',
  './duck-quest/js/bao-cafe-v299.js?v=24-327',
- './app.js?v=24.349',
- './universal-clothing-v311.js?v=24.311',
+ './app.js?v=24.353',
+ './universal-clothing-v311.js?v=24.353',
  './gimmick-hub-v288.js?v=24.296',
  './hub-boosts.js?v=24.346',
- './trading-cards-ui.js?v=24.351',
+ './trading-cards-ui.js?v=24.353',
  './tasks.js?v=24.336',
  './firebase-reminders.mjs?v=24.296',
  './task-reminders.js?v=24.296',
  './hub.js?v=24.296',
- './sock-gremlin-fashion-v297.js?v=24.326',
+ './sock-gremlin-fashion-v297.js?v=24.353',
  './sock-gremlin-fashion-fix-v312.js?v=24.312',
  './fixes-v313.js?v=24.313',
  './fixes-v314.js?v=24.314',

@@ -836,6 +836,19 @@
     const c=state.crafting;
     if(!c.rarity || typeof c.rarity!=="object" || Array.isArray(c.rarity)) c.rarity={};
     if(!c.holo || typeof c.holo!=="object" || Array.isArray(c.holo)) c.holo={};
+    if(!c.holoVariants || typeof c.holoVariants!=="object" || Array.isArray(c.holoVariants))c.holoVariants={};
+    // Existing family-wide Holo finishes are retained on Original only.
+    // Never assume a different color was upgraded: historical saves have no record.
+    if(!c.holoVariantMigrationV353){
+      for(const [id,oldHolo] of Object.entries(c.holo)){
+        if(oldHolo){
+          const colors=c.holoVariants[id]||{};
+          colors.default=true;
+          c.holoVariants[id]=colors;
+        }
+      }
+      c.holoVariantMigrationV353=true;
+    }
     if(!c.variantsUnlocked || typeof c.variantsUnlocked!=="object" || Array.isArray(c.variantsUnlocked)) c.variantsUnlocked={};
     if(!c.displayVariant || typeof c.displayVariant!=="object" || Array.isArray(c.displayVariant)) c.displayVariant={};
     return state;
@@ -862,7 +875,7 @@
     return {
       state,
       rarity:c.rarity[cardId] || null,
-      holo:Boolean(c.holo[cardId]),
+      holo:Boolean(c.holoVariants?.[cardId]?.[c.displayVariant?.[cardId]||"default"]),
       unlocked:c.variantsUnlocked[cardId],
       displayVariant:c.displayVariant[cardId] || "default"
     };

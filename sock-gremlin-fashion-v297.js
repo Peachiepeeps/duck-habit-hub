@@ -26,6 +26,28 @@
     "jenson-top":["classic","formal","casual"],"jenson-pants":["classic","formal"],"jenson-shoes":["classic","formal"],"jenson-glasses":["accessory","classic","formal"],
     "daisy-crown":["accessory","cute","romantic"],"ocean-sunglasses":["accessory","cool","casual"],"halo":["accessory","cute","fancy"],"candy-hairclip":["accessory","cute","bright"]
   };
+  // v24.353: Universal Clothing copies can participate in fashion scoring too.
+  // Only the equipped copies contribute; owning an item never scores by itself.
+  const UNIVERSAL_STYLE_TAGS={
+    "big-hoodie":["cozy","casual","cute"],"big-cardigan":["cozy","classic","cute"],
+    "bow-dress-small":["cute","romantic","fancy"],"bow-dress-large":["cute","romantic","fancy"],
+    "bunny-outfit":["cute","silly","cozy"],"maid-outfit":["classic","formal","cute"],
+    "big-bow":["accessory","cute","romantic"],"r-bow":["accessory","cute"],
+    "glasses":["accessory","classic"],"short-socks":["cozy","casual"],
+    "knee-socks":["cute","classic"],"thigh-socks":["cute","fancy"]
+  };
+  function universalEquippedFamilies(){
+    const state=save?.universalClothingV311;
+    const look=state?.loadouts?.miko;
+    if(!look)return [];
+    const worn=[look.dress,look.outer,...(Array.isArray(look.extras)?look.extras:[]),
+      ...Object.keys(look.socks||{}).filter(id=>look.socks[id]&&look.socks[id]!=="OFF")].filter(Boolean);
+    const byId=new Map();
+    for(const copies of Object.values(state.copies||{})){
+      if(Array.isArray(copies))for(const copy of copies)if(copy?.id&&copy.familyId)byId.set(copy.id,copy.familyId);
+    }
+    return [...new Set(worn.map(id=>byId.get(id)).filter(Boolean))];
+  }
   function shuffle(list){const out=[...list];for(let i=out.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]];}return out;}
   function challenge(){return save?.[KEY];}
   function ownedMikoSet(){return new Set(Array.isArray(save?.characterUnlockedItems?.miko)?save.characterUnlockedItems.miko:[]);}
@@ -36,8 +58,8 @@
     if(combined.size<3)["casual","cozy","accessory","classic","cute"].forEach(tag=>combined.add(tag));
     return shuffle([...combined]).slice(0,3).map(id=>({id,label:TAG_LABELS[id]||id}));
   }
-  function currentOutfitIds(){const outfit=save?.characterOutfits?.miko||{};return [outfit.shirt,outfit.outer,outfit.bottom,outfit.socks,outfit.shoes,outfit.bangsStyle,...(Array.isArray(outfit.extras)?outfit.extras:[])].filter(Boolean);}
-  function evaluate(criteria){const wornTags=new Set();currentOutfitIds().forEach(id=>(TAGS[id]||[]).forEach(tag=>wornTags.add(tag)));return(criteria||[]).map(item=>({...item,matched:wornTags.has(item.id)}));}
+  function currentOutfitIds(){const outfit=save?.characterOutfits?.miko||{};return [outfit.shirt,outfit.outer,outfit.bottom,outfit.socks,outfit.shoes,outfit.bangsStyle,...(Array.isArray(outfit.extras)?outfit.extras:[]),...universalEquippedFamilies()].filter(Boolean);}
+  function evaluate(criteria){const wornTags=new Set();currentOutfitIds().forEach(id=>(TAGS[id]||UNIVERSAL_STYLE_TAGS[id]||[]).forEach(tag=>wornTags.add(tag)));return(criteria||[]).map(item=>({...item,matched:wornTags.has(item.id)}));}
   function restoreHubCharacter(c){const previous=c?.previousHubCharacter;if(previous&&CHARACTERS[previous]&&save.unlockedCharacters?.includes(previous)){save.selectedCharacter=previous;try{syncSelectedCharacterRoom();}catch(error){}}}
   function addChallengeUi(c){
     document.body.classList.add("sock-fashion-mode-v297");const panel=document.querySelector("#closetPanel");if(!panel)return;document.querySelector("#closeCloset")?.classList.add("sock-fashion-close-hidden-v297");panel.querySelector("#sockFashionBannerV297")?.remove();

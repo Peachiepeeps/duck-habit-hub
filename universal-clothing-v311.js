@@ -477,7 +477,7 @@
   }
 
   function appendUniversalOptions(group){
-    if(document.body.classList.contains("sock-fashion-mode-v297"))return;
+    // v24.353: Universal items remain available for the Sock Gremlin fashion battle.
     const characterId=save.selectedCharacter;
     const families=Object.values(FAMILIES).filter(f=>groupAcceptsFamily(group,f,characterId));
     if(!families.length)return;

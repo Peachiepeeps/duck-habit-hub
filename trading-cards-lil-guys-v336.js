@@ -61,20 +61,49 @@
     return shiny?[...all,{id:'shiny',label:shiny.name,art:shiny.art,linkedCardId:shiny.id}]:all;
   };
   TC.variantCounts=function(data,id){return {...(ensure(data)?.variantOwned?.[id]||{})};};
+  function isHolo(state,id,variant="default"){
+    return Boolean(state?.crafting?.holoVariants?.[id]?.[variant]);
+  }
+  function colorCounts(state,id){
+    const tracked=state?.variantOwned?.[id];
+    return tracked&&typeof tracked==='object'&&Object.keys(tracked).length
+      ?tracked:{default:count(state?.owned?.[id])};
+  }
+  function reserve(state,id,key){return isHolo(state,id,key)?1:4;}
+  TC.isColorHolo=isHolo;
+  TC.variantColorCount=function(state,id,key="default"){
+    return count(colorCounts(state,id)[key]);
+  };
+  // Unupgraded colors retain four cards (one card + 3 for Holo);
+  // finished colors only need their last copy protected.
   TC.variantExtras=function(state,id){
-    const counts=state?.variantOwned?.[id]||{};
-    return Object.values(counts).reduce((sum,n)=>sum+Math.max(0,count(n)-1),0);
+    return Object.entries(colorCounts(state,id)).reduce((sum,[key,n])=>
+      sum+Math.max(0,count(n)-reserve(state,id,key)),0);
   };
   TC.convertVariantDuplicates=function(state,id,requested=Infinity){
-    const counts=state?.variantOwned?.[id]||{};
+    const counts=colorCounts(state,id);
     let left=Number.isFinite(requested)?count(requested):Infinity,removed=0;
-    for(const key of Object.keys(counts)){
-      const take=Math.min(left,Math.max(0,count(counts[key])-1));
-      counts[key]-=take;removed+=take;left-=take;
+    for(const [key,value] of Object.entries(counts)){
+      const take=Math.min(left,Math.max(0,count(value)-reserve(state,id,key)));
+      if(!take)continue;
+      counts[key]=count(value)-take;removed+=take;left-=take;
       if(left<=0)break;
     }
     if(removed)state.owned[id]=Math.max(0,count(state.owned[id])-removed);
     return removed;
+  };
+  TC.upgradeColorHolo=function(state,id,variant="default",required=3){
+    if(!state?.crafting || isHolo(state,id,variant))return false;
+    const counts=colorCounts(state,id);
+    const total=count(counts[variant]);
+    if(total<required+1)return false;
+    // Only the selected color pays for its own finish.
+    counts[variant]=total-required;
+    state.owned[id]=Math.max(0,count(state.owned[id])-required);
+    if(!state.crafting.holoVariants||typeof state.crafting.holoVariants!=="object")state.crafting.holoVariants={};
+    if(!state.crafting.holoVariants[id])state.crafting.holoVariants[id]={};
+    state.crafting.holoVariants[id][variant]=true;
+    return true;
   };
   const oldFace=TC.createFace;
   TC.createFace=function(cardOrId,opts={}){
@@ -86,6 +115,14 @@
       const option=optionsFor(card).find(v=>v.id===variantId);
       const img=face.querySelector('.tc-art');
       if(option&&img)img.src=TC.cardArt({...card,art:option.art});
+    }
+    if(!opts.locked){
+      const shown=String(variantId||TC.cardCraft?.craftFor?.(card.id,TC.readSave())?.displayVariant||'default');
+      const state=TC.cardCraft?.ensure?.(TC.readSave());
+      const holo=TC.isColorHolo(state,card.id,shown);
+      face.classList.toggle('tc-holo-v262',holo);
+      face.querySelectorAll('.tc-holo-overlay-v262').forEach(el=>el.remove());
+      if(holo){const overlay=document.createElement('i');overlay.className='tc-holo-overlay-v262';overlay.setAttribute('aria-hidden','true');face.append(overlay);}
     }
     return face;
   };
