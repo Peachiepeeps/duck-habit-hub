@@ -1,0 +1,89 @@
+name: Install Duckie Days v24.343 - Shop, Holo and Six Nests
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Duckie-Days-v24.343-Shop-Cards-Six-Nests-QOL-update-only.zip'
+      - '.github/workflows/install-duckie-days-v24-343-shop-cards-six-nests.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24343-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Check for uploaded update ZIP
+        id: zip
+        shell: bash
+        run: |
+          if [ -f 'Duckie-Days-v24.343-Shop-Cards-Six-Nests-QOL-update-only.zip' ]; then
+            echo "found=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=no" >> "$GITHUB_OUTPUT"
+            echo "Upload v24.343 update ZIP to repo root, then rerun this workflow."
+          fi
+      - name: Verify and install update
+        if: steps.zip.outputs.found == 'yes'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          from hashlib import sha256
+          from zipfile import ZipFile
+          PKG='Duckie-Days-v24.343-Shop-Cards-Six-Nests-QOL-update-only.zip'
+          PKG_SHA='c0e706027cbc9d4c442049b4c13c199c5bdba87e57c9c4022d2630c56abf3fb8'
+          OLD={'trading-cards-ui.js': '23637cfe5a8df8587972c78d3bb3697d4725b5978718d4e14e3595682ee1566c', 'duck-quest/js/game-v96.js': '5d56993d1f69ec8e581b5a1ccaec4d4228120eeb2aff51615598fc60b9cfa00b', 'duck-quest/js/hatchery-v179.js': '4c8af5a5aec0460d26d2aaee158cd9e93f648fe09337e22e41ad949de088a098', 'duck-quest/js/hatchery-egg-position-v192.js': 'b8b75a2a9c4fadfb385810188ec2c33107d215d557761db15b35639c41d4c082', 'duck-quest/assets/eggs/Hatching-background-six-v343.png': None, 'duck-quest/index.html': '850dde00e608d5ae792efd1941e248072bef970e950da8cbc8e0157d6cd15952', 'index.html': '73c44ba39560a5cc30b560c3574da6391744c493a39c170bd98199e7107d80d2', 'sw.js': '0375302b5bd64254e1f9bf75ae63e42a30557c2661cf893d8e10a30fe0500925', 'version.json': '993fc8cc5b839b99d4b656bb620a561cef2c8e1a4d3aef6ff08ff405abef0580'}
+          NEW={'trading-cards-ui.js': 'b90e4ee0e07c17067c15bf771c906f371b2db40afb83a0e1e340a5031b87719d', 'duck-quest/js/game-v96.js': '65cf547e2a330a6929cbc6ee936eaed3a906013f036a1ec27fd4a8a9078c0807', 'duck-quest/js/hatchery-v179.js': 'f939db99f21b26d8cb8f52a92831b66534b683ce888d11286a788f73630f6d5a', 'duck-quest/js/hatchery-egg-position-v192.js': '9416d9d8653d6d4f71a00bcbb62bdd23967c4326c53b33c8f049eba2a61db701', 'duck-quest/assets/eggs/Hatching-background-six-v343.png': '048b08a7f9de83ba994dd759bbf962965770a8f77847f95671fdf270dc580e81', 'duck-quest/index.html': 'f66b1c601b3957603514d40e2021d1f211cce5c1676d75e35429529e40f539bc', 'index.html': 'fcb9eace4fa784ac28b22a55beafd7e34f38a59d99f47e05658f38b3a303ac3f', 'sw.js': '3357f6224c17d4e532515fba38ef7c06b617c73458ced08a4471bed490e8750a', 'version.json': 'dfebb926d399c78f7a78bbc88a4ada2ccafe257e872f6430d4034463fca65463'}
+          
+          def digest(data):return sha256(data).hexdigest()
+          
+          pkg=Path(PKG)
+          if not pkg.is_file():raise SystemExit('Upload the matching v24.343 update ZIP to the repository root first.')
+          if digest(pkg.read_bytes())!=PKG_SHA:raise SystemExit('Incorrect v24.343 update ZIP; no game files changed.')
+          with ZipFile(pkg) as archive:
+              names=archive.namelist()
+              if sorted(names)!=sorted(NEW):raise SystemExit('Unrecognized or missing ZIP paths; refusing to install.')
+              updates={p:archive.read(p) for p in NEW}
+          for p,data in updates.items():
+              if digest(data)!=NEW[p]:raise SystemExit('Checksum failure: '+p)
+          states=[]
+          for p in NEW:
+              file=Path(p)
+              cur=digest(file.read_bytes()) if file.is_file() else None
+              if cur==NEW[p]:states.append('new')
+              elif cur==OLD[p]:states.append('old')
+              else:raise SystemExit('Unknown edits or missing baseline: '+p+'. Nothing overwritten.')
+          if all(x=='new' for x in states):print('v24.343 is already installed.')
+          elif all(x=='old' for x in states):
+              for p,data in updates.items():
+                  Path(p).parent.mkdir(parents=True,exist_ok=True)
+                  Path(p).write_bytes(data)
+              assert all(digest(Path(p).read_bytes())==NEW[p] for p in NEW)
+              print('Installed v24.343 Shop/Cards/Six Nest QOL update.')
+          else:raise SystemExit('Mixed partial release. Stopped without writing.')
+          pkg.unlink()
+          PYCODE
+      - name: Commit installed files
+        if: steps.zip.outputs.found == 'yes'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A -- 'trading-cards-ui.js' 'duck-quest/js/game-v96.js' 'duck-quest/js/hatchery-v179.js' 'duck-quest/js/hatchery-egg-position-v192.js' 'duck-quest/assets/eggs/Hatching-background-six-v343.png' 'duck-quest/index.html' 'index.html' 'sw.js' 'version.json' 'Duckie-Days-v24.343-Shop-Cards-Six-Nests-QOL-update-only.zip'
+          if git diff --cached --quiet; then
+            echo 'Already installed.'
+          else
+            git commit -m 'Duckie Days v24.343: unlimited packs, daily cards, holo protection, six nests'
+            git push
+          fi
