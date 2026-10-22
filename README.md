@@ -1,24 +1,29 @@
-Duckie Days v24.128
+# Duckie Days — v24.346 🦆
 
-A cozy duck game/habit hub with OCs, collecting, decorating, Duck Quest, and minigames.
+A cozy duck game and habit hub, featuring original characters, Duck Quest, Buddy collecting, the closet, card collecting, room decorating, and minigames.
 
-v24.128 adds unlockable Duck Quest UI Themes, selectable Buddy family portraits, and RPG terminology polish. Duck Quest now uses Stage + Level wording, “Equip Charm,” and keeps full-Stage completion prizes hidden until they are actually earned.
+## Project structure
 
-<!-- CURRENT-FILE-MAP:START -->
-## Current file map
+| Location | Contents |
+| --- | --- |
+| `index.html`, `app.js`, `app.css` | Main game, UI, and styling |
+| `hub.js`, `hub.css`, `hub-boosts.js` | Home, room, Shop, and inventory boosts |
+| `duck-quest/` | Duck Quest, battles, hatchery, encounters, and their active add-on scripts |
+| `assets/` | Shared character, item, furniture, and collectible art |
+| `bao-cafe/`, `bakery/`, `crane-game/`, `memory-game/`, `sort-game/`, `duckdoku/` | Playable minigames |
+| `trading-cards-*.js`, `trading-cards-*.css` | Trading Card collection and UI |
+| `tasks.js`, `tasks.css`, `task-reminders.*`, `firebase-reminders.mjs` | Tasks and reminders |
+| `firebase-backend/` | Push notification backend materials |
+| `sw.js`, `manifest.webmanifest`, `version.json` | Offline/app metadata and versioning |
+| `bao-cafe-planning/` | Design notes and references retained for future work |
+| `.github/workflows/` | One maintenance cleanup workflow; GitHub Pages builds are managed by GitHub |
 
-The root code was consolidated in v24.287 so future updates are easier to follow.
+## Maintaining the game
 
-- `app.js` / `app.css` — main app and base styling
-- `hub.js` / `hub.css` — Home/room features; **Book shelf positioning is in `hub.css`**
-- `hub-boosts.js` — Hub Shop / EXP Candy helpers
-- `tasks.js` / `tasks.css` — Tasks, Duck Bucks, and Collectible Shelf
-- `task-reminders.js` / `task-reminders.css` / `firebase-reminders.mjs` — task reminders
-- `trading-cards-base.js` / `.css` — shared Trading Card core
-- `trading-cards-extra.js` / `.css` — newer Trading Card data/features
-- `trading-cards-ui.js` — Trading Card book/workshop UI
-- `duck-quest/` — Duck Quest game files
-- `sw.js` — service worker/cache list
+- Keep the active version-numbered `fixes-*.js` / `fixes-*.css` files: these are **loaded by the current HTML** and may still change behavior or style.
+- When installing a new game release, update the HTML references, cache manifest, and `version.json` together.
+- Don't delete assets solely because their name is not visible in HTML; many are selected dynamically by JavaScript.
+- Historical versions and completed installer workflows remain recoverable from Git history. The v24.346 cleanup intentionally removes only unreferenced old code and completed installers.
+- Refer to `CLEANUP-AUDIT.md` for the full deletion list and verification results.
 
-Old numbered files were removed from the live tree after being consolidated; Git history still preserves them.
-<!-- CURRENT-FILE-MAP:END -->
+This cleanup does not alter player saves, character assets, game mechanics, or the deployed base URL.
