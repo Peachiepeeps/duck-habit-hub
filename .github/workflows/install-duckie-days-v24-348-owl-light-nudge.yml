@@ -1,0 +1,89 @@
+name: Install Duckie Days v24.348 Owl Light Nudge
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/install-duckie-days-v24-348-owl-light-nudge.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-348-owl-light-nudge-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Apply v24.348 Owl Light Nudge
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+
+          ROOT = Path('.')
+
+          def read(path):
+            return (ROOT / path).read_text(encoding='utf-8')
+
+          def write(path, content):
+            (ROOT / path).write_text(content, encoding='utf-8')
+
+          def replace_once(text, old, new, label):
+            count = text.count(old)
+            if count != 1:
+              raise SystemExit(f"Expected exactly one match for {label!r}, found {count}")
+            return text.replace(old, new, 1)
+
+          fix_path = 'duck-quest/js/fixes-v347.js'
+          fix_js = read(fix_path)
+          fix_js = replace_once(
+            fix_js,
+            "overlay.style.top=(spriteBox.top-hostBox.top)+'px';",
+            "overlay.style.top=(spriteBox.top-hostBox.top+1)+'px';",
+            'owl overlay one-pixel nudge'
+          )
+          write(fix_path, fix_js)
+
+          dq_index = read('duck-quest/index.html')
+          dq_index = replace_once(
+            dq_index,
+            '  <script src="js/fixes-v347.js?v=24.347"></script>',
+            '  <script src="js/fixes-v347.js?v=24.348"></script>',
+            'duck-quest fixes-v347 query bump'
+          )
+          write('duck-quest/index.html', dq_index)
+
+          root_index = read('index.html')
+          root_index = replace_once(root_index, 'const DUCK_HUB_BUILD = "24.347";', 'const DUCK_HUB_BUILD = "24.348";', 'DUCK_HUB_BUILD')
+          root_index = replace_once(root_index, 'register("./sw.js?v=24-347-stoplight-owl-chonk-fix",', 'register("./sw.js?v=24-348-owl-light-nudge",', 'service worker query')
+          write('index.html', root_index)
+
+          sw = read('sw.js')
+          sw = replace_once(sw, "const APP_CACHE='duck-habit-hub-app-v24-347-stoplight-owl-chonk-fix';", "const APP_CACHE='duck-habit-hub-app-v24-348-owl-light-nudge';", 'APP_CACHE')
+          sw = replace_once(sw, "'./sw.js?v=24.347',", "'./sw.js?v=24.348',", 'sw self cache entry')
+          sw = replace_once(sw, "'./duck-quest/js/fixes-v347.js?v=24.347',", "'./duck-quest/js/fixes-v347.js?v=24.348',", 'sw fixes-v347 query bump')
+          write('sw.js', sw)
+
+          version = json.loads(read('version.json'))
+          version['version'] = '24.348'
+          write('version.json', json.dumps(version, indent=2) + '\n')
+          PY
+
+      - name: Commit v24.348 Owl Light Nudge
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add duck-quest/js/fixes-v347.js duck-quest/index.html index.html sw.js version.json
+          git diff --cached --quiet && { echo "No changes to commit."; exit 0; }
+          git commit -m "Duckie Days v24.348: nudge owl lights down 1px"
+          git push
