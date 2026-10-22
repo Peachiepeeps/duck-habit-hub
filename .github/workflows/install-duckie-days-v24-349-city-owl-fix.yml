@@ -1,0 +1,187 @@
+name: Install Duckie Days v24.349 City Progress + Owl Alignment
+
+"on":
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/install-duckie-days-v24-349-city-owl-fix.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v24-349-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Repair City save and owl overlay
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY_PATCH'
+          from pathlib import Path
+          import json
+
+          ROOT=Path('.')
+
+          def read(p):return (ROOT/p).read_text(encoding='utf-8')
+          def write(p,s):(ROOT/p).write_text(s,encoding='utf-8')
+          def replace_once(s,old,new,label):
+              count=s.count(old)
+              if count!=1:raise SystemExit(f"v24.349 mismatch: {label}: expected 1, got {count}; no commit")
+              return s.replace(old,new,1)
+
+          version=json.loads(read('version.json'))
+          if version.get('version')!='24.348':raise SystemExit('This patch expects v24.348; current version is '+str(version.get('version')))
+
+          # Protect existing City Streets ranks, cleared state, and last-area selection
+          # when the hub normalizes Quest data. Duck Quest already handles City 1–200.
+          p='app.js';s=read(p)
+          s=replace_once(s,
+            '  const rawCloudLast = Number(existing.areas?.cloud?.lastRank ?? legacyAreas.cloud?.lastRank) || 1;',
+            '  const rawCloudLast = Number(existing.areas?.cloud?.lastRank ?? legacyAreas.cloud?.lastRank) || 1;\n'
+            '  const rawCityUnlocked = Number(existing.areas?.city?.unlockedRank ?? legacyAreas.city?.unlockedRank) || 1;\n'
+            '  const rawCityLast = Number(existing.areas?.city?.lastRank ?? legacyAreas.city?.lastRank) || 1;',
+            'city progress raw fields')
+          s=replace_once(s,
+            '  const cloudLast = Math.max(1, Math.min(cloudUnlocked, rawCloudLast));',
+            '  const cloudLast = Math.max(1, Math.min(cloudUnlocked, rawCloudLast));\n'
+            '  const cityUnlocked = Math.max(1, Math.min(200, Math.floor(rawCityUnlocked)));\n'
+            '  const cityLast = Math.max(1, Math.min(cityUnlocked, Math.floor(rawCityLast)));',
+            'city progress clamps')
+          s=replace_once(s,
+            '  const validAreas = ["meadow", "ocean", "candy", "cloud"];',
+            '  const validAreas = ["meadow", "ocean", "candy", "cloud", "city"];',
+            'city valid area')
+          s=replace_once(s,
+            '      cloud: { unlockedRank: cloudUnlocked, lastRank: cloudLast }',
+            '      cloud: { unlockedRank: cloudUnlocked, lastRank: cloudLast },\n'
+            '      city: { unlockedRank: cityUnlocked, lastRank: cityLast }',
+            'city saved areas')
+          s=replace_once(s,
+            '      cloud: Boolean(existing.clearedAreas?.cloud || rawCloudLast >= 150 || rawCloudUnlocked >= 150)',
+            '      cloud: Boolean(existing.clearedAreas?.cloud || rawCloudLast >= 150 || rawCloudUnlocked >= 150),\n'
+            '      city: Boolean(existing.clearedAreas?.city)',
+            'city cleared state')
+          write(p,s)
+
+          # Optional opt-in recovery for the Miko progress witnessed in the screenshot:
+          # City Streets Level 4 was reached earlier. Do not assume how many wins after it.
+          p='duck-quest/js/game-v96.js';s=read(p)
+          anchor='function openRoutePicker(areaId){'
+          addition='''// v24.349: opt-in restoration of Miko's previously documented City Level 4.
+          // No automatic grants to fresh saves; never lower an existing City level.
+          function offerMikoCityRecoveryV349(){
+            const card=ui.routePickerModal?.querySelector('.route-picker-modal-card');
+            if(!card)return;
+            card.querySelector('[data-city-recovery-v349]')?.remove();
+            if(selectedArea!=='city'||activeCharacterId!=='miko')return;
+            const city=areaProgress('city');
+            if((Number(city?.unlockedRank)||1)>=4||questSave.mikoCityLevel4RecoveryV349)return;
+            const button=document.createElement('button');
+            button.type='button';
+            button.className='pixel-button';
+            button.dataset.cityRecoveryV349='1';
+            button.style.cssText='width:100%;margin-top:9px;min-height:44px;white-space:normal;padding:8px;font-size:.73rem;';
+            button.textContent='Restore Miko’s City Level 4 ♡';
+            button.addEventListener('click',()=>{
+              if(currentRun||selectedArea!=='city'||activeCharacterId!=='miko')return;
+              const progress=areaProgress('city');
+              progress.unlockedRank=Math.max(4,Number(progress.unlockedRank)||1);
+              progress.lastRank=Math.max(4,Math.min(progress.unlockedRank,Number(progress.lastRank)||1));
+              activeHeroProgress().lastArea='city';
+              questSave.mikoCityLevel4RecoveryV349=true;
+              persistAll();
+              openRoutePicker('city');
+            });
+            card.appendChild(button);
+          }
+
+          '''
+          s=replace_once(s,anchor,addition+anchor,'quest recovery insertion')
+          s=replace_once(s,
+            '  populateStartingPointPicker(progress);\n  ui.routeStartLevelPicker?.classList.add("hidden");',
+            '  populateStartingPointPicker(progress);\n  offerMikoCityRecoveryV349();\n  ui.routeStartLevelPicker?.classList.add("hidden");',
+            'recovery display')
+          write(p,s)
+
+          # One native sprite pixel was being overshot by ALL three light positions.
+          # Native asset dimensions 100 x 110, center targets (31.5,66), (31.5,81),
+          # (36.5,95). Draw 10x10 native-pixel circles centered exactly there.
+          p='duck-quest/js/fixes-v347.js';s=read(p)
+          s=replace_once(s,'left:27%; top:56.4%; width:10%;','left:26.5%; top:55.455%; width:10%;','red light position')
+          s=replace_once(s,'left:27%; top:70%; width:10%;','left:26.5%; top:69.091%; width:10%;','yellow light position')
+          s=replace_once(s,'left:32%; top:82.7%; width:10%;','left:31.5%; top:81.818%; width:10%;','green light position')
+          s=replace_once(s,
+            "overlay.style.top=(spriteBox.top-hostBox.top+1)+'px';",
+            "overlay.style.top=(spriteBox.top-hostBox.top)+'px';",
+            'remove old additional CSS pixel nudge')
+          # Synchronize once per visual frame, so CSS bounce and overlay stay together.
+          s=replace_once(s,'  setInterval(syncVisualFixes,60);',
+            '''  function followSpritesEveryFrameV349(){
+              syncVisualFixes();
+              requestAnimationFrame(followSpritesEveryFrameV349);
+            }
+            requestAnimationFrame(followSpritesEveryFrameV349);''',
+            'replace 60ms polling with animation-frame sync')
+          # Precise `object-fit:contain` geometry: the content may not fill img's box.
+          s=replace_once(s,
+            '''      overlay.style.left=(spriteBox.left-hostBox.left)+'px';
+                overlay.style.top=(spriteBox.top-hostBox.top)+'px';
+                overlay.style.width=spriteBox.width+'px';
+                overlay.style.height=spriteBox.height+'px';''',
+            '''      const nativeW=Math.max(1,Number(refs.sprite.naturalWidth)||100);
+                const nativeH=Math.max(1,Number(refs.sprite.naturalHeight)||110);
+                const scale=Math.min(spriteBox.width/nativeW,spriteBox.height/nativeH);
+                const drawnW=nativeW*scale,drawnH=nativeH*scale;
+                overlay.style.left=(spriteBox.left-hostBox.left+(spriteBox.width-drawnW)/2)+'px';
+                const idleFrameNudge=/idle-2(?:\\.|$)/i.test(String(refs.sprite.currentSrc||refs.sprite.src||'')) ? scale : 0;
+                overlay.style.top=(spriteBox.top-hostBox.top+(spriteBox.height-drawnH)/2+idleFrameNudge)+'px';
+                overlay.style.width=drawnW+'px';
+                overlay.style.height=drawnH+'px';''',
+            'track actual rendered image content')
+          write(p,s)
+
+          # Cache/version bumps ensure both hub save fix and quest sprite fix arrive together.
+          p='index.html';s=read(p)
+          s=replace_once(s,'<script src="app.js?v=24.345"></script>','<script src="app.js?v=24.349"></script>','hub game JS cachebuster')
+          s=replace_once(s,'const DUCK_HUB_BUILD = "24.348";','const DUCK_HUB_BUILD = "24.349";','hub build')
+          s=replace_once(s,'register("./sw.js?v=24-348-owl-light-nudge",','register("./sw.js?v=24-349-city-progression-owl-alignment",','hub sw URL')
+          write(p,s)
+          p='duck-quest/index.html';s=read(p)
+          s=replace_once(s,'<script src="js/game-v96.js?v=24-345"></script>','<script src="js/game-v96.js?v=24-349"></script>','quest main script URL')
+          s=replace_once(s,'<script src="js/fixes-v347.js?v=24.348"></script>','<script src="js/fixes-v347.js?v=24.349"></script>','owl fixes URL')
+          write(p,s)
+          p='sw.js';s=read(p)
+          s=replace_once(s,"const APP_CACHE='duck-habit-hub-app-v24-348-owl-light-nudge';","const APP_CACHE='duck-habit-hub-app-v24-349-city-progression-owl-alignment';",'sw cache name')
+          s=replace_once(s,"'./sw.js?v=24.348',","'./sw.js?v=24.349',",'sw self')
+          s=replace_once(s,"'./app.js?v=24.345',","'./app.js?v=24.349',",'sw hub app')
+          s=replace_once(s,"'./duck-quest/js/game-v96.js?v=24-345',","'./duck-quest/js/game-v96.js?v=24-349',",'sw quest game')
+          s=replace_once(s,"'./duck-quest/js/fixes-v347.js?v=24.348',","'./duck-quest/js/fixes-v347.js?v=24.349',",'sw owl')
+          write(p,s)
+          version['version']='24.349'
+          write('version.json',json.dumps(version,indent=2)+'\n')
+
+          assert 'city: { unlockedRank: cityUnlocked, lastRank: cityLast }' in read('app.js')
+          assert 'requestAnimationFrame(followSpritesEveryFrameV349)' in read('duck-quest/js/fixes-v347.js')
+          print('Duckie Days v24.349 ready: City saved fields retained; optional Miko Level 4 recovery; owl lamp pixels aligned.')
+          PY_PATCH
+          node --check app.js
+          node --check duck-quest/js/game-v96.js
+          node --check duck-quest/js/fixes-v347.js
+      - name: Commit installed game files
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add app.js duck-quest/js/game-v96.js duck-quest/js/fixes-v347.js index.html duck-quest/index.html sw.js version.json
+          if git diff --cached --quiet; then echo 'No changes to commit.'; else
+            git commit -m 'Duckie Days v24.349: preserve City progression and align owl lamps'
+            git push
+          fi
