@@ -94,6 +94,22 @@
     return state;
   }
   function isFavorite(id){return state.favorites.includes(id);}
+  function cardThumbSrc(card,item){
+  if(card?.enemyId==='mimic' && (item?.id==='lucky' || item?.id==='healthy')){
+    return TC.asset('duck-quest/assets/enemies/mimic/'+item.id+'/idle-2.webp');
+  }
+  return TC.cardArt({...card,art:item?.art||card?.art});
+}
+function tcGalleryFace(card,opts={}){
+  const face=TC.createFace(card,opts);
+  if(!card || opts.locked || card.enemyId!=='mimic')return face;
+  const display=TC.cardCraft?.craftFor?.(card.id,save)?.displayVariant;
+  if(display==='lucky'||display==='healthy'){
+    const img=face.querySelector('.tc-art');
+    if(img)img.src=cardThumbSrc(card,{id:display});
+  }
+  return face;
+}
   function toggleFavorite(id){const i=state.favorites.indexOf(id);if(i>=0)state.favorites.splice(i,1);else state.favorites.push(id);persist();renderCards();}
   function sortedCards(){return [...TC.cards].filter(card=>rarityFilter==="all"||card.rarity===rarityFilter).filter(card=>showMissing||Number(state.owned[card.id]||0)>0).sort((a,b)=>TC.order[a.rarity]-TC.order[b.rarity]||Number(isFavorite(b.id))-Number(isFavorite(a.id))||a.number.localeCompare(b.number));}
   function renderCards(){
@@ -102,12 +118,12 @@
     panel.querySelector("#tcPackCount").textContent=state.unopenedPacks;panel.querySelector("#tcOpenPack").disabled=state.unopenedPacks<1;panel.querySelector("#tcOpenTenPacks").disabled=state.unopenedPacks<10;
     const grid=panel.querySelector("#tcGrid");grid.innerHTML="";const list=sortedCards();
     if(!list.length){const empty=document.createElement("div");empty.className="tc-empty";empty.innerHTML=showMissing?"<strong>No cards in this rarity yet.</strong>":"<strong>No cards collected here yet!</strong><br>Try your Starter Pack, Duck Quest, or the Daily Shop. ♡";grid.append(empty);return;}
-    list.forEach(card=>{const qty=Math.max(0,Number(state.owned[card.id])||0),locked=qty<1;const entry=document.createElement("article");entry.className="tc-entry";const fav=document.createElement("button");fav.type="button";fav.className=`tc-favorite${isFavorite(card.id)?" active":""}`;fav.textContent="♥";fav.disabled=locked;fav.setAttribute("aria-label",`Favorite ${card.name}`);fav.addEventListener("click",e=>{e.stopPropagation();toggleFavorite(card.id)});const face=TC.createFace(card,{locked});const name=document.createElement("span");name.className="tc-entry-label";name.textContent=locked?`${TC.labels[card.rarity]} · ${card.number}`:card.name;const owned=document.createElement("span");owned.className="tc-owned";owned.textContent=locked?"Missing":`Owned ×${qty}`;entry.append(fav,face,name,owned);entry.addEventListener("click",()=>openDetail(card,locked));grid.append(entry);});
+    list.forEach(card=>{const qty=Math.max(0,Number(state.owned[card.id])||0),locked=qty<1;const entry=document.createElement("article");entry.className="tc-entry";const fav=document.createElement("button");fav.type="button";fav.className=`tc-favorite${isFavorite(card.id)?" active":""}`;fav.textContent="♥";fav.disabled=locked;fav.setAttribute("aria-label",`Favorite ${card.name}`);fav.addEventListener("click",e=>{e.stopPropagation();toggleFavorite(card.id)});const face=tcGalleryFace(card,{locked});const name=document.createElement("span");name.className="tc-entry-label";name.textContent=locked?`${TC.labels[card.rarity]} · ${card.number}`:card.name;const owned=document.createElement("span");owned.className="tc-owned";owned.textContent=locked?"Missing":`Owned ×${qty}`;entry.append(fav,face,name,owned);entry.addEventListener("click",()=>openDetail(card,locked));grid.append(entry);});
   }
   function openDetail(card,locked){
     syncCardState();
     detailCardId=card.id;
-    const body=detail.querySelector("#tcDetailBody");body.innerHTML="";body.append(TC.createFace(card,{locked}));
+    const body=detail.querySelector("#tcDetailBody");body.innerHTML="";body.append(tcGalleryFace(card,{locked}));
     const title=document.createElement("h2");title.textContent=locked?"???":card.name;
     const meta=document.createElement("p");const displayRarity=TC.effectiveRarity?.(card,save)||card.rarity;meta.innerHTML=`<strong>${TC.labels[displayRarity]||displayRarity}</strong> · ${card.number}<br>${card.category}`;
     const owned=document.createElement("p");owned.textContent=locked?"Not collected yet":`Owned ×${state.owned[card.id]}`;
@@ -125,7 +141,7 @@
         const cosmetic=!separate&&unlocked.includes(item.id);
         const chip=document.createElement('button');chip.type='button';chip.className='tc-lilguys-variant-chip';
         chip.disabled=quantity<1&&!cosmetic;
-        const img=document.createElement('img');img.src=TC.cardArt({...card,art:item.art});img.alt='';img.loading='lazy';
+        const img=document.createElement('img');img.src=cardThumbSrc(card,item);img.alt='';img.loading='lazy';
         const label=document.createElement('span');label.textContent=item.label;
         const qty=document.createElement('small');qty.textContent=quantity?`×${quantity}`:(cosmetic?'Dust unlocked':'Not found');
         chip.append(img,label,qty);
@@ -680,7 +696,7 @@
     const face=TC.createFace(card,{locked:false});
     const art=face.querySelector('.tc-art');
     if(art && option?.art){
-      art.src=TC.cardArt({...card,art:option.art});
+      art.src=cardThumbSrc(card,option);
     }
     face.classList.add('tc-variant-preview-face-v270');
     return face;

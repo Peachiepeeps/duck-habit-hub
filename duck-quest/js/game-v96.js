@@ -3870,13 +3870,26 @@ function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 // current encounter decoded/warm. This avoids animation stalls without
 // preloading the entire game at startup.
 const questImageWarmCache = new Map();
+const QUEST_WARM_IMAGE_LIMIT = 96;
 function warmQuestImage(src){
-  if(!src || questImageWarmCache.has(src)) return;
+  if(!src) return;
+  const key=String(src);
+  if(questImageWarmCache.has(key)){
+    const existing=questImageWarmCache.get(key);
+    questImageWarmCache.delete(key);
+    questImageWarmCache.set(key,existing); // Recently used sprites stay warm.
+    return;
+  }
   const img=new Image();
   img.decoding="async";
-  img.src=src;
-  questImageWarmCache.set(src,img);
-  if(typeof img.decode==="function") img.decode().catch(()=>{});
+  img.onerror=()=>{if(questImageWarmCache.get(key)===img)questImageWarmCache.delete(key);};
+  questImageWarmCache.set(key,img);
+  img.src=key;
+  if(typeof img.decode==="function")img.decode().catch(()=>{});
+  while(questImageWarmCache.size>QUEST_WARM_IMAGE_LIMIT){
+    const oldest=questImageWarmCache.keys().next().value;
+    questImageWarmCache.delete(oldest);
+  }
 }
 
 function warmCurrentBattleAssets(enemy=null){
@@ -3905,6 +3918,22 @@ function warmCurrentBattleAssets(enemy=null){
     "assets/shinies/amethyst-mimic-open.webp"
   ].forEach(src=>sources.add(src));
   sources.forEach(warmQuestImage);
+  const nextIndex=(currentRun?.index??-1)+1;
+  const upcoming=currentRun?.mode==="normal"?currentRun.plan?.[nextIndex]:null;
+  if(upcoming){
+    const prewarmNext=()=>{
+      const nextBg=currentAreaConfig()?.backgrounds?.[nextIndex];
+      if(nextBg)warmQuestImage(nextBg);
+      const ids=Array.isArray(upcoming.enemyIds)?upcoming.enemyIds:[upcoming.enemyId].filter(Boolean);
+      ids.slice(0,2).forEach(id=>{
+        const template=ENEMIES[id];
+        const preview=template?.idle?.[0]||template?.image;
+        if(preview)warmQuestImage(preview);
+      });
+    };
+    if(typeof requestIdleCallback==="function")requestIdleCallback(prewarmNext,{timeout:1800});
+    else setTimeout(prewarmNext,700);
+  }
 }
 
 function warmQuestMenuAssets(){

@@ -15,12 +15,12 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-350-safe-trading-card-purchases';
+const APP_CACHE='duck-habit-hub-app-v24-351-card-variants-artwork-mimic-fix';
 const APP_SHELL=[
  './',
  './index.html',
  './version.json',
- './sw.js?v=24.350',
+ './sw.js?v=24.351',
  './manifest.webmanifest?v=24.296',
  './app.css?v=24.345',
  './trading-cards-base.css?v=24.327',
@@ -78,7 +78,7 @@ const APP_SHELL=[
  './universal-clothing-v311.js?v=24.311',
  './gimmick-hub-v288.js?v=24.296',
  './hub-boosts.js?v=24.346',
- './trading-cards-ui.js?v=24.350',
+ './trading-cards-ui.js?v=24.351',
  './tasks.js?v=24.336',
  './firebase-reminders.mjs?v=24.296',
  './task-reminders.js?v=24.296',
@@ -127,7 +127,7 @@ const APP_SHELL=[
  './duck-quest/css/quest-v276.css?v=24-276',
  './duck-quest/css/quest-v277.css?v=24-277',
  './duck-quest/css/quest-v278.css?v=24-280',
- './duck-quest/js/game-v96.js?v=24-349',
+ './duck-quest/js/game-v96.js?v=24-351',
  './duck-quest/js/hatchery-v179.js?v=24-345',
  './duck-quest/js/hatchery-egg-position-v192.js?v=24-343',
  './duck-quest/assets/eggs/Hatching-background-six-v343.png',
@@ -151,7 +151,8 @@ const APP_SHELL=[
  './crane-game/script-v24-40.js?v=24-298',
  './duck-quest/js/fixes-v289.js?v=24-296',
  './duck-quest/js/universal-clothing-drops-v311.js?v=24.311',
- './duck-quest/js/fixes-v311.js?v=24.311',
+ './duck-quest/js/fixes-v311.js?v=24.351',
+ './duck-quest/js/trading-card-drops-v235.js?v=24.351',
  './duck-quest/js/new-enemies-v313.js?v=24.313',
  './duck-quest/js/fixes-v347.js?v=24.349',
  './duck-quest/js/fixes-v313.js?v=24.313',
