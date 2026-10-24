@@ -88,12 +88,21 @@
     ['stoplight-owl','Stoplight Owl','City Streets',true],
     ['lil-king','Lil King','City Streets',true],
     ['scarrie','Scarrie','Meadow',true],
-    ['bottle-fairy','Bottle Fairy','Ocean',true]
+    ['bottle-fairy','Bottle Fairy','Ocean',true],
+    ['pumpkitty','Pumpkitty','Spooky Forest',false],
+    ['webby','Webby','Spooky Forest',false],
+    ['voodoo-dollie','Voodoo Dollie','Spooky Forest',false],
+    ['vampire-bat','Vampire Bat','Spooky Forest',false],
+    ['dizzy-mushie','Dizzy Mushie','Spooky Forest',false],
+    ['nurse-boo-boo','Nurse Boo Boo','Spooky Forest',false],
+    ['miss-wick','Miss Wick','Spooky Forest',true],
+    ['spider-maid','Spider Maid','Spooky Forest',true],
+    ['pumpkin-knight','Pumpkin Knight','Spooky Forest',true]
   ];
   additionalCardFamilies.forEach(([enemyId,name,area,boss],index)=>{
     const rarity=boss?'uncommon':'common';
     const folder=boss?'bosses':'enemies';
-    const art=`${folder}/${enemyId}/base/idle-1.png`;
+    const art=`${folder}/${enemyId}/base/idle-1.${area==='Spooky Forest'?'webp':'png'}`;
     const cardId=(boss?'u-':'c-')+enemyId;
     if(!cards.some(c=>c.id===cardId))cards.push({
       id:cardId,enemyId,name,art,rarity,
@@ -103,7 +112,7 @@
     const shinyId='r-'+enemyId;
     if(!cards.some(c=>c.id===shinyId))cards.push({
       id:shinyId,enemyId,name:'Shiny '+name,
-      art:`${folder}/${enemyId}/base/shiny-idle-1.png`,
+      art:`${folder}/${enemyId}/base/shiny-idle-1.${area==='Spooky Forest'?'webp':'png'}`,
       rarity:'rare',number:`R-${String(100+index).padStart(3,'0')}`,
       category:area+' Shiny',hint:`Find Shiny ${name} in Duck Quest or a Card Pack.`
     });

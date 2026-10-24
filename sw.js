@@ -15,12 +15,12 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-353-fashion-holo-fixes';
+const APP_CACHE='duck-habit-hub-app-v24-354-spooky-forest';
 const APP_SHELL=[
  './',
  './index.html',
  './version.json',
- './sw.js?v=24.353',
+ './sw.js?v=24.354',
  './manifest.webmanifest?v=24.296',
  './app.css?v=24.345',
  './trading-cards-base.css?v=24.327',
@@ -36,7 +36,7 @@ const APP_SHELL=[
  './fixes-v313.css?v=24.313',
  './fixes-v314.css?v=24.314',
  './fixes-v315.css?v=24.315',
- './trading-cards-base.js?v=24.326',
+ './trading-cards-base.js?v=24.354',
  './trading-cards-extra.js?v=24.353',
  './trading-cards-lil-guys-v336.js?v=24.353',
  './trading-cards-v317.js?v=24.317',
@@ -75,7 +75,7 @@ const APP_SHELL=[
  './duck-quest/css/fixes-v318.css?v=24.318',
  './duck-quest/js/bao-cafe-v299.js?v=24-327',
  './app.js?v=24.353',
- './universal-clothing-v311.js?v=24.353',
+ './universal-clothing-v311.js?v=24.354',
  './gimmick-hub-v288.js?v=24.296',
  './hub-boosts.js?v=24.346',
  './trading-cards-ui.js?v=24.353',

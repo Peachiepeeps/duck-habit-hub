@@ -69,6 +69,17 @@ const AREA_CONFIG = Object.freeze({
     ],
     stageNames:["Neighborhood Lane","Apartment Row","Corner Store","City Crossroads"],
     resultTitle:"City Streets is Clear!"
+  },
+  spooky: {
+    id:"spooky",name:"Spooky Forest",label:"SPOOKY FOREST",maxRank:240,
+    backgrounds:[
+      "assets/backgrounds/spooky/stage-1.webp",
+      "assets/backgrounds/spooky/stage-2.webp",
+      "assets/backgrounds/spooky/stage-3.webp",
+      "assets/backgrounds/spooky/stage-4.webp"
+    ],
+    stageNames:["Whispering Woods","Graveyard Trail","Pumpkin Path","Haunted Manor"],
+    resultTitle:"Spooky Forest is Clear!"
   }
 });
 
@@ -3070,9 +3081,10 @@ function defaultCharacterQuestProgress(){
       ocean:{unlockedRank:1,lastRank:1},
       candy:{unlockedRank:1,lastRank:1},
       cloud:{unlockedRank:1,lastRank:1},
-      city:{unlockedRank:1,lastRank:1}
+      city:{unlockedRank:1,lastRank:1},
+      spooky:{unlockedRank:1,lastRank:1}
     },
-    clearedAreas:{meadow:false,ocean:false,candy:false,cloud:false,city:false},
+    clearedAreas:{meadow:false,ocean:false,candy:false,cloud:false,city:false,spooky:false},
     affectionMilestonesSeen:{five:false,ten:false},
     endless:{record:0,checkpoint:1}
   };
@@ -3098,6 +3110,8 @@ function normalizeCharacterQuestProgress(raw, legacy={}){
   const cloudLast=clampInt(rawCloudLast,1,cloudUnlocked,1);
   const cityUnlocked=clampInt(q.areas?.city?.unlockedRank ?? legacyAreas.city?.unlockedRank,1,200,1);
   const cityLast=clampInt(q.areas?.city?.lastRank ?? legacyAreas.city?.lastRank,1,cityUnlocked,1);
+  const spookyUnlocked=clampInt(q.areas?.spooky?.unlockedRank ?? legacyAreas.spooky?.unlockedRank,1,240,1);
+  const spookyLast=clampInt(q.areas?.spooky?.lastRank ?? legacyAreas.spooky?.lastRank,1,spookyUnlocked,1);
   const incomingIcon=q.iconBackground ?? legacy.iconBackground;
   return {
     ...d,...q,
@@ -3112,14 +3126,16 @@ function normalizeCharacterQuestProgress(raw, legacy={}){
       ocean:{unlockedRank:oceanUnlocked,lastRank:Math.min(oceanLast,oceanUnlocked)},
       candy:{unlockedRank:candyUnlocked,lastRank:Math.min(candyLast,candyUnlocked)},
       cloud:{unlockedRank:cloudUnlocked,lastRank:Math.min(cloudLast,cloudUnlocked)},
-      city:{unlockedRank:cityUnlocked,lastRank:Math.min(cityLast,cityUnlocked)}
+      city:{unlockedRank:cityUnlocked,lastRank:Math.min(cityLast,cityUnlocked)},
+      spooky:{unlockedRank:spookyUnlocked,lastRank:Math.min(spookyLast,spookyUnlocked)}
     },
     clearedAreas:{
       meadow:Boolean(q.clearedAreas?.meadow || rawMeadowLast>=40 || rawMeadowUnlocked>=40),
       ocean:Boolean(q.clearedAreas?.ocean || rawOceanLast>=100 || rawOceanUnlocked>=100),
       candy:Boolean(q.clearedAreas?.candy),
       cloud:Boolean(q.clearedAreas?.cloud || rawCloudLast>=150 || rawCloudUnlocked>=150),
-      city:Boolean(q.clearedAreas?.city)
+      city:Boolean(q.clearedAreas?.city),
+      spooky:Boolean(q.clearedAreas?.spooky)
     },
     affectionMilestonesSeen:{
       five:Boolean(q.affectionMilestonesSeen?.five),
@@ -3726,7 +3742,8 @@ const AREA_CLEAR_CLOSET_REWARDS = Object.freeze({
   ocean:{id:"ocean-sunglasses",name:"Sunglasses",image:"../assets/ui/sunglasses-reward.png"},
   candy:{id:"candy-hairclip",name:"Candy Hairclip",image:"../assets/ui/candy-hairclip-reward.webp"},
   cloud:{id:"halo",name:"Halo",image:"../assets/ui/halo-reward.png"},
-  city:{id:"city-crown",name:"City Crown",image:"assets/backgrounds/city/crown-base.png"}
+  city:{id:"city-crown",name:"City Crown",image:"assets/backgrounds/city/crown-base.png"},
+  spooky:{id:"uclothes-spooky-cat-ears",name:"Spooky Cat Ears",image:"../assets/universal-clothing/previews/spooky-cat-ears.webp"}
 });
 
 function characterClosetUnlocks(characterId){
@@ -3985,7 +4002,9 @@ function peepStats(level = activeHeroProgress().level) {
 }
 
 function enemyScaled(template, rank, areaId="meadow") {
-  const tuning=areaId==="cloud"
+  const tuning=areaId==="spooky"
+    ? {hp:.026,atk:.016,exp:.023,reward:.018}
+    : areaId==="cloud"
     ? {hp:.028,atk:.017,exp:.021,reward:.016}
     : areaId==="city"
       ? {hp:.024,atk:.015,exp:.022,reward:.017}
@@ -4941,7 +4960,8 @@ const BUDDY_AREA_FAMILIES = Object.freeze({
   ocean:["cool-seagull","sea-turtle","catfish","seaunicorn","sea-star","vampire-squid","jellybun"],
   candy:["apple-baby","gummy-worm","pudding-pig","gingerlolly","candycane-deer","gummy-shark","cream-fox"],
   cloud:["star-mouse","puff-fairy","tulipa","snoud","cloud-bunny","lunar-moth","aries","cherub-duck"],
-    city:[]
+    city:[],
+    spooky:["pumpkitty","webby","voodoo-dollie","vampire-bat","dizzy-mushie","nurse-boo-boo","miss-wick","spider-maid","pumpkin-knight"]
 });
 
 const BUDDY_AREA_BY_ENEMY = Object.freeze(Object.fromEntries(
@@ -5282,6 +5302,7 @@ function rankWord(rank) {
 }
 
 function rankDescription(rank,areaId=selectedArea) {
+  if(areaId==="spooky")return `Spooky Forest Level ${rank} · The haunted woods are full of surprises!`;
   if(areaId==="city"){
     if(rank<=1)return "City Streets Level 1 · The neighborhood is full of surprises!";
     if(rank<200)return `City Streets Level ${rank} · Something curious is stirring along the sidewalks.`;
@@ -7905,6 +7926,11 @@ function endRun(won) {
       if(!hasCharacterClosetReward(activeCharacterId,areaReward.id) && unlockCharacterClosetReward(activeCharacterId,areaReward.id)){
         if(!Array.isArray(currentRun.closetRewardsEarned)) currentRun.closetRewardsEarned=[];
         currentRun.closetRewardsEarned.push({name:`${areaReward.name} · Unlocked for ${heroDisplayName()}!`,image:areaReward.image});
+        // Spooky reward is a paintable Universal Clothing extra. Grant one persistent copy once per OC.
+        if(currentRun.area==='spooky'){
+          if(!hubSave.inventory || typeof hubSave.inventory!=='object')hubSave.inventory={};
+          hubSave.inventory['uclothes-spooky-cat-ears']=Math.max(0,Number(hubSave.inventory['uclothes-spooky-cat-ears'])||0)+1;
+        }
       }
     }
   }
@@ -8265,7 +8291,8 @@ setInterval(()=>{
     ocean:{name:'Ocean',dashBackground:'assets/dash/backgrounds/DD-Ocean-3x.png',backgrounds:['assets/dash/backgrounds/DD-Ocean-3x.png'],obstacle:'assets/dash/Obstacle-rock.png'},
     candy:{name:'Candyland',dashBackground:'assets/dash/backgrounds/DD-Candyland-3x.png',backgrounds:['assets/dash/backgrounds/DD-Candyland-3x.png'],obstacle:'assets/dash/Obstacle-gumdrop.png'},
     cloud:{name:'Cloud Garden',dashBackground:'assets/dash/backgrounds/DD-CloudGarden-3x.png',backgrounds:['assets/dash/backgrounds/DD-CloudGarden-3x.png'],obstacle:'assets/dash/Obstacle-cloud.png'},
-    city:{name:'City Streets',dashBackground:'assets/backgrounds/city/duckie-dash.png',backgrounds:['assets/backgrounds/city/duckie-dash.png'],obstacle:'assets/dash/Obstacle-rock.png'}
+    city:{name:'City Streets',dashBackground:'assets/backgrounds/city/duckie-dash.png',backgrounds:['assets/backgrounds/city/duckie-dash.png'],obstacle:'assets/dash/Obstacle-traffic-cone.webp'},
+    spooky:{name:'Spooky Forest',dashBackground:'assets/dash/backgrounds/DD-SpookyForest.webp',backgrounds:['assets/dash/backgrounds/DD-SpookyForest.webp'],obstacle:'assets/dash/Obstacle-pumpkin.webp'}
   };
   const SPECIAL_REWARD_ITEMS={
     token:{id:'jump-token',name:'Jump Token',image:'assets/dash/Jump-Token.png'},

@@ -42,6 +42,11 @@
       preview:"previews/r-bow.webp",regions:["main"],folder:"r-bow",
       description:"Universal side bow."
     },
+    "spooky-cat-ears":{
+      id:"spooky-cat-ears",itemId:"uclothes-spooky-cat-ears",name:"Spooky Cat Ears",kind:"extra",rewardOnly:true,price:0,
+      preview:"previews/spooky-cat-ears.webp",regions:["main","secondary"],folder:"spooky-cat-ears",
+      description:"Clear Spooky Forest Level 240 to unlock. Paint the outside and inner ears separately."
+    },
     "glasses":{
       id:"glasses",itemId:"uclothes-glasses",name:"Glasses",kind:"extra",price:125,
       preview:"previews/glasses.webp",regions:[],folder:"glasses",
@@ -84,7 +89,7 @@
   }
 
   function defaultColors(family){
-    return Object.fromEntries((family.regions||[]).map(region=>[region,"white"]));
+    return Object.fromEntries((family.regions||[]).map(region=>[region, family.id==='spooky-cat-ears'&&region==='secondary'?'pink':'white']));
   }
 
   function makeCopy(familyId){
@@ -209,7 +214,7 @@
         universalClothingFamily:family.id,
         universalClothing:true
       };
-      if(!SHOP_STOCK.clothing.some(entry=>entry.itemId===family.itemId)){
+      if(!family.rewardOnly && !SHOP_STOCK.clothing.some(entry=>entry.itemId===family.itemId)){
         SHOP_STOCK.clothing.push({itemId:family.itemId,price:family.price});
       }
     }
@@ -467,11 +472,11 @@
     const info=document.createElement("div");
     info.className="uc-copy-info-v311";
     const title=document.createElement("strong");title.textContent=family.name;
-    const summary=document.createElement("small");summary.textContent="Not owned · Buy in Shop or find as a fashion reward";
+    const summary=document.createElement("small");summary.textContent=family.rewardOnly?'Locked · Clear Spooky Forest Level 240':'Not owned · Buy in Shop or find as a fashion reward';
     info.append(title,summary);
     const action=document.createElement("button");
     action.type="button";action.className="uc-equip-button-v311";action.textContent="Locked";
-    action.addEventListener("click",()=>showToast(`${family.name} can be purchased in the Shop or found as a fashion encounter reward!`));
+    action.addEventListener("click",()=>showToast(family.rewardOnly?'Complete Spooky Forest Level 240 to unlock the ears!':`${family.name} can be purchased in the Shop or found as a fashion encounter reward!`));
     card.append(preview,info,action);
     return card;
   }
@@ -573,6 +578,7 @@
       result.push(coloredLayer(folder,region,colors[region]||"white",unique));
     }
     result.push(outlineLayer(folder,"outline",unique));
+    if(family.id==='spooky-cat-ears')result.forEach((layer,index)=>{layer.z=55+index*.1;});
     return result;
   }
 
