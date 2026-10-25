@@ -66,8 +66,9 @@
   function stopLuvAnimation(){ if(luvTimer){clearInterval(luvTimer);luvTimer=null;} }
   function startLuvAnimation(){
     stopLuvAnimation(); let i=0; if(!ui.chestSprite)return;
-    ui.chestSprite.src=LUV_FRAMES[0];
-    luvTimer=setInterval(()=>{i=(i+1)%2;if(ui.chestSprite)ui.chestSprite.src=LUV_FRAMES[i];},430);
+    LUV_FRAMES.forEach(warmQuestImage);
+    setQuestSpriteFrame(ui.chestSprite,LUV_FRAMES[0]);
+    luvTimer=setInterval(()=>{i=(i+1)%2;if(ui.chestSprite)setQuestSpriteFrame(ui.chestSprite,LUV_FRAMES[i]);},430);
   }
   function clearLuvBirdieSceneV291(){
     stopLuvAnimation();

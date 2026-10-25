@@ -489,10 +489,10 @@ function applyQuestIconBorder(element, characterId){
 }
 
 function questCharacterIconPreviewSrc(characterId){
-  if(characterId === "miko") return MikoIdle?.[0] || "../assets/characters/miko/Miko-base.webp";
-  if(characterId === "io") return IoIdle?.[0] || "../assets/characters/io/Io-base.webp";
-  if(characterId === "miho") return MihoIdle?.[0] || "../assets/characters/miho/base/hurt.webp";
-  if(characterId === "annika") return AnnikaIdle?.[0] || "../assets/characters/annika/base/hurt.webp";
+  if(characterId === "miko") return MikoIdle?.[0] || "assets/characters/miko/base/idle-1.webp";
+  if(characterId === "io") return IoIdle?.[0] || "assets/characters/io/base/idle-1.webp";
+  if(characterId === "miho") return MihoIdle?.[0] || "assets/characters/miho/base/hurt.webp";
+  if(characterId === "annika") return AnnikaIdle?.[0] || "assets/characters/annika/base/hurt.webp";
   return "assets/characters/peep/base/idle-1.webp";
 }
 
@@ -3538,7 +3538,7 @@ function renderEnemyCombatant(enemy,slot=enemySlot(enemy)){
     refs.sprite.classList.toggle("ocean-elite-fighter",Boolean(enemy.eliteVariant));
     refs.sprite.classList.toggle("ocean-boss-fighter",enemy.id==="vampire-squid");
     refs.sprite.classList.toggle("cream-fox-fighter",enemy.id==="cream-fox");
-    refs.sprite.src=enemy.idle?.[0] || enemy.image || "";
+    setQuestSpriteFrame(refs.sprite,enemy.idle?.[0] || enemy.image || "");
     refs.sprite.alt=enemy.name || "Enemy";
   }
   renderEnemyHp(enemy);
@@ -3553,12 +3553,12 @@ function startSecondaryEnemyIdle(enemy){
   const refs=enemyUiFor(enemy);
   const frames=Array.isArray(enemy.idle)&&enemy.idle.length?enemy.idle:[enemy.image].filter(Boolean);
   if(!frames.length || !refs.sprite) return;
-  refs.sprite.src=frames[0];
+  setQuestSpriteFrame(refs.sprite,frames[0]);
   if(frames.length<2) return;
   secondaryEnemyIdleTimer=setInterval(()=>{
     if(actionLocked || enemy.hpNow<=0 || refs.combatant?.classList.contains("hidden")) return;
     index=(index+1)%frames.length;
-    refs.sprite.src=frames[index];
+    setQuestSpriteFrame(refs.sprite,frames[index]);
   },enemy.speed || 380);
 }
 
@@ -3888,25 +3888,60 @@ function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 // preloading the entire game at startup.
 const questImageWarmCache = new Map();
 const QUEST_WARM_IMAGE_LIMIT = 96;
+const questFrameWanted = new WeakMap();
+
+// Resolve only after the new frame is loaded and decoded. Keep the last
+// successful frame on-screen meanwhile instead of swapping to a blank IMG.
 function warmQuestImage(src){
-  if(!src) return;
+  if(!src) return Promise.resolve(false);
   const key=String(src);
-  if(questImageWarmCache.has(key)){
-    const existing=questImageWarmCache.get(key);
+  const existing=questImageWarmCache.get(key);
+  if(existing){
     questImageWarmCache.delete(key);
-    questImageWarmCache.set(key,existing); // Recently used sprites stay warm.
-    return;
+    questImageWarmCache.set(key,existing);
+    return existing.ready;
   }
   const img=new Image();
   img.decoding="async";
-  img.onerror=()=>{if(questImageWarmCache.get(key)===img)questImageWarmCache.delete(key);};
-  questImageWarmCache.set(key,img);
+  let resolveReady;
+  const ready=new Promise(resolve=>{resolveReady=resolve;});
+  const entry={img,ready};
+  const finish=ok=>{
+    if(!ok && questImageWarmCache.get(key)===entry)questImageWarmCache.delete(key);
+    resolveReady(ok);
+  };
+  img.onload=()=>{
+    const decoding=typeof img.decode==="function" ? img.decode() : Promise.resolve();
+    Promise.resolve(decoding).catch(()=>{}).then(()=>finish(img.naturalWidth>0));
+  };
+  img.onerror=()=>finish(false);
+  questImageWarmCache.set(key,entry);
   img.src=key;
-  if(typeof img.decode==="function")img.decode().catch(()=>{});
   while(questImageWarmCache.size>QUEST_WARM_IMAGE_LIMIT){
     const oldest=questImageWarmCache.keys().next().value;
     questImageWarmCache.delete(oldest);
   }
+  return ready;
+}
+
+function setQuestSpriteFrame(target,src){
+  if(!target || !src)return;
+  const key=String(src);
+  questFrameWanted.set(target,key);
+  if(target.getAttribute('src')===key)return;
+  const current=target.getAttribute('src');
+  const cached=questImageWarmCache.get(key);
+  if(cached?.img?.complete && cached.img.naturalWidth>0){
+    target.src=key;
+    warmQuestImage(key); // Mark this animation frame as recently used.
+    return;
+  }
+  warmQuestImage(key).then(ok=>{
+    if(!ok || !target.isConnected || questFrameWanted.get(target)!==key)return;
+    // A hurt/skill frame might have replaced the idle frame in the meantime.
+    if(target.getAttribute('src')!==current && target.getAttribute('src')!==key)return;
+    if(target.getAttribute('src')!==key)target.src=key;
+  });
 }
 
 function warmCurrentBattleAssets(enemy=null){
@@ -4589,7 +4624,7 @@ function renderHeroComposite(container,src=heroIdleFrames()[0]){
     container.appendChild(img);
   }
   img.alt=heroDisplayName();
-  img.src=src;
+  setQuestSpriteFrame(img,src);
 }
 
 
@@ -5561,12 +5596,12 @@ function startEncounter() {
   if(isEndless){
     currentRun.rank=endlessEffectiveRank(currentRun.floor);
     if(!currentRun.floorBackground) currentRun.floorBackground=chooseEndlessBackground();
-    ui.battleBg.src=currentRun.floorBackground;
+    setQuestSpriteFrame(ui.battleBg,currentRun.floorBackground);
     const oceanish=String(currentRun.floorBackground).includes('/ocean/');
     ui.battlefield.classList.toggle("ocean-peep-raised",oceanish && !String(currentRun.floorBackground).includes('/floor.'));
   } else {
     const cfg=currentAreaConfig();
-    ui.battleBg.src=cfg.backgrounds[currentRun.index];
+    setQuestSpriteFrame(ui.battleBg,cfg.backgrounds[currentRun.index]);
     ui.battlefield.classList.toggle("ocean-peep-raised", currentRun.area==="ocean" && (currentRun.index===1 || currentRun.index===2));
   }
   updateEncounterHeader(encounter);
@@ -5799,12 +5834,12 @@ function startBuddyIdle(buddy){
   buddyIdleIndex=0;
   const frames=Array.isArray(buddy?.idle) && buddy.idle.length ? buddy.idle : [buddy?.image].filter(Boolean);
   if(!frames.length || !ui.buddyBattleSprite) return;
-  ui.buddyBattleSprite.src=frames[0];
+  setQuestSpriteFrame(ui.buddyBattleSprite,frames[0]);
   if(frames.length < 2) return;
   buddyIdleTimer=setInterval(()=>{
     if(actionLocked || !ui.buddyCombatant || ui.buddyCombatant.classList.contains("hidden")) return;
     buddyIdleIndex=(buddyIdleIndex+1)%frames.length;
-    ui.buddyBattleSprite.src=frames[buddyIdleIndex];
+    setQuestSpriteFrame(ui.buddyBattleSprite,frames[buddyIdleIndex]);
   },380);
 }
 
@@ -6016,7 +6051,7 @@ async function useBuddySkill(){
 
 function setHeroFrame(src){
   if(activeCharacterId!=="peep") renderHeroComposite(ui.battleHeroComposite,src);
-  else if(ui.peepSprite) ui.peepSprite.src=src;
+  else if(ui.peepSprite) setQuestSpriteFrame(ui.peepSprite,src);
 }
 
 function restoreHeroIdleFrame(){
@@ -6099,12 +6134,12 @@ function startEnemyIdle() {
   if(!currentEnemy) return;
   const tracked=currentEnemy;
   const refs=enemyUiFor(tracked);
-  refs.sprite.src=tracked.idle[0];
+  setQuestSpriteFrame(refs.sprite,tracked.idle[0]);
   refs.sprite.alt=tracked.name;
   idleTimer=setInterval(()=>{
     if(actionLocked || !tracked || tracked.hpNow<=0 || refs.combatant?.classList.contains("hidden")) return;
     enemyIdleIndex=(enemyIdleIndex+1)%tracked.idle.length;
-    refs.sprite.src=tracked.idle[enemyIdleIndex];
+    setQuestSpriteFrame(refs.sprite,tracked.idle[enemyIdleIndex]);
   },tracked.speed || 380);
 }
 
@@ -9385,12 +9420,12 @@ setInterval(()=>{
       if(isEndless){
         currentRun.rank=endlessEffectiveRank(currentRun.floor);
         if(!currentRun.floorBackground) currentRun.floorBackground=chooseEndlessBackground();
-        ui.battleBg.src=currentRun.floorBackground;
+        setQuestSpriteFrame(ui.battleBg,currentRun.floorBackground);
         const oceanish=String(currentRun.floorBackground).includes('/ocean/');
         ui.battlefield.classList.toggle('ocean-peep-raised',oceanish && !String(currentRun.floorBackground).includes('/floor.'));
       }else{
         const cfg=currentAreaConfig();
-        ui.battleBg.src=cfg.backgrounds[currentRun.index];
+        setQuestSpriteFrame(ui.battleBg,cfg.backgrounds[currentRun.index]);
         ui.battlefield.classList.toggle('ocean-peep-raised', currentRun.area==='ocean' && (currentRun.index===1 || currentRun.index===2));
       }
       updateEncounterHeader(encounter);
@@ -9419,12 +9454,12 @@ setInterval(()=>{
       if(isEndless){
         currentRun.rank=endlessEffectiveRank(currentRun.floor);
         if(!currentRun.floorBackground) currentRun.floorBackground=chooseEndlessBackground();
-        ui.battleBg.src=currentRun.floorBackground;
+        setQuestSpriteFrame(ui.battleBg,currentRun.floorBackground);
         const oceanish=String(currentRun.floorBackground).includes('/ocean/');
         ui.battlefield.classList.toggle('ocean-peep-raised',oceanish && !String(currentRun.floorBackground).includes('/floor.'));
       }else{
         const cfg=currentAreaConfig();
-        ui.battleBg.src=cfg.backgrounds[currentRun.index];
+        setQuestSpriteFrame(ui.battleBg,cfg.backgrounds[currentRun.index]);
         ui.battlefield.classList.toggle('ocean-peep-raised', currentRun.area==='ocean' && (currentRun.index===1 || currentRun.index===2));
       }
       updateEncounterHeader(encounter);

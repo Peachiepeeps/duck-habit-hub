@@ -1035,7 +1035,7 @@
 
       const price = document.createElement('span');
       price.className = 'task-buck-inline-v254';
-      price.innerHTML = `<img src="assets/task-shop/duck-bucks.png" alt="" /> <b>${PERK.price}</b>`;
+      price.innerHTML = `<img src="assets/task-shop/Duck-bucks.png" alt="" /> <b>${PERK.price}</b>`;
 
       const buy = document.createElement('button');
       buy.type = 'button';

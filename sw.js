@@ -15,12 +15,15 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-354-spooky-forest';
+const APP_CACHE='duck-habit-hub-app-v24-355-performance';
+const MEDIA_CACHE='duck-habit-hub-media-v24-355';
+const MAX_MEDIA_ENTRIES=400;
+let mediaWrites=0;
 const APP_SHELL=[
  './',
  './index.html',
  './version.json',
- './sw.js?v=24.354',
+ './sw.js?v=24.355',
  './manifest.webmanifest?v=24.296',
  './app.css?v=24.345',
  './trading-cards-base.css?v=24.327',
@@ -73,13 +76,13 @@ const APP_SHELL=[
  './bao-cafe/assets/Frappe-idle-1.png',
  './duck-quest/css/bao-cafe-v299.css?v=24-309',
  './duck-quest/css/fixes-v318.css?v=24.318',
- './duck-quest/js/bao-cafe-v299.js?v=24-327',
- './app.js?v=24.353',
+ './duck-quest/js/bao-cafe-v299.js?v=24.355',
+ './app.js?v=24.355',
  './universal-clothing-v311.js?v=24.354',
  './gimmick-hub-v288.js?v=24.296',
  './hub-boosts.js?v=24.346',
  './trading-cards-ui.js?v=24.353',
- './tasks.js?v=24.336',
+ './tasks.js?v=24.355',
  './firebase-reminders.mjs?v=24.296',
  './task-reminders.js?v=24.296',
  './hub.js?v=24.296',
@@ -127,20 +130,20 @@ const APP_SHELL=[
  './duck-quest/css/quest-v276.css?v=24-276',
  './duck-quest/css/quest-v277.css?v=24-277',
  './duck-quest/css/quest-v278.css?v=24-280',
- './duck-quest/js/game-v96.js?v=24-351',
+ './duck-quest/js/game-v96.js?v=24.355',
  './duck-quest/js/hatchery-v179.js?v=24-345',
  './duck-quest/js/hatchery-egg-position-v192.js?v=24-343',
  './duck-quest/assets/eggs/Hatching-background-six-v343.png',
- './duck-quest/js/love-interests-v326.js?v=24-352',
+ './duck-quest/js/love-interests-v326.js?v=24.355',
  './duck-quest/js/task-buddy-boost-v254.js?v=24-255',
- './duck-quest/js/special-encounters-v326.js?v=24-326',
+ './duck-quest/js/special-encounters-v326.js?v=24.355',
  './duck-quest/js/quest-v265.js?v=24-283',
  './duck-quest/js/quest-v269.js?v=24-269',
  './duck-quest/js/quest-v270.js?v=24-284',
- './duck-quest/js/gimmick-encounters-v288.js?v=24-352',
- './duck-quest/js/sock-gremlin-v297.js?v=24-298',
+ './duck-quest/js/gimmick-encounters-v288.js?v=24.355',
+ './duck-quest/js/sock-gremlin-v297.js?v=24.355',
  './duck-quest/js/special-catch-v298.js?v=24-298',
- './duck-quest/js/ufono-v298.js?v=24-298',
+ './duck-quest/js/ufono-v298.js?v=24.355',
  './duck-quest/js/porcupin-v298.js?v=24-298',
  './memory-game/index.html',
  './memory-game/script-v24-44.js?v=24-298',
@@ -447,12 +450,58 @@ const APP_SHELL=[
  './duck-quest/assets/enemies/star-glider/base/shiny-idle-1.png',
  './duck-quest/assets/enemies/star-glider/base/shiny-idle-2.png',
 ];
+// Precache app code and navigation documents, not hundreds of encounter skins.
+// The rest is cached only when visited: faster installs, less network contention.
+const ESSENTIAL_SHELL=APP_SHELL.filter(path=>/\.(?:html|css|js|mjs|json|webmanifest)(?:\?|$)/.test(path));
 self.addEventListener('message',e=>{if(e.data?.type==='SKIP_WAITING')self.skipWaiting();});
-self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(APP_CACHE).then(c=>c.addAll(APP_SHELL)));});
-self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('duck-habit-hub-app-')&&k!==APP_CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
-self.addEventListener('fetch',e=>{
-  if(e.request.method!=='GET')return;
-  const u=new URL(e.request.url);
-  if(u.origin!==self.location.origin)return;
-  e.respondWith(caches.match(e.request,{ignoreSearch:true}).then(cached=>cached||fetch(e.request).then(r=>{if(r&&r.ok)caches.open(APP_CACHE).then(c=>c.put(e.request,r.clone()));return r;})));
+self.addEventListener('install',event=>{
+  self.skipWaiting();
+  event.waitUntil(caches.open(APP_CACHE).then(cache=>cache.addAll(ESSENTIAL_SHELL)));
+});
+self.addEventListener('activate',event=>{
+  event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>
+    (key.startsWith('duck-habit-hub-app-')&&key!==APP_CACHE)||
+    (key.startsWith('duck-habit-hub-media-')&&key!==MEDIA_CACHE)
+  ).map(key=>caches.delete(key)))).then(()=>self.clients.claim()));
+});
+async function pruneMediaCache(){
+  const cache=await caches.open(MEDIA_CACHE);
+  const keys=await cache.keys();
+  if(keys.length>MAX_MEDIA_ENTRIES){
+    await Promise.all(keys.slice(0,keys.length-MAX_MEDIA_ENTRIES).map(req=>cache.delete(req)));
+  }
+}
+self.addEventListener('fetch',event=>{
+  const request=event.request;
+  if(request.method!=='GET')return;
+  const url=new URL(request.url);
+  if(url.origin!==self.location.origin)return;
+  const navigation=request.mode==='navigate'||request.destination==='document';
+  const media=request.destination==='image'||/\.(?:png|webp|jpe?g|gif|svg)(?:$|\?)/i.test(url.pathname);
+  event.respondWith((async()=>{
+    const cacheName=media?MEDIA_CACHE:APP_CACHE;
+    const cache=await caches.open(cacheName);
+    // Navigation is network-first so new releases are visible promptly.
+    if(navigation){
+      try{
+        const response=await fetch(request);
+        if(response.ok)event.waitUntil(cache.put(request,response.clone()).catch(()=>{}));
+        return response;
+      }catch(error){
+        return (await cache.match(request)) || (await caches.match('./index.html')) || Response.error();
+      }
+    }
+    // Never ignore ?v= cache keys: different builds can be different files.
+    const cached=await cache.match(request);
+    if(cached)return cached;
+    try{
+      const response=await fetch(request);
+      if(response.ok){
+        event.waitUntil(cache.put(request,response.clone()).then(()=>{
+          if(media && ++mediaWrites%24===0)return pruneMediaCache();
+        }).catch(()=>{}));
+      }
+      return response;
+    }catch(error){return Response.error();}
+  })());
 });

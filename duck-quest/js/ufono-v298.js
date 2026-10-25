@@ -41,7 +41,7 @@
     c.reward={label,kind};c.rewardGranted=true;c.run=JSON.parse(JSON.stringify(currentRun));hubSave[KEY]=c;persistAll();return c.reward;
   }
   function stopIdle(){if(timer){clearInterval(timer);timer=null;}}
-  function startIdle(v){stopIdle();let f=1;ui.chestSprite.src=sprite(v,1);timer=setInterval(()=>{f=f===1?2:1;if(ui.chestSprite)ui.chestSprite.src=sprite(v,f);},410);}
+  function startIdle(v){stopIdle();let f=1;[1,2].forEach(n=>warmQuestImage(sprite(v,n)));setQuestSpriteFrame(ui.chestSprite,sprite(v,1));timer=setInterval(()=>{f=f===1?2:1;if(ui.chestSprite)setQuestSpriteFrame(ui.chestSprite,sprite(v,f));},410);}
   function clear(){stopIdle();ui.chestLayer?.classList.add("hidden");ui.chestLayer?.classList.remove("ufono-return-v298");ui.chestSprite?.classList.remove("ufono-art-v298");ui.battlefield?.classList.remove("ufono-scene-v298");if(ui.eventChoiceActions){ui.eventChoiceActions.innerHTML="";ui.eventChoiceActions.classList.add("hidden");}}
   function catchEnemy(c){const v=c.variant||"base";return{id:"ufono",name:NAMES[v]||"UFONO",idle:[sprite(v,1),sprite(v,2)],hurt:`assets/gimmicks/ufono/${v}/hurt.png`,shiny:Boolean(c.shiny),boss:false,gimmickVariant:v,maxHp:1,hpNow:1};}
   function showReturn(c){

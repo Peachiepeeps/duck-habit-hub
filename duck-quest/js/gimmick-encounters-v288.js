@@ -78,8 +78,9 @@
     ui.chestSprite.classList.remove('gimmick-egg-art-v288');
     ui.chestSprite.classList.add('gimmick-art-v288');
     let i=0;
-    ui.chestSprite.src=frames[0];
-    sceneTimer=setInterval(()=>{i=(i+1)%frames.length;if(ui.chestSprite)ui.chestSprite.src=frames[i];},speed);
+    frames.forEach(warmQuestImage);
+    setQuestSpriteFrame(ui.chestSprite,frames[0]);
+    sceneTimer=setInterval(()=>{i=(i+1)%frames.length;if(ui.chestSprite)setQuestSpriteFrame(ui.chestSprite,frames[i]);},speed);
   }
   function prep(encounter){
     try{clearAnimations();}catch{}clearScene();actionLocked=false;pendingChest=null;pendingDefeatedEnemy=null;befriendAttempted=false;

@@ -1253,7 +1253,7 @@ const ITEMS = {
   "petbed-gray": {
     "name": "Legacy Gray Pet Bed",
     "category": "legacy-furniture",
-    "image": "assets/furniture/pet-beds/petbed-gray.png",
+    "image": "assets/furniture/pet-beds/Bed-grey.webp",
     "icon": "♡",
     "sellValue": 0,
     "legacyFurnitureTarget": "petbed-grey"
@@ -1261,7 +1261,7 @@ const ITEMS = {
   "petbed-cream": {
     "name": "Legacy Cream Pet Bed",
     "category": "legacy-furniture",
-    "image": "assets/furniture/pet-beds/petbed-cream.png",
+    "image": "assets/furniture/pet-beds/Bed-white.webp",
     "icon": "♡",
     "sellValue": 0,
     "legacyFurnitureTarget": "petbed-white"
@@ -3698,7 +3698,7 @@ function normalizeBuddyRecord(record, fallbackKey = "") {
       enemyId: "mimic",
       variantId: "base",
       name: "Mimic",
-      image: "assets/enemies/mimic/base/open-1.webp",
+      image: "duck-quest/assets/enemies/mimic/base/open-1.webp",
       shiny: false,
       boss: false
     },
@@ -3706,7 +3706,7 @@ function normalizeBuddyRecord(record, fallbackKey = "") {
       enemyId: "mimic",
       variantId: "lucky",
       name: "Lucky Mimic",
-      image: "assets/enemies/mimic/lucky/open.webp",
+      image: "duck-quest/assets/enemies/mimic/lucky/open.webp",
       shiny: false,
       boss: false
     },
@@ -3714,7 +3714,7 @@ function normalizeBuddyRecord(record, fallbackKey = "") {
       enemyId: "mimic",
       variantId: "healthy",
       name: "Healthy Mimic",
-      image: "assets/enemies/mimic/healthy/open.webp",
+      image: "duck-quest/assets/enemies/mimic/healthy/open.webp",
       shiny: false,
       boss: false
     },
@@ -3722,7 +3722,7 @@ function normalizeBuddyRecord(record, fallbackKey = "") {
       enemyId: "mimic",
       variantId: "shiny",
       name: "Amethyst Mimic",
-      image: "assets/shinies/amethyst-mimic-idle-1.webp",
+      image: "duck-quest/assets/shinies/amethyst-mimic-idle-1.webp",
       shiny: true,
       boss: false
     },
@@ -3730,7 +3730,7 @@ function normalizeBuddyRecord(record, fallbackKey = "") {
       enemyId: "mimic",
       variantId: "shiny",
       name: "Amethyst Mimic",
-      image: "assets/shinies/amethyst-mimic-idle-1.webp",
+      image: "duck-quest/assets/shinies/amethyst-mimic-idle-1.webp",
       shiny: true,
       boss: false
     }

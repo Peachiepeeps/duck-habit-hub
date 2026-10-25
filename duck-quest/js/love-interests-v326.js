@@ -1011,10 +1011,10 @@ kiri: {
       if (img.complete) sizeSceneSprite(img);
       return;
     }
-    img.style.visibility = "hidden"; // Never show the prior lover while loading a new portrait.
-    img.onload = () => { sizeSceneSprite(img); img.style.visibility = "visible"; };
-    img.src = src;
-    if (img.complete && img.naturalWidth){ sizeSceneSprite(img); img.style.visibility = "visible"; }
+    if(!img.getAttribute("src"))img.style.visibility="hidden";
+    img.onload=()=>{sizeSceneSprite(img);img.style.visibility="visible";};
+    setQuestSpriteFrame(img,src);
+    if(img.complete && img.naturalWidth){sizeSceneSprite(img);img.style.visibility="visible";}
   }
 
   function sceneSpriteFrame(charId, pose, step){
@@ -1133,6 +1133,9 @@ kiri: {
     };
     state.left.alt = CHARACTERS[scene.leftId]?.name || scene.leftId;
     state.right.alt = CHARACTERS[scene.rightId]?.name || scene.rightId;
+    // The layer persists across encounters: discard the previous lover immediately.
+    state.left.removeAttribute("src"); state.right.removeAttribute("src");
+    state.left.style.visibility="hidden"; state.right.style.visibility="hidden";
     state.left.onload = () => sizeSceneSprite(state.left);
     state.right.onload = () => sizeSceneSprite(state.right);
 

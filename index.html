@@ -1200,12 +1200,12 @@
   <script src="trading-cards-sock-gremlin-v297.js?v=24.297"></script>
   <script src="trading-cards-universal-v298.js?v=24.298"></script>
   <script src="trading-cards-bao-cafe-v299.js?v=24.299"></script>
-  <script src="app.js?v=24.353"></script>
+  <script src="app.js?v=24.355"></script>
   <script src="universal-clothing-v311.js?v=24.354"></script>
   <script src="gimmick-hub-v288.js?v=24.296"></script>
   <script src="hub-boosts.js?v=24.346"></script>
   <script src="trading-cards-ui.js?v=24.353"></script>
-  <script src="tasks.js?v=24.336"></script>
+  <script src="tasks.js?v=24.355"></script>
   <script type="module" src="firebase-reminders.mjs?v=24.296"></script>
   <script src="task-reminders.js?v=24.296"></script>
   <script src="hub.js?v=24.296"></script>
@@ -1225,7 +1225,7 @@
     // v24.84: use a stable service-worker URL and actively check the deployed
     // build when the installed PWA is opened/resumed. This prevents Android
     // from keeping an already-open standalone app on an older app shell.
-    const DUCK_HUB_BUILD = "24.354";
+    const DUCK_HUB_BUILD = "24.355";
     let duckHubReloadingForUpdate = false;
 
     function duckHubReloadFresh(version) {
@@ -1289,7 +1289,7 @@
       window.addEventListener("load", async () => {
         try {
           await duckHubClearOldCodeCaches();
-          const registration = await navigator.serviceWorker.register("./sw.js?v=24-354-spooky-forest", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("./sw.js?v=24-355-performance", { updateViaCache: "none" });
           await registration.update();
           if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
           await duckHubCheckForUpdate(registration);
