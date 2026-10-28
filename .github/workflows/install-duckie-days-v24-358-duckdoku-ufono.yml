@@ -1,0 +1,216 @@
+name: Install Ducky Days v24.358 — Duckdoku Rewards and Free UFONO Crane
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/install-duckie-days-v24-358-duckdoku-ufono.yml'
+permissions:
+  contents: write
+jobs:
+  install:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: duckie-days-v24-358-installer
+      cancel-in-progress: false
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - name: Apply targeted gameplay fixes (save data untouched)
+        shell: bash
+        run: |
+          python3 - <<'PY_PATCH'
+          from pathlib import Path
+          import json
+
+          ROOT=Path('.')
+          def read(path):
+              return (ROOT/path).read_text(encoding='utf-8')
+          def write(path, value):
+              (ROOT/path).write_text(value,encoding='utf-8')
+          def replace_once(source, before, after, path):
+              n=source.count(before)
+              if n!=1:
+                  raise RuntimeError(f'Expected exactly one matching integration in {path}; found {n}: {before[:95]!r}')
+              return source.replace(before,after,1)
+
+          version=json.loads(read('version.json')).get('version')
+          if version!='24.357':
+              raise SystemExit(f'Safety check: expected Ducky Days v24.357, found {version!r}. No game files changed.')
+
+          # Flip just Strawbunny and Pudding Snatcher, regardless of their color variant.
+          # CSS individual scale preserves existing attack / hurt transform animations.
+          p='duck-quest/index.html'
+          s=read(p)
+          style='''<style id="v24358-shared-enemy-facing">
+          /* v24.358: face the hero; applies to battle, Duckipedia and captured portraits. */
+          img[src*="enemies/strawbunny/"],
+          img[src*="enemies/pudding-snatcher/"] { scale: -1 1; }
+          </style>
+          '''
+          s=replace_once(s,'</head>',style+'</head>',p)
+          write(p,s)
+
+          # Duckdoku rewards: one payout per unique level, kept in its existing save.
+          p='duckdoku/script.js';s=read(p)
+          s=replace_once(s,'  let complete=false;','  let complete=false;\n  let lostLifeThisPuzzle=false;',p)
+          s=replace_once(s,"    return {unlocked,completed,best:p.best&&typeof p.best==='object'?p.best:{}};", """    const rewarded=p.rewarded&&typeof p.rewarded==='object'&&!Array.isArray(p.rewarded)?p.rewarded:{};
+              const flawlessStreak=Math.max(0,Math.floor(Number(p.flawlessStreak)||0));
+              return {unlocked,completed,best:p.best&&typeof p.best==='object'?p.best:{},rewarded,flawlessStreak};""",p)
+          s=replace_once(s,"helperUses={hint:1,reveal:1,scan:1};complete=false;", "helperUses={hint:1,reveal:1,scan:1};complete=false;lostLifeThisPuzzle=false;",p)
+          s=replace_once(s,"      marks[index]='red';renderCell(index);lives=Math.max(0,lives-1);setScore(score-25);renderLives();", """      lostLifeThisPuzzle=true;
+                const streakProgress=readProgress();
+                if(streakProgress.flawlessStreak){streakProgress.flawlessStreak=0;writeProgress(streakProgress);}
+                marks[index]='red';renderCell(index);lives=Math.max(0,lives-1);setScore(score-25);renderLives();""",p)
+          old='''  function finishPuzzle(){
+              complete=true;renderHelpers();renderLives();setScore(score+300);
+              const progress=readProgress();progress.completed[String(stage)]=true;progress.best[String(stage)]=Math.max(Number(progress.best[String(stage)])||0,score);
+              progress.unlocked=Math.max(progress.unlocked,Math.min(MAX_SAFE_LEVEL,stage+1));writeProgress(progress);renderLevelGrid();
+              $('#resultScore').textContent=score.toLocaleString();$('#resultDifficulty').textContent=puzzle.difficulty;
+              $('#resultCopy').textContent=`Level ${stage.toLocaleString()} complete! Another puzzle is ready whenever you are. ♡`;
+              $('#nextLevelButton').textContent='Next Level ♡';
+              setTimeout(()=>openModal(resultModal),350);
+            }'''
+          new='''  function finishPuzzle(){
+              if(complete)return;
+              complete=true;renderHelpers();renderLives();setScore(score+300);
+              const progress=readProgress(),key=String(stage);
+              progress.completed[key]=true;
+              progress.best[key]=Math.max(Number(progress.best[key])||0,score);
+              progress.unlocked=Math.max(progress.unlocked,Math.min(MAX_SAFE_LEVEL,stage+1));
+              let earned=0,base=0,milestone=0,flawless=false;
+              if(!progress.rewarded[key]){
+                // Each puzzle earns coins only once, including levels completed before this update.
+                // Replaying a previously rewarded level never grants more coins or streak progress.
+                const byDifficulty={Cozy:60,Steady:90,Tricky:120,Sneaky:160};
+                base=byDifficulty[puzzle.difficulty]||90;
+                flawless=!lostLifeThisPuzzle&&lives===STARTING_LIVES&&extraLivesBought===0;
+                if(flawless){
+                  progress.flawlessStreak++;
+                  const streak=progress.flawlessStreak;
+                  milestone=streak===3?200:streak===5?350:(streak>=10&&streak%5===0?500:0);
+                }else progress.flawlessStreak=0;
+                earned=base+(flawless?150:0)+milestone;
+                const hub=readHub();
+                hub.coins=Math.max(0,Number(hub.coins)||0)+earned;
+                writeHub(hub);
+                progress.rewarded[key]=true;
+                renderCoins();
+              }
+              writeProgress(progress);renderLevelGrid();
+              $('#resultScore').textContent=score.toLocaleString();
+              $('#resultDifficulty').textContent=puzzle.difficulty;
+              const levelLabel=`Level ${stage.toLocaleString()} complete!`;
+              let rewardText=earned?` +${earned.toLocaleString()} Pink Coins (${base} base${flawless?' + 150 flawless':''}${milestone?' + '+milestone+' streak bonus':''})!`:' This level already awarded its coins.';
+              if(earned&&flawless)rewardText+=` ♡ Flawless streak: ${progress.flawlessStreak}!`;
+              $('#resultCopy').textContent=levelLabel+rewardText;
+              $('#nextLevelButton').textContent='Next Level ♡';
+              setTimeout(()=>openModal(resultModal),350);
+            }'''
+          s=replace_once(s,old,new,p)
+          write(p,s)
+          p='duckdoku/index.html';s=read(p)
+          s=replace_once(s,'script.js?v=24.340','script.js?v=24.358',p)
+          write(p,s)
+
+          # UFONO challenge: do not charge coin amounts for attempts or restocks.
+          # Visiting crane-game/?ufono=1 alone is not enough: require a live challenge.
+          p='crane-game/script-v24-40.js';s=read(p)
+          s=replace_once(s,'function completeUfonoChallenge(result={}){', '''function isUfonoFreeCrane(){
+            if(!UFONO_MODE)return false;
+            const c=loadHubSave().ufonoChallengeV298;
+            return Boolean(c && c.status==='minigame' && c.game==='crane');
+          }
+
+          function completeUfonoChallenge(result={}){''',p)
+          s=replace_once(s,'''  const coins = getCoins();
+            if(coins < PLAY_COST){
+              pulseCoinBox();
+              setMessage(`You need ${PLAY_COST} Pink Coins to play!`);
+              return;
+            }
+            setCoins(coins-PLAY_COST);''','''  const coins = getCoins(),freePlay=isUfonoFreeCrane();
+            if(!freePlay && coins < PLAY_COST){
+              pulseCoinBox();
+              setMessage(`You need ${PLAY_COST} Pink Coins to play!`);
+              return;
+            }
+            if(!freePlay)setCoins(coins-PLAY_COST);''',p)
+          s=replace_once(s,'''  const coins = getCoins();
+            if(coins < RESET_COST){
+              pulseCoinBox();
+              setMessage(`You need ${RESET_COST} Pink Coins to restock!`);
+              return;
+            }
+
+            setCoins(coins-RESET_COST);''','''  const coins = getCoins(),freePlay=isUfonoFreeCrane();
+            if(!freePlay && coins < RESET_COST){
+              pulseCoinBox();
+              setMessage(`You need ${RESET_COST} Pink Coins to restock!`);
+              return;
+            }
+
+            if(!freePlay)setCoins(coins-RESET_COST);''',p)
+          s=replace_once(s,'dropButton.addEventListener("click",dropClaw);','''if(isUfonoFreeCrane()){
+            const playLabel=document.getElementById('playCostText');
+            const resetLabel=document.getElementById('resetCostText');
+            if(playLabel)playLabel.textContent='FREE';
+            if(resetLabel)resetLabel.textContent='FREE';
+          }
+          dropButton.addEventListener("click",dropClaw);''',p)
+          write(p,s)
+          p='crane-game/play-v24-40.html';s=read(p)
+          s=replace_once(s,'script-v24-40.js?v=24-298','script-v24-40.js?v=24.358',p)
+          write(p,s)
+
+          # Refresh PWA app cache; preserve the unrelated image/media cache.
+          p='sw.js';s=read(p)
+          s=replace_once(s,"const APP_CACHE='duck-habit-hub-app-v24-357'", "const APP_CACHE='duck-habit-hub-app-v24-358'",p)
+          s=replace_once(s,'./duckdoku/script.js?v=24.340','./duckdoku/script.js?v=24.358',p)
+          s=replace_once(s,'./crane-game/script-v24-40.js?v=24-298','./crane-game/script-v24-40.js?v=24.358',p)
+          write(p,s)
+          write('version.json',json.dumps({'version':'24.358'},indent=2)+'\n')
+          print('Ducky Days v24.358 patched: facing, Duckdoku coins/flawless streaks, UFONO free crane, version/cache')
+          PY_PATCH
+      - name: Validate patched JavaScript and game references
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check duckdoku/script.js
+          node --check crane-game/script-v24-40.js
+          python3 - <<'PY_VERIFY'
+          from pathlib import Path
+          import json
+          assert json.loads(Path('version.json').read_text())['version']=='24.358'
+          checks={
+            'duck-quest/index.html':['v24358-shared-enemy-facing','enemies/strawbunny/','enemies/pudding-snatcher/'],
+            'duckdoku/script.js':['flawlessStreak','progress.rewarded[key]=true','writeHub(hub)','milestone=streak===3?200','lostLifeThisPuzzle=true'],
+            'duckdoku/index.html':['script.js?v=24.358'],
+            'crane-game/script-v24-40.js':['isUfonoFreeCrane()','if(!freePlay)setCoins(coins-PLAY_COST)','if(!freePlay)setCoins(coins-RESET_COST)'],
+            'crane-game/play-v24-40.html':['script-v24-40.js?v=24.358'],
+            'sw.js':["duck-habit-hub-app-v24-358",'./duckdoku/script.js?v=24.358','./crane-game/script-v24-40.js?v=24.358'],
+          }
+          for path,needles in checks.items():
+            data=Path(path).read_text()
+            for token in needles:
+              if token not in data:raise RuntimeError(f'{path}: missing {token}')
+          print('All v24.358 integration and syntax checks passed.')
+          PY_VERIFY
+      - name: Commit game changes and remove temporary installer
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          rm -f .github/workflows/install-duckie-days-v24-358-duckdoku-ufono.yml
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'Nothing changed.'
+          else
+            git commit -m 'Ducky Days v24.358: Duckdoku rewards, UFONO free crane, facing fix'
+            git push origin HEAD:main
+          fi
