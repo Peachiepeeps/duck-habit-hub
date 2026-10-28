@@ -1,0 +1,149 @@
+name: Repair Ducky Days v24.357 Trading Cards and Bao Cafe
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/install-duckie-days-v24-357-trading-cards-cafe.yml'
+permissions:
+  contents: write
+jobs:
+  repair:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out latest Ducky Days
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - name: Repair Fabled cards without touching saved collection data
+        run: |
+          cat > /tmp/duckie_repair_v357.py <<'PYFIX'
+          #!/usr/bin/env python3
+          """Ducky Days v24.357 targeted repair: trading cards + clipped soda bubbles.
+          No localStorage, save object, collectible IDs, or save migration is changed.
+          Usage: python3 apply_v357.py GAME_ROOT
+          """
+          from pathlib import Path
+          import json, re, sys
+          root=Path(sys.argv[1]) if len(sys.argv)>1 else Path('.')
+
+          def modify(rel, fix):
+              path=root/rel
+              old=path.read_text(encoding='utf8')
+              new=fix(old)
+              if new == old: raise RuntimeError('Expected change was not made: '+rel)
+              path.write_text(new,encoding='utf8')
+              print('Updated',rel)
+
+          def cards_fix(s):
+              # v24.356 missed the comma after the F-shinobu-cheryln entry.  This
+              # produces an undefined array element at runtime and aborts registration.
+              needle='["shinobu-cheryln","Shinobu x Cheryln","trading-cards/fabled/F-shinobu-cheryln.png","Fabled"]\n'
+              if s.count(needle)!=1:raise RuntimeError('Unexpected original Fabled card structure')
+              s=s.replace(needle,needle.rstrip('\n')+',\n',1)
+              # New shared family shiny sprites are shipped as .webp, not .png.
+              old="art:`${folder}/${enemyId}/base/shiny-idle-1.${area==='Spooky Forest'?'webp':'png'}`"
+              new="art:`${folder}/${enemyId}/base/shiny-idle-1.${area==='Spooky Forest'||['strawbunny','pudding-snatcher','pancake-ray'].includes(enemyId)?'webp':'png'}`"
+              if s.count(old)!=1:raise RuntimeError('Missing shared enemy shiny art resolver')
+              s=s.replace(old,new,1)
+              return s
+          modify('trading-cards-base.js', cards_fix)
+
+          def fix_cafe(s):
+              match=re.search(r'(?m)^(const STATIONS_RAW\s*=\s*)([^\n]*)(;\s*)$',s)
+              if not match:raise RuntimeError('Could not locate embedded stations')
+              stations=json.loads(match.group(2))
+              for stage, pct in [('sweetness','8%'),('flavor','10%')]:
+                  html=stations[stage]
+                  original='fizz.style.clipPath=style.clipPath;'
+                  if html.count(original)!=1:raise RuntimeError(f'Expected existing bubble clip not found in {stage}')
+                  # Follow alpha mask of the drink, AND trim spillover at cup bottom;
+                  # the sprite/mask includes a few transparent-appearing overscan pixels
+                  # below the actual cup contour when transformed.
+                  replacement=f"fizz.style.clipPath=baseEffect==='soda'?'inset(0 0 {pct} 0)':style.clipPath;"
+                  html=html.replace(original,replacement,1)
+                  # Ensure layout is refreshed when the drink artwork or stage changes.
+                  # Existing mutation observer on src is preserved (sweetness), and
+                  # flavor uses the drink's existing computed alpha mask.
+                  stations[stage]=html
+              new_payload=json.dumps(stations,ensure_ascii=True,separators=(',',':')).replace('<',r'\u003c').replace('>',r'\u003e').replace('&',r'\u0026')
+              s=s[:match.start(2)]+new_payload+s[match.end(2):]
+              return s
+          modify('bao-cafe/index.html',fix_cafe)
+
+          def update_script_html(s):
+              old='trading-cards-base.js?v=24.356';new='trading-cards-base.js?v=24.357'
+              if s.count(old)!=1:raise RuntimeError('Unexpected HTML trading-card script reference')
+              s=s.replace(old,new,1)
+              # Refresh PWA service worker after changing cached game scripts.
+              s=s.replace('sw.js?v=24-356-big-update','sw.js?v=24-357-card-cafe-fix')
+              return s
+          for rel in ['index.html','duck-quest/index.html']:
+              modify(rel,update_script_html)
+
+          def sw_fix(s):
+              old="const APP_CACHE='duck-habit-hub-app-v24-356';"
+              if s.count(old)!=1: raise RuntimeError('Unexpected service worker cache version')
+              s=s.replace(old,"const APP_CACHE='duck-habit-hub-app-v24-357';",1)
+              old="'./trading-cards-base.js?v=24.354'"
+              if s.count(old)!=1:raise RuntimeError('Unexpected service worker card preload path')
+              s=s.replace(old,"'./trading-cards-base.js?v=24.357'",1)
+              return s
+          modify('sw.js',sw_fix)
+
+          def version_fix(s):
+              v=json.loads(s)
+              if v.get('version')!='24.356':raise RuntimeError('Expected v24.356 live game; found '+str(v))
+              v['version']='24.357'
+              return json.dumps(v,indent=2)+'\n'
+          modify('version.json',version_fix)
+          print('v24.357 applied. All existing tradingCards/owned/unopenedPacks data remains untouched.')
+          PYFIX
+          python3 /tmp/duckie_repair_v357.py .
+      - name: Verify trading cards and cafe corrections
+        run: |
+          node --check trading-cards-base.js
+          node - <<'NODEVERIFY'
+          const assert=require('node:assert/strict');
+          global.window={};global.location={pathname:'/duck-quest/'};
+          global.document={createElement(){return {}}};
+          require('./trading-cards-base.js');
+          const c=window.DuckieTradingCards;
+          assert.ok(c && c.cards.length>=175,'Trading Cards failed to register');
+          for(const id of ['f-io','f-quackers','r-love-shin','r-love-bubble'])
+            assert.ok(c.byId[id],`Missing card ${id}`);
+          const save={tradingCards:{owned:{'f-io':2,'c-bee':4},unopenedPacks:6}};
+          c.grantPack(save,1);
+          assert.equal(save.tradingCards.unopenedPacks,7,'Pack award broken');
+          assert.equal(save.tradingCards.owned['f-io'],2,'Owned card unexpectedly changed');
+          assert.equal(save.tradingCards.owned['c-bee'],4,'Owned card unexpectedly changed');
+          console.log(`Trading Cards ready: ${c.cards.length} cards; existing collection unchanged`);
+          NODEVERIFY
+          python3 - <<'PYVERIFY'
+          from pathlib import Path
+          import re,json
+          s=Path('bao-cafe/index.html').read_text()
+          m=re.search(r'(?m)^const STATIONS_RAW\s*=\s*([^\n]*);',s)
+          assert m,'Bao Cafe station data missing'
+          stages=json.loads(m.group(1))
+          assert "inset(0 0 8% 0)" in stages['sweetness'],'Sweetness soda clip missing'
+          assert "inset(0 0 10% 0)" in stages['flavor'],'Flavor soda clip missing'
+          for page in ['index.html','duck-quest/index.html']:
+            assert 'trading-cards-base.js?v=24.357' in Path(page).read_text()
+          assert json.loads(Path('version.json').read_text())['version']=='24.357'
+          print('Both station clips and v24.357 cache-busting verified')
+          PYVERIFY
+      - name: Commit repair and clean up installer
+        run: |
+          rm -f .github/workflows/install-duckie-days-v24-357-trading-cards-cafe.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'Nothing to commit'
+          else
+            git commit -m 'Ducky Days v24.357: restore trading cards and clip cafe soda bubbles'
+            git push origin HEAD:main
+          fi
