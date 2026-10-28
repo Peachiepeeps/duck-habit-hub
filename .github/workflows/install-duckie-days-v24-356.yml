@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/install-duckie-days-v24-356.yml'
       - '.github/workflows/duckie-days-v24-356-content.zip'
+      - 'duckie-days-v24-356-content.zip'
 permissions:
   contents: write
 jobs:
@@ -24,7 +25,8 @@ jobs:
           from pathlib import Path
           from zipfile import ZipFile
           bundle=Path('.github/workflows/duckie-days-v24-356-content.zip')
-          if not bundle.is_file():raise SystemExit('Missing content zip. Upload BOTH files together to .github/workflows')
+          if not bundle.is_file():bundle=Path('duckie-days-v24-356-content.zip')
+          if not bundle.is_file():raise SystemExit('Content ZIP not found in .github/workflows or repository root')
           with ZipFile(bundle) as z:
               for member in z.infolist():
                   path=Path(member.filename)
@@ -89,7 +91,8 @@ jobs:
             .github/workflows/cafe-customer-v356.zip \
             .github/workflows/extra-cards-v356.json
           rm -f .github/workflows/install-duckie-days-v24-356.yml \
-            .github/workflows/duckie-days-v24-356-content.zip
+            .github/workflows/duckie-days-v24-356-content.zip \
+            duckie-days-v24-356-content.zip
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
