@@ -1192,7 +1192,7 @@
       </section>
     </section>
   </main>
-  <script src="trading-cards-base.js?v=24.356"></script>
+  <script src="trading-cards-base.js?v=24.357"></script>
   <script src="trading-cards-extra.js?v=24.353"></script>
   <script src="trading-cards-lil-guys-v336.js?v=24.353"></script>
   <script src="trading-cards-v317.js?v=24.317"></script>
@@ -1289,7 +1289,7 @@
       window.addEventListener("load", async () => {
         try {
           await duckHubClearOldCodeCaches();
-          const registration = await navigator.serviceWorker.register("./sw.js?v=24-356-big-update", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("./sw.js?v=24-357-card-cafe-fix", { updateViaCache: "none" });
           await registration.update();
           if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
           await duckHubCheckForUpdate(registration);

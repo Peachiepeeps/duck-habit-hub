@@ -15,7 +15,7 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-356';
+const APP_CACHE='duck-habit-hub-app-v24-357';
 const MEDIA_CACHE='duck-habit-hub-media-v24-356';
 const MAX_MEDIA_ENTRIES=400;
 let mediaWrites=0;
@@ -39,7 +39,7 @@ const APP_SHELL=[
  './fixes-v313.css?v=24.313',
  './fixes-v314.css?v=24.314',
  './fixes-v315.css?v=24.315',
- './trading-cards-base.js?v=24.354',
+ './trading-cards-base.js?v=24.357',
  './trading-cards-extra.js?v=24.353',
  './trading-cards-lil-guys-v336.js?v=24.353',
  './trading-cards-v317.js?v=24.317',

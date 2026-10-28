@@ -43,7 +43,7 @@
     ["io","Io","trading-cards/fabled/F-io.png","Fabled"],
     ["annika","Annika","trading-cards/fabled/F-annika.png","Fabled"],
     ["miho","Miho","trading-cards/fabled/F-miho.png","Fabled"],
-    ["shinobu-cheryln","Shinobu x Cheryln","trading-cards/fabled/F-shinobu-cheryln.png","Fabled"]
+    ["shinobu-cheryln","Shinobu x Cheryln","trading-cards/fabled/F-shinobu-cheryln.png","Fabled"],
 
     ["wedding","Wedding","trading-cards/fabled/F-wedding.png","Fabled"],
     ["miss-wick","Miss Wick","trading-cards/fabled/F-miss-wick.png","Fabled"],
@@ -146,7 +146,7 @@
     const shinyId='r-'+enemyId;
     if(!cards.some(c=>c.id===shinyId))cards.push({
       id:shinyId,enemyId,name:'Shiny '+name,
-      art:`${folder}/${enemyId}/base/shiny-idle-1.${area==='Spooky Forest'?'webp':'png'}`,
+      art:`${folder}/${enemyId}/base/shiny-idle-1.${area==='Spooky Forest'||['strawbunny','pudding-snatcher','pancake-ray'].includes(enemyId)?'webp':'png'}`,
       rarity:'rare',number:`R-${String(100+index).padStart(3,'0')}`,
       category:area+' Shiny',hint:`Find Shiny ${name} in Duck Quest or a Card Pack.`
     });
