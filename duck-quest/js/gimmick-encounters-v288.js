@@ -13,7 +13,7 @@
   const COOLDOWN_NORMAL_ENCOUNTERS=4;
   const BASE_CARD_CHANCE=.08;
   const PITY=5;
-  const GIMMICKS=["rotten-egg","lucky-cat","ghost-girl","pippa","artist-friend","angy-duck","sock-gremlin","ufono"];
+  const GIMMICKS=["rotten-egg","lucky-cat","ghost-girl","pippa","artist-friend","angy-duck","sock-gremlin","ufono","quackers"];
   const FOODS=[{"id":"bread-loaf","name":"Bread Loaf","image":"../assets/food/Bread-loaf.webp","price":60},{"id":"apple","name":"Apple","image":"../assets/food/apple.webp","price":50},{"id":"burger","name":"Burger","image":"../assets/food/Burger.webp","price":75},{"id":"cake-slice","name":"Cake Slice","image":"../assets/food/Cake-slice.webp","price":75},{"id":"cake","name":"Cake","image":"../assets/food/Cake.webp","price":100},{"id":"champagne","name":"Champagne","image":"../assets/food/Champagne.webp","price":125},{"id":"chocolate-brioche","name":"Chocolate Brioche","image":"../assets/food/Chocolate-brioche.webp","price":125},{"id":"concha","name":"Concha","image":"../assets/food/Concha.webp","price":90},{"id":"cookie","name":"Cookie","image":"../assets/food/Cookie.webp","price":50},{"id":"croissant","name":"Croissant","image":"../assets/food/Croissant.webp","price":75},{"id":"cupcake","name":"Cupcake","image":"../assets/food/Cupcake.webp","price":75},{"id":"fancy-milk-tea","name":"Fancy Milk Tea","image":"../assets/food/Fancy-milk-tea.webp","price":90},{"id":"fruit-cup","name":"Fruit Cup","image":"../assets/food/Fruit-cup.webp","price":60},{"id":"fruit-tart","name":"Fruit Tart","image":"../assets/food/Fruit-tart.webp","price":75},{"id":"gummy-bear","name":"Gummy Bear","image":"../assets/food/Gummy-bear.webp","price":50},{"id":"lemon","name":"Lemon","image":"../assets/food/Lemon.webp","price":50},{"id":"lime","name":"Lime","image":"../assets/food/Lime.webp","price":50},{"id":"lollipop","name":"Lollipop","image":"../assets/food/Lollipop.webp","price":50},{"id":"milk-tea","name":"Milk Tea","image":"../assets/food/Milk-tea.webp","price":60},{"id":"milk","name":"Milk","image":"../assets/food/Milk.webp","price":50},{"id":"mushroom","name":"Mushroom","image":"../assets/food/Mushroom.webp","price":60},{"id":"parfait","name":"Parfait","image":"../assets/food/Parfait.webp","price":125},{"id":"pizza","name":"Pizza","image":"../assets/food/Pizza.webp","price":75},{"id":"pudding","name":"Pudding","image":"../assets/food/Pudding.webp","price":60},{"id":"strawberry-shortcake","name":"Strawberry Shortcake","image":"../assets/food/Strawberry-shortcake.webp","price":90},{"id":"strawberry","name":"Strawberry","image":"../assets/food/Strawberry.webp","price":50},{"id":"water","name":"Water","image":"../assets/food/Water.webp","price":50},{"id":"watermelon","name":"Watermelon","image":"../assets/food/Watermelon.webp","price":60},{"id":"wedding-cake","name":"Wedding Cake","image":"../assets/food/Wedding-cake.webp","price":150}];
   const SUPPLIES=[{"id":"standard-duck","name":"Standard Duck","image":"../assets/ducks/Standard-duck.webp"},{"id":"dash-cart-pink","name":"Pink Dash Cart","image":"assets/dash/carts/Duck-car-pink.png"},{"id":"dash-cart-mint","name":"Mint Dash Cart","image":"assets/dash/carts/Duck-car-mint.png"},{"id":"dash-cart-purple","name":"Purple Dash Cart","image":"assets/dash/carts/Duck-car-purple.png"},{"id":"dash-cart-black","name":"Black Dash Cart","image":"assets/dash/carts/Duck-car-black.png"},{"id":"sunglasses","name":"Sunglasses","image":"../assets/gifts/Sunglasses.webp"},{"id":"yarn","name":"Yarn","image":"../assets/ingredients/Yarn.webp"},{"id":"thread","name":"Thread","image":"../assets/ingredients/Thread.webp"},{"id":"party-hat","name":"Party Hat","image":"../assets/gifts/Party-hat.webp"},{"id":"knife","name":"Knife","image":"../assets/gifts/Knife.webp"},{"id":"game-controller","name":"Game Controller","image":"../assets/gifts/Gaming-controller.webp"},{"id":"pill","name":"Pill","image":"../assets/gifts/Pill.webp"},{"id":"ufo","name":"UFO","image":"../assets/gifts/UFO.webp"},{"id":"pocket-monster-ball","name":"Pocket Monster Ball","image":"../assets/gifts/Pocket-monster-ball.webp"},{"id":"jester-bell","name":"Jester Bell","image":"../assets/gifts/Jester-bell.webp"},{"id":"crown","name":"Crown","image":"../assets/gifts/Crown.webp"},{"id":"magical-girl-pendant","name":"Magical Girl Pendant","image":"../assets/gifts/Magical-girl-pendant.webp"},{"id":"bunny-ears","name":"Bunny Ears","image":"../assets/gifts/Bunny-ears.webp"},{"id":"flower","name":"Flower","image":"../assets/gifts/Flower.webp"},{"id":"sleep-mask","name":"Sleep Mask","image":"../assets/gifts/Sleep-mask.webp"},{"id":"paintbrush","name":"Paintbrush","image":"../assets/gifts/Paint-brush.webp"},{"id":"ghost","name":"Ghost","image":"../assets/ingredients/Ghost.webp"},{"id":"demon-wing","name":"Demon Wing","image":"../assets/ingredients/Demon-wing.webp"},{"id":"angel-wing","name":"Angel Wing","image":"../assets/ingredients/Angel-wing.webp"},{"id":"glitter","name":"Glitter","image":"../assets/ingredients/Sparkle.webp"},{"id":"cat-ears","name":"Cat Ears","image":"../assets/gifts/Cat-ears.webp"},{"id":"moon","name":"Moon","image":"../assets/ingredients/Moon.webp"},{"id":"mustache","name":"Mustache","image":"../assets/gifts/Mustache.webp"},{"id":"top-hat","name":"Top Hat","image":"../assets/gifts/Top-hat.webp"},{"id":"bow","name":"Bow","image":"../assets/gifts/Bow.webp"},{"id":"googly-eyes","name":"Googly Eyes","image":"../assets/ingredients/googly-eyes.webp"},{"id":"scarf","name":"Scarf","image":"../assets/ingredients/scarf.webp"},{"id":"skateboard","name":"Skateboard","image":"../assets/ingredients/skateboard.webp"},{"id":"wig","name":"Wig","image":"../assets/ingredients/wig.webp"},{"id":"eyebrows","name":"Eyebrows","image":"../assets/ingredients/eyebrows.webp"},{"id":"vampire-teeth","name":"Vampire Teeth","image":"../assets/ingredients/vampire-teeth.webp"},{"id":"bathtub","name":"Bathtub","image":"../assets/ingredients/bathtub.webp"}];
   const PAINTS=[{"id":"red-paint","name":"Red Paint"},{"id":"dark-red-paint","name":"Dark Red Paint"},{"id":"magenta-paint","name":"Magenta Paint"},{"id":"orange-paint","name":"Orange Paint"},{"id":"peach-paint","name":"Peach Paint"},{"id":"gold-paint","name":"Gold Paint"},{"id":"silver-paint","name":"Silver Paint"},{"id":"bronze-paint","name":"Bronze Paint"},{"id":"green-paint","name":"Green Paint"},{"id":"mint-paint","name":"Mint Paint"},{"id":"aqua-paint","name":"Aqua Paint"},{"id":"sky-blue-paint","name":"Sky Blue Paint"},{"id":"blue-paint","name":"Blue Paint"},{"id":"periwinkle-paint","name":"Periwinkle Paint"},{"id":"purple-paint","name":"Purple Paint"},{"id":"violet-paint","name":"Violet Paint"},{"id":"pink-paint","name":"Pink Paint"},{"id":"white-paint","name":"White Paint"},{"id":"grey-paint","name":"Grey Paint"},{"id":"black-paint","name":"Black Paint"},{"id":"rainbow-paint","name":"Rainbow Paint"}];
@@ -277,7 +277,72 @@
   function artistFriend(){animateScene(['assets/gimmicks/artist-friend/idle-1.png','assets/gimmicks/artist-friend/idle-2.png']);ui.chestCaption.textContent='Artist Friend';setMessage('Artist Friend appears with an armful of paints and supplies!');const m=menu('Artist Friend','They have an idea!');const recolor=eligibleRecolorEntries().length>0&&Math.random()<.50;if(recolor)artistRecolor(m);else artistInspiration(m);}
   function angyDuck(){const shiny=Math.random()<currentShinyRate(),variant=shiny?'shiny':pick(NORMAL_VARIANTS['angy-duck']);const path=shiny?'shiny':variant;animateScene([`assets/gimmicks/angy-duck/${path}/idle-1.png`,`assets/gimmicks/angy-duck/${path}/idle-2.png`],360);ui.chestCaption.textContent=shiny?'Shiny Angy Duck ✨':'Angy Duck';setMessage('An extremely angry duck stomps into your path. It wants to fight!');const m=menu(shiny?'A SHINY Angy Duck is furious!':'Angy Duck wants beef!','Defeat it to calm it down and receive a random duck. Or befriend it during battle and keep Angy Duck instead.');button(m,'Bring it on!',()=>beginBattle('angy-duck',shiny?'base':variant,shiny,'angy-duck'),'primary');button(m,'Back away slowly',()=>finish('Angy Duck quacks furiously as you retreat.'));
   }
-  function show(encounter){prep(encounter);const kind=encounter.gimmick;state().stats[kind]=Math.max(0,Number(state().stats[kind])||0)+1;persistAll();if(kind==='rotten-egg')rottenEgg();else if(kind==='lucky-cat')luckyCat();else if(kind==='ghost-girl')ghostGirl();else if(kind==='pippa')pippa();else if(kind==='artist-friend')artistFriend();else if(kind==='sock-gremlin')window.DuckieSockGremlinV297?.show?.({animateScene,menu,button,finish});else if(kind==='ufono')window.DuckieUFONOV298?.show?.({animateScene,menu,button,finish});else angyDuck();}
+  function quackersPond(){
+    animateScene(['assets/gimmicks/quackers/Quackers-idle-1.png','assets/gimmicks/quackers/Quackers-idle-2.png'],470);
+    ui.chestCaption.textContent='Quackers · Lucky Duck Pond';
+    setMessage('Quackers: Quack quack! Feeling lucky today? Pick a duck! Any duck!');
+    const m=menu('Lucky Duck Pond','Pick ONE floating duck to reveal a surprise! Every duck holds a prize.');
+    const controls=m.querySelector('.gimmick-actions-v288');controls.innerHTML='';
+    const style=document.createElement('style');style.textContent=`
+      #gimmickMenuV288.quackers-v356{max-height:min(54dvh,400px);overflow:hidden;display:flex;flex-direction:column;align-items:center;gap:3px}
+      .quackers-v356 .quack-pond-v356{width:min(100%,390px);height:clamp(96px,18dvh,150px);border:3px solid #7db6b1;border-radius:50% 50% 45% 45%;background:radial-gradient(ellipse,#b3eee5 15%,#70c7d3 70%,#5aafc7 100%);display:flex;justify-content:space-around;align-items:center;box-shadow:inset 0 9px #ffffff55;margin:0 auto}
+      .quackers-v356 .quack-pond-v356 button{width:31%;height:80%;display:grid;place-items:center;background:transparent;border:0;padding:0;cursor:pointer;transition:transform .15s;touch-action:manipulation}
+      .quackers-v356 .quack-pond-v356 button:focus-visible{outline:3px solid #ad6890;border-radius:25px}
+      .quackers-v356 .quack-pond-v356 img{width:clamp(43px,10vh,73px);height:clamp(43px,10vh,73px);object-fit:contain;image-rendering:pixelated;animation:quackFloatV356 1.2s ease-in-out infinite alternate}
+      .quackers-v356 .quack-pond-v356 button:nth-child(2) img{animation-delay:.2s}
+      .quackers-v356 .quack-pond-v356 button:nth-child(3) img{animation-delay:.5s}
+      .quackers-v356 .quack-result-v356{font-size:clamp(12px,2vh,16px);min-height:1.5em;font-weight:700;text-align:center}
+      .quackers-v356 .gimmick-actions-v288{display:flex;flex-direction:column;align-items:center;gap:4px;width:100%}
+      @keyframes quackFloatV356{to{transform:translateY(-6px) rotate(3deg)}}
+      @media(max-height:600px){#gimmickMenuV288.quackers-v356{max-height:48dvh;padding:4px}.quackers-v356 .quack-pond-v356{height:85px}.quackers-v356 .quack-pond-v356 img{width:48px;height:48px}}
+    `;m.classList.add('quackers-v356');m.prepend(style);
+    const pond=document.createElement('div');pond.className='quack-pond-v356';
+    const summary=document.createElement('div');summary.className='quack-result-v356';summary.setAttribute('aria-live','polite');
+    const golden=Math.random()<.03?randInt(0,2):-1;
+    const ducks=['../assets/ducks/Standard-duck.webp','../assets/ducks/Pink-duck.webp','../assets/ducks/Blue-duck.webp'];
+    if(golden!==-1)ducks[golden]='../assets/ducks/Golden-duck.webp';
+    let picked=false;
+    const win=()=>{
+      const r=Math.random(),tier=r<.50?'common':r<.85?'lucky':'rare';
+      const choices=tier==='common'?[
+        ()=>{const n=randInt(75,125);addCoins(n);return `${n} Pink Coins`;},
+        ()=>{addInventory('exp-candy-small',3);return '3 Small EXP Candies';},
+        ()=>{addInventory('buddy-pon',3);return '3 Lil Pons';}
+      ]:tier==='lucky'?[
+        ()=>{const n=randInt(200,300);addCoins(n);return `${n} Pink Coins`;},
+        ()=>{addInventory('exp-candy-large',2);return '2 Large EXP Candies';},
+        ()=>{addInventory('jump-token',2);return '2 Jump Tokens';},
+        ()=>{hubSave.taskProgression??={};hubSave.taskProgression.duckBucks=Math.max(0,Number(hubSave.taskProgression.duckBucks)||0)+5;return '5 Duck Bucks';}
+      ]:[
+        ()=>{const t=TC?.ensureState?.(hubSave);if(t){t.unopenedPacks=Math.max(0,Number(t.unopenedPacks)||0)+1;return '1 Card Pack';}addCoins(200);return '200 Pink Coins';},
+        ()=>{addInventory('exp-candy-large',5);return '5 Large EXP Candies';},
+        ()=>{addInventory('buddy-pon',10);return '10 Lil Pons';},
+        ()=>{hubSave.taskProgression??={};hubSave.taskProgression.duckBucks=Math.max(0,Number(hubSave.taskProgression.duckBucks)||0)+15;return '15 Duck Bucks';}
+      ];
+      return pick(choices)();
+    };
+    ducks.forEach((src,i)=>{
+      const b=document.createElement('button');b.type='button';b.setAttribute('aria-label',i===golden?'Pick the golden duck':`Pick duck ${i+1}`);
+      const img=document.createElement('img');img.src=src;img.alt=i===golden?'Golden duck':'Floating duck';b.append(img);
+      b.addEventListener('click',()=>{
+        if(picked)return;picked=true;pond.querySelectorAll('button').forEach(x=>x.disabled=true);
+        let reward='';
+        if(i===golden){
+          const owned=Math.max(0,Number(TC?.ensureState?.(hubSave)?.owned?.['f-quackers']||0));
+          addCoins(150);
+          if(!owned&&TC?.byId?.['f-quackers']){TC.grantCard(hubSave,'f-quackers',1);reward='NEW Quackers Fabled Card + 150 Pink Coins';}
+          else{const t=TC?.ensureState?.(hubSave);if(t)t.unopenedPacks=Math.max(0,Number(t.unopenedPacks)||0)+1;reward='1 Card Pack + 150 Pink Coins';}
+        }else reward=win();
+        summary.textContent=`✨ ${reward}!`;
+        const next=document.createElement('button');next.type='button';next.className='pixel-button primary';next.textContent='Continue';
+        next.addEventListener('click',()=>finish(`Quackers: A lucky duck indeed! You won ${reward}!`),{once:true});
+        controls.append(next);persistAll();
+      },{once:true});pond.append(b);
+    });
+    controls.append(pond,summary);
+    // Explicitly one free pick, no replay until the next independent encounter.
+  }
+  function show(encounter){prep(encounter);const kind=encounter.gimmick;state().stats[kind]=Math.max(0,Number(state().stats[kind])||0)+1;persistAll();if(kind==='rotten-egg')rottenEgg();else if(kind==='lucky-cat')luckyCat();else if(kind==='ghost-girl')ghostGirl();else if(kind==='pippa')pippa();else if(kind==='artist-friend')artistFriend();else if(kind==='sock-gremlin')window.DuckieSockGremlinV297?.show?.({animateScene,menu,button,finish});else if(kind==='ufono')window.DuckieUFONOV298?.show?.({animateScene,menu,button,finish});else if(kind==='quackers')quackersPond();else angyDuck();}
 
   if(typeof buildEncounterFromPool==='function'){
     const oldBuild=buildEncounterFromPool;buildEncounterFromPool=function(enemyPool,mode='stage'){

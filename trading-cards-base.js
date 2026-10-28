@@ -44,6 +44,33 @@
     ["annika","Annika","trading-cards/fabled/F-annika.png","Fabled"],
     ["miho","Miho","trading-cards/fabled/F-miho.png","Fabled"],
     ["shinobu-cheryln","Shinobu x Cheryln","trading-cards/fabled/F-shinobu-cheryln.png","Fabled"]
+
+    ["wedding","Wedding","trading-cards/fabled/F-wedding.png","Fabled"],
+    ["miss-wick","Miss Wick","trading-cards/fabled/F-miss-wick.png","Fabled"],
+    ["rachel","Rachel","trading-cards/fabled/F-rachel.png","Fabled"],
+    ["parfait","Parfait","trading-cards/fabled/F-parfait.png","Fabled"],
+    ["parfait-x-frappe","Parfait x Frappe","trading-cards/fabled/F-parfait-x-frappe.png","Fabled"],
+    ["ducky-x-ceruru","Ducky x Ceruru","trading-cards/fabled/F-ducky-x-ceruru.png","Fabled"],
+    ["mushi","Mushi","trading-cards/fabled/F-mushi.png","Fabled"],
+    ["hold-me","Hold Me","trading-cards/fabled/F-hold-me.png","Fabled"],
+    ["shiyu-x-yukine","Shiyu x Yukine","trading-cards/fabled/F-shiyu-x-yukine.png","Fabled"],
+    ["shiyu-x-yukine-2","Shiyu x Yukine 2","trading-cards/fabled/F-shiyu-x-yukine-2.png","Fabled"],
+    ["io-transform","Io Transformation","trading-cards/fabled/F-io-transform.png","Fabled"],
+    ["fuyu","Fuyu","trading-cards/fabled/F-fuyu.png","Fabled"],
+    ["milkie-way","Milkie Way","trading-cards/fabled/F-milkie-way.png","Fabled"],
+    ["io-2","Io II","trading-cards/fabled/F-io-2.png","Fabled"],
+    ["stormy","Stormy","trading-cards/fabled/F-stormy.png","Fabled"],
+    ["bean","Bean","trading-cards/fabled/F-bean.png","Fabled"],
+    ["ribbi","Ribbi","trading-cards/fabled/F-ribbi.png","Fabled"],
+    ["ichigo","Ichigo","trading-cards/fabled/F-ichigo.png","Fabled"],
+    ["mocha","Mocha","trading-cards/fabled/F-mocha.png","Fabled"],
+    ["pluto","Pluto","trading-cards/fabled/F-pluto.png","Fabled"],
+    ["pippa","Pippa","trading-cards/fabled/F-pippa.png","Fabled"],
+    ["lace-x-corduroy","Lace x Corduroy","trading-cards/fabled/F-lace-x-corduroy.png","Fabled"],
+    ["lil-king","Lil King","trading-cards/fabled/F-lil-king.png","Fabled"],
+    ["bearista","Bearista","trading-cards/fabled/F-bearista.png","Fabled"],
+    ["pumpkitty","Pumpkitty","trading-cards/fabled/F-pumpkitty.png","Fabled"],
+    ["quackers","Quackers","gimmicks/quackers/Quackers-idle-1.png","Fabled"],
   ];
   const cards=[];
   normal.forEach((x,i)=>cards.push({id:`c-${x[0]}`,enemyId:x[0],name:x[1],art:x[2],rarity:"common",number:`C-${String(i+1).padStart(3,"0")}`,category:stage[x[0]]||"Duck Quest",hint:`Defeat ${x[1]} in Duck Quest, find it in a pack, or check the Daily Shop.`}));
@@ -68,6 +95,8 @@
   cards.push({id:"r-love-nene",characterId:"nene",name:"Nene",art:"love-interests/nene/Nene-idle-1.png",rarity:"rare",number:"R-055",category:"Miko Love Interest",hint:"Witness Nico and Nene's reunion while exploring Duck Quest as Miko."});
   cards.push({id:"r-love-moriko",characterId:"moriko",name:"Moriko",art:"love-interests/moriko/Moriko-idle-1.png",rarity:"rare",number:"R-056",category:"Miko Love Interest",hint:"Witness Moriko and Jenson's reunion while exploring Duck Quest as Miko."});
   cards.push({id:"r-love-jenson",characterId:"jenson",name:"Jenson",art:"love-interests/jenson/Jenson-Sprite-idle-1.png",rarity:"rare",number:"R-057",category:"Miko Love Interest",hint:"Witness Moriko and Jenson's reunion while exploring Duck Quest as Miko."});
+  cards.push({id:'r-love-shin',characterId:'shin',name:'Shin',art:'love-interests/shin/Shin-idle-1.png',rarity:'rare',number:'R-058',category:'Annika Love Interest',hint:'Meet Shin while playing Duck Quest as Annika.'});
+  cards.push({id:'r-love-bubble',characterId:'bubble',name:'Bubble',art:'love-interests/bubble/Bubble-idle-1.png',rarity:'rare',number:'R-059',category:'Annika Love Interest',hint:'Meet Bubble while playing Duck Quest as Annika.'});
   // City Streets and newly introduced boss/enemy cards. Add at the end so
   // all existing IDs/numbers and saved quantities remain unchanged.
   const additionalCardFamilies=[
@@ -99,10 +128,15 @@
     ['spider-maid','Spider Maid','Spooky Forest',true],
     ['pumpkin-knight','Pumpkin Knight','Spooky Forest',true]
   ];
+  additionalCardFamilies.push(
+    ['strawbunny','Strawbunny','Meadow / Candyland',false],
+    ['pudding-snatcher','Pudding Snatcher','City Streets / Candyland',false],
+    ['pancake-ray','Pancake Ray','Ocean / Candyland',true]
+  );
   additionalCardFamilies.forEach(([enemyId,name,area,boss],index)=>{
     const rarity=boss?'uncommon':'common';
     const folder=boss?'bosses':'enemies';
-    const art=`${folder}/${enemyId}/base/idle-1.${area==='Spooky Forest'?'webp':'png'}`;
+    const art=`${folder}/${enemyId}/base/idle-1.${area==='Spooky Forest'||['strawbunny','pudding-snatcher','pancake-ray'].includes(enemyId)?'webp':'png'}`;
     const cardId=(boss?'u-':'c-')+enemyId;
     if(!cards.some(c=>c.id===cardId))cards.push({
       id:cardId,enemyId,name,art,rarity,

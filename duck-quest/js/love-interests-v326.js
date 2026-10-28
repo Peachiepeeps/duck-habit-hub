@@ -9,6 +9,9 @@
   const MIKO_SMUG = "assets/characters/miko/base/smug.webp";
 
   const CHARACTERS = {
+    annika:{name:'Annika',sprites:{idle1:'assets/characters/annika/base/idle-1.webp',idle2:'assets/characters/annika/base/idle-2.webp'}},
+    shin:{name:'Shin',duckId:'shin-duck',cardId:'r-love-shin',sprites:{idle1:'assets/love-interests/shin/Shin-idle-1.png',idle2:'assets/love-interests/shin/Shin-idle-2.png',blush:'assets/love-interests/shin/Shin-hurt.png'},outfitIds:['annika-lingerie-stockings','annika-lingerie-bottoms','annika-lingerie-babydoll']},
+    bubble:{name:'Bubble',duckId:'bubble-duck',cardId:'r-love-bubble',sprites:{idle1:'assets/love-interests/bubble/Bubble-idle-1.png',idle2:'assets/love-interests/bubble/Bubble-idle-2.png',happy:'assets/love-interests/bubble/Bubble-happy.png'},outfitIds:['annika-date-pigtails','annika-date-stockings','annika-date-heels','annika-date-skirt','annika-date-sweater','annika-date-necklace']},
     miko: {
       name: "Miko",
       sprites: { idle1: MIKO_IDLE_1, idle2: MIKO_IDLE_2, smug: MIKO_SMUG }
@@ -129,7 +132,7 @@ kiri: {
       cardId: "r-love-midori",
       sprites: {
         idle1: "assets/love-interests/midori/Midori-opened.png",
-        idle2: "assets/love-interests/midori/Midori-closed.png",
+        idle2: "assets/love-interests/midori/Midori-idle-2.png",
         closed: "assets/love-interests/midori/Midori-closed.png",
         smug: "assets/love-interests/midori/Midori-opened-smug.png"
       },
@@ -204,6 +207,32 @@ kiri: {
   };
 
   const SCENES = {
+    shin:{id:'shin',title:'Shin',kicker:'ANNIKA LOVE INTEREST',leftId:'annika',rightId:'shin',dialogue:[
+      {speaker:'Annika',text:'Oh, hello, Shin!',rightPose:'idle'},
+      {speaker:'Shin',text:'Ah! There you are. Uh, Tamao wanted me to give this to you.',rightPose:'idle'},
+      {speaker:'Annika',text:'Me? Oh, thank you.',rightPose:'idle'},
+      {speaker:'Narrator',text:'Annika opens the box.',rightPose:'idle'},
+      {speaker:'Annika',text:'Oh my!',rightPose:'idle'},
+      {speaker:'Shin',text:'What is it…?',rightPose:'idle'},
+      {speaker:'Narrator',text:'He peeks over her shoulder.',rightPose:'blush'},
+      {speaker:'Shin',text:'DAMN IT, TAMAO!',rightPose:'blush'},
+      {speaker:'Annika',text:'I… uh, I like it.',rightPose:'blush'},
+      {speaker:'Shin',text:'I mean… It’s… It’s not bad… S-Should we head home?',rightPose:'blush'},
+      {speaker:'Annika',text:'Yes, please!',rightPose:'blush'}
+    ],reward(){const data=load();unlockCharacter(data,'shin',{grantCard:false,grantDuck:true,grantOutfit:true});save(data);notifyUnlock('shin');}},
+    bubble:{id:'bubble',title:'Bubble',kicker:'ANNIKA LOVE INTEREST',leftId:'annika',rightId:'bubble',dialogue:[
+      {speaker:'Annika',text:'Oh, Bubble, hello!',rightPose:'idle'},
+      {speaker:'Bubble',text:'Hello, my queen. It’s dangerous being out alone. Would you like me to escort you home?',rightPose:'idle'},
+      {speaker:'Annika',text:'How sweet of you. Sure, I wouldn’t mind that.',rightPose:'idle'},
+      {speaker:'Bubble',text:'My pleasure. I couldn’t possibly let you get hurt here.',rightPose:'idle'},
+      {speaker:'Annika',text:'I appreciate it. What were you doing out here?',rightPose:'idle'},
+      {speaker:'Bubble',text:'Oh, I was just… on a walk. That’s all.',rightPose:'idle'},
+      {speaker:'Annika',text:'Best not to dig further…',rightPose:'idle'},
+      {speaker:'Annika',text:'I see. Ahh, I ripped my sweater a bit…',rightPose:'idle'},
+      {speaker:'Bubble',text:'Oh, I can fix that. I know, I’ll get you a cute new outfit! We can go on a date!',rightPose:'happy'},
+      {speaker:'Annika',text:'You’re too sweet, Bubble. Sure, I won’t say no to that.',rightPose:'happy'},
+      {speaker:'Bubble',text:'Okay, let’s go!',rightPose:'happy'}
+    ],reward(){const data=load();unlockCharacter(data,'bubble',{grantCard:false,grantDuck:true,grantOutfit:true});save(data);notifyUnlock('bubble');}},
     lukio: {
       id: "lukio",
       title: "Lukio",
@@ -861,6 +890,7 @@ kiri: {
     data.loveInterests = data.loveInterests && typeof data.loveInterests === "object" ? data.loveInterests : {};
     data.characterUnlockedItems = data.characterUnlockedItems && typeof data.characterUnlockedItems === "object" ? data.characterUnlockedItems : {};
     if (!Array.isArray(data.characterUnlockedItems.miko)) data.characterUnlockedItems.miko = [];
+    if (!Array.isArray(data.characterUnlockedItems.annika)) data.characterUnlockedItems.annika = [];
     if (!Array.isArray(data.unlockedDucks)) data.unlockedDucks = [];
     data.duckCollectionCounts = data.duckCollectionCounts && typeof data.duckCollectionCounts === "object" ? data.duckCollectionCounts : {};
     data.tradingCards = data.tradingCards && typeof data.tradingCards === "object" ? data.tradingCards : {};
@@ -876,7 +906,7 @@ kiri: {
     data.loveInterestPairs.nicoNene = data.loveInterestPairs.nicoNene && typeof data.loveInterestPairs.nicoNene === "object" ? data.loveInterestPairs.nicoNene : {};
     data.loveInterestPairs.morikoJenson = data.loveInterestPairs.morikoJenson && typeof data.loveInterestPairs.morikoJenson === "object" ? data.loveInterestPairs.morikoJenson : {};
 
-    for (const key of ["lukio", "shinobu", "cheryln", "hibiki", "devlin", "yuzuru", "westley", "circe", "quin", "kiri", "midori", "luka", "cybil", "nico", "nene", "moriko", "jenson"]) {
+    for (const key of ["lukio", "shinobu", "cheryln", "hibiki", "devlin", "yuzuru", "westley", "circe", "quin", "kiri", "midori", "luka", "cybil", "nico", "nene", "moriko", "jenson", "shin", "bubble"]) {
       data.loveInterests[key] = data.loveInterests[key] && typeof data.loveInterests[key] === "object" ? data.loveInterests[key] : {};
     }
     return {
@@ -926,7 +956,8 @@ kiri: {
     if (options.grantOutfit) {
       state.outfitUnlocked = true;
       for (const piece of cfg.outfitIds) {
-        if (!data.characterUnlockedItems.miko.includes(piece)) data.characterUnlockedItems.miko.push(piece);
+        const target=key==='shin'||key==='bubble'?data.characterUnlockedItems.annika:data.characterUnlockedItems.miko;
+        if (!target.includes(piece)) target.push(piece);
       }
     }
     if (options.grantCard) {
@@ -1055,7 +1086,8 @@ kiri: {
     if (scene.id.includes("-")) {
       return scene.title.split(" + ").map(name => `${name} Trading Card`);
     }
-    const items=[`${scene.title} Duck`, `Miko's ${scene.title} Outfit`];
+    const outfit=scene.id==='shin'?'Annika’s Lingerie Outfit':scene.id==='bubble'?'Annika’s Date Outfit':`Miko’s ${scene.title} Outfit`;
+    const items=[`${scene.title} Duck`,outfit];
     if(scene.id==="lukio") items.push("Lukio Trading Card");
     return items;
   }
@@ -1220,7 +1252,7 @@ kiri: {
     const data = load();
     const root = ensureAll(data);
     let shouldSave = false;
-    for (const key of ["lukio", "shinobu", "cheryln", "hibiki", "devlin", "yuzuru", "westley", "circe", "quin", "kiri", "midori", "luka", "cybil", "nico", "nene", "moriko", "jenson"]) {
+    for (const key of ["lukio", "shinobu", "cheryln", "hibiki", "devlin", "yuzuru", "westley", "circe", "quin", "kiri", "midori", "luka", "cybil", "nico", "nene", "moriko", "jenson", "shin", "bubble"]) {
       if (!root.loveInterests[key]?.encountered) continue;
       unlockCharacter(data, key, { grantCard: key === "lukio", grantDuck: true, grantOutfit: true });
       shouldSave = true;
@@ -1254,6 +1286,10 @@ kiri: {
     const data = load();
     const root = ensureAll(data);
     const ids = [];
+    if(activeCharacterId()==='annika'){
+      for(const name of ['shin','bubble'])if(!root.loveInterests[name].encountered)ids.push(name);
+      return ids.length?ids:['shin','bubble']; // Repeat encounters: duck + card, never reaward outfit.
+    }
 
     if (!root.loveInterests.lukio.encountered) ids.push("lukio");
     if (!root.loveInterests.shinobu.encountered) ids.push("shinobu");
@@ -1301,7 +1337,7 @@ kiri: {
 
   function maybeBeforeNextEncounter(continueFn){
     if (bypassNextRoll) { bypassNextRoll = false; return false; }
-    if (open || !isMiko()) return false;
+    if (open || !(isMiko() || activeCharacterId()==='annika')) return false;
 
     const data=load();
     const ids = eligibleScenes();
@@ -1325,6 +1361,8 @@ kiri: {
   window.DuckieLoveInterests.chance = SHARED_CHANCE;
   window.DuckieLoveInterests.maybeBeforeNextEncounter = maybeBeforeNextEncounter;
   window.DuckieLoveInterests.trigger = showScene;
+  window.triggerShinEncounter = function(){return showScene('shin');};
+  window.triggerBubbleEncounter = function(){return showScene('bubble');};
   window.triggerLukioEncounter = function(){ return showScene("lukio"); };
   window.triggerShinobuEncounter = function(){ return showScene("shinobu"); };
   window.triggerCherylnEncounter = function(){ return showScene("cheryln"); };

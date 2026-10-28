@@ -3846,6 +3846,9 @@ window.DuckieQuestLoveRewardSync = function(incoming){
     const currentMiko=Array.isArray(hubSave.characterUnlockedItems.miko)?hubSave.characterUnlockedItems.miko:[];
     const incomingMiko=Array.isArray(incoming.characterUnlockedItems?.miko)?incoming.characterUnlockedItems.miko:[];
     hubSave.characterUnlockedItems.miko=[...new Set([...currentMiko,...incomingMiko])];
+    const currentAnnika=Array.isArray(hubSave.characterUnlockedItems.annika)?hubSave.characterUnlockedItems.annika:[];
+    const incomingAnnika=Array.isArray(incoming.characterUnlockedItems?.annika)?incoming.characterUnlockedItems.annika:[];
+    hubSave.characterUnlockedItems.annika=[...new Set([...currentAnnika,...incomingAnnika])];
 
     const currentDucks=Array.isArray(hubSave.unlockedDucks)?hubSave.unlockedDucks:[];
     const incomingDucks=Array.isArray(incoming.unlockedDucks)?incoming.unlockedDucks:[];
