@@ -1381,6 +1381,7 @@
   let stage=1,puzzle=null,marks=[],lives=STARTING_LIVES,extraLivesBought=0,score=0;
   let helperUses={hint:1,reveal:1,scan:1};
   let complete=false;
+  let lostLifeThisPuzzle=false;
   let pointerDown=false,dragging=false,lastDragIndex=-1,pressIndex=-1,startX=0,startY=0;
   let lastTapIndex=-1,lastTapAt=0,lastTapPreviousMark='';
 
@@ -1395,7 +1396,9 @@
     // In older versions finishing the last handcrafted level could not
     // unlock its successor. Recover the player's completed last level.
     if(completed[String(HANDMADE_COUNT)]&&unlocked<=HANDMADE_COUNT)unlocked=HANDMADE_COUNT+1;
-    return {unlocked,completed,best:p.best&&typeof p.best==='object'?p.best:{}};
+    const rewarded=p.rewarded&&typeof p.rewarded==='object'&&!Array.isArray(p.rewarded)?p.rewarded:{};
+    const flawlessStreak=Math.max(0,Math.floor(Number(p.flawlessStreak)||0));
+    return {unlocked,completed,best:p.best&&typeof p.best==='object'?p.best:{},rewarded,flawlessStreak};
   }
   function writeProgress(p){writeJSON(GAME_KEY,p);}
   function setStatus(text,kind=''){statusText.textContent=text;statusText.dataset.kind=kind;}
@@ -1458,7 +1461,7 @@
   function resetPuzzle(nextStage=stage){
     closeModals();stage=levelNumber(nextStage);puzzle=puzzleForLevel(stage);
     levelPageStart=Math.floor((stage-1)/LEVELS_PER_PAGE)*LEVELS_PER_PAGE+1;
-    marks=Array(puzzle.size*puzzle.size).fill('');lives=STARTING_LIVES;extraLivesBought=0;helperUses={hint:1,reveal:1,scan:1};complete=false;
+    marks=Array(puzzle.size*puzzle.size).fill('');lives=STARTING_LIVES;extraLivesBought=0;helperUses={hint:1,reveal:1,scan:1};complete=false;lostLifeThisPuzzle=false;
     setScore(0);levelText.textContent=stage;renderBoard();renderLives();renderHelpers();renderCoins();renderLevelGrid();
     setStatus('Tap to X · Double tap to place a Duck · Swipe to mark Xs');
   }
@@ -1478,6 +1481,9 @@
       else setStatus(source==='reveal'?'A Duck was revealed! 🦆':'Duck found!','good');
       checkComplete();
     }else if(source==='player'){
+      lostLifeThisPuzzle=true;
+      const streakProgress=readProgress();
+      if(streakProgress.flawlessStreak){streakProgress.flawlessStreak=0;writeProgress(streakProgress);}
       marks[index]='red';renderCell(index);lives=Math.max(0,lives-1);setScore(score-25);renderLives();
       board.classList.remove('shake');void board.offsetWidth;board.classList.add('shake');setStatus('Oops — red X! One life lost.','bad');
       if(lives<=0)setTimeout(()=>openGameOver(),250);
@@ -1487,11 +1493,38 @@
     if(puzzle.solution.every((c,r)=>marks[cellIndex(r,c)]==='duck'))finishPuzzle();
   }
   function finishPuzzle(){
+    if(complete)return;
     complete=true;renderHelpers();renderLives();setScore(score+300);
-    const progress=readProgress();progress.completed[String(stage)]=true;progress.best[String(stage)]=Math.max(Number(progress.best[String(stage)])||0,score);
-    progress.unlocked=Math.max(progress.unlocked,Math.min(MAX_SAFE_LEVEL,stage+1));writeProgress(progress);renderLevelGrid();
-    $('#resultScore').textContent=score.toLocaleString();$('#resultDifficulty').textContent=puzzle.difficulty;
-    $('#resultCopy').textContent=`Level ${stage.toLocaleString()} complete! Another puzzle is ready whenever you are. ♡`;
+    const progress=readProgress(),key=String(stage);
+    progress.completed[key]=true;
+    progress.best[key]=Math.max(Number(progress.best[key])||0,score);
+    progress.unlocked=Math.max(progress.unlocked,Math.min(MAX_SAFE_LEVEL,stage+1));
+    let earned=0,base=0,milestone=0,flawless=false;
+    if(!progress.rewarded[key]){
+      // Each puzzle earns coins only once, including levels completed before this update.
+      // Replaying a previously rewarded level never grants more coins or streak progress.
+      const byDifficulty={Cozy:60,Steady:90,Tricky:120,Sneaky:160};
+      base=byDifficulty[puzzle.difficulty]||90;
+      flawless=!lostLifeThisPuzzle&&lives===STARTING_LIVES&&extraLivesBought===0;
+      if(flawless){
+        progress.flawlessStreak++;
+        const streak=progress.flawlessStreak;
+        milestone=streak===3?200:streak===5?350:(streak>=10&&streak%5===0?500:0);
+      }else progress.flawlessStreak=0;
+      earned=base+(flawless?150:0)+milestone;
+      const hub=readHub();
+      hub.coins=Math.max(0,Number(hub.coins)||0)+earned;
+      writeHub(hub);
+      progress.rewarded[key]=true;
+      renderCoins();
+    }
+    writeProgress(progress);renderLevelGrid();
+    $('#resultScore').textContent=score.toLocaleString();
+    $('#resultDifficulty').textContent=puzzle.difficulty;
+    const levelLabel=`Level ${stage.toLocaleString()} complete!`;
+    let rewardText=earned?` +${earned.toLocaleString()} Pink Coins (${base} base${flawless?' + 150 flawless':''}${milestone?' + '+milestone+' streak bonus':''})!`:' This level already awarded its coins.';
+    if(earned&&flawless)rewardText+=` ♡ Flawless streak: ${progress.flawlessStreak}!`;
+    $('#resultCopy').textContent=levelLabel+rewardText;
     $('#nextLevelButton').textContent='Next Level ♡';
     setTimeout(()=>openModal(resultModal),350);
   }

@@ -15,7 +15,7 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-357';
+const APP_CACHE='duck-habit-hub-app-v24-358';
 const MEDIA_CACHE='duck-habit-hub-media-v24-356';
 const MAX_MEDIA_ENTRIES=400;
 let mediaWrites=0;
@@ -104,7 +104,7 @@ const APP_SHELL=[
  './fixes-v326.js?v=24.326',
  './duckdoku/index.html',
  './duckdoku/style.css?v=24.340',
- './duckdoku/script.js?v=24.340',
+ './duckdoku/script.js?v=24.358',
  './assets/ducks/Standard-duck.webp',
  './assets/bakery/backgrounds/Bakery-background.webp',
  './assets/bakery/drops/Pink-heart-refill.webp',
@@ -151,7 +151,7 @@ const APP_SHELL=[
  './sort-game/script-v24-32.js?v=24-298',
  './crane-game/index.html',
  './crane-game/play-v24-40.html',
- './crane-game/script-v24-40.js?v=24-298',
+ './crane-game/script-v24-40.js?v=24.358',
  './duck-quest/js/fixes-v289.js?v=24-296',
  './duck-quest/js/universal-clothing-drops-v311.js?v=24.311',
  './duck-quest/js/fixes-v311.js?v=24.352',

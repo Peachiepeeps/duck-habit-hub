@@ -357,6 +357,12 @@ function saveHubSave(data){
 }
 
 
+function isUfonoFreeCrane(){
+  if(!UFONO_MODE)return false;
+  const c=loadHubSave().ufonoChallengeV298;
+  return Boolean(c && c.status==='minigame' && c.game==='crane');
+}
+
 function completeUfonoChallenge(result={}){
   if(!UFONO_MODE)return false;
   try{const data=loadHubSave(),c=data.ufonoChallengeV298;if(!c||c.status!=="minigame"||c.game!=="crane")return false;c.status="return";c.completedAt=Date.now();c.gameResult={game:"crane",...result};data.ufonoChallengeV298=c;saveHubSave(data);setMessage("UFONO challenge cleared! Beaming back to Duck Quest…");setTimeout(()=>{window.location.href="../duck-quest/?ufono-return=1";},850);return true;}catch(e){return false;}
@@ -746,13 +752,13 @@ async function returnClawToHome(){
 async function dropClaw(){
   if(busy || !getUnlockedDuckIds().length || !prizes.length) return;
 
-  const coins = getCoins();
-  if(coins < PLAY_COST){
+  const coins = getCoins(),freePlay=isUfonoFreeCrane();
+  if(!freePlay && coins < PLAY_COST){
     pulseCoinBox();
     setMessage(`You need ${PLAY_COST} Pink Coins to play!`);
     return;
   }
-  setCoins(coins-PLAY_COST);
+  if(!freePlay)setCoins(coins-PLAY_COST);
 
   busy = true;
   dropButton.disabled = true;
@@ -894,19 +900,25 @@ function resetPrizes(){
     return;
   }
 
-  const coins = getCoins();
-  if(coins < RESET_COST){
+  const coins = getCoins(),freePlay=isUfonoFreeCrane();
+  if(!freePlay && coins < RESET_COST){
     pulseCoinBox();
     setMessage(`You need ${RESET_COST} Pink Coins to restock!`);
     return;
   }
 
-  setCoins(coins-RESET_COST);
+  if(!freePlay)setCoins(coins-RESET_COST);
   clawX = CHUTE_X;
   setClawPosition(clawX,CLAW_HOME_Y,false);
   newPrizeLayout();
 }
 
+if(isUfonoFreeCrane()){
+  const playLabel=document.getElementById('playCostText');
+  const resetLabel=document.getElementById('resetCostText');
+  if(playLabel)playLabel.textContent='FREE';
+  if(resetLabel)resetLabel.textContent='FREE';
+}
 dropButton.addEventListener("click",dropClaw);
 resetButton.addEventListener("click",resetPrizes);
 
