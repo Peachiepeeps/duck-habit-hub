@@ -34,6 +34,14 @@
 img[src*="enemies/strawbunny/"],
 img[src*="enemies/pudding-snatcher/"] { scale: -1 1; }
 </style>
+<style id="v24359-enemy-facing-kitty-summon">
+img[src*="enemies/puffer/"],img[src*="enemies/star-glider/"],img[src*="enemies/asterfox/"]{scale:-1 1}
+.love-interest-battle-scene .lain-rescue-kitty-v359{position:absolute;z-index:0;width:13%;max-width:77px;bottom:5%;height:auto;object-fit:contain;image-rendering:pixelated;animation:lainKittyBobV359 1s ease-in-out infinite alternate;animation-delay:calc(var(--kitty-index)*-.2s);pointer-events:none}
+.love-interest-battle-scene .love-interest-battle-sprite{z-index:2}
+@keyframes lainKittyBobV359{to{translate:0 -8px}}
+.flame-spirit-summon-v359{position:absolute;z-index:75;width:clamp(42px,12%,80px);height:auto;object-fit:contain;image-rendering:pixelated;right:25%;top:28%;pointer-events:none;animation:wickFlameV359 .7s ease-in forwards}
+@keyframes wickFlameV359{0%{opacity:0;transform:translate(15px,18px) scale(.35)}30%{opacity:1;transform:translate(0,0) scale(1)}70%{opacity:1;transform:translate(-50px,20px) scale(1.15)}100%{opacity:0;transform:translate(-170px,75px) scale(.4)}}
+</style>
 </head>
 <body>
   <main class="quest-shell">
@@ -198,13 +206,13 @@ img[src*="enemies/pudding-snatcher/"] { scale: -1 1; }
               <small>Levels 1–160</small>
             </span>
           </button>
-          <button class="area-option spooky-area-option" data-area="spooky" type="button">
-            <img class="area-option-image pixel-background" src="assets/backgrounds/spooky/stage-1.webp" alt="Spooky Forest preview" loading="lazy" decoding="async" />
-            <span class="area-option-copy"><strong>Spooky Forest</strong><small>Levels 1–240</small></span>
-          </button>
           <button class="area-option city-area-option" data-area="city" type="button">
             <img class="area-option-image pixel-background" src="assets/backgrounds/city/stage-1.png" alt="City Streets preview" loading="lazy" decoding="async" />
             <span class="area-option-copy"><strong>City Streets</strong><small>Levels 1–200</small></span>
+          </button>
+          <button class="area-option spooky-area-option" data-area="spooky" type="button">
+            <img class="area-option-image pixel-background" src="assets/backgrounds/spooky/stage-1.webp" alt="Spooky Forest preview" loading="lazy" decoding="async" />
+            <span class="area-option-copy"><strong>Spooky Forest</strong><small>Levels 1–240</small></span>
           </button>
         </div>
       </section>
@@ -298,8 +306,8 @@ img[src*="enemies/pudding-snatcher/"] { scale: -1 1; }
           <button class="buddy-filter" data-buddy-filter="ocean" type="button">Ocean</button>
           <button class="buddy-filter" data-buddy-filter="candy" type="button">Candyland</button>
           <button class="buddy-filter" data-buddy-filter="cloud" type="button">Cloud Garden</button>
-          <button class="buddy-filter" data-buddy-filter="spooky" type="button">Spooky Forest</button>
           <button class="buddy-filter" data-buddy-filter="city" type="button">City Streets</button>
+          <button class="buddy-filter" data-buddy-filter="spooky" type="button">Spooky Forest</button>
           <button class="buddy-filter" data-buddy-filter="shiny" type="button">Shiny ✨</button>
         </div>
         <div id="buddyCollectionGrid" class="buddy-collection-grid"></div>
@@ -530,7 +538,7 @@ img[src*="enemies/pudding-snatcher/"] { scale: -1 1; }
     </section>
   </main>
 
-  <script src="../trading-cards-base.js?v=24.357"></script>
+  <script src="../trading-cards-base.js?v=24.359"></script>
   <script src="../trading-cards-extra.js?v=24.344"></script>
   <script src="../trading-cards-lil-guys-v336.js?v=24.336"></script>
   <script src="../trading-cards-v317.js?v=24.317"></script>
@@ -538,7 +546,7 @@ img[src*="enemies/pudding-snatcher/"] { scale: -1 1; }
   <script src="../trading-cards-sock-gremlin-v297.js?v=24.297"></script>
   <script src="../trading-cards-universal-v298.js?v=24.298"></script>
   <script src="../trading-cards-bao-cafe-v299.js?v=24.299"></script>
-  <script src="js/game-v96.js?v=24.356"></script>
+  <script src="js/game-v96.js?v=24.359"></script>
   <script src="js/hatchery-v179.js?v=24-345"></script>
   <script src="js/hatchery-egg-position-v192.js?v=24-343"></script>
   <script src="js/hatchery-ui-v193.js?v=24-255"></script>
@@ -557,15 +565,15 @@ img[src*="enemies/pudding-snatcher/"] { scale: -1 1; }
   <script src="js/merchant-fix-v218.js?v=24-255"></script>
   <script src="js/dash-background-fix-v226.js?v=24-255"></script>
   <script src="js/trading-card-drops-v235.js?v=24-351"></script>
-  <script src="js/love-interests-v326.js?v=24.356"></script>
+  <script src="js/love-interests-v326.js?v=24.359"></script>
   <script src="js/task-buddy-boost-v254.js?v=24-255"></script>
   <script src="js/special-encounters-v326.js?v=24.356"></script>
   <script src="js/quest-v265.js?v=24-283"></script>
   <script src="js/quest-v269.js?v=24-269"></script>
   <script src="js/quest-v270.js?v=24-284"></script>
-  <script src="js/gimmick-encounters-v288.js?v=24.356"></script>
+  <script src="js/gimmick-encounters-v288.js?v=24.359"></script>
   <script src="js/special-catch-v298.js?v=24-298"></script>
-  <script src="js/sock-gremlin-v297.js?v=24.356"></script>
+  <script src="js/sock-gremlin-v297.js?v=24.359"></script>
   <script src="js/ufono-v298.js?v=24.356"></script>
   <script src="js/porcupin-v298.js?v=24-298"></script>
   <script src="js/bao-cafe-v299.js?v=24.356"></script>
@@ -583,5 +591,6 @@ img[src*="enemies/pudding-snatcher/"] { scale: -1 1; }
   <script src="js/sweetheart-v352.js?v=24.352"></script>
   <script src="js/spooky-forest-v354.js?v=24.354"></script>
   <script src="js/shared-families-v356.js?v=24.356"></script>
+  <script src="js/extra-content-v359.js?v=24.359"></script>
 </body>
 </html>

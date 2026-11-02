@@ -62,14 +62,15 @@
   function evaluate(criteria){const wornTags=new Set();currentOutfitIds().forEach(id=>(TAGS[id]||UNIVERSAL_STYLE_TAGS[id]||[]).forEach(tag=>wornTags.add(tag)));return(criteria||[]).map(item=>({...item,matched:wornTags.has(item.id)}));}
   function restoreHubCharacter(c){const previous=c?.previousHubCharacter;if(previous&&CHARACTERS[previous]&&save.unlockedCharacters?.includes(previous)){save.selectedCharacter=previous;try{syncSelectedCharacterRoom();}catch(error){}}}
   function addChallengeUi(c){
+    const judge=c.source==='bownny'?'Bownny':'Sock Gremlin';
     document.body.classList.add("sock-fashion-mode-v297");const panel=document.querySelector("#closetPanel");if(!panel)return;document.querySelector("#closeCloset")?.classList.add("sock-fashion-close-hidden-v297");panel.querySelector("#sockFashionBannerV297")?.remove();
-    const banner=document.createElement("section");banner.id="sockFashionBannerV297";banner.className="sock-fashion-banner-v297";banner.setAttribute("aria-label","Sock Gremlin fashion challenge");
-    const eyebrow=document.createElement("span");eyebrow.className="sock-fashion-eyebrow-v297";eyebrow.textContent="SOCK GREMLIN FASHION BATTLE";
+    const banner=document.createElement("section");banner.id="sockFashionBannerV297";banner.className="sock-fashion-banner-v297";banner.setAttribute("aria-label",`${judge} fashion challenge`);
+    const eyebrow=document.createElement("span");eyebrow.className="sock-fashion-eyebrow-v297";eyebrow.textContent=`${judge.toUpperCase()} FASHION BATTLE`;
     const title=document.createElement("strong");title.textContent="Dress Miko to match all 3 prompts!";
     const chips=document.createElement("div");chips.className="sock-fashion-chips-v297";(c.criteria||[]).forEach(item=>{const chip=document.createElement("span");chip.textContent=item.label;chips.append(chip);});
     const note=document.createElement("small");note.textContent="1–3 hearts are awarded based on how many prompts your finished outfit matches. More hearts = better rewards!";
     const done=document.createElement("button");done.type="button";done.className="sock-fashion-done-v297";done.textContent="Done! Judge My Outfit ♡";
-    done.addEventListener("click",()=>{const state=challenge();if(!state||state.status!=="closet")return;const results=evaluate(state.criteria),matches=results.filter(item=>item.matched).length;state.criteria=results;state.score=Math.max(1,Math.min(3,matches));state.status="judging";state.completedAt=Date.now();state.outfitSnapshot=JSON.parse(JSON.stringify(save.characterOutfits?.miko||{}));restoreHubCharacter(state);persist();done.disabled=true;done.textContent="Back to Sock Gremlin…";window.location.href="duck-quest/?sock-gremlin-return=1";});
+    done.addEventListener("click",()=>{const state=challenge();if(!state||state.status!=="closet")return;const results=evaluate(state.criteria),matches=results.filter(item=>item.matched).length;state.criteria=results;state.score=Math.max(1,Math.min(3,matches));state.status="judging";state.completedAt=Date.now();state.outfitSnapshot=JSON.parse(JSON.stringify(save.characterOutfits?.miko||{}));restoreHubCharacter(state);persist();done.disabled=true;done.textContent=`Back to ${state.source==='bownny'?'Bownny':'Sock Gremlin'}…`;window.location.href="duck-quest/?sock-gremlin-return=1";});
     banner.append(eyebrow,title,chips,note,done);panel.insertBefore(banner,panel.querySelector("#closetOptions"));
   }
   function beginIfNeeded(){

@@ -9,6 +9,8 @@
   const MIKO_SMUG = "assets/characters/miko/base/smug.webp";
 
   const CHARACTERS = {
+    lain:{name:'Lain',duckId:'lain-duck',cardId:'r-love-lain',sprites:{idle1:'assets/love-interests/lain/Lain-idle-1.png',idle2:'assets/love-interests/lain/Lain-idle-2.png',sigh:'assets/love-interests/lain/Lain-sigh.png'},outfitIds:['annika-casual-bow','annika-casual-dress','annika-casual-shoes']},
+    tamao:{name:'Tamao',duckId:'tamao-duck',cardId:'r-love-tamao',sprites:{idle1:'assets/love-interests/tamao/Tamao-idle-1.png',idle2:'assets/love-interests/tamao/Tamao-idle-2.png',sigh:'assets/love-interests/tamao/Tamao-sigh.png'},outfitIds:['annika-school-buns','annika-school-socks','annika-school-sneakers','annika-school-uniform','annika-school-hoodie']},
     annika:{name:'Annika',sprites:{idle1:'assets/characters/annika/base/idle-1.webp',idle2:'assets/characters/annika/base/idle-2.webp'}},
     shin:{name:'Shin',duckId:'shin-duck',cardId:'r-love-shin',sprites:{idle1:'assets/love-interests/shin/Shin-idle-1.png',idle2:'assets/love-interests/shin/Shin-idle-2.png',blush:'assets/love-interests/shin/Shin-hurt.png'},outfitIds:['annika-lingerie-stockings','annika-lingerie-bottoms','annika-lingerie-babydoll']},
     bubble:{name:'Bubble',duckId:'bubble-duck',cardId:'r-love-bubble',sprites:{idle1:'assets/love-interests/bubble/Bubble-idle-1.png',idle2:'assets/love-interests/bubble/Bubble-idle-2.png',happy:'assets/love-interests/bubble/Bubble-happy.png'},outfitIds:['annika-date-pigtails','annika-date-stockings','annika-date-heels','annika-date-skirt','annika-date-sweater','annika-date-necklace']},
@@ -207,6 +209,61 @@ kiri: {
   };
 
   const SCENES = {
+    lain:{id:'lain',title:'Lain',kicker:'ANNIKA LOVE INTEREST',leftId:'annika',rightId:'lain',kitties:true,dialogue:[
+      {speaker:'Annika',text:'L-Lain, are you okay?'},
+      {speaker:'Lain',text:'Oh. Yeah. I just met some little kitties… I think they need a home.',rightPose:'idle'},
+      {speaker:'Annika',text:'Awww, they really like you! That’s so sweet.'},
+      {speaker:'Lain',text:'You’re not bothered when I bring home animals?',rightPose:'sigh'},
+      {speaker:'Annika',text:'Not at all. I mean, you make enough to house them, and you do get them to loving homes. I think it’s sweet.'},
+      {speaker:'Lain',text:'Thank you. That makes me feel much better.',rightPose:'idle'},
+      {speaker:'Annika',text:'Not a problem at all! Can I help name them?'},
+      {speaker:'Lain',text:'Sure, let’s head home and we can name them there. Oh, here… for you.'},
+      {speaker:'Annika',text:'Oh! Thank you!!'}
+    ],reward(){const data=load();unlockCharacter(data,'lain',{grantCard:false,grantDuck:true,grantOutfit:true});save(data);notifyUnlock('lain');}},
+    tamao:{id:'tamao',title:'Tamao',kicker:'ANNIKA LOVE INTEREST',leftId:'annika',rightId:'tamao',dialogue:[
+      {speaker:'Tamao',text:'Oh, there you are. Hello.'},
+      {speaker:'Annika',text:'Tamao! What was with the gift you gave Shin to give me?!'},
+      {speaker:'Tamao',text:'I thought it’d look good on you.'},
+      {speaker:'Annika',text:'And why didn’t you just give it to me yourself?'},
+      {speaker:'Tamao',text:'Because he irritated me, so I knew it would get him to react. Besides, I assume you used it soooo, what’s the issue?'},
+      {speaker:'Annika',text:'Jeez, Tamao, you need to stop fighting with him. I nearly had a panic attack!'},
+      {speaker:'Tamao',text:'Sorry, sorry. It’s fine, it’s fine! I just can’t stand that jerk…',rightPose:'sigh'},
+      {speaker:'Annika',text:'You two…'},
+      {speaker:'Tamao',text:'Here, a nicer gift. I promise it’s not the same as the other.',rightPose:'idle'},
+      {speaker:'Annika',text:'Oh? Thank you… Oh, thank goodness, it’s actually cute and sweet… I appreciate this, Tamao.'},
+      {speaker:'Tamao',text:'No problem. Let’s go home.'},
+      {speaker:'Annika',text:'Alright!'}
+    ],reward(){const data=load();unlockCharacter(data,'tamao',{grantCard:false,grantDuck:true,grantOutfit:true});save(data);notifyUnlock('tamao');}},
+    'shin-tamao':{id:'shin-tamao',title:'Shin + Tamao',kicker:'LOVERS REUNITE',leftId:'shin',rightId:'tamao',dialogue:[
+      {speaker:'Shin',text:'YOU!',leftPose:'blush'},
+      {speaker:'Tamao',text:'Oho, someone looks angry…'},
+      {speaker:'Shin',text:'I swear to god, Tamao, you did that on purpose!',leftPose:'blush'},
+      {speaker:'Tamao',text:'I don’t know what you’re talking about.',rightPose:'idle'},
+      {speaker:'Shin',text:'You know what you did! That… That gift you gave me to give to Annika!'},
+      {speaker:'Tamao',text:'Did you not like it?'},
+      {speaker:'Shin',text:'I… That’s beside the point! You KNEW that would fluster me!',leftPose:'blush'},
+      {speaker:'Tamao',text:'I did, I never said otherwise.'},
+      {speaker:'Shin',text:'You… You are horrible.'},
+      {speaker:'Tamao',text:'Good. Suffer.'},
+      {speaker:'Shin',text:'UGH. Let’s just go home.'},
+      {speaker:'Tamao',text:'Oh, okay, buy me a drink on the way back.'},
+      {speaker:'Shin',text:'Jeez, fine.'}
+    ],reward(){const data=load(),root=ensureAll(data);unlockCardsOnly(data,['shin','tamao']);root.pairScenes.shinTamao={seen:true,cardsGranted:true};save(data);notifyUnlock('shin-tamao');}},
+    'bubble-lain':{id:'bubble-lain',title:'Bubble + Lain',kicker:'LOVERS REUNITE',leftId:'bubble',rightId:'lain',dialogue:[
+      {speaker:'Bubble',text:'Laiiinnn! Hello, my love.',leftPose:'happy'},
+      {speaker:'Lain',text:'Oh, hello Bubble… Were you looking for me?'},
+      {speaker:'Bubble',text:'Yeah, I missed you.'},
+      {speaker:'Lain',text:'Oh, I’m sorry. I was busy at work…',rightPose:'sigh'},
+      {speaker:'Bubble',text:'It’s okay! It’s time to take a break though.'},
+      {speaker:'Lain',text:'I suppose…'},
+      {speaker:'Bubble',text:'Yes, I insist! You overwork yourself if not!'},
+      {speaker:'Lain',text:'Thank you. You always worry so much for me, I feel bad.'},
+      {speaker:'Bubble',text:'Please don’t. I love taking care of you. You’re my soulmate. It is never an inconvenience.',leftPose:'happy'},
+      {speaker:'Lain',text:'I appreciate it… I love you.',rightPose:'idle'},
+      {speaker:'Bubble',text:'I love you too, hun!',leftPose:'happy'},
+      {speaker:'Lain',text:'Let’s go home… I want a nap.',rightPose:'sigh'},
+      {speaker:'Bubble',text:'Yes, sir! Hehe…',leftPose:'happy'}
+    ],reward(){const data=load(),root=ensureAll(data);unlockCardsOnly(data,['bubble','lain']);root.pairScenes.bubbleLain={seen:true,cardsGranted:true};save(data);notifyUnlock('bubble-lain');}},
     shin:{id:'shin',title:'Shin',kicker:'ANNIKA LOVE INTEREST',leftId:'annika',rightId:'shin',dialogue:[
       {speaker:'Annika',text:'Oh, hello, Shin!',rightPose:'idle'},
       {speaker:'Shin',text:'Ah! There you are. Uh, Tamao wanted me to give this to you.',rightPose:'idle'},
@@ -897,6 +954,8 @@ kiri: {
     data.tradingCards.owned = data.tradingCards.owned && typeof data.tradingCards.owned === "object" ? data.tradingCards.owned : {};
     data.tradingCards.unseen = Array.isArray(data.tradingCards.unseen) ? data.tradingCards.unseen : [];
     data.loveInterestPairs = data.loveInterestPairs && typeof data.loveInterestPairs === "object" ? data.loveInterestPairs : {};
+    data.loveInterestPairs.shinTamao = data.loveInterestPairs.shinTamao && typeof data.loveInterestPairs.shinTamao === "object" ? data.loveInterestPairs.shinTamao : {};
+    data.loveInterestPairs.bubbleLain = data.loveInterestPairs.bubbleLain && typeof data.loveInterestPairs.bubbleLain === "object" ? data.loveInterestPairs.bubbleLain : {};
     data.loveInterestPairs.shinobuCheryln = data.loveInterestPairs.shinobuCheryln && typeof data.loveInterestPairs.shinobuCheryln === "object" ? data.loveInterestPairs.shinobuCheryln : {};
     data.loveInterestPairs.devlinHibiki = data.loveInterestPairs.devlinHibiki && typeof data.loveInterestPairs.devlinHibiki === "object" ? data.loveInterestPairs.devlinHibiki : {};
     data.loveInterestPairs.westleyYuzuru = data.loveInterestPairs.westleyYuzuru && typeof data.loveInterestPairs.westleyYuzuru === "object" ? data.loveInterestPairs.westleyYuzuru : {};
@@ -906,7 +965,7 @@ kiri: {
     data.loveInterestPairs.nicoNene = data.loveInterestPairs.nicoNene && typeof data.loveInterestPairs.nicoNene === "object" ? data.loveInterestPairs.nicoNene : {};
     data.loveInterestPairs.morikoJenson = data.loveInterestPairs.morikoJenson && typeof data.loveInterestPairs.morikoJenson === "object" ? data.loveInterestPairs.morikoJenson : {};
 
-    for (const key of ["lukio", "shinobu", "cheryln", "hibiki", "devlin", "yuzuru", "westley", "circe", "quin", "kiri", "midori", "luka", "cybil", "nico", "nene", "moriko", "jenson", "shin", "bubble"]) {
+    for (const key of ["lukio", "shinobu", "cheryln", "hibiki", "devlin", "yuzuru", "westley", "circe", "quin", "kiri", "midori", "luka", "cybil", "nico", "nene", "moriko", "jenson", "shin", "bubble", "lain", "tamao"]) {
       data.loveInterests[key] = data.loveInterests[key] && typeof data.loveInterests[key] === "object" ? data.loveInterests[key] : {};
     }
     return {
@@ -956,7 +1015,7 @@ kiri: {
     if (options.grantOutfit) {
       state.outfitUnlocked = true;
       for (const piece of cfg.outfitIds) {
-        const target=key==='shin'||key==='bubble'?data.characterUnlockedItems.annika:data.characterUnlockedItems.miko;
+        const target=['shin','bubble','lain','tamao'].includes(key)?data.characterUnlockedItems.annika:data.characterUnlockedItems.miko;
         if (!target.includes(piece)) target.push(piece);
       }
     }
@@ -1086,7 +1145,7 @@ kiri: {
     if (scene.id.includes("-")) {
       return scene.title.split(" + ").map(name => `${name} Trading Card`);
     }
-    const outfit=scene.id==='shin'?'Annika’s Lingerie Outfit':scene.id==='bubble'?'Annika’s Date Outfit':`Miko’s ${scene.title} Outfit`;
+    const outfit=scene.id==='shin'?'Annika’s Lingerie Outfit':scene.id==='bubble'?'Annika’s Date Outfit':scene.id==='lain'?'Annika’s Casual Cute Outfit':scene.id==='tamao'?'Annika’s School Outfit':`Miko’s ${scene.title} Outfit`;
     const items=[`${scene.title} Duck`,outfit];
     if(scene.id==="lukio") items.push("Lukio Trading Card");
     return items;
@@ -1140,6 +1199,27 @@ kiri: {
     document.querySelector("#battleScreen .battle-ui")?.classList.toggle("love-interest-dialogue-active", active);
   }
 
+  function sceneKitties(state){
+    state.el.querySelectorAll('.lain-rescue-kitty-v359').forEach(node=>node.remove());
+    if(!state.scene.kitties)return;
+    const area=String((typeof currentRun!=='undefined'&&currentRun?.area)|| (typeof selectedArea!=='undefined'?selectedArea:'meadow'));
+    const pool={
+      meadow:['assets/enemies/cat-slime/base/idle-1-neutral.webp','assets/enemies/cat-slime/base/Green-idle-1-neutral.webp','assets/enemies/cat-slime/base/Strawberry-idle-1-neutral.webp'],
+      ocean:['assets/enemies/catfish/base/idle-1.webp','assets/enemies/catfish/base/Orange-idle-1.webp','assets/enemies/catfish/base/Brown-idle-1.webp'],
+      spooky:['assets/enemies/pumpkitty/base/idle-1.webp','assets/enemies/pumpkitty/base/pink-idle-1.webp','assets/enemies/pumpkitty/base/gold-idle-1.webp'],
+      city:['assets/enemies/trashcat/base/idle-1.webp','assets/enemies/trashcat/base/blue-idle-1.webp','assets/enemies/trashcat/base/orange-idle-1.webp'],
+      candy:['assets/enemies/jellybeanie/base/idle-1.webp','assets/enemies/jellybeanie/base/lime-idle-1.webp','assets/enemies/jellybeanie/base/grape-idle-1.webp'],
+      cloud:['assets/enemies/whispurr/base/idle-1.webp','assets/enemies/whispurr/base/pink-idle-1.webp','assets/enemies/whispurr/base/purple-idle-1.webp']
+    };
+    const options=[...(pool[area]||pool.meadow)].sort(()=>Math.random()-.5);
+    if(Math.random()<.16)options[Math.floor(Math.random()*3)]='assets/enemies/mimic/base/open-1.webp';
+    options.slice(0,3).forEach((src,i)=>{
+      const img=document.createElement('img');img.className='lain-rescue-kitty-v359';img.alt='One of Lain’s rescued kittens';img.src=src;
+      img.style.setProperty('--kitty-index',i);img.style.left=`${33+i*9}%`;
+      state.el.insertBefore(img,state.right);
+    });
+  }
+
   function showScene(sceneId, onFinished){
     const scene = SCENES[sceneId];
     if (!scene || open) return false;
@@ -1170,6 +1250,7 @@ kiri: {
     state.left.style.visibility="hidden"; state.right.style.visibility="hidden";
     state.left.onload = () => sizeSceneSprite(state.left);
     state.right.onload = () => sizeSceneSprite(state.right);
+    sceneKitties(state);
 
     let index = 0;
     const render = () => {
@@ -1218,6 +1299,7 @@ kiri: {
           state.left.onload = null;
           state.right.onload = null;
           state.heart.classList.add("hidden");
+          el.querySelectorAll(".lain-rescue-kitty-v359").forEach(node=>node.remove());
           el.classList.add("hidden");
           el.setAttribute("aria-hidden", "true");
           actions.innerHTML = "";
@@ -1252,7 +1334,7 @@ kiri: {
     const data = load();
     const root = ensureAll(data);
     let shouldSave = false;
-    for (const key of ["lukio", "shinobu", "cheryln", "hibiki", "devlin", "yuzuru", "westley", "circe", "quin", "kiri", "midori", "luka", "cybil", "nico", "nene", "moriko", "jenson", "shin", "bubble"]) {
+    for (const key of ["lukio", "shinobu", "cheryln", "hibiki", "devlin", "yuzuru", "westley", "circe", "quin", "kiri", "midori", "luka", "cybil", "nico", "nene", "moriko", "jenson", "shin", "bubble", "lain", "tamao"]) {
       if (!root.loveInterests[key]?.encountered) continue;
       unlockCharacter(data, key, { grantCard: key === "lukio", grantDuck: true, grantOutfit: true });
       shouldSave = true;
@@ -1265,7 +1347,9 @@ kiri: {
       ["kiriMidori", ["kiri", "midori"]],
       ["lukaCybil", ["luka", "cybil"]],
       ["nicoNene", ["nico", "nene"]],
-      ["morikoJenson", ["moriko", "jenson"]]
+      ["morikoJenson", ["moriko", "jenson"]],
+      ["shinTamao", ["shin", "tamao"]],
+      ["bubbleLain", ["bubble", "lain"]]
     ];
     for (const [pairKey, keys] of pairChecks) {
       if (!root.pairScenes[pairKey]?.cardsGranted) continue;
@@ -1287,8 +1371,10 @@ kiri: {
     const root = ensureAll(data);
     const ids = [];
     if(activeCharacterId()==='annika'){
-      for(const name of ['shin','bubble'])if(!root.loveInterests[name].encountered)ids.push(name);
-      return ids.length?ids:['shin','bubble']; // Repeat encounters: duck + card, never reaward outfit.
+      for(const name of ['shin','bubble','lain','tamao'])if(!root.loveInterests[name].encountered)ids.push(name);
+      if(root.loveInterests.shin.encountered&&root.loveInterests.tamao.encountered&&!root.pairScenes.shinTamao.cardsGranted)ids.push('shin-tamao');
+      if(root.loveInterests.bubble.encountered&&root.loveInterests.lain.encountered&&!root.pairScenes.bubbleLain.cardsGranted)ids.push('bubble-lain');
+      return ids.length?ids:['shin','bubble','lain','tamao']; // Repeat encounters: duck + card, never reaward outfit.
     }
 
     if (!root.loveInterests.lukio.encountered) ids.push("lukio");
@@ -1361,6 +1447,10 @@ kiri: {
   window.DuckieLoveInterests.chance = SHARED_CHANCE;
   window.DuckieLoveInterests.maybeBeforeNextEncounter = maybeBeforeNextEncounter;
   window.DuckieLoveInterests.trigger = showScene;
+  window.triggerLainEncounter = function(){return showScene('lain');};
+  window.triggerTamaoEncounter = function(){return showScene('tamao');};
+  window.triggerShinTamaoCutscene = function(){return showScene('shin-tamao');};
+  window.triggerBubbleLainCutscene = function(){return showScene('bubble-lain');};
   window.triggerShinEncounter = function(){return showScene('shin');};
   window.triggerBubbleEncounter = function(){return showScene('bubble');};
   window.triggerLukioEncounter = function(){ return showScene("lukio"); };

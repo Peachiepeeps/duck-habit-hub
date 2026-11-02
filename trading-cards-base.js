@@ -97,6 +97,9 @@
   cards.push({id:"r-love-jenson",characterId:"jenson",name:"Jenson",art:"love-interests/jenson/Jenson-Sprite-idle-1.png",rarity:"rare",number:"R-057",category:"Miko Love Interest",hint:"Witness Moriko and Jenson's reunion while exploring Duck Quest as Miko."});
   cards.push({id:'r-love-shin',characterId:'shin',name:'Shin',art:'love-interests/shin/Shin-idle-1.png',rarity:'rare',number:'R-058',category:'Annika Love Interest',hint:'Meet Shin while playing Duck Quest as Annika.'});
   cards.push({id:'r-love-bubble',characterId:'bubble',name:'Bubble',art:'love-interests/bubble/Bubble-idle-1.png',rarity:'rare',number:'R-059',category:'Annika Love Interest',hint:'Meet Bubble while playing Duck Quest as Annika.'});
+  cards.push({id:'r-love-lain',characterId:'lain',name:'Lain',art:'love-interests/lain/Lain-idle-1.png',rarity:'rare',number:'R-060',category:'Annika Love Interest',hint:'Meet Lain as Annika.'});
+  cards.push({id:'r-love-tamao',characterId:'tamao',name:'Tamao',art:'love-interests/tamao/Tamao-idle-1.png',rarity:'rare',number:'R-061',category:'Annika Love Interest',hint:'Meet Tamao as Annika.'});
+  cards.push({id:'r-bownny',name:'Bownny',art:'gimmicks/bownny/base/idle-1.png',rarity:'rare',number:'R-062',category:'Gimmick Encounter',hint:'Meet Bownny in Duck Quest.'});
   // City Streets and newly introduced boss/enemy cards. Add at the end so
   // all existing IDs/numbers and saved quantities remain unchanged.
   const additionalCardFamilies=[
@@ -133,10 +136,11 @@
     ['pudding-snatcher','Pudding Snatcher','City Streets / Candyland',false],
     ['pancake-ray','Pancake Ray','Ocean / Candyland',true]
   );
+  additionalCardFamilies.push(['trashcat','Trashcat','City Streets',false],['jellybeanie','Jellybeanie','Candyland',false],['whispurr','Whispurr','Cloud Garden',false],['flame-spirit','Flame Spirit','Spooky Forest',false]);
   additionalCardFamilies.forEach(([enemyId,name,area,boss],index)=>{
     const rarity=boss?'uncommon':'common';
     const folder=boss?'bosses':'enemies';
-    const art=`${folder}/${enemyId}/base/idle-1.${area==='Spooky Forest'||['strawbunny','pudding-snatcher','pancake-ray'].includes(enemyId)?'webp':'png'}`;
+    const art=`${folder}/${enemyId}/base/idle-1.${area==='Spooky Forest'||['strawbunny','pudding-snatcher','pancake-ray','trashcat','jellybeanie','whispurr','flame-spirit'].includes(enemyId)?'webp':'png'}`;
     const cardId=(boss?'u-':'c-')+enemyId;
     if(!cards.some(c=>c.id===cardId))cards.push({
       id:cardId,enemyId,name,art,rarity,
@@ -146,7 +150,7 @@
     const shinyId='r-'+enemyId;
     if(!cards.some(c=>c.id===shinyId))cards.push({
       id:shinyId,enemyId,name:'Shiny '+name,
-      art:`${folder}/${enemyId}/base/shiny-idle-1.${area==='Spooky Forest'||['strawbunny','pudding-snatcher','pancake-ray'].includes(enemyId)?'webp':'png'}`,
+      art:`${folder}/${enemyId}/base/shiny-idle-1.${area==='Spooky Forest'||['strawbunny','pudding-snatcher','pancake-ray','trashcat','jellybeanie','whispurr','flame-spirit'].includes(enemyId)?'webp':'png'}`,
       rarity:'rare',number:`R-${String(100+index).padStart(3,'0')}`,
       category:area+' Shiny',hint:`Find Shiny ${name} in Duck Quest or a Card Pack.`
     });

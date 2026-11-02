@@ -7005,6 +7005,20 @@ async function performEnemyAttack(multiplier=1,label="",lifeDrainHeal=0){
   if(!currentEnemy) return 0;
   setMessage(label||`${currentEnemy.name} attacks!`);
   const refs=activeEnemyUi();
+  if(currentEnemy.id==='miss-wick'&&!currentEnemy._summonedFlameV359){
+    currentEnemy._summonedFlameV359=true;
+    const field=ui.battlefield||document.querySelector('#battlefield');
+    if(field){
+      const spirit=document.createElement('img');spirit.className='flame-spirit-summon-v359';
+      const colors=['','blue-','green-','purple-','grey-'];
+      spirit.src='assets/enemies/flame-spirit/base/'+colors[Math.floor(Math.random()*colors.length)]+'idle-1.webp';
+      spirit.alt='Miss Wick’s summoned Flame Spirit';field.append(spirit);
+      setMessage('Miss Wick summons a tiny Flame Spirit! ✨');
+      await sleep(700);spirit.remove();
+      if(!currentRun||currentRun.hp<=0)return 0;
+    }
+    setMessage(label||`${currentEnemy.name} attacks!`);
+  }
   refs.sprite?.classList.add("attack-pop"); await sleep(300);
 
   if(skillState.enemyAccuracyDownTurns>0 && Math.random()<Number(skillState.enemyMissChance||0)){
