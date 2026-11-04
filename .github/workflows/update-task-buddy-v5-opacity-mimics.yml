@@ -1,0 +1,113 @@
+name: Task Buddy v5 - translucent room and static Mimics
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-task-buddy-beta-install
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Duckie Days
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Install v5 update and preserve user saves
+        shell: bash
+        run: |
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import re
+
+          target=Path('duckie-task-buddy-v5-opacity-mimics.zip')
+          if not target.is_file():
+              raise SystemExit('Upload duckie-task-buddy-v5-opacity-mimics.zip into the repository ROOT first.')
+          assetpaths=[f'duck-quest/assets/enemies/mimic/{kind}/static-open-v5.{ext}' for kind in ('healthy','lucky') for ext in ('png','webp')]
+          required={'task-buddy-beta.html','task-buddy-beta.css',*assetpaths}
+          with ZipFile(target) as z:
+              if set(z.namelist())!=required or len(z.namelist())!=len(required):
+                  raise SystemExit('ZIP contents unexpected. Refusing partial install: '+str(z.namelist()))
+              assets={name:z.read(name) for name in required}
+              if not all(assets.values()):raise SystemExit('Empty ZIP member: refusing installation.')
+
+          # Patch the installed source from the repository; never overwrite unrelated game code.
+          changes={}
+          for name in ('index.html','duck-quest/index.html','task-buddy-beta.js',
+                       'trading-cards-extra.js','trading-cards-ui.js',
+                       'app.js','duck-quest/js/quest-v270.js'):
+              path=Path(name)
+              if not path.is_file():raise SystemExit(f'Missing game file: {name}')
+              changes[name]=path.read_text(encoding='utf-8')
+
+          def replace_required(path,old,new,minimum=1):
+              s=changes[path]
+              if s.count(old)<minimum and new not in s:
+                  raise SystemExit(f'Unexpected {path} layout: missing {old!r}. Files unchanged.')
+              changes[path]=s.replace(old,new)
+
+          # Keep opening of all existing animations untouched; only non-animated art changes.
+          for kind in ('healthy','lucky'):
+              replace_required('trading-cards-extra.js',
+                  f'enemies/mimic/{kind}/idle-1.webp',
+                  f'enemies/mimic/{kind}/static-open-v5.webp')
+              replace_required('app.js',
+                  f'duck-quest/assets/enemies/mimic/{kind}/open.webp',
+                  f'duck-quest/assets/enemies/mimic/{kind}/static-open-v5.webp')
+              replace_required('duck-quest/js/quest-v270.js',
+                  f'assets/enemies/mimic/{kind}/open.webp',
+                  f'assets/enemies/mimic/{kind}/static-open-v5.webp')
+          replace_required('trading-cards-ui.js',
+              "'/idle-2.webp'", "'/static-open-v5.webp'")
+
+          # Bust cached scripts so Android and iPad get new mappings.
+          for p,names in [('index.html',['trading-cards-extra.js','trading-cards-ui.js','app.js',
+                                        'task-buddy-beta.css','task-buddy-beta.js']),
+                          ('duck-quest/index.html',['../trading-cards-extra.js','js/quest-v270.js'])]:
+              for name in names:
+                  s=changes[p]
+                  pat=re.escape(name)+r'\?v=[^"\s<>]+'
+                  if not re.search(pat,s):raise SystemExit(f'Cannot find script/style URL {name} in {p}.')
+                  changes[p]=re.sub(pat,name+'?v=buddy-v5',s,count=1)
+
+          # Reload the transparent body inside the iframe too.
+          s=changes['task-buddy-beta.js']
+          if "./task-buddy-beta.html?v=4" in s:
+              changes['task-buddy-beta.js']=s.replace("./task-buddy-beta.html?v=4","./task-buddy-beta.html?v=buddy-v5")
+          elif "./task-buddy-beta.html?v=buddy-v5" not in s:
+              raise SystemExit('Could not locate iframe cache version. No files changed.')
+          for name,content in changes.items():Path(name).write_text(content,encoding='utf-8')
+          for name,data in assets.items():
+              path=Path(name);path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(data)
+          print('Task Buddy v5: translucent shell, preserved Your Tasks, static open Healthy/Lucky Mimics.')
+          PYCODE
+
+      - name: Validate installed files
+        run: |
+          node --check task-buddy-beta.js
+          node --check trading-cards-ui.js
+          node --check trading-cards-extra.js
+          node --check app.js
+          node --check duck-quest/js/quest-v270.js
+          grep -Fq 'background:transparent!important' task-buddy-beta.html
+          grep -Fq 'background:rgba(255,248,252,.70)!important' task-buddy-beta.css
+          grep -Fq 'static-open-v5.webp' trading-cards-extra.js
+          grep -Fq 'static-open-v5.webp' trading-cards-ui.js
+          test -s duck-quest/assets/enemies/mimic/healthy/static-open-v5.webp
+          test -s duck-quest/assets/enemies/mimic/lucky/static-open-v5.webp
+
+      - name: Commit changes
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html duck-quest/index.html task-buddy-beta.js task-buddy-beta.html task-buddy-beta.css trading-cards-extra.js trading-cards-ui.js app.js duck-quest/js/quest-v270.js duck-quest/assets/enemies/mimic/healthy/static-open-v5.* duck-quest/assets/enemies/mimic/lucky/static-open-v5.*
+          if git diff --cached --quiet; then echo 'No changes needed.'; exit 0; fi
+          git commit -m 'Task Buddy v5 translucent popup and open Mimic card sprites'
+          git push
