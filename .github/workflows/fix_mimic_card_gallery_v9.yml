@@ -1,0 +1,90 @@
+name: Fix Mimic card gallery - original open sprites v9
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-mimic-gallery-fix
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Duckie Days
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Correct Lucky and Healthy Mimic artwork in card gallery
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          ui_path = Path('trading-cards-ui.js')
+          index_path = Path('index.html')
+          if not ui_path.is_file() or not index_path.is_file():
+              raise SystemExit('Expected game files are missing. No files changed.')
+
+          ui = ui_path.read_text(encoding='utf-8')
+          index = index_path.read_text(encoding='utf-8')
+          # All image refs used by card previews, variant chips, and the gallery
+          # pass through cardThumbSrc(). Restore the original normalized sprite.
+          expected = "return TC.asset('duck-quest/assets/enemies/mimic/'+item.id+'/static-open-v5.webp');"
+          replacement = "return TC.asset('duck-quest/assets/enemies/mimic/'+item.id+'/open.webp');"
+          if expected in ui:
+              ui = ui.replace(expected, replacement)
+          elif replacement not in ui:
+              raise SystemExit('Unexpected cardThumbSrc helper: refusing to alter other artwork.')
+
+          if 'static-open-v5.webp' in ui:
+              raise SystemExit('Old Mimic static asset still referenced by trading-cards-ui.js')
+          if ui.count(replacement) != 1:
+              raise SystemExit('Expected exactly one standardized Mimic gallery art helper')
+
+          # Verify normalized assets were already installed by the earlier workflow.
+          for variant in ('lucky','healthy'):
+              for filename in ('open.webp','idle-1.webp','idle-2.webp','closed.webp'):
+                  asset = Path('duck-quest/assets/enemies/mimic') / variant / filename
+                  if not asset.is_file() or asset.stat().st_size == 0:
+                      raise SystemExit(f'Missing required original sprite: {asset}')
+
+          # Make browser/PWA fetch the corrected gallery script rather than cached v8.
+          pattern = r'(src="trading-cards-ui\.js\?v=)[^"\s]+("\s*>)'
+          index, n = re.subn(pattern, r'\g<1>mimic-gallery-v9\g<2>', index)
+          if n != 1:
+              raise SystemExit(f'Expected exactly one trading-cards-ui.js script reference; found {n}')
+
+          ui_path.write_text(ui, encoding='utf-8')
+          index_path.write_text(index, encoding='utf-8')
+          print('Fixed Mimic card gallery, variant chips, and card previews to use original open.webp')
+          PY
+
+      - name: Verify before committing
+        shell: bash
+        run: |
+          node --check trading-cards-ui.js
+          grep -Fq "item.id+'/open.webp'" trading-cards-ui.js
+          if grep -Fq 'static-open-v5.webp' trading-cards-ui.js; then
+            echo 'ERROR: old Fabled-style gallery art reference remains'
+            exit 1
+          fi
+          grep -Fq 'trading-cards-ui.js?v=mimic-gallery-v9' index.html
+
+      - name: Commit targeted fix
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add trading-cards-ui.js index.html
+          if git diff --cached --quiet; then
+            echo 'Already fixed; no changes needed.'
+            exit 0
+          fi
+          git commit -m 'Fix Lucky and Healthy Mimic card gallery artwork'
+          git push
