@@ -1,0 +1,102 @@
+name: Install Task Buddy v7 - Shared Bucks Paint and Shelf
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-task-buddy-beta-install
+  cancel-in-progress: false
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Duckie Days
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Install v7 from one ZIP
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile, BadZipFile
+          import re
+
+          canonical = 'duckie-task-buddy-v7-shared-bucks-paint-shelf.zip'
+          expected = {'task-buddy-beta.html', 'task-buddy-beta.js', 'task-buddy-beta.css'}
+          candidates = [p for p in Path('.').glob('duckie-task-buddy-v7-shared-bucks-paint-shelf*.zip') if p.is_file()]
+          if not candidates:
+              raise SystemExit('Please upload the v7 ZIP into the repository root first.')
+          # Prefer the exact filename; accept GitHub/iPad suffixes such as " 2.zip".
+          candidates.sort(key=lambda p: (p.name == canonical, p.stat().st_mtime), reverse=True)
+          archive_path = candidates[0]
+          try:
+              with ZipFile(archive_path) as archive:
+                  names = archive.namelist()
+                  if set(names) != expected or len(names) != 3:
+                      raise SystemExit('ZIP should contain exactly the three Task Buddy files, without folders.')
+                  data = {name: archive.read(name) for name in expected}
+                  if not all(data.values()):
+                      raise SystemExit('An installer file in the ZIP was empty.')
+          except BadZipFile as exc:
+              raise SystemExit('Invalid ZIP: ' + str(exc))
+
+          index_path = Path('index.html')
+          if not index_path.is_file():
+              raise SystemExit('Game index.html was not found.')
+          index = index_path.read_text(encoding='utf-8')
+          for kind in ('css', 'js'):
+              pattern = r'task-buddy-beta\.' + kind + r'\?v=[A-Za-z0-9._-]+'
+              matches = re.findall(pattern, index)
+              if len(matches) != 1:
+                  raise SystemExit('Expected exactly one existing Task Buddy ' + kind + ' reference. Found: ' + repr(matches))
+              index = re.sub(pattern, 'task-buddy-beta.' + kind + '?v=buddy-v7', index, count=1)
+
+          for name, contents in data.items():
+              Path(name).write_bytes(contents)
+          index_path.write_text(index, encoding='utf-8')
+          print('Installed v7 from', archive_path)
+          PY
+
+      - name: Check JavaScript, links, and shared economy integration
+        shell: bash
+        run: |
+          node --check task-buddy-beta.js
+          python3 - <<'PY'
+          from pathlib import Path
+          import re, subprocess
+          index = Path('index.html').read_text()
+          html = Path('task-buddy-beta.html').read_text()
+          js = Path('task-buddy-beta.js').read_text()
+          for ext in ('css','js'):
+              assert 'task-buddy-beta.'+ext+'?v=buddy-v7' in index
+          assert 'duckie-buddy:spend' in js and 'saved.taskProgression.duckBucks=balance-amount' in js
+          assert 'saved.inventory[id]=balance-1' in js
+          assert 'const HOME_PAINT_COLORS=' in html
+          assert '[1.9,11.2,20.5]' in html
+          scripts = re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',html,re.S)
+          inline = [s for s in scripts if not s.lstrip().startswith('{')]
+          if not inline:
+              raise SystemExit('Inline game JavaScript missing.')
+          Path('/tmp/duckie_buddy_inline_v7.js').write_text('\n;\n'.join(inline))
+          subprocess.run(['node','--check','/tmp/duckie_buddy_inline_v7.js'],check=True)
+          print('v7 shared-economy code checks passed.')
+          PY
+
+      - name: Commit installed files
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html task-buddy-beta.html task-buddy-beta.js task-buddy-beta.css
+          if git diff --cached --quiet; then
+            echo 'Already installed.'
+            exit 0
+          fi
+          git commit -m 'Task Buddy Room v7: shared bucks, matching paint, more room colors and 3x5 shelf'
+          git push
