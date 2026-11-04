@@ -1,0 +1,79 @@
+name: Update Task Buddy Room v2
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-task-buddy-beta-install
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out game
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Install updated Task Buddy Room files
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile, BadZipFile
+          from html.parser import HTMLParser
+          import re
+
+          archive_path = Path('duckie-task-buddy-update-v2.zip')
+          expected = {'task-buddy-beta.html', 'task-buddy-beta.css', 'task-buddy-beta.js'}
+          if not archive_path.is_file():
+              raise SystemExit('Upload duckie-task-buddy-update-v2.zip to repository root first.')
+          try:
+              with ZipFile(archive_path) as archive:
+                  names = archive.namelist()
+                  if len(names) != len(expected) or set(names) != expected:
+                      raise SystemExit('Unexpected ZIP contents: ' + repr(names))
+                  for name in expected:
+                      data = archive.read(name)
+                      if not data:
+                          raise SystemExit('Empty file: ' + name)
+                      Path(name).write_bytes(data)
+          except BadZipFile as exc:
+              raise SystemExit(f'Bad ZIP: {exc}')
+
+          index = Path('index.html')
+          source = index.read_text(encoding='utf8')
+          # Preserve every other game script, task setting, and save system.
+          if source.count('task-buddy-beta.css?v=2') != 1 or source.count('task-buddy-beta.js?v=2') != 1:
+              raise SystemExit('Unexpected Task Buddy integration references. No changes made to index.html.')
+          source = source.replace('task-buddy-beta.css?v=2', 'task-buddy-beta.css?v=3', 1)
+          source = source.replace('task-buddy-beta.js?v=2', 'task-buddy-beta.js?v=3', 1)
+          index.write_text(source, encoding='utf8')
+          print('Task Buddy v2 update installed; existing game files preserved.')
+          PY
+
+      - name: Verify before commit
+        run: |
+          test -s task-buddy-beta.html
+          test -s task-buddy-beta.js
+          test -s task-buddy-beta.css
+          grep -q 'task-buddy-beta.js?v=3' index.html
+          grep -q 'task-buddy-beta.css?v=3' index.html
+          grep -q 'inventory-quantity-card' task-buddy-beta.html
+          grep -q 'task-shop-item-v261-perk' task-buddy-beta.css
+          node --check task-buddy-beta.js
+
+      - name: Commit update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html task-buddy-beta.html task-buddy-beta.js task-buddy-beta.css
+          if git diff --cached --quiet; then
+            echo 'Files already current.'
+            exit 0
+          fi
+          git commit -m "Update Task Buddy inventory and layouts; correct Snuggle Ducks price icon"
+          git push
