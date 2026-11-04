@@ -1,0 +1,178 @@
+name: Normalize Mimic sprite names - all displays
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-mimic-sprite-normalization
+  cancel-in-progress: false
+
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Duckie Days
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Normalize original Mimic sprites and audit all game code
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          root = Path('duck-quest/assets/enemies/mimic')
+          variants = ('lucky', 'healthy')
+          extensions = ('.png', '.webp')
+
+          # Validate EVERYTHING before writing ANYTHING. No substitute artwork.
+          source_bytes = {}
+          for variant in variants:
+              folder = root / variant
+              for ext in extensions:
+                  paths = {name: folder / (name + ext)
+                           for name in ('closed', 'open', 'idle-1', 'idle-2')}
+                  for name, path in paths.items():
+                      if not path.is_file() or path.stat().st_size == 0:
+                          raise SystemExit(f'Missing original {variant} sprite: {path}')
+                  source_bytes[(variant, ext)] = {name: path.read_bytes()
+                                                  for name, path in paths.items()}
+
+          # Consistent meaning across Mimics:
+          #   closed = closed chest
+          #   open   = creature visible (the artist's ORIGINAL open sprite)
+          #   idle-1 = open, creature visible, to match the other Mimic idle art
+          #   idle-2 = open, creature visible, existing second idle frame
+          # The old idle-1 contained a closed chest. Its intended appearance is
+          # already stored in the original closed file, so do not put it in open.
+          for variant in variants:
+              for ext in extensions:
+                  folder = root / variant
+                  original_open = source_bytes[(variant, ext)]['open']
+                  idle1_path = folder / ('idle-1' + ext)
+                  if idle1_path.read_bytes() != original_open:
+                      idle1_path.write_bytes(original_open)
+                      print('Normalized idle-1 to original open pose:', idle1_path)
+                  else:
+                      print('Already normalized:', idle1_path)
+                  for unchanged in ('closed', 'open', 'idle-2'):
+                      file = folder / (unchanged + ext)
+                      if file.read_bytes() != source_bytes[(variant, ext)][unchanged]:
+                          raise SystemExit(f'Unexpected change to {file}')
+
+          # Scan all active source files (not just the main card gallery).
+          # Remove references to previous generated Fabled/substitute art;
+          # static uses the real open.webp, animated uses idle-1/idle-2.
+          extensions_to_scan = {'.js', '.mjs', '.ts', '.tsx', '.jsx', '.html',
+                                '.css', '.json'}
+          skipped = {'.git', '.github', 'node_modules', 'dist', 'build', 'vendor'}
+          edited = []
+          counts = {'lucky': 0, 'healthy': 0}
+          for path in Path('.').rglob('*'):
+              if not path.is_file() or path.suffix.lower() not in extensions_to_scan:
+                  continue
+              if any(part in skipped for part in path.parts):
+                  continue
+              if path.stat().st_size > 8_000_000:
+                  continue
+              try:
+                  original = path.read_text(encoding='utf-8')
+              except (OSError, UnicodeDecodeError):
+                  continue
+              updated = original
+              for variant in variants:
+                  # Catches static-open-v5.webp, static-open-original-v6.png,
+                  # and other prior generated names, without touching the
+                  # original open/closed/idle animation asset paths.
+                  pattern = (rf'(enemies/mimic/{variant}/)'
+                             rf'static-open[-_a-zA-Z0-9]*\.(?:png|webp)')
+                  updated, found = re.subn(pattern, r'\g<1>open.webp', updated)
+                  counts[variant] += found
+              if updated != original:
+                  path.write_text(updated, encoding='utf-8')
+                  edited.append(str(path))
+                  print('Repaired art references:', path)
+
+          # Confirm no stale generated card art remains in active game code.
+          leftovers = []
+          for path in Path('.').rglob('*'):
+              if (not path.is_file() or path.suffix.lower() not in extensions_to_scan
+                  or any(part in skipped for part in path.parts)
+                  or path.stat().st_size > 8_000_000):
+                  continue
+              try:
+                  contents = path.read_text(encoding='utf-8')
+              except (OSError, UnicodeDecodeError):
+                  continue
+              if re.search(r'enemies/mimic/(?:healthy|lucky)/static-open', contents):
+                  leftovers.append(str(path))
+          if leftovers:
+              raise SystemExit('Stale artwork paths still found: ' + ', '.join(leftovers))
+
+          # Refresh caches for the two entry points. Only touch the version
+          # query, preserving the existing script load order and code.
+          version = 'mimic-normalize-v8'
+          entry_scripts = {
+              Path('index.html'): ('app.js', 'trading-cards-extra.js',
+                                   'trading-cards-ui.js'),
+              Path('duck-quest/index.html'): ('../trading-cards-extra.js',
+                                              'js/quest-v270.js'),
+          }
+          for page, scripts in entry_scripts.items():
+              if not page.is_file():
+                  raise SystemExit(f'Missing game entry point: {page}')
+              html = page.read_text(encoding='utf-8')
+              for script in scripts:
+                  patt = r'(src=["\']' + re.escape(script) + r'\?v=)[^"\']+'
+                  html, count = re.subn(patt, lambda m: m.group(1) + version, html)
+                  if count != 1:
+                      raise SystemExit(f'Expected exactly one {script} reference in {page}; found {count}')
+              page.write_text(html, encoding='utf-8')
+
+          for variant in variants:
+              for ext in extensions:
+                  folder = root / variant
+                  assert (folder / ('idle-1' + ext)).read_bytes() == source_bytes[(variant, ext)]['open']
+                  assert (folder / ('open' + ext)).read_bytes() == source_bytes[(variant, ext)]['open']
+                  assert (folder / ('closed' + ext)).read_bytes() == source_bytes[(variant, ext)]['closed']
+          print('Mimic normalization verified. Static reference replacements:', counts)
+          print('Active game source files corrected:', len(edited))
+          PY
+
+      - name: Check source syntax and expected assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check app.js
+          node --check trading-cards-extra.js
+          node --check trading-cards-ui.js
+          node --check duck-quest/js/quest-v270.js
+          for variant in lucky healthy; do
+            for state in closed open idle-1 idle-2; do
+              test -s "duck-quest/assets/enemies/mimic/$variant/$state.png"
+              test -s "duck-quest/assets/enemies/mimic/$variant/$state.webp"
+            done
+          done
+          echo 'Mimic names, original assets, and JavaScript verified.'
+
+      - name: Commit sprite normalization
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          # This job modifies only validated Mimic image paths, active source
+          # references, and two HTML entry points. Stage all of those changes.
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'Sprites and references were already normalized.'
+            exit 0
+          fi
+          git commit -m 'Normalize Lucky and Healthy Mimic sprite states and static artwork'
+          git push
