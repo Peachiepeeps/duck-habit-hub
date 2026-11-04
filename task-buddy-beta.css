@@ -27,3 +27,12 @@
 }
 @media(max-width:480px){.duckie-task-buddy-beta-frame{width:92vw !important;height:min(86dvh,720px) !important}}
 /* The host applies inert to Your Tasks while the room is open; it remains visible. */
+
+/* v4 — no second window behind Task Buddy Room.
+   Keep the original Your Tasks screen mounted and inert (so its state is preserved),
+   but hide its entire visual panel for as long as the Buddy Room is open.
+   The existing show()/hide() handler adds/removes this body class. */
+body.duckie-buddy-beta-open #tasksPanel {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
