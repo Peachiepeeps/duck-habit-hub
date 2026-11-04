@@ -46,3 +46,6 @@ body.duckie-buddy-beta-open #tasksPanel {
 #duckieTaskBuddyBetaOverlay { background:transparent!important; }
 .duckie-task-buddy-beta-backdrop {background:rgba(42,29,50,.16)!important;}
 .duckie-task-buddy-beta-frame {background:rgba(255,248,252,.70)!important;}
+
+/* v7: swatch grid remains compact on mobile while showing an expanded room palette */
+.makeover-colors{max-height:205px;overflow-y:auto;align-content:start}
