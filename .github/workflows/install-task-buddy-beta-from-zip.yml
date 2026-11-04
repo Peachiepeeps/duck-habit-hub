@@ -1,0 +1,107 @@
+name: Install Task Buddy Room beta from ZIP
+
+on:
+  workflow_dispatch:
+    inputs:
+      remove:
+        description: 'Remove beta popup from Your Tasks instead?'
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-task-buddy-beta-install
+  cancel-in-progress: false
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Duckie Days
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Extract single uploaded ZIP and install
+        env:
+          REMOVE_BETA: ${{ inputs.remove }}
+        run: |
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          from zipfile import ZipFile, BadZipFile
+
+          zip_path = Path('duckie-task-buddy-beta-upload.zip')
+          assets = ['task-buddy-beta.html', 'task-buddy-beta.js', 'task-buddy-beta.css']
+          index_path = Path('index.html')
+          if not index_path.is_file():
+              raise SystemExit('index.html not found in repository root.')
+
+          # Use distinctive markers, and preserve every other existing game file/line.
+          begin = '<!-- TASK_BUDDY_BETA_START -->'
+          end = '<!-- TASK_BUDDY_BETA_END -->'
+          content = index_path.read_text(encoding='utf-8')
+          if content.count(begin) != content.count(end):
+              raise SystemExit('An incomplete beta integration marker was found; please review index.html.')
+          while begin in content:
+              i = content.index(begin)
+              j = content.index(end, i) + len(end)
+              content = content[:i] + content[j:]
+
+          # Also support safely upgrading the previous first-beta workflow integration.
+          old_marker = '<!-- TASK_BUDDY_BETA_INTEGRATION -->'
+          for tag in (
+              '<link rel="stylesheet" href="task-buddy-beta.css?v=1" />',
+              '<script src="task-buddy-beta.js?v=1"></script>',
+          ):
+              content = content.replace(old_marker + '\n' + tag, '')
+
+          remove = os.getenv('REMOVE_BETA', 'false').lower() == 'true'
+          if not remove:
+              if not zip_path.is_file():
+                  raise SystemExit('Upload duckie-task-buddy-beta-upload.zip to the repository ROOT first.')
+              try:
+                  with ZipFile(zip_path) as archive:
+                      names = archive.namelist()
+                      if any(n not in assets for n in names) or any(names.count(n) != 1 for n in assets):
+                          raise SystemExit('ZIP must contain exactly the three task-buddy-beta files, without folders.')
+                      for name in assets:
+                          data = archive.read(name)
+                          if not data:
+                              raise SystemExit(name + ' is empty.')
+                          Path(name).write_bytes(data)
+              except BadZipFile as err:
+                  raise SystemExit('The uploaded ZIP is corrupt: ' + str(err))
+
+              if '</head>' not in content or '</body>' not in content:
+                  raise SystemExit('Could not find safe HTML insertion points in index.html.')
+              css = (f'{begin}\n'
+                     '<link rel="stylesheet" href="task-buddy-beta.css?v=2" />\n'
+                     f'{end}')
+              js = (f'{begin}\n'
+                    '<script src="task-buddy-beta.js?v=2"></script>\n'
+                    f'{end}')
+              content = content.replace('</head>', css + '\n</head>', 1)
+              content = content.replace('</body>', js + '\n</body>', 1)
+
+          index_path.write_text(content, encoding='utf-8')
+          print('Removed Task Buddy beta hooks.' if remove else 'Installed Task Buddy beta from uploaded ZIP.')
+          PY
+
+      - name: Commit the beta files and index hooks
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if [ "${{ inputs.remove }}" != "true" ]; then
+            git add task-buddy-beta.html task-buddy-beta.js task-buddy-beta.css
+          fi
+          if git diff --cached --quiet; then
+            echo 'No changes needed.'
+            exit 0
+          fi
+          git commit -m "Install Task Buddy Room beta from single ZIP"
+          git push
