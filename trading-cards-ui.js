@@ -96,7 +96,7 @@
   function isFavorite(id){return state.favorites.includes(id);}
   function cardThumbSrc(card,item){
   if(card?.enemyId==='mimic' && (item?.id==='lucky' || item?.id==='healthy')){
-    return TC.asset('duck-quest/assets/enemies/mimic/'+item.id+'/static-open-v5.webp');
+    return TC.asset('duck-quest/assets/enemies/mimic/'+item.id+'/open.webp');
   }
   return TC.cardArt({...card,art:item?.art||card?.art});
 }
