@@ -20,12 +20,12 @@
     const count=completedToday();
     if(force||lastCount!==count){lastCount=count;frame.contentWindow.postMessage({type:'duckie-buddy:task-count',count},location.origin);}
   }
-  function hide(){if(overlay)overlay.hidden=true;document.body.classList.remove('duckie-buddy-beta-open');if(updater){clearInterval(updater);updater=null;}const opener=document.getElementById(BTN);opener?.focus();}
+  function hide(){if(overlay)overlay.hidden=true;const tasks=document.getElementById('tasksPanel');if(tasks)tasks.inert=false;document.body.classList.remove('duckie-buddy-beta-open');if(updater){clearInterval(updater);updater=null;}const opener=document.getElementById(BTN);opener?.focus();}
   function show(){
     if(!overlay)return;
-    overlay.hidden=false;document.body.classList.add('duckie-buddy-beta-open');
+    overlay.hidden=false;const tasks=document.getElementById('tasksPanel');if(tasks)tasks.inert=true;document.body.classList.add('duckie-buddy-beta-open');
     lastCount=-1;
-    if(!frame.src)frame.src='./task-buddy-beta.html?v=3';
+    if(!frame.src)frame.src='./task-buddy-beta.html?v=4';
     sendCount(true);
     if(updater)clearInterval(updater);
     updater=setInterval(()=>sendCount(false),1200);

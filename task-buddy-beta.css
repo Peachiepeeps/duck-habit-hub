@@ -16,3 +16,14 @@
 /* The Snuggle Ducks perk's price icon must not inherit the card preview image dimensions. */
 #taskShopGrid .task-shop-item-v261-perk .task-buck-inline-v254 img{width:15px!important;height:15px!important;min-width:15px!important;max-width:15px!important;max-height:15px!important;object-fit:contain!important;display:inline-block!important;vertical-align:middle!important;flex:none!important}
 #taskShopGrid .task-shop-item-v261-perk .task-buck-inline-v254{display:inline-flex!important;align-items:center!important;gap:3px!important}
+
+/* v3 — show the Your Tasks panel behind a non-interactive Buddy Room overlay. */
+#duckieTaskBuddyBetaOverlay{background:transparent !important}
+.duckie-task-buddy-beta-backdrop{background:rgba(42,29,50,.24) !important}
+.duckie-task-buddy-beta-frame{
+  width:min(90vw,620px) !important;
+  height:min(85dvh,740px) !important;
+  max-width:100% !important;
+}
+@media(max-width:480px){.duckie-task-buddy-beta-frame{width:92vw !important;height:min(86dvh,720px) !important}}
+/* The host applies inert to Your Tasks while the room is open; it remains visible. */

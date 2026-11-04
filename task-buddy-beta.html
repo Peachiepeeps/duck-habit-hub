@@ -180,6 +180,25 @@ body{min-height:100svh;background:radial-gradient(ellipse at 50% 30%,#fae8f8 0%,
 .shop-items .shop-featured>.shop-card-actions button{max-width:125px}
 .task-inventory-grid .inventory-quantity-card{position:relative;min-height:93px;padding-bottom:5px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
 .task-inventory-grid .inventory-count{color:#8b5189;font-size:11px;font-weight:850;background:#fff0f8;border:1px solid #e9c7de;border-radius:7px;padding:2px 6px;line-height:1.2}
+
+/* v3 — Room Color Makeover actions remain in one line beside the buy button. */
+.shop-items .shop-featured > .shop-card-actions{
+  grid-column:2 / 3 !important;grid-row:auto !important;
+  display:flex !important;flex-direction:row !important;
+  flex-wrap:nowrap !important;align-items:center !important;justify-content:flex-start !important;
+  gap:6px !important;width:100% !important;max-width:none !important;min-width:0;
+}
+.shop-items .shop-featured > .shop-card-actions > button{
+  flex:1 1 0 !important;min-width:0 !important;max-width:none !important;
+  width:auto !important;margin:0 !important;white-space:nowrap;
+  font-size:11px;padding:7px 5px;
+}
+.shop-items .shop-item:not(.shop-featured) > .shop-card-actions{
+  display:flex !important;flex-direction:row !important;flex-wrap:nowrap !important;
+}
+.shop-items .shop-item:not(.shop-featured) > .shop-card-actions > button{
+  flex:1 1 0 !important;min-width:0 !important;white-space:nowrap;
+}
 </style></head><body><main class="shell">
 <section id="home" class="closed-placeholder hidden" aria-live="polite">
   <p>♡ Task Buddy Room closed</p>
@@ -224,7 +243,11 @@ function showRoom(){ $('home').classList.add('hidden');$('room-screen').classLis
 function home(){resetScene();hideModal();$('room-screen').classList.add('hidden');$('home').classList.remove('hidden')}
 const modalHistory=[];
 function showModal(title,content){
-  if(!$('overlay').hidden){
+  // History tracks WINDOWS, not re-rendered content or changes to a tab.
+  // Reopening the same window replaces its contents without adding a Back step.
+  const alreadyOpen=!$('overlay').hidden;
+  const sameWindow=alreadyOpen && $('modal-window-key')?.textContent===title;
+  if(alreadyOpen && !sameWindow){
     const previous=$('modal-content');
     const saved=document.createDocumentFragment();
     while(previous.firstChild)saved.appendChild(previous.firstChild);
@@ -233,6 +256,13 @@ function showModal(title,content){
   $('modal-title').textContent=title;
   $('modal-content').replaceChildren(content);
   $('overlay').hidden=false;
+  // Hidden record of the active modal window. Using title here allows
+  // same-window tab changes (Gifts ↔ Decorations) without extra history.
+  if(!$('modal-window-key')){
+    const key=document.createElement('span');key.id='modal-window-key';key.hidden=true;
+    $('overlay').append(key);
+  }
+  $('modal-window-key').textContent=title;
 }
 function hideModal(){
   $('overlay').hidden=true;
@@ -244,6 +274,7 @@ function backModal(){
   if(modalHistory.length){
     const prev=modalHistory.pop();
     $('modal-title').textContent=prev.title;
+    if($('modal-window-key'))$('modal-window-key').textContent=prev.title;
     $('modal-content').replaceChildren(prev.content);
     if(dateSceneTimer){clearInterval(dateSceneTimer);dateSceneTimer=null}
     if(dailyBossFrameTimer){clearInterval(dailyBossFrameTimer);dailyBossFrameTimer=null}
