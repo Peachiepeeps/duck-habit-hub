@@ -794,12 +794,12 @@
     {
       "id": "lucky",
       "label": "Lucky",
-      "art": "enemies/mimic/lucky/static-open-v5.webp"
+      "art": "enemies/mimic/lucky/open.webp"
     },
     {
       "id": "healthy",
       "label": "Healthy",
-      "art": "enemies/mimic/healthy/static-open-v5.webp"
+      "art": "enemies/mimic/healthy/open.webp"
     }
   ]
 };

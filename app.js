@@ -3754,7 +3754,7 @@ function normalizeBuddyRecord(record, fallbackKey = "") {
       enemyId: "mimic",
       variantId: "lucky",
       name: "Lucky Mimic",
-      image: "duck-quest/assets/enemies/mimic/lucky/static-open-v5.webp",
+      image: "duck-quest/assets/enemies/mimic/lucky/open.webp",
       shiny: false,
       boss: false
     },
@@ -3762,7 +3762,7 @@ function normalizeBuddyRecord(record, fallbackKey = "") {
       enemyId: "mimic",
       variantId: "healthy",
       name: "Healthy Mimic",
-      image: "duck-quest/assets/enemies/mimic/healthy/static-open-v5.webp",
+      image: "duck-quest/assets/enemies/mimic/healthy/open.webp",
       shiny: false,
       boss: false
     },
@@ -12709,8 +12709,8 @@ function buddyGenderSymbol(gender) {
 
 const PROFILE_MIMIC_PORTRAITS = Object.freeze({
   base: "duck-quest/assets/enemies/mimic/base/open-1.webp",
-  lucky: "duck-quest/assets/enemies/mimic/lucky/static-open-v5.webp",
-  healthy: "duck-quest/assets/enemies/mimic/healthy/static-open-v5.webp",
+  lucky: "duck-quest/assets/enemies/mimic/lucky/open.webp",
+  healthy: "duck-quest/assets/enemies/mimic/healthy/open.webp",
   amethyst: "duck-quest/assets/shinies/amethyst-mimic-idle-1.webp"
 });
 
