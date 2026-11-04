@@ -1,0 +1,92 @@
+name: Install Task Buddy v10 - Roommates and Colors
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-task-buddy-beta-install
+  cancel-in-progress: false
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Duckie Days
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Install verified Buddy Room update
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import re
+          archive_name='duckie-task-buddy-v10-roommates-colors'
+          found=sorted(Path('.').glob(archive_name+'*.zip'))
+          if not found:
+              raise SystemExit('Upload '+archive_name+'.zip to the repository root before running this workflow.')
+          if len(found)>1:
+              raise SystemExit('Several v10 ZIPs found: '+', '.join(str(f) for f in found)+'. Remove older duplicates to avoid installing the wrong one.')
+          expected={'task-buddy-beta.html','task-buddy-beta.js','task-buddy-beta.css'}
+          with ZipFile(found[0]) as archive:
+              names=archive.namelist()
+              if set(names)!=expected or len(names)!=3:
+                  raise SystemExit('Unexpected ZIP contents: '+repr(names))
+              content={name:archive.read(name) for name in names}
+          if any(not data for data in content.values()):
+              raise SystemExit('Update contains an empty file.')
+          html=content['task-buddy-beta.html'].decode('utf-8')
+          for marker in ('ROOM_AFFECTION_MAX=100','function inviteToLiveTogether','favoriteDuckColors','duckie-buddy:spend'):
+              if marker not in html and marker!='duckie-buddy:spend':
+                  raise SystemExit('Missing room feature: '+marker)
+          script=content['task-buddy-beta.js'].decode('utf-8')
+          if 'duckie-buddy:spend' not in script:
+              raise SystemExit('ZIP lacks the shared Duck Bucks/Paint bridge.')
+          index=Path('index.html')
+          source=index.read_text(encoding='utf-8')
+          for filename in ('task-buddy-beta.css','task-buddy-beta.js'):
+              pattern=re.escape(filename)+r'\?v=[^"\s<>]+'
+              if len(re.findall(pattern,source))!=1:
+                  raise SystemExit('Missing or duplicated reference to '+filename)
+              source=re.sub(pattern,filename+'?v=buddy-v10',source,count=1)
+          # Tasks already awards exactly one Duck Buck per completion.
+          tasks=Path('tasks.js').read_text(encoding='utf-8')
+          if 'p.duckBucks+=1;' not in tasks or 'p.completedToday+=1;' not in tasks:
+              raise SystemExit('Existing task reward logic changed. Stop to avoid double rewards.')
+          for name,data in content.items():
+              Path(name).write_bytes(data)
+          index.write_text(source,encoding='utf-8')
+          print('Installed v10 without modifying main game save or task reward code.')
+          PY
+
+      - name: Check syntax and installation
+        run: |
+          node --check task-buddy-beta.js
+          python3 - <<'PY'
+          from pathlib import Path
+          import re,subprocess
+          html=Path('task-buddy-beta.html').read_text()
+          scripts=re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',html,re.S)
+          if len(scripts)<2:raise SystemExit('Missing embedded scripts')
+          # The first executable app script occurs before the final iframe bridge.
+          app=scripts[-2]
+          r=subprocess.run(['node','--check'],input=app,text=True,capture_output=True)
+          if r.returncode:raise SystemExit(r.stderr)
+          assert 'buddy-v10' in Path('index.html').read_text()
+          PY
+
+      - name: Commit update
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html task-buddy-beta.html task-buddy-beta.css task-buddy-beta.js
+          if git diff --cached --quiet; then
+            echo 'Already installed.'
+            exit 0
+          fi
+          git commit -m 'Buddy Room v10 - affection move-ins duck colors and expanded palette'
+          git push
