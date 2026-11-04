@@ -25,7 +25,7 @@
     if(!overlay)return;
     overlay.hidden=false;document.body.classList.add('duckie-buddy-beta-open');
     lastCount=-1;
-    if(!frame.src)frame.src='./task-buddy-beta.html?v=1';
+    if(!frame.src)frame.src='./task-buddy-beta.html?v=3';
     sendCount(true);
     if(updater)clearInterval(updater);
     updater=setInterval(()=>sendCount(false),1200);
@@ -37,7 +37,8 @@
     const btn=document.createElement('button');btn.id=BTN;btn.type='button';
     btn.className='duckie-task-buddy-beta-button';btn.textContent='Task Buddy Room';
     btn.addEventListener('click',show);
-    actions.appendChild(btn);
+    const addTask=actions.querySelector('#addTaskButton');
+    if(addTask)addTask.insertAdjacentElement('afterend',btn);else actions.appendChild(btn);
     overlay=document.createElement('div');overlay.id=ID;overlay.hidden=true;
     overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Task Buddy Room');
     const backdrop=document.createElement('button');backdrop.type='button';backdrop.className='duckie-task-buddy-beta-backdrop';backdrop.setAttribute('aria-label','Close Task Buddy Room');backdrop.addEventListener('click',hide);

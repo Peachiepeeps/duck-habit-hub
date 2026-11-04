@@ -172,6 +172,14 @@ body{min-height:100svh;background:radial-gradient(ellipse at 50% 30%,#fae8f8 0%,
 .date-actions button{white-space:normal;min-height:48px}
 .date-actions button:disabled{opacity:.45;cursor:not-allowed}
 .date-picker select{width:100%;max-width:100%}
+
+/* Task Buddy shop compact action rows and owned quantities */
+.shop-card-actions{display:flex;gap:5px;align-items:center;justify-content:center;flex-wrap:wrap;min-width:0;width:100%}
+.shop-card-actions button{flex:1 1 auto;min-width:0;white-space:nowrap;padding:6px 7px;font-size:11px}
+.shop-items .shop-featured>.shop-card-actions{grid-column:2;grid-row:3;justify-content:flex-start;width:100%;max-width:260px}
+.shop-items .shop-featured>.shop-card-actions button{max-width:125px}
+.task-inventory-grid .inventory-quantity-card{position:relative;min-height:93px;padding-bottom:5px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.task-inventory-grid .inventory-count{color:#8b5189;font-size:11px;font-weight:850;background:#fff0f8;border:1px solid #e9c7de;border-radius:7px;padding:2px 6px;line-height:1.2}
 </style></head><body><main class="shell">
 <section id="home" class="closed-placeholder hidden" aria-live="polite">
   <p>♡ Task Buddy Room closed</p>
@@ -278,15 +286,37 @@ function switchOC(){
 let roomSlots={};const positions=[...([40,71,101,132,162].flatMap(baseline=>[0.95,8.1,15.25,22.4].map(left=>[left,((baseline-20)/180*100)])))];
 function renderSlots(){for(let n of $('stage').querySelectorAll('.slot'))n.remove();positions.forEach(([left,top],i)=>{let b=el('button','slot');b.style.left=left+'%';b.style.top=top+'%';b.title=`Shelf spot ${i+1}`;b.setAttribute('aria-label',`Shelf spot ${i+1}, ${slots[i]?itemName(slots[i]):'empty'}`);if(slots[i]){let im=el('img');im.src=SHELF_ART[slots[i]]||urlFor(slots[i]);im.alt='';b.append(im)}else b.textContent='+';b.onclick=()=>slotPicker(i);$('stage').append(b)})}
 function gridItems(keys,action,selected=null){let c=el('div','grid-items');for(let k of keys){let b=el('button','item'+(k===selected?' selected':''));let img=el('img');img.src=urlFor(k);img.alt='';b.append(img,el('span',null,itemName(k)));b.onclick=()=>action(k);c.append(b)}return c}
-function slotPicker(i){selectedSlot=i;let c=el('div');c.append(el('p','note',`Choose a gift or duck for shelf spot ${i+1}. Decorations are shared with gift inventory in this preview.`));if(slots[i])c.append(btn('Remove decoration',()=>{slots[i]=null;roomSlots[owner]=slots;renderSlots();hideModal()}));c.append(gridItems(Object.keys(inventory).filter(k=>inventory[k]>0),k=>{slots[i]=k;roomSlots[owner]=slots;renderSlots();hideModal()}));showModal(`Decorate shelf spot ${i+1}`,c)}
-function taskInventory(){let c=el('div');c.append(el('p','note','Prototype inventory: gifts, ducks, and shelf decorations. Gift quantities are demo values; your real game inventory is untouched.'));c.append(gridItems(Object.keys(inventory).filter(k=>inventory[k]>0),k=>{pickerGift=k;giftMenu(false)}));showModal('Task Inventory',c)}
+function slotPicker(i){selectedSlot=i;let c=el('div');c.append(el('p','note',`Choose a gift or duck for shelf spot ${i+1}.`));if(slots[i])c.append(btn('Remove decoration',()=>{slots[i]=null;roomSlots[owner]=slots;renderSlots();hideModal()}));c.append(gridItems(Object.keys(inventory).filter(k=>inventory[k]>0),k=>{slots[i]=k;roomSlots[owner]=slots;renderSlots();hideModal()}));showModal(`Decorate shelf spot ${i+1}`,c)}
+function taskInventory(){
+ let c=el('div');
+ const cards=el('div','grid-items task-inventory-grid');
+ const keys=Object.keys(inventory).filter(k=>Number(inventory[k])>0);
+ for(const k of keys){
+   const button=el('button','item inventory-quantity-card');
+   const im=el('img');im.src=urlFor(k);im.alt='';
+   const label=el('span',null,itemName(k));
+   const qty=el('strong','inventory-count','Owned: '+Math.max(0,Math.floor(Number(inventory[k])||0)));
+   button.append(im,label,qty);button.onclick=()=>{pickerGift=k;giftMenu(false)};cards.append(button);
+ }
+ for(const name of furnitureNames){
+   const owned=Math.max(0,Math.floor(Number(furnitureOwned[name])||0));
+   if(!owned)continue;
+   const button=el('button','item inventory-quantity-card');
+   const im=el('img');im.src=DECOR_ASSETS[name+' Thumb'];im.alt='';
+   button.append(im,el('span',null,name),el('strong','inventory-count','Owned: '+owned));
+   button.onclick=()=>customizeFurniture(name);cards.append(button);
+ }
+ if(!cards.children.length)c.append(el('p','note','Nothing owned yet. Visit Task Shop to collect decorations!'));
+ else c.append(cards);
+ showModal('Task Inventory',c)
+}
 function giftMenu(duo){pickedRecipient=duo?(allChars.find(x=>x!==owner)||'annika'):owner;let c=el('div','fields');if(duo){let l=el('label',null,'Recipient');l.append(makeSelect(allChars.filter(x=>x!==owner).map(k=>[k,names(k)]),pickedRecipient,v=>pickedRecipient=v));c.append(l)}
  let l=el('label',null,'Pick a gift');l.append(makeSelect(Object.keys(inventory).filter(k=>inventory[k]>0).map(k=>[k,itemName(k)]),pickerGift,v=>pickerGift=v));c.append(l);
  c.append(el('p','note',duo?'Your active Task Buddy and the recipient appear together; both change expression based on the gift.':'The gift appears briefly to the right of your OC while they react, then both return to idle.'));
  c.append(btn('Give gift!',()=>{let recip=pickedRecipient;let g=pickerGift;hideModal();scene(owner,recip,g,duo)},'pill big'));
  showModal(duo?'Have Buddy give a gift':'Gift to Buddy',c)}
-function shop(){let c=el('div');c.append(el('p','note','Demo Task Shop · Gifts/decorations cost 2 Duck Bucks each. Room recoloring unlock: 10 Duck Bucks. Purchases here are previews only.'));c.append(gridItems(giftKeys,k=>{inventory[k]=(inventory[k]||0)+1;taskInventory()}));c.append(btn('Set a favorite-color duck (demo)',duckPrefs));showModal('Task Shop',c)}
-function duckPrefs(){let c=el('div','fields');c.append(el('p','note','Favorite-colored ducks are included as gift items! No favorite colors are assumed. Choose one for a character now; this stays only in the prototype.'));let id=owner;let color=Object.keys(ducks)[0];let l=el('label',null,'Character');l.append(makeSelect(allChars.map(k=>[k,names(k)]),id,v=>id=v));c.append(l);let l2=el('label',null,'Favorite duck color');l2.append(makeSelect(Object.keys(ducks).map(x=>[x,x]),color,v=>color=v));c.append(l2);c.append(btn('Set favorite color',()=>{favoriteDuckColors[id]=color.toLowerCase();hideModal();say(`${names(id)}'s favorite duck color is ${color}! ♡`)},'pill big'));showModal('Favorite-Color Ducks',c)}
+function shop(){let c=el('div');c.append(el('p','note','Gifts and decorations cost 2 Duck Bucks each. Room recoloring unlock: 10 Duck Bucks.'));c.append(gridItems(giftKeys,k=>{inventory[k]=(inventory[k]||0)+1;taskInventory()}));c.append(btn('Set a favorite-color duck',duckPrefs));showModal('Task Shop',c)}
+function duckPrefs(){let c=el('div','fields');c.append(el('p','note','Choose a favorite duck color for a character.'));let id=owner;let color=Object.keys(ducks)[0];let l=el('label',null,'Character');l.append(makeSelect(allChars.map(k=>[k,names(k)]),id,v=>id=v));c.append(l);let l2=el('label',null,'Favorite duck color');l2.append(makeSelect(Object.keys(ducks).map(x=>[x,x]),color,v=>color=v));c.append(l2);c.append(btn('Set favorite color',()=>{favoriteDuckColors[id]=color.toLowerCase();hideModal();say(`${names(id)}'s favorite duck color is ${color}! ♡`)},'pill big'));showModal('Favorite-Color Ducks',c)}
 
 // Shop state is intentionally DEMO-ONLY. The live game will supply saved balances and inventory.
 let duckBucks=60, paintBalance=20, roomColorUnlocked={};
@@ -324,8 +354,8 @@ function furnishRoom(){let holder=$('room-furniture');holder.replaceChildren();f
 function syncRoomAppearance(){mainRoomColors();furnishRoom()}
 const oldShowRoom=showRoom;showRoom=function(){oldShowRoom();syncRoomAppearance()};
 function pricedItem(key,cost,owned,art,onBuy,onManage){let card=el('div','shop-item');let pic=el('img');pic.src=art;pic.alt='';card.append(pic,el('span','shop-name',key),el('span','shop-meta',`${cost} Duck Bucks · Owned: ${owned}`));
- let b=btn('Buy',()=>{if(duckBucks<cost)return;duckBucks-=cost;onBuy();shop(activeShopTab)},'shop-primary');b.disabled=duckBucks<cost;card.append(b);
- if(onManage)card.append(btn('Customize',onManage,'small-action'));return card}
+ let actions=el('div','shop-card-actions');let b=btn('Buy',()=>{if(duckBucks<cost)return;duckBucks-=cost;onBuy();shop(activeShopTab)},'shop-primary');b.disabled=duckBucks<cost;actions.append(b);
+ if(onManage)actions.append(btn('Customize',onManage,'small-action'));card.append(actions);return card}
 let activeShopTab='gifts';
 function shop(tab=activeShopTab){activeShopTab=tab;let c=el('div');c.append(currencyHeader());
  let tabs=el('div','shop-switch');for(let [label,k] of [['Gifts','gifts'],['Decorations','decor']]){
@@ -343,10 +373,9 @@ function shop(tab=activeShopTab){activeShopTab=tab;let c=el('div');c.append(curr
   let buy=btn(roomColorUnlocked[owner]?'Owned':'Buy',()=>{
     if(roomColorUnlocked[owner]||duckBucks<10)return;
     duckBucks-=10;roomColorUnlocked[owner]=true;shop('decor');
-  },'shop-primary');buy.disabled=!!roomColorUnlocked[owner]||duckBucks<10;makeover.append(buy);
-  makeover.append(btn('Customize',()=>roomMakeover(),'small-action'));grid.prepend(makeover);
+  },'shop-primary');buy.disabled=!!roomColorUnlocked[owner]||duckBucks<10;const makeoverActions=el('div','shop-card-actions');makeoverActions.append(buy,btn('Customize',()=>roomMakeover(),'small-action'));makeover.append(makeoverActions);grid.prepend(makeover);
  }
- c.append(grid);c.append(el('p','note','Prototype values only; no Duckie Days coins or saves are changed.'));
+ c.append(grid);c.append(el('p','note',''));
  showModal('Task Shop',c)
 }
 function chooseDuckToRecolor(){
@@ -365,7 +394,7 @@ function roomMakeover(){let draft={...savedRoomColors()};let selected='Wallpaper
  let swatches=el('div','makeover-colors');for(let hex of palette){let b=el('button');b.style.background=hex;b.title=hex;b.setAttribute('aria-label','Color '+hex);b.onclick=()=>{colorPick.value=hex;changeColor(hex)};swatches.append(b)}c.append(swatches);
  function changeColor(hex){draft[selected]=hex;preview.replaceWith(preview=roomPreview(draft))}
  colorPick.oninput=()=>changeColor(colorPick.value);
- let msg=el('p','shop-alert',roomColorUnlocked[owner]?'Room recoloring is already unlocked.':'Preview is free. First apply costs 10 Duck Bucks.');c.append(msg);
+ let msg=el('p','shop-alert',roomColorUnlocked[owner]?'Room recoloring is already unlocked.':'Try colors for free. First apply costs 10 Duck Bucks.');c.append(msg);
  let actions=el('div','makeover-footer');actions.append(btn('Back to Decorations',()=>shop('decor'),'backbutton'));
  let apply=btn(roomColorUnlocked[owner]?'Apply Colors':'Unlock & Apply · 10',()=>{
  if(!roomColorUnlocked[owner]){if(duckBucks<10){msg.textContent='Not enough Duck Bucks.';return}duckBucks-=10;roomColorUnlocked[owner]=true}
@@ -453,18 +482,18 @@ function characterStats(){
  }
  tabRow.setAttribute('role','tablist');giftSection.append(tabRow,giftArea);chooseTab(0);c.append(giftSection);
  c.append(el('div','compact-duck-line','Favorite duck color: '+(favoriteDuckColors[owner]||'Not selected')));
- c.append(el('div','compact-demo-note','Preview only · Relationship values are not connected to game saves yet.'));
+ c.append(el('div','compact-demo-note','Relationship progress will be available in a future update.'));
  
  showModal(names(owner)+' · Character Stats',c);
 }
-function taskGames(){let c=el('div');c.append(el('p','note',window.parent!==window?'Daily Boss HP updates automatically from tasks completed today.':'Standalone demo: the test task counter below simulates today’s completed tasks.'));
+function taskGames(){let c=el('div');c.append(el('p','note',window.parent!==window?'Daily Boss HP updates automatically from tasks completed today.':'Completed tasks determine boss HP.'));
  let games=el('div','game-card');games.append(el('h3',null,'Daily Task Boss'));
  games.append(el('p',null,'Existing Duck Quest bosses · Easy / Medium / Hard'));
  games.append(btn('View Daily Bosses',()=>dailyBoss(true),'shop-primary'));c.append(games);
- let demo=el('div','game-card');demo.append(el('strong',null,'Standalone preview: tasks completed today'));
+ let demo=el('div','game-card');demo.append(el('strong',null,'Tasks completed today'));
  let control=el('input');control.type='range';control.min='0';control.max='16';control.step='1';control.value=simulatedTasksCompleted;control.style.width='100%';
  let countLabel=el('span','note',String(simulatedTasksCompleted)+' tasks');
- control.setAttribute('aria-label','Demo tasks completed today');
+ control.setAttribute('aria-label','Tasks completed today');
  control.addEventListener('input',()=>{countLabel.textContent=control.value+' tasks';setTaskBossCompletedTasks(control.value)});
  demo.append(control,countLabel,el('p','note','Test progress here, then open Daily Bosses. In the merged game, real task completion will update this automatically.'));
  if(window.parent===window)c.append(demo);else c.append(el('p','note','Live today: '+simulatedTasksCompleted+' completed tasks.'));
@@ -625,7 +654,7 @@ function dateAdventure(partner){
  reward.append(el('div',null,`+10 Affection for ${names(owner)}`));
  reward.append(el('div',null,`+10 Affection for ${names(partner)}`));
  reward.append(el('div',null,'+20 Coins'));
- reward.append(el('small',null,'Prototype rewards — no live balance or affection is changed.'));
+ reward.append(el('small',null,'Affection and coin rewards will be enabled in a future update.'));
  c.append(reward);
  
  showModal('Date Adventure ♡',c);
