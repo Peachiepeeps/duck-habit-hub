@@ -24,13 +24,13 @@
     }
     if(key==='mimic:lucky'){
       return {
-        image:'assets/enemies/mimic/lucky/open.webp',
+        image:'assets/enemies/mimic/lucky/static-open-v5.webp',
         idle:['assets/enemies/mimic/lucky/idle-1.webp','assets/enemies/mimic/lucky/idle-2.webp']
       };
     }
     if(key==='mimic:healthy'){
       return {
-        image:'assets/enemies/mimic/healthy/open.webp',
+        image:'assets/enemies/mimic/healthy/static-open-v5.webp',
         idle:['assets/enemies/mimic/healthy/idle-1.webp','assets/enemies/mimic/healthy/idle-2.webp']
       };
     }
@@ -44,13 +44,13 @@
     // Legacy fallback for pre-key saves only.
     if(variant==='lucky' || name.includes('lucky mimic')){
       return {
-        image:'assets/enemies/mimic/lucky/open.webp',
+        image:'assets/enemies/mimic/lucky/static-open-v5.webp',
         idle:['assets/enemies/mimic/lucky/idle-1.webp','assets/enemies/mimic/lucky/idle-2.webp']
       };
     }
     if(variant==='healthy' || name.includes('healthy mimic')){
       return {
-        image:'assets/enemies/mimic/healthy/open.webp',
+        image:'assets/enemies/mimic/healthy/static-open-v5.webp',
         idle:['assets/enemies/mimic/healthy/idle-1.webp','assets/enemies/mimic/healthy/idle-2.webp']
       };
     }

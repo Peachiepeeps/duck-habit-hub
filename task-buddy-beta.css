@@ -36,3 +36,13 @@ body.duckie-buddy-beta-open #tasksPanel {
   visibility: hidden !important;
   pointer-events: none !important;
 }
+
+/* v5: preserve Your Tasks visually beneath the Buddy Room.
+   The host still applies inert while the popup is open. */
+body.duckie-buddy-beta-open #tasksPanel {
+  visibility: visible !important;
+  pointer-events: none !important;
+}
+#duckieTaskBuddyBetaOverlay { background:transparent!important; }
+.duckie-task-buddy-beta-backdrop {background:rgba(42,29,50,.16)!important;}
+.duckie-task-buddy-beta-frame {background:rgba(255,248,252,.70)!important;}

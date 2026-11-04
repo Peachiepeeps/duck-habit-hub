@@ -199,6 +199,10 @@ body{min-height:100svh;background:radial-gradient(ellipse at 50% 30%,#fae8f8 0%,
 .shop-items .shop-item:not(.shop-featured) > .shop-card-actions > button{
   flex:1 1 0 !important;min-width:0 !important;white-space:nowrap;
 }
+
+/* v5: let the host supply the 70%-opaque translucent pink panel.
+   Keep only the actual room card and its menu panels fully opaque. */
+html,body { background:transparent!important; }
 </style></head><body><main class="shell">
 <section id="home" class="closed-placeholder hidden" aria-live="polite">
   <p>♡ Task Buddy Room closed</p>

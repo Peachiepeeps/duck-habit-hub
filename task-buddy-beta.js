@@ -25,7 +25,7 @@
     if(!overlay)return;
     overlay.hidden=false;const tasks=document.getElementById('tasksPanel');if(tasks)tasks.inert=true;document.body.classList.add('duckie-buddy-beta-open');
     lastCount=-1;
-    if(!frame.src)frame.src='./task-buddy-beta.html?v=4';
+    if(!frame.src)frame.src='./task-buddy-beta.html?v=buddy-v5';
     sendCount(true);
     if(updater)clearInterval(updater);
     updater=setInterval(()=>sendCount(false),1200);
