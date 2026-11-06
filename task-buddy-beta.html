@@ -204,6 +204,22 @@ body{min-height:100svh;background:radial-gradient(ellipse at 50% 30%,#fae8f8 0%,
    Keep only the actual room card and its menu panels fully opaque. */
 html,body { background:transparent!important; }
 .move-in-dialog{display:grid;gap:9px}.move-in-scene{width:100%}.move-in-prompt{display:flex;align-items:center;gap:10px;border-radius:12px;padding:10px;background:#fff3f8;color:#66455a}.move-in-prompt .compact-stat-sprite{width:64px;height:64px;flex:none;object-fit:contain;image-rendering:pixelated}.move-in-prompt p{margin:4px 0 0;font-size:.85rem}.compact-stat-section select{max-width:100%}
+
+/* v12: live-room masks use the same rendering as the makeover preview. */
+.room-stage .live-recolor {
+  background:var(--tint);
+  mask-image:var(--mask);
+  -webkit-mask-image:var(--mask);
+  mask-size:100% 100%;
+  -webkit-mask-size:100% 100%;
+  mask-repeat:no-repeat;
+  -webkit-mask-repeat:no-repeat;
+}
+/* v12: Shin and Lain stay taller than Annika in gift, roommate and date scenes. */
+.figure.host.with-guest[data-character="shin"],.figure.host.with-guest[data-character="lain"],
+.figure.guest[data-character="shin"],.figure.guest[data-character="lain"] {height:58%;width:27%;}
+.figure.host:not(.with-guest)[data-character="shin"],.figure.host:not(.with-guest)[data-character="lain"] {height:66%;width:27%;}
+.date-actor[data-character="shin"],.date-actor[data-character="lain"] {height:64%;width:30%;}
 </style></head><body><main class="shell">
 <section id="home" class="closed-placeholder hidden" aria-live="polite">
   <p>♡ Task Buddy Room closed</p>
@@ -238,10 +254,10 @@ function sprite(id,mood='neutral'){
  const list=mood==='favorite'?['happy','smile','shy','blush','flustered','neutral']:mood==='dislike'?['unhappy','unimpressed','annoyed','angry','sad','crying','neutral']:['neutral','idle','happy','smile'];
  for(const m of list){if(n[m])return n[m];if(f[m])return f[m]};return f.neutral||Object.values(f)[0]||Object.values(n)[0]||'';
 }
-function preference(id,gift){let c=prefs.characters[id];if(gift.startsWith('duck-')){let color=gift.slice(5);return String(favoriteDuckColors[id]||'').toLowerCase()===color?'favorite':'neutral'}return c?.favorites.includes(gift)?'favorite':c?.dislikes.includes(gift)?'dislike':'neutral'}
+function preference(id,gift){let c=prefs.characters[id];if(gift.startsWith('duck-')){let color=gift.slice(5);return favoriteDuckColors[id]===color?'favorite':'neutral'}return c?.favorites.includes(gift)?'favorite':c?.dislikes.includes(gift)?'dislike':'neutral'}
 function say(msg){$('scene-text').textContent=msg}
-function resetScene(){clearTimeout(timing);reacting=false;idleStep=1;$('host-sprite').src=idleFrame(owner,1);$('host-sprite').classList.remove('with-guest');$('guest-sprite').hidden=true;$('scene-gift').hidden=true;$('scene-arrow').hidden=true;roommateAppearance()}
-function scene(giver,receiver,gift,duo){resetScene();reacting=true;const mood=preference(receiver,gift);const giftReward=awardGiftProgress(giver,receiver,gift,duo,mood);let alt=prefs.characters[receiver]?.altDialogueItems?.includes(gift);if(duo){$('host-sprite').classList.add('with-guest');$('host-sprite').src=sprite(giver,mood==='favorite'?'favorite':'neutral');$('guest-sprite').src=sprite(receiver,mood);$('guest-sprite').hidden=false;$('scene-gift').classList.add('between');$('scene-arrow').hidden=false}else{$('host-sprite').src=sprite(receiver,mood);$('scene-gift').classList.remove('between')}
+function resetScene(){clearTimeout(timing);reacting=false;idleStep=1;$('host-sprite').dataset.character=owner;$('guest-sprite').removeAttribute('data-character');$('host-sprite').src=idleFrame(owner,1);$('host-sprite').classList.remove('with-guest');$('guest-sprite').hidden=true;$('scene-gift').hidden=true;$('scene-arrow').hidden=true;roommateAppearance()}
+function scene(giver,receiver,gift,duo){resetScene();reacting=true;const mood=preference(receiver,gift);const giftReward=awardGiftProgress(giver,receiver,gift,duo,mood);let alt=prefs.characters[receiver]?.altDialogueItems?.includes(gift);if(duo){$('host-sprite').classList.add('with-guest');$('host-sprite').src=sprite(giver,mood==='favorite'?'favorite':'neutral');$('guest-sprite').src=sprite(receiver,mood);$('guest-sprite').dataset.character=receiver;$('guest-sprite').hidden=false;$('scene-gift').classList.add('between');$('scene-arrow').hidden=false}else{$('host-sprite').src=sprite(receiver,mood);$('scene-gift').classList.remove('between')}
  $('scene-gift').src=urlFor(gift);$('scene-gift').hidden=false;
  let phrase=mood==='favorite'?'loves':mood==='dislike'?"isn't fond of":'appreciates';say((duo?`${names(giver)} gives ${names(receiver)} `:`${names(receiver)} receives `)+`the ${itemName(gift)}! ${names(receiver)} ${phrase} it.${alt?' Special dialogue item!':''} ${giftReward.text}`);
  timing=setTimeout(()=>{resetScene();if(giftReward.proposal&&owner===giver)inviteToLiveTogether(receiver);else say(`${names(owner)} is relaxing in the Buddy Room. ♡`)},2600);
@@ -441,10 +457,10 @@ function shop(tab=activeShopTab){activeShopTab=tab;let c=el('div');c.append(curr
   grid.append(pricedItem('Duck',2,ducksOwned,ducks.White,()=>{inventory['duck-white']=(inventory['duck-white']||0)+1},()=>chooseDuckToRecolor()));
   let makeover=el('div','shop-item shop-featured');let thumb=el('img');thumb.src=DECOR_ASSETS['Room Icon'];thumb.alt='Empty Buddy Room';
   makeover.append(thumb,el('span','shop-name','Room Color Makeover'),
-     el('span','shop-meta',`10 Duck Bucks · Owned: ${roomColorUnlocked[owner]?1:0}`));
-  let buy=btn(roomColorUnlocked[owner]?'Owned':'Buy',()=>{
+     el('span','shop-meta',roomColorUnlocked[owner]?'Unlocked · Customize free anytime':'10 Duck Bucks to unlock · Choose & Apply colors after purchase'));
+  let buy=btn(roomColorUnlocked[owner]?'Unlocked':'Unlock & Choose Colors',()=>{
     if(roomColorUnlocked[owner])return;
-    spendBucks(10,(ok,reason)=>{if(!ok){alert(reason);return}roomColorUnlocked[owner]=true;saveBuddyState();shop('decor')});
+    spendBucks(10,(ok,reason)=>{if(!ok){alert(reason);return}roomColorUnlocked[owner]=true;saveBuddyState();roomMakeover()});
   },'shop-primary');buy.disabled=!!roomColorUnlocked[owner]||duckBucks<10;const makeoverActions=el('div','shop-card-actions');makeoverActions.append(buy,btn('Customize',()=>roomMakeover(),'small-action'));makeover.append(makeoverActions);grid.prepend(makeover);
  }
  c.append(grid);c.append(el('p','note',''));
@@ -460,7 +476,7 @@ function chooseDuckToRecolor(){
  showModal('Choose a Duck',c)
 }
 function roomMakeover(){let draft={...savedRoomColors()};let selected='Wallpaper';let color=draft[selected]||'#F9DDE8';
- let c=el('div');c.append(el('p','note','Room colors are free after unlocking Room Color Makeover. No Paint is used.'));let balance=currencyHeader();c.append(balance);let preview=roomPreview(draft);c.append(preview);
+ let c=el('div');c.append(el('p','note','Choose a room area and a color. The preview updates instantly; tap Apply Colors to change your actual room. Once unlocked, recoloring is always free. No Paint is used.'));let balance=currencyHeader();c.append(balance);let preview=roomPreview(draft);c.append(preview);
  let fields=el('div','makeover-layout');let label=el('label',null,'Choose room area');let select=makeSelect(roomParts.map(x=>[x,x]),selected,v=>{selected=v;color=draft[v]||'#F9DDE8';colorPick.value=color});label.append(select);fields.append(label);
  let colorPick=document.createElement('input');colorPick.type='color';colorPick.value=color;colorPick.setAttribute('aria-label','Choose color');fields.append(colorPick);c.append(fields);
  let swatches=el('div','makeover-colors');for(let hex of palette){let b=el('button');b.style.background=hex;b.title=hex;b.setAttribute('aria-label','Color '+hex);b.onclick=()=>{colorPick.value=hex;changeColor(hex)};swatches.append(b)}c.append(swatches);
@@ -532,7 +548,7 @@ function invitedMoveIn(roomId,partnerId){return pendingMoveIns[roomId]===partner
 function roommateAppearance(){
  const id=roommates[owner];
  if(!id || !allChars.includes(id) || reacting)return;
- $('guest-sprite').src=idleAsset(id,idleStep||1);
+ $('guest-sprite').src=idleAsset(id,idleStep||1);$('guest-sprite').dataset.character=id;
  $('guest-sprite').alt=names(id);$('guest-sprite').hidden=false;
  $('host-sprite').classList.add('with-guest');
 }
@@ -543,7 +559,7 @@ function inviteToLiveTogether(partner){
  const scene=el('div','date-stage move-in-scene');
  const bg=el('img','date-bg');bg.src=ROOM_ART;bg.alt='Buddy Room';scene.append(bg);
  const a=el('img','date-actor left');a.src=idleAsset(roomOwner,1);a.alt=names(roomOwner);
- const b=el('img','date-actor right');b.src=idleAsset(partner,1);b.alt=names(partner);
+ const b=el('img','date-actor right');b.src=idleAsset(partner,1);b.alt=names(partner);a.dataset.character=roomOwner;b.dataset.character=partner;
  scene.append(a,b);c.append(scene);
  const prompt=el('div','move-in-prompt');
  const portrait=el('img','compact-stat-sprite');portrait.src=idleAsset(partner,1);portrait.alt=names(partner);
@@ -631,7 +647,7 @@ function characterStats(){
  c.append(relationship);
  const giftSection=el('div','compact-stat-section compact-gift-section');
  giftSection.append(el('div','compact-section-label','Gift Preferences ♡'));
- giftSection.append(el('div','stat-gift duck-favorite-highlight','♥ Favorite Duck: '+(FIXED_DUCK_FAVORITES[owner]?FIXED_DUCK_FAVORITES[owner]+' Duck':'Not selected yet')));
+ giftSection.append(el('div','stat-gift duck-favorite-highlight','♥ Favorite Duck: '+(FIXED_DUCK_FAVORITES[owner]||'Yellow')+' Duck'));
  const tabRow=el('div','compact-gift-tabs');
  const giftArea=el('div','compact-gift-content');
  const tabs=[['Favorites',p.favorites],['Dislikes',p.dislikes],['Alt Dialogue',p.altDialogueItems]];
@@ -643,9 +659,9 @@ function characterStats(){
  tabRow.setAttribute('role','tablist');giftSection.append(tabRow,giftArea);chooseTab(0);c.append(giftSection);
  const fav=el('div','compact-stat-section duck-fixed-favorite');
  fav.append(el('div','compact-section-label','Favorite Duck ♡'));
- const chosen=FIXED_DUCK_FAVORITES[owner]||'';
- const preview=el('img','compact-stat-sprite');preview.src=ducks[chosen]||'';preview.hidden=!chosen;preview.alt=chosen?chosen+' Duck':'No favorite duck selected';
- const duckDetails=el('div');duckDetails.append(el('strong',null,(chosen?chosen+' Duck':'Not selected yet')),el('p','note','A favorite gift! +15 Happiness · +10 Affection when gifted by another OC'));
+ const chosen=FIXED_DUCK_FAVORITES[owner]||'Yellow';
+ const preview=el('img','compact-stat-sprite');preview.src=ducks[chosen]||ducks.Yellow;preview.alt=chosen+' Duck';
+ const duckDetails=el('div');duckDetails.append(el('strong',null,chosen+' Duck'),el('p','note','A favorite gift! +15 Happiness · +10 Affection when gifted by another OC'));
  const display=el('div','compact-stat-head');display.append(preview,duckDetails);fav.append(display);c.append(fav);
   showModal(names(owner)+' · Character Stats',c);
 }
@@ -784,9 +800,9 @@ function datePickPartner(method){
  const preview=el('div','date-stage date-selection-preview');
  const bg=el('img','date-bg');bg.src=ROOM_ART;preview.append(bg);
  const a=el('img','date-actor left');a.src=idleAsset(owner,1);a.alt=names(owner);preview.append(a);
- const b=el('img','date-actor right');b.src=idleAsset(selected,1);b.alt=names(selected);preview.append(b);
+ const b=el('img','date-actor right');b.src=idleAsset(selected,1);b.alt=names(selected);a.dataset.character=owner;b.dataset.character=selected;preview.append(b);
  const selector=wrap.querySelector('select');
- selector.addEventListener('change',()=>{b.src=idleAsset(selected,1);b.alt=names(selected)});
+ selector.addEventListener('change',()=>{b.src=idleAsset(selected,1);b.alt=names(selected);b.dataset.character=selected});
  c.append(preview);
  c.append(el('div','date-info',method==='free'?'Uses one earned date credit':'Costs 5 Duck Bucks'));
  c.append(btn('Start Date ♡',()=>{
@@ -808,7 +824,7 @@ function dateAdventure(partner){
  const stage=el('div','date-stage');
  const bg=el('img','date-bg');bg.src=TASK_BOSS_BACKGROUNDS[Math.floor(Math.random()*TASK_BOSS_BACKGROUNDS.length)];bg.alt='Random Duck Quest date setting';stage.append(bg);
  const a=el('img','date-actor left');a.alt=names(owner);stage.append(a);
- const b=el('img','date-actor right');b.alt=names(partner);stage.append(b);
+ const b=el('img','date-actor right');b.alt=names(partner);a.dataset.character=owner;b.dataset.character=partner;stage.append(b);
  const h=el('img','date-heart');h.src=DATE_HEART_ART;h.alt='Red pixel heart';stage.append(h);
  c.append(stage);
  const dateOwner=owner;const proposalReady=awardDateAffection(dateOwner,partner);
