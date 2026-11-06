@@ -25,13 +25,13 @@
     if(key==='mimic:lucky'){
       return {
         image:'assets/enemies/mimic/lucky/open.webp',
-        idle:['assets/enemies/mimic/lucky/idle-1.webp','assets/enemies/mimic/lucky/idle-2.webp']
+        idle:['assets/enemies/mimic/lucky/open.webp','assets/enemies/mimic/lucky/open.webp']
       };
     }
     if(key==='mimic:healthy'){
       return {
         image:'assets/enemies/mimic/healthy/open.webp',
-        idle:['assets/enemies/mimic/healthy/idle-1.webp','assets/enemies/mimic/healthy/idle-2.webp']
+        idle:['assets/enemies/mimic/healthy/open.webp','assets/enemies/mimic/healthy/open.webp']
       };
     }
     if(key==='mimic:shiny' || key==='mimic:amethyst'){
@@ -45,13 +45,13 @@
     if(variant==='lucky' || name.includes('lucky mimic')){
       return {
         image:'assets/enemies/mimic/lucky/open.webp',
-        idle:['assets/enemies/mimic/lucky/idle-1.webp','assets/enemies/mimic/lucky/idle-2.webp']
+        idle:['assets/enemies/mimic/lucky/open.webp','assets/enemies/mimic/lucky/open.webp']
       };
     }
     if(variant==='healthy' || name.includes('healthy mimic')){
       return {
         image:'assets/enemies/mimic/healthy/open.webp',
-        idle:['assets/enemies/mimic/healthy/idle-1.webp','assets/enemies/mimic/healthy/idle-2.webp']
+        idle:['assets/enemies/mimic/healthy/open.webp','assets/enemies/mimic/healthy/open.webp']
       };
     }
     if(variant==='amethyst' || variant==='shiny' || name.includes('amethyst mimic')){

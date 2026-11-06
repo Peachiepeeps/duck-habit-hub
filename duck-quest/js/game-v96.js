@@ -2376,7 +2376,7 @@ function enemyVariantId(enemy) {
   if(enemy.id==="mimic" && enemy.mimicChestStyle) return String(enemy.mimicChestStyle)==="regular" ? "base" : String(enemy.mimicChestStyle);
   return String(
     enemy.catSlimeVariant || enemy.beeVariant || enemy.flowerVariant || enemy.acornMouseVariant || enemy.mushroomVariant || enemy.treeSquirrelVariant || enemy.oceanVariant || enemy.seaunicornVariant || enemy.jellybunVariant ||
-    enemy.gimmickVariant || enemy.porcupinVariant || enemy.catterpillarVariant || enemy.seaStarVariant || enemy.appleBabyVariant || enemy.gummyWormVariant || enemy.puddingPigVariant || enemy.gingerlollyVariant || enemy.candycaneDeerVariant || enemy.gummySharkVariant || enemy.creamFoxVariant || enemy.starMouseVariant || enemy.puffFairyVariant || enemy.tulipaVariant || enemy.snoudVariant || enemy.cloudBunnyVariant || enemy.lunarMothVariant || enemy.ariesVariant || enemy.cherubDuckVariant || enemy.plushbunVariant || "base"
+    enemy.gimmickVariant || enemy.v313Variant || enemy.porcupinVariant || enemy.catterpillarVariant || enemy.seaStarVariant || enemy.appleBabyVariant || enemy.gummyWormVariant || enemy.puddingPigVariant || enemy.gingerlollyVariant || enemy.candycaneDeerVariant || enemy.gummySharkVariant || enemy.creamFoxVariant || enemy.starMouseVariant || enemy.puffFairyVariant || enemy.tulipaVariant || enemy.snoudVariant || enemy.cloudBunnyVariant || enemy.lunarMothVariant || enemy.ariesVariant || enemy.cherubDuckVariant || enemy.plushbunVariant || "base"
   );
 }
 

@@ -33,7 +33,7 @@
       :def.colors[Math.floor(Math.random()*def.colors.length)];
     const index=Math.max(0,def.colors.indexOf(color));const boost=shiny?1.5:1+index*.12;
     ENEMIES[id]={...original,name:shiny?`Shiny ${def.name}`:color==='base'?def.name:`${color[0].toUpperCase()+color.slice(1)} ${def.name}`,
-      idle:[path(id,color,'idle-1'),path(id,color,'idle-2'),...(id==='pancake-ray'&&color==='raspberry'?[path(id,color,'idle-3')]:[])],
+      idle:[path(id,color,'idle-1'),path(id,color,'idle-2')],
       hurt:path(id,color,'hurt'),hp:Math.round(def.hp*boost),attack:Math.round(def.attack*(1+index*.05)),
       exp:Math.round(def.exp*boost),coinMin:Math.round(def.coinMin*boost),coinMax:Math.round(def.coinMax*boost),
       v313Variant:color,shiny,shinyId:shiny?'shiny':undefined};
