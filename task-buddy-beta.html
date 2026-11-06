@@ -217,6 +217,25 @@ html,body { background:transparent!important; }
 }
 /* natural-sprite-v13: Shared sprite sizing; no per-character enlargement. */
 .figure[data-character='shin'],.figure[data-character='lain'],.date-actor[data-character='shin'],.date-actor[data-character='lain'] {object-fit:contain;object-position:center bottom;image-rendering:pixelated;}
+/* buddy-native-v14: preserve each ORIGINAL sprite's pixel proportions.
+   Percentages are scaled by naturalHeight / 96 in the load handler below.
+   width:auto allows the image's native width:height ratio; never stretch art. */
+.room-stage img.figure {
+  width:auto !important; max-width:none !important;
+  height:var(--buddy-native-duo,27%) !important;
+  object-fit:contain !important; object-position:center bottom !important;
+  image-rendering:pixelated;
+}
+.room-stage img.figure.host:not(.with-guest) {
+  height:var(--buddy-native-solo,42%) !important;
+}
+.date-stage img.date-actor {
+  width:auto !important; max-width:none !important;
+  height:var(--buddy-native-date,38%) !important;
+  object-fit:contain !important; object-position:center bottom !important;
+  image-rendering:pixelated;
+}
+
 </style></head><body><main class="shell">
 <section id="home" class="closed-placeholder hidden" aria-live="polite">
   <p>♡ Task Buddy Room closed</p>
@@ -892,6 +911,23 @@ $('launch').onclick=showRoom;$('room-close').onclick=()=>{if(window.parent!==win
   style.textContent='body{background:transparent!important;padding:0!important} .closed-placeholder{display:none!important}';
   document.head.appendChild(style);
   window.parent.postMessage({type:'duckie-buddy:ready'},location.origin);
+})();
+</script>
+<script id="buddy-native-v14">
+// Each sprite is measured from its own PNG/WebP file, not a guessed OC size.
+(() => {
+  'use strict';
+  function sync(img) {
+    if (!(img instanceof HTMLImageElement) || !img.matches('.figure, .date-actor')) return;
+    if (!img.naturalWidth || !img.naturalHeight) return;
+    const factor = img.naturalHeight / 96;
+    img.style.setProperty('--buddy-native-duo', (27 * factor).toFixed(4) + '%');
+    img.style.setProperty('--buddy-native-solo', (42 * factor).toFixed(4) + '%');
+    img.style.setProperty('--buddy-native-date', (38 * factor).toFixed(4) + '%');
+    img.style.aspectRatio = img.naturalWidth + ' / ' + img.naturalHeight;
+  }
+  document.addEventListener('load', event => sync(event.target), true);
+  document.querySelectorAll('img.figure, img.date-actor').forEach(sync);
 })();
 </script>
 </body></html>
