@@ -1,0 +1,124 @@
+name: Fix Task Buddy sprite native proportions v14
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  preserve-native-proportions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use actual image dimensions for Buddy Room character sizing
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          p = Path('task-buddy-beta.html')
+          if not p.is_file():
+              raise SystemExit('Missing Task Buddy Room HTML; nothing changed.')
+          html = p.read_text(encoding='utf-8')
+          if 'class="figure host"' not in html or 'class="figure guest"' not in html or '.date-actor' not in html:
+              raise SystemExit('Expected character scene elements missing; nothing changed.')
+          if '</style>' not in html or '</body>' not in html:
+              raise SystemExit('Expected HTML boundaries missing; nothing changed.')
+
+          # Drop the obsolete v12 oversizing override if it survived an earlier install.
+          html = re.sub(
+              r'/\* v12: Shin and Lain stay taller than Annika in gift, roommate and date scenes\. \*/\s*'
+              r'\.figure\.host\.with-guest\[data-character="shin"\],\.figure\.host\.with-guest\[data-character="lain"\],\s*'
+              r'\.figure\.guest\[data-character="shin"\],\.figure\.guest\[data-character="lain"\]\s*\{height:58%;width:27%;\}\s*'
+              r'\.figure\.host:not\(\.with-guest\)\[data-character="shin"\],\.figure\.host:not\(\.with-guest\)\[data-character="lain"\]\s*\{height:66%;width:27%;\}\s*'
+              r'\.date-actor\[data-character="shin"\],\.date-actor\[data-character="lain"\]\s*\{height:64%;width:30%;\}\s*',
+              '',html
+          )
+          css = '''/* buddy-native-v14: preserve each ORIGINAL sprite's pixel proportions.
+             Percentages are scaled by naturalHeight / 96 in the load handler below.
+             width:auto allows the image's native width:height ratio; never stretch art. */
+          .room-stage img.figure {
+            width:auto !important; max-width:none !important;
+            height:var(--buddy-native-duo,27%) !important;
+            object-fit:contain !important; object-position:center bottom !important;
+            image-rendering:pixelated;
+          }
+          .room-stage img.figure.host:not(.with-guest) {
+            height:var(--buddy-native-solo,42%) !important;
+          }
+          .date-stage img.date-actor {
+            width:auto !important; max-width:none !important;
+            height:var(--buddy-native-date,38%) !important;
+            object-fit:contain !important; object-position:center bottom !important;
+            image-rendering:pixelated;
+          }
+          '''
+          js = '''<script id="buddy-native-v14">
+          // Each sprite is measured from its own PNG/WebP file, not a guessed OC size.
+          (() => {
+            'use strict';
+            function sync(img) {
+              if (!(img instanceof HTMLImageElement) || !img.matches('.figure, .date-actor')) return;
+              if (!img.naturalWidth || !img.naturalHeight) return;
+              const factor = img.naturalHeight / 96;
+              img.style.setProperty('--buddy-native-duo', (27 * factor).toFixed(4) + '%');
+              img.style.setProperty('--buddy-native-solo', (42 * factor).toFixed(4) + '%');
+              img.style.setProperty('--buddy-native-date', (38 * factor).toFixed(4) + '%');
+              img.style.aspectRatio = img.naturalWidth + ' / ' + img.naturalHeight;
+            }
+            document.addEventListener('load', event => sync(event.target), true);
+            document.querySelectorAll('img.figure, img.date-actor').forEach(sync);
+          })();
+          </script>'''
+          # A fresh run or re-run replaces v14 markers rather than duplicating them.
+          html = re.sub(r'/\* buddy-native-v14:.*?\*/.*?(?=</style>)', '', html, flags=re.S) if 'buddy-native-v14:' in html else html
+          html = re.sub(r'<script id="buddy-native-v14">.*?</script>', '', html, flags=re.S)
+          html = html.replace('</style>', css+'\n</style>',1)
+          html = html.replace('</body>', js+'\n</body>',1)
+          p.write_text(html,encoding='utf-8')
+
+          bridge = Path('task-buddy-beta.js')
+          if bridge.is_file():
+              code = bridge.read_text(encoding='utf-8')
+              code,count = re.subn(r'task-buddy-beta\.html\?v=[\w.-]+',
+                                   'task-buddy-beta.html?v=native-proportions-v14',code)
+              if count!=1: raise SystemExit('Expected single iframe cache reference; cannot safely finish.')
+              bridge.write_text(code,encoding='utf-8')
+          else: raise SystemExit('Missing Task Buddy bridge.')
+          index = Path('index.html')
+          if index.is_file():
+              code = index.read_text(encoding='utf-8')
+              code,count = re.subn(r'task-buddy-beta\.js\?v=[\w.-]+',
+                                   'task-buddy-beta.js?v=native-proportions-v14',code)
+              if count!=1: raise SystemExit('Expected single main game cache reference; cannot safely finish.')
+              index.write_text(code,encoding='utf-8')
+          else: raise SystemExit('Missing main game entry.')
+          print('Using natural sprite dimensions in roommate, gifting, solo room, date and move-in scenes.')
+          PY
+      - name: Validate native proportional sizing and preserve room changes
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          t=Path('task-buddy-beta.html').read_text()
+          assert t.count('id="buddy-native-v14"') == 1
+          assert t.count('buddy-native-v14:') == 1
+          assert 'img.naturalHeight / 96' in t and 'img.naturalWidth' in t
+          assert 'height:58%;width:27%' not in t
+          assert 'height:64%;width:30%' not in t
+          assert 'v12: live-room masks' in t
+          assert 'native-proportions-v14' in Path('task-buddy-beta.js').read_text()
+          assert 'native-proportions-v14' in Path('index.html').read_text()
+          print('Validated native pixel aspect ratios, gift/date/room stages, room tints, iframe cache bust.')
+          PY
+      - name: Commit updated Task Buddy sprite sizing
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add task-buddy-beta.html task-buddy-beta.js index.html
+          if git diff --cached --quiet; then
+            echo 'Already up to date.'
+          else
+            git commit -m 'Fix Task Buddy sprites using native image proportions v14'
+            git push
+          fi
