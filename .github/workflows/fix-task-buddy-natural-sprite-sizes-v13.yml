@@ -1,0 +1,88 @@
+name: Fix Task Buddy natural sprite sizes v13
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  restore-sprite-proportions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore original sprite sizing without touching art or saves
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          html = Path('task-buddy-beta.html')
+          if not html.exists():
+              raise SystemExit('Missing task-buddy-beta.html; stopping before any changes')
+          content = html.read_text(encoding='utf-8')
+          # Remove ONLY the forced v12 oversized Shin and Lain style rules.
+          v12 = re.compile(
+              r'/\* v12: Shin and Lain stay taller than Annika in gift, roommate and date scenes\. \*/\s*'
+              r'\.figure\.host\.with-guest\[data-character="shin"\],\.figure\.host\.with-guest\[data-character="lain"\],\s*'
+              r'\.figure\.guest\[data-character="shin"\],\.figure\.guest\[data-character="lain"\]\s*\{height:58%;width:27%;\}\s*'
+              r'\.figure\.host:not\(\.with-guest\)\[data-character="shin"\],\.figure\.host:not\(\.with-guest\)\[data-character="lain"\]\s*\{height:66%;width:27%;\}\s*'
+              r'\.date-actor\[data-character="shin"\],\.date-actor\[data-character="lain"\]\s*\{height:64%;width:30%;\}\s*'
+          )
+          content, count = v12.subn('', content)
+          if count != 1:
+              if 'v12: Shin and Lain stay taller' in content:
+                  raise SystemExit('v12 sizing rules changed; refusing uncertain modification')
+              if 'natural-sprite-v13' not in content:
+                  raise SystemExit('Could not find expected v12 override; refusing uncertain modification')
+          # Use common image containers and original transparent pixel art proportions.
+          if 'natural-sprite-v13' not in content:
+              style = ("/* natural-sprite-v13: Shared sprite sizing; no per-character enlargement. */\n"
+                       ".figure[data-character='shin'],.figure[data-character='lain']," 
+                       ".date-actor[data-character='shin'],.date-actor[data-character='lain'] "
+                       "{object-fit:contain;object-position:center bottom;image-rendering:pixelated;}\n")
+              if '</style>' not in content:
+                  raise SystemExit('No style boundary found; refusing uncertain modification')
+              content=content.replace('</style>',style+'</style>',1)
+          html.write_text(content, encoding='utf-8')
+
+          # Change the iframe URL so browsers do not use the earlier oversized v12 HTML.
+          bridge=Path('task-buddy-beta.js')
+          if bridge.exists():
+              js=bridge.read_text(encoding='utf-8')
+              new,n=re.subn(r'task-buddy-beta\.html\?v=[\w.-]+', 'task-buddy-beta.html?v=natural-sprite-v13',js)
+              if n:
+                  bridge.write_text(new,encoding='utf-8')
+          index=Path('index.html')
+          if index.exists():
+              source=index.read_text(encoding='utf-8')
+              source=re.sub(r'task-buddy-beta\.js\?v=[\w.-]+','task-buddy-beta.js?v=natural-sprite-v13',source)
+              index.write_text(source,encoding='utf-8')
+          print('Removed forced v12 size enlargement; room styling, artwork, and save code preserved.')
+          PY
+      - name: Verify natural sizing and no forced percentages
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          t=Path('task-buddy-beta.html').read_text()
+          assert 'natural-sprite-v13' in t
+          assert 'v12: Shin and Lain stay taller' not in t
+          assert 'height:58%;width:27%' not in t
+          assert 'height:66%;width:27%' not in t
+          assert 'height:64%;width:30%' not in t
+          assert 'v12: live-room masks' in t, 'Room color fix was unexpectedly missing'
+          b=Path('task-buddy-beta.js').read_text()
+          assert 'task-buddy-beta.html?v=natural-sprite-v13' in b
+          print('Verified: natural sprite layout, room-color correction kept, new iframe cache version.')
+          PY
+      - name: Commit corrected layout
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add task-buddy-beta.html task-buddy-beta.js index.html
+          if git diff --cached --quiet; then
+            echo 'Already installed; no changes needed.'
+          else
+            git commit -m 'Restore natural Shin and Lain sprite sizes in Task Buddy'
+            git push
+          fi
