@@ -1,0 +1,125 @@
+name: Install Duckie Days v11 - Gifts and Quest Fixes
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-task-buddy-beta-install
+  cancel-in-progress: false
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Duckie Days
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Install v11 assets and repair Quest references
+        shell: bash
+        run: |
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import re
+          archives=sorted(Path('.').glob('duckie-days-v11-gifts-favorite-ducks-quest-fixes*.zip'))
+          if len(archives)!=1:
+              raise SystemExit('Expected one v11 ZIP in the repo root. Found: '+repr([str(x) for x in archives]))
+          expected={'task-buddy-beta.html','task-buddy-beta.js','task-buddy-beta.css','duck-quest-v11-portrait-skills.js'}
+          with ZipFile(archives[0]) as z:
+              if set(z.namelist())!=expected:raise SystemExit('Unexpected ZIP contents: '+repr(z.namelist()))
+              data={name:z.read(name) for name in expected}
+          if any(not v for v in data.values()):raise SystemExit('Empty update file')
+          html=data['task-buddy-beta.html'].decode('utf-8')
+          for marker in ('FIXED_DUCK_FAVORITES','awardGiftProgress','buddyProgress','function inviteToLiveTogether'):
+              if marker not in html:raise SystemExit('Missing v11 feature: '+marker)
+          source={}
+          def read(name):
+              path=Path(name)
+              if not path.exists():raise SystemExit('Missing game file: '+name)
+              source[name]=path.read_text(encoding='utf-8')
+              return source[name]
+          index=read('index.html')
+          for name in ('task-buddy-beta.css','task-buddy-beta.js'):
+              pattern=re.escape(name)+r'\?v=[^"\s<>]+'
+              if len(re.findall(pattern,index))!=1:raise SystemExit('Missing or repeated reference: '+name)
+              index=re.sub(pattern,name+'?v=buddy-v11',index,count=1)
+          source['index.html']=index
+          quest=read('duck-quest/index.html')
+          # Add portrait shortcut after the existing quest scripts so the original Skills control is ready.
+          if 'duck-quest-v11-portrait-skills.js' not in quest:
+              if '</body>' not in quest:raise SystemExit('Quest page has no body end')
+              quest=quest.replace('</body>','  <script src="../duck-quest-v11-portrait-skills.js?v=buddy-v11"></script>\n</body>',1)
+          for name in ('js/game-v96.js','js/quest-v270.js','js/shared-families-v356.js'):
+              pattern=re.escape(name)+r'\?v=[^"\s<>]+'
+              if len(re.findall(pattern,quest))!=1:raise SystemExit('Missing/repeated Quest script: '+name)
+              quest=re.sub(pattern,name+'?v=buddy-v11',quest,count=1)
+          source['duck-quest/index.html']=quest
+          game=read('duck-quest/js/game-v96.js')
+          old='enemy.gimmickVariant || enemy.porcupinVariant'
+          new='enemy.gimmickVariant || enemy.v313Variant || enemy.porcupinVariant'
+          if old in game:game=game.replace(old,new,1)
+          elif new not in game:raise SystemExit('Could not locate enemyVariantId: cannot safely fix card variant')
+          source['duck-quest/js/game-v96.js']=game
+          family=read('duck-quest/js/shared-families-v356.js')
+          old="idle:[path(id,color,'idle-1'),path(id,color,'idle-2'),...(id==='pancake-ray'&&color==='raspberry'?[path(id,color,'idle-3')]:[])],"
+          new="idle:[path(id,color,'idle-1'),path(id,color,'idle-2')],"
+          if old in family:family=family.replace(old,new,1)
+          elif new not in family:raise SystemExit('Could not locate Pancake Ray idle animation')
+          source['duck-quest/js/shared-families-v356.js']=family
+          mimic=read('duck-quest/js/quest-v270.js')
+          for color in ('lucky','healthy'):
+              old="idle:['assets/enemies/mimic/"+color+"/idle-1.webp','assets/enemies/mimic/"+color+"/idle-2.webp']"
+              new="idle:['assets/enemies/mimic/"+color+"/open.webp','assets/enemies/mimic/"+color+"/open.webp']"
+              mimic=mimic.replace(old,new)
+              if new not in mimic:raise SystemExit('Mimic image mapping missing: '+color)
+              if not Path('duck-quest/assets/enemies/mimic/'+color+'/open.webp').is_file():raise SystemExit('Missing original Mimic open sprite: '+color)
+          source['duck-quest/js/quest-v270.js']=mimic
+          tasks=read('tasks.js')
+          if 'p.duckBucks+=1;' not in tasks:raise SystemExit('Task reward has changed; refusing to double-award Duck Bucks')
+          for name,v in source.items():
+              if name!='tasks.js':Path(name).write_text(v,encoding='utf-8')
+          for name,v in data.items():Path(name).write_bytes(v)
+          print('Installed Buddy Room v11, portrait Skills shortcut, Pancake Ray idle/card-variant fix, and static Mimic previews.')
+          PYCODE
+
+      - name: Check JavaScript and installed game links
+        shell: bash
+        run: |
+          node --check task-buddy-beta.js
+          node --check duck-quest-v11-portrait-skills.js
+          node --check duck-quest/js/game-v96.js
+          node --check duck-quest/js/quest-v270.js
+          node --check duck-quest/js/shared-families-v356.js
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          import re,subprocess
+          html=Path('task-buddy-beta.html').read_text()
+          scripts=re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',html,re.S)
+          for script in scripts:
+              if 'function characterStats' not in script:continue
+              check=subprocess.run(['node','--check'],input=script,text=True,capture_output=True)
+              if check.returncode:raise SystemExit('Buddy Room JavaScript error: '+check.stderr)
+              break
+          else:raise SystemExit('Could not locate Buddy Room game script')
+          assert 'buddy-v11' in Path('index.html').read_text()
+          assert 'buddy-v11' in Path('duck-quest/index.html').read_text()
+          assert 'enemy.v313Variant' in Path('duck-quest/js/game-v96.js').read_text()
+          PYCODE
+
+      - name: Commit and push v11
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html duck-quest/index.html task-buddy-beta.html task-buddy-beta.js task-buddy-beta.css duck-quest-v11-portrait-skills.js duck-quest/js/game-v96.js duck-quest/js/shared-families-v356.js duck-quest/js/quest-v270.js
+          if git diff --cached --quiet; then
+            echo 'v11 is already installed.'
+            exit 0
+          fi
+          git commit -m 'Duckie Days v11 favorite ducks gift affection and Quest fixes'
+          git push
