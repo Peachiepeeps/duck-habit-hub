@@ -215,11 +215,8 @@ html,body { background:transparent!important; }
   mask-repeat:no-repeat;
   -webkit-mask-repeat:no-repeat;
 }
-/* v12: Shin and Lain stay taller than Annika in gift, roommate and date scenes. */
-.figure.host.with-guest[data-character="shin"],.figure.host.with-guest[data-character="lain"],
-.figure.guest[data-character="shin"],.figure.guest[data-character="lain"] {height:58%;width:27%;}
-.figure.host:not(.with-guest)[data-character="shin"],.figure.host:not(.with-guest)[data-character="lain"] {height:66%;width:27%;}
-.date-actor[data-character="shin"],.date-actor[data-character="lain"] {height:64%;width:30%;}
+/* natural-sprite-v13: Shared sprite sizing; no per-character enlargement. */
+.figure[data-character='shin'],.figure[data-character='lain'],.date-actor[data-character='shin'],.date-actor[data-character='lain'] {object-fit:contain;object-position:center bottom;image-rendering:pixelated;}
 </style></head><body><main class="shell">
 <section id="home" class="closed-placeholder hidden" aria-live="polite">
   <p>♡ Task Buddy Room closed</p>
