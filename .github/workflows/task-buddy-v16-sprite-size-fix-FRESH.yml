@@ -1,0 +1,88 @@
+name: Fix Task Buddy consistent room and gift sprite sizes v16
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fix-consistent-sprite-scale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use one natural-size sprite scale in all scenes
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('task-buddy-beta.html')
+          if not p.is_file():raise SystemExit('Buddy Room not installed')
+          s=p.read_text(encoding='utf-8')
+          if 'buddy-native-v14' not in s:raise SystemExit('Native-dimension scaling block missing; no changes made')
+          marker='/* buddy-unified-scale-v16: one physical size in the solo room, two-character room, gift scenes, dates, and move-in scenes. */'
+          if marker not in s:
+              # A common scale means the host remains visually the same size when a visitor appears.
+              # For a 96 px original sprite use 36% of the room stage height, adjusting by naturalHeight / 96.
+              overrides='''\n'''+marker+'''\n.room-stage img.figure,\n.room-stage img.figure.host:not(.with-guest),\n.date-stage img.date-actor {\n  height:var(--buddy-unified-scale,36%) !important;\n  width:auto !important;max-width:none !important;\n  object-fit:contain !important;object-position:center bottom !important;\n  image-rendering:pixelated;\n}\n'''
+              anchor='/* v15: gift picker shows the CURRENT recipient'
+              if anchor not in s:raise SystemExit('Expected v15 gifting styles missing. Install v15 first.')
+              s=s.replace(anchor,overrides+'\n'+anchor,1)
+              script_anchor="img.style.setProperty('--buddy-native-duo', (30.24 * factor).toFixed(4) + '%');"
+              if script_anchor not in s:raise SystemExit('Expected v15 scale handler missing. Install v15 first.')
+              s=s.replace(script_anchor,"img.style.setProperty('--buddy-unified-scale', (36 * factor).toFixed(4) + '%');\n    "+script_anchor,1)
+          p.write_text(s,encoding='utf-8')
+          bridge=Path('task-buddy-beta.js')
+          if not bridge.is_file():raise SystemExit('Bridge missing')
+          b=bridge.read_text(encoding='utf-8')
+          b,n=re.subn(r'task-buddy-beta\.html\?v=[\w.-]+','task-buddy-beta.html?v=unified-scene-v16',b)
+          if n!=1:raise SystemExit('Unexpected iframe cache reference count')
+          bridge.write_text(b,encoding='utf-8')
+          main=Path('index.html')
+          h=main.read_text(encoding='utf-8')
+          h,n=re.subn(r'task-buddy-beta\.js\?v=[\w.-]+','task-buddy-beta.js?v=unified-scene-v16',h)
+          if n!=1:raise SystemExit('Unexpected script cache reference count')
+          main.write_text(h,encoding='utf-8')
+          print('One common 36%-of-stage scale; natural image height ratio is preserved for every OC/NPC.')
+          PY
+      - name: Validate proportional sizes and preserved gifts
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from html.parser import HTMLParser
+          import tempfile,subprocess
+          s=Path('task-buddy-beta.html').read_text(encoding='utf-8')
+          assert 'buddy-unified-scale-v16' in s
+          assert "(36 * factor).toFixed(4)" in s
+          assert '.room-stage img.figure.host:not(.with-guest),' in s
+          assert '.date-stage img.date-actor {' in s
+          assert 'gift-favorites-v15' in s
+          assert 'v12: live-room masks' in s
+          assert 'unified-scene-v16' in Path('task-buddy-beta.js').read_text()
+          class Scripts(HTMLParser):
+              def __init__(self):super().__init__();self.parts=[];self.active=False
+              def handle_starttag(self,t,attrs):
+                  if t=='script':
+                      self.active=dict(attrs).get('type','') not in ('application/json',)
+                      if self.active:self.parts.append('')
+              def handle_data(self,d):
+                  if self.active:self.parts[-1]+=d
+              def handle_endtag(self,t):
+                  if t=='script':self.active=False
+          parser=Scripts();parser.feed(s)
+          for body in parser.parts:
+              with tempfile.NamedTemporaryFile(mode='w',suffix='.js') as f:
+                  f.write(body);f.flush();subprocess.run(['node','--check',f.name],check=True)
+          print('Validated unified scale, save-safe gift system, and all inline JavaScript.')
+          PY
+      - name: Commit v16
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add task-buddy-beta.html task-buddy-beta.js index.html
+          if git diff --cached --quiet;then
+            echo 'Already applied.'
+          else
+            git commit -m 'Keep Buddy Room characters same size when gifting and dating'
+            git push
+          fi
