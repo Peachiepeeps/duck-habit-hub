@@ -1,0 +1,85 @@
+name: Install Task Buddy v12 - Room Colors and Character Heights
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-task-buddy-beta-install
+  cancel-in-progress: false
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout game
+        uses: actions/checkout@v4
+
+      - name: Install Task Buddy v12 without resetting saved rooms
+        shell: bash
+        run: |
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import re
+          archives=sorted(Path('.').glob('duckie-task-buddy-v12-room-and-height-fix*.zip'))
+          if len(archives)!=1:
+              raise SystemExit('Upload exactly one v12 ZIP to the repository root. Found: '+repr([str(x) for x in archives]))
+          with ZipFile(archives[0]) as z:
+              if set(z.namelist())!={'task-buddy-beta.html'}:
+                  raise SystemExit('Unexpected ZIP contents: '+str(z.namelist()))
+              body=z.read('task-buddy-beta.html').decode('utf-8')
+          required=['room-stage .live-recolor','function roomMakeover()','function scene(','roomColorUnlocked[owner]','data-character="shin"','FIXED_DUCK_FAVORITES']
+          for marker in required:
+              if marker not in body:raise SystemExit('Missing v12 feature: '+marker)
+          index=Path('index.html')
+          buddy_js=Path('task-buddy-beta.js')
+          if not index.is_file() or not buddy_js.is_file():raise SystemExit('Main game files missing')
+          text=index.read_text(encoding='utf-8')
+          for name in ('task-buddy-beta.js','task-buddy-beta.css'):
+              pat=re.escape(name)+r'\?v=[^"\s<>]+'
+              if len(re.findall(pat,text))!=1:raise SystemExit('Could not safely update asset link: '+name)
+              text=re.sub(pat,name+'?v=buddy-v12',text,count=1)
+          # Also refresh the iframe page URL, which was previously fixed to buddy-v7.
+          js=buddy_js.read_text(encoding='utf-8')
+          js,n=re.subn(r'task-buddy-beta\.html\?v=[a-zA-Z0-9._-]+', 'task-buddy-beta.html?v=buddy-v12',js)
+          if n!=1:raise SystemExit('Could not safely update the Buddy Room iframe URL')
+          Path('task-buddy-beta.html').write_text(body,encoding='utf-8')
+          index.write_text(text,encoding='utf-8')
+          buddy_js.write_text(js,encoding='utf-8')
+          print('Installed v12 live room tint rendering, makeover navigation and tall-character scenes. Saves were not modified.')
+          PYCODE
+
+      - name: Verify game scripts
+        shell: bash
+        run: |
+          node --check task-buddy-beta.js
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          import subprocess,re
+          s=Path('task-buddy-beta.html').read_text(encoding='utf-8')
+          for body in re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',s,re.S):
+              if 'function roomMakeover()' in body:
+                  result=subprocess.run(['node','--check'],input=body,text=True,capture_output=True)
+                  if result.returncode:raise SystemExit(result.stderr)
+                  break
+          else:raise SystemExit('Missing Task Buddy game logic')
+          assert 'buddy-v12' in Path('index.html').read_text(encoding='utf-8')
+          assert 'buddy-v12' in Path('task-buddy-beta.js').read_text(encoding='utf-8')
+          print('Checks passed')
+          PYCODE
+
+      - name: Commit and deploy changes
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html task-buddy-beta.js task-buddy-beta.html
+          if git diff --cached --quiet; then
+            echo 'v12 already installed.'
+            exit 0
+          fi
+          git commit -m 'Fix Task Buddy room recolor display and taller Shin and Lain'
+          git push
