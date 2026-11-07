@@ -1,0 +1,146 @@
+name: Fix Special Task editing v18
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Patch existing task editing and Special Task conversion
+        run: |
+          python3 - <<'PYV18'
+          from pathlib import Path
+          import re
+          root=Path.cwd()
+          app=root/'app.js'
+          s=app.read_text(encoding='utf8')
+          def replace_once(old,new,label):
+           global s
+           if new in s:return
+           if old not in s:raise RuntimeError('Unexpected app.js while applying '+label)
+           s=s.replace(old,new,1)
+          # Safe edit action in task cards, not available in v17.
+          replace_once('''  actions.append(complete);
+          
+            if (showTomorrowButton) {''','''  actions.append(complete);
+            const editTaskButton=document.createElement('button');
+            editTaskButton.type='button';
+            editTaskButton.className='task-edit-button-v18';
+            editTaskButton.textContent='✎ Edit';
+            editTaskButton.setAttribute('aria-label',`Edit ${task.name}`);
+            editTaskButton.addEventListener('click',()=>openExistingTaskEditor(task.id));
+            actions.append(editTaskButton);
+          
+            if (showTomorrowButton) {''','task card edit button')
+          # Preserve original ID, completion count, creation date, and schedule.
+          replace_once('''function openTaskForm() {
+            resetTaskForm();''','''let editingExistingTaskIdV18=null;
+          function openExistingTaskEditor(id){
+            const task=save.tasks.find(item=>item.id===id);
+            if(!task)return;
+            resetTaskForm();
+            editingExistingTaskIdV18=id;
+            if(taskSource){taskSource.value='new';taskSource.disabled=true;}
+            updateTaskSourceMode();
+            taskName.value=task.name;
+            setTaskRewardInForm(task.reward);
+            applyRepeatToTaskForm(structuredClone(task.repeat||{type:'once'}));
+            if(task.repeat?.type==='once'&&taskSpecificDate)taskSpecificDate.value=task.nextDue||localDateKey();
+            window.DuckieSpecialTasksV17?.load?.(task);
+            const heading=taskFormPanel.querySelector('h1');if(heading)heading.textContent='Edit Task';
+            const submit=taskForm.querySelector('[type="submit"]');if(submit)submit.textContent='Save Changes';
+            taskFormPanel.classList.remove('hidden');
+            requestAnimationFrame(()=>taskName.focus());
+          }
+          function clearExistingTaskEditorV18(){
+            editingExistingTaskIdV18=null;
+            if(taskSource)taskSource.disabled=false;
+            const heading=taskFormPanel.querySelector('h1');if(heading)heading.textContent='Add Task';
+            const submit=taskForm.querySelector('[type="submit"]');if(submit)submit.textContent='Add Task';
+          }
+          function openTaskForm() {
+            clearExistingTaskEditorV18();
+            resetTaskForm();''','edit task initialization')
+          replace_once('''function closeTaskForm() {
+            taskFormPanel.classList.add("hidden");
+          }''','''function closeTaskForm() {
+            taskFormPanel.classList.add("hidden");
+            clearExistingTaskEditorV18();
+          }''','reset edit mode on close')
+          replace_once('''  save.tasks.push(task);
+          
+            if (!usingSaved && saveAsTemplate.checked) {''','''  const existingToEdit=editingExistingTaskIdV18 ? save.tasks.find(item=>item.id===editingExistingTaskIdV18) : null;
+            if(editingExistingTaskIdV18 && !existingToEdit){
+              showToast('The task is no longer available. Please reopen it.');return;
+            }
+            if(existingToEdit){
+              const sameRepeat=JSON.stringify(existingToEdit.repeat)===JSON.stringify(task.repeat);
+              const keepDue=sameRepeat && existingToEdit.repeat?.type!=='once';
+              task.id=existingToEdit.id;
+              task.createdAt=existingToEdit.createdAt;
+              task.completions=existingToEdit.completions;
+              task.pinned=existingToEdit.pinned;
+              if(keepDue)task.nextDue=existingToEdit.nextDue;
+              Object.assign(existingToEdit,task);
+            } else {
+              save.tasks.push(task);
+            }
+          
+            if (!existingToEdit && !usingSaved && saveAsTemplate.checked) {''','update existing task without cloning')
+          replace_once('''  showToast(`Added "${task.name}"!`);
+          }''','''  showToast(existingToEdit ? `Updated "${task.name}"! ♡` : `Added "${task.name}"!`);
+          }''','update confirmation')
+          # Don't lose special metadata when converting or editing; existing validation already in submit.
+          app.write_text(s,encoding='utf8')
+          feature=root/'special-tasks-v17.js'
+          t=feature.read_text(encoding='utf8')
+          old='''  window.DuckieSpecialTasksV17={catalog,sanitize,summary,award,reset,isSpecial:()=>Boolean(enabled&&check?.checked),formRewards:readRows};'''
+          new='''  function load(task){
+              mount();reset();
+              enabled=Boolean(task?.special);
+              if(check)check.checked=enabled;
+              if(area)area.classList.toggle('hidden',!enabled);
+              if(enabled){
+                const gifts=sanitize(task?.specialRewards);
+                for(const gift of gifts)addRow(gift.id,gift.qty);
+                if(!gifts.length)addRow();
+              }
+            }
+            window.DuckieSpecialTasksV17={catalog,sanitize,summary,award,reset,load,isSpecial:()=>Boolean(enabled&&check?.checked),formRewards:readRows};'''
+          if new not in t:
+           if old not in t:raise RuntimeError('Unexpected special-tasks-v17.js; refusing partial installation')
+           t=t.replace(old,new,1)
+           feature.write_text(t,encoding='utf8')
+          css=root/'special-tasks-v17.css'
+          c=css.read_text(encoding='utf8')
+          newcss='''
+          /* v18: edit existing tasks from their usual list. */
+          .task-edit-button-v18{border:1px solid #bd85b2;background:#fff0fa;color:#7a3969;border-radius:10px;padding:7px 11px;font-weight:700;cursor:pointer;min-height:32px}
+          .task-edit-button-v18:hover{background:#fce0f1}
+          '''
+          if '.task-edit-button-v18{' not in c:css.write_text(c+newcss,encoding='utf8')
+          # Cache-bust source changes, without touching other integrations.
+          h=root/'index.html'; html=h.read_text(encoding='utf8')
+          # Explicit literal fallback for re patterns
+          html=re.sub(r'special-tasks-v17\.js\?v=[^"\']+', 'special-tasks-v17.js?v=18-edit', html)
+          html=re.sub(r'special-tasks-v17\.css\?v=[^"\']+', 'special-tasks-v17.css?v=18-edit', html)
+          html=re.sub(r'app\.js\?v=[^"\']+', 'app.js?v=18-task-edit', html)
+          if 'special-tasks-v17.js?v=18-edit' not in html or 'app.js?v=18-task-edit' not in html:raise RuntimeError('Expected game scripts not found')
+          h.write_text(html,encoding='utf8')
+          print('v18 complete: existing task editing + Special Task conversion, preserves task ID and progress')
+          PYV18
+      - name: Check scripts and commit only updated files
+        run: |
+          node --check app.js
+          node --check special-tasks-v17.js
+          git add app.js special-tasks-v17.js special-tasks-v17.css index.html
+          if git diff --cached --quiet; then
+            echo "Special Task editing v18 already installed"
+            exit 0
+          fi
+          git -c user.name="Duckie Days Bot" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -m "Fix editing and converting existing Special Tasks v18"
+          git push
