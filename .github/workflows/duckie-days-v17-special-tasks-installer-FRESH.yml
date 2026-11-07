@@ -1,0 +1,92 @@
+name: Install Duckie Days v17 - Special Tasks and Workflow Cleanup
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-v17-special-tasks
+  cancel-in-progress: false
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Duckie Days
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Locate and validate the v17 ZIP
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import os
+          matches = sorted(Path('.').glob('duckie-days-v17-special-tasks*.zip'))
+          if not matches:
+              raise SystemExit('Missing v17 ZIP. Upload duckie-days-v17-special-tasks.zip to the repository ROOT (not .github/workflows).')
+          # Choose the expected original name when present; otherwise allow GitHub's renamed download, e.g. " (1)".
+          exact = Path('duckie-days-v17-special-tasks.zip')
+          if exact.exists(): selected=exact
+          elif len(matches)==1: selected=matches[0]
+          else: raise SystemExit('Multiple renamed v17 ZIPs detected. Keep one: '+', '.join(map(str,matches)))
+          expected = {'install-v17.py','special-tasks-v17.js','special-tasks-v17.css'}
+          with ZipFile(selected) as z:
+              names=set(z.namelist())
+              if names != expected:
+                  raise SystemExit('Wrong v17 ZIP contents: '+str(sorted(names)))
+              dest=Path(os.environ['RUNNER_TEMP'])/'duckie-v17-install'
+              dest.mkdir(parents=True,exist_ok=True)
+              for name in sorted(expected):
+                  blob=z.read(name)
+                  if not blob: raise SystemExit('Empty file in ZIP: '+name)
+                  (dest/name).write_bytes(blob)
+          with open(os.environ['GITHUB_ENV'],'a',encoding='utf8') as out:
+              out.write('DUCKIE_V17_PATCH_DIR='+str(dest)+'\n')
+          print('Verified v17 installer package:',selected)
+          PY
+
+      - name: Apply Special Tasks and archive obsolete installers
+        shell: bash
+        run: |
+          python3 "$DUCKIE_V17_PATCH_DIR/install-v17.py"
+
+      - name: Validate installed game files
+        shell: bash
+        run: |
+          node --check app.js
+          node --check tasks.js
+          node --check special-tasks-v17.js
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('app.js').read_text(encoding='utf8')
+          h=Path('index.html').read_text(encoding='utf8')
+          assert 'special: Boolean(task.special)' in s, 'Special Task save field missing'
+          assert "card.classList.add('special-task-v17')" in s, 'Special Task cards not styled'
+          assert 'DuckieSpecialTasksV17?.award?.(task)' in s, 'Special reward award hook missing'
+          assert 'special-tasks-v17.css?v=17' in h, 'Special Task CSS not loaded'
+          assert 'special-tasks-v17.js?v=17' in h, 'Special Task JS not loaded'
+          assert Path('special-tasks-v17.css').is_file()
+          assert Path('special-tasks-v17.js').is_file()
+          assert Path('task-buddy-beta.html').is_file(), 'Existing Task Buddy Room unexpectedly missing'
+          assert Path('task-buddy-beta.js').is_file(), 'Existing Task Buddy bridge unexpectedly missing'
+          print('Special Tasks installed and existing Task Buddy files retained.')
+          PY
+
+      - name: Commit the update and archived workflows
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add app.js index.html special-tasks-v17.js special-tasks-v17.css
+          git add -A .github/workflows .github/workflow-archive
+          if git diff --cached --quiet; then
+            echo 'v17 is already installed. No further changes required.'
+          else
+            git commit -m 'Add configurable Special Tasks; archive older install workflows'
+            git push
+          fi
