@@ -13376,7 +13376,9 @@ function normalizeTask(task) {
     nextDue: task.repeat?.type === "anytime" ? null : (task.nextDue || localDateKey()),
     createdAt: task.createdAt || Date.now(),
     completions: Number(task.completions) || 0,
-    pinned: Boolean(task.pinned)
+    pinned: Boolean(task.pinned),
+    special: Boolean(task.special),
+    specialRewards: window.DuckieSpecialTasksV17?.sanitize?.(task.specialRewards) || (Array.isArray(task.specialRewards) ? task.specialRewards : [])
   };
 }
 
@@ -13602,6 +13604,7 @@ function completeTask(id) {
   const happinessGained = addCharacterHappiness(1);
   task.completions = (task.completions || 0) + 1;
   recordTaskCompletion(task, reward);
+  const specialBonuses = window.DuckieSpecialTasksV17?.award?.(task) || '';
 
   if (task.repeat?.type === "once" || task.repeat?.type === "anytime") {
     save.tasks = save.tasks.filter(item => item.id !== id);
@@ -13616,7 +13619,7 @@ function completeTask(id) {
   renderTasks();
   setExpression("expression-happy", 2200);
 
-  showToast(`Task complete! +${reward} Pink Coins${happinessGained > 0 ? ` · +${happinessGained} Happiness` : ""} ♡`);
+  showToast(`Task complete! +${reward} Pink Coins${happinessGained > 0 ? ` · +${happinessGained} Happiness` : ""}${specialBonuses ? ` · ✨ ${specialBonuses}` : ''} ♡`);
 }
 
 function toggleTaskPinned(id) {
@@ -13636,6 +13639,7 @@ function toggleTaskPinned(id) {
 function renderTaskCard(task, { showTomorrowButton = false, showTodayButton = false } = {}) {
   const card = document.createElement("article");
   card.className = `task-card${isTaskReady(task) ? " ready" : " upcoming"}`;
+  if (task.special) card.classList.add('special-task-v17');
 
   const top = document.createElement("div");
   top.className = "task-card-top";
@@ -13646,6 +13650,12 @@ function renderTaskCard(task, { showTomorrowButton = false, showTodayButton = fa
   title.className = "task-card-title";
   title.textContent = task.name;
   titleWrap.append(title, createCoinInline(task.reward));
+  if(task.special){
+    const specialLabel=document.createElement('small');
+    specialLabel.className='special-task-rewards-label-v17';
+    specialLabel.textContent='🎁 '+(window.DuckieSpecialTasksV17?.summary?.(task.specialRewards)||'Special rewards');
+    titleWrap.append(specialLabel);
+  }
 
   if (task.pinned) {
     const pin = document.createElement("span");
@@ -14152,6 +14162,11 @@ function submitTaskForm(event) {
     return;
   }
 
+  if(!usingSaved && window.DuckieSpecialTasksV17?.isSpecial?.() && !(window.DuckieSpecialTasksV17?.formRewards?.().length)){
+    showToast('Add at least one Special Task reward. ♡');
+    return;
+  }
+
   const reward = getTaskReward();
   if (!reward) {
     showToast("Choose a Pink Coin reward.");
@@ -14192,7 +14207,9 @@ function submitTaskForm(event) {
     nextDue,
     createdAt: Date.now(),
     completions: 0,
-    pinned: false
+    pinned: false,
+    special: usingSaved ? Boolean(template.special) : Boolean(window.DuckieSpecialTasksV17?.isSpecial?.()),
+    specialRewards: usingSaved ? (template.specialRewards || []) : (window.DuckieSpecialTasksV17?.formRewards?.() || [])
   });
 
   save.tasks.push(task);
@@ -14202,7 +14219,9 @@ function submitTaskForm(event) {
       id: makeId("template"),
       name: task.name,
       reward: task.reward,
-      repeat: structuredClone(task.repeat)
+      repeat: structuredClone(task.repeat),
+      special: task.special,
+      specialRewards: structuredClone(task.specialRewards)
     });
   }
 

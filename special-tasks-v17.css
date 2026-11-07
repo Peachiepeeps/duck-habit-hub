@@ -1,0 +1,17 @@
+/* V17 special tasks: visually distinct, but kept in the normal task tabs. */
+.special-task-options-v17{margin:14px 0;padding:12px;border:2px solid #c487d4;border-radius:14px;background:#fff3ff;color:#50335b}
+.special-task-toggle-v17{display:flex;gap:12px;align-items:center;cursor:pointer}
+.special-task-toggle-v17 input{width:20px;height:20px;accent-color:#a75bbe;flex-shrink:0}
+.special-task-toggle-v17 span{display:flex;flex-direction:column;gap:3px}
+.special-task-toggle-v17 small{font-size:12px;line-height:1.4}
+.special-task-builder-v17{margin-top:14px}
+.special-task-builder-v17.hidden{display:none!important}
+.special-task-builder-v17 p{font-size:12px;line-height:1.5;margin:0 0 10px}
+.special-reward-v17{display:flex;gap:6px;align-items:center;margin:8px 0}
+.special-reward-v17 select{flex:1;min-width:0;border:1px solid #caa6d3;background:white;border-radius:8px;padding:9px 5px;font-size:12px}
+.special-reward-v17 input{width:65px;min-width:50px;border:1px solid #caa6d3;background:white;border-radius:8px;padding:9px 4px;font-size:12px}
+.special-reward-v17 button,.special-add-reward-v17{border:1px solid #bd80ce;border-radius:9px;background:white;color:#6f3c80;padding:8px 10px;cursor:pointer}
+.special-add-reward-v17{width:100%;margin-top:7px;font-weight:700}
+.task-card.special-task-v17{border:2px solid #c68cda!important;background:linear-gradient(120deg,#fff2fc,#f8f0ff)!important;box-shadow:0 2px 10px #bf88d12b}
+.task-card.special-task-v17 .task-card-title::before{content:'✨ ';}
+.special-task-rewards-label-v17{display:block;margin-top:6px;color:#81459a;font-size:11px;font-weight:700;line-height:1.4}
