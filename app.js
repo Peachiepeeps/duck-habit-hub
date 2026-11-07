@@ -13692,6 +13692,13 @@ function renderTaskCard(task, { showTomorrowButton = false, showTodayButton = fa
   complete.disabled = !isTaskReady(task);
   complete.addEventListener("click", () => completeTask(task.id));
   actions.append(complete);
+  const editTaskButton=document.createElement('button');
+  editTaskButton.type='button';
+  editTaskButton.className='task-edit-button-v18';
+  editTaskButton.textContent='✎ Edit';
+  editTaskButton.setAttribute('aria-label',`Edit ${task.name}`);
+  editTaskButton.addEventListener('click',()=>openExistingTaskEditor(task.id));
+  actions.append(editTaskButton);
 
   if (showTomorrowButton) {
     const tomorrow = document.createElement("button");
@@ -14099,7 +14106,32 @@ function resetTaskForm() {
   updateTaskSourceMode();
 }
 
+let editingExistingTaskIdV18=null;
+function openExistingTaskEditor(id){
+  const task=save.tasks.find(item=>item.id===id);
+  if(!task)return;
+  resetTaskForm();
+  editingExistingTaskIdV18=id;
+  if(taskSource){taskSource.value='new';taskSource.disabled=true;}
+  updateTaskSourceMode();
+  taskName.value=task.name;
+  setTaskRewardInForm(task.reward);
+  applyRepeatToTaskForm(structuredClone(task.repeat||{type:'once'}));
+  if(task.repeat?.type==='once'&&taskSpecificDate)taskSpecificDate.value=task.nextDue||localDateKey();
+  window.DuckieSpecialTasksV17?.load?.(task);
+  const heading=taskFormPanel.querySelector('h1');if(heading)heading.textContent='Edit Task';
+  const submit=taskForm.querySelector('[type="submit"]');if(submit)submit.textContent='Save Changes';
+  taskFormPanel.classList.remove('hidden');
+  requestAnimationFrame(()=>taskName.focus());
+}
+function clearExistingTaskEditorV18(){
+  editingExistingTaskIdV18=null;
+  if(taskSource)taskSource.disabled=false;
+  const heading=taskFormPanel.querySelector('h1');if(heading)heading.textContent='Add Task';
+  const submit=taskForm.querySelector('[type="submit"]');if(submit)submit.textContent='Add Task';
+}
 function openTaskForm() {
+  clearExistingTaskEditorV18();
   resetTaskForm();
   updateRepeatExtras();
   taskFormPanel.classList.remove("hidden");
@@ -14108,6 +14140,7 @@ function openTaskForm() {
 
 function closeTaskForm() {
   taskFormPanel.classList.add("hidden");
+  clearExistingTaskEditorV18();
 }
 
 function updateRepeatExtras() {
@@ -14212,9 +14245,24 @@ function submitTaskForm(event) {
     specialRewards: usingSaved ? (template.specialRewards || []) : (window.DuckieSpecialTasksV17?.formRewards?.() || [])
   });
 
-  save.tasks.push(task);
+  const existingToEdit=editingExistingTaskIdV18 ? save.tasks.find(item=>item.id===editingExistingTaskIdV18) : null;
+  if(editingExistingTaskIdV18 && !existingToEdit){
+    showToast('The task is no longer available. Please reopen it.');return;
+  }
+  if(existingToEdit){
+    const sameRepeat=JSON.stringify(existingToEdit.repeat)===JSON.stringify(task.repeat);
+    const keepDue=sameRepeat && existingToEdit.repeat?.type!=='once';
+    task.id=existingToEdit.id;
+    task.createdAt=existingToEdit.createdAt;
+    task.completions=existingToEdit.completions;
+    task.pinned=existingToEdit.pinned;
+    if(keepDue)task.nextDue=existingToEdit.nextDue;
+    Object.assign(existingToEdit,task);
+  } else {
+    save.tasks.push(task);
+  }
 
-  if (!usingSaved && saveAsTemplate.checked) {
+  if (!existingToEdit && !usingSaved && saveAsTemplate.checked) {
     save.savedTaskTemplates.push({
       id: makeId("template"),
       name: task.name,
@@ -14229,7 +14277,7 @@ function submitTaskForm(event) {
   closeTaskForm();
   currentTaskTab = taskBucket(task);
   renderTasks();
-  showToast(`Added "${task.name}"!`);
+  showToast(existingToEdit ? `Updated "${task.name}"! ♡` : `Added "${task.name}"!`);
 }
 
 

@@ -84,5 +84,16 @@
   mount();
   // Existing normal tasks don't become special automatically.
   document.getElementById('addTaskButton')?.addEventListener('click',()=>setTimeout(reset,0));
-  window.DuckieSpecialTasksV17={catalog,sanitize,summary,award,reset,isSpecial:()=>Boolean(enabled&&check?.checked),formRewards:readRows};
+  function load(task){
+    mount();reset();
+    enabled=Boolean(task?.special);
+    if(check)check.checked=enabled;
+    if(area)area.classList.toggle('hidden',!enabled);
+    if(enabled){
+      const gifts=sanitize(task?.specialRewards);
+      for(const gift of gifts)addRow(gift.id,gift.qty);
+      if(!gifts.length)addRow();
+    }
+  }
+  window.DuckieSpecialTasksV17={catalog,sanitize,summary,award,reset,load,isSpecial:()=>Boolean(enabled&&check?.checked),formRewards:readRows};
 })();
