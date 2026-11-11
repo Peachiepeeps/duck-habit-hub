@@ -1,0 +1,35 @@
+name: Install Duckie Days v24.362 - Miho Closet and Task Buddies
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Duckie-Days-v24.362-Miho-Closet-Task-Buddies-UPDATE-ONLY.zip'
+permissions:
+  contents: write
+jobs:
+  install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Install v24.362 correction
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP='Duckie-Days-v24.362-Miho-Closet-Task-Buddies-UPDATE-ONLY.zip'
+          test -f "$ZIP" || { echo "::error::Upload $ZIP in the repository root first."; exit 1; }
+          unzip -t "$ZIP"
+          unzip -oq "$ZIP" -d .
+          grep -q '24.362' version.json
+          test -f task-buddy-beta.html
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add app.js app.css task-buddy-beta.html task-buddy-beta.js index.html sw.js version.json duck-quest/index.html duck-quest/js/love-interests-v326.js
+          if ! git diff --cached --quiet; then
+            git commit -m 'Fix Miho love-interest Closet and Task Buddies v24.362'
+            git push
+          else
+            echo 'v24.362 already installed.'
+          fi
