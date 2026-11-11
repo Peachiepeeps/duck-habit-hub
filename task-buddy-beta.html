@@ -236,6 +236,9 @@ html,body { background:transparent!important; }
   image-rendering:pixelated;
 }
 
+/* v24.363: gift reactions keep each buddy at the room's solo size. */
+.figure.host,.figure.host.with-guest,.figure.host:not(.with-guest),.figure.guest{height:48%!important;width:22%!important;bottom:10%!important;object-fit:contain;object-position:center bottom}
+.figure.host.with-guest{left:24%!important}.figure.guest{right:24%!important}
 </style></head><body><main class="shell">
 <section id="home" class="closed-placeholder hidden" aria-live="polite">
   <p>♡ Task Buddy Room closed</p>

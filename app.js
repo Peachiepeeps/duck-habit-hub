@@ -3364,7 +3364,6 @@ const MIHO_PRESET_PIECES = {"ranger": {"top": "look-ranger-shirt", "bottom": "lo
 const MIHO_CLOSET = [
   { id: "hair", label: "Hair", type: "hair", options: ["hair-main", "hair-long"] },
   { id: "backBow", label: "Back Bows", type: "single", allowNone: true, options: ["look-ranger-bow", "look-lovell-bow", "look-collin-bow", "look-beau-bow", "look-ideno-bow", "look-hinaru-bow"] },
-  { id: "bangsStyle", label: "Bangs", type: "single", allowNone: true, options: ["bangs", "look-ein-bangs"] },
   { id: "headBow", label: "Head Bows", type: "single", allowNone: true, options: ["bow", "bow-low", "look-ein-bow"] },
   { id: "top", label: "Tops", type: "single", allowNone: true, options: ["top-shirt", "top-button-shirt", "look-ranger-shirt", "look-lovell-hoodie", "look-collin-top", "look-ideno-top", "look-hinaru-sweater"] },
   { id: "outer", label: "Layers", type: "single", allowNone: true, options: ["jacket-black", "jacket-red", "look-ein-jacket"] },
@@ -6843,12 +6842,24 @@ function renderHairOptions(group) {
     return;
   }
 
-  closetOptions.append(makeOptionCard({
-    assetId: "bangs",
-    label: "Bangs",
-    selected: true,
-    required: true
-  }));
+  if (save.selectedCharacter === "miho") {
+    const outfit = getCurrentOutfit();
+    addSectionLabel("Bangs");
+    for (const id of ["bangs", "look-ein-bangs"]) {
+      const asset = MIHO_ASSETS[id];
+      const unlocked = isClosetAssetUnlocked(id, "miho");
+      closetOptions.append(makeOptionCard({
+        assetId:id, label:asset.label,
+        selected:(outfit.bangsStyle || "bangs")===id,locked:!unlocked,
+        onClick: unlocked ? () => chooseSingle({id:"bangsStyle"},id) : () => showToast(closetLockedMessage(id,asset))
+      }));
+    }
+    addSectionLabel("Hair");
+  } else {
+    closetOptions.append(makeOptionCard({
+      assetId: "bangs", label: "Bangs", selected: true, required: true
+    }));
+  }
 
   const outfit = getCurrentOutfit();
 

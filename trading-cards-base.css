@@ -145,3 +145,12 @@
 .tc-pack-god .tc-pack-stage{border-color:#dfb451;background:radial-gradient(circle,#fffcee 0,#ffecc5 55%,#ead5f7 100%);box-shadow:0 0 42px rgba(255,220,109,.45)}
 .tc-pack-special .tc-pack-title,.tc-pack-god .tc-pack-title{font-size:clamp(1.05rem,4.5vw,1.7rem);text-align:center}
 @media(max-width:560px){.tc-pack-bar .tc-open-pack{font-size:.64rem;padding:7px 9px}.tc-pack-bar>img{width:31px;height:42px}.tc-pack-bar>div{flex:1 1 105px;min-width:0}}
+
+/* v24.363: eliminate the mid-swipe stop; reveal the card faster. */
+.tc-pack-rip.swiping{transition:none!important;animation:none!important;touch-action:none}
+.tc-pack-rip.ripping{animation:tcPackRipV236 .12s ease-out both!important}
+.tc-pack-rip.opened{animation:tcPackOpenGlow .18s ease-out both!important}
+.tc-reveal-grid.tc-ten-pack-summary{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important;max-height:58vh;overflow-y:auto;align-content:start;padding:6px!important}
+.tc-ten-pack-summary .tc-summary-card{min-width:0;display:flex;flex-direction:column;gap:4px;align-items:center;text-align:center;font-size:.63rem;color:#805a70}
+.tc-ten-pack-summary .tc-summary-card .tc-face{width:100%;max-width:110px}
+.tc-ten-pack-summary .tc-summary-card span{font-size:.59rem;line-height:1.2;overflow-wrap:anywhere}

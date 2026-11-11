@@ -6,7 +6,7 @@
   const TC=window.DuckieTradingCards;if(!TC)return;
   let state=TC.ensureState(save);
   let showMissing=false,rarityFilter="all",packRipping=false,packSequence=0,packPointer=null;
-  let packSessionTotal=1,packSessionOpened=0,packSessionCurrentOpened=false,packSessionSpecials=0,packSessionGods=0,packSessionResults=[];
+  let packSessionTotal=1,packSessionOpened=0,packSessionCurrentOpened=false,packSessionSpecials=0,packSessionGods=0,packSessionResults=[],packSummaryShown=false;
   // Each pack in a 10-pack session independently has a 7% Special chance
   // and a 0.5% God chance. One-pack openings retain their original odds.
   const PACK_BONUS={special:.07,god:.005};
@@ -184,7 +184,7 @@ function tcGalleryFace(card,opts={}){
   function openPack(amount=1){
     syncCardState();
     if(state.unopenedPacks<amount)return;
-    packSessionTotal=amount;packSessionOpened=0;packSessionSpecials=0;packSessionGods=0;packSessionResults=[];
+    packSessionTotal=amount;packSessionOpened=0;packSessionSpecials=0;packSessionGods=0;packSessionResults=[];packSummaryShown=false;
     resetPackStage();
   }
   function resetPackStage(){
@@ -247,8 +247,27 @@ function tcGalleryFace(card,opts={}){
     setTimeout(()=>{
       if(sequence!==packSequence)return;
       body.src=TC.packAsset('card-pack-ripped.png');rip.className='tc-pack-rip opened';
-      setTimeout(()=>buildPackCards(draw.cards,sequence,draw.kind),720);
-    },430);
+      setTimeout(()=>buildPackCards(draw.cards,sequence,draw.kind),180);
+    },95);
+  }
+  function showTenPackSummary(){
+    packSummaryShown=true;
+    const grid=packLayer.querySelector('.tc-reveal-grid');
+    const title=packLayer.querySelector('.tc-pack-title');
+    const note=packLayer.querySelector('.tc-pack-instruction');
+    const rip=packLayer.querySelector('.tc-pack-rip');
+    const close=packLayer.querySelector('.tc-pack-close-bottom');
+    packLayer.classList.remove('tc-pack-special','tc-pack-god');
+    rip.className='tc-pack-rip hidden';
+    title.textContent='All 30 Cards Obtained! ♡';
+    note.textContent=`10 packs • ${packSessionSpecials} Special • ${packSessionGods} God packs`;
+    grid.innerHTML='';grid.classList.add('tc-ten-pack-summary');
+    for(const pack of packSessionResults)for(const card of pack.cards){
+      const holder=document.createElement('div');holder.className='tc-summary-card';
+      holder.append(TC.createFace(card));
+      const name=document.createElement('span');name.textContent=card.name;holder.append(name);grid.append(holder);
+    }
+    close.textContent='Done';close.classList.remove('hidden');
   }
   function closePack(){
     if(packSessionTotal===10&&packSessionCurrentOpened&&packSessionOpened<10){
@@ -267,6 +286,10 @@ function tcGalleryFace(card,opts={}){
       buildPackCards(next.cards,packSequence,next.kind);
       return;
     }
+    if(packSessionTotal===10 && packSessionResults.length===10 && !packSummaryShown){showTenPackSummary();return;}
+    const grid=packLayer.querySelector('.tc-reveal-grid');grid.classList.remove('tc-ten-pack-summary');
+    const ripDisplay=packLayer.querySelector('.tc-pack-rip');ripDisplay.classList.remove('hidden');
+    packLayer.querySelector('.tc-pack-close-bottom').textContent='Close';
     const summary=packSessionTotal===10?`Opened ${packSessionOpened} card packs!${packSessionSpecials?` ✨ Special ×${packSessionSpecials}`:''}${packSessionGods?` 🌟 God ×${packSessionGods}`:''}`:'';
     packSequence+=1;packRipping=false;packPointer=null;packLayer.classList.add('hidden');
     const rip=packLayer.querySelector('.tc-pack-rip'),close=packLayer.querySelector('.tc-pack-close-bottom');
