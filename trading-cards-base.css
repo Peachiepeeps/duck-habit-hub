@@ -154,3 +154,8 @@
 .tc-ten-pack-summary .tc-summary-card{min-width:0;display:flex;flex-direction:column;gap:4px;align-items:center;text-align:center;font-size:.63rem;color:#805a70}
 .tc-ten-pack-summary .tc-summary-card .tc-face{width:100%;max-width:110px}
 .tc-ten-pack-summary .tc-summary-card span{font-size:.59rem;line-height:1.2;overflow-wrap:anywhere}
+
+/* v24.364 instant tear on touch-release; no tilt-back hold. */
+.tc-pack-rip.ripping{animation:none!important;transition:none!important;}
+.tc-pack-rip.opened{animation:tcPackOpenGlow .12s ease-out both!important;}
+.tc-pack-rip.opened .tc-pack-top{animation:tcTornTopV236 .18s ease-out forwards!important;}

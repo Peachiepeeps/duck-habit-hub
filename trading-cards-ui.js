@@ -228,27 +228,35 @@ function tcGalleryFace(card,opts={}){
     if(packRipping||packSessionCurrentOpened||state.unopenedPacks<packSessionTotal||packLayer.classList.contains('hidden'))return;
     packRipping=true;packSessionCurrentOpened=true;
     const sequence=packSequence;
-    // One swipe spends the entire selected batch. Every draw and all thirty
-    // cards are saved immediately, even if the reveal screen is closed early.
-    packSessionResults=Array.from({length:packSessionTotal},()=>rollSessionPack());
-    const draw=packSessionResults[0];
-    state.unopenedPacks-=packSessionTotal;
-    state.stats.packsOpened+=packSessionTotal;
-    packSessionOpened=1;
-    packSessionSpecials=packSessionResults.filter(p=>p.kind==='special').length;
-    packSessionGods=packSessionResults.filter(p=>p.kind==='god').length;
-    for(const pack of packSessionResults){pack.cards=pack.cards.map(card=>{const variantId=TC.pickRandomVariant?.(card)||'default';TC.grantCard(save,card.id,1,{variantId,source:'pack'});return {...card,packVariantId:variantId};});}
-    persist();syncCardState();renderCards();
     const rip=packLayer.querySelector('.tc-pack-rip'),body=rip.querySelector('.tc-pack-body');
     const note=packLayer.querySelector('.tc-pack-instruction');
-    rip.style.removeProperty('transform');rip.className='tc-pack-rip ripping';
-    if(draw.kind!=='normal')packLayer.classList.add(draw.kind==='god'?'tc-pack-god':'tc-pack-special');
-    note.textContent=draw.kind==='god'?'🌟 An incredible glow!':draw.kind==='special'?'✨ Something sparkles inside!':'Rrrip!';
-    setTimeout(()=>{
+    // Retain the swipe angle; do not snap back and pause before tearing.
+    const prior=rip.style.transform;
+    rip.style.removeProperty('transform');
+    rip.className='tc-pack-rip ripping';
+    if(prior)rip.style.setProperty('--tc-rip-origin',prior);
+    note.textContent='Rrrip!';
+    // Show the torn asset before doing synchronous batch generation/storage work.
+    requestAnimationFrame(()=>{
       if(sequence!==packSequence)return;
       body.src=TC.packAsset('card-pack-ripped.png');rip.className='tc-pack-rip opened';
-      setTimeout(()=>buildPackCards(draw.cards,sequence,draw.kind),180);
-    },95);
+      setTimeout(()=>{
+        if(sequence!==packSequence)return;
+        // One swipe spends and awards the whole batch, even if its previews are closed.
+        packSessionResults=Array.from({length:packSessionTotal},()=>rollSessionPack());
+        const draw=packSessionResults[0];
+        state.unopenedPacks-=packSessionTotal;
+        state.stats.packsOpened+=packSessionTotal;
+        packSessionOpened=1;
+        packSessionSpecials=packSessionResults.filter(p=>p.kind==='special').length;
+        packSessionGods=packSessionResults.filter(p=>p.kind==='god').length;
+        for(const pack of packSessionResults){pack.cards=pack.cards.map(card=>{const variantId=TC.pickRandomVariant?.(card)||'default';TC.grantCard(save,card.id,1,{variantId,source:'pack'});return {...card,packVariantId:variantId};});}
+        persist();syncCardState();renderCards();
+        if(draw.kind!=='normal')packLayer.classList.add(draw.kind==='god'?'tc-pack-god':'tc-pack-special');
+        note.textContent=draw.kind==='god'?'🌟 An incredible glow!':draw.kind==='special'?'✨ Something sparkles inside!':'Rrrip!';
+        buildPackCards(draw.cards,sequence,draw.kind);
+      },0);
+    });
   }
   function showTenPackSummary(){
     packSummaryShown=true;
