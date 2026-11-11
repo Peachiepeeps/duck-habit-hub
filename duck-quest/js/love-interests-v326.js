@@ -9,6 +9,14 @@
   const MIKO_SMUG = "assets/characters/miko/base/smug.webp";
 
   const CHARACTERS = {
+    miho: {name:'Miho', sprites:{idle1:'assets/characters/miho/base/idle-1.webp',idle2:'assets/characters/miho/base/idle-2.webp',angry:'assets/characters/miho/base/threaten.webp',fluster:'assets/characters/miho/base/fluster.webp'}},
+    ranger: {name:"Ranger",duckId:"ranger-duck",cardId:"r-love-ranger",sprites:{"idle1": "assets/love-interests/ranger/Ranger-idle-1.png", "idle2": "assets/love-interests/ranger/Ranger-idle-2.png", "angry": "assets/love-interests/ranger/Ranger-Angry.png", "smirk": "assets/love-interests/ranger/Ranger-Smirk.png"},outfitIds:["look-ranger-shirt", "look-ranger-boots", "look-ranger-pants", "look-ranger-bow", "look-ranger-sign"]},
+    lovell: {name:"Lovell",duckId:"lovell-duck",cardId:"r-love-lovell",sprites:{"idle1": "assets/love-interests/lovell/Lovell-idle-1.png", "idle2": "assets/love-interests/lovell/Lovell-idle-2.png", "drool": "assets/love-interests/lovell/Lovell-drool.png", "gasp": "assets/love-interests/lovell/Lovell-gasp.png"},outfitIds:["look-lovell-hairpins", "look-lovell-hoodie", "look-lovell-skirt", "look-lovell-shoes", "look-lovell-socks", "look-lovell-bow"]},
+    collin: {name:"Collin",duckId:"collin-duck",cardId:"r-love-collin",sprites:{"idle1": "assets/love-interests/collin/Collin-idle-1.png", "idle2": "assets/love-interests/collin/Collin-idle-2.png", "angry": "assets/love-interests/collin/Collin-angry.png", "happy": "assets/love-interests/collin/Collin-happy.png"},outfitIds:["look-collin-top", "look-collin-boots", "look-collin-shorts", "look-collin-socks", "look-collin-bow"]},
+    beau: {name:"Beau",duckId:"beau-duck",cardId:"r-love-beau",sprites:{"idle1": "assets/love-interests/beau/Beau-idle-1.png", "idle2": "assets/love-interests/beau/Beau-idle-2.png", "happy": "assets/love-interests/beau/Beau-happy.png", "sad": "assets/love-interests/beau/Beau-sad.png"},outfitIds:["look-beau-dress", "look-beau-boots", "look-beau-tights", "look-beau-bow"]},
+    ein: {name:"Ein",duckId:"ein-duck",cardId:"r-love-ein",sprites:{"idle1": "assets/love-interests/ein/Ein-idle-1.png", "idle2": "assets/love-interests/ein/Ein-idle-2.png", "pout": "assets/love-interests/ein/Ein-Pout.png", "happy": "assets/love-interests/ein/Ein-Happy.png"},outfitIds:["look-ein-bow", "look-ein-bangs", "look-ein-gloves", "look-ein-jacket", "look-ein-boots", "look-ein-short", "look-ein-stockings"]},
+    ideno: {name:"Ideno",duckId:"ideno-duck",cardId:"r-love-ideno",sprites:{"idle1": "assets/love-interests/ideno/Ideno-idle-1.png", "idle2": "assets/love-interests/ideno/Ideno-idle-2.png", "angry": "assets/love-interests/ideno/Ideno-angry.png", "smirk": "assets/love-interests/ideno/Ideno-smirk.png"},outfitIds:["look-ideno-top", "look-ideno-loafers", "look-ideno-skirt", "look-ideno-stockings", "look-ideno-bow"]},
+    hinaru: {name:"Hinaru",duckId:"hinaru-duck",cardId:"r-love-hinaru",sprites:{"idle1": "assets/love-interests/hinaru/Hinaru-idle-1.png", "idle2": "assets/love-interests/hinaru/Hinaru-idle-2.png", "amused": "assets/love-interests/hinaru/Hinaru-amused.png", "unhappy": "assets/love-interests/hinaru/Hinaru-unhappy.png"},outfitIds:["look-hinaru-sweater", "look-hinaru-heels", "look-hinaru-skirt", "look-hinaru-bow"]},
     lain:{name:'Lain',duckId:'lain-duck',cardId:'r-love-lain',sprites:{idle1:'assets/love-interests/lain/Lain-idle-1.png',idle2:'assets/love-interests/lain/Lain-idle-2.png',sigh:'assets/love-interests/lain/Lain-sigh.png'},outfitIds:['annika-casual-bow','annika-casual-dress','annika-casual-shoes']},
     tamao:{name:'Tamao',duckId:'tamao-duck',cardId:'r-love-tamao',sprites:{idle1:'assets/love-interests/tamao/Tamao-idle-1.png',idle2:'assets/love-interests/tamao/Tamao-idle-2.png',sigh:'assets/love-interests/tamao/Tamao-sigh.png'},outfitIds:['annika-school-buns','annika-school-socks','annika-school-sneakers','annika-school-uniform','annika-school-hoodie']},
     annika:{name:'Annika',sprites:{idle1:'assets/characters/annika/base/idle-1.webp',idle2:'assets/characters/annika/base/idle-2.webp'}},
@@ -209,6 +217,128 @@ kiri: {
   };
 
   const SCENES = {
+    ranger: {id:'ranger',title:'Ranger',kicker:'MIHO LOVE INTEREST',leftId:'miho',rightId:'ranger',dialogue:[
+      {speaker:"Ranger",text:"Oh, hi there, Majo!",rightPose:"idle"},
+      {speaker:"Miho",text:"Ugh, that’s not my name. And did you follow me?",leftPose:"idle"},
+      {speaker:"Ranger",text:"Yeah, I was bored. You left me alone.",rightPose:"idle"},
+      {speaker:"Miho",text:"Ughhh, I can’t babysit you all damn day.",leftPose:"angry"},
+      {speaker:"Ranger",text:"You don’t have to. I’ll just follow you.",rightPose:"idle"},
+      {speaker:"Miho",text:"Great. Love that.",leftPose:"idle"},
+      {speaker:"Ranger",text:"I know you do!",rightPose:"idle"},
+      {speaker:"Miho",text:"I was being sarcastic!!",leftPose:"idle"},
+      {speaker:"Ranger",text:"Hehe, oh right! I got you a gift! People do that, right?",rightPose:"smirk"},
+      {speaker:"Miho",text:"I guess, but if it’s something gross, I’ll kill you.",leftPose:"angry"},
+      {speaker:"Ranger",text:"Not this time! Look!",rightPose:"idle"},
+      {speaker:"Miho",text:"….This… This is fine, whatever, I’ll take it.",leftPose:"idle"},
+      {speaker:"Ranger",text:"I chose right?!",rightPose:"idle"},
+      {speaker:"Miho",text:"Shut up! Let’s just go home, damn it.",leftPose:"angry"},
+      {speaker:"Ranger",text:"Got it, Majo!",rightPose:"idle"},
+      {speaker:"Miho",text:"Still not my name!!",leftPose:"idle"}
+    ],reward(){const data=load();const first=!Boolean(data.loveInterests?.ranger?.encountered);unlockCharacter(data,'ranger',{grantCard:false,grantDuck:true,grantOutfit:first});save(data);notifyUnlock('ranger');}},
+    lovell: {id:'lovell',title:'Lovell',kicker:'MIHO LOVE INTEREST',leftId:'miho',rightId:'lovell',dialogue:[
+      {speaker:"Lovell",text:"*not paying attention* Hehehehe…. That guy was so cute…",rightPose:"gasp"},
+      {speaker:"Miho",text:"Oi. What are you doing?",leftPose:"idle"},
+      {speaker:"Lovell",text:"EEK! Miho! Hello!",rightPose:"idle"},
+      {speaker:"Miho",text:"I asked a question. Don’t you dare add any more damn men to this stupid group.",leftPose:"angry"},
+      {speaker:"Lovell",text:"Calm down! I can look, but I won’t touch. I got enough hot dudes.",rightPose:"idle"},
+      {speaker:"Miho",text:"You can have them.",leftPose:"idle"},
+      {speaker:"Lovell",text:"Aww, that doesn’t mean I don’t love you! My pretty girlie~",rightPose:"gasp"},
+      {speaker:"Miho",text:"S-shut up, you little brat!!",leftPose:"angry"},
+      {speaker:"Lovell",text:"Hehehe, oops. Sorry, didn’t mean to fluster you.",rightPose:"gasp"},
+      {speaker:"Miho",text:"You’re lucky I don’t kill animals and you resemble one too much.",leftPose:"angry"},
+      {speaker:"Lovell",text:"That’s the reason?! Not love!?",rightPose:"gasp"},
+      {speaker:"Miho",text:"Nope.",leftPose:"idle"},
+      {speaker:"Lovell",text:"Ruddeee… And I got you a gift too. Here.",rightPose:"gasp"},
+      {speaker:"Miho",text:"…Fine. Thank you…. I don’t mind this.",leftPose:"fluster"},
+      {speaker:"Lovell",text:"Awww, I’m so glad!!",rightPose:"idle"},
+      {speaker:"Miho",text:"Whatever, let’s just go home…",leftPose:"idle"},
+      {speaker:"Lovell",text:"Okie dokie!",rightPose:"idle"}
+    ],reward(){const data=load();const first=!Boolean(data.loveInterests?.lovell?.encountered);unlockCharacter(data,'lovell',{grantCard:false,grantDuck:true,grantOutfit:first});save(data);notifyUnlock('lovell');}},
+    collin: {id:'collin',title:'Collin',kicker:'MIHO LOVE INTEREST',leftId:'miho',rightId:'collin',dialogue:[
+      {speaker:"Collin",text:"Oh, hey, Miho.",rightPose:"idle"},
+      {speaker:"Miho",text:"What are you doing here?",leftPose:"idle"},
+      {speaker:"Collin",text:"Lookin’ for ya. Wanna go somewhere together?",rightPose:"idle"},
+      {speaker:"Miho",text:"Absolutely not.",leftPose:"idle"},
+      {speaker:"Collin",text:"Oh, I guess I’ll tell my dad you can’t make it.",rightPose:"idle"},
+      {speaker:"Miho",text:"What!? ugh, I thought you meant something weird. If it’s visiting your father, I guess I don’t mind.",leftPose:"angry"},
+      {speaker:"Collin",text:"Yeah, I know. Just wanted to get you to react.",rightPose:"idle"},
+      {speaker:"Miho",text:"You’re fucking stupid.",leftPose:"angry"},
+      {speaker:"Collin",text:"How hurtful. Common, let’s go.",rightPose:"idle"},
+      {speaker:"Miho",text:"Whatever, I just don’t mind your father. He has taste, unlike you.",leftPose:"idle"},
+      {speaker:"Collin",text:"Love you too, babe. Oh, here.",rightPose:"happy"},
+      {speaker:"Miho",text:"….Why would I want this?",leftPose:"idle"},
+      {speaker:"Collin",text:"You can just say thank you.",rightPose:"idle"},
+      {speaker:"Miho",text:"ugh… Thank you, I guess…its not terrible…",leftPose:"fluster"}
+    ],reward(){const data=load();const first=!Boolean(data.loveInterests?.collin?.encountered);unlockCharacter(data,'collin',{grantCard:false,grantDuck:true,grantOutfit:first});save(data);notifyUnlock('collin');}},
+    beau: {id:'beau',title:'Beau',kicker:'MIHO LOVE INTEREST',leftId:'miho',rightId:'beau',dialogue:[
+      {speaker:"Beau",text:"Oh, hello, Miho…",rightPose:"idle"},
+      {speaker:"Miho",text:"Beau…hello.",leftPose:"idle"},
+      {speaker:"Beau",text:"What brings you here? I was walking home from a modelling job.",rightPose:"idle"},
+      {speaker:"Miho",text:"Just wandering, I guess. Can I…accompany you?",leftPose:"idle"},
+      {speaker:"Beau",text:"Of course, I’d like that. Shall we?",rightPose:"idle"},
+      {speaker:"Miho",text:"Y-Yeah…",leftPose:"idle"},
+      {speaker:"Beau",text:"You look lovely today.",rightPose:"happy"},
+      {speaker:"Miho",text:"I-I uh… Thanks…",leftPose:"fluster"},
+      {speaker:"Beau",text:"You don’t have to be nervous, you know.",rightPose:"idle"},
+      {speaker:"Miho",text:"Nervous? I’m not nervous!",leftPose:"fluster"},
+      {speaker:"Beau",text:"Ahhh, my apologies. Don’t worry so much, okay?",rightPose:"idle"},
+      {speaker:"Miho",text:"I…Sorry, I just…am not used to genuine kindness that isn’t people trying to fluster me on purpose.",leftPose:"idle"},
+      {speaker:"Beau",text:"That’s completely understandable. Here, have this.",rightPose:"idle"},
+      {speaker:"Miho",text:"Oh. Thank you, This is…nice.",leftPose:"fluster"},
+      {speaker:"Beau",text:"You’re very welcome. Hopefully it brings you some comfort. Now, shall we head home?",rightPose:"idle"},
+      {speaker:"Miho",text:"…Yeah, thanks…",leftPose:"fluster"}
+    ],reward(){const data=load();const first=!Boolean(data.loveInterests?.beau?.encountered);unlockCharacter(data,'beau',{grantCard:false,grantDuck:true,grantOutfit:first});save(data);notifyUnlock('beau');}},
+    ein: {id:'ein',title:'Ein',kicker:'MIHO LOVE INTEREST',leftId:'miho',rightId:'ein',dialogue:[
+      {speaker:"Miho",text:"What are you doing here?",leftPose:"idle"},
+      {speaker:"Ein",text:"Eh? I was looking for some of the guys. Mainly Beau.",rightPose:"idle"},
+      {speaker:"Miho",text:"He’s probably working. He has better things to do.",leftPose:"idle"},
+      {speaker:"Ein",text:"Common, don’t be so mean.",rightPose:"idle"},
+      {speaker:"Miho",text:"Why? There’s no reason to be nice.",leftPose:"idle"},
+      {speaker:"Ein",text:"Well, I can distract the guys to give you time to rest!",rightPose:"idle"},
+      {speaker:"Miho",text:"Hm… I GUESS that’s useful.",leftPose:"idle"},
+      {speaker:"Ein",text:"See? I’ll happily take that sacrifice!",rightPose:"idle"},
+      {speaker:"Miho",text:"I think you just want to be surrounded by hot dudes.",leftPose:"idle"},
+      {speaker:"Ein",text:"You admit they’re hot?",rightPose:"happy"},
+      {speaker:"Miho",text:"Shut up.",leftPose:"angry"},
+      {speaker:"Ein",text:"Yeah, yeah. Oh, here. This will look good on you.",rightPose:"idle"},
+      {speaker:"Miho",text:"Oh… Thanks, I guess.",leftPose:"fluster"},
+      {speaker:"Ein",text:"You’re very welcome. Now common!",rightPose:"idle"},
+      {speaker:"Miho",text:"H-hey, where are you dragging me to?!",leftPose:"idle"}
+    ],reward(){const data=load();const first=!Boolean(data.loveInterests?.ein?.encountered);unlockCharacter(data,'ein',{grantCard:false,grantDuck:true,grantOutfit:first});save(data);notifyUnlock('ein');}},
+    ideno: {id:'ideno',title:'Ideno',kicker:'MIHO LOVE INTEREST',leftId:'miho',rightId:'ideno',dialogue:[
+      {speaker:"Ideno",text:"Oh, you. Why are you here?",rightPose:"idle"},
+      {speaker:"Miho",text:"I don’t need a damn reason. I do what I want.",leftPose:"angry"},
+      {speaker:"Ideno",text:"Yeah, yeah. Do I need to escort you home?",rightPose:"idle"},
+      {speaker:"Miho",text:"Shut it, I don’t need anything from you!",leftPose:"angry"},
+      {speaker:"Ideno",text:"Big words from a girl flustered by sweet words.",rightPose:"smirk"},
+      {speaker:"Miho",text:"I swear to god, I will kill you.",leftPose:"angry"},
+      {speaker:"Ideno",text:"Heh. Try me. You’d bring me back.",rightPose:"idle"},
+      {speaker:"Miho",text:"I… Shut up!!!!!",leftPose:"angry"},
+      {speaker:"Ideno",text:"Common, Princess, I’ll walk you home.",rightPose:"idle"},
+      {speaker:"Miho",text:"Oh, shut it. I’ve had enough of your annoying words.",leftPose:"angry"},
+      {speaker:"Ideno",text:"Didn’t say that last night.",rightPose:"idle"},
+      {speaker:"Miho",text:"I will smack you.",leftPose:"angry"},
+      {speaker:"Ideno",text:"Oh nooo… Here you go, I suppose I’ll make it better with a gift.",rightPose:"smirk"},
+      {speaker:"Miho",text:"Ugh, whatever, I’ll take it.",leftPose:"idle"},
+      {speaker:"Ideno",text:"You sure? I can take it back.",rightPose:"idle"},
+      {speaker:"Miho",text:"Just start walking!!",leftPose:"idle"}
+    ],reward(){const data=load();const first=!Boolean(data.loveInterests?.ideno?.encountered);unlockCharacter(data,'ideno',{grantCard:false,grantDuck:true,grantOutfit:first});save(data);notifyUnlock('ideno');}},
+    hinaru: {id:'hinaru',title:'Hinaru',kicker:'MIHO LOVE INTEREST',leftId:'miho',rightId:'hinaru',dialogue:[
+      {speaker:"Miho",text:"… Yo, wake up. Why are you sleeping outside?",leftPose:"idle"},
+      {speaker:"Hinaru",text:"Oh… Sup?",rightPose:"idle"},
+      {speaker:"Miho",text:"Sup? What do you mean, sup? You’re outside, dumbass.",leftPose:"angry"},
+      {speaker:"Hinaru",text:"It’s just such nice weather… I couldn’t help myself.",rightPose:"idle"},
+      {speaker:"Miho",text:"Jeez, do I have to carry you home?",leftPose:"idle"},
+      {speaker:"Hinaru",text:"Will ya? I wouldn’t mind.",rightPose:"idle"},
+      {speaker:"Miho",text:"I…ugh, I’ll call Ideno to come get you.",leftPose:"idle"},
+      {speaker:"Hinaru",text:"Nah, I was joking. I’ll just come with you.",rightPose:"idle"},
+      {speaker:"Miho",text:"You’re way too relaxed. Don’t you have any concern?",leftPose:"idle"},
+      {speaker:"Hinaru",text:"Not really. I’m a fox demon, I can defend myself if needed.",rightPose:"idle"},
+      {speaker:"Miho",text:"Hm. Guess you’re right. Fine, if you turn into a fox, I’ll carry you.",leftPose:"idle"},
+      {speaker:"Hinaru",text:"Sweet, I’ll take ya up on that. Here, I was holding this and figured you’d like it.",rightPose:"amused"},
+      {speaker:"Miho",text:"Oh. Thanks…",leftPose:"fluster"},
+      {speaker:"Hinaru",text:"Eh, it’s payment for carrying me. Now, let’s go.",rightPose:"idle"}
+    ],reward(){const data=load();const first=!Boolean(data.loveInterests?.hinaru?.encountered);unlockCharacter(data,'hinaru',{grantCard:false,grantDuck:true,grantOutfit:first});save(data);notifyUnlock('hinaru');}},
     lain:{id:'lain',title:'Lain',kicker:'ANNIKA LOVE INTEREST',leftId:'annika',rightId:'lain',kitties:true,dialogue:[
       {speaker:'Annika',text:'L-Lain, are you okay?'},
       {speaker:'Lain',text:'Oh. Yeah. I just met some little kitties… I think they need a home.',rightPose:'idle'},
@@ -965,7 +1095,7 @@ kiri: {
     data.loveInterestPairs.nicoNene = data.loveInterestPairs.nicoNene && typeof data.loveInterestPairs.nicoNene === "object" ? data.loveInterestPairs.nicoNene : {};
     data.loveInterestPairs.morikoJenson = data.loveInterestPairs.morikoJenson && typeof data.loveInterestPairs.morikoJenson === "object" ? data.loveInterestPairs.morikoJenson : {};
 
-    for (const key of ["lukio", "shinobu", "cheryln", "hibiki", "devlin", "yuzuru", "westley", "circe", "quin", "kiri", "midori", "luka", "cybil", "nico", "nene", "moriko", "jenson", "shin", "bubble", "lain", "tamao"]) {
+    for (const key of ["lukio", "shinobu", "cheryln", "hibiki", "devlin", "yuzuru", "westley", "circe", "quin", "kiri", "midori", "luka", "cybil", "nico", "nene", "moriko", "jenson", "shin", "bubble", "lain", "tamao", "ranger", "lovell", "collin", "beau", "ein", "ideno", "hinaru"]) {
       data.loveInterests[key] = data.loveInterests[key] && typeof data.loveInterests[key] === "object" ? data.loveInterests[key] : {};
     }
     return {
@@ -1145,7 +1275,7 @@ kiri: {
     if (scene.id.includes("-")) {
       return scene.title.split(" + ").map(name => `${name} Trading Card`);
     }
-    const outfit=scene.id==='shin'?'Annika’s Lingerie Outfit':scene.id==='bubble'?'Annika’s Date Outfit':scene.id==='lain'?'Annika’s Casual Cute Outfit':scene.id==='tamao'?'Annika’s School Outfit':`Miko’s ${scene.title} Outfit`;
+    const outfit=['ranger','lovell','collin','beau','ein','ideno','hinaru'].includes(scene.id)?`Miho’s ${scene.title} Outfit`:scene.id==='shin'?'Annika’s Lingerie Outfit':scene.id==='bubble'?'Annika’s Date Outfit':scene.id==='lain'?'Annika’s Casual Cute Outfit':scene.id==='tamao'?'Annika’s School Outfit':`Miko’s ${scene.title} Outfit`;
     const items=[`${scene.title} Duck`,outfit];
     if(scene.id==="lukio") items.push("Lukio Trading Card");
     return items;
@@ -1334,7 +1464,7 @@ kiri: {
     const data = load();
     const root = ensureAll(data);
     let shouldSave = false;
-    for (const key of ["lukio", "shinobu", "cheryln", "hibiki", "devlin", "yuzuru", "westley", "circe", "quin", "kiri", "midori", "luka", "cybil", "nico", "nene", "moriko", "jenson", "shin", "bubble", "lain", "tamao"]) {
+    for (const key of ["lukio", "shinobu", "cheryln", "hibiki", "devlin", "yuzuru", "westley", "circe", "quin", "kiri", "midori", "luka", "cybil", "nico", "nene", "moriko", "jenson", "shin", "bubble", "lain", "tamao", "ranger", "lovell", "collin", "beau", "ein", "ideno", "hinaru"]) {
       if (!root.loveInterests[key]?.encountered) continue;
       unlockCharacter(data, key, { grantCard: key === "lukio", grantDuck: true, grantOutfit: true });
       shouldSave = true;
@@ -1370,6 +1500,11 @@ kiri: {
     const data = load();
     const root = ensureAll(data);
     const ids = [];
+    if(activeCharacterId()==='miho'){
+      const mihoIds=['ranger','lovell','collin','beau','ein','ideno','hinaru'];
+      const unseen=mihoIds.filter(id=>!root.loveInterests[id].encountered);
+      return unseen.length?unseen:mihoIds;
+    }
     if(activeCharacterId()==='annika'){
       for(const name of ['shin','bubble','lain','tamao'])if(!root.loveInterests[name].encountered)ids.push(name);
       if(root.loveInterests.shin.encountered&&root.loveInterests.tamao.encountered&&!root.pairScenes.shinTamao.cardsGranted)ids.push('shin-tamao');
@@ -1447,6 +1582,13 @@ kiri: {
   window.DuckieLoveInterests.chance = SHARED_CHANCE;
   window.DuckieLoveInterests.maybeBeforeNextEncounter = maybeBeforeNextEncounter;
   window.DuckieLoveInterests.trigger = showScene;
+  window.triggerRangerEncounter = function(){return showScene('ranger');};
+  window.triggerLovellEncounter = function(){return showScene('lovell');};
+  window.triggerCollinEncounter = function(){return showScene('collin');};
+  window.triggerBeauEncounter = function(){return showScene('beau');};
+  window.triggerEinEncounter = function(){return showScene('ein');};
+  window.triggerIdenoEncounter = function(){return showScene('ideno');};
+  window.triggerHinaruEncounter = function(){return showScene('hinaru');};
   window.triggerLainEncounter = function(){return showScene('lain');};
   window.triggerTamaoEncounter = function(){return showScene('tamao');};
   window.triggerShinTamaoCutscene = function(){return showScene('shin-tamao');};
