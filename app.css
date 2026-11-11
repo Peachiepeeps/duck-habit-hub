@@ -7870,3 +7870,7 @@ body[data-quest-theme="midnight-pixel"] .secondary-button,body[data-quest-theme=
 .miho-look-choice {display:inline-flex;vertical-align:top;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;min-width:110px;min-height:65px;margin:.3rem;padding:.55rem;border:2px solid #e5c7d5;border-radius:14px;background:#fff8fc;color:#65455a;font:inherit;font-weight:700;cursor:pointer;}
 .miho-look-choice img {display:block;width:105px;height:140px;object-fit:contain;}
 .miho-look-choice[aria-pressed="true"] {border-color:#c4588a;background:#fce7f2;box-shadow:0 0 0 2px #f2b7d2;}
+
+/* v24.362 — saved outfit combinations */
+.saved-outfit-combination {display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin:8px 0;align-items:stretch}
+.saved-outfit-combination .miho-look-choice {margin:0;min-width:0}

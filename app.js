@@ -3202,47 +3202,47 @@ const IO_CLOSET = [
 
 const MIHO_ASSETS = {
   "look-ranger-shirt": { label: "Ranger Shirt", file: "Miho-Ranger-Shirt.png", z: 35 },
-  "look-ranger-boots": { label: "Ranger boots", file: "Miho-Ranger-boots.png", z: 35 },
-  "look-ranger-pants": { label: "Ranger pants", file: "Miho-Ranger-pants.png", z: 35 },
-  "look-ranger-bow": { label: "Ranger bow", file: "Miho-Ranger-bow.png", z: 35 },
-  "look-ranger-sign": { label: "Ranger Sign", file: "Miho-Ranger-Sign.png", z: 35 },
+  "look-ranger-boots": { label: "Ranger boots", file: "Miho-Ranger-boots.png", z: 27 },
+  "look-ranger-pants": { label: "Ranger pants", file: "Miho-Ranger-pants.png", z: 31 },
+  "look-ranger-bow": { label: "Ranger bow", file: "Miho-Ranger-bow.png", z: 13 },
+  "look-ranger-sign": { label: "Ranger Sign", file: "Miho-Ranger-Sign.png", z: 12 },
   "look-preview-ranger": { label: "Ranger Outfit", file: "Miho-Ranger-Reference.png", z: 35 },
-  "look-lovell-hairpins": { label: "Lovell Hairpins", file: "Miho-Lovell-Hairpins.png", z: 35 },
+  "look-lovell-hairpins": { label: "Lovell Hairpins", file: "Miho-Lovell-Hairpins.png", z: 56 },
   "look-lovell-hoodie": { label: "Lovell hoodie", file: "Miho-Lovell-hoodie.png", z: 35 },
-  "look-lovell-skirt": { label: "Lovell skirt", file: "Miho-Lovell-skirt.png", z: 35 },
-  "look-lovell-shoes": { label: "Lovell shoes", file: "Miho-Lovell-shoes.png", z: 35 },
-  "look-lovell-socks": { label: "Lovell socks", file: "Miho-Lovell-socks.png", z: 35 },
-  "look-lovell-bow": { label: "Lovell bow", file: "Miho-Lovell-bow.png", z: 35 },
+  "look-lovell-skirt": { label: "Lovell skirt", file: "Miho-Lovell-skirt.png", z: 31 },
+  "look-lovell-shoes": { label: "Lovell shoes", file: "Miho-Lovell-shoes.png", z: 27 },
+  "look-lovell-socks": { label: "Lovell socks", file: "Miho-Lovell-socks.png", z: 25 },
+  "look-lovell-bow": { label: "Lovell bow", file: "Miho-Lovell-bow.png", z: 13 },
   "look-preview-lovell": { label: "Lovell Outfit", file: "Miho-Lovell-Reference.png", z: 35 },
   "look-collin-top": { label: "Collin Top", file: "Miho-Collin-Top.png", z: 35 },
-  "look-collin-boots": { label: "Collin Boots", file: "Miho-Collin-Boots.png", z: 35 },
-  "look-collin-shorts": { label: "Collin Shorts", file: "Miho-Collin-Shorts.png", z: 35 },
-  "look-collin-socks": { label: "Collin Socks", file: "Miho-Collin-Socks.png", z: 35 },
-  "look-collin-bow": { label: "Collin Bow", file: "Miho-Collin-Bow.png", z: 35 },
+  "look-collin-boots": { label: "Collin Boots", file: "Miho-Collin-Boots.png", z: 27 },
+  "look-collin-shorts": { label: "Collin Shorts", file: "Miho-Collin-Shorts.png", z: 31 },
+  "look-collin-socks": { label: "Collin Socks", file: "Miho-Collin-Socks.png", z: 25 },
+  "look-collin-bow": { label: "Collin Bow", file: "Miho-Collin-Bow.png", z: 8 },
   "look-preview-collin": { label: "Collin Outfit", file: "Miho-Collin-Reference.png", z: 35 },
   "look-beau-dress": { label: "Beau Dress", file: "Miho-Beau-Dress.png", z: 35 },
-  "look-beau-boots": { label: "Beau Boots", file: "Miho-Beau-Boots.png", z: 35 },
-  "look-beau-tights": { label: "Beau Tights", file: "Miho-Beau-Tights.png", z: 35 },
-  "look-beau-bow": { label: "Beau Bow", file: "Miho-Beau-Bow.png", z: 35 },
+  "look-beau-boots": { label: "Beau Boots", file: "Miho-Beau-Boots.png", z: 27 },
+  "look-beau-tights": { label: "Beau Tights", file: "Miho-Beau-Tights.png", z: 25 },
+  "look-beau-bow": { label: "Beau Bow", file: "Miho-Beau-Bow.png", z: 8 },
   "look-preview-beau": { label: "Beau Outfit", file: "Miho-Beau-Reference.png", z: 35 },
-  "look-ein-bow": { label: "Ein Bow", file: "Miho-Ein-Bow.png", z: 35 },
-  "look-ein-bangs": { label: "Ein Bangs", file: "Miho-Ein-Bangs.png", z: 35 },
-  "look-ein-gloves": { label: "Ein Gloves", file: "Miho-Ein-Gloves.png", z: 35 },
+  "look-ein-bow": { label: "Ein Bow", file: "Miho-Ein-Bow.png", z: 57 },
+  "look-ein-bangs": { label: "Ein Bangs", file: "Miho-Ein-Bangs.png", z: 48 },
+  "look-ein-gloves": { label: "Ein Gloves", file: "Miho-Ein-Gloves.png", z: 39 },
   "look-ein-jacket": { label: "Ein Jacket", file: "Miho-Ein-Jacket.png", z: 35 },
-  "look-ein-boots": { label: "Ein boots", file: "Miho-Ein-boots.png", z: 35 },
-  "look-ein-short": { label: "Ein Short", file: "Miho-Ein-Short.png", z: 35 },
-  "look-ein-stockings": { label: "Ein Stockings", file: "Miho-Ein-Stockings.png", z: 35 },
+  "look-ein-boots": { label: "Ein boots", file: "Miho-Ein-boots.png", z: 27 },
+  "look-ein-short": { label: "Ein Short", file: "Miho-Ein-Short.png", z: 31 },
+  "look-ein-stockings": { label: "Ein Stockings", file: "Miho-Ein-Stockings.png", z: 25 },
   "look-preview-ein": { label: "Ein Outfit", file: "Miho-Ein-Reference.png", z: 35 },
   "look-ideno-top": { label: "Ideno Top", file: "Miho-Ideno-Top.png", z: 35 },
-  "look-ideno-loafers": { label: "Ideno loafers", file: "Miho-Ideno-loafers.png", z: 35 },
-  "look-ideno-skirt": { label: "Ideno skirt", file: "Miho-Ideno-skirt.png", z: 35 },
-  "look-ideno-stockings": { label: "Ideno stockings", file: "Miho-Ideno-stockings.png", z: 35 },
-  "look-ideno-bow": { label: "Ideno bow", file: "Miho-Ideno-bow.png", z: 35 },
+  "look-ideno-loafers": { label: "Ideno loafers", file: "Miho-Ideno-loafers.png", z: 27 },
+  "look-ideno-skirt": { label: "Ideno skirt", file: "Miho-Ideno-skirt.png", z: 31 },
+  "look-ideno-stockings": { label: "Ideno stockings", file: "Miho-Ideno-stockings.png", z: 25 },
+  "look-ideno-bow": { label: "Ideno bow", file: "Miho-Ideno-bow.png", z: 8 },
   "look-preview-ideno": { label: "Ideno Outfit", file: "Miho-Ideno-Reference.png", z: 35 },
   "look-hinaru-sweater": { label: "Hinaru Sweater", file: "Miho-Hinaru-Sweater.png", z: 35 },
-  "look-hinaru-heels": { label: "Hinaru Heels", file: "Miho-Hinaru-Heels.png", z: 35 },
-  "look-hinaru-skirt": { label: "Hinaru Skirt", file: "Miho-Hinaru-Skirt.png", z: 35 },
-  "look-hinaru-bow": { label: "Hinaru Bow", file: "Miho-Hinaru-Bow.png", z: 35 },
+  "look-hinaru-heels": { label: "Hinaru Heels", file: "Miho-Hinaru-Heels.png", z: 27 },
+  "look-hinaru-skirt": { label: "Hinaru Skirt", file: "Miho-Hinaru-Skirt.png", z: 31 },
+  "look-hinaru-bow": { label: "Hinaru Bow", file: "Miho-Hinaru-Bow.png", z: 13 },
   "look-preview-hinaru": { label: "Hinaru Outfit", file: "Miho-Hinaru-Reference.png", z: 35 },
   "hair-main": { label: "Short Hair", file: "Miho-hair.webp", z: 10 },
   "hair-long": { label: "Long Hair", file: "Miho-long-hair.webp", z: 10 },
@@ -3358,18 +3358,22 @@ const MIHO_COMPLETE_LOOKS = {
   ]
 };
 const MIHO_LOOK_NAMES = ["ranger", "lovell", "collin", "beau", "ein", "ideno", "hinaru"];
+const MIHO_PRESET_PIECES = {"ranger": {"top": "look-ranger-shirt", "bottom": "look-ranger-pants", "shoes": "look-ranger-boots", "backBow": "look-ranger-bow", "extras": ["look-ranger-sign"]}, "lovell": {"top": "look-lovell-hoodie", "bottom": "look-lovell-skirt", "shoes": "look-lovell-shoes", "legwear": "look-lovell-socks", "backBow": "look-lovell-bow", "extras": ["look-lovell-hairpins"]}, "collin": {"top": "look-collin-top", "bottom": "look-collin-shorts", "shoes": "look-collin-boots", "legwear": "look-collin-socks", "backBow": "look-collin-bow"}, "beau": {"dress": "look-beau-dress", "shoes": "look-beau-boots", "legwear": "look-beau-tights", "backBow": "look-beau-bow"}, "ein": {"top": null, "outer": "look-ein-jacket", "bottom": "look-ein-short", "shoes": "look-ein-boots", "legwear": "look-ein-stockings", "bangsStyle": "look-ein-bangs", "headBow": "look-ein-bow", "extras": ["look-ein-gloves"]}, "ideno": {"top": "look-ideno-top", "bottom": "look-ideno-skirt", "shoes": "look-ideno-loafers", "legwear": "look-ideno-stockings", "backBow": "look-ideno-bow"}, "hinaru": {"top": "look-hinaru-sweater", "bottom": "look-hinaru-skirt", "shoes": "look-hinaru-heels", "backBow": "look-hinaru-bow"}};
+
 
 const MIHO_CLOSET = [
-  { id: "mihoLook", label: "Outfits ♡", type: "miho-complete-looks", options: MIHO_LOOK_NAMES },
   { id: "hair", label: "Hair", type: "hair", options: ["hair-main", "hair-long"] },
-  { id: "headBow", label: "Head Bows", type: "single", allowNone: true, options: ["bow", "bow-low"] },
-  { id: "top", label: "Tops", type: "single", allowNone: true, options: ["top-shirt", "top-button-shirt"] },
-  { id: "outer", label: "Layers", type: "single", allowNone: true, options: ["jacket-black", "jacket-red"] },
-  { id: "bottom", label: "Bottoms", type: "single", allowNone: true, options: ["bottom-skirt", "bottom-slit-skirt", "bottom-shorts"] },
-  { id: "dress", label: "Dresses", type: "single", allowNone: true, options: ["dress-black"] },
-  { id: "legwear", label: "Legwear", type: "single", allowNone: true, options: ["legwear-stockings", "legwear-stockings-laceup"] },
-  { id: "shoes", label: "Shoes", type: "single", allowNone: true, options: ["shoes-boots", "shoes-booties"] },
-  { id: "extras", label: "Extras", type: "multi", options: ["belt", "neck-bow", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip", "city-crown"] }
+  { id: "backBow", label: "Back Bows", type: "single", allowNone: true, options: ["look-ranger-bow", "look-lovell-bow", "look-collin-bow", "look-beau-bow", "look-ideno-bow", "look-hinaru-bow"] },
+  { id: "bangsStyle", label: "Bangs", type: "single", allowNone: true, options: ["bangs", "look-ein-bangs"] },
+  { id: "headBow", label: "Head Bows", type: "single", allowNone: true, options: ["bow", "bow-low", "look-ein-bow"] },
+  { id: "top", label: "Tops", type: "single", allowNone: true, options: ["top-shirt", "top-button-shirt", "look-ranger-shirt", "look-lovell-hoodie", "look-collin-top", "look-ideno-top", "look-hinaru-sweater"] },
+  { id: "outer", label: "Layers", type: "single", allowNone: true, options: ["jacket-black", "jacket-red", "look-ein-jacket"] },
+  { id: "bottom", label: "Bottoms", type: "single", allowNone: true, options: ["bottom-skirt", "bottom-slit-skirt", "bottom-shorts", "look-ranger-pants", "look-lovell-skirt", "look-collin-shorts", "look-ein-short", "look-ideno-skirt", "look-hinaru-skirt"] },
+  { id: "dress", label: "Dresses", type: "single", allowNone: true, options: ["dress-black", "look-beau-dress"] },
+  { id: "legwear", label: "Legwear", type: "single", allowNone: true, options: ["legwear-stockings", "legwear-stockings-laceup", "look-lovell-socks", "look-collin-socks", "look-beau-tights", "look-ein-stockings", "look-ideno-stockings"] },
+  { id: "shoes", label: "Shoes", type: "single", allowNone: true, options: ["shoes-boots", "shoes-booties", "look-ranger-boots", "look-lovell-shoes", "look-collin-boots", "look-beau-boots", "look-ein-boots", "look-ideno-loafers", "look-hinaru-heels"] },
+  { id: "extras", label: "Extras", type: "multi", options: ["belt", "neck-bow", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip", "city-crown", "look-ranger-sign", "look-lovell-hairpins", "look-ein-gloves"] },
+  { id: "savedOutfits", label: "Saved Outfits ♡", type: "saved-outfits" }
 ];
 
 const ANNIKA_THUMB_BOUNDS = {
@@ -3643,17 +3647,26 @@ function normalizeMihoOutfit(rawOutfit = {}) {
     ? structuredClone(DEFAULT_MIHO_OUTFIT)
     : { ...structuredClone(DEFAULT_MIHO_OUTFIT), ...incoming };
 
+  // Migration from v24.361's complete-look switch into independently equipped pieces.
+  if (MIHO_LOOK_NAMES.includes(normalized.mihoLook)) {
+    const ownedLook = incoming.mihoLook;
+    const pieces = MIHO_PRESET_PIECES[ownedLook] || {};
+    Object.assign(normalized, structuredClone(pieces));
+    normalized.mihoLook = null;
+  }
   if (!MIHO_LOOK_NAMES.includes(normalized.mihoLook)) normalized.mihoLook = null;
   if (!["hair-main", "hair-long"].includes(normalized.hair)) normalized.hair = "hair-main";
-  if (![null, "bow", "bow-low"].includes(normalized.headBow)) normalized.headBow = "bow";
-  if (![null, "top-shirt", "top-button-shirt"].includes(normalized.top)) normalized.top = "top-shirt";
-  if (![null, "jacket-black", "jacket-red"].includes(normalized.outer)) normalized.outer = "jacket-black";
-  if (![null, "bottom-skirt", "bottom-slit-skirt", "bottom-shorts"].includes(normalized.bottom)) normalized.bottom = "bottom-skirt";
-  if (![null, "dress-black"].includes(normalized.dress)) normalized.dress = null;
-  if (![null, "legwear-stockings", "legwear-stockings-laceup"].includes(normalized.legwear)) normalized.legwear = "legwear-stockings";
-  if (![null, "shoes-boots", "shoes-booties"].includes(normalized.shoes)) normalized.shoes = "shoes-boots";
+  if (![null, "bow", "bow-low", "look-ein-bow"].includes(normalized.headBow)) normalized.headBow = "bow";
+  if (![null, "top-shirt", "top-button-shirt", "look-ranger-shirt", "look-lovell-hoodie", "look-collin-top", "look-ideno-top", "look-hinaru-sweater"].includes(normalized.top)) normalized.top = "top-shirt";
+  if (![null, "jacket-black", "jacket-red", "look-ein-jacket"].includes(normalized.outer)) normalized.outer = "jacket-black";
+  if (![null, "bottom-skirt", "bottom-slit-skirt", "bottom-shorts", "look-ranger-pants", "look-lovell-skirt", "look-collin-shorts", "look-ein-short", "look-ideno-skirt", "look-hinaru-skirt"].includes(normalized.bottom)) normalized.bottom = "bottom-skirt";
+  if (![null, "dress-black", "look-beau-dress"].includes(normalized.dress)) normalized.dress = null;
+  if (![null, "legwear-stockings", "legwear-stockings-laceup", "look-lovell-socks", "look-collin-socks", "look-beau-tights", "look-ein-stockings", "look-ideno-stockings"].includes(normalized.legwear)) normalized.legwear = "legwear-stockings";
+  if (![null, "shoes-boots", "shoes-booties", "look-ranger-boots", "look-lovell-shoes", "look-collin-boots", "look-beau-boots", "look-ein-boots", "look-ideno-loafers", "look-hinaru-heels"].includes(normalized.shoes)) normalized.shoes = "shoes-boots";
+  normalized.backBow = [null, "look-ranger-bow", "look-lovell-bow", "look-collin-bow", "look-beau-bow", "look-ideno-bow", "look-hinaru-bow"].includes(normalized.backBow) ? normalized.backBow : null;
+  normalized.bangsStyle = [null, "bangs", "look-ein-bangs"].includes(normalized.bangsStyle) ? normalized.bangsStyle : "bangs";
   normalized.extras = Array.isArray(normalized.extras)
-    ? normalized.extras.filter(id => ["belt", "neck-bow", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip", "city-crown"].includes(id))
+    ? normalized.extras.filter(id => ["belt", "neck-bow", "daisy-crown", "ocean-sunglasses", "halo", "candy-hairclip", "city-crown", "look-ranger-sign", "look-lovell-hairpins", "look-ein-gloves"].includes(id))
     : [...DEFAULT_MIHO_OUTFIT.extras];
   return normalized;
 }
@@ -4520,11 +4533,11 @@ function getCharacterAssetMap(characterId = save.selectedCharacter) {
 }
 
 function getCharacterCloset(characterId = save.selectedCharacter) {
-  if (characterId === "miko") return MIKO_CLOSET;
-  if (characterId === "io") return IO_CLOSET;
+  if (characterId === "miko") return [...MIKO_CLOSET, { id: "savedOutfits", label: "Saved Outfits ♡", type: "saved-outfits" }];
+  if (characterId === "io") return [...IO_CLOSET, { id: "savedOutfits", label: "Saved Outfits ♡", type: "saved-outfits" }];
   if (characterId === "miho") return MIHO_CLOSET;
-  if (characterId === "annika") return ANNIKA_CLOSET;
-  return CLOSET;
+  if (characterId === "annika") return [...ANNIKA_CLOSET, { id: "savedOutfits", label: "Saved Outfits ♡", type: "saved-outfits" }];
+  return [...CLOSET, { id: "savedOutfits", label: "Saved Outfits ♡", type: "saved-outfits" }];
 }
 
 function getCharacterThumbBounds(characterId = save.selectedCharacter) {
@@ -4628,6 +4641,16 @@ function normalizeCharacterState() {
     ...(Array.isArray(save.characterUnlockedItems.miho) ? save.characterUnlockedItems.miho : []),
     ...getCharacterStarterWardrobe("miho")
   ]);
+  // v24.362: repair Miho love-interest reward items mistakenly credited to Miko in v24.361.
+  if (save.loveInterests && typeof save.loveInterests === "object") {
+    for (const name of MIHO_LOOK_NAMES) {
+      if (save.loveInterests[name]?.outfitUnlocked) {
+        for (const item of MIHO_COMPLETE_LOOKS[name] || []) {
+          if (typeof item === "string" && item.startsWith("look-") && !item.startsWith("look-preview-")) mihoUnlocks.add(item);
+        }
+      }
+    }
+  }
   const annikaUnlocks = new Set([
     ...(Array.isArray(save.characterUnlockedItems.annika) ? save.characterUnlockedItems.annika : []),
     ...getCharacterStarterWardrobe("annika")
@@ -6160,19 +6183,16 @@ function getIoEquippedAssetIds() {
 
 function getMihoEquippedAssetIds() {
   const outfit = getCharacterOutfit("miho");
-  if (outfit.mihoLook && MIHO_COMPLETE_LOOKS[outfit.mihoLook] && save.loveInterests?.[outfit.mihoLook]?.outfitUnlocked) {
-    const look = MIHO_COMPLETE_LOOKS[outfit.mihoLook];
-    return look.map(id => id === "@hair" ? "hair-main" : id === "@expression" ? currentExpression : id).filter(Boolean);
-  }
-  const ids = [outfit.hair, "base"];
+  const ids = [outfit.backBow, outfit.hair, outfit.headBow, "base"];
   if (outfit.legwear) ids.push(outfit.legwear);
-  if (outfit.dress) ids.push(outfit.dress);
-  else ids.push(outfit.bottom, outfit.top);
-  ids.push(...(Array.isArray(outfit.extras) ? outfit.extras : []));
-  if (outfit.outer) ids.push(outfit.outer);
   if (outfit.shoes) ids.push(outfit.shoes);
-  ids.push(currentExpression, outfit.headBow, "bangs");
-  return ids.filter(Boolean);
+  if (outfit.bottom && !outfit.dress) ids.push(outfit.bottom);
+  if (outfit.dress) ids.push(outfit.dress);
+  else if (outfit.top) ids.push(outfit.top);
+  if (outfit.outer) ids.push(outfit.outer);
+  ids.push(...(Array.isArray(outfit.extras) ? outfit.extras : []));
+  ids.push(currentExpression, outfit.bangsStyle === null ? null : (outfit.bangsStyle || "bangs"));
+  return ids.filter(Boolean).filter(id => !id.startsWith("look-") || isClosetAssetUnlocked(id, "miho"));
 }
 
 function getAnnikaEquippedAssetIds() {
@@ -6252,37 +6272,7 @@ function getRenderOrderedAssets(characterId = save.selectedCharacter) {
   }
 
   if (character.id === "miho") {
-    const outfit = getCharacterOutfit("miho");
-    if (outfit.mihoLook && MIHO_COMPLETE_LOOKS[outfit.mihoLook] && save.loveInterests?.[outfit.mihoLook]?.outfitUnlocked) {
-      // getMihoEquippedAssetIds() already supplies exactly the approved
-      // back-to-front sequence. Never re-sort by z-index in this mode.
-      return equipped;
-    }
-
-    // User-requested FRONT → BACK order:
-    // Bangs, Expression, Jacket, Belt, Shirt/Dress, Skirt/Shorts, Boots,
-    // Stockings, Body Base, Hair Bow, Hair.
-    // DOM renders back → front, so this list is intentionally reversed.
-    const mihoBackToFront = [
-      "hair-main", "hair-long",
-      "bow", "bow-low",
-      "base",
-      "legwear-stockings", "legwear-stockings-laceup",
-      "shoes-boots", "shoes-booties",
-      "bottom-skirt", "bottom-slit-skirt", "bottom-shorts", "dress-black",
-      "top-shirt", "top-button-shirt",
-      "belt", "neck-bow",
-      "jacket-black", "jacket-red",
-      "expression-neutral", "expression-happy", "expression-sad", "expression-shocked", "expression-mad",
-      "bangs"
-    ];
-    const orderMap = new Map(mihoBackToFront.map((id, index) => [id, index]));
-    return equipped.sort((a, b) => {
-      const aOrder = orderMap.has(a.id) ? orderMap.get(a.id) : 1000 + (Number(a.z) || 0);
-      const bOrder = orderMap.has(b.id) ? orderMap.get(b.id) : 1000 + (Number(b.z) || 0);
-      if (aOrder !== bOrder) return aOrder - bOrder;
-      return (Number(a.z) || 0) - (Number(b.z) || 0);
-    });
+    return equipped.sort((a,b) => (Number(a.z)||0) - (Number(b.z)||0));
   }
 
   if (character.id === "annika") {
@@ -7621,8 +7611,59 @@ function closetLockedMessage(id, asset) {
     "moriko-hoodie":"Moriko","moriko-sleeve":"Moriko","moriko-pants":"Moriko","moriko-shoes":"Moriko","moriko-necklace":"Moriko","moriko-hair":"Moriko","moriko-bangs":"Moriko",
     "jenson-top":"Jenson","jenson-pants":"Jenson","jenson-shoes":"Jenson","jenson-glasses":"Jenson"
   };
+  const mihoLove = /^look-(ranger|lovell|collin|beau|ein|ideno|hinaru)-/.exec(id);
+  if (mihoLove) return `${asset.label} is locked — meet ${mihoLove[1][0].toUpperCase()+mihoLove[1].slice(1)} while exploring Duck Quest as Miho!`;
   if (loveInterestWardrobe[id]) return `${asset.label} is locked — meet ${loveInterestWardrobe[id]} while exploring Duck Quest as Miko!`;
   return questRewardHints[id] || `${asset.label} is locked — unlock it from the Shop!`;
+}
+
+function getSavedOutfitCollection(characterId = save.selectedCharacter) {
+  if (!save.savedOutfitCombinations || typeof save.savedOutfitCombinations !== "object") save.savedOutfitCombinations = {};
+  if (!Array.isArray(save.savedOutfitCombinations[characterId])) save.savedOutfitCombinations[characterId] = [];
+  return save.savedOutfitCombinations[characterId];
+}
+function renderSavedOutfits() {
+  const presets = getSavedOutfitCollection();
+  const description = document.createElement("p");
+  description.textContent = "Save your current mix-and-match look, then load it again anytime ♡ (up to 20 per character)";
+  closetOptions.append(description);
+  const saveButton = document.createElement("button");
+  saveButton.type="button";
+  saveButton.className="miho-look-choice";
+  saveButton.textContent="♡ Save Current Outfit";
+  saveButton.disabled = presets.length >= 20;
+  saveButton.addEventListener("click", () => {
+    const entryName=window.prompt("Name this outfit combination:", `Outfit ${presets.length+1}`);
+    if (entryName === null) return;
+    const name=entryName.trim().slice(0,50);
+    if (!name) return;
+    presets.push({name, outfit:structuredClone(getCurrentOutfit())});
+    persist(); renderClosetOptions();
+  });
+  closetOptions.append(saveButton);
+  for (let index=0; index<presets.length;index++) {
+    const entry=presets[index];
+    if (!entry || !entry.outfit) continue;
+    const row=document.createElement("div"); row.className="saved-outfit-combination";
+    const load=document.createElement("button"); load.type="button";
+    load.className="miho-look-choice"; load.textContent=`♡ ${entry.name}`;
+    load.addEventListener("click", () => {
+      const id=save.selectedCharacter;
+      const candidate=structuredClone(entry.outfit);
+      const unlocked=new Set(getCharacterUnlockedItems(id));
+      const assetMap=getCharacterAssetMap(id);
+      for (const [key,value] of Object.entries(candidate)) {
+        if (Array.isArray(value)) candidate[key]=value.filter(x=>!assetMap[x]||unlocked.has(x));
+        else if (typeof value==="string" && assetMap[value] && !unlocked.has(value)) candidate[key]=null;
+      }
+      save.characterOutfits[id]=candidate;
+      persist(); renderPeep(); renderClosetOptions();
+    });
+    const del=document.createElement("button"); del.type="button";
+    del.className="miho-look-choice"; del.textContent="Delete";
+    del.addEventListener("click",()=>{presets.splice(index,1);persist();renderClosetOptions();});
+    row.append(load,del); closetOptions.append(row);
+  }
 }
 
 function renderClosetOptions() {
@@ -7632,38 +7673,8 @@ function renderClosetOptions() {
   removeSockPopover();
   closetOptions.innerHTML = "";
 
-  if (group.type === "miho-complete-looks") {
-    const outfit = getCurrentOutfit();
-    const intro = document.createElement("p");
-    intro.textContent = "Pick a complete look ♡ Your regular outfit stays saved and comes back when you select None.";
-    intro.className = "miho-look-description";
-    closetOptions.append(intro);
-    const none = document.createElement("button");
-    none.type = "button";
-    none.className = "miho-look-choice";
-    none.textContent = "♡ None — Regular Outfit";
-    none.setAttribute("aria-pressed", String(!outfit.mihoLook));
-    none.addEventListener("click", () => { outfit.mihoLook = null; persist(); renderPeep(); renderClosetOptions(); });
-    closetOptions.append(none);
-    const unlockedMihoLooks = new Set(Object.entries(save.loveInterests || {}).filter(([key, value]) => value && value.outfitUnlocked).map(([key]) => key));
-    for (const name of MIHO_LOOK_NAMES) {
-      const button = document.createElement("button");
-      const isUnlocked = unlockedMihoLooks.has(name);
-      button.disabled = !isUnlocked;
-      button.title = isUnlocked ? "" : "Meet " + name[0].toUpperCase() + name.slice(1) + " in Duck Quest to unlock";
-      button.type = "button";
-      button.className = "miho-look-choice";
-      button.setAttribute("aria-pressed", String(outfit.mihoLook === name));
-      const img = document.createElement("img");
-      img.src = `${CHARACTERS.miho.assetFolder}Miho-${name[0].toUpperCase()+name.slice(1)}-Reference.png`;
-      img.alt = "";
-      img.loading = "lazy";
-      const title = document.createElement("span");
-      title.textContent = `${name[0].toUpperCase()+name.slice(1)} Outfit${isUnlocked ? "" : " 🔒"}`;
-      button.append(img, title);
-      button.addEventListener("click", () => { if (!isUnlocked) return; outfit.mihoLook = name; persist(); renderPeep(); renderClosetOptions(); });
-      closetOptions.append(button);
-    }
+  if (group.type === "saved-outfits") {
+    renderSavedOutfits();
     return;
   }
 

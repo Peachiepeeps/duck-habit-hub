@@ -1077,6 +1077,14 @@ kiri: {
     data.loveInterests = data.loveInterests && typeof data.loveInterests === "object" ? data.loveInterests : {};
     data.characterUnlockedItems = data.characterUnlockedItems && typeof data.characterUnlockedItems === "object" ? data.characterUnlockedItems : {};
     if (!Array.isArray(data.characterUnlockedItems.miko)) data.characterUnlockedItems.miko = [];
+    if (!Array.isArray(data.characterUnlockedItems.miho)) data.characterUnlockedItems.miho = [];
+    // Backfill existing first-encounter outfits awarded to Miko by the old build.
+    for (const id of ['ranger','lovell','collin','beau','ein','ideno','hinaru']) {
+      if (data.loveInterests[id]?.outfitUnlocked && CHARACTERS[id]) {
+        for (const item of CHARACTERS[id].outfitIds) if (!data.characterUnlockedItems.miho.includes(item)) data.characterUnlockedItems.miho.push(item);
+      }
+    }
+
     if (!Array.isArray(data.characterUnlockedItems.annika)) data.characterUnlockedItems.annika = [];
     if (!Array.isArray(data.unlockedDucks)) data.unlockedDucks = [];
     data.duckCollectionCounts = data.duckCollectionCounts && typeof data.duckCollectionCounts === "object" ? data.duckCollectionCounts : {};
@@ -1137,6 +1145,11 @@ kiri: {
     const state = ensureAll(data).loveInterests[key];
     state.encountered = true;
     state.spritesUnlocked = true;
+    // Repair the v24.361 cross-character reward bug for previously met Miho love interests.
+    if (['ranger','lovell','collin','beau','ein','ideno','hinaru'].includes(key) && state.outfitUnlocked) {
+      for (const piece of cfg.outfitIds) if (!data.characterUnlockedItems.miho.includes(piece)) data.characterUnlockedItems.miho.push(piece);
+    }
+
     if (options.grantDuck) {
       state.duckUnlocked = true;
       if (!data.unlockedDucks.includes(cfg.duckId)) data.unlockedDucks.push(cfg.duckId);
@@ -1145,7 +1158,7 @@ kiri: {
     if (options.grantOutfit) {
       state.outfitUnlocked = true;
       for (const piece of cfg.outfitIds) {
-        const target=['shin','bubble','lain','tamao'].includes(key)?data.characterUnlockedItems.annika:data.characterUnlockedItems.miko;
+        const target=['shin','bubble','lain','tamao'].includes(key)?data.characterUnlockedItems.annika:(['ranger','lovell','collin','beau','ein','ideno','hinaru'].includes(key)?data.characterUnlockedItems.miho:data.characterUnlockedItems.miko);
         if (!target.includes(piece)) target.push(piece);
       }
     }
