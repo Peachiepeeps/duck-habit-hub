@@ -1,0 +1,34 @@
+name: Install Duckie Days v24.368 - Polish Fixes
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Duckie-Days-v24.368-Polish-Fixes-UPDATE-ONLY.zip'
+permissions:
+  contents: write
+jobs:
+  install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Install v24.368
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP='Duckie-Days-v24.368-Polish-Fixes-UPDATE-ONLY.zip'
+          test -f "$ZIP" || { echo "::error::Upload $ZIP to the repository root first."; exit 1; }
+          unzip -t "$ZIP"
+          unzip -oq "$ZIP" -d .
+          grep -q '24.368' version.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add app.css app.js bao-cafe/index.html index.html sw.js version.json assets/miho/Miho-neutral-v24368.webp assets/miho/Miho-angry-v24368.webp assets/thumbs/characters/miho/Miho-neutral-v24368.webp assets/thumbs/characters/miho/Miho-angry-v24368.webp
+          if ! git diff --cached --quiet; then
+            git commit -m 'Install Duckie Days v24.368 polish fixes'
+            git push
+          else
+            echo 'v24.368 already installed.'
+          fi
