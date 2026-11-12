@@ -48,3 +48,8 @@
 .home-makeover-featured-label{font-size:clamp(14px,3vw,22px);font-weight:950;text-align:center;text-shadow:0 1px #fff;padding:8px}
 .home-makeover-purchase-icon{width:min(100%,210px);height:120px;border-radius:13px;border:2px solid #e1afc9;display:grid;place-items:center;font-weight:900;font-size:18px}
 @media(max-width:400px){.home-makeover-rooms-shop .home-makeover-featured{grid-template-columns:30% 1fr;gap:7px}.home-makeover-featured-label{font-size:13px}}
+
+/* v24.374: room button is an unlock reward, with only the requested label. */
+#roomPickerButton #roomPickerSwatch,
+#roomPickerButton .room-picker-arrow{display:none!important}
+#roomPickerButton .room-picker-text{white-space:nowrap}

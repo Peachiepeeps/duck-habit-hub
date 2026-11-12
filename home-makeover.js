@@ -1,4 +1,4 @@
-/* Duckie Days v24.373 — Home Hub Room Makeover, safely separate from OC positioning. */
+/* Duckie Days v24.374 — Home Hub Room Makeover, safely separate from OC positioning. */
 (() => {
  'use strict';
  const MAKEOVER_PRICE=100;
@@ -58,6 +58,16 @@
   if(!design)return;
   for(const [label,area] of REGIONS){const entry=design[area];if(entry)container.append(overlay(area,entry));}
  }
+ function syncMakeoverButton(){
+   const enabled=!!state().unlocked;
+   const wrapper=roomPickerButton.closest('.room-picker-wrap');
+   if(wrapper)wrapper.style.display=enabled?'':'none';
+   roomPickerButton.hidden=!enabled;
+   roomPickerText.textContent='Room Makeover';
+   roomPickerButton.setAttribute('aria-label','Room Makeover');
+   roomPickerButton.setAttribute('aria-expanded','false');
+   if(roomPickerSwatch)roomPickerSwatch.hidden=true;
+ }
  function paintLive(){
    const layers=document.getElementById('homeMakeoverLayers');if(!layers)return;
    const enabled=state().unlocked;
@@ -65,22 +75,14 @@
    // Keep the original warm cream/brown base, without affecting OC or arrow positions.
    roomWallpaperOverlay.classList.add('hidden');
    roomImage.src='assets/rooms/cream.webp';
-   roomPickerText.textContent=enabled?'Change Room':'Cream Room';
-   roomPickerButton.setAttribute('aria-label',enabled?'Change room colors':'Cream Room — unlock Room Makeover in the Rooms shop');
-   roomPickerButton.setAttribute('aria-expanded','false');
-   if(roomPickerSwatch){
-     roomPickerSwatch.classList.remove('wallpaper-active','wallpaper-swatch');
-     roomPickerSwatch.style.background='#f4e2c8';
-   }
+   syncMakeoverButton();
  }
  const originalRenderRoom=renderRoom;
  renderRoom=function(...args){const result=originalRenderRoom.apply(this,args);paintLive();return result};
  const originalPickerDisplay=updateRoomPickerButtonDisplay;
  updateRoomPickerButtonDisplay=function(...args){
    const result=originalPickerDisplay.apply(this,args);
-   roomPickerText.textContent=state().unlocked?'Change Room':'Cream Room';
-   roomPickerButton.setAttribute('aria-label',state().unlocked?'Change room colors':'Cream Room — unlock Room Makeover in the Rooms shop');
-   if(roomPickerSwatch){roomPickerSwatch.classList.remove('wallpaper-active','wallpaper-swatch');roomPickerSwatch.style.background='#f4e2c8';}
+   syncMakeoverButton();
    return result;
  };
  const originalRenderShop=renderShop;

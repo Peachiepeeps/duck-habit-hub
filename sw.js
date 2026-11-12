@@ -15,8 +15,8 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-373';
-const MEDIA_CACHE='duck-habit-hub-media-v24-373';
+const APP_CACHE='duck-habit-hub-app-v24-374';
+const MEDIA_CACHE='duck-habit-hub-media-v24-374';
 const MAX_MEDIA_ENTRIES=400;
 let mediaWrites=0;
 const APP_SHELL=[
@@ -25,7 +25,7 @@ const APP_SHELL=[
  './version.json',
  './sw.js?v=24.356',
  './manifest.webmanifest?v=24.296',
- './app.css?v=24.373',
+ './app.css?v=24.374',
  './trading-cards-base.css?v=24.327',
  './trading-cards-extra.css?v=24.296',
  './trading-cards-lil-guys-v336.css?v=24.336',
@@ -39,7 +39,7 @@ const APP_SHELL=[
  './fixes-v313.css?v=24.313',
  './fixes-v314.css?v=24.314',
  './fixes-v315.css?v=24.315',
- './trading-cards-base.js?v=24.373',
+ './trading-cards-base.js?v=24.374',
  './trading-cards-extra.js?v=24.353',
  './trading-cards-lil-guys-v336.js?v=24.353',
  './trading-cards-v317.js?v=24.317',
@@ -77,11 +77,11 @@ const APP_SHELL=[
  './duck-quest/css/bao-cafe-v299.css?v=24-309',
  './duck-quest/css/fixes-v318.css?v=24.318',
  './duck-quest/js/bao-cafe-v299.js?v=24.356',
- './app.js?v=24.373',
- './home-makeover.js?v=24.373',
- './home-makeover.css?v=24.373',
- './task-buddy-beta.js?v=24.373',
- './task-buddy-beta.html?v=24.373',
+ './app.js?v=24.374',
+ './home-makeover.js?v=24.374',
+ './home-makeover.css?v=24.374',
+ './task-buddy-beta.js?v=24.374',
+ './task-buddy-beta.html?v=24.374',
  './assets/rooms/makeover/wallpaper.png',
  './assets/rooms/makeover/ceiling.png',
  './assets/rooms/makeover/baseboard.png',
@@ -142,7 +142,7 @@ const APP_SHELL=[
  './duck-quest/js/hatchery-v179.js?v=24-345',
  './duck-quest/js/hatchery-egg-position-v192.js?v=24-343',
  './duck-quest/assets/eggs/Hatching-background-six-v343.png',
- './duck-quest/js/love-interests-v326.js?v=24.373',
+ './duck-quest/js/love-interests-v326.js?v=24.374',
  './duck-quest/js/task-buddy-boost-v254.js?v=24-255',
  './duck-quest/js/special-encounters-v326.js?v=24.356',
  './duck-quest/js/quest-v265.js?v=24-283',
