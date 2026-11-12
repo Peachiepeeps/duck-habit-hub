@@ -1,4 +1,4 @@
-/* Duckie Days v24.377 — Home Hub Room Makeover, safely separate from OC positioning. */
+/* Duckie Days v24.378 — Home Hub Room Makeover, safely separate from OC positioning. */
 (() => {
  'use strict';
  const MAKEOVER_PRICE=100;
@@ -109,25 +109,93 @@
      container.append(outlineLayer('room-lines'));
    }
  }
+ // Recolor the real equipped shelf PNGs in their own 1080x1920 canvas.
+ // Reusing the real displayed <img> means no differently-positioned overlays,
+ // and the original dark outlines are kept pixel-for-pixel.
+ const recoloredShelves=new Map();
+ function tintedShelfSprite(kind,hex){
+   const key=kind+'|'+hex.toLowerCase();
+   if(recoloredShelves.has(key))return recoloredShelves.get(key);
+   const source=kind==='full'
+      ? 'assets/furniture/shelves/shelf-white.png'
+      : 'assets/furniture/book-shelves/book-shelf-white.png';
+   const task=new Promise(resolve=>{
+     const image=new Image();
+     image.onload=()=>{
+       try{
+         const canvas=document.createElement('canvas');
+         canvas.width=image.naturalWidth;canvas.height=image.naturalHeight;
+         const ctx=canvas.getContext('2d',{willReadFrequently:true});
+         ctx.drawImage(image,0,0);
+         const pixels=ctx.getImageData(0,0,canvas.width,canvas.height);
+         const d=pixels.data;
+         const base=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16));
+         const inset=base.map(v=>Math.round(v*.79));
+         for(let i=0;i<d.length;i+=4){
+           if(d[i+3]===0)continue;
+           const brightness=(d[i]+d[i+1]+d[i+2])/3;
+           if(brightness<20)continue; // Keep pure black outlines black.
+           const isInset=kind==='full' && brightness<215;
+           const originalLuma=isInset?187.33:238.67;
+           const target=isInset?inset:base;
+           // Antialiased edge pixels remain dark instead of being filled solid.
+           const factor=Math.min(1.1,brightness/originalLuma);
+           for(let k=0;k<3;k++)d[i+k]=Math.min(255,Math.round(target[k]*factor));
+         }
+         ctx.putImageData(pixels,0,0);
+         resolve(canvas.toDataURL('image/png'));
+       }catch(_){resolve(source)}
+     };
+     image.onerror=()=>resolve(source);
+     image.src=source;
+   });
+   recoloredShelves.set(key,task);
+   return task;
+ }
+ function recolorDisplayedShelf(element,kind,entry){
+   if(!element||!entry)return;
+   const token=kind+'|'+entry.primary;
+   element.dataset.homeMakeoverRecolor=token;
+   tintedShelfSprite(kind,entry.primary).then(url=>{
+     if(element.dataset.homeMakeoverRecolor!==token)return;
+     if(element.classList.contains('hidden'))return;
+     // Do not replace the sprite for furniture changed while PNG was loading.
+     if(kind==='full'&&!element.classList.contains('shelf-furniture'))return;
+     element.src=url;
+   });
+ }
  function paintFurniture(container,design){
    container.replaceChildren();
-   // Always restore the real furniture sprites, including when switching OCs.
+   // The game's own furniture images keep their exact native positions,
+   // transforms, outlines and perched-duck layout.
    if(leftFurnitureDisplay)leftFurnitureDisplay.style.visibility='';
    if(bookShelfFurnitureDisplay)bookShelfFurnitureDisplay.style.visibility='';
+   if(leftFurnitureDisplay)leftFurnitureDisplay.dataset.homeMakeoverRecolor='';
+   if(bookShelfFurnitureDisplay)bookShelfFurnitureDisplay.dataset.homeMakeoverRecolor='';
    if(!design)return;
-   const leftVisible=leftFurnitureDisplay && !leftFurnitureDisplay.classList.contains('hidden');
-   const fullShelf=leftVisible && leftFurnitureDisplay.classList.contains('shelf-furniture');
-   const dresser=leftVisible && leftFurnitureDisplay.classList.contains('dresser-furniture');
-   const wallShelf=bookShelfFurnitureDisplay && !bookShelfFurnitureDisplay.classList.contains('hidden');
-   if(fullShelf&&design.bookshelf){
-     container.append(...furnitureLayers('bookshelf',design.bookshelf));
-   }
+   const leftVisible=leftFurnitureDisplay&&!leftFurnitureDisplay.classList.contains('hidden');
+   const fullShelf=leftVisible&&leftFurnitureDisplay.classList.contains('shelf-furniture');
+   const dresser=leftVisible&&leftFurnitureDisplay.classList.contains('dresser-furniture');
+   const wallShelf=bookShelfFurnitureDisplay&&!bookShelfFurnitureDisplay.classList.contains('hidden');
+   if(fullShelf&&design.bookshelf)recolorDisplayedShelf(leftFurnitureDisplay,'full',design.bookshelf);
+   if(wallShelf&&design.halfShelf)recolorDisplayedShelf(bookShelfFurnitureDisplay,'book',design.halfShelf);
    if(dresser&&design.nightstand){
+     // Nightstand retains its independent original art masks.
      container.append(...furnitureLayers('nightstand',design.nightstand));
    }
-   if(wallShelf&&design.halfShelf){
-     container.append(...furnitureLayers('halfShelf',design.halfShelf));
+ }
+ function paintFloorExtension(design){
+   const stage=document.getElementById('stage');
+   if(!stage)return;
+   let extension=document.getElementById('homeMakeoverFloorExtension');
+   if(!extension){
+     extension=document.createElement('div');
+     extension.id='homeMakeoverFloorExtension';
+     extension.setAttribute('aria-hidden','true');
+     stage.append(extension);
    }
+   extension.style.background=design?.floor?patternCss(design.floor):'';
+   extension.style.display=design?.floor?'block':'none';
  }
  function paintWing(){
    // The wing shelf is a separate furnishing and is not the Home Hub's Full Shelf.
@@ -156,8 +224,7 @@
    paintWing();
    // On narrow phones, the native 9:16 room picture is shorter than the viewport.
    // Fill the space beneath it with the selected floor finish, not the old tan.
-   const stage=document.getElementById('stage');
-   if(stage)stage.style.background=design?.floor?patternCss(design.floor):'';
+   paintFloorExtension(design);
    // No OC or arrow modifications: only room artwork and overlays change.
    roomWallpaperOverlay.classList.add('hidden');
    roomImage.src='assets/rooms/cream.webp';
@@ -288,8 +355,10 @@
        image.style.display='none';
        preview.style.background='#fff3e4';
        const shelf=document.createElement('img');shelf.className='home-makeover-preview-shelf';
-       shelf.src='assets/furniture/shelves/shelf-white.webp';shelf.alt='';
-       previewLayers.append(shelf,...furnitureLayers('bookshelf',entry));
+       shelf.alt='';previewLayers.append(shelf);
+       tintedShelfSprite('full',entry.primary).then(url=>{
+         if(selected==='bookshelf'&&previewLayers.contains(shelf))shelf.src=url;
+       });
      }else{
        for(const a of ['wallpaper','floor','ceiling','baseboard']){
          const e=(a===selected?entry:draft[a]);if(e)previewLayers.append(surfaceLayer(a,e));
@@ -299,7 +368,10 @@
        if(selected==='halfShelf'){
          // Preview the wall bookshelf in place; the recolor mask skips its outlines.
          const shelf=document.createElement('img');shelf.className='home-makeover-preview-shelf';
-         shelf.src=path('half-shelf-white');shelf.alt='';previewLayers.append(shelf,...furnitureLayers('halfShelf',entry));
+         shelf.alt='';previewLayers.append(shelf);
+         tintedShelfSprite('book',entry.primary).then(url=>{
+           if(selected==='halfShelf'&&previewLayers.contains(shelf))shelf.src=url;
+         });
        }
      }
      swatches.replaceChildren();

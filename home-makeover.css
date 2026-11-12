@@ -93,3 +93,16 @@
    interior masks. Their original black line art remains visible underneath. */
 .home-makeover-furniture-layers{z-index:9}
 .home-makeover-furniture-layers .home-makeover-layer{mix-blend-mode:normal}
+
+/* v24.378: mobile height beyond the 9:16 room image is the same floor.
+   Unlike a stage background this layer cannot be reset by the original
+   asynchronous image-color sampling code. */
+#homeMakeoverFloorExtension{display:none;pointer-events:none}
+@media(max-width:600px){
+  #homeMakeoverFloorExtension{
+    position:absolute;
+    left:0;right:0;top:177.7778vw;bottom:0;
+    z-index:0;
+    pointer-events:none;
+  }
+}
