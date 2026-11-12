@@ -3117,7 +3117,7 @@ const MIHO_THUMB_BOUNDS = {
   "Miho-Hinaru-Skirt.png": [367, 1407, 703, 1510],
   "Miho-Hinaru-Bow.png": [308, 707, 751, 803],
   "Miho-Hinaru-Reference.png": [220, 707, 859, 1804],
-  "Miho-angry.webp": [355, 950, 719, 1149],
+  "Miho-angry-v24368.webp": [355, 950, 719, 1149],
   "Miho-bangs.webp": [296,772,790,1272],
   "Miho-base.webp": [319,798,761,1794],
   "Miho-belt.webp": [445,1331,632,1364],
@@ -3133,7 +3133,7 @@ const MIHO_THUMB_BOUNDS = {
   "Miho-jacket.webp": [379,1218,694,1374],
   "Miho-long-hair.webp": [139,747,941,1502],
   "Miho-neck-bow.webp": [477,1214,595,1315],
-  "Miho-neutral.webp": [355, 950, 719, 1133],
+  "Miho-neutral-v24368.webp": [355, 950, 719, 1133],
   "Miho-red-jacket-shop.webp": [327,1231,738,1458],
   "Miho-red-jacket.webp": [327,1232,738,1458],
   "Miho-shirt.webp": [428,1223,645,1385],
@@ -3260,11 +3260,11 @@ const MIHO_ASSETS = {
   "jacket-red": { label: "Red Jacket", file: "Miho-red-jacket.webp", previewFile: "Miho-red-jacket-shop.webp", z: 36 },
   "shoes-boots": { label: "Boots", file: "Miho-boots.webp", z: 31 },
   "shoes-booties": { label: "Booties", file: "Miho-booties.webp", z: 31 },
-  "expression-neutral": { label: "Neutral", file: "Miho-neutral.webp", z: 46 },
+  "expression-neutral": { label: "Neutral", file: "Miho-neutral-v24368.webp", z: 46 },
   "expression-happy": { label: "Flustered", file: "Miho-flustered.webp", z: 46 },
-  "expression-sad": { label: "Neutral", file: "Miho-neutral.webp", z: 46 },
+  "expression-sad": { label: "Neutral", file: "Miho-neutral-v24368.webp", z: 46 },
   "expression-shocked": { label: "Flustered", file: "Miho-flustered.webp", z: 46 },
-  "expression-mad": { label: "Angry", file: "Miho-angry.webp", z: 46 },
+  "expression-mad": { label: "Angry", file: "Miho-angry-v24368.webp", z: 46 },
   "bow": { label: "Head Bow", file: "Miho-bow.webp", z: 11 },
   "bow-low": { label: "Low Bow", file: "Miho-bow-low.webp", z: 11 },
   "neck-bow": { label: "Neck Bow", file: "Miho-neck-bow.webp", z: 34 },
@@ -6650,7 +6650,7 @@ const CHARACTER_PREVIEW_THUMB_FILES = {
   peep: new Set(["bangs.png", "bangs.webp", "base.png", "base.webp", "beret.png", "beret.webp", "bunny-tail.png", "bunny-tail.webp", "cat-ears.png", "cat-ears.webp", "cheek-bandage.png", "cheek-bandage.webp", "collar.png", "collar.webp", "colorful-sneakers.png", "colorful-sneakers.webp", "cow-ears.png", "cow-ears.webp", "cow-tail.png", "cow-tail.webp", "cropped-jacket.png", "cropped-jacket.webp", "expression-happy.png", "expression-happy.webp", "expression-mad.png", "expression-mad.webp", "expression-neutral.png", "expression-neutral.webp", "expression-sad.png", "expression-sad.webp", "expression-shocked.png", "expression-shocked.webp", "fluffy-skirt.png", "fluffy-skirt.webp", "hair-jellyfish.png", "hair-jellyfish.webp", "hair-long-pigtails.png", "hair-long-pigtails.webp", "hair-low-pigtails.png", "hair-low-pigtails.webp", "hair-ponytail.png", "hair-ponytail.webp", "hair-short.png", "hair-short.webp", "hair-side-ribbon.png", "hair-side-ribbon.webp", "horns.png", "horns.webp", "large-back-hair-bow.png", "large-back-hair-bow.webp", "left-bow.png", "left-bow.webp", "loafer-shoes.png", "loafer-shoes.webp", "off-shoulder-sweater.png", "off-shoulder-sweater.webp", "pleated-skirt.png", "pleated-skirt.webp", "right-bow.png", "right-bow.webp", "right-leg-bandage.png", "right-leg-bandage.webp", "short-sleeved-shirt.png", "short-sleeved-shirt.webp", "sock-left-blue.png", "sock-left-blue.webp", "sock-left-rainbow.png", "sock-left-rainbow.webp", "sock-right-blue.png", "sock-right-blue.webp", "sock-right-rainbow.png", "sock-right-rainbow.webp", "white-bow.png", "white-bow.webp", "white-cardigan-shop.png", "white-cardigan-shop.webp", "white-cardigan-sides.png", "white-cardigan-sides.webp", "white-cardigan.png", "white-cardigan.webp", "white-dress.png", "white-dress.webp", "white-lace-stockings.png", "white-lace-stockings.webp", "white-mary-janes.png", "white-mary-janes.webp"]),
   miko: new Set(["Miko-Boxers.PNG", "Miko-Boxers.webp", "Miko-angry.PNG", "Miko-angry.webp", "Miko-bangs-pinned.PNG", "Miko-bangs-pinned.webp", "Miko-bangs.PNG", "Miko-bangs.webp", "Miko-base-arm.PNG", "Miko-base-arm.webp", "Miko-base.PNG", "Miko-base.webp", "Miko-belt.PNG", "Miko-belt.webp", "Miko-big-shirt.PNG", "Miko-big-shirt.webp", "Miko-button-shirt-closet.PNG", "Miko-button-shirt-closet.webp", "Miko-button-shirt.PNG", "Miko-button-shirt.webp", "Miko-button-sleeve.PNG", "Miko-button-sleeve.webp", "Miko-capri-pants.PNG", "Miko-capri-pants.webp", "Miko-hair.PNG", "Miko-hair.webp", "Miko-happy.PNG", "Miko-happy.webp", "Miko-headband.PNG", "Miko-headband.webp", "Miko-hoodie-back.PNG", "Miko-hoodie-back.webp", "Miko-hoodie-closet.PNG", "Miko-hoodie-closet.webp", "Miko-hoodie-sleeve.PNG", "Miko-hoodie-sleeve.webp", "Miko-hoodie.PNG", "Miko-hoodie.webp", "Miko-jeans.PNG", "Miko-jeans.webp", "Miko-loafers.PNG", "Miko-loafers.webp", "Miko-neutral.PNG", "Miko-neutral.webp", "Miko-sad.PNG", "Miko-sad.webp", "Miko-shocked.PNG", "Miko-shocked.webp", "Miko-smug.PNG", "Miko-smug.webp", "Miko-socks.PNG", "Miko-socks.webp", "Miko-sweater-closet.PNG", "Miko-sweater-closet.webp", "Miko-sweater-sleeve.PNG", "Miko-sweater-sleeve.webp", "Miko-sweater.PNG", "Miko-sweater.webp", "black-blazer-arm-piece.png", "black-blazer-arm-piece.webp", "black-blazer-shop.png", "black-blazer-shop.webp", "black-blazer.png", "black-blazer.webp", "black-hairpins.png", "black-hairpins.webp", "blouse.png", "blouse.webp", "fancy-loafers.png", "fancy-loafers.webp", "shorts.png", "shorts.webp", "white-garter-sock-left.png", "white-garter-sock-left.webp", "white-garter-sock-right.png", "white-garter-sock-right.webp", "white-garter-socks.png", "white-garter-socks.webp"]),
   io: new Set(["Io-ahoge.webp", "Io-angry.webp", "Io-back-school-bow.webp", "Io-bangs.webp", "Io-body-base.webp", "Io-buns.webp", "Io-crown.webp", "Io-happy.webp", "Io-heart-pin.webp", "Io-l-magical-stocking.webp", "Io-l-school-sock.webp", "Io-long-hair.webp", "Io-magical-back-bow.webp", "Io-magical-boots.webp", "Io-magical-dress.webp", "Io-magical-stockings-shop.webp", "Io-magical-stockings.webp", "Io-mew-boots.webp", "Io-mew-collar.webp", "Io-mew-dress.webp", "Io-mew-garter.webp", "Io-mew-jacket-shop.webp", "Io-mew-jacket.webp", "Io-neutral.webp", "Io-pigtails.webp", "Io-r-magical-stocking.webp", "Io-r-school-sock.webp", "Io-school-shirt.webp", "Io-school-shoes.webp", "Io-school-skirt.webp", "Io-school-socks-shop.webp", "Io-school-socks.webp", "Io-sheep-ears.webp"]),
-  miho: new Set(["Miho-angry.webp", "Miho-bangs.webp", "Miho-base.webp", "Miho-belt.webp", "Miho-booties.webp", "Miho-boots.webp", "Miho-bow-low.webp", "Miho-bow.webp", "Miho-button-shirt.webp", "Miho-dress.webp", "Miho-flustered.webp", "Miho-hair.webp", "Miho-jacket-shop.webp", "Miho-jacket.webp", "Miho-long-hair.webp", "Miho-neck-bow.webp", "Miho-neutral.webp", "Miho-red-jacket-shop.webp", "Miho-red-jacket.webp", "Miho-shirt.webp", "Miho-shorts.webp", "Miho-skirt.webp", "Miho-slit-skirt.webp", "Miho-stockings-laceup.webp", "Miho-stockings.webp"])
+  miho: new Set(["Miho-angry-v24368.webp", "Miho-bangs.webp", "Miho-base.webp", "Miho-belt.webp", "Miho-booties.webp", "Miho-boots.webp", "Miho-bow-low.webp", "Miho-bow.webp", "Miho-button-shirt.webp", "Miho-dress.webp", "Miho-flustered.webp", "Miho-hair.webp", "Miho-jacket-shop.webp", "Miho-jacket.webp", "Miho-long-hair.webp", "Miho-neck-bow.webp", "Miho-neutral-v24368.webp", "Miho-red-jacket-shop.webp", "Miho-red-jacket.webp", "Miho-shirt.webp", "Miho-shorts.webp", "Miho-skirt.webp", "Miho-slit-skirt.webp", "Miho-stockings-laceup.webp", "Miho-stockings.webp"])
 };
 
 function characterPreviewSrc(characterId, file) {

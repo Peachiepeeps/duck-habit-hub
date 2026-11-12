@@ -7853,11 +7853,11 @@ body[data-quest-theme="midnight-pixel"] .secondary-button,body[data-quest-theme=
 
 /* v24.342: raise the active OC noticeably without moving shelf art. */
 .stage:not(.closet-open):not(.room-wing-view):not(.task-shelf-view) #peepWrap {
-  inset: -2% 0 2% 0;
+  inset: 1% 0 -1% 0;
 }
 @media (max-width:600px){
   .stage:not(.closet-open):not(.room-wing-view):not(.task-shelf-view) #peepWrap{
-    inset:auto 0 10% 0!important;
+    inset:auto 0 8% 0!important;
   }
 }
 
@@ -7881,9 +7881,9 @@ body[data-quest-theme="midnight-pixel"] .secondary-button,body[data-quest-theme=
 .stage #roomWingButton.room-wing-button,
 .stage #taskShelfButton.task-shelf-button-v254{
   top:auto!important;
-  bottom:10.0%!important;
+  bottom:9.35%!important;
 }
 @media(max-width:600px){
  .stage #roomWingButton.room-wing-button,
- .stage #taskShelfButton.task-shelf-button-v254{bottom:10.0%!important;}
+ .stage #taskShelfButton.task-shelf-button-v254{bottom:9.35%!important;}
 }
