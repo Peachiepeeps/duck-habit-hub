@@ -88,3 +88,8 @@
  .home-makeover-color-tab{padding:4px}
 }
 /* Furniture is solid-only; its darker drawers and shelves are generated in JS. */
+
+/* v24.377: the full shelf and book ledge are colored with exact white-sprite
+   interior masks. Their original black line art remains visible underneath. */
+.home-makeover-furniture-layers{z-index:9}
+.home-makeover-furniture-layers .home-makeover-layer{mix-blend-mode:normal}

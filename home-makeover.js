@@ -1,4 +1,4 @@
-/* Duckie Days v24.376 — Home Hub Room Makeover, safely separate from OC positioning. */
+/* Duckie Days v24.377 — Home Hub Room Makeover, safely separate from OC positioning. */
 (() => {
  'use strict';
  const MAKEOVER_PRICE=100;
@@ -10,7 +10,7 @@
    'stripes':{name:'Vertical Stripes',icon:'║',description:'Simple vertical two-color stripes for every OC',price:1000}
  };
  const PALETTE=["#FFFDF8","#F9F5EA","#EEE5D5","#DCD2C2","#CBB9A4","#AA9180","#79665A","#594A48","#28262D","#FFF0F4","#F9DDE8","#F1B9C9","#E98BA9","#C76586","#9F4168","#E4AED4","#F5D8ED","#FFF1E2","#FFE0C7","#F5BB99","#EF956F","#CF785E","#FFD7AA","#FFE5AD","#EDCE7D","#FFF2BD","#FFE480","#E4CF67","#C2B45F","#E4F0BD","#C8E0AA","#A0CC92","#E2F7E9","#B6E7CB","#94DBB4","#75C5A0","#4EA985","#B5E9E6","#89DBD7","#62B9BE","#E4F5FB","#B6D8F7","#8DBDE9","#679FDD","#486FBC","#D4D9F8","#AAB9ED","#889BDB","#EFE6FF","#E7D5FA","#CBB5F0","#B6A6CF","#987FBD","#7C619C","#6F5D7D","#E4D7CB","#D2BCA8","#A88A71","#86654D","#5F4038","#F9C4B3","#BD8D8C","#FFDFE1","#FFBFC3","#F5959C","#EC646E","#D6404E","#BF2638","#9C2433","#7C192B","#5D1421","#3E1018","#B13E4E","#E94E64","#505058","#414149","#36363C","#24252B","#17181D"];
- const REGIONS=[['Wallpaper','wallpaper'],['Floor','floor'],['Ceiling Trim','ceiling'],['Baseboard','baseboard'],['Bookshelf','bookshelf'],['Half Shelf','halfShelf'],['Nightstand','nightstand']];
+ const REGIONS=[['Wallpaper','wallpaper'],['Floor','floor'],['Ceiling Trim','ceiling'],['Baseboard','baseboard'],['Full Shelf','bookshelf'],['Bookshelf','halfShelf'],['Nightstand','nightstand']];
  const FURNITURE=new Set(['bookshelf','halfShelf','nightstand']);
  const PATTERN_AREAS=new Set(['wallpaper','floor']);
  const PATTERNS=[['solid','Solid'],['gingham','Gingham'],['ombre','Ombré'],['checkers','Checkered'],['stripes','Striped']];
@@ -89,9 +89,13 @@
    if(area==='nightstand'){
      items.push(maskLayer('nightstand-frame',c),maskLayer('nightstand-drawers',darker),maskLayer('nightstand-knobs',shade(c,.55)),outlineLayer('nightstand-lines'));
    }else if(area==='bookshelf'){
-     items.push(maskLayer('full-shelf-frame',c),maskLayer('full-shelf-shelves',darker),outlineLayer('full-shelf-lines'));
+     // Full Shelf: fit the exact equipped six-shelf sprite, not the unrelated
+     // Shelf of Ducks wing. The white furniture art keeps its black outlines.
+     items.push(maskLayer('six-shelf-frame-mask',c),maskLayer('six-shelf-panels-mask',darker));
    }else if(area==='halfShelf'){
-     items.push(maskLayer('half-shelf-white',c,'home-makeover-half-tint'));
+     // Bookshelf: only the inner white pixels of the wall-mounted book ledge;
+     // never place a solid rectangle across the book or its outline.
+     items.push(maskLayer('book-shelf-body-mask',c));
    }
    return items;
  }
@@ -107,30 +111,30 @@
  }
  function paintFurniture(container,design){
    container.replaceChildren();
+   // Always restore the real furniture sprites, including when switching OCs.
+   if(leftFurnitureDisplay)leftFurnitureDisplay.style.visibility='';
+   if(bookShelfFurnitureDisplay)bookShelfFurnitureDisplay.style.visibility='';
    if(!design)return;
-   // Furniture only appears if the corresponding item is equipped. The mask PNGs
-   // share the native 1080x1920 coordinates with each sprite.
-   const dresser=leftFurnitureDisplay && !leftFurnitureDisplay.classList.contains('hidden')
-      && leftFurnitureDisplay.classList.contains('dresser-furniture');
-   const halfShelf=bookShelfFurnitureDisplay && !bookShelfFurnitureDisplay.classList.contains('hidden');
+   const leftVisible=leftFurnitureDisplay && !leftFurnitureDisplay.classList.contains('hidden');
+   const fullShelf=leftVisible && leftFurnitureDisplay.classList.contains('shelf-furniture');
+   const dresser=leftVisible && leftFurnitureDisplay.classList.contains('dresser-furniture');
+   const wallShelf=bookShelfFurnitureDisplay && !bookShelfFurnitureDisplay.classList.contains('hidden');
+   if(fullShelf&&design.bookshelf){
+     container.append(...furnitureLayers('bookshelf',design.bookshelf));
+   }
    if(dresser&&design.nightstand){
-     leftFurnitureDisplay.style.visibility='hidden';
      container.append(...furnitureLayers('nightstand',design.nightstand));
-   }else if(leftFurnitureDisplay)leftFurnitureDisplay.style.visibility='';
-   if(halfShelf&&design.halfShelf){
-     bookShelfFurnitureDisplay.src='assets/rooms/makeover/half-shelf-white.png';
+   }
+   if(wallShelf&&design.halfShelf){
      container.append(...furnitureLayers('halfShelf',design.halfShelf));
    }
  }
- function paintWing(design){
+ function paintWing(){
+   // The wing shelf is a separate furnishing and is not the Home Hub's Full Shelf.
    const wing=document.getElementById('homeMakeoverWingLayers');
    const shelf=document.getElementById('wingShelfImage');
-   if(!wing||!shelf)return;
-   wing.replaceChildren();shelf.style.visibility='';
-   if(design?.bookshelf){
-     shelf.style.visibility='hidden';
-     wing.append(...furnitureLayers('bookshelf',design.bookshelf));
-   }
+   if(wing)wing.replaceChildren();
+   if(shelf)shelf.style.visibility='';
  }
  function syncMakeoverButton(){
    const enabled=!!state().unlocked;
@@ -149,7 +153,11 @@
    paintSurfaces(layers,design);
    const furniture=document.getElementById('homeMakeoverFurnitureLayers');
    if(furniture)paintFurniture(furniture,design);
-   paintWing(design);
+   paintWing();
+   // On narrow phones, the native 9:16 room picture is shorter than the viewport.
+   // Fill the space beneath it with the selected floor finish, not the old tan.
+   const stage=document.getElementById('stage');
+   if(stage)stage.style.background=design?.floor?patternCss(design.floor):'';
    // No OC or arrow modifications: only room artwork and overlays change.
    roomWallpaperOverlay.classList.add('hidden');
    roomImage.src='assets/rooms/cream.webp';
@@ -279,7 +287,9 @@
      if(selected==='bookshelf'){
        image.style.display='none';
        preview.style.background='#fff3e4';
-       previewLayers.append(...furnitureLayers('bookshelf',entry));
+       const shelf=document.createElement('img');shelf.className='home-makeover-preview-shelf';
+       shelf.src='assets/furniture/shelves/shelf-white.webp';shelf.alt='';
+       previewLayers.append(shelf,...furnitureLayers('bookshelf',entry));
      }else{
        for(const a of ['wallpaper','floor','ceiling','baseboard']){
          const e=(a===selected?entry:draft[a]);if(e)previewLayers.append(surfaceLayer(a,e));
@@ -287,7 +297,7 @@
        previewLayers.append(outlineLayer('room-lines'));
        if(selected==='nightstand')previewLayers.append(...furnitureLayers('nightstand',entry));
        if(selected==='halfShelf'){
-         // Preview the actual white half shelf, with its preserved black lines.
+         // Preview the wall bookshelf in place; the recolor mask skips its outlines.
          const shelf=document.createElement('img');shelf.className='home-makeover-preview-shelf';
          shelf.src=path('half-shelf-white');shelf.alt='';previewLayers.append(shelf,...furnitureLayers('halfShelf',entry));
        }
