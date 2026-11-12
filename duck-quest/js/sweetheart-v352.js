@@ -3,7 +3,7 @@
   'use strict';
   if(window.DuckieSweetheartBattlesV352)return;
   const TC=window.DuckieTradingCards;
-  const chance=.012; // 1.2% per eligible non-boss encounter, after Miko has met a love interest.
+  const chance=0; // replaced by v24.385 boss-only special battle // 1.2% per eligible non-boss encounter, after Miko has met a love interest.
   const bosses={meadow:'scarrie',ocean:'bottle-fairy',candy:'cream-fox',cloud:'cherub-duck',city:'stoplight-owl'};
   let currentSweetheart=null;
   const CSS=`

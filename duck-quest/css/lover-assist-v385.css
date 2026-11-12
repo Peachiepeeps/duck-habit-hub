@@ -1,0 +1,34 @@
+/* Duckie Days 24.385 — Lovers and Friends boss assists */
+#battlefield.lover-assist-battle-v385 #buddyCombatant{
+  display:flex!important;left:32%!important;bottom:8%!important;z-index:7!important;
+  transform:translateX(-50%)!important;pointer-events:none!important;
+  flex-direction:column;align-items:center;
+}
+#battlefield.lover-assist-battle-v385 #buddyBattleSprite{
+  max-width:125px!important;width:auto!important;height:min(29vh,127px)!important;
+  object-fit:contain!important;image-rendering:pixelated!important;
+  transform:scaleX(-1);transform-origin:center bottom;
+}
+#battlefield.lover-assist-battle-v385 #buddyBattleName{
+  max-width:140px!important;white-space:normal!important;text-align:center!important;
+  line-height:1.05!important;background:#fff2f9!important;color:#783d63!important;
+  border-radius:12px!important;padding:3px 7px!important;
+}
+#loverAssistHpV385{width:105px;max-width:110px;display:grid;justify-items:center;gap:3px;z-index:9;pointer-events:none}
+#loverAssistHpV385[hidden]{display:none!important}
+.lover-assist-hp-track-v385{width:100%;height:9px;background:#4b263f;border-radius:999px;border:2px solid #4b263f;overflow:hidden}
+#loverAssistFillV385{height:100%;width:100%;display:block;background:linear-gradient(90deg,#f7a4cc,#fff1af);transition:width .2s ease}
+#loverAssistTextV385{display:block;white-space:nowrap;background:rgba(255,247,251,.92);color:#743755;padding:2px 5px;border-radius:10px;font-size:10px;font-weight:900}
+#battlefield.lover-assist-battle-v385 .lover-assist-down-v385 #buddyBattleSprite{filter:grayscale(.8);opacity:.57}
+#battlefield.lover-assist-battle-v385 #enemySprite{
+  filter:drop-shadow(0 0 8px #fff08e) drop-shadow(0 0 15px #ffaaff);
+  animation:lover-boss-glow-v385 1.3s ease-in-out infinite alternate;
+}
+@keyframes lover-boss-glow-v385{to{filter:drop-shadow(0 0 15px #fff6a7) drop-shadow(0 0 24px #ffc2e4)}}
+@media(max-width:430px){
+  #battlefield.lover-assist-battle-v385 #buddyCombatant{left:34%!important;bottom:6%!important}
+  #battlefield.lover-assist-battle-v385 #buddyBattleSprite{max-width:90px!important;height:min(23vh,102px)!important}
+  #loverAssistHpV385{width:88px}
+  #loverAssistTextV385{font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){#battlefield.lover-assist-battle-v385 #enemySprite{animation:none!important}}
