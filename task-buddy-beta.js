@@ -71,7 +71,7 @@ function hide(){if(overlay)overlay.hidden=true;const tasks=document.getElementBy
     if(!overlay)return;
     overlay.hidden=false;const tasks=document.getElementById('tasksPanel');if(tasks)tasks.inert=true;document.body.classList.add('duckie-buddy-beta-open');
     lastCount=-1;
-    if(!frame.src)frame.src='./task-buddy-beta.html?v=24.362';
+    if(!frame.src)frame.src='./task-buddy-beta.html?v=24.372';
     sendCount(true);sendSnapshot();
     if(updater)clearInterval(updater);
     updater=setInterval(()=>{sendCount(false);sendSnapshot()},1200);

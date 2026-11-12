@@ -247,6 +247,23 @@ html,body { background:transparent!important; }
 .room-stage img.figure.guest{right:18%!important;}
 .room-stage img.onstage-gift,.room-stage .handoff-arrow{transition:none!important;}
 
+
+/* v24.372: one-screen Task Buddy room makeover. No instructions or nested scroll. */
+.modal:has(.buddy-makeover-compact){width:min(96vw,510px);max-height:min(96dvh,740px);overflow:hidden;display:flex;flex-direction:column;padding:9px 12px}
+.modal:has(.buddy-makeover-compact) .modal-top{flex:none;margin-bottom:5px}
+.modal:has(.buddy-makeover-compact) #modal-content{flex:1;min-height:0;display:flex;flex-direction:column}
+.buddy-makeover-compact{flex:1;min-height:0;display:flex;flex-direction:column;gap:5px}
+.buddy-makeover-compact .shop-balance{margin:0;padding:4px 7px;font-size:10px;flex:none}
+.buddy-makeover-compact .makeover-preview{width:min(100%,340px);aspect-ratio:320/180;margin:0 auto;flex:0 1 auto;max-height:20dvh}
+.buddy-makeover-compact .makeover-layout{margin:0;gap:5px;flex:none}
+.buddy-makeover-compact .makeover-layout select{margin-top:2px;padding:5px;height:31px}
+.buddy-makeover-compact .makeover-layout input[type=color]{height:31px;width:42px}
+.buddy-makeover-compact .makeover-colors{display:grid;grid-template-columns:repeat(auto-fit,minmax(19px,1fr));gap:3px;margin:0;flex:1;min-height:0;align-content:space-evenly;overflow:hidden}
+.buddy-makeover-compact .makeover-colors button{width:100%;height:auto;min-height:14px;max-height:24px;border-radius:4px}
+.buddy-makeover-compact .shop-alert{margin:0;line-height:1.15;min-height:0;font-size:10px;flex:none}
+.buddy-makeover-compact .makeover-footer{display:grid;grid-template-columns:1fr 1fr;margin:0;gap:6px;flex:none}
+.buddy-makeover-compact .makeover-footer button{padding:7px 3px;font-size:11px}
+@media(max-height:600px){.buddy-makeover-compact .makeover-preview{max-height:16dvh}.modal:has(.buddy-makeover-compact){padding:5px 9px}.buddy-makeover-compact{gap:3px}}
 </style><!-- v24.365 gift alignment: keep both existing sprites, gift, and arrow unchanged in size. -->
 <style id="gift-alignment-v24366">
 .room-stage img.figure.host.with-guest{left:37.5%!important;}
@@ -510,7 +527,7 @@ function chooseDuckToRecolor(){
  showModal('Choose a Duck',c)
 }
 function roomMakeover(){let draft={...savedRoomColors()};let selected='Wallpaper';let color=draft[selected]||'#F9DDE8';
- let c=el('div');c.append(el('p','note','Choose a room area and a color. The preview updates instantly; tap Apply Colors to change your actual room. Once unlocked, recoloring is always free. No Paint is used.'));let balance=currencyHeader();c.append(balance);let preview=roomPreview(draft);c.append(preview);
+ let c=el('div','buddy-makeover-compact');let balance=currencyHeader();c.append(balance);let preview=roomPreview(draft);c.append(preview);
  let fields=el('div','makeover-layout');let label=el('label',null,'Choose room area');let select=makeSelect(roomParts.map(x=>[x,x]),selected,v=>{selected=v;color=draft[v]||'#F9DDE8';colorPick.value=color});label.append(select);fields.append(label);
  let colorPick=document.createElement('input');colorPick.type='color';colorPick.value=color;colorPick.setAttribute('aria-label','Choose color');fields.append(colorPick);c.append(fields);
  let swatches=el('div','makeover-colors');for(let hex of palette){let b=el('button');b.style.background=hex;b.title=hex;b.setAttribute('aria-label','Color '+hex);b.onclick=()=>{colorPick.value=hex;changeColor(hex)};swatches.append(b)}c.append(swatches);
