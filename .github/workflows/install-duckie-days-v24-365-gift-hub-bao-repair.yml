@@ -1,0 +1,34 @@
+
+name: Install Duckie Days v24.365 - Gift, Hub and Bao Cafe Repair
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Duckie-Days-v24.365-Gift-Hub-Bao-Cafe-Repair-UPDATE-ONLY.zip'
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install v24.365
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP='Duckie-Days-v24.365-Gift-Hub-Bao-Cafe-Repair-UPDATE-ONLY.zip'
+          test -f "$ZIP"
+          unzip -t "$ZIP"
+          unzip -oq "$ZIP" -d .
+          grep -q '24.365' version.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add app.css task-buddy-beta.html bao-cafe/index.html index.html sw.js version.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Install Duckie Days v24.365 fixes'
+            git push
+          fi
