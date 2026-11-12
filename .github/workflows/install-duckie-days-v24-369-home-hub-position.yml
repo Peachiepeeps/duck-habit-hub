@@ -1,0 +1,32 @@
+name: Install Duckie Days v24.369 - Home Hub Position
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Duckie-Days-v24.369-Home-Hub-Position-UPDATE-ONLY.zip'
+permissions:
+  contents: write
+jobs:
+  install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install v24.369
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP='Duckie-Days-v24.369-Home-Hub-Position-UPDATE-ONLY.zip'
+          test -f "$ZIP" || { echo "::error::Upload $ZIP to the repository root first."; exit 1; }
+          unzip -t "$ZIP"
+          unzip -oq "$ZIP" -d .
+          grep -q '24.369' version.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add app.css index.html sw.js version.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Install Duckie Days v24.369 Home Hub positioning'
+            git push
+          else
+            echo 'v24.369 already installed.'
+          fi
