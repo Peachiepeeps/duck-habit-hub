@@ -54,8 +54,37 @@
 #roomPickerButton .room-picker-arrow{display:none!important}
 #roomPickerButton .room-picker-text{white-space:nowrap}
 
-/* v24.375: keep Coins anchored at the right when Room Makeover is locked
+/* v24.376: keep Coins anchored at the right when Room Makeover is locked
    and its left-hand header button is hidden. */
 .top-hud > .coin-pill {
   margin-left: auto;
 }
+
+/* v24.376: individually drawn recolor masks; maintain the room's original outlines. */
+.home-makeover-outline{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none}
+.home-makeover-furniture-layers,.home-makeover-wing-layers{position:absolute;inset:0;pointer-events:none}
+.home-makeover-furniture-layers{z-index:9}
+.home-makeover-wing-layers{z-index:41}
+.home-makeover-furniture-layers:empty,.home-makeover-wing-layers:empty{display:none}
+.home-makeover-furniture-layers .home-makeover-layer,.home-makeover-wing-layers .home-makeover-layer{mask-position:top center;-webkit-mask-position:top center}
+.home-makeover-half-tint{mix-blend-mode:multiply}
+.home-makeover-preview-layers{position:absolute;inset:0;pointer-events:none}
+.home-makeover-preview-layers .home-makeover-layer,.home-makeover-preview-layers .home-makeover-outline{position:absolute;inset:0;width:100%;height:100%}
+.home-makeover-preview-shelf{position:absolute;inset:0;width:100%;height:100%;object-fit:fill}
+.home-makeover-furniture-layers .home-makeover-outline,.home-makeover-wing-layers .home-makeover-outline{object-fit:contain}
+@media(max-width:600px){
+ .home-makeover-furniture-layers{top:0;bottom:auto;width:100%;height:177.7778vw}
+ .home-makeover-furniture-layers .home-makeover-layer,.home-makeover-furniture-layers .home-makeover-outline{height:100%}
+}
+/* Keep all 79 palette choices accessible on small screens by making swatches
+   compact instead of turning the entire modal into a scrolling pane. */
+.home-makeover-dialog{height:min(95dvh,690px)}
+.home-makeover-top-preview{grid-template-columns:105px minmax(0,1fr);gap:8px}
+.home-makeover-preview{width:min(100%,105px);max-height:23dvh}
+.home-makeover-colors{grid-template-columns:repeat(10,minmax(0,1fr));grid-auto-rows:1fr;gap:3px;min-height:0;overflow:hidden}
+@media(max-height:680px){
+ .home-makeover-dialog{height:96dvh;gap:4px;padding:7px}
+ .home-makeover-preview{max-height:19dvh}
+ .home-makeover-color-tab{padding:4px}
+}
+/* Furniture is solid-only; its darker drawers and shelves are generated in JS. */

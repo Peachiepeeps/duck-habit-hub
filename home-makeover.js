@@ -1,4 +1,4 @@
-/* Duckie Days v24.374 — Home Hub Room Makeover, safely separate from OC positioning. */
+/* Duckie Days v24.376 — Home Hub Room Makeover, safely separate from OC positioning. */
 (() => {
  'use strict';
  const MAKEOVER_PRICE=100;
@@ -10,13 +10,18 @@
    'stripes':{name:'Vertical Stripes',icon:'║',description:'Simple vertical two-color stripes for every OC',price:1000}
  };
  const PALETTE=["#FFFDF8","#F9F5EA","#EEE5D5","#DCD2C2","#CBB9A4","#AA9180","#79665A","#594A48","#28262D","#FFF0F4","#F9DDE8","#F1B9C9","#E98BA9","#C76586","#9F4168","#E4AED4","#F5D8ED","#FFF1E2","#FFE0C7","#F5BB99","#EF956F","#CF785E","#FFD7AA","#FFE5AD","#EDCE7D","#FFF2BD","#FFE480","#E4CF67","#C2B45F","#E4F0BD","#C8E0AA","#A0CC92","#E2F7E9","#B6E7CB","#94DBB4","#75C5A0","#4EA985","#B5E9E6","#89DBD7","#62B9BE","#E4F5FB","#B6D8F7","#8DBDE9","#679FDD","#486FBC","#D4D9F8","#AAB9ED","#889BDB","#EFE6FF","#E7D5FA","#CBB5F0","#B6A6CF","#987FBD","#7C619C","#6F5D7D","#E4D7CB","#D2BCA8","#A88A71","#86654D","#5F4038","#F9C4B3","#BD8D8C","#FFDFE1","#FFBFC3","#F5959C","#EC646E","#D6404E","#BF2638","#9C2433","#7C192B","#5D1421","#3E1018","#B13E4E","#E94E64","#505058","#414149","#36363C","#24252B","#17181D"];
- const REGIONS=[['Wallpaper','wallpaper'],['Ceiling Trim','ceiling'],['Baseboard','baseboard'],['Floor','floor']];
+ const REGIONS=[['Wallpaper','wallpaper'],['Floor','floor'],['Ceiling Trim','ceiling'],['Baseboard','baseboard'],['Bookshelf','bookshelf'],['Half Shelf','halfShelf'],['Nightstand','nightstand']];
+ const FURNITURE=new Set(['bookshelf','halfShelf','nightstand']);
+ const PATTERN_AREAS=new Set(['wallpaper','floor']);
  const PATTERNS=[['solid','Solid'],['gingham','Gingham'],['ombre','Ombré'],['checkers','Checkered'],['stripes','Striped']];
  const creamDefaults={
    wallpaper:{primary:'#F4E2C8',secondary:'#FFF9F0',pattern:'solid'},
    ceiling:{primary:'#FFF9F0',secondary:'#F4E2C8',pattern:'solid'},
    baseboard:{primary:'#FFF4E6',secondary:'#F4E2C8',pattern:'solid'},
-   floor:{primary:'#C99C72',secondary:'#FFF4E6',pattern:'solid'}
+   floor:{primary:'#C99C72',secondary:'#FFF4E6',pattern:'solid'},
+   bookshelf:{primary:'#D8C1A4',secondary:'#C3A788',pattern:'solid'},
+   halfShelf:{primary:'#EEDFCF',secondary:'#CCB5A0',pattern:'solid'},
+   nightstand:{primary:'#D8C1A4',secondary:'#C3A788',pattern:'solid'}
  };
  const safeColors=new Set(PALETTE.map(x=>x.toLowerCase()));
  function state(){
@@ -38,6 +43,16 @@
    persist();
  }
  ensureCreamRooms();
+ // v24.376: the first gradient-era rooms use incompatible masks. Keep those old
+ // selections available for recovery but start the separated-artwork version in cream.
+ function migrateArtLayers(){
+   const s=state();if(s.artLayersVersion===2)return;
+   if(Object.keys(s.byCharacter||{}).length && !s.legacyByCharacter){
+     s.legacyByCharacter=structuredClone(s.byCharacter);
+   }
+   s.byCharacter={};s.artLayersVersion=2;persist();
+ }
+ migrateArtLayers();
  function unlocked(id){const s=state();return id==='room-makeover'?!!s.unlocked:s.patterns.includes(id)}
  function activeDesign(id=save.selectedCharacter){return state().byCharacter[id] || null}
  function patternCss(entry){
@@ -52,11 +67,70 @@
     default:return a;
    }
  }
- function overlay(area,entry){const node=document.createElement('div');node.className='home-makeover-layer';node.style.setProperty('--makeover-mask',`url("assets/rooms/makeover/${area}.png")`);node.style.background=patternCss(entry);return node}
- function paint(container,design){
-  container.replaceChildren();
-  if(!design)return;
-  for(const [label,area] of REGIONS){const entry=design[area];if(entry)container.append(overlay(area,entry));}
+ function shade(hex,ratio=.79){
+   const raw=/^#[0-9a-f]{6}$/i.test(hex)?hex:'#D8C1A4';
+   const rgb=[1,3,5].map(i=>parseInt(raw.slice(i,i+2),16));
+   return '#'+rgb.map(v=>Math.round(v*ratio).toString(16).padStart(2,'0')).join('');
+ }
+ const path=(name)=>`assets/rooms/makeover/${name}.png`;
+ function maskLayer(name,color,cssClass=''){
+   const node=document.createElement('div');node.className=`home-makeover-layer ${cssClass}`;
+   node.style.setProperty('--makeover-mask',`url("${path(name)}")`);
+   node.style.background=color;return node;
+ }
+ function outlineLayer(name){const node=document.createElement('img');node.className='home-makeover-outline';node.src=path(name);node.alt='';node.draggable=false;return node}
+ function surfaceLayer(area,entry){
+   return maskLayer(`${area}-color`,patternCss(entry));
+ }
+ function furnitureLayers(area,entry){
+   const c=entry?.primary||creamDefaults[area].primary;
+   const darker=shade(c);
+   const items=[];
+   if(area==='nightstand'){
+     items.push(maskLayer('nightstand-frame',c),maskLayer('nightstand-drawers',darker),maskLayer('nightstand-knobs',shade(c,.55)),outlineLayer('nightstand-lines'));
+   }else if(area==='bookshelf'){
+     items.push(maskLayer('full-shelf-frame',c),maskLayer('full-shelf-shelves',darker),outlineLayer('full-shelf-lines'));
+   }else if(area==='halfShelf'){
+     items.push(maskLayer('half-shelf-white',c,'home-makeover-half-tint'));
+   }
+   return items;
+ }
+ function paintSurfaces(container,design){
+   container.replaceChildren();
+   if(!design)return;
+   for(const area of ['wallpaper','floor','ceiling','baseboard']){
+     if(design[area])container.append(surfaceLayer(area,design[area]));
+   }
+   if(['wallpaper','floor','ceiling','baseboard'].some(a=>!!design[a])){
+     container.append(outlineLayer('room-lines'));
+   }
+ }
+ function paintFurniture(container,design){
+   container.replaceChildren();
+   if(!design)return;
+   // Furniture only appears if the corresponding item is equipped. The mask PNGs
+   // share the native 1080x1920 coordinates with each sprite.
+   const dresser=leftFurnitureDisplay && !leftFurnitureDisplay.classList.contains('hidden')
+      && leftFurnitureDisplay.classList.contains('dresser-furniture');
+   const halfShelf=bookShelfFurnitureDisplay && !bookShelfFurnitureDisplay.classList.contains('hidden');
+   if(dresser&&design.nightstand){
+     leftFurnitureDisplay.style.visibility='hidden';
+     container.append(...furnitureLayers('nightstand',design.nightstand));
+   }else if(leftFurnitureDisplay)leftFurnitureDisplay.style.visibility='';
+   if(halfShelf&&design.halfShelf){
+     bookShelfFurnitureDisplay.src='assets/rooms/makeover/half-shelf-white.png';
+     container.append(...furnitureLayers('halfShelf',design.halfShelf));
+   }
+ }
+ function paintWing(design){
+   const wing=document.getElementById('homeMakeoverWingLayers');
+   const shelf=document.getElementById('wingShelfImage');
+   if(!wing||!shelf)return;
+   wing.replaceChildren();shelf.style.visibility='';
+   if(design?.bookshelf){
+     shelf.style.visibility='hidden';
+     wing.append(...furnitureLayers('bookshelf',design.bookshelf));
+   }
  }
  function syncMakeoverButton(){
    const enabled=!!state().unlocked;
@@ -71,8 +145,12 @@
  function paintLive(){
    const layers=document.getElementById('homeMakeoverLayers');if(!layers)return;
    const enabled=state().unlocked;
-   paint(layers,enabled?activeDesign():null);
-   // Keep the original warm cream/brown base, without affecting OC or arrow positions.
+   const design=enabled?activeDesign():null;
+   paintSurfaces(layers,design);
+   const furniture=document.getElementById('homeMakeoverFurnitureLayers');
+   if(furniture)paintFurniture(furniture,design);
+   paintWing(design);
+   // No OC or arrow modifications: only room artwork and overlays change.
    roomWallpaperOverlay.classList.add('hidden');
    roomImage.src='assets/rooms/cream.webp';
    syncMakeoverButton();
@@ -150,52 +228,89 @@
    return {dialog,close:()=>backdrop.remove(),balance};
  }
  function openCustomRoom(){
-  if(!state().unlocked){showToast('Unlock Room Makeover for 1,000 Pink Coins in Shop → Rooms!');return;}
-  const oc=save.selectedCharacter;
-  const saved={...structuredClone(creamDefaults),...structuredClone(activeDesign(oc)||{})};
-  const draft=structuredClone(saved);
-  let selected='wallpaper';let colorTarget='primary';
-  const modal=baseDialog('Room Makeover ♡');
-  const screen=document.createElement('div');screen.className='home-makeover-top-preview';
-  const preview=document.createElement('div');preview.className='home-makeover-preview';
-  const image=document.createElement('img');image.src='assets/rooms/cream.webp';image.alt='Room color preview';preview.append(image);
-  const previewLayers=document.createElement('div');previewLayers.style.cssText='position:absolute;inset:0';preview.append(previewLayers);
-  const fields=document.createElement('div');fields.className='home-makeover-fields';
-  const regionLabel=document.createElement('label');regionLabel.textContent='Choose room area';
-  const regionSelect=document.createElement('select');for(const [label,key] of REGIONS)regionSelect.add(new Option(label,key));regionLabel.append(regionSelect);
-  const patternLabel=document.createElement('label');patternLabel.textContent='Pattern';
-  const patternSelect=document.createElement('select');for(const [key,label] of PATTERNS){const option=new Option(label,key);if(key!=='solid'&&!unlocked(key)){option.disabled=true;option.textContent=`🔒 ${label}`};patternSelect.add(option)}
-  patternLabel.append(patternSelect);fields.append(regionLabel,patternLabel);screen.append(preview,fields);modal.dialog.append(screen);
-  const colorTabs=document.createElement('div');colorTabs.className='home-makeover-color-row';
-  const first=makeButton('Primary color',()=>switchColor('primary'));first.className='home-makeover-color-tab';
-  const second=makeButton('Secondary color',()=>switchColor('secondary'));second.className='home-makeover-color-tab';
-  colorTabs.append(first,second);modal.dialog.append(colorTabs);
-  const swatches=document.createElement('div');swatches.className='home-makeover-colors';modal.dialog.append(swatches);
-  const msg=document.createElement('p');msg.className='home-makeover-note';msg.textContent='Preview is free. Apply a new room design for 100 Pink Coins.';modal.dialog.append(msg);
-  const actions=document.createElement('div');actions.className='home-makeover-bottom';
-  const back=makeButton('Cancel',()=>modal.close());
-  const apply=makeButton('Apply · 100 Coins',()=>{
-    if(JSON.stringify(draft)===JSON.stringify(saved)){modal.close();showToast('Your room is already using these colors!');return}
-    if(Number(save.coins||0)<MAKEOVER_PRICE){msg.textContent='Not enough Pink Coins to apply!';return}
-    save.coins-=MAKEOVER_PRICE;
-    state().byCharacter[oc]=structuredClone(draft);
-    persist();modal.close();renderRoom();showToast('Room makeover complete! ♡ -100 Pink Coins');
-  });apply.classList.add('primary');actions.append(back,apply);modal.dialog.append(actions);
-  function ensure(){return draft[selected]||(draft[selected]={...creamDefaults[selected]})}
-  function redraw(){
-    previewLayers.replaceChildren();
-    for(const [label,key] of REGIONS){const entry=draft[key];if(entry)previewLayers.append(overlay(key,entry))}
-    patternSelect.value=ensure().pattern;
-    first.classList.toggle('active',colorTarget==='primary');second.classList.toggle('active',colorTarget==='secondary');
-    swatches.replaceChildren();
-    for(const hex of PALETTE){const chip=makeButton('',()=>{ensure()[colorTarget]=hex;redraw()});chip.className='home-makeover-chip';chip.style.background=hex;
-      chip.title=hex;chip.setAttribute('aria-label',`Choose ${hex}`);chip.classList.toggle('selected',String(ensure()[colorTarget]).toLowerCase()===hex.toLowerCase());swatches.append(chip)}
-    apply.disabled=Number(save.coins||0)<MAKEOVER_PRICE;
-  }
-  function switchColor(next){colorTarget=next;redraw()}
-  regionSelect.onchange=()=>{selected=regionSelect.value;redraw()};
-  patternSelect.onchange=()=>{if(patternSelect.value!=='solid'&&!unlocked(patternSelect.value))return;ensure().pattern=patternSelect.value;redraw()};
-  redraw();
+   if(!state().unlocked){showToast('Unlock Room Makeover in Shop → Rooms!');return;}
+   const oc=save.selectedCharacter;
+   const saved=structuredClone(activeDesign(oc)||{});
+   const draft=structuredClone(saved);
+   let selected='wallpaper', colorTarget='primary';
+   const modal=baseDialog('Room Makeover ♡');
+   const screen=document.createElement('div');screen.className='home-makeover-top-preview';
+   const preview=document.createElement('div');preview.className='home-makeover-preview';
+   const image=document.createElement('img');image.src='assets/rooms/cream.webp';image.alt='Room color preview';preview.append(image);
+   const previewLayers=document.createElement('div');previewLayers.className='home-makeover-preview-layers';preview.append(previewLayers);
+   const fields=document.createElement('div');fields.className='home-makeover-fields';
+   const regionLabel=document.createElement('label');regionLabel.textContent='Choose room area';
+   const regionSelect=document.createElement('select');for(const [label,key] of REGIONS)regionSelect.add(new Option(label,key));regionLabel.append(regionSelect);
+   const patternLabel=document.createElement('label');patternLabel.textContent='Pattern';
+   const patternSelect=document.createElement('select');for(const [key,label] of PATTERNS){
+     const option=new Option(label,key);if(key!=='solid'&&!unlocked(key)){option.disabled=true;option.textContent=`🔒 ${label}`};patternSelect.add(option);
+   }
+   patternLabel.append(patternSelect);fields.append(regionLabel,patternLabel);screen.append(preview,fields);modal.dialog.append(screen);
+   const colorTabs=document.createElement('div');colorTabs.className='home-makeover-color-row';
+   const first=makeButton('Primary color',()=>switchColor('primary'));first.className='home-makeover-color-tab';
+   const second=makeButton('Secondary color',()=>switchColor('secondary'));second.className='home-makeover-color-tab';
+   colorTabs.append(first,second);modal.dialog.append(colorTabs);
+   const swatches=document.createElement('div');swatches.className='home-makeover-colors';modal.dialog.append(swatches);
+   const msg=document.createElement('p');msg.className='home-makeover-note';msg.textContent='Preview free · Apply any changes for 100 Pink Coins.';modal.dialog.append(msg);
+   const actions=document.createElement('div');actions.className='home-makeover-bottom';
+   const back=makeButton('Cancel',()=>modal.close());
+   const apply=makeButton('Apply · 100 Coins',()=>{
+     if(JSON.stringify(draft)===JSON.stringify(saved)){modal.close();showToast('Your room is already using these colors!');return;}
+     if(Number(save.coins||0)<MAKEOVER_PRICE){msg.textContent='Not enough Pink Coins to apply!';return;}
+     save.coins-=MAKEOVER_PRICE;
+     state().byCharacter[oc]=structuredClone(draft);
+     persist();modal.close();renderRoom();showToast('Room makeover complete! ♡ -100 Pink Coins');
+   });apply.classList.add('primary');actions.append(back,apply);modal.dialog.append(actions);
+   function effective(area){return draft[area]||creamDefaults[area]}
+   function ensure(){return draft[selected]||(draft[selected]={...creamDefaults[selected]})}
+   function draw(){
+     const entry=effective(selected);
+     const isFurniture=FURNITURE.has(selected);
+     const twoColors=PATTERN_AREAS.has(selected)&&entry.pattern!=='solid';
+     patternLabel.style.display=PATTERN_AREAS.has(selected)?'':'none';
+     patternSelect.disabled=!PATTERN_AREAS.has(selected);
+     patternSelect.value=PATTERN_AREAS.has(selected)?(entry.pattern||'solid'):'solid';
+     second.style.display=twoColors?'':'none';
+     if(!twoColors)colorTarget='primary';
+     first.textContent=twoColors?'Primary color':'Choose color';
+     first.classList.toggle('active',colorTarget==='primary');second.classList.toggle('active',colorTarget==='secondary');
+     previewLayers.replaceChildren();image.style.display='';
+     // All artwork is in original 1080x1920 coordinates; draw its original lines last.
+     if(selected==='bookshelf'){
+       image.style.display='none';
+       preview.style.background='#fff3e4';
+       previewLayers.append(...furnitureLayers('bookshelf',entry));
+     }else{
+       for(const a of ['wallpaper','floor','ceiling','baseboard']){
+         const e=(a===selected?entry:draft[a]);if(e)previewLayers.append(surfaceLayer(a,e));
+       }
+       previewLayers.append(outlineLayer('room-lines'));
+       if(selected==='nightstand')previewLayers.append(...furnitureLayers('nightstand',entry));
+       if(selected==='halfShelf'){
+         // Preview the actual white half shelf, with its preserved black lines.
+         const shelf=document.createElement('img');shelf.className='home-makeover-preview-shelf';
+         shelf.src=path('half-shelf-white');shelf.alt='';previewLayers.append(shelf,...furnitureLayers('halfShelf',entry));
+       }
+     }
+     swatches.replaceChildren();
+     const chosen=effective(selected)[colorTarget];
+     for(const hex of PALETTE){
+       const chip=makeButton('',()=>{ensure()[colorTarget]=hex;if(isFurniture)ensure().pattern='solid';draw()});
+       chip.className='home-makeover-chip';chip.style.background=hex;chip.title=hex;
+       chip.setAttribute('aria-label',`Choose ${hex}`);
+       chip.classList.toggle('selected',String(chosen).toLowerCase()===hex.toLowerCase());
+       swatches.append(chip);
+     }
+     apply.disabled=Number(save.coins||0)<MAKEOVER_PRICE;
+   }
+   function switchColor(next){colorTarget=next;draw()}
+   regionSelect.onchange=()=>{selected=regionSelect.value;colorTarget='primary';draw()};
+   patternSelect.onchange=()=>{
+     if(!PATTERN_AREAS.has(selected))return;
+     if(patternSelect.value!=='solid'&&!unlocked(patternSelect.value))return;
+     ensure().pattern=patternSelect.value;draw();
+   };
+   draw();
  }
  // Capture only after unlocking: the original room/wallpaper picker stays available until purchase.
  roomPickerButton.addEventListener('click',event=>{
