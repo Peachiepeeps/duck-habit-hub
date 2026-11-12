@@ -1,4 +1,4 @@
-/* Duckie Days v24.379 — Home Hub Room Makeover, safely separate from OC positioning. */
+/* Duckie Days v24.380 — Home Hub Room Makeover, safely separate from OC positioning. */
 (() => {
  'use strict';
  const MAKEOVER_PRICE=100;
@@ -282,6 +282,15 @@
      paintWingShelfImage(image);
    }).observe(image,{attributes:true,attributeFilter:['src']});
  }
+ // Keep the purchased feature's title stable when the original room/wing
+ // renderer refreshes its old 'Wallpaper' label after navigation.
+ const makeoverTitleObserver=new MutationObserver(()=>{
+   if(state().unlocked && roomPickerText.textContent!=='Room Makeover'){
+     roomPickerText.textContent='Room Makeover';
+   }
+ });
+ makeoverTitleObserver.observe(roomPickerText,{childList:true,characterData:true,subtree:true});
+
  function syncMakeoverButton(){
    const enabled=!!state().unlocked;
    const wrapper=roomPickerButton.closest('.room-picker-wrap');

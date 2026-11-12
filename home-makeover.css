@@ -139,3 +139,10 @@
  font-size:clamp(.95rem,3.8vw,1.14rem);
  font-weight:950;
 }
+
+/* v24.380: the Shelf of Ducks' return arrow belongs on the right in
+   the duck wing only. Do not touch main-room arrows or the task shelf. */
+.stage.room-wing-view #roomWingButton.room-wing-button {
+  left: auto !important;
+  right: 3.8% !important;
+}
