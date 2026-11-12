@@ -7875,16 +7875,15 @@ body[data-quest-theme="midnight-pixel"] .secondary-button,body[data-quest-theme=
 .saved-outfit-combination {display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin:8px 0;align-items:stretch}
 .saved-outfit-combination .miho-look-choice {margin:0;min-width:0}
 
-/* v24.363: lower the hub OC together with its poke hitbox, and lower both shelf arrows. */
-.stage #peepWrap.peep-wrap{top:2.3%!important;bottom:-2.3%!important}
-.stage #roomWingButton.room-wing-button,.stage #taskShelfButton.task-shelf-button-v254{bottom:-0.6%!important}
-@media(max-width:520px){.stage #peepWrap.peep-wrap{top:2.6%!important;bottom:-2.6%!important}.stage #roomWingButton.room-wing-button,.stage #taskShelfButton.task-shelf-button-v254{bottom:-0.3%!important}}
-
-/* v24.364 — move actual OC artwork/hitbox, including mobile's inset:auto rule. */
-.stage:not(.closet-open):not(.room-wing-view):not(.task-shelf-view) #peepWrap.peep-wrap{transform:translateY(4.5%)!important;}
-.stage #roomWingButton.room-wing-button,.stage #taskShelfButton.task-shelf-button-v254{bottom:1.2%!important;}
-@media(max-width:520px){.stage:not(.closet-open):not(.room-wing-view):not(.task-shelf-view) #peepWrap.peep-wrap{transform:translateY(6.5%)!important;}.stage #roomWingButton.room-wing-button,.stage #taskShelfButton.task-shelf-button-v254{bottom:1.25%!important;}}
-
-/* v24.365: slight upward nudge for both hub arrows only. */
-.stage #roomWingButton.room-wing-button,.stage #taskShelfButton.task-shelf-button-v254{bottom:2.35%!important;}
-@media(max-width:520px){.stage #roomWingButton.room-wing-button,.stage #taskShelfButton.task-shelf-button-v254{bottom:2.4%!important;}}
+/* v24.367: restore the original v24.342 character position (no late
+   top/bottom or translate overrides). The v24.342 tasks.css places both
+   arrows at 9.3%; this small lift is deliberate and keeps them visible. */
+.stage #roomWingButton.room-wing-button,
+.stage #taskShelfButton.task-shelf-button-v254{
+  top:auto!important;
+  bottom:10.0%!important;
+}
+@media(max-width:600px){
+ .stage #roomWingButton.room-wing-button,
+ .stage #taskShelfButton.task-shelf-button-v254{bottom:10.0%!important;}
+}

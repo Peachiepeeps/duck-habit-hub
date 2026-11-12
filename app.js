@@ -6309,6 +6309,12 @@ function getRenderOrderedAssets(characterId = save.selectedCharacter) {
   return equipped.sort((a, b) => (Number(a.z) || 0) - (Number(b.z) || 0));
 }
 
+// v24.367: force a fresh request for the two replacement Miho expressions.
+function characterAssetFreshUrl(characterId, filename, path) {
+  const isReplacement=characterId==='miho' && /^(Miho-neutral|Miho-angry)\.webp$/i.test(String(filename||'').split('/').pop());
+  return isReplacement ? `${path}?v=24.367` : path;
+}
+
 function renderCharacterInto(container, characterId = save.selectedCharacter) {
   container.innerHTML = "";
 
@@ -6320,7 +6326,7 @@ function renderCharacterInto(container, characterId = save.selectedCharacter) {
     img.decoding = "async";
     img.loading = "eager";
     img.fetchPriority = index < 4 ? "high" : "auto";
-    img.src = `${character.assetFolder}${asset.file}`;
+    img.src = characterAssetFreshUrl(character.id, asset.file, `${character.assetFolder}${asset.file}`);
     img.alt = "";
     img.style.setProperty("--z", asset.z);
     img.style.zIndex = String(index + 1);
@@ -6445,7 +6451,7 @@ function updateExpressionLayer(assetId) {
   }
   if (!layer) return;
 
-  const src = `${character.assetFolder}${asset.file}`;
+  const src = characterAssetFreshUrl(character.id, asset.file, `${character.assetFolder}${asset.file}`);
   layer.dataset.asset = assetId;
   layer.src = src;
   layer.style.setProperty("--z", asset.z);
@@ -6650,9 +6656,9 @@ const CHARACTER_PREVIEW_THUMB_FILES = {
 function characterPreviewSrc(characterId, file) {
   const name = String(file || "").split("/").pop();
   if (CHARACTER_PREVIEW_THUMB_FILES[characterId]?.has(name)) {
-    return `assets/thumbs/characters/${characterId}/${name.replace(/\.[^.]+$/, ".webp")}`;
+    return characterAssetFreshUrl(characterId, name, `assets/thumbs/characters/${characterId}/${name.replace(/\.[^.]+$/, ".webp")}`);
   }
-  return `${CHARACTERS[characterId].assetFolder}${file}`;
+  return characterAssetFreshUrl(characterId, file, `${CHARACTERS[characterId].assetFolder}${file}`);
 }
 
 function duckThumbFile(duck) {
