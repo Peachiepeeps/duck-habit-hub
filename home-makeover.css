@@ -32,3 +32,19 @@
 .home-makeover-shop-card .shop-item-art{display:grid;place-items:center;font-size:32px;line-height:1}
 .home-makeover-button{min-width:112px}
 @media(max-height:650px){.home-makeover-dialog{height:min(96dvh,560px);gap:4px;padding:7px}.home-makeover-preview{max-height:21dvh}.home-makeover-color-row .home-makeover-color-tab{padding:4px}.home-makeover-top-preview{gap:6px}}
+
+/* v24.373 — prominent makeover item and full-tile pattern swatches. */
+.shop-grid.home-makeover-rooms-shop{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.home-makeover-rooms-shop .home-makeover-featured{grid-column:1/-1;display:grid;grid-template-columns:minmax(85px,36%) 1fr;align-items:center;gap:12px}
+.home-makeover-rooms-shop .home-makeover-featured .shop-item-art{aspect-ratio:1.6/1;height:100%;min-height:84px}
+.home-makeover-rooms-shop .home-makeover-featured .shop-item-copy{margin-top:0}
+.home-makeover-rooms-shop .home-makeover-shop-card:not(.home-makeover-featured) .shop-item-art{aspect-ratio:1/0.72}
+.home-makeover-shop-card .home-makeover-pattern-art{width:100%;background-size:auto!important;display:grid;place-items:center;border:1px solid #dfbaca;border-radius:12px;overflow:hidden}
+.home-makeover-pattern-art.home-makeover-art-gingham,.home-makeover-purchase-icon.home-makeover-art-gingham{background:repeating-linear-gradient(0deg,transparent 0 13px,#efb9cb8c 13px 23px),repeating-linear-gradient(90deg,transparent 0 13px,#efb9cb8c 13px 23px),#fff3e8}
+.home-makeover-pattern-art.home-makeover-art-checkers,.home-makeover-purchase-icon.home-makeover-art-checkers{background:conic-gradient(#ecacc7 25%,#fff3e8 0 50%,#ecacc7 0 75%,#fff3e8 0) 0 0/40px 40px}
+.home-makeover-pattern-art.home-makeover-art-ombre,.home-makeover-purchase-icon.home-makeover-art-ombre{background:linear-gradient(145deg,#f2abc9,#fff5e4)}
+.home-makeover-pattern-art.home-makeover-art-stripes,.home-makeover-purchase-icon.home-makeover-art-stripes{background:repeating-linear-gradient(90deg,#f0b1c9 0 15px,#fff3e8 15px 30px)}
+.home-makeover-pattern-art.home-makeover-art-room-makeover,.home-makeover-purchase-icon.home-makeover-art-room-makeover{background:linear-gradient(150deg,#ffeaf3,#f2c4d7 48%,#fff0dc);color:#995478}
+.home-makeover-featured-label{font-size:clamp(14px,3vw,22px);font-weight:950;text-align:center;text-shadow:0 1px #fff;padding:8px}
+.home-makeover-purchase-icon{width:min(100%,210px);height:120px;border-radius:13px;border:2px solid #e1afc9;display:grid;place-items:center;font-weight:900;font-size:18px}
+@media(max-width:400px){.home-makeover-rooms-shop .home-makeover-featured{grid-template-columns:30% 1fr;gap:7px}.home-makeover-featured-label{font-size:13px}}

@@ -1,4 +1,4 @@
-/* Duckie Days v24.372 — Home Hub Room Makeover, safely separate from OC positioning. */
+/* Duckie Days v24.373 — Home Hub Room Makeover, safely separate from OC positioning. */
 (() => {
  'use strict';
  const MAKEOVER_PRICE=100;
@@ -26,6 +26,18 @@
    if(!s.byCharacter || typeof s.byCharacter!=='object')s.byCharacter={};
    return s;
  }
+ // All existing OCs begin with the original cream/brown room, without deleting purchased styles.
+ function ensureCreamRooms(){
+   const s=state();
+   if(s.creamMigrated)return;
+   for(const characterId of Object.keys(CHARACTERS)){
+     setCharacterRoomId('cream',characterId);
+     setCharacterWallpaperId(null,characterId);
+   }
+   s.creamMigrated=true;
+   persist();
+ }
+ ensureCreamRooms();
  function unlocked(id){const s=state();return id==='room-makeover'?!!s.unlocked:s.patterns.includes(id)}
  function activeDesign(id=save.selectedCharacter){return state().byCharacter[id] || null}
  function patternCss(entry){
@@ -48,15 +60,17 @@
  }
  function paintLive(){
    const layers=document.getElementById('homeMakeoverLayers');if(!layers)return;
-   const design=state().unlocked?activeDesign():null;
-   paint(layers,design);
-   if(state().unlocked){
-     // The previous automatic patterned wallpaper overlay is disabled only in makeover mode.
-     roomWallpaperOverlay.classList.add('hidden');
-     // Actual room artwork returns to its original warm cream/brown base once unlocked.
-     roomImage.src='assets/rooms/cream.webp';
-     roomPickerText.textContent='Customize Room';
-     roomPickerButton.setAttribute('aria-label','Customize this OC room colors');
+   const enabled=state().unlocked;
+   paint(layers,enabled?activeDesign():null);
+   // Keep the original warm cream/brown base, without affecting OC or arrow positions.
+   roomWallpaperOverlay.classList.add('hidden');
+   roomImage.src='assets/rooms/cream.webp';
+   roomPickerText.textContent=enabled?'Change Room':'Cream Room';
+   roomPickerButton.setAttribute('aria-label',enabled?'Change room colors':'Cream Room — unlock Room Makeover in the Rooms shop');
+   roomPickerButton.setAttribute('aria-expanded','false');
+   if(roomPickerSwatch){
+     roomPickerSwatch.classList.remove('wallpaper-active','wallpaper-swatch');
+     roomPickerSwatch.style.background='#f4e2c8';
    }
  }
  const originalRenderRoom=renderRoom;
@@ -64,17 +78,22 @@
  const originalPickerDisplay=updateRoomPickerButtonDisplay;
  updateRoomPickerButtonDisplay=function(...args){
    const result=originalPickerDisplay.apply(this,args);
-   if(state().unlocked){roomPickerText.textContent='Customize Room';roomPickerButton.setAttribute('aria-label','Customize this OC room colors');}
+   roomPickerText.textContent=state().unlocked?'Change Room':'Cream Room';
+   roomPickerButton.setAttribute('aria-label',state().unlocked?'Change room colors':'Cream Room — unlock Room Makeover in the Rooms shop');
+   if(roomPickerSwatch){roomPickerSwatch.classList.remove('wallpaper-active','wallpaper-swatch');roomPickerSwatch.style.background='#f4e2c8';}
    return result;
  };
  const originalRenderShop=renderShop;
- renderShop=function(...args){const result=originalRenderShop.apply(this,args);appendShopUpgrades();return result};
+ renderShop=function(...args){const result=originalRenderShop.apply(this,args);shopGrid.classList.toggle('home-makeover-rooms-shop',currentShopTab==='rooms');appendShopUpgrades();return result};
  function appendShopUpgrades(){
   if(currentShopTab!=='rooms')return;
   for(const [id,info] of Object.entries(UPGRADES).reverse()){
    if(unlocked(id))continue;
-   const button=document.createElement('button');button.type='button';button.className='shop-item-card shop-room-card home-makeover-shop-card';
-   const art=document.createElement('span');art.className='shop-item-art shop-room-art';art.textContent=info.icon;
+   const button=document.createElement('button');button.type='button';button.className='shop-item-card shop-room-card home-makeover-shop-card'+(id==='room-makeover'?' home-makeover-featured':'');
+   const art=document.createElement('span');art.className='shop-item-art shop-room-art home-makeover-pattern-art home-makeover-art-'+id;
+   if(id==='room-makeover'){
+     const label=document.createElement('span');label.className='home-makeover-featured-label';label.textContent='Room Makeover ♡';art.append(label);
+   }
    const copy=document.createElement('span');copy.className='shop-item-copy';
    const name=document.createElement('strong');name.textContent=info.name;
    const price=document.createElement('span');price.className='shop-item-price';
@@ -89,14 +108,15 @@
    const info=UPGRADES[id];if(!info||unlocked(id))return;
    const modal=baseDialog(info.name);
    const main=document.createElement('div');main.style.cssText='display:grid;place-items:center;gap:16px;flex:1;text-align:center;';
-   const art=document.createElement('div');art.style.fontSize='65px';art.textContent=info.icon;
-   const desc=document.createElement('p');desc.textContent=info.description+'. This unlock is shared across all OCs.';
+   const art=document.createElement('div');art.className='home-makeover-purchase-icon home-makeover-art-'+id;
+   if(id==='room-makeover'){const label=document.createElement('span');label.textContent='Room Makeover ♡';art.append(label)}
+   const desc=document.createElement('p');desc.textContent=id==='room-makeover'?'Activate Room Makeover for 1,000 Coins? This unlocks the Change Room button for every OC.':info.description+'. This unlock is shared across all OCs.';
    const price=document.createElement('strong');price.textContent='1,000 Pink Coins';
    const remaining=document.createElement('p');remaining.className='home-makeover-note';remaining.textContent=`Balance: ${Number(save.coins||0).toLocaleString()} Pink Coins`;
    main.append(art,desc,price,remaining);modal.dialog.append(main);
    const footer=document.createElement('div');footer.className='home-makeover-bottom';
    const cancel=makeButton('Back',()=>modal.close());
-   const buy=makeButton('Unlock · 1,000',()=>{
+   const buy=makeButton(id==='room-makeover'?'Activate · 1,000 Coins':'Unlock · 1,000 Coins',()=>{
      if(unlocked(id))return;
      if(Number(save.coins||0)<1000){remaining.textContent='Not enough Pink Coins!';return;}
      save.coins-=1000;
@@ -177,11 +197,12 @@
  }
  // Capture only after unlocking: the original room/wallpaper picker stays available until purchase.
  roomPickerButton.addEventListener('click',event=>{
-   if(!state().unlocked)return;
-   event.stopImmediatePropagation();event.preventDefault();closeRoomPicker();openCustomRoom();
+   event.stopImmediatePropagation();event.preventDefault();closeRoomPicker();
+   if(!state().unlocked){showToast('Unlock Room Makeover for 1,000 Coins in Shop → Rooms!');return;}
+   openCustomRoom();
  },true);
  // Old picker overlay must not come back from routine screen updates.
  const originalRenderPicker=renderRoomPicker;
- renderRoomPicker=function(...args){const result=originalRenderPicker.apply(this,args);if(state().unlocked)closeRoomPicker();return result};
+ renderRoomPicker=function(...args){const result=originalRenderPicker.apply(this,args);closeRoomPicker();return result};
  paintLive();updateRoomPickerButtonDisplay();
 })();
