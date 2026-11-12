@@ -53,3 +53,9 @@
 #roomPickerButton #roomPickerSwatch,
 #roomPickerButton .room-picker-arrow{display:none!important}
 #roomPickerButton .room-picker-text{white-space:nowrap}
+
+/* v24.375: keep Coins anchored at the right when Room Makeover is locked
+   and its left-hand header button is hidden. */
+.top-hud > .coin-pill {
+  margin-left: auto;
+}
