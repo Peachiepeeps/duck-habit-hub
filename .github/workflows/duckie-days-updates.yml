@@ -1,0 +1,86 @@
+name: Duckie Days - Install Updates
+
+on:
+  push:
+    paths:
+      - 'Duckie-Days-v*-UPDATE-ONLY.zip'
+  workflow_dispatch:
+    inputs:
+      update_zip:
+        description: 'Exact update ZIP filename (optional; blank chooses newest)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: duckie-days-update-installer
+  cancel-in-progress: false
+
+jobs:
+  install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Install uploaded patch
+        shell: bash
+        env:
+          REQUESTED_ZIP: ${{ github.event.inputs.update_zip }}
+        run: |
+          set -euo pipefail
+          ZIP="${REQUESTED_ZIP:-}"
+          if [ -z "$ZIP" ]; then
+            ZIP="$(find . -maxdepth 1 -type f -name 'Duckie-Days-v*-UPDATE-ONLY.zip' -printf '%f\n' | sort -V | tail -n 1)"
+          fi
+          if [ -z "$ZIP" ] || [ ! -f "$ZIP" ]; then
+            echo "::error::Upload an update ZIP to the repository root."
+            exit 1
+          fi
+          echo "Installing $ZIP"
+          unzip -t "$ZIP"
+          mapfile -t PATCH_FILES < <(unzip -Z -1 "$ZIP" | grep -v '/$')
+          if [ "${#PATCH_FILES[@]}" -eq 0 ]; then
+            echo "::error::The update ZIP contains no files."
+            exit 1
+          fi
+          unzip -oq "$ZIP" -d .
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- "${PATCH_FILES[@]}"
+          if ! git diff --cached --quiet; then
+            git commit -m "Install Duckie Days update: $ZIP"
+            git push
+          else
+            echo "Update already installed."
+          fi
+      - name: Archive obsolete installer workflows
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .github/workflow-archive
+          count=0
+          while IFS= read -r -d '' src; do
+            stem="$(basename "$src")"
+            dest=".github/workflow-archive/$stem"
+            if [ -e "$dest" ]; then
+              dest=".github/workflow-archive/retired-$stem"
+            fi
+            if [ -e "$dest" ]; then
+              dest=".github/workflow-archive/retired-$(date +%Y%m%d)-$stem"
+            fi
+            git mv -- "$src" "$dest"
+            count=$((count+1))
+          done < <(find .github/workflows -maxdepth 1 -type f ! -name 'duckie-days-updates.yml' -print0)
+          echo "Archived $count obsolete workflow files."
+          git add -A -- .github/workflows .github/workflow-archive
+          if ! git diff --cached --quiet; then
+            git commit -m 'Archive obsolete Duckie Days installer workflows'
+            if ! git push; then
+              echo "::warning::Game update installed, but workflow archive push was blocked. Move old installer YAML files into .github/workflow-archive manually."
+              exit 0
+            fi
+          fi
