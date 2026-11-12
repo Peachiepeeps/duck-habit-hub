@@ -1,4 +1,4 @@
-/* Duckie Days v24.378 — Home Hub Room Makeover, safely separate from OC positioning. */
+/* Duckie Days v24.379 — Home Hub Room Makeover, safely separate from OC positioning. */
 (() => {
  'use strict';
  const MAKEOVER_PRICE=100;
@@ -197,12 +197,90 @@
    extension.style.background=design?.floor?patternCss(design.floor):'';
    extension.style.display=design?.floor?'block':'none';
  }
+ // The Shelf of Ducks and Collectible Shelf use their own 1080×1920 sprite.
+ // Recolor that actual sprite with the selected Home Hub Full Shelf color,
+ // preserving its antialiased black lines and two slightly different shades.
+ // The separate page color pickers are intentionally retired.
+ const wingShelfOriginal='assets/room-expansion/shelves/shelf-cream.webp';
+ const wingShelfRecolors=new Map();
+ function coloredWingShelf(hex){
+   const key=String(hex||'').toLowerCase();
+   if(wingShelfRecolors.has(key))return wingShelfRecolors.get(key);
+   const task=new Promise(resolve=>{
+     const image=new Image();
+     image.onload=()=>{
+       try{
+         const canvas=document.createElement('canvas');
+         canvas.width=image.naturalWidth;canvas.height=image.naturalHeight;
+         const ctx=canvas.getContext('2d',{willReadFrequently:true});
+         ctx.drawImage(image,0,0);
+         const pixels=ctx.getImageData(0,0,canvas.width,canvas.height);
+         const d=pixels.data;
+         const main=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16));
+         const inside=main.map(value=>Math.round(value*.79));
+         const referenceMain=[246,237,233];
+         const referenceInside=[199,185,178];
+         const normMain=referenceMain.reduce((sum,v)=>sum+v*v,0);
+         const normInside=referenceInside.reduce((sum,v)=>sum+v*v,0);
+         for(let i=0;i<d.length;i+=4){
+           if(!d[i+3])continue;
+           const r=d[i],g=d[i+1],b=d[i+2];
+           // Estimate which original paint the pixel belonged to, accounting
+           // for black antialiasing; do not paint over the ink outlines.
+           const tMain=Math.min(1,Math.max(0,(r*246+g*237+b*233)/normMain));
+           const tInside=Math.min(1,Math.max(0,(r*199+g*185+b*178)/normInside));
+           const errorMain=(r-246*tMain)**2+(g-237*tMain)**2+(b-233*tMain)**2;
+           const errorInside=(r-199*tInside)**2+(g-185*tInside)**2+(b-178*tInside)**2;
+           const inner=errorInside<errorMain;
+           const intensity=inner?tInside:tMain;
+           if(intensity<.11)continue;
+           const target=inner?inside:main;
+           for(let c=0;c<3;c++)d[i+c]=Math.round(target[c]*intensity);
+         }
+         ctx.putImageData(pixels,0,0);
+         resolve(canvas.toDataURL('image/png'));
+       }catch(error){console.warn('Duckie Days shelf recolor skipped',error);resolve(wingShelfOriginal)}
+     };
+     image.onerror=()=>resolve(wingShelfOriginal);
+     image.src=wingShelfOriginal;
+   });
+   wingShelfRecolors.set(key,task);
+   return task;
+ }
+ function paintWingShelfImage(img){
+   if(!img)return;
+   const current=activeDesign();
+   const fullShelfColor=current?.bookshelf?.primary;
+   const color=state().unlocked&&/^#[0-9a-f]{6}$/i.test(fullShelfColor||'')?fullShelfColor:null;
+   const token=color?color.toLowerCase():'default';
+   img.dataset.makeoverWingColor=token;
+   if(!color){
+     // Both wings start with the original cream drawing until recolored.
+     if(img.getAttribute('src')!==wingShelfOriginal)img.src=wingShelfOriginal;
+     return;
+   }
+   coloredWingShelf(color).then(uri=>{
+     if(img.dataset.makeoverWingColor!==token)return;
+     if(img.getAttribute('src')!==uri)img.src=uri;
+   });
+ }
  function paintWing(){
-   // The wing shelf is a separate furnishing and is not the Home Hub's Full Shelf.
    const wing=document.getElementById('homeMakeoverWingLayers');
-   const shelf=document.getElementById('wingShelfImage');
    if(wing)wing.replaceChildren();
-   if(shelf)shelf.style.visibility='';
+   paintWingShelfImage(document.getElementById('wingShelfImage'));
+   paintWingShelfImage(document.getElementById('taskCollectibleShelfImage'));
+ }
+ // The independent wing scripts reset their image src when opening a shelf.
+ // Reapply its shared color after that render, without changing either shelf's
+ // saved collectibles, slots, position or clickable areas.
+ for(const id of ['wingShelfImage','taskCollectibleShelfImage']){
+   const image=document.getElementById(id);
+   if(!image)continue;
+   new MutationObserver(()=>{
+     const url=image.getAttribute('src')||'';
+     if(url.startsWith('data:image/'))return;
+     paintWingShelfImage(image);
+   }).observe(image,{attributes:true,attributeFilter:['src']});
  }
  function syncMakeoverButton(){
    const enabled=!!state().unlocked;

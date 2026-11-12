@@ -106,3 +106,36 @@
     pointer-events:none;
   }
 }
+
+/* v24.379: wing shelves share the Home Hub Full Shelf finish. Remove the
+   obsolete independent swatches (and their occupied space) entirely. */
+#wingShelfStylePicker,#taskCollectibleShelfStylePicker{display:none!important}
+/* Readable even on deep burgundy, patterned or cream wallpaper. */
+.duck-display-title,
+#taskCollectibleWing .task-collectible-title-v254{
+  display:grid;
+  place-items:center;
+  gap:3px;
+  color:#553b47!important;
+  text-shadow:none!important;
+}
+.duck-display-title span,.duck-display-title strong,
+#taskCollectibleWing .task-collectible-title-v254 span,
+#taskCollectibleWing .task-collectible-title-v254 strong{
+  display:block;
+  width:max-content;
+  max-width:90%;
+  margin-inline:auto;
+  padding:2px 12px;
+  border:1px solid rgba(116,76,92,.25);
+  border-radius:9px;
+  background:rgba(255,250,246,.96);
+  color:#533943!important;
+  text-shadow:none!important;
+  box-shadow:0 2px 7px rgba(34,24,31,.24);
+}
+.duck-display-title strong,
+#taskCollectibleWing .task-collectible-title-v254 strong{
+ font-size:clamp(.95rem,3.8vw,1.14rem);
+ font-weight:950;
+}
