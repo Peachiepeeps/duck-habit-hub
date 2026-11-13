@@ -1144,6 +1144,7 @@ function prepareOrder(){
   const visual=goalDrinkVisual();
   renderDrink('preview',visual.color,visual.opacity,order.ice,order.toppings,order.base);
   cyclePair(document.getElementById('previewCustomerSprite'),document.getElementById('previewBearSprite'));
+  updateCafeBearFavoriteGreeting();
 }
 
 function startCurrentOrder(){
@@ -1777,6 +1778,112 @@ document.getElementById('again').addEventListener('click',prepareOrder);
 document.getElementById('changeBear').addEventListener('click',goBearPick);
 buildBearPicker();
 </script>
+
+<style id="duckieBearFavoriteStylesV389">
+/* v24.389: A small, readable greeting beneath the order scene, not on top of the drink artwork. */
+#orderPreview .previewCard{overflow-y:auto;overscroll-behavior:contain}
+#cafeBearFavoriteSpeech[hidden]{display:none!important}
+#cafeBearFavoriteSpeech{
+  width:min(95%,355px);margin:-1px 5px 6px auto;position:relative;
+  padding:7px 11px;background:#fff2f8;border:2px solid #e8b3d0;
+  border-radius:16px 16px 5px 16px;box-shadow:0 3px 0 rgba(188,111,147,.12);
+  text-align:left;line-height:1.27;color:#75495d;font-size:clamp(.70rem,2.4vw,.82rem);
+}
+#cafeBearFavoriteSpeech::before{
+  content:"";position:absolute;top:-7px;right:26px;width:11px;height:11px;
+  background:#fff2f8;border-left:2px solid #e8b3d0;border-top:2px solid #e8b3d0;
+  transform:rotate(45deg);
+}
+#cafeBearFavoriteSpeech .bearFavoriteSpeaker{display:block;color:#bb608b;font-size:.78em;font-weight:950;margin-bottom:2px}
+#cafeBearFavoriteSpeech .bearFavoriteLine{display:block;font-weight:800;white-space:pre-wrap;overflow-wrap:anywhere}
+#orderPreview .cafeScene.bearFavoriteCustomer .sceneCharacter.bear.counterBear::after{
+  content:"♥";position:absolute;z-index:15;right:3px;top:-14px;color:#fc68a5;font-size:24px;
+  text-shadow:-1px -1px #fff,1px 1px #fff,0 3px 0 #fff;
+  animation:baoFavoriteHeart 1.6s ease-in-out infinite;pointer-events:none;
+}
+@keyframes baoFavoriteHeart{0%,100%{transform:rotate(-8deg) translateY(0)}50%{transform:rotate(8deg) translateY(-3px)}}
+#result .cafe-bear-rewards.cafeBearFavoriteReward{background:#fff0f7;border-color:#e59cbe}
+#result .cafe-bear-rewards.cafeBearFavoriteReward strong{color:#b04480}
+</style>
+<script id="duckieBearFavoriteCustomersV389">
+// v24.389: all bears have 1–3 customer favorites. Dialogue remains exactly as supplied.
+const CAFE_BEAR_FAVORITES = Object.freeze({
+  "cheese": {
+    "customers": [
+      "Devlin",
+      "Hibiki",
+      "Beau"
+    ],
+    "dialogue": "Oh… it’s you. Welcome, please sit and relax…"
+  },
+  "parfait": {
+    "customers": [
+      "Io",
+      "Pippa",
+      "Nene"
+    ],
+    "dialogue": "Welcome! It’s nice to see you again! I’ll be right back with your regular!"
+  },
+  "frappe": {
+    "customers": [
+      "Miko",
+      "Collin",
+      "Lukio"
+    ],
+    "dialogue": "Yo! Nice to see ya again! Wanna chat? Lemme get you a drink!"
+  },
+  "hime": {
+    "customers": [
+      "Peep",
+      "Luv & Birdie",
+      "Bubble"
+    ],
+    "dialogue": "Hi friend! I’m so glad you’re here! Sit, sit, I’ll give you a drink if you help me win Cheese’s heart! <3"
+  },
+  "melrose": {
+    "customers": [
+      "Annika",
+      "Quin",
+      "Cybil"
+    ],
+    "dialogue": "Welcome. Sorry if I’m a bit slow, but please relax and I’ll get you something nice to drink."
+  },
+  "pickle": {
+    "customers": [
+      "Shinobu",
+      "Cheryln",
+      "Ein"
+    ],
+    "dialogue": "*Mouth Full* Oh, hewwo! Welcome back! Want a snack, or maybe a drink?"
+  }
+});
+function isBearFavoriteCustomer(bearId, customerName){
+  const bear=CAFE_BEAR_FAVORITES[String(bearId||'').toLowerCase()];
+  return !!bear && bear.customers.includes(String(customerName||''));
+}
+const favoriteSpeech=document.createElement('div');
+favoriteSpeech.id='cafeBearFavoriteSpeech';
+favoriteSpeech.hidden=true;
+favoriteSpeech.setAttribute('role','status');
+favoriteSpeech.setAttribute('aria-live','polite');
+const favoriteSpeaker=document.createElement('span');favoriteSpeaker.className='bearFavoriteSpeaker';
+const favoriteLine=document.createElement('span');favoriteLine.className='bearFavoriteLine';
+favoriteSpeech.append(favoriteSpeaker,favoriteLine);
+document.querySelector('#orderPreview .characterScene')?.insertAdjacentElement('afterend',favoriteSpeech);
+function updateCafeBearFavoriteGreeting(){
+  const bearId=String(selectedBear||'').toLowerCase();
+  const name=currentCustomer?.name||'';
+  const favorite=isBearFavoriteCustomer(bearId,name);
+  const scene=document.querySelector('#orderPreview .cafeScene');
+  if(scene)scene.classList.toggle('bearFavoriteCustomer',favorite);
+  favoriteSpeech.hidden=!favorite;
+  if(!favorite)return;
+  favoriteSpeaker.textContent='♡ '+(BEAR_SPRITES[bearId]?.name||bearId)+' · Favorite Customer!';
+  // Use textContent, not HTML: Hime's '<3' and Pickle's asterisks are literal dialogue.
+  favoriteLine.textContent=CAFE_BEAR_FAVORITES[bearId].dialogue;
+}
+window.DuckieCafeBearFavorites=CAFE_BEAR_FAVORITES;
+</script>
 <style id="duckieCafeBearRewardStyle">
   #result .resultCard{overflow-y:auto;overscroll-behavior:contain;}
   .cafe-bear-rewards{margin:6px auto 1px;padding:7px 9px;border:2px solid #e9bfd4;border-radius:13px;background:#fff1f8;text-align:center;color:#805267;max-width:98%;font-size:clamp(.64rem,2.3vw,.79rem);line-height:1.24}
@@ -1879,7 +1986,10 @@ buildBearPicker();
     const bearId=String(selectedBear||'cheese').toLowerCase();
     const pool=BEAR_REWARD_POOLS[bearId];
     if(!pool?.length)return;
-    const count=perfect?2:1;
+    // Favorite customers double the number of independent reward draws,
+    // rather than doubling quantities or the unrelated +50 favorite-drink bonus.
+    const isFavorite=isBearFavoriteCustomer(bearId,currentCustomer?.name);
+    const count=(perfect?2:1)*(isFavorite?2:1);
     const prizes=Array.from({length:count},()=>pool[Math.floor(Math.random()*pool.length)]);
     const save=readSave();
     prizes.forEach(prize=>grant(save,prize));
@@ -1896,7 +2006,10 @@ buildBearPicker();
     if(container){
       container.innerHTML='';
       const heading=document.createElement('strong');
-      heading.textContent=`🎁 ${BEAR_SPRITES[bearId]?.name||bearId}'s Special Rewards · ${count} ${count===1?'prize':'prizes'}!`;
+      heading.textContent=isFavorite
+        ? `💕 Favorite Customer! ×2 Bear Rewards · ${count} prizes!`
+        : `🎁 ${BEAR_SPRITES[bearId]?.name||bearId}'s Special Rewards · ${count} ${count===1?'prize':'prizes'}!`;
+      container.classList.toggle('cafeBearFavoriteReward',isFavorite);
       const items=document.createElement('div');items.className='cafe-bear-reward-items';
       for(const prize of prizes){const el=document.createElement('span');el.textContent=prize.name;items.append(el)}
       container.append(heading,items);

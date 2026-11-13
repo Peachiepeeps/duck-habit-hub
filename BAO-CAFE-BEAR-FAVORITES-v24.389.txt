@@ -1,0 +1,30 @@
+Duckie Days v24.389 — Bao Café Favorite Customers (UPDATE ONLY)
+=============================================================
+Apply after v24.388. Install the ZIP contents at the repository root,
+keeping existing files. This update changes only:
+  bao-cafe/index.html
+  index.html (service-worker refresh)
+  sw.js (cache version)
+  version.json
+
+NEW: each of the six bears has 3 favorite café customers.
+When the selected bear serves a favorite, a heart appears above the bear
+on the New Order screen, with her special dialogue in a small bubble
+beneath the scene. This stays out of the way of the order art.
+
+Favorite customer: completed order = 2 independent reward draws;
+perfect order = 4 independent reward draws.
+Other customers: completed order = 1; perfect order = 2.
+The separate +50 Pink Coins favorite-drink bonus is not multiplied.
+Reward pools, quantities, rare-egg/card-pack support and quest duplicate
+prevention are preserved from v24.387.
+
+Favorite customers:
+  Cheese: Devlin, Hibiki, Beau
+  Parfait: Io, Pippa, Nene
+  Frappe: Miko, Collin, Lukio
+  Hime: Peep, Luv & Birdie, Bubble (Peep REPLACES Annika)
+  Mel Rose: Annika, Quin, Cybil
+  Pickle: Shinobu, Cheryln, Ein
+
+This update does not modify your live GitHub repository automatically.
