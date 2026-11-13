@@ -1,0 +1,21 @@
+Duckie Days v24.388 — Bao Café: Tamao + Lain Favorite Lid/Straw Colors
+
+UPDATE-ONLY: Apply these files at the root of your existing Duckie Days repository AFTER the v24.387 Three Bears Rewards update. Do not remove existing files. This is not a standalone game download.
+
+Updated:
+- bao-cafe/index.html: activates the chosen favorite lid and straw color preferences for Tamao (8 colors) and Lain (10 colors).
+- index.html, sw.js, version.json: bumps the version/service-worker cache so the updated café page is fetched on the next visit.
+
+Tamao: Pink, Lavender, Grape Soda, Moonlight, Twilight, Charcoal, Midnight Black, Marshmallow.
+Lain: Jade, Seafoam, Mint, Matcha, Pistachio, Midnight Black, Charcoal, Chocolate, Caramel, Gray.
+
+All other customer preferences, bear rewards, cards, sprites, and game save data are unchanged. Normal flat lids must now match a preferred color for Tamao and Lain; dome lids automatically pass the lid check as before. Straw color must still match for the +50 Pink Coin favorites bonus.
+
+Test after installing:
+1. Serve/update the game and reload (close/reopen PWA if needed).
+2. Start a Tamao or Lain order with one of her preferred drink recipes.
+3. Try a favorite straw color and flat lid color: when other parts match, the favorites bonus should appear.
+4. Try a nonfavorite straw color: favorites bonus should not appear, even with a dome lid.
+5. Confirm other customers and the six bears still work.
+
+Game data/save files are not included or modified.
