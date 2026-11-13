@@ -15,15 +15,15 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-385';
-const MEDIA_CACHE='duck-habit-hub-media-v24-385';
+const APP_CACHE='duck-habit-hub-app-v24-387';
+const MEDIA_CACHE='duck-habit-hub-media-v24-387';
 const MAX_MEDIA_ENTRIES=400;
 let mediaWrites=0;
 const APP_SHELL=[
  './',
  './index.html',
  './version.json',
- './sw.js?v=24.356',
+ './sw.js?v=24.387',
  './manifest.webmanifest?v=24.296',
  './app.css?v=24.385',
  './trading-cards-base.css?v=24.327',
@@ -46,8 +46,14 @@ const APP_SHELL=[
  './trading-cards-gimmicks-v288.js?v=24.296',
  './trading-cards-sock-gremlin-v297.js?v=24.297',
  './trading-cards-universal-v298.js?v=24.298',
- './trading-cards-bao-cafe-v299.js?v=24.309',
+ './trading-cards-bao-cafe-v299.js?v=24.387',
  './bao-cafe/index.html',
+ './duck-quest/assets/gimmicks/bao-cafe/hime/idle-1.png',
+ './duck-quest/assets/gimmicks/bao-cafe/hime/idle-2.png',
+ './duck-quest/assets/gimmicks/bao-cafe/melrose/idle-1.png',
+ './duck-quest/assets/gimmicks/bao-cafe/melrose/idle-2.png',
+ './duck-quest/assets/gimmicks/bao-cafe/pickle/idle-1.png',
+ './duck-quest/assets/gimmicks/bao-cafe/pickle/idle-2.png',
  './bao-cafe/style.css?v=24.309',
  './bao-cafe/script.js?v=24.309',
  './bao-cafe/assets/Background-cafe.webp',
@@ -76,7 +82,7 @@ const APP_SHELL=[
  './bao-cafe/assets/Frappe-idle-1.png',
  './duck-quest/css/bao-cafe-v299.css?v=24-309',
  './duck-quest/css/fixes-v318.css?v=24.318',
- './duck-quest/js/bao-cafe-v299.js?v=24.356',
+ './duck-quest/js/bao-cafe-v299.js?v=24.387',
  './duck-quest/js/lover-assist-v385.js?v=24.385',
  './duck-quest/js/sweetheart-v352.js?v=24.385',
  './duck-quest/css/lover-assist-v385.css?v=24.385',

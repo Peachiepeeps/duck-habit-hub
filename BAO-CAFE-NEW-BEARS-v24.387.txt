@@ -1,0 +1,18 @@
+Duckie Days v24.387 — Bao Café: Hime, Mel Rose, Pickle rewards
+
+UPDATE-ONLY: Extract these files at the root of your existing game repository.
+Do not delete or replace the rest of the game. All 3 bears are female.
+
+Rewards: a completed order awards 1 random prize from that bear's pool; a perfect order awards 2.
+Hime: Chocolate Brioche x1, Concha x1, Love Letter x1, Glitter x3, Pink Heart Refill x1, Pink Paint x2, Rare Egg x1, Hime Card x1, 250 Pink Coins.
+Mel Rose: Apple x1, Fruit Tart x1, Pill x1, Warm Blanket x2, White Paint x2, Mel Rose Card x1, Trading Card Pack x1, 250 Pink Coins.
+Pickle: Burger x1, Small EXP Candy x3, Large EXP Candy x2, Green Paint x2, Common Egg x1, Pickle Card x1, 250 Pink Coins.
+
+Cards are Rare Special NPC entries in the existing collection. Original sprites (idle and reaction) are included.
+Eggs are placed in the existing inventory, and Trading Card Packs increase unopenedPacks.
+Rare Duck Quest Bao Café encounters can now choose any of the six bears.
+The game version and service worker cache were bumped to v24.387.
+The original 3 bears' rewards are unchanged.
+
+Check manually after installing: choose each bear; finish an order; confirm inventory, eggs, unopened packs, and cards.
+Your game save is not included or edited.

@@ -2,11 +2,14 @@
 (function(){
   'use strict';
   const VERSION='24.299',KEY='baoCafeChallengeV299',TC=window.DuckieTradingCards;
-  const BEARS=['cheese','parfait','frappe'];
+  const BEARS=['cheese','parfait','frappe','hime','melrose','pickle'];
   const INFO={
     cheese:{name:'Cheese',mode:'Combo scoring',copy:'Cheese rewards accuracy! Keep a perfect streak to build a bigger score multiplier.',card:'r-bao-cheese',food:'cupcake'},
     parfait:{name:'Parfait',mode:'Time boosts',copy:'Parfait adds time every 3 perfect orders. Stay accurate and keep the cafe moving!',card:'r-bao-parfait',food:'parfait'},
-    frappe:{name:'Frappe',mode:'Double orders',copy:'Frappe loves upselling. Some customers will ask for two drinks instead of one!',card:'r-bao-frappe',food:'fancy-milk-tea'}
+    frappe:{name:'Frappe',mode:'Double orders',copy:'Frappe loves upselling. Some customers will ask for two drinks instead of one!',card:'r-bao-frappe',food:'fancy-milk-tea'},
+    hime:{name:'Hime',mode:'Special rewards',copy:'Hime would love your help at Bao Café! Complete a drink to receive one of her special presents.',card:'r-bao-hime',food:'chocolate-brioche'},
+    melrose:{name:'Mel Rose',mode:'Special rewards',copy:'Mel Rose has cozy prizes and card packs to share. Help her make a delicious drink!',card:'r-bao-melrose',food:'fruit-tart'},
+    pickle:{name:'Pickle',mode:'Special rewards',copy:'Pickle has treats, EXP candies, and eggs to share. Help with her café order!',card:'r-bao-pickle',food:'burger'}
   };
   let cooldown=0,animTimer=null;
   const pick=a=>a[Math.floor(Math.random()*a.length)];

@@ -1193,7 +1193,7 @@
   <script src="trading-cards-gimmicks-v288.js?v=24.296"></script>
   <script src="trading-cards-sock-gremlin-v297.js?v=24.297"></script>
   <script src="trading-cards-universal-v298.js?v=24.298"></script>
-  <script src="trading-cards-bao-cafe-v299.js?v=24.299"></script>
+  <script src="trading-cards-bao-cafe-v299.js?v=24.387"></script>
   <script src="app.js?v=24.385"></script>
   <script src="home-makeover.js?v=24.385"></script>
   <script src="universal-clothing-v311.js?v=24.354"></script>
@@ -1285,7 +1285,7 @@
       window.addEventListener("load", async () => {
         try {
           await duckHubClearOldCodeCaches();
-          const registration = await navigator.serviceWorker.register("./sw.js?v=24-359-content", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("./sw.js?v=24-387-bears", { updateViaCache: "none" });
           await registration.update();
           if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
           await duckHubCheckForUpdate(registration);
