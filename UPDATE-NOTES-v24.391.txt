@@ -1,0 +1,24 @@
+Duckie Days v24.391 — Home Hub, Clothing & Endless Duckdoku
+UPDATE-ONLY PACKAGE — apply on top of v24.390, retain all other game files.
+
+CHANGES:
+- Belts render below jackets/hoodies/cardigans and other outerwear across all five OCs.
+- Simplified Room Makeover / inventory: one reusable Bookshelf (free) and one Dresser (225 Pink Coins if not already owned). Remove either with the "None" furniture choice. Original purchased brown/dark dressers migrate into one owned Dresser. Old furniture IDs are hidden from shop/inventory but retained in save records for compatibility.
+- Bookshelf and Dresser keep separate customization colors per OC when switching or removing; furniture switching is free, recoloring costs 100 Pink Coins.
+- Furniture tint overlay no longer displays in the Shelf of Ducks / Task Collectible Shelf wings.
+- OC-room navigation arrows moved up 3 CSS pixels.
+- Maid universal outfit: trimmed colored mask edges inward ~1 pixel across 63 color layers; original black outlines retained unchanged.
+- Miho: standard bangs always selectable, Black Dress unlocked as a base closet choice, while Ein's bangs still require their existing unlock. Either bangs style can be selected after unlocking.
+- Duckdoku: original 24 handcrafted 6x6 levels preserved; from level 25 onward, an endless, reproducible mix of 6x6/8x8/10x10 levels. New 8x8/10x10 level generators tested for unique solutions; mobile board and controls compacted for portrait screens. Saved level progression preserved.
+
+QA PERFORMED:
+- JavaScript syntax checks passed for modified app, makeover, overlay fix and Duckdoku.
+- Tested 46 consecutive endless puzzles (levels 25–70): 6x6, 8x8 and 10x10 all have exactly one solution.
+- Confirmed old Dresser inventory and placement migration, furniture removal persistence, and all five native OC belt/jacket orders via targeted tests.
+- Maid color images were trimmed, with outlines untouched.
+- IMPORTANT: Full visual browser playthrough was blocked by this environment. Please verify outfit layering, maid recolors, furniture positions, and Duckdoku fit after applying.
+
+INSTALLATION:
+- Back up your current save/repository.
+- Extract/upload these UPDATE-ONLY files into the same repository paths, overwriting matching files. Keep other files/assets unchanged.
+- Ensure the prior v24.390 changes are installed. Commit/deploy and refresh the PWA to clear stale cache.

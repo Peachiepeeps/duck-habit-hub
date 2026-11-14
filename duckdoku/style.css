@@ -44,3 +44,43 @@ button.top-stat{cursor:pointer}.top-stat span{font-size:.58rem;letter-spacing:.1
 .level-pager-button{min-height:36px;padding:5px 3px;border:1.5px solid #e6ccd6;border-radius:12px;background:#fff6fa;color:#976c7d;font-weight:900;font-size:.68rem;cursor:pointer}
 .level-pager-button:disabled{opacity:.28;cursor:not-allowed}
 .level-choice{font-variant-numeric:tabular-nums;font-size:clamp(.54rem,2.5vw,.72rem)}
+
+/* v24.391 — Endless Mix mobile screen-fit: 6×6, 8×8 and 10×10. */
+:root {--r6:#f3c9df;--r7:#b5d4e7;--r8:#ffe2af;--r9:#d9d1f5;}
+.cell.region-6{--cell-bg:var(--r6)}.cell.region-7{--cell-bg:var(--r7)}
+.cell.region-8{--cell-bg:var(--r8)}.cell.region-9{--cell-bg:var(--r9)}
+/* Keep all controls and the square board on the phone viewport, no board scrolling. */
+.duckdoku-shell {min-height:100dvh;padding-top:max(4px,env(safe-area-inset-top));padding-bottom:max(4px,env(safe-area-inset-bottom));}
+.duckdoku-card {padding:8px 9px 9px;}
+.board {width:min(100%,540px,calc(100dvh - 330px));min-width:0;}
+.board[data-size="8"] .cell.mark-x::before,.board[data-size="8"] .cell.red-x::before{font-size:clamp(16px,5.2vw,35px)}
+.board[data-size="10"] .cell.mark-x::before,.board[data-size="10"] .cell.red-x::before{font-size:clamp(13px,4.4vw,30px)}
+.board[data-size="10"] .cell {border-width:1px}
+.board[data-size="10"] .cell.region-top {border-top-width:2px}
+.board[data-size="10"] .cell.region-bottom {border-bottom-width:2px}
+.board[data-size="10"] .cell.region-left {border-left-width:2px}
+.board[data-size="10"] .cell.region-right {border-right-width:2px}
+.level-size{display:block;font-size:.45rem;line-height:1.1;color:#a27585}
+@media(max-width:430px){
+ .duckdoku-card{padding:6px 7px 7px}
+ .round-button,.top-stat{min-height:38px}
+ .life-row{min-height:36px;padding:3px 0 0;gap:5px}
+ .life-icon{width:23px;height:23px}
+ .rule-strip{margin:4px 0 5px;gap:5px}
+ .rule-card{min-height:43px;padding:3px;font-size:.49rem;gap:3px}
+ .rule-card img{width:24px;height:24px}
+ .rule-card .mini-grid{width:26px;height:26px}
+ .rule-card .duck-pair img{width:20px;height:20px}
+ .status-text{min-height:25px;margin:5px auto 3px;font-size:.58rem}
+ .helper-bar{gap:5px;margin-top:2px}
+ .helper-button{min-height:62px;padding:4px;gap:0;border-radius:12px}
+ .helper-icon{height:30px}.helper-icon img{max-height:30px;max-width:36px}
+ .helper-button strong{font-size:.65rem}
+ .board {width:min(100%,calc(100dvh - 272px));}
+}
+@media(max-height:620px){
+ .rule-card{min-height:37px}
+ .board{width:min(100%,calc(100dvh - 260px))}
+ .helper-button{min-height:54px}
+ .life-row{min-height:30px}
+}

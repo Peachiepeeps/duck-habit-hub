@@ -1338,11 +1338,114 @@
     }
     return regions;
   }
+  // v24.391: deterministic, genuinely solvable 8x8 and 10x10 Endless Mix.
+  // Each level keeps the same size/layout when replayed or loaded from a save.
+  function gridSizeForLevel(level){
+    if(level<=HANDMADE_COUNT)return 6;
+    const rng=seededRandom(level);
+    // Discard early generator samples to decorrelate adjacent level numbers.
+    for(let i=0;i<5;i++)rng();
+    return [6,8,10][Math.floor(rng()*3)];
+  }
+  function shuffleByRng(array,rng){
+    for(let i=array.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[array[i],array[j]]=[array[j],array[i]];}
+    return array;
+  }
+  function queenSolution(size,rng){
+    const chosen=[],occupied=new Set();
+    function visit(row){
+      if(row===size)return true;
+      for(const col of shuffleByRng(Array.from({length:size},(_,i)=>i),rng)){
+        if(occupied.has(col)||(row>0&&Math.abs(col-chosen[row-1])<=1))continue;
+        chosen[row]=col;occupied.add(col);
+        if(visit(row+1))return true;
+        occupied.delete(col);
+      }
+      return false;
+    }
+    return visit(0)?chosen:null;
+  }
+  function growMixedRegions(size,rng,solution,singleCount){
+    const regions=Array(size*size).fill(-1),counts=Array(size).fill(1);
+    for(let row=0;row<size;row++)regions[row*size+solution[row]]=row;
+    const singletons=new Set(shuffleByRng(Array.from({length:size},(_,i)=>i),rng).slice(0,singleCount));
+    for(let remaining=size*size-size;remaining>0;remaining--){
+      const frontier=[];let smallest=Infinity;
+      for(let i=0;i<regions.length;i++){
+        if(regions[i]!==-1)continue;
+        const row=Math.floor(i/size),col=i%size;
+        const neighbors=[row>0?i-size:-1,row<size-1?i+size:-1,col>0?i-1:-1,col<size-1?i+1:-1];
+        for(const adjacent of neighbors){
+          const region=adjacent<0?-1:regions[adjacent];
+          if(region<0||singletons.has(region))continue;
+          const weight=counts[region]+rng()*3;
+          frontier.push([i,region,weight]);smallest=Math.min(smallest,weight);
+        }
+      }
+      if(!frontier.length)return null;
+      const shortlist=frontier.filter(item=>item[2]<smallest+2);
+      const [i,region]=shortlist[Math.floor(rng()*shortlist.length)];
+      regions[i]=region;counts[region]++;
+    }
+    return regions;
+  }
+  function hasOneMixedSolution(size,regions){
+    // Backtrack over rows. Check row/column, non-touching and 1 duck per color.
+    let found=0,checks=0,usedCols=0,usedRegions=0,previous=-1;
+    function visit(row){
+      if(++checks>120000)return false;
+      if(row===size){found++;return found<2;}
+      for(let col=0;col<size;col++){
+        if((usedCols&(1<<col))||(row>0&&Math.abs(col-previous)<=1))continue;
+        const region=regions[row*size+col],bit=1<<region;
+        if(usedRegions&bit)continue;
+        const before=previous;previous=col;usedCols|=1<<col;usedRegions|=bit;
+        const keepGoing=visit(row+1);
+        usedCols^=1<<col;usedRegions^=bit;previous=before;
+        if(!keepGoing)return false;
+      }
+      return true;
+    }
+    const completed=visit(0);
+    return completed&&found===1;
+  }
+  function generateMixedPuzzle(size,level,rng){
+    let solution=null,regions=null;
+    // Start with fewer forced single-cell regions; increase only when needed
+    // to guarantee exactly one solution. 10x10 puzzles still have many open cells.
+    for(let singles=1;singles<=size-2&&!regions;singles++){
+      for(let attempt=0;attempt<70;attempt++){
+        const trial=queenSolution(size,rng);
+        if(!trial)continue;
+        const trialRegions=growMixedRegions(size,rng,trial,singles);
+        if(trialRegions&&hasOneMixedSolution(size,trialRegions)){
+          solution=trial;regions=trialRegions;break;
+        }
+      }
+    }
+    if(!regions){
+      // Guaranteed unique fallback: size-1 forced cells and one remaining
+      // region. This always obeys all row/column/touch/color constraints.
+      solution=queenSolution(size,rng);
+      if(!solution)throw new Error('Unable to generate a Duckdoku solution');
+      regions=Array(size*size).fill(size-1);
+      for(let row=0;row<size-1;row++)regions[row*size+solution[row]]=row;
+    }
+    const rating=size===10?160:size===8?125:90;
+    return {stage:level,size,solution:solution.slice(),regions,rating,
+      difficulty:size===10?'Sneaky':size===8?'Tricky':'Steady'};
+  }
   function puzzleForLevel(level){
     level=levelNumber(level);
     if(level<=HANDMADE_COUNT)return PUZZLES[level-1];
     if(level===cachedLevel)return cachedPuzzle;
     const rng=seededRandom(level);
+    const size=gridSizeForLevel(level);
+    if(size>6){
+      cachedLevel=level;
+      cachedPuzzle=generateMixedPuzzle(size,level,rng);
+      return cachedPuzzle;
+    }
     let chosen=null,regions=null;
     for(let attempt=0;attempt<220;attempt++){
       chosen=QUEEN_LAYOUTS[Math.floor(rng()*QUEEN_LAYOUTS.length)];
@@ -1451,9 +1554,9 @@
     el.setAttribute('aria-label',`Row ${Math.floor(index/puzzle.size)+1}, column ${index%puzzle.size+1}${mark==='x'?', marked X':mark==='red'?', wrong guess':mark==='duck'?', Duck':''}`);
   }
   function renderBoard(){
-    board.innerHTML='';board.style.setProperty('--n',puzzle.size);
+    board.innerHTML='';board.style.setProperty('--n',puzzle.size);board.dataset.size=String(puzzle.size);
     puzzle.regions.forEach((reg,index)=>{
-      const b=document.createElement('button');b.type='button';b.className=`cell region-${reg%6} ${regionBoundaryClass(index)}`;b.dataset.index=index;b.setAttribute('role','gridcell');board.append(b);
+      const b=document.createElement('button');b.type='button';b.className=`cell region-${reg} ${regionBoundaryClass(index)}`;b.dataset.index=index;b.setAttribute('role','gridcell');board.append(b);
     });
     marks.forEach((_,i)=>renderCell(i));
   }
@@ -1463,7 +1566,7 @@
     levelPageStart=Math.floor((stage-1)/LEVELS_PER_PAGE)*LEVELS_PER_PAGE+1;
     marks=Array(puzzle.size*puzzle.size).fill('');lives=STARTING_LIVES;extraLivesBought=0;helperUses={hint:1,reveal:1,scan:1};complete=false;lostLifeThisPuzzle=false;
     setScore(0);levelText.textContent=stage;renderBoard();renderLives();renderHelpers();renderCoins();renderLevelGrid();
-    setStatus('Tap to X · Double tap to place a Duck · Swipe to mark Xs');
+    setStatus(`${puzzle.size}×${puzzle.size} · Tap to X · Double tap for Duck · Swipe to mark Xs`);
   }
   function toggleX(index){
     if(complete||marks[index]==='red'||marks[index]==='duck')return;
@@ -1596,6 +1699,7 @@
     for(let n=levelPageStart;n<levelPageStart+LEVELS_PER_PAGE;n++){
       const b=document.createElement('button');b.type='button';b.className='level-choice';
       b.textContent=n.toLocaleString();b.disabled=n>p.unlocked;
+      if(n>HANDMADE_COUNT){const sz=document.createElement('small');sz.className='level-size';sz.textContent=gridSizeForLevel(n)+'×'+gridSizeForLevel(n);b.append(sz);}
       b.classList.toggle('current',n===stage);b.classList.toggle('done',!!p.completed[String(n)]);
       b.addEventListener('click',()=>resetPuzzle(n));levelGrid.append(b);
     }

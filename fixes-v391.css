@@ -1,0 +1,8 @@
+
+/* v24.391: furniture tint belongs ONLY to main Home Hub, never the two trophy wings. */
+.stage.room-wing-view #homeMakeoverFurnitureLayers,
+.stage.task-shelf-view #homeMakeoverFurnitureLayers {display:none!important;}
+/* Lift the two navigation arrows 3 CSS px from their 24.390 location. */
+.stage #roomWingButton.room-wing-button,
+.stage #taskShelfButton.task-shelf-button-v254 {bottom:calc(6.25% - 3px)!important;}
+@media(max-width:600px){.stage #roomWingButton.room-wing-button,.stage #taskShelfButton.task-shelf-button-v254{bottom:calc(6.25% - 3px)!important;}}

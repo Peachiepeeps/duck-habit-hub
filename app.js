@@ -1351,6 +1351,18 @@ const ITEMS = {
     "duckPerch": "dresser",
     "thumbBounds": [0, 1278, 248, 1832]
   },
+  "bookshelf": {
+    "name": "Bookshelf", "category": "furniture",
+    "image": "assets/furniture/shelves/shelf-white.webp", "icon": "▤",
+    "sellValue": 0, "furnitureSlot": "left", "furnitureType": "shelf",
+    "duckPerch": "shelf", "thumbBounds": [0,320,254,1807]
+  },
+  "dresser": {
+    "name": "Dresser", "category": "furniture",
+    "image": "assets/furniture/dressers/dresser-brown.webp", "icon": "▰",
+    "sellValue": 0, "furnitureSlot": "left", "furnitureType": "dresser",
+    "duckPerch": "dresser", "thumbBounds": [0,1278,248,1832]
+  },
   "rug-cloud-dark": {
     "name": "Dark Cloud Rug",
     "category": "furniture",
@@ -1648,8 +1660,7 @@ const SHOP_STOCK = {
   furniture: [
     { itemId: "petbed-white", price: 200, customizableFurniture: true, maxQuantity: 21 },
     { itemId: "lights-white", price: 200, customizableFurniture: true, maxQuantity: 21 },
-    { itemId: "dresser-brown", price: 225 },
-    { itemId: "dresser-dark-brown", price: 225 },
+    { itemId: "dresser", price: 225 },
     { itemId: "rug-cloud-dark", price: 160 },
     { itemId: "rug-cloud-white", price: 160 },
     { itemId: "rug-heart-white", price: 160 },
@@ -4562,8 +4573,8 @@ function getCharacterStarterWardrobe(characterId = save.selectedCharacter) {
   }
   if (characterId === "miho") {
     return [
-      "hair-main", "bow", "top-shirt", "bottom-skirt", "jacket-black",
-      "legwear-stockings", "shoes-boots", "belt"
+      "hair-main", "bangs", "bow", "top-shirt", "bottom-skirt", "jacket-black",
+      "legwear-stockings", "shoes-boots", "belt", "dress-black"
     ];
   }
   if (characterId === "annika") {
@@ -7850,7 +7861,8 @@ function showGiftBurst(symbol = "♡") {
 
 const ROOM_MAKEOVER_LEGACY_SHELVES = new Set([
   'shelf-white', 'shelf-dark-brown', 'shelf-brown',
-  'book-shelf-brown', 'book-shelf-white', 'book-shelf-dark'
+  'book-shelf-brown', 'book-shelf-white', 'book-shelf-dark',
+  'dresser-brown', 'dresser-dark-brown'
 ]);
 
 function inventoryItemsForCategory(category) {
@@ -8261,7 +8273,7 @@ function closeInventoryAll() {
 // -------------------- ROOM FURNITURE --------------------
 
 const EMPTY_ROOM_FURNITURE = Object.freeze({
-  left: null,
+  left: "bookshelf",
   petBed: null,
   rug: null,
   lights: null,
@@ -8292,9 +8304,23 @@ const PETBED_DUCK_PERCH = Object.freeze({
 });
 
 function normalizeRoomFurniture() {
-  if (!save.roomFurniture || typeof save.roomFurniture !== "object") {
-    save.roomFurniture = {};
+  if (!save.roomFurniture || typeof save.roomFurniture !== "object") save.roomFurniture = {};
+  if (save.furnitureChoicesMigratedV24391) return;
+  if (!save.inventory || typeof save.inventory !== 'object') save.inventory={};
+  // Old purchasable dresser colors are ONE reusable furniture choice now.
+  const oldDresserIds=['dresser-brown','dresser-dark-brown'];
+  const owned=oldDresserIds.some(id=>Number(save.inventory[id]||0)>0);
+  let wasPlaced=false;
+  for (const room of Object.values(save.roomFurniture)) {
+    if (!room || typeof room!=='object') continue;
+    if (oldDresserIds.includes(room.left)){room.left='dresser';wasPlaced=true;}
+    else if (['shelf-white','shelf-dark-brown','shelf-brown'].includes(room.left))room.left='bookshelf';
+    else if (room.left == null)room.left='bookshelf'; // In v24.390 this displayed the free shelf.
   }
+  if (owned || wasPlaced)save.inventory.dresser=Math.max(1,Number(save.inventory.dresser||0));
+  save.inventory.bookshelf=Math.max(1,Number(save.inventory.bookshelf||0));
+  save.furnitureChoicesMigratedV24391=true;
+  try{persist();}catch(_){}
 }
 
 function getRoomFurniture(roomId = save.room) {
@@ -8305,9 +8331,6 @@ function getRoomFurniture(roomId = save.room) {
     ...EMPTY_ROOM_FURNITURE,
     ...(savedRoom && typeof savedRoom === "object" ? savedRoom : {})
   };
-  // Legacy nulls previously meant 'no shelf'. After making the six-shelf part
-  // of Room Makeover, the free white shelf is the default left furnishing.
-  if (!result.left) result.left = 'shelf-white';
   return result;
 }
 
