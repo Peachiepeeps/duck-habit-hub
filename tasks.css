@@ -822,7 +822,13 @@
 }
 
 /* v24.394: comfortably larger new plushes on the dresser; other decor keeps its dimensions. */
-.task-dresser-collectible-v260[data-task-collectible-kind="plush"]{width:19.5%;top:60.3%;left:12.4%}
+.task-dresser-collectible-v260[data-task-collectible-kind="plush"]{
+  width:23.8%; /* 22% larger than the previous 19.5% width */
+  aspect-ratio:1 / 1; /* the layered plush art is a 500 x 500 canvas */
+  left:11.5%;
+  top:65.3%;
+  transform:translate(-50%,-100%); /* anchor visible plush feet on dresser top */
+}
 .task-shop-owned-count-v394{display:block;color:#996e83!important;font-weight:850;font-size:.51rem!important}
 .task-collectible-location-v394{font-size:.47rem;color:#917681;font-weight:700}
 
@@ -844,3 +850,6 @@
 .inventory-collectible-swatch-v394[aria-pressed=true]{outline:3px solid #ad608c;outline-offset:2px}
 .inventory-collectible-swatch-v394:focus-visible,.inventory-copy-choice-v394:focus-visible{outline:3px solid #8e5782;outline-offset:2px}
 @media(max-width:390px){.inventory-collectible-swatches-v394{gap:5px}.inventory-collectible-swatch-v394{width:25px;height:25px}}
+
+/* v24.397: plush size/placement adjustment above is scoped to the Home Hub dresser.
+   The Task Collectible Shelf's .task-collectible-slot-v254 artwork is unchanged. */

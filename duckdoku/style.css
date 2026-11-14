@@ -90,16 +90,16 @@ button.top-stat{cursor:pointer}.top-stat span{font-size:.58rem;letter-spacing:.1
    The board takes the available vertical space, while helper controls remain visible.
    Columns stay evenly sized, and cells grow vertically instead of requiring scroll. */
 :root{
-  --r0:#e58a8a; /* soft coral */
-  --r1:#e2e2a7; /* butter yellow */
-  --r2:#8ae58a; /* fresh green */
-  --r3:#8acee5; /* sky blue */
-  --r4:#8a8ae5; /* periwinkle */
-  --r5:#e8bad1; /* blush pink */
-  --r6:#e5b88a; /* peach */
-  --r7:#9fead7; /* seafoam */
-  --r8:#bac6e8; /* powder blue */
-  --r9:#e58ae5; /* orchid */
+  --r0:#F6C9D7; /* Strawberry Milk */
+  --r1:#F7E8B5; /* Buttercream */
+  --r2:#ACDFB7; /* Mint Jelly */
+  --r3:#92D4E9; /* Seafoam Aqua */
+  --r4:#AEDBFF; /* Baby Blue */
+  --r5:#C9C6F7; /* Periwinkle */
+  --r6:#F8DCCB; /* Peach Cream */
+  --r7:#D8E8B2; /* Pistachio */
+  --r8:#E4C8F2; /* Lavender */
+  --r9:#D9C1B1; /* Milk Tea */
 }
 /* Stretch the game card to the viewport: no more large empty area below it. */
 .duckdoku-shell{height:100dvh;min-height:0;align-items:stretch}
@@ -116,3 +116,11 @@ button.top-stat{cursor:pointer}.top-stat span{font-size:.58rem;letter-spacing:.1
 /* v24.395: Preserve the requested v24.394 test adjustment: 10px shorter
    than v24.393, 15px shorter overall than v24.392. */
 .board{--duckdoku-board-trim:15px;height:calc(100% - var(--duckdoku-board-trim))}
+
+/* v24.396: the 150vw ceiling also needs the requested 10px reduction.
+   Otherwise tall phones hit that ceiling and never visibly shrink the board. */
+.board{max-height:calc(150vw - 10px)}
+
+/* v24.397 — keep X marks visible over the newly approved light pastel tiles.
+   No puzzle rules, board height, or selection mechanics are changed. */
+.cell.mark-x::before{ text-shadow:0 1px 2px rgba(75,51,63,.68),0 0 1px rgba(75,51,63,.85); }

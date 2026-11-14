@@ -1,0 +1,29 @@
+DUCKIE DAYS v24.397 — APPROVED DUCKDOKU PASTELS + HOME HUB DRESSER PLUSH FIT
+
+CUMULATIVE UPDATE-ONLY ZIP: includes earlier v24.393–24.396 new bears,
+customized collectibles, duplicate purchases, and Duckdoku height corrections.
+
+Duckdoku palette (ten approved shades):
+  Strawberry Milk  #F6C9D7
+  Peach Cream      #F8DCCB
+  Buttercream      #F7E8B5
+  Pistachio        #D8E8B2
+  Mint Jelly       #ACDFB7
+  Seafoam Aqua     #92D4E9
+  Baby Blue        #AEDBFF
+  Periwinkle       #C9C6F7
+  Lavender         #E4C8F2
+  Milk Tea         #D9C1B1
+
+The ten shades are distributed across 6x6, 8x8 and 10x10 region indexes
+so smaller boards have a range of warm/cool colors. White X marks receive
+stronger shadow for visibility on the lighter backgrounds.
+The existing 10px board-height correction remains unchanged.
+
+Home Hub Dresser ONLY: plush visual width increased 19.5% -> 23.8%,
+positioned via the bottom edge rather than center to sit naturally on the
+dresser surface, and aligned with the visible dresser top. No collectible
+shelf sizes, positions, art assets, or purchase customization changed.
+
+Upload to the GitHub repo root using the existing update workflow.
+No player save files are included or overwritten.
