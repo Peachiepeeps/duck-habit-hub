@@ -10,9 +10,9 @@
     hime:{name:'Hime',mode:'Special rewards',copy:'Hime would love your help at Bao Café! Complete a drink to receive one of her special presents.',card:'r-bao-hime',food:'chocolate-brioche'},
     melrose:{name:'Mel Rose',mode:'Special rewards',copy:'Mel Rose has cozy prizes and card packs to share. Help her make a delicious drink!',card:'r-bao-melrose',food:'fruit-tart'},
     pickle:{name:'Pickle',mode:'Special rewards',copy:'Pickle has treats, EXP candies, and eggs to share. Help with her café order!',card:'r-bao-pickle',food:'burger'},
-    cerise:{name:'Cerise',mode:'Bao Café shift',copy:'Join Cerise for a café order and earn a Pink Coin thank-you.',food:'cupcake'},
-    hunni:{name:'Hunni',mode:'Bao Café shift',copy:'Join Hunni for a café order and earn a Pink Coin thank-you.',food:'cupcake'},
-    woolie:{name:'Woolie',mode:'Bao Café shift',copy:'Join Woolie for a café order and earn a Pink Coin thank-you.',food:'cupcake'}
+    cerise:{name:'Cerise',pronouns:'she/her',mode:'Special rewards',copy:'Cerise has cozy prizes, sweet treats, and a rare card to share. Help her make a drink!',card:'r-bao-cerise',food:'cupcake'},
+    hunni:{name:'Hunni',pronouns:'she/her',mode:'Special rewards',copy:'Hunni offers sweet treats, supplies, and a rare card for your help at Bao Café!',card:'r-bao-hunni',food:'croissant'},
+    woolie:{name:'Woolie',pronouns:'they/them',mode:'Special rewards',copy:'Woolie has cozy gifts, EXP candies, and their rare card. Help with a café shift!',card:'r-bao-woolie',food:'bread-loaf'}
   };
   let cooldown=0,animTimer=null;
   const pick=a=>a[Math.floor(Math.random()*a.length)];

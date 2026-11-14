@@ -820,3 +820,27 @@
 @media(max-width:600px){
   #roomWingButton,#taskShelfButton{bottom:9.3%!important;}
 }
+
+/* v24.394: comfortably larger new plushes on the dresser; other decor keeps its dimensions. */
+.task-dresser-collectible-v260[data-task-collectible-kind="plush"]{width:19.5%;top:60.3%;left:12.4%}
+.task-shop-owned-count-v394{display:block;color:#996e83!important;font-weight:850;font-size:.51rem!important}
+.task-collectible-location-v394{font-size:.47rem;color:#917681;font-weight:700}
+
+
+/* v24.394 — full-color Furniture inventory editor, independently saved per purchased copy. */
+.inventory-sheet-card:has(.inventory-collectible-large-preview-v394){max-height:min(90%,780px);overflow-y:auto;scrollbar-width:thin;padding-top:9px}
+.inventory-sheet-card:has(.inventory-collectible-large-preview-v394) .inventory-sheet-icon{width:48px;height:48px;margin-bottom:2px}
+.inventory-sheet-card:has(.inventory-collectible-large-preview-v394) .inventory-sheet-actions{gap:6px;margin-top:5px}
+.inventory-collectible-large-preview-v394{display:block;object-fit:contain;width:94px;height:94px;margin:0 auto 2px}
+.inventory-collectible-title-v394{font-size:.67rem;color:#876376}
+.inventory-copy-picker-v394{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;max-height:110px;overflow-y:auto}
+.inventory-copy-choice-v394{width:33px;height:31px;border-radius:9px;background:#fff;border:1.5px solid #dec4d0;color:#80546a;font:inherit;font-size:.67rem;font-weight:850}
+.inventory-copy-choice-v394[aria-pressed=true]{background:#edc5d8;border-color:#bd7e9d;color:#5e3749}
+.inventory-collectible-location-v394{margin:1px!important;font-size:.6rem;color:#8e7481}
+.inventory-collectible-color-section-v394{display:grid;gap:5px;padding:5px 8px;border-radius:11px;border:1px solid #eadce4;background:#fffafd;text-align:left}
+.inventory-collectible-color-section-v394>strong{font-size:.65rem;color:#835e74}
+.inventory-collectible-swatches-v394{display:grid;grid-template-columns:repeat(auto-fill,minmax(26px,1fr));gap:7px;justify-items:center}
+.inventory-collectible-swatch-v394{width:27px;height:27px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #c9aab7;cursor:pointer;touch-action:manipulation;padding:0}
+.inventory-collectible-swatch-v394[aria-pressed=true]{outline:3px solid #ad608c;outline-offset:2px}
+.inventory-collectible-swatch-v394:focus-visible,.inventory-copy-choice-v394:focus-visible{outline:3px solid #8e5782;outline-offset:2px}
+@media(max-width:390px){.inventory-collectible-swatches-v394{gap:5px}.inventory-collectible-swatch-v394{width:25px;height:25px}}

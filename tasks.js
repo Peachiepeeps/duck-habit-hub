@@ -9,6 +9,10 @@
   const SHELF_UNLOCK_TASKS=50;
   const SHELF_SLOTS=24;
   const SURPRISE_CHANCE=.15;
+  const COPY_SEPARATOR='::';
+  const baseCollectibleId=copyId=>String(copyId||'').split(COPY_SEPARATOR)[0];
+  const collectibleCopyKey=(id,number)=>number>1 ? `${id}${COPY_SEPARATOR}${number}` : id;
+
 
   const COLLECTIBLES=[
     {id:'task-plush-1',name:'Special Plush 1',image:'assets/task-shop/Task-plush-1.png',price:20,kind:'collectible',description:'A Task Shop exclusive plush for your collectible shelf.'},
@@ -16,12 +20,12 @@
     {id:'task-plush-3',name:'Special Plush 3',image:'assets/task-shop/Task-plush-3.png',price:20,kind:'collectible',description:'A Task Shop exclusive plush for your collectible shelf.'},
     {id:'task-plush-4',name:'Special Plush 4',image:'assets/task-shop/Task-plush-4.png',price:20,kind:'collectible',description:'A Task Shop exclusive plush for your collectible shelf.'},
     {id:'task-plush-5',name:'Special Plush 5',image:'assets/task-shop/Task-plush-5.png',price:20,kind:'collectible',description:'A Task Shop exclusive plush for your collectible shelf.'},
-    {id:'plush-lop-bunny',name:'Lop Bunny Plush',image:'assets/task-shop/layered/plush-lop-bunny-preview.png',price:20,kind:'collectible',description:'A cuddly, recolorable lop-eared bunny.'},
-    {id:'plush-perky-bunny',name:'Perky Bunny Plush',image:'assets/task-shop/layered/plush-perky-bunny-preview.png',price:20,kind:'collectible',description:'A sweet bunny with perky ears and customizable colors.'},
-    {id:'plush-kitty',name:'Kitty Plush',image:'assets/task-shop/layered/plush-kitty-preview.png',price:20,kind:'collectible',description:'A stitched kitty plush with customizable colors.'},
-    {id:'flower-daisy',name:'Daisy Vase',image:'assets/task-shop/layered/flower-daisy-preview.png',price:20,kind:'collectible',description:'Daisies and a recolorable vase for your shelf.'},
-    {id:'flower-rose',name:'Rose Vase',image:'assets/task-shop/layered/flower-rose-preview.png',price:20,kind:'collectible',description:'A rose and a recolorable vase for your shelf.'},
-    {id:'flower-tulip',name:'Tulip Vase',image:'assets/task-shop/layered/flower-tulip-preview.png',price:20,kind:'collectible',description:'A tulip and a recolorable vase for your shelf.'}
+    {id:'plush-lop-bunny',repeatable:true,name:'Lop Bunny Plush',image:'assets/task-shop/layered/plush-lop-bunny-preview.png',price:20,kind:'collectible',description:'A cuddly, recolorable lop-eared bunny.'},
+    {id:'plush-perky-bunny',repeatable:true,name:'Perky Bunny Plush',image:'assets/task-shop/layered/plush-perky-bunny-preview.png',price:20,kind:'collectible',description:'A sweet bunny with perky ears and customizable colors.'},
+    {id:'plush-kitty',repeatable:true,name:'Kitty Plush',image:'assets/task-shop/layered/plush-kitty-preview.png',price:20,kind:'collectible',description:'A stitched kitty plush with customizable colors.'},
+    {id:'flower-daisy',repeatable:true,name:'Daisy Vase',image:'assets/task-shop/layered/flower-daisy-preview.png',price:20,kind:'collectible',description:'Daisies and a recolorable vase for your shelf.'},
+    {id:'flower-rose',repeatable:true,name:'Rose Vase',image:'assets/task-shop/layered/flower-rose-preview.png',price:20,kind:'collectible',description:'A rose and a recolorable vase for your shelf.'},
+    {id:'flower-tulip',repeatable:true,name:'Tulip Vase',image:'assets/task-shop/layered/flower-tulip-preview.png',price:20,kind:'collectible',description:'A tulip and a recolorable vase for your shelf.'}
   ];
 
   const SHOP_ITEMS=[
@@ -56,9 +60,36 @@
     p.duckBucks=Math.max(0,Math.floor(Number(p.duckBucks)||0));
     p.collectiblesOwned=Array.isArray(p.collectiblesOwned)?[...new Set(p.collectiblesOwned.map(String))]:[];
     if(!p.collectibleStyles || typeof p.collectibleStyles!=='object' || Array.isArray(p.collectibleStyles))p.collectibleStyles={};
+    if(!p.collectibleCopyStyles || typeof p.collectibleCopyStyles!=='object' || Array.isArray(p.collectibleCopyStyles))p.collectibleCopyStyles={};
+    if(!p.collectibleCounts || typeof p.collectibleCounts!=='object' || Array.isArray(p.collectibleCounts))p.collectibleCounts={};
+    // Migrate the original single-copy saves without losing their colors or shelf locations.
+    for(const item of COLLECTIBLES){
+      const oldOwned=p.collectiblesOwned.includes(item.id);
+      const count=Math.max(oldOwned?1:0,Math.floor(Number(p.collectibleCounts[item.id])||0));
+      if(count>0){p.collectibleCounts[item.id]=item.repeatable?count:1;if(!oldOwned)p.collectiblesOwned.push(item.id);}
+    }
+    const copyIsOwned=copyId=>{
+      const id=baseCollectibleId(copyId), item=COLLECTIBLES.find(entry=>entry.id===id);
+      if(!item)return false;
+      const number=copyId===id?1:Number(String(copyId).slice(id.length+COPY_SEPARATOR.length));
+      return Number.isInteger(number)&&number>0&&number<=(Number(p.collectibleCounts[id])||0)&&
+        (number===1||Boolean(item.repeatable))&&copyId===collectibleCopyKey(id,number);
+    };
     p.shelfSlots=Array.isArray(p.shelfSlots)?p.shelfSlots.slice(0,SHELF_SLOTS):[];
     while(p.shelfSlots.length<SHELF_SLOTS) p.shelfSlots.push(null);
-    p.shelfSlots=p.shelfSlots.map(id=>COLLECTIBLES.some(item=>item.id===id)&&p.collectiblesOwned.includes(id)?id:null);
+    p.shelfSlots=p.shelfSlots.map(copyId=>copyIsOwned(copyId)?copyId:null);
+    if(p.dresserCollectibleByRoom && typeof p.dresserCollectibleByRoom==='object'){
+      for(const [room,copyId] of Object.entries(p.dresserCollectibleByRoom)){
+        if(!copyIsOwned(copyId))delete p.dresserCollectibleByRoom[room];
+      }
+    }
+    // Inventoried quantities are a mirror of Task Shop purchases for the Furniture tab.
+    if(!save.inventory || typeof save.inventory!=='object')save.inventory={};
+    for(const item of COLLECTIBLES)if(item.repeatable){
+      const count=Number(p.collectibleCounts[item.id])||0;
+      if(count)save.inventory[item.id]=count;
+      else delete save.inventory[item.id];
+    }
     p.shelfUnlocked=Boolean(p.shelfUnlocked || Number(save.stats?.tasksCompleted||0)>=SHELF_UNLOCK_TASKS);
     p.shelfUnlockSeen=Boolean(p.shelfUnlockSeen);
 
@@ -334,11 +365,18 @@
     if(taskHeaderBuckCount) taskHeaderBuckCount.textContent=p.duckBucks.toLocaleString();
   }
 
-  function ownedCollectible(id){return ensureProgress().collectiblesOwned.includes(id);}
+  function ownedCollectible(id){return (Number(ensureProgress().collectibleCounts[baseCollectibleId(id)])||0)>0;}
+  function numberOwned(p,id){return Number(p.collectibleCounts[id])||0;}
+  function stylesForCopy(p,copyId){
+    const id=baseCollectibleId(copyId);
+    return p.collectibleCopyStyles[copyId]|| (copyId===id?p.collectibleStyles[id]:null) || {};
+  }
+  function availableCopies(p,id){return Array.from({length:numberOwned(p,id)},(_,n)=>collectibleCopyKey(id,n+1));}
 
-  function applyCollectibleArt(img,item){
+  function applyCollectibleArt(img,item,copyId=item?.id){
     if(!img || !item)return;
-    window.DuckieCollectibleArtV393?.apply(img,item.id,ensureProgress().collectibleStyles);
+    const p=ensureProgress();
+    window.DuckieCollectibleArtV393?.apply(img,item.id,{[item.id]:stylesForCopy(p,copyId)});
   }
   const ART_PALETTE=['#fff9f0','#f6d5e5','#e9a6bc','#ecc4a2','#f4e2a2','#c8e9c3','#a1d7d0','#b2d8ef','#c5c1ed','#d5b1dc','#9997ac','#665464','#34323c'];
   const artApi=window.DuckieCollectibleArtV393;
@@ -383,11 +421,12 @@
 
   function buyTaskShopItem(item){
     const p=ensureProgress();
-    if(item.kind==='collectible' && ownedCollectible(item.id)){showToast(`${item.name} is already yours!`);return;}
+    if(item.kind==='collectible' && !item.repeatable && ownedCollectible(item.id)){showToast(`${item.name} is already yours!`);return;}
     if(p.duckBucks<item.price){showToast(`You need ${item.price-p.duckBucks} more Duck Bucks.`);return;}
     p.duckBucks-=item.price;
     if(item.kind==='collectible'){
-      p.collectiblesOwned.push(item.id);
+      p.collectibleCounts[item.id]=numberOwned(p,item.id)+1;
+      if(!p.collectiblesOwned.includes(item.id))p.collectiblesOwned.push(item.id);
     }else if(item.kind==='inventory'){
       addInventory(item.inventoryId||item.id,item.qty||1);
     }else if(item.kind==='pack'){
@@ -417,10 +456,14 @@
       copy.append(name,desc);
       const foot=document.createElement('div');foot.className='task-shop-item-foot-v254';
       const price=makeBuckInline(item.price);
-      const buy=document.createElement('button');buy.type='button';buy.textContent=owned?'Owned':'Buy';buy.disabled=owned || p.duckBucks<item.price;
+      const count=item.kind==='collectible'?numberOwned(p,item.id):0;
+      if(item.repeatable && count>0){
+        const stock=document.createElement('small');stock.className='task-shop-owned-count-v394';stock.textContent=`Owned ×${count} · Customize in Inventory → Furniture`;copy.append(stock);
+      }
+      const buy=document.createElement('button');buy.type='button';buy.textContent=owned&&!item.repeatable?'Owned':count>0&&item.repeatable?'Buy Another':'Buy';buy.disabled=(owned&&!item.repeatable) || p.duckBucks<item.price;
       buy.addEventListener('click',()=>buyTaskShopItem(item));
       foot.append(price,buy);
-      if(item.kind==='collectible' && artApi?.ART[item.id] && owned){
+      if(item.kind==='collectible' && artApi?.ART[item.id] && owned && !item.repeatable){
         const customize=document.createElement('button');customize.type='button';customize.className='task-customize-btn-v393';customize.textContent='Customize';
         customize.addEventListener('click',()=>customizeCollectible(item));foot.append(customize);
       }
@@ -492,9 +535,9 @@
     const p=ensureProgress();
     taskCollectibleSlots.innerHTML='';
     p.shelfSlots.forEach((id,index)=>{
-      const item=COLLECTIBLES.find(entry=>entry.id===id);
+      const item=COLLECTIBLES.find(entry=>entry.id===baseCollectibleId(id));
       const btn=document.createElement('button');btn.type='button';btn.className=`wing-duck-slot task-collectible-slot-v254${item?' occupied':''}`;
-      if(item){const img=document.createElement('img');img.src=item.image;img.alt='';btn.append(img);applyCollectibleArt(img,item);btn.setAttribute('aria-label',`Shelf spot ${index+1}: ${item.name}`);}
+      if(item){const img=document.createElement('img');img.src=item.image;img.alt='';btn.append(img);applyCollectibleArt(img,item,id);btn.setAttribute('aria-label',`Shelf spot ${index+1}: ${item.name} (copy ${id===item.id?1:id.split(COPY_SEPARATOR).pop()})`);}
       else{const plus=document.createElement('span');plus.textContent='+';btn.append(plus);btn.setAttribute('aria-label',`Shelf spot ${index+1}: empty`);}
       btn.addEventListener('click',()=>openTaskCollectiblePicker(index));
       taskCollectibleSlots.append(btn);
@@ -510,7 +553,8 @@
   function chooseTaskCollectible(id){
     if(!Number.isInteger(selectedTaskCollectibleSlot)) return;
     const p=ensureProgress();
-    if(!p.collectiblesOwned.includes(id)) return;
+    const baseId=baseCollectibleId(id);
+    if(!p.collectiblesOwned.includes(baseId)||!availableCopies(p,baseId).includes(id))return;
     p.shelfSlots.forEach((current,index)=>{if(current===id)p.shelfSlots[index]=null;});
     if(p.dresserCollectibleByRoom && typeof p.dresserCollectibleByRoom==='object'){
       Object.keys(p.dresserCollectibleByRoom).forEach(room=>{
@@ -525,16 +569,19 @@
   function renderTaskCollectiblePicker(){
     if(!taskCollectiblePickerGrid) return;
     const p=ensureProgress();taskCollectiblePickerGrid.innerHTML='';
-    const owned=COLLECTIBLES.filter(item=>p.collectiblesOwned.includes(item.id));
+    const owned=COLLECTIBLES.flatMap(item=>availableCopies(p,item.id).map((copyId,index)=>({item,copyId,number:index+1})));
     if(!owned.length){
       const empty=document.createElement('p');empty.className='task-collectible-empty-v254';empty.textContent='Buy a collectible from the Task Shop first, then it can live here. ♡';taskCollectiblePickerGrid.append(empty);return;
     }
-    owned.forEach(item=>{
+    owned.forEach(({item,copyId,number})=>{
       const btn=document.createElement('button');btn.type='button';btn.className='task-collectible-choice-v254';
       const img=document.createElement('img');img.src=item.image;img.alt='';
-      applyCollectibleArt(img,item);
-      const name=document.createElement('span');name.textContent=item.name;
-      btn.append(img,name);btn.addEventListener('click',()=>chooseTaskCollectible(item.id));taskCollectiblePickerGrid.append(btn);
+      applyCollectibleArt(img,item,copyId);
+      const name=document.createElement('span');name.textContent=item.repeatable?`${item.name} #${number}`:item.name;
+      const position=p.shelfSlots.findIndex(placed=>placed===copyId);
+      const dresserRoom=Object.entries(p.dresserCollectibleByRoom||{}).find(([,placed])=>placed===copyId)?.[0];
+      const caption=document.createElement('small');caption.className='task-collectible-location-v394';caption.textContent=position>=0?`On shelf ${position+1}`:dresserRoom?'On dresser':'Available';
+      btn.append(img,name,caption);btn.addEventListener('click',()=>chooseTaskCollectible(copyId));taskCollectiblePickerGrid.append(btn);
     });
   }
 
@@ -590,7 +637,8 @@
   }
 
   window.DuckieTaskProgressV254Installed=true;
-  window.DuckieTaskProgressV254={ensureProgress,renderTaskShop,renderTaskShelf,SHOP_ITEMS,COLLECTIBLES};
+  window.DuckieTaskProgressV254={ensureProgress,renderTaskShop,renderTaskShelf,SHOP_ITEMS,COLLECTIBLES,
+    baseCollectibleId,collectibleCopyKey,availableCopies,stylesForCopy,numberOwned,saveNow};
 })();
 ;
 
@@ -701,7 +749,8 @@
   function currentDresserCollectible(){
     const p=progress();
     const id=p.dresserCollectibleByRoom[roomKey()];
-    return id && byId.has(id) && p.collectiblesOwned.includes(id) ? id : null;
+    const base=api.baseCollectibleId(id);
+    return id && byId.has(base) && api.availableCopies(p,base).includes(id) ? id : null;
   }
 
   function clearRenderedPlush(){
@@ -714,7 +763,7 @@
     if(!dresserAvailable()) return;
 
     const id=currentDresserCollectible();
-    const item=id ? byId.get(id) : null;
+    const item=id ? byId.get(api.baseCollectibleId(id)) : null;
     if(!item) return;
 
     const img=document.createElement('img');
@@ -724,14 +773,15 @@
     img.loading='eager';
     img.className='task-dresser-collectible-v260';
     img.dataset.taskCollectibleId=id;
+    img.dataset.taskCollectibleKind=item.id.startsWith('plush-')?'plush':item.id.startsWith('flower-')?'flower':'other';
     furnitureLayer.append(img);
-    window.DuckieCollectibleArtV393?.apply(img,id,progress().collectibleStyles);
+    window.DuckieCollectibleArtV393?.apply(img,item.id,{[item.id]:api.stylesForCopy(progress(),id)});
   }
 
   function setDresserCollectible(id){
-    const item=byId.get(id);
+    const item=byId.get(api.baseCollectibleId(id));
     const p=progress();
-    if(!item || !p.collectiblesOwned.includes(id)) return;
+    if(!item || !api.availableCopies(p,item.id).includes(id)) return;
 
     if(!dresserAvailable()){
       try{showToast('Place a dresser in this room first. ♡');}catch(error){}
@@ -749,8 +799,7 @@
       return;
     }
 
-    // A collectible is one display item: move it off the Task Treasure shelf
-    // and any other room dresser before placing it here.
+    // Each purchased copy is unique; move only the chosen copy, not every bunny.
     if(Array.isArray(p.shelfSlots)){
       p.shelfSlots=p.shelfSlots.map(currentId=>currentId===id?null:currentId);
     }
@@ -782,7 +831,7 @@
 
     taskShopGrid.querySelectorAll('.task-shop-item-v254').forEach(card=>{
       const item=collectibleForCard(card);
-      if(!item || !p.collectiblesOwned.includes(item.id)) return;
+      if(!item || !p.collectiblesOwned.includes(item.id) || item.repeatable) return;
       const foot=card.querySelector('.task-shop-item-foot-v254');
       if(!foot) return;
 
@@ -1232,3 +1281,158 @@
   try{ renderTaskShopPerkCard(); }catch(error){}
 })();
 ;
+
+ 
+// ===== v24.394 — inventory furniture customization for individual collectible copies =====
+(()=>{
+  'use strict';
+  const api=window.DuckieTaskProgressV254;
+  const art=window.DuckieCollectibleArtV393;
+  if(!api||!art||typeof ITEMS!=='object')return;
+  const repeatables=api.COLLECTIBLES.filter(item=>item.repeatable);
+  const byId=new Map(repeatables.map(item=>[item.id,item]));
+  const colorChoices=[
+    ['Snow','#ffffff'],['Cream','#fff9ee'],['Ivory','#f4e9d2'],['Oat','#decfba'],['Sand','#cbb69b'],
+    ['Butter','#fff3ae'],['Sunflower','#ffe277'],['Honey','#f6bd5e'],['Gold','#dba34b'],['Mustard','#bd9845'],
+    ['Peach','#ffdbbc'],['Apricot','#f9b78b'],['Tangerine','#f4985f'],['Coral','#f78775'],['Pumpkin','#d87448'],
+    ['Blush','#ffe2e8'],['Strawberry Milk','#f6b9d1'],['Bubblegum','#ed8fbe'],['Rose','#db659d'],['Raspberry','#b94779'],
+    ['Cherry','#e65c72'],['Crimson','#b73d57'],['Brick','#a55b53'],['Burgundy','#783f5a'],['Maroon','#673b49'],
+    ['Lilac','#edd6fb'],['Lavender','#d4b7f2'],['Orchid','#b493e1'],['Amethyst','#8864ba'],['Plum','#624d87'],
+    ['Powder Blue','#e2ecff'],['Sky Blue','#b5d9ff'],['Periwinkle','#a3b9ed'],['Cornflower','#769bdb'],['Navy','#465e98'],
+    ['Ice Blue','#d9f7fb'],['Aqua','#9de5eb'],['Turquoise','#6bc9d1'],['Teal','#4b9ba3'],['Deep Sea','#326b7e'],
+    ['Mint','#daf7dc'],['Pistachio','#bceab9'],['Sage','#a7c6a1'],['Grass','#85be78'],['Forest','#578a66'],
+    ['Lime','#e6f4a2'],['Olive','#a8ad6b'],['Moss','#797d52'],['Clover','#60a97f'],['Pine','#3b7868'],
+    ['Cloud Grey','#e5e3ea'],['Silver','#c8c2cc'],['Dove','#aaa6b3'],['Slate','#817a90'],['Charcoal','#494554'],
+    ['Chocolate','#704b41'],['Caramel','#b88164'],['Coffee','#976a52'],['Mocha','#806b65'],['Black','#28252e']
+  ];
+  const eyeChoices=[
+    ['Ink','#252530'],['Black','#38313a'],['Dark Brown','#5b403d'],['Chestnut','#875d48'],
+    ['Hazel','#a38755'],['Amber','#bc8b4d'],['Golden','#dfbe71'],['Blush','#a55885'],
+    ['Pink','#ed8fbe'],['Ruby','#be5364'],['Lavender','#b198d1'],['Purple','#8465b9'],
+    ['Ocean','#597caf'],['Blue','#7cabe1'],['Teal','#487e8d'],['Mint','#7dc7ab'],
+    ['Green','#65966d'],['Olive','#a2a66b'],['Grey','#84808a'],['White','#f6f3ed'],
+    ['Coral','#e58b85'],['Peach','#e3a78e'],['Silver','#bbc2d4'],['Plum','#604877']
+  ];
+  // Reuse the game's own Inventory grid and item sheet, instead of creating a second store.
+  repeatables.forEach(item=>{
+    ITEMS[item.id]={name:item.name,category:'furniture',image:item.image,icon:'🧸',sellValue:0,
+      description:'A Task Shop collectible. Choose and customize each purchased copy.'};
+  });
+  api.ensureProgress();
+  const chosenCopies=new Map();
+  let draft=null;
+  let chosenId=null;
+  let paintToken=0;
+  const oldRenderInventory=renderInventory;
+  renderInventory=function(){
+    api.ensureProgress();
+    const result=oldRenderInventory.apply(this,arguments);
+    if(currentInventoryTab==='furniture'){
+      document.querySelectorAll('#inventoryGrid [data-item-id]').forEach(card=>{
+        const id=card.dataset.itemId, item=byId.get(id);
+        if(!item)return;
+        const img=card.querySelector('.inventory-item-icon img');
+        if(img){
+          const p=api.ensureProgress();
+          art.apply(img,id,{[id]:api.stylesForCopy(p,id)});
+        }
+      });
+    }
+    return result;
+  };
+  const oldRenderSheet=renderInventoryItemSheet;
+  renderInventoryItemSheet=function(){
+    const id=selectedInventoryItemId, item=byId.get(id);
+    if(!item)return oldRenderSheet.apply(this,arguments);
+    const p=api.ensureProgress();
+    const copies=api.availableCopies(p,id);
+    if(!copies.length){closeInventoryItem();return;}
+    const current=chosenCopies.get(id);
+    const copyId=copies.includes(current)?current:copies[0];
+    chosenCopies.set(id,copyId);
+    if(copyId!==chosenId || !draft){
+      chosenId=copyId;
+      draft={...art.ART[id].defaults,...api.stylesForCopy(p,copyId)};
+    }
+    const copyNo=copies.indexOf(copyId)+1;
+    inventorySheetIcon.innerHTML='';
+    const thumb=document.createElement('img');thumb.src=item.image;thumb.alt='';thumb.style.objectFit='contain';
+    inventorySheetIcon.append(thumb);
+    const actions=inventorySheetActions;
+    actions.innerHTML='';
+    inventorySheetCategory.textContent='Furniture · Task Shop';
+    inventorySheetName.textContent=item.name;
+    inventorySheetQuantity.textContent=`Owned ×${copies.length} · Editing copy ${copyNo}`;
+    inventoryGiftPreference.classList.add('hidden');inventoryGiftPreference.innerHTML='';
+    const preview=document.createElement('img');preview.className='inventory-collectible-large-preview-v394';preview.alt='Color preview for '+item.name;
+    const updatePreview=()=>{
+      const token=++paintToken;
+      art.render(id,draft).then(uri=>{if(token===paintToken&&preview.isConnected){preview.src=uri;thumb.src=uri;}}).catch(console.warn);
+    };
+    actions.append(preview);
+    if(copies.length>1){
+      const heading=document.createElement('strong');heading.className='inventory-collectible-title-v394';heading.textContent='Choose which copy to customize';actions.append(heading);
+      const copyRow=document.createElement('div');copyRow.className='inventory-copy-picker-v394';
+      copies.forEach((uid,index)=>{
+        const button=document.createElement('button');button.type='button';button.className='inventory-copy-choice-v394';
+        button.textContent=`#${index+1}`;button.setAttribute('aria-pressed',String(uid===copyId));
+        button.title='Customize copy '+(index+1);
+        button.addEventListener('click',()=>{chosenCopies.set(id,uid);chosenId=null;renderInventoryItemSheet()});
+        copyRow.append(button);
+      });
+      actions.append(copyRow);
+    }
+    const selectedShelf=p.shelfSlots.findIndex(uid=>uid===copyId);
+    const dresserRoom=Object.entries(p.dresserCollectibleByRoom||{}).find(([,uid])=>uid===copyId)?.[0];
+    const location=document.createElement('p');location.className='inventory-collectible-location-v394';
+    location.textContent=selectedShelf>=0?`This copy is on collectible shelf spot ${selectedShelf+1}.`:dresserRoom?'This copy is on a dresser.':'This copy is ready to display.';
+    actions.append(location);
+    const groups=art.ART[id].type==='plush'
+      ?[['main','Main fabric'],['secondary','Accent fabric'],['face','Eye color']]
+      :[['vase','Vase color'],['petal','Flower color'],...(id==='flower-daisy'?[['center','Daisy center']]:[])];
+    for(const [field,label] of groups){
+      const section=document.createElement('section');section.className='inventory-collectible-color-section-v394';
+      const heading=document.createElement('strong');heading.textContent=label;
+      const swatches=document.createElement('div');swatches.className='inventory-collectible-swatches-v394';
+      const choices=[...(field==='face'?eyeChoices:colorChoices)];
+      // Original imported art defaults remain available even if not on the new swatches.
+      if(!choices.some(([,hex])=>hex.toLowerCase()===String(draft[field]||'').toLowerCase())){
+        choices.unshift(['Original',draft[field]]);
+      }
+      for(const [name,color] of choices){
+        const button=document.createElement('button');button.type='button';button.className='inventory-collectible-swatch-v394';
+        button.style.background=color;button.title=name;button.setAttribute('aria-label',`${label}: ${name}`);
+        button.setAttribute('aria-pressed',String(draft[field]===color));
+        button.addEventListener('click',()=>{
+          draft[field]=color;
+          swatches.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
+          updatePreview();
+        });
+        swatches.append(button);
+      }
+      section.append(heading,swatches);actions.append(section);
+    }
+    const saveBtn=document.createElement('button');saveBtn.type='button';saveBtn.className='inventory-action primary';saveBtn.textContent=`Save Colors for Copy #${copyNo} ♡`;
+    saveBtn.addEventListener('click',()=>{
+      p.collectibleCopyStyles[copyId]={...draft};
+      if(copyId===id)p.collectibleStyles[id]={...draft};
+      api.saveNow();api.renderTaskShelf();
+      try{window.DuckieTaskDresserV260?.renderDresserCollectible?.()}catch(e){console.warn(e)}
+      renderInventory();
+      try{showToast(`${item.name} #${copyNo} recolored! ♡`)}catch(e){}
+      renderInventoryItemSheet();
+    });
+    actions.append(saveBtn);
+    const dresserReady=(()=>{try{return currentLeftFurnitureType(save.room)==='dresser'&&Boolean(getRoomFurniture(save.room)?.left)}catch(e){return false}})();
+    const here=(()=>{try{const key=typeof mainRoomStorageId==='function'?String(mainRoomStorageId(save.room)):String(save.room);return p.dresserCollectibleByRoom?.[key]===copyId}catch(e){return false}})();
+    const place=document.createElement('button');place.type='button';place.className='inventory-action';
+    place.textContent=here?'Remove This Copy From Dresser':dresserReady?'Place This Copy on Dresser':'Place a Dresser First';
+    place.disabled=!dresserReady&&!here;
+    place.addEventListener('click',()=>{
+      window.DuckieTaskDresserV260?.setDresserCollectible?.(copyId);
+      renderInventoryItemSheet();
+    });
+    actions.append(place);
+    updatePreview();
+  };
+})();

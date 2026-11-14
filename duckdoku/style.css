@@ -113,5 +113,6 @@ button.top-stat{cursor:pointer}.top-stat span{font-size:.58rem;letter-spacing:.1
   aspect-ratio:auto;
 }
 
-/* v24.393: the requested five-pixel board height reduction, total. */
-.board{height:calc(100% - 5px)}
+/* v24.395: Preserve the requested v24.394 test adjustment: 10px shorter
+   than v24.393, 15px shorter overall than v24.392. */
+.board{--duckdoku-board-trim:15px;height:calc(100% - var(--duckdoku-board-trim))}

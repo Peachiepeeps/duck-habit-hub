@@ -1,0 +1,31 @@
+Duckie Days v24.395 — Complete Bear Profiles + Cumulative Duckdoku/Collectibles Update
+UPDATE ONLY (no save files). Apply after v24.391, including if v24.393/v24.394 were already installed.
+This update contains the complete v24.393 asset set plus v24.394 final code and v24.395 changes.
+
+BAO CAFÉ — THREE FULL BEAR PROFILES
+Cerise (she/her): Miho, Nico, Ideno. Greeting exactly: "Welcome back! You look cold, would you like me to grab you a scarf or sweater? Or just a drink?"
+  6 equally likely entries: Cupcake x1; Yarn x2; Lil Pon x2; Magenta Paint x1; Cerise Trading Card x1; 100 Pink Coins x1.
+Hunni (she/her): Kiri, Moriko, Beau. Greeting exactly: "Hey there, sugar. I'm happy you came back! Come, sit sit. I'll bring you a honey snack with your drink."
+  6 equally likely entries: Croissant x1; Moon x2; Boss Lil Pon x2; Gold Paint x1; Hunni Trading Card x1; 100 Pink Coins x2 (200 coins in one draw).
+Woolie (they/them): Westley, Jenson, Shin. Greeting exactly: "Mmm... Oh! It's you! I was just resting my eyes. Hehe, come sit with me for a bit!"
+  6 equally likely entries: Bread Loaf x2; Sleep Mask x2; EXP Candy Large x3; Teddy Bear x2; 100 Pink Coins x2; Woolie Trading Card x1.
+  Each reward entry is 1/6 chance on each independent draw; quantities are granted together.
+  Favorite customers get twice as many bear reward draws. Existing perfect order bonuses and +50 favorite-drink bonus unchanged.
+  All three new card IDs are registered as collectible R-203/R-204/R-205. The existing in-game bear idle sprites are temporary card art; bespoke card artwork is STILL needed and may replace the sprite without changing the saved IDs.
+  Duck Quest encounter bear descriptions and card links updated. No double rewards when returning from a café encounter.
+
+DUCKDOKU — INCLUDED FROM v24.394
+  Requested 10px decrease compared with v24.393 (15px compared with v24.392) retained.
+  Ten distinct pastel colors, 6x6/8x8/10x10 gameplay and helper buttons preserved.
+
+COLLECTIBLE SHELF / TASK SHOP — CUMULATIVE v24.393–v24.394 CONTENT
+  3 layered plushes (Lop Bunny, Perky Bunny, Kitty) with shared face/eye, 50%-opacity blush/stitches.
+  3 flower arrangements (Daisy, Rose, Tulip) with stem behind vase.
+  Repeatable plush/flower purchases at 20 Duck Bucks per COPY; independent placement and colors.
+  Increased dresser plush size; Inventory -> Furniture can customize individual copies.
+  60 cloth/flower/vase colors, 24 eye colors; previous saves migrated without overwriting data.
+  Pixel-art heart marker on favorite customers.
+
+INSTALL
+  Unzip into your repository ROOT (or use your existing update installer expecting a root-level ZIP).
+  Do not delete existing files. Changes overlay only included paths.
