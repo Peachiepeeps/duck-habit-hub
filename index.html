@@ -1224,7 +1224,7 @@
     // v24.84: use a stable service-worker URL and actively check the deployed
     // build when the installed PWA is opened/resumed. This prevents Android
     // from keeping an already-open standalone app on an older app shell.
-    const DUCK_HUB_BUILD = "24.391";
+    const DUCK_HUB_BUILD = "24.392";
     let duckHubReloadingForUpdate = false;
 
     function duckHubReloadFresh(version) {
@@ -1288,7 +1288,7 @@
       window.addEventListener("load", async () => {
         try {
           await duckHubClearOldCodeCaches();
-          const registration = await navigator.serviceWorker.register("./sw.js?v=24-391-hub-doku-furniture", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("./sw.js?v=24-392-duckdoku-tall-pastels", { updateViaCache: "none" });
           await registration.update();
           if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
           await duckHubCheckForUpdate(registration);

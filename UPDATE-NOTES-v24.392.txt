@@ -1,0 +1,29 @@
+Duckie Days v24.392 — Duckdoku Taller Board + Distinct Pastels
+UPDATE-ONLY PATCH — apply on top of the supplied v24.391 hub.
+
+WHAT CHANGED
+• Duckdoku board expands vertically to use the phone screen instead of leaving a large empty area below the game.
+• The board remains within the viewport along with the header, rules, status and Hint/Reveal/Scan buttons. No board scrolling required at tested portrait phone sizes.
+• All 10 Duckdoku region pastels are now individually more distinguishable. The first 6/8/10 colors apply to the 6×6/8×8/10×10 grids respectively.
+• No puzzle generation, solution, save-game, gameplay, rewards or touch-control logic was modified.
+• Updated PWA service-worker cache and hub build version to ensure new CSS is retrieved.
+
+VERIFICATION
+• 320×568, 375×667, 390×844, 412×915 phone viewports: page fits without scrolling.
+• Also checked 600×950, 1200×800 and 1200×620 viewports for layout/overflow.
+• Sample generated 8×8 and 10×10 puzzle boards displayed their expected number of distinct colors.
+• Pointer smoke check: single tap adds an X, delayed tap removes it, quick double-tap attempts a Duck; helper buttons remained visible.
+• JavaScript syntax checks passed; ZIP integrity checked.
+
+INSTALL
+1. Upload Duckie-Days-v24.392-Duckdoku-Board-and-Pastels-UPDATE-ONLY.zip to your GitHub repository ROOT (not inside a folder).
+2. The existing .github/workflows/duckie-days-updates.yml should automatically extract and commit the patch. The ZIP does not include or replace any GitHub Actions workflow.
+3. Refresh/reopen the PWA after the deployment; close other open tabs if the old stylesheet is still cached.
+
+FILES IN PATCH
+• duckdoku/style.css
+• duckdoku/index.html
+• index.html
+• sw.js
+• version.json
+• UPDATE-NOTES-v24.392.txt
