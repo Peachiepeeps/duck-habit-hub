@@ -1,0 +1,22 @@
+DUCKIE DAYS v24.399 — CACHE REFRESH AND V24.398 DISPLAY FIX
+
+THIS IS A CUMULATIVE UPDATE-ONLY ZIP. Upload just this ZIP to the repository root.
+
+Why this patch is necessary:
+  v24.398 installed correctly in GitHub, but index.html, duckdoku/index.html,
+  version.json, and the service-worker cache IDs still pointed to v24.397.
+  As a result, the installed Android PWA could reuse older files.
+
+Updates in this release:
+  - Bump Duckie Days build and version.json to 24.399.
+  - Bust versioned CSS/JS references in the hub and Duckdoku entry pages.
+  - Refresh the service-worker cache names and precache URLs to v24.399.
+  - Preserve v24.398's board-height correction: 35px total board trim, plus
+    30px trim to the tall-phone height ceiling.
+  - Preserve Seafoam Aqua #9ADCEF.
+  - Preserve larger, lowered Home Hub dresser plush placement.
+  - Keep the collectible shelf unchanged.
+
+This ZIP does not include or overwrite the player's save data.
+If the Android app was open during deployment, close it completely and reopen
+with a data connection to let the service worker update.
