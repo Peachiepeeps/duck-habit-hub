@@ -15,8 +15,8 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-389';
-const MEDIA_CACHE='duck-habit-hub-media-v24-389';
+const APP_CACHE='duck-habit-hub-app-v24-390';
+const MEDIA_CACHE='duck-habit-hub-media-v24-390';
 const MAX_MEDIA_ENTRIES=400;
 let mediaWrites=0;
 const APP_SHELL=[
@@ -86,8 +86,8 @@ const APP_SHELL=[
  './duck-quest/js/lover-assist-v385.js?v=24.385',
  './duck-quest/js/sweetheart-v352.js?v=24.385',
  './duck-quest/css/lover-assist-v385.css?v=24.385',
- './app.js?v=24.385',
- './home-makeover.js?v=24.385',
+ './app.js?v=24.390',
+ './home-makeover.js?v=24.390',
  './home-makeover.css?v=24.385',
  './task-buddy-beta.js?v=24.385',
  './task-buddy-beta.html?v=24.385',
@@ -99,7 +99,7 @@ const APP_SHELL=[
  './gimmick-hub-v288.js?v=24.296',
  './hub-boosts.js?v=24.346',
  './trading-cards-ui.js?v=24.353',
- './tasks.js?v=24.356',
+ './tasks.js?v=24.390',
  './firebase-reminders.mjs?v=24.296',
  './task-reminders.js?v=24.296',
  './hub.js?v=24.296',
@@ -119,6 +119,7 @@ const APP_SHELL=[
  './fixes-v321.js?v=24.321',
  './fixes-v322.js?v=24.322',
  './fixes-v326.js?v=24.326',
+ './fixes-v390.js?v=24.390',
  './duckdoku/index.html',
  './duckdoku/style.css?v=24.340',
  './duckdoku/script.js?v=24.358',

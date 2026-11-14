@@ -1648,9 +1648,6 @@ const SHOP_STOCK = {
   furniture: [
     { itemId: "petbed-white", price: 200, customizableFurniture: true, maxQuantity: 21 },
     { itemId: "lights-white", price: 200, customizableFurniture: true, maxQuantity: 21 },
-    { itemId: "shelf-white", price: 225 },
-    { itemId: "shelf-dark-brown", price: 225 },
-    { itemId: "shelf-brown", price: 225 },
     { itemId: "dresser-brown", price: 225 },
     { itemId: "dresser-dark-brown", price: 225 },
     { itemId: "rug-cloud-dark", price: 160 },
@@ -7851,9 +7848,16 @@ function showGiftBurst(symbol = "♡") {
   setTimeout(() => burst.remove(), 1200);
 }
 
+const ROOM_MAKEOVER_LEGACY_SHELVES = new Set([
+  'shelf-white', 'shelf-dark-brown', 'shelf-brown',
+  'book-shelf-brown', 'book-shelf-white', 'book-shelf-dark'
+]);
+
 function inventoryItemsForCategory(category) {
   const itemIds = Object.keys(save.inventory || {})
-    .filter(itemId => ITEMS[itemId]?.category === category && inventoryQuantity(itemId) > 0);
+    .filter(itemId => ITEMS[itemId]?.category === category
+      && !ROOM_MAKEOVER_LEGACY_SHELVES.has(itemId)
+      && inventoryQuantity(itemId) > 0);
 
   if (category !== "furniture") {
     return itemIds.sort((a, b) => ITEMS[a].name.localeCompare(ITEMS[b].name));
@@ -8297,10 +8301,14 @@ function getRoomFurniture(roomId = save.room) {
   normalizeRoomFurniture();
   const storageId = mainRoomStorageId(roomId);
   const savedRoom = save.roomFurniture[storageId];
-  return {
+  const result = {
     ...EMPTY_ROOM_FURNITURE,
     ...(savedRoom && typeof savedRoom === "object" ? savedRoom : {})
   };
+  // Legacy nulls previously meant 'no shelf'. After making the six-shelf part
+  // of Room Makeover, the free white shelf is the default left furnishing.
+  if (!result.left) result.left = 'shelf-white';
+  return result;
 }
 
 function ensureRoomFurniture(roomId = save.room) {
@@ -12101,7 +12109,8 @@ function inventoryQuantity(itemId) {
 function totalInventoryItems(category = null) {
   return Object.entries(save.inventory || {}).reduce((sum, [itemId, quantity]) => {
     const item = ITEMS[itemId];
-    if (!item || (category && item.category !== category)) return sum;
+    if (!item || (category && item.category !== category)
+      || ROOM_MAKEOVER_LEGACY_SHELVES.has(itemId)) return sum;
     return sum + Math.max(0, Number(quantity) || 0);
   }, 0);
 }

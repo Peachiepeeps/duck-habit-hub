@@ -1,0 +1,14 @@
+Duckie Days v24.390 — Home Hub and Shiny Egg (update-only)
+
+Apply ON TOP of v24.389 or a newer deployment that includes v24.389. This ZIP does not contain the whole game.
+
+1. Task Shop: Shiny Egg costs 150 Duck Bucks. It awards exactly one shiny-egg to the existing inventory, is repeat-purchasable, and hatches a guaranteed random Shiny Lil Guy in 24 hours. It does NOT allow choosing the Shiny family.
+2. Home Hub: the six-shelf is the free default left-side furnishing, even in older saves without a shelf purchase. Placing a duck on its six ledges is available from the Duckipedia duck detail sheet. Switching the furniture in Room Makeover restores this feature.
+3. Room Makeover: 'Furniture by your OC' now switches between the six-shelf (free) and an owned dresser; a furniture-only change costs no Pink Coins. Recoloring still costs 100 Pink Coins. The game keeps existing saved room colors and placements.
+4. Shelf color variants were retired from Shop and Inventory listings. Old owned shelf entries stay in save data; nothing is deleted. Wall book shelf art remains where it is.
+5. Room Makeover dresser uses the painted frame/drawer/knob/line layers without the original brown image showing behind the customized color.
+6. Universal Clothing dresses and oversize layers now sort correctly for all five OCs: body and bottom first, dress above bottom, and outer layer above dress. Existing Miko/Io shared-hand positioning remains behind the body.
+
+Files changed: app.js, home-makeover.js, tasks.js, fixes-v390.js, index.html, sw.js, version.json. Includes the existing Shiny Egg sprite to ensure it is available.
+
+Checks performed: JS syntax for changed scripts, five-OC garment-order simulation, shelf/dresser save fallback and selector assertions, 150-Duck-Bucks item definition, Shiny-only hatchery pool. Full visual game/browsing QA was unavailable in this environment. Test the actual deployed game on your device after installing, especially older saved rooms and wardrobe combos.

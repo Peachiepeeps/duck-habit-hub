@@ -1194,14 +1194,14 @@
   <script src="trading-cards-sock-gremlin-v297.js?v=24.297"></script>
   <script src="trading-cards-universal-v298.js?v=24.298"></script>
   <script src="trading-cards-bao-cafe-v299.js?v=24.387"></script>
-  <script src="app.js?v=24.385"></script>
-  <script src="home-makeover.js?v=24.385"></script>
+  <script src="app.js?v=24.390"></script>
+  <script src="home-makeover.js?v=24.390"></script>
   <script src="universal-clothing-v311.js?v=24.354"></script>
   <script src="gimmick-hub-v288.js?v=24.296"></script>
   <script src="hub-boosts.js?v=24.346"></script>
   <script src="trading-cards-ui.js?v=24.385"></script>
   <script src="special-tasks-v17.js?v=18-edit"></script>
-  <script src="tasks.js?v=24.356"></script>
+  <script src="tasks.js?v=24.390"></script>
   <script type="module" src="firebase-reminders.mjs?v=24.296"></script>
   <script src="task-reminders.js?v=24.296"></script>
   <script src="hub.js?v=24.296"></script>
@@ -1216,12 +1216,13 @@
   <script src="fixes-v321.js?v=24.321"></script>
   <script src="fixes-v322.js?v=24.322"></script>
   <script src="fixes-v326.js?v=24.326"></script>
+  <script src="fixes-v390.js?v=24.390"></script>
 
   <script>
     // v24.84: use a stable service-worker URL and actively check the deployed
     // build when the installed PWA is opened/resumed. This prevents Android
     // from keeping an already-open standalone app on an older app shell.
-    const DUCK_HUB_BUILD = "24.356";
+    const DUCK_HUB_BUILD = "24.390";
     let duckHubReloadingForUpdate = false;
 
     function duckHubReloadFresh(version) {
@@ -1285,7 +1286,7 @@
       window.addEventListener("load", async () => {
         try {
           await duckHubClearOldCodeCaches();
-          const registration = await navigator.serviceWorker.register("./sw.js?v=24-389-bear-favorites", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("./sw.js?v=24-390-hub-shiny-egg", { updateViaCache: "none" });
           await registration.update();
           if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
           await duckHubCheckForUpdate(registration);

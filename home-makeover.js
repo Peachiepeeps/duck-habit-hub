@@ -10,7 +10,7 @@
    'stripes':{name:'Vertical Stripes',icon:'║',description:'Simple vertical two-color stripes for every OC',price:1000}
  };
  const PALETTE=["#FFFDF8","#F9F5EA","#EEE5D5","#DCD2C2","#CBB9A4","#AA9180","#79665A","#594A48","#28262D","#FFF0F4","#F9DDE8","#F1B9C9","#E98BA9","#C76586","#9F4168","#E4AED4","#F5D8ED","#FFF1E2","#FFE0C7","#F5BB99","#EF956F","#CF785E","#FFD7AA","#FFE5AD","#EDCE7D","#FFF2BD","#FFE480","#E4CF67","#C2B45F","#E4F0BD","#C8E0AA","#A0CC92","#E2F7E9","#B6E7CB","#94DBB4","#75C5A0","#4EA985","#B5E9E6","#89DBD7","#62B9BE","#E4F5FB","#B6D8F7","#8DBDE9","#679FDD","#486FBC","#D4D9F8","#AAB9ED","#889BDB","#EFE6FF","#E7D5FA","#CBB5F0","#B6A6CF","#987FBD","#7C619C","#6F5D7D","#E4D7CB","#D2BCA8","#A88A71","#86654D","#5F4038","#F9C4B3","#BD8D8C","#FFDFE1","#FFBFC3","#F5959C","#EC646E","#D6404E","#BF2638","#9C2433","#7C192B","#5D1421","#3E1018","#B13E4E","#E94E64","#505058","#414149","#36363C","#24252B","#17181D"];
- const REGIONS=[['Wallpaper','wallpaper'],['Floor','floor'],['Ceiling Trim','ceiling'],['Baseboard','baseboard'],['Full Shelf','bookshelf'],['Bookshelf','halfShelf'],['Nightstand','nightstand']];
+ const REGIONS=[['Wallpaper','wallpaper'],['Floor','floor'],['Ceiling Trim','ceiling'],['Baseboard','baseboard'],['Full Shelf','bookshelf'],['Bookshelf','halfShelf'],['Dresser','nightstand']];
  const FURNITURE=new Set(['bookshelf','halfShelf','nightstand']);
  const PATTERN_AREAS=new Set(['wallpaper','floor']);
  const PATTERNS=[['solid','Solid'],['gingham','Gingham'],['ombre','Ombré'],['checkers','Checkered'],['stripes','Striped']];
@@ -180,7 +180,9 @@
    if(fullShelf&&design.bookshelf)recolorDisplayedShelf(leftFurnitureDisplay,'full',design.bookshelf);
    if(wallShelf&&design.halfShelf)recolorDisplayedShelf(bookShelfFurnitureDisplay,'book',design.halfShelf);
    if(dresser&&design.nightstand){
-     // Nightstand retains its independent original art masks.
+     // Never draw brown base artwork underneath a customized dresser. The
+     // recolor masks include its frame, drawers, knobs and original line art.
+     leftFurnitureDisplay.style.visibility='hidden';
      container.append(...furnitureLayers('nightstand',design.nightstand));
    }
  }
@@ -395,6 +397,11 @@
    const saved=structuredClone(activeDesign(oc)||{});
    const draft=structuredClone(saved);
    let selected='wallpaper', colorTarget='primary';
+   const originalLeftItem=getRoomFurniture(save.room).left;
+   const ownedDresser=['dresser-brown','dresser-dark-brown'].find(id=>inventoryQuantity(id)>0);
+   const startingDresser=String(originalLeftItem||'').startsWith('dresser-')?originalLeftItem:null;
+   const dresserItem=startingDresser||ownedDresser||null;
+   let furnitureChoice=startingDresser?'dresser':'shelf';
    const modal=baseDialog('Room Makeover ♡');
    const screen=document.createElement('div');screen.className='home-makeover-top-preview';
    const preview=document.createElement('div');preview.className='home-makeover-preview';
@@ -402,12 +409,18 @@
    const previewLayers=document.createElement('div');previewLayers.className='home-makeover-preview-layers';preview.append(previewLayers);
    const fields=document.createElement('div');fields.className='home-makeover-fields';
    const regionLabel=document.createElement('label');regionLabel.textContent='Choose room area';
-   const regionSelect=document.createElement('select');for(const [label,key] of REGIONS)regionSelect.add(new Option(label,key));regionLabel.append(regionSelect);
+   const regionSelect=document.createElement('select');for(const [label,key] of REGIONS)regionSelect.add(new Option(label,key));   regionLabel.append(regionSelect);
+   const furnitureLabel=document.createElement('label');furnitureLabel.textContent='Furniture by your OC';
+   const furnitureSelect=document.createElement('select');
+   furnitureSelect.add(new Option('Six-Shelf (free)','shelf'));
+   const dresserOption=new Option(dresserItem?'Dresser':'Dresser (buy in Shop first)','dresser');
+   dresserOption.disabled=!dresserItem;furnitureSelect.add(dresserOption);
+   furnitureSelect.value=furnitureChoice;furnitureLabel.append(furnitureSelect);
    const patternLabel=document.createElement('label');patternLabel.textContent='Pattern';
    const patternSelect=document.createElement('select');for(const [key,label] of PATTERNS){
      const option=new Option(label,key);if(key!=='solid'&&!unlocked(key)){option.disabled=true;option.textContent=`🔒 ${label}`};patternSelect.add(option);
    }
-   patternLabel.append(patternSelect);fields.append(regionLabel,patternLabel);screen.append(preview,fields);modal.dialog.append(screen);
+   patternLabel.append(patternSelect);fields.append(regionLabel,furnitureLabel,patternLabel);screen.append(preview,fields);modal.dialog.append(screen);
    const colorTabs=document.createElement('div');colorTabs.className='home-makeover-color-row';
    const first=makeButton('Primary color',()=>switchColor('primary'));first.className='home-makeover-color-tab';
    const second=makeButton('Secondary color',()=>switchColor('secondary'));second.className='home-makeover-color-tab';
@@ -416,12 +429,17 @@
    const msg=document.createElement('p');msg.className='home-makeover-note';msg.textContent='Preview free · Apply any changes for 100 Pink Coins.';modal.dialog.append(msg);
    const actions=document.createElement('div');actions.className='home-makeover-bottom';
    const back=makeButton('Cancel',()=>modal.close());
+   function desiredFurnitureId(){return furnitureChoice==='dresser'?dresserItem:'shelf-white'}
+   function colorChanged(){return JSON.stringify(draft)!==JSON.stringify(saved)}
+   function furnitureChanged(){return desiredFurnitureId()!==originalLeftItem}
    const apply=makeButton('Apply · 100 Coins',()=>{
-     if(JSON.stringify(draft)===JSON.stringify(saved)){modal.close();showToast('Your room is already using these colors!');return;}
-     if(Number(save.coins||0)<MAKEOVER_PRICE){msg.textContent='Not enough Pink Coins to apply!';return;}
-     save.coins-=MAKEOVER_PRICE;
-     state().byCharacter[oc]=structuredClone(draft);
-     persist();modal.close();renderRoom();showToast('Room makeover complete! ♡ -100 Pink Coins');
+     const recoloring=colorChanged(),switching=furnitureChanged();
+     if(!recoloring&&!switching){modal.close();showToast('Your room is already using these settings!');return;}
+     if(recoloring&&Number(save.coins||0)<MAKEOVER_PRICE){msg.textContent='Not enough Pink Coins to recolor!';return;}
+     if(recoloring){save.coins-=MAKEOVER_PRICE;state().byCharacter[oc]=structuredClone(draft);}
+     if(switching)ensureRoomFurniture(save.room).left=desiredFurnitureId();
+     persist();modal.close();renderRoom();
+     showToast(recoloring?'Room makeover complete! ♡ -100 Pink Coins':'Furniture switched! ♡');
    });apply.classList.add('primary');actions.append(back,apply);modal.dialog.append(actions);
    function effective(area){return draft[area]||creamDefaults[area]}
    function ensure(){return draft[selected]||(draft[selected]={...creamDefaults[selected]})}
@@ -470,10 +488,14 @@
        chip.classList.toggle('selected',String(chosen).toLowerCase()===hex.toLowerCase());
        swatches.append(chip);
      }
-     apply.disabled=Number(save.coins||0)<MAKEOVER_PRICE;
+     const recoloring=colorChanged();
+     apply.textContent=recoloring?'Apply · 100 Coins':'Switch furniture · Free';
+     apply.disabled=recoloring&&Number(save.coins||0)<MAKEOVER_PRICE;
+     msg.textContent=recoloring?'Apply new colors for 100 Pink Coins. Furniture swaps are included.':'Switching just the furniture is free. Recoloring costs 100 Pink Coins.';
    }
    function switchColor(next){colorTarget=next;draw()}
    regionSelect.onchange=()=>{selected=regionSelect.value;colorTarget='primary';draw()};
+   furnitureSelect.onchange=()=>{furnitureChoice=furnitureSelect.value;selected=furnitureChoice==='dresser'?'nightstand':'bookshelf';regionSelect.value=selected;colorTarget='primary';draw()};
    patternSelect.onchange=()=>{
      if(!PATTERN_AREAS.has(selected))return;
      if(patternSelect.value!=='solid'&&!unlocked(patternSelect.value))return;

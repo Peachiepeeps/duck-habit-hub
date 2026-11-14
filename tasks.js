@@ -24,6 +24,7 @@
     {id:'exp-candy-large',name:'EXP Candy Large',image:'assets/items/quest-boosts/Exp-candy-large.png',price:18,kind:'inventory',qty:1,description:'Adds 50% of the active OC’s current Duck Quest EXP bar.'},
     {id:'card-pack',name:'Trading Card Pack',image:'assets/trading-cards/card-pack-unopened.png',price:15,kind:'pack',qty:1,description:'Adds one unopened Trading Card Pack.'},
     {id:'rare-egg',name:'Rare Egg',image:'duck-quest/assets/eggs/Rare-egg.png',price:20,kind:'inventory',qty:1,description:'A harder-to-get egg with better Buddy possibilities.'},
+    {id:'shiny-egg',name:'Shiny Egg ✨',image:'duck-quest/assets/gimmicks/shiny-egg.png',price:150,kind:'inventory',qty:1,description:'An ultra-rare goal! Incubate for 24 hours to hatch a guaranteed random Shiny Lil Guy.'},
     {id:'jump-token-bundle',name:'Jump Token Bundle',image:'duck-quest/assets/dash/Jump-Token.png',price:8,kind:'inventory',inventoryId:'jump-token',qty:3,description:'Three Jump Tokens for Duckie Dash.'}
   ];
 
