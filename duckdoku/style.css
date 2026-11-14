@@ -113,12 +113,11 @@ button.top-stat{cursor:pointer}.top-stat span{font-size:.58rem;letter-spacing:.1
   aspect-ratio:auto;
 }
 
-/* v24.398: shorten the board more noticeably on the user's phone so the
-   status text and helper buttons stay visible without scrolling. */
-.board{--duckdoku-board-trim:35px;height:calc(100% - var(--duckdoku-board-trim))}
-
-/* Match the same stronger reduction on the tall-phone ceiling. */
-.board{max-height:calc(150vw - 30px)}
+/* v24.400: another 30px shorter than v24.399, reserving room for
+   all three Hint/Reveal/Scan buttons above the Android bottom navigation. */
+.board{--duckdoku-board-trim:65px;height:calc(100% - var(--duckdoku-board-trim))}
+/* Reduce the tall-phone clamp by the same amount, so tall phones also shrink. */
+.board{max-height:calc(150vw - 60px)}
 
 /* v24.397 — keep X marks visible over the newly approved light pastel tiles.
    No puzzle rules, board height, or selection mechanics are changed. */

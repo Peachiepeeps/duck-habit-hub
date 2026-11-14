@@ -1320,6 +1320,8 @@
   });
   api.ensureProgress();
   const chosenCopies=new Map();
+  const chosenColorFields=new Map();
+  const selectedColorPages=new Map();
   let draft=null;
   let chosenId=null;
   let paintToken=0;
@@ -1355,64 +1357,153 @@
       draft={...art.ART[id].defaults,...api.stylesForCopy(p,copyId)};
     }
     const copyNo=copies.indexOf(copyId)+1;
-    inventorySheetIcon.innerHTML='';
-    const thumb=document.createElement('img');thumb.src=item.image;thumb.alt='';thumb.style.objectFit='contain';
-    inventorySheetIcon.append(thumb);
     const actions=inventorySheetActions;
     actions.innerHTML='';
+    inventorySheetIcon.innerHTML=''; // The large live preview is enough—no second circular icon.
     inventorySheetCategory.textContent='Furniture · Task Shop';
     inventorySheetName.textContent=item.name;
     inventorySheetQuantity.textContent=`Owned ×${copies.length} · Editing copy ${copyNo}`;
     inventoryGiftPreference.classList.add('hidden');inventoryGiftPreference.innerHTML='';
-    const preview=document.createElement('img');preview.className='inventory-collectible-large-preview-v394';preview.alt='Color preview for '+item.name;
+
+    const preview=document.createElement('img');
+    preview.className='inventory-collectible-large-preview-v394';
+    preview.alt='Color preview for '+item.name;
+    preview.src=item.image;
     const updatePreview=()=>{
       const token=++paintToken;
-      art.render(id,draft).then(uri=>{if(token===paintToken&&preview.isConnected){preview.src=uri;thumb.src=uri;}}).catch(console.warn);
+      art.render(id,draft).then(uri=>{
+        if(token===paintToken && preview.isConnected)preview.src=uri;
+      }).catch(console.warn);
     };
     actions.append(preview);
+
+    // A single copy dropdown replaces the potentially long, scrollable row of buttons.
     if(copies.length>1){
-      const heading=document.createElement('strong');heading.className='inventory-collectible-title-v394';heading.textContent='Choose which copy to customize';actions.append(heading);
-      const copyRow=document.createElement('div');copyRow.className='inventory-copy-picker-v394';
+      const copyRow=document.createElement('div');copyRow.className='inventory-copy-row-v400';
+      const copyLabel=document.createElement('label');copyLabel.textContent='Customize copy';
+      const copySelect=document.createElement('select');copySelect.className='inventory-compact-select-v400';
+      copyLabel.append(copySelect);
       copies.forEach((uid,index)=>{
-        const button=document.createElement('button');button.type='button';button.className='inventory-copy-choice-v394';
-        button.textContent=`#${index+1}`;button.setAttribute('aria-pressed',String(uid===copyId));
-        button.title='Customize copy '+(index+1);
-        button.addEventListener('click',()=>{chosenCopies.set(id,uid);chosenId=null;renderInventoryItemSheet()});
-        copyRow.append(button);
+        const onShelf=p.shelfSlots.findIndex(x=>x===uid);
+        const onDresser=Object.values(p.dresserCollectibleByRoom||{}).includes(uid);
+        const where=onShelf>=0?`Shelf ${onShelf+1}`:onDresser?'Dresser':'Available';
+        const option=document.createElement('option');option.value=uid;
+        option.textContent=`#${index+1} · ${where}`;
+        copySelect.append(option);
       });
+      copySelect.value=copyId;
+      copySelect.addEventListener('change',()=>{
+        chosenCopies.set(id,copySelect.value);chosenId=null;renderInventoryItemSheet();
+      });
+      copyRow.append(copyLabel);
       actions.append(copyRow);
     }
+
     const selectedShelf=p.shelfSlots.findIndex(uid=>uid===copyId);
     const dresserRoom=Object.entries(p.dresserCollectibleByRoom||{}).find(([,uid])=>uid===copyId)?.[0];
     const location=document.createElement('p');location.className='inventory-collectible-location-v394';
-    location.textContent=selectedShelf>=0?`This copy is on collectible shelf spot ${selectedShelf+1}.`:dresserRoom?'This copy is on a dresser.':'This copy is ready to display.';
+    location.textContent=selectedShelf>=0?`On collectible shelf spot ${selectedShelf+1}`:dresserRoom?'On the dresser':'Ready to display';
     actions.append(location);
+
     const groups=art.ART[id].type==='plush'
       ?[['main','Main fabric'],['secondary','Accent fabric'],['face','Eye color']]
       :[['vase','Vase color'],['petal','Flower color'],...(id==='flower-daisy'?[['center','Daisy center']]:[])];
-    for(const [field,label] of groups){
-      const section=document.createElement('section');section.className='inventory-collectible-color-section-v394';
-      const heading=document.createElement('strong');heading.textContent=label;
-      const swatches=document.createElement('div');swatches.className='inventory-collectible-swatches-v394';
-      const choices=[...(field==='face'?eyeChoices:colorChoices)];
-      // Original imported art defaults remain available even if not on the new swatches.
-      if(!choices.some(([,hex])=>hex.toLowerCase()===String(draft[field]||'').toLowerCase())){
-        choices.unshift(['Original',draft[field]]);
+
+    // Show ONE layer's colors at a time. No vertical wall of 60-color swatches.
+    const layerRow=document.createElement('div');layerRow.className='inventory-color-layer-tabs-v400';
+    layerRow.setAttribute('role','tablist');layerRow.setAttribute('aria-label','Choose a part to color');
+    const colorArea=document.createElement('section');colorArea.className='inventory-color-page-v400';
+    actions.append(layerRow,colorArea);
+    let activeField=chosenColorFields.get(id);
+    if(!groups.some(([field])=>field===activeField))activeField=groups[0][0];
+
+    const makePalettes=(field)=>{
+      if(field==='face'){
+        const eyes=[
+          {name:'Eyes 1 · Natural & pinks',colors:eyeChoices.slice(0,12)},
+          {name:'Eyes 2 · Blues & extras',colors:eyeChoices.slice(12,24)}
+        ];
+        if(!eyeChoices.some(([,hex])=>hex.toLowerCase()===String(draft[field]||'').toLowerCase())){
+          eyes.push({name:'Original eye color',colors:[['Original',draft[field]]]});
+        }
+        return eyes;
       }
-      for(const [name,color] of choices){
-        const button=document.createElement('button');button.type='button';button.className='inventory-collectible-swatch-v394';
-        button.style.background=color;button.title=name;button.setAttribute('aria-label',`${label}: ${name}`);
-        button.setAttribute('aria-pressed',String(draft[field]===color));
-        button.addEventListener('click',()=>{
-          draft[field]=color;
-          swatches.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
-          updatePreview();
-        });
-        swatches.append(button);
+      const names=['Creams & yellows','Peaches & pinks','Reds & purples','Blues & aquas','Greens & herbs','Greys & browns'];
+      const result=names.map((name,index)=>({name,colors:colorChoices.slice(index*10,index*10+10)}));
+      if(!colorChoices.some(([,hex])=>hex.toLowerCase()===String(draft[field]||'').toLowerCase())){
+        result.push({name:'Original color',colors:[['Original',draft[field]]]});
       }
-      section.append(heading,swatches);actions.append(section);
-    }
-    const saveBtn=document.createElement('button');saveBtn.type='button';saveBtn.className='inventory-action primary';saveBtn.textContent=`Save Colors for Copy #${copyNo} ♡`;
+      return result;
+    };
+    const drawColorPage=()=>{
+      chosenColorFields.set(id,activeField);
+      layerRow.querySelectorAll('button').forEach(button=>{
+        const active=button.dataset.colorField===activeField;
+        button.setAttribute('aria-selected',String(active));
+        button.classList.toggle('active',active);
+      });
+      colorArea.innerHTML='';
+      const palettes=makePalettes(activeField);
+      const currentHex=String(draft[activeField]||'').toLowerCase();
+      const paletteKey=id+':'+activeField;
+      let paletteIndex=selectedColorPages.get(paletteKey);
+      if(!Number.isInteger(paletteIndex)||paletteIndex<0||paletteIndex>=palettes.length){
+        paletteIndex=palettes.findIndex(page=>page.colors.some(([,color])=>String(color).toLowerCase()===currentHex));
+        if(paletteIndex<0)paletteIndex=0;
+      }
+      const selector=document.createElement('select');
+      selector.className='inventory-compact-select-v400 inventory-palette-select-v400';
+      selector.setAttribute('aria-label','Choose a color family');
+      palettes.forEach((page,index)=>{
+        const option=document.createElement('option');option.value=String(index);
+        option.textContent=page.name;selector.append(option);
+      });
+      selector.value=String(paletteIndex);
+      const selectedLabel=document.createElement('span');
+      selectedLabel.className='inventory-current-color-v400';
+      selectedLabel.setAttribute('aria-live','polite');
+      const swatches=document.createElement('div');swatches.className='inventory-collectible-swatches-v394 inventory-compact-swatches-v400';
+      const fillSwatches=()=>{
+        const index=Number(selector.value);
+        selectedColorPages.set(paletteKey,index);
+        const page=palettes[index];
+        swatches.replaceChildren();
+        for(const [name,color] of page.colors){
+          const button=document.createElement('button');button.type='button';
+          button.className='inventory-collectible-swatch-v394';
+          button.style.background=color;button.title=name;
+          button.setAttribute('aria-label',`${groups.find(([key])=>key===activeField)[1]}: ${name}`);
+          button.setAttribute('aria-pressed',String(draft[activeField]===color));
+          button.addEventListener('click',()=>{
+            draft[activeField]=color;
+            swatches.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
+            selectedLabel.textContent=name;
+            updatePreview();
+          });
+          swatches.append(button);
+        }
+        const selected=page.colors.find(([,color])=>color.toLowerCase()===String(draft[activeField]).toLowerCase());
+        selectedLabel.textContent=selected?selected[0]:'Custom color';
+      };
+      selector.addEventListener('change',fillSwatches);
+      const selectRow=document.createElement('div');selectRow.className='inventory-color-page-heading-v400';
+      selectRow.append(selector,selectedLabel);
+      colorArea.append(selectRow,swatches);
+      fillSwatches();
+    };
+    groups.forEach(([field,label])=>{
+      const button=document.createElement('button');button.type='button';
+      button.className='inventory-color-layer-v400';button.dataset.colorField=field;
+      button.setAttribute('role','tab');button.textContent=label;
+      button.addEventListener('click',()=>{activeField=field;drawColorPage()});
+      layerRow.append(button);
+    });
+    drawColorPage();
+
+    const controls=document.createElement('div');controls.className='inventory-collectible-bottom-actions-v400';
+    const saveBtn=document.createElement('button');saveBtn.type='button';saveBtn.className='inventory-action primary';
+    saveBtn.textContent='Save Colors ♡';
+    saveBtn.title=`Save colors for ${item.name} copy #${copyNo}`;
     saveBtn.addEventListener('click',()=>{
       p.collectibleCopyStyles[copyId]={...draft};
       if(copyId===id)p.collectibleStyles[id]={...draft};
@@ -1422,17 +1513,19 @@
       try{showToast(`${item.name} #${copyNo} recolored! ♡`)}catch(e){}
       renderInventoryItemSheet();
     });
-    actions.append(saveBtn);
+    controls.append(saveBtn);
     const dresserReady=(()=>{try{return currentLeftFurnitureType(save.room)==='dresser'&&Boolean(getRoomFurniture(save.room)?.left)}catch(e){return false}})();
     const here=(()=>{try{const key=typeof mainRoomStorageId==='function'?String(mainRoomStorageId(save.room)):String(save.room);return p.dresserCollectibleByRoom?.[key]===copyId}catch(e){return false}})();
     const place=document.createElement('button');place.type='button';place.className='inventory-action';
-    place.textContent=here?'Remove This Copy From Dresser':dresserReady?'Place This Copy on Dresser':'Place a Dresser First';
+    place.textContent=here?'Remove from dresser':dresserReady?'Place on dresser':'Needs dresser';
+    place.title=here?'Remove this copy from dresser':dresserReady?'Place this copy on dresser':'Place a dresser in this room first';
     place.disabled=!dresserReady&&!here;
     place.addEventListener('click',()=>{
       window.DuckieTaskDresserV260?.setDresserCollectible?.(copyId);
       renderInventoryItemSheet();
     });
-    actions.append(place);
+    controls.append(place);
+    actions.append(controls);
     updatePreview();
   };
 })();

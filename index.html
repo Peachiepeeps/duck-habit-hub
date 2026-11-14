@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="duck-habit-build" content="24.399" />
+  <meta name="duck-habit-build" content="24.400" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta id="appThemeColor" name="theme-color" content="#f7dbe5" />
@@ -11,8 +11,8 @@
   <link rel="stylesheet" href="trading-cards-base.css?v=24.385" />
   <link rel="stylesheet" href="trading-cards-extra.css?v=24.296" />
   <link rel="stylesheet" href="trading-cards-lil-guys-v336.css?v=24.336" />
-  <link rel="stylesheet" href="task-collectible-art-v393.css?v=24.399" />
-  <link rel="stylesheet" href="tasks.css?v=24.399" />
+  <link rel="stylesheet" href="task-collectible-art-v393.css?v=24.400" />
+  <link rel="stylesheet" href="tasks.css?v=24.400" />
   <link rel="stylesheet" href="hub.css?v=24.296" />
   <link rel="stylesheet" href="task-reminders.css?v=24.296" />
   <link rel="stylesheet" href="sock-gremlin-v297.css?v=24.297" />
@@ -1195,7 +1195,7 @@
   <script src="trading-cards-gimmicks-v288.js?v=24.296"></script>
   <script src="trading-cards-sock-gremlin-v297.js?v=24.297"></script>
   <script src="trading-cards-universal-v298.js?v=24.298"></script>
-  <script src="trading-cards-bao-cafe-v299.js?v=24.399"></script>
+  <script src="trading-cards-bao-cafe-v299.js?v=24.400"></script>
   <script src="app.js?v=24.391"></script>
   <script src="home-makeover.js?v=24.391"></script>
   <script src="universal-clothing-v311.js?v=24.354"></script>
@@ -1203,8 +1203,8 @@
   <script src="hub-boosts.js?v=24.346"></script>
   <script src="trading-cards-ui.js?v=24.385"></script>
   <script src="special-tasks-v17.js?v=18-edit"></script>
-  <script src="task-collectible-art-v393.js?v=24.399"></script>
-  <script src="tasks.js?v=24.399"></script>
+  <script src="task-collectible-art-v393.js?v=24.400"></script>
+  <script src="tasks.js?v=24.400"></script>
   <script type="module" src="firebase-reminders.mjs?v=24.296"></script>
   <script src="task-reminders.js?v=24.296"></script>
   <script src="hub.js?v=24.296"></script>
@@ -1226,7 +1226,7 @@
     // v24.84: use a stable service-worker URL and actively check the deployed
     // build when the installed PWA is opened/resumed. This prevents Android
     // from keeping an already-open standalone app on an older app shell.
-    const DUCK_HUB_BUILD = "24.399";
+    const DUCK_HUB_BUILD = "24.400";
     let duckHubReloadingForUpdate = false;
 
     function duckHubReloadFresh(version) {
@@ -1290,7 +1290,7 @@
       window.addEventListener("load", async () => {
         try {
           await duckHubClearOldCodeCaches();
-          const registration = await navigator.serviceWorker.register("./sw.js?v=24-399-cache-refresh", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("./sw.js?v=24-400-compact-customizer", { updateViaCache: "none" });
           await registration.update();
           if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
           await duckHubCheckForUpdate(registration);

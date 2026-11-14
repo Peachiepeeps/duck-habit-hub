@@ -826,8 +826,8 @@
   width:26.5%; /* a little larger on the Home Hub dresser only */
   aspect-ratio:1 / 1; /* the layered plush art is a 500 x 500 canvas */
   left:11.5%;
-  top:69.0%;
-  transform:translate(-50%,-100%); /* bottom edge sits right on the dresser top */
+  top:68.5%; /* tiny 0.5%-height nudge upward from v24.399 */
+  transform:translate(-50%,-100%); /* leave scale and left position unchanged */
 }
 .task-shop-owned-count-v394{display:block;color:#996e83!important;font-weight:850;font-size:.51rem!important}
 .task-collectible-location-v394{font-size:.47rem;color:#917681;font-weight:700}
@@ -853,3 +853,47 @@
 
 /* v24.397: plush size/placement adjustment above is scoped to the Home Hub dresser.
    The Task Collectible Shelf's .task-collectible-slot-v254 artwork is unchanged. */
+
+
+/* v24.400: compact no-scroll recoloring editor (plushes and flower vases ONLY). */
+.inventory-sheet-card:has(.inventory-collectible-large-preview-v394){
+  max-height:calc(100% - 12px);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  padding:8px 10px 10px;
+}
+.inventory-sheet-card:has(.inventory-collectible-large-preview-v394) .inventory-sheet-icon{display:none}
+.inventory-sheet-card:has(.inventory-collectible-large-preview-v394) .inventory-sheet-actions{
+  display:flex;flex-direction:column;gap:6px;min-height:0;overflow:hidden;margin-top:5px
+}
+.inventory-sheet-card:has(.inventory-collectible-large-preview-v394) .inventory-sheet-category{font-size:.49rem;line-height:1.1}
+.inventory-sheet-card:has(.inventory-collectible-large-preview-v394) h2{font-size:.88rem;margin:2px 0}
+.inventory-sheet-card:has(.inventory-collectible-large-preview-v394) .inventory-sheet-quantity{font-size:.57rem}
+.inventory-collectible-large-preview-v394{width:80px;height:80px;flex:0 0 auto;margin:0 auto}
+.inventory-collectible-location-v394{font-size:.55rem!important;line-height:1.1;margin:0!important}
+.inventory-copy-row-v400{display:flex;align-items:center;justify-content:center;gap:8px;width:100%}
+.inventory-copy-row-v400 label{display:flex;align-items:center;gap:8px;color:#876376;font-size:.61rem;font-weight:850}
+.inventory-compact-select-v400{height:32px;min-width:0;max-width:100%;border:1.5px solid #dfc5d0;border-radius:10px;padding:3px 8px;background:#fffafd;color:#79576b;font:inherit;font-size:.64rem;font-weight:750}
+.inventory-color-layer-tabs-v400{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+.inventory-color-layer-v400{padding:7px 3px;border:1.5px solid #e7d4df;border-radius:9px;background:#fff7fb;color:#87677a;font:inherit;font-size:.59rem;line-height:1;font-weight:850;cursor:pointer;min-width:0}
+.inventory-color-layer-v400.active{background:#f2cddd;border-color:#b87999;color:#6b405a}
+.inventory-color-page-v400{border:1.5px solid #eadce4;border-radius:12px;background:#fffafd;padding:7px;display:grid;gap:8px;min-height:0}
+.inventory-color-page-heading-v400{display:flex;align-items:center;gap:5px;justify-content:space-between}
+.inventory-palette-select-v400{max-width:68%;flex:1 1 68%;height:31px}
+.inventory-current-color-v400{min-width:0;flex:0 1 32%;font-size:.59rem;font-weight:800;color:#865e75;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.inventory-compact-swatches-v400{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:7px}
+.inventory-compact-swatches-v400 .inventory-collectible-swatch-v394{width:29px;height:29px;flex:0 0 29px}
+.inventory-collectible-bottom-actions-v400{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.inventory-collectible-bottom-actions-v400 .inventory-action{padding:9px 4px;min-height:36px;font-size:.63rem}
+@media(max-width:390px){
+  .inventory-compact-swatches-v400{gap:5px}
+  .inventory-compact-swatches-v400 .inventory-collectible-swatch-v394{width:27px;height:27px;flex-basis:27px}
+}
+@media(max-height:700px){
+  .inventory-collectible-large-preview-v394{width:62px;height:62px}
+  .inventory-sheet-card:has(.inventory-collectible-large-preview-v394) .inventory-sheet-actions{gap:4px}
+  .inventory-compact-swatches-v400 .inventory-collectible-swatch-v394{width:25px;height:25px;flex-basis:25px}
+  .inventory-color-page-v400{gap:4px;padding:5px}
+  .inventory-color-layer-v400{padding:5px 3px}
+}

@@ -1,0 +1,20 @@
+DUCKIE DAYS v24.400 — DUCKDOKU + DRESSER + COMPACT COLLECTIBLE COLORS
+
+Cumulative update-only ZIP. Upload only this ZIP to repository root.
+
+CHANGES
+1. Shorten Duckdoku board by another 30px (65px total trim vs v24.392)
+   and the tall-screen max-height ceiling by 30px too. Make all three
+   Hint/Reveal/Scan powerups visible on the same screen without scrolling.
+2. Home Hub dresser plush up very slightly (top 69.0% -> 68.5%).
+   Dresser plush size unchanged; collectible shelf untouched.
+3. Inventory > Furniture > plush/flower customization: remove redundant
+   top circular thumbnail; show one recolorable layer at a time with
+   separate layer tabs and a compact color-family dropdown. Every one
+   of the previous 60 fabric/flower colors and 24 eye colors remains
+   selectable. Compact live preview and Save/Place buttons fit together.
+4. Preserve cumulative earlier features and saved item styles/copies.
+5. Bump build, service-worker caches, and stylesheet/script URLs to 24.400
+   to refresh the installed PWA.
+
+No player save data is packaged or overwritten.
