@@ -823,11 +823,11 @@
 
 /* v24.394: comfortably larger new plushes on the dresser; other decor keeps its dimensions. */
 .task-dresser-collectible-v260[data-task-collectible-kind="plush"]{
-  width:23.8%; /* 22% larger than the previous 19.5% width */
+  width:26.5%; /* a little larger on the Home Hub dresser only */
   aspect-ratio:1 / 1; /* the layered plush art is a 500 x 500 canvas */
   left:11.5%;
-  top:65.3%;
-  transform:translate(-50%,-100%); /* anchor visible plush feet on dresser top */
+  top:69.0%;
+  transform:translate(-50%,-100%); /* bottom edge sits right on the dresser top */
 }
 .task-shop-owned-count-v394{display:block;color:#996e83!important;font-weight:850;font-size:.51rem!important}
 .task-collectible-location-v394{font-size:.47rem;color:#917681;font-weight:700}

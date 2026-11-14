@@ -71,9 +71,9 @@ button.top-stat{cursor:pointer}.top-stat span{font-size:.58rem;letter-spacing:.1
  .rule-card img{width:24px;height:24px}
  .rule-card .mini-grid{width:26px;height:26px}
  .rule-card .duck-pair img{width:20px;height:20px}
- .status-text{min-height:25px;margin:5px auto 3px;font-size:.58rem}
- .helper-bar{gap:5px;margin-top:2px}
- .helper-button{min-height:62px;padding:4px;gap:0;border-radius:12px}
+ .status-text{min-height:22px;margin:4px auto 2px;font-size:.56rem}
+ .helper-bar{gap:5px;margin-top:1px}
+ .helper-button{min-height:60px;padding:4px 3px;gap:0;border-radius:12px}
  .helper-icon{height:30px}.helper-icon img{max-height:30px;max-width:36px}
  .helper-button strong{font-size:.65rem}
  .board {width:min(100%,calc(100dvh - 272px));}
@@ -93,7 +93,7 @@ button.top-stat{cursor:pointer}.top-stat span{font-size:.58rem;letter-spacing:.1
   --r0:#F6C9D7; /* Strawberry Milk */
   --r1:#F7E8B5; /* Buttercream */
   --r2:#ACDFB7; /* Mint Jelly */
-  --r3:#92D4E9; /* Seafoam Aqua */
+  --r3:#9ADCEF; /* Seafoam Aqua — slightly lighter */
   --r4:#AEDBFF; /* Baby Blue */
   --r5:#C9C6F7; /* Periwinkle */
   --r6:#F8DCCB; /* Peach Cream */
@@ -113,13 +113,12 @@ button.top-stat{cursor:pointer}.top-stat span{font-size:.58rem;letter-spacing:.1
   aspect-ratio:auto;
 }
 
-/* v24.395: Preserve the requested v24.394 test adjustment: 10px shorter
-   than v24.393, 15px shorter overall than v24.392. */
-.board{--duckdoku-board-trim:15px;height:calc(100% - var(--duckdoku-board-trim))}
+/* v24.398: shorten the board more noticeably on the user's phone so the
+   status text and helper buttons stay visible without scrolling. */
+.board{--duckdoku-board-trim:35px;height:calc(100% - var(--duckdoku-board-trim))}
 
-/* v24.396: the 150vw ceiling also needs the requested 10px reduction.
-   Otherwise tall phones hit that ceiling and never visibly shrink the board. */
-.board{max-height:calc(150vw - 10px)}
+/* Match the same stronger reduction on the tall-phone ceiling. */
+.board{max-height:calc(150vw - 30px)}
 
 /* v24.397 — keep X marks visible over the newly approved light pastel tiles.
    No puzzle rules, board height, or selection mechanics are changed. */
