@@ -1,0 +1,8 @@
+Duckie Days v24.393 — Bao Café Bears, Collectible Plushes + Flowers, Favorite Heart, Duckdoku
+UPDATE-ONLY. Extract at repository root / upload ZIP to existing updater. Do not delete other game files.
+- Duckdoku: reduce board height by exactly 5px; retain distinct pastel palette.
+- Bao Café: Cerise, Hunni, Woolie added as selectable bears, animated using original 64x64 sprites. Also appear in Duck Quest rare Bao Café encounters, using their original idle art. Their special favorite-customer lists, dialogue and personalized rewards were NOT provided; no new favorites are assigned and each temporarily awards standard 100 Pink Coins per draw (1/2 depending on order) rather than invented special items.
+- Favorite customer pixel heart: uses supplied 29x27 PNG above bear head, replacing text-heart character. Existing six bears' favorites and dialogues unchanged.
+- Task Shop: three new layered plushes (Lop Bunny, Perky Bunny, Kitty); face lines/color, blush and stitches shared, blush/stitches drawn at 50% opacity. Three new flowers (Daisy, Rose, Tulip); stem drawn behind vase.
+- Each new collectible costs 20 Duck Bucks, permanent once purchased, can appear on 24-slot shelf; plush colors, vase colors and petal colors are customizable and saved per item. Existing shop collectibles and old saves remain. All previews are bundled as PNG; customization is drawn from supplied source art at runtime.
+- Updated SW cache and version. No save files bundled.

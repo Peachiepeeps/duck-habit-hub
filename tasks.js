@@ -15,7 +15,13 @@
     {id:'task-plush-2',name:'Special Plush 2',image:'assets/task-shop/Task-plush-2.png',price:20,kind:'collectible',description:'A Task Shop exclusive plush for your collectible shelf.'},
     {id:'task-plush-3',name:'Special Plush 3',image:'assets/task-shop/Task-plush-3.png',price:20,kind:'collectible',description:'A Task Shop exclusive plush for your collectible shelf.'},
     {id:'task-plush-4',name:'Special Plush 4',image:'assets/task-shop/Task-plush-4.png',price:20,kind:'collectible',description:'A Task Shop exclusive plush for your collectible shelf.'},
-    {id:'task-plush-5',name:'Special Plush 5',image:'assets/task-shop/Task-plush-5.png',price:20,kind:'collectible',description:'A Task Shop exclusive plush for your collectible shelf.'}
+    {id:'task-plush-5',name:'Special Plush 5',image:'assets/task-shop/Task-plush-5.png',price:20,kind:'collectible',description:'A Task Shop exclusive plush for your collectible shelf.'},
+    {id:'plush-lop-bunny',name:'Lop Bunny Plush',image:'assets/task-shop/layered/plush-lop-bunny-preview.png',price:20,kind:'collectible',description:'A cuddly, recolorable lop-eared bunny.'},
+    {id:'plush-perky-bunny',name:'Perky Bunny Plush',image:'assets/task-shop/layered/plush-perky-bunny-preview.png',price:20,kind:'collectible',description:'A sweet bunny with perky ears and customizable colors.'},
+    {id:'plush-kitty',name:'Kitty Plush',image:'assets/task-shop/layered/plush-kitty-preview.png',price:20,kind:'collectible',description:'A stitched kitty plush with customizable colors.'},
+    {id:'flower-daisy',name:'Daisy Vase',image:'assets/task-shop/layered/flower-daisy-preview.png',price:20,kind:'collectible',description:'Daisies and a recolorable vase for your shelf.'},
+    {id:'flower-rose',name:'Rose Vase',image:'assets/task-shop/layered/flower-rose-preview.png',price:20,kind:'collectible',description:'A rose and a recolorable vase for your shelf.'},
+    {id:'flower-tulip',name:'Tulip Vase',image:'assets/task-shop/layered/flower-tulip-preview.png',price:20,kind:'collectible',description:'A tulip and a recolorable vase for your shelf.'}
   ];
 
   const SHOP_ITEMS=[
@@ -49,6 +55,7 @@
     const p=save.taskProgression;
     p.duckBucks=Math.max(0,Math.floor(Number(p.duckBucks)||0));
     p.collectiblesOwned=Array.isArray(p.collectiblesOwned)?[...new Set(p.collectiblesOwned.map(String))]:[];
+    if(!p.collectibleStyles || typeof p.collectibleStyles!=='object' || Array.isArray(p.collectibleStyles))p.collectibleStyles={};
     p.shelfSlots=Array.isArray(p.shelfSlots)?p.shelfSlots.slice(0,SHELF_SLOTS):[];
     while(p.shelfSlots.length<SHELF_SLOTS) p.shelfSlots.push(null);
     p.shelfSlots=p.shelfSlots.map(id=>COLLECTIBLES.some(item=>item.id===id)&&p.collectiblesOwned.includes(id)?id:null);
@@ -329,6 +336,51 @@
 
   function ownedCollectible(id){return ensureProgress().collectiblesOwned.includes(id);}
 
+  function applyCollectibleArt(img,item){
+    if(!img || !item)return;
+    window.DuckieCollectibleArtV393?.apply(img,item.id,ensureProgress().collectibleStyles);
+  }
+  const ART_PALETTE=['#fff9f0','#f6d5e5','#e9a6bc','#ecc4a2','#f4e2a2','#c8e9c3','#a1d7d0','#b2d8ef','#c5c1ed','#d5b1dc','#9997ac','#665464','#34323c'];
+  const artApi=window.DuckieCollectibleArtV393;
+  function customizeCollectible(item){
+    if(!artApi?.ART[item.id] || !ownedCollectible(item.id))return;
+    const def=artApi.ART[item.id], p=ensureProgress();
+    let chosen={...def.defaults,...(p.collectibleStyles[item.id]||{})};
+    const overlay=document.createElement('div');overlay.className='task-customizer-overlay-v393';
+    const card=document.createElement('section');card.className='task-customizer-card-v393';card.setAttribute('role','dialog');card.setAttribute('aria-modal','true');card.setAttribute('aria-label','Customize '+item.name);
+    const title=document.createElement('h3');title.textContent='Customize '+item.name+' ♡';
+    const preview=document.createElement('img');preview.className='task-customizer-preview-v393';preview.src=item.image;preview.alt=item.name;
+    const close=()=>overlay.remove();
+    const paint=()=>artApi.render(item.id,chosen).then(src=>{if(overlay.isConnected)preview.src=src}).catch(console.warn);
+    card.append(title,preview);
+    const groups=def.type==='plush'?[['main','Main fabric'],['secondary','Accent fabric'],['face','Eye color']]:[['vase','Vase color'],['petal','Flower color'],...(item.id==='flower-daisy'?[['center','Daisy center']]:[])];
+    groups.forEach(([field,label])=>{
+      const row=document.createElement('div');row.className='task-customizer-row-v393';
+      const heading=document.createElement('strong');heading.textContent=label;
+      const choices=document.createElement('div');choices.className='task-customizer-swatches-v393';
+      const palette=field==='face'?['#252530','#684d45','#7b609b','#af5981','#497f87','#c0a08c',...ART_PALETTE]:ART_PALETTE;
+      palette.forEach(color=>{
+        const button=document.createElement('button');button.type='button';button.className='task-customizer-swatch-v393';
+        button.style.setProperty('--swatch',color);button.setAttribute('aria-label',label+': '+color);button.title=color;
+        const select=()=>{chosen[field]=color;choices.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));paint()};
+        button.setAttribute('aria-pressed',String(chosen[field]===color));button.addEventListener('click',select);choices.append(button);
+      });
+      row.append(heading,choices);card.append(row);
+    });
+    const actions=document.createElement('div');actions.className='task-customizer-actions-v393';
+    const cancel=document.createElement('button');cancel.type='button';cancel.textContent='Cancel';cancel.addEventListener('click',close);
+    const saveBtn=document.createElement('button');saveBtn.type='button';saveBtn.className='save-v393';saveBtn.textContent='Save Colors ♡';
+    saveBtn.addEventListener('click',()=>{
+      p.collectibleStyles[item.id]={...chosen};saveNow();close();renderTaskShop();renderTaskShelf();
+      try{window.DuckieTaskDresserV260?.renderDresserCollectible?.()}catch(error){}
+      showToast(item.name+' customized! ♡');
+    });
+    actions.append(cancel,saveBtn);card.append(actions);overlay.append(card);
+    overlay.addEventListener('click',e=>{if(e.target===overlay)close()});
+    taskShopPanel.append(overlay);paint();
+  }
+
+
   function buyTaskShopItem(item){
     const p=ensureProgress();
     if(item.kind==='collectible' && ownedCollectible(item.id)){showToast(`${item.name} is already yours!`);return;}
@@ -355,8 +407,9 @@
     taskShopGrid.innerHTML='';
     SHOP_ITEMS.forEach(item=>{
       const owned=item.kind==='collectible' && ownedCollectible(item.id);
-      const card=document.createElement('article');card.className=`task-shop-item-v254${owned?' owned':''}`;
+      const card=document.createElement('article');card.className=`task-shop-item-v254${owned?' owned':''}`;card.dataset.collectibleId=item.id;
       const img=document.createElement('img');img.src=item.image;img.alt='';
+      applyCollectibleArt(img,item);
       if(item.fallback) img.onerror=()=>{if(img.src.endsWith(item.image.split('/').pop())) img.src=item.fallback;};
       const copy=document.createElement('div');
       const name=document.createElement('strong');name.textContent=item.name;
@@ -367,6 +420,10 @@
       const buy=document.createElement('button');buy.type='button';buy.textContent=owned?'Owned':'Buy';buy.disabled=owned || p.duckBucks<item.price;
       buy.addEventListener('click',()=>buyTaskShopItem(item));
       foot.append(price,buy);
+      if(item.kind==='collectible' && artApi?.ART[item.id] && owned){
+        const customize=document.createElement('button');customize.type='button';customize.className='task-customize-btn-v393';customize.textContent='Customize';
+        customize.addEventListener('click',()=>customizeCollectible(item));foot.append(customize);
+      }
       card.append(img,copy,foot);taskShopGrid.append(card);
     });
     renderDuckBuckBalances();
@@ -437,7 +494,7 @@
     p.shelfSlots.forEach((id,index)=>{
       const item=COLLECTIBLES.find(entry=>entry.id===id);
       const btn=document.createElement('button');btn.type='button';btn.className=`wing-duck-slot task-collectible-slot-v254${item?' occupied':''}`;
-      if(item){const img=document.createElement('img');img.src=item.image;img.alt='';btn.append(img);btn.setAttribute('aria-label',`Shelf spot ${index+1}: ${item.name}`);}
+      if(item){const img=document.createElement('img');img.src=item.image;img.alt='';btn.append(img);applyCollectibleArt(img,item);btn.setAttribute('aria-label',`Shelf spot ${index+1}: ${item.name}`);}
       else{const plus=document.createElement('span');plus.textContent='+';btn.append(plus);btn.setAttribute('aria-label',`Shelf spot ${index+1}: empty`);}
       btn.addEventListener('click',()=>openTaskCollectiblePicker(index));
       taskCollectibleSlots.append(btn);
@@ -475,6 +532,7 @@
     owned.forEach(item=>{
       const btn=document.createElement('button');btn.type='button';btn.className='task-collectible-choice-v254';
       const img=document.createElement('img');img.src=item.image;img.alt='';
+      applyCollectibleArt(img,item);
       const name=document.createElement('span');name.textContent=item.name;
       btn.append(img,name);btn.addEventListener('click',()=>chooseTaskCollectible(item.id));taskCollectiblePickerGrid.append(btn);
     });
@@ -667,6 +725,7 @@
     img.className='task-dresser-collectible-v260';
     img.dataset.taskCollectibleId=id;
     furnitureLayer.append(img);
+    window.DuckieCollectibleArtV393?.apply(img,id,progress().collectibleStyles);
   }
 
   function setDresserCollectible(id){
@@ -708,6 +767,7 @@
   }
 
   function collectibleForCard(card){
+    if(card?.dataset.collectibleId && byId.has(card.dataset.collectibleId))return byId.get(card.dataset.collectibleId);
     const art=card?.querySelector(':scope > img');
     const src=art?.getAttribute('src') || '';
     if(!src) return null;

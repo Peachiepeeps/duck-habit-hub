@@ -1,0 +1,16 @@
+/* v24.393 — collectible customization */
+.task-customizer-overlay-v393{position:absolute;inset:0;z-index:410;display:grid;place-items:center;padding:10px;background:rgba(72,50,63,.43);backdrop-filter:blur(2px)}
+.task-customizer-overlay-v393[hidden]{display:none!important}
+.task-customizer-card-v393{width:min(100%,415px);max-height:94%;overflow-y:auto;padding:13px;border-radius:20px;background:#fff9fb;border:2px solid #e9bfd4;box-shadow:0 12px 35px rgba(72,42,55,.22);text-align:center;color:#765363}
+.task-customizer-card-v393 h3{margin:2px 0 5px;font-size:1rem}
+.task-customizer-preview-v393{width:132px;height:132px;object-fit:contain;image-rendering:auto;display:block;margin:0 auto 6px}
+.task-customizer-row-v393{margin:8px 0;text-align:left}
+.task-customizer-row-v393 strong{display:block;font-size:.69rem;margin-bottom:5px}
+.task-customizer-swatches-v393{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}
+.task-customizer-swatch-v393{width:34px;height:34px;padding:0;border:2px solid #fff;border-radius:50%;background:var(--swatch);box-shadow:0 0 0 1px rgba(100,60,80,.25);cursor:pointer;flex:none}
+.task-customizer-swatch-v393[aria-pressed=true]{outline:3px solid #af698b;outline-offset:2px}
+.task-customizer-actions-v393{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.task-customizer-actions-v393 button{min-height:39px;border-radius:12px;font:inherit;font-size:.73rem;font-weight:900;border:1px solid #dec2d0;background:#fff;color:#825e70;cursor:pointer}
+.task-customizer-actions-v393 .save-v393{background:#eed5e3;color:#664658;border-color:#d69eb8}
+.task-customize-btn-v393{background:#f5e2ef!important;color:#85516f!important}
+@media(max-width:390px){.task-customizer-preview-v393{width:105px;height:105px}.task-customizer-swatch-v393{width:30px;height:30px}}

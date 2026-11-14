@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="duck-habit-build" content="24.336" />
+  <meta name="duck-habit-build" content="24.393" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta id="appThemeColor" name="theme-color" content="#f7dbe5" />
@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="trading-cards-base.css?v=24.385" />
   <link rel="stylesheet" href="trading-cards-extra.css?v=24.296" />
   <link rel="stylesheet" href="trading-cards-lil-guys-v336.css?v=24.336" />
+  <link rel="stylesheet" href="task-collectible-art-v393.css?v=24.393" />
   <link rel="stylesheet" href="tasks.css?v=24.342" />
   <link rel="stylesheet" href="hub.css?v=24.296" />
   <link rel="stylesheet" href="task-reminders.css?v=24.296" />
@@ -1202,7 +1203,8 @@
   <script src="hub-boosts.js?v=24.346"></script>
   <script src="trading-cards-ui.js?v=24.385"></script>
   <script src="special-tasks-v17.js?v=18-edit"></script>
-  <script src="tasks.js?v=24.390"></script>
+  <script src="task-collectible-art-v393.js?v=24.393"></script>
+  <script src="tasks.js?v=24.393"></script>
   <script type="module" src="firebase-reminders.mjs?v=24.296"></script>
   <script src="task-reminders.js?v=24.296"></script>
   <script src="hub.js?v=24.296"></script>
@@ -1288,7 +1290,7 @@
       window.addEventListener("load", async () => {
         try {
           await duckHubClearOldCodeCaches();
-          const registration = await navigator.serviceWorker.register("./sw.js?v=24-392-duckdoku-tall-pastels", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("./sw.js?v=24-393-new-bears-shelf", { updateViaCache: "none" });
           await registration.update();
           if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
           await duckHubCheckForUpdate(registration);

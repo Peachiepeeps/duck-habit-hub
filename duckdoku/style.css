@@ -112,3 +112,6 @@ button.top-stat{cursor:pointer}.top-stat span{font-size:.58rem;letter-spacing:.1
   max-height:150vw;
   aspect-ratio:auto;
 }
+
+/* v24.393: the requested five-pixel board height reduction, total. */
+.board{height:calc(100% - 5px)}
