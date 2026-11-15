@@ -441,7 +441,9 @@
   }
 
   function renderTaskShop(){
-    if(!taskShopGrid) return;
+    // Do not build or composite the Task Shop previews at Home Hub startup.
+    // Opening the shop always explicitly calls this renderer.
+    if(!taskShopGrid || taskShopPanel?.classList.contains('hidden')) return;
     const p=ensureProgress();
     taskShopGrid.innerHTML='';
     SHOP_ITEMS.forEach(item=>{
@@ -530,9 +532,14 @@
     if(inShelf) renderTaskShelf();
   }
 
+  let lastShelfSignature=null;
   function renderTaskShelf(){
-    if(!taskCollectibleSlots) return;
+    if(!taskCollectibleSlots || taskCollectibleWing?.classList.contains('hidden')) return;
     const p=ensureProgress();
+    const signature=JSON.stringify(p.shelfSlots.map(copyId =>
+      copyId ? [copyId,stylesForCopy(p,copyId)] : null));
+    if(signature===lastShelfSignature && taskCollectibleSlots.children.length===p.shelfSlots.length) return;
+    lastShelfSignature=signature;
     taskCollectibleSlots.innerHTML='';
     p.shelfSlots.forEach((id,index)=>{
       const item=COLLECTIBLES.find(entry=>entry.id===baseCollectibleId(id));
@@ -758,24 +765,31 @@
   }
 
   function renderDresserCollectible(){
-    clearRenderedPlush();
-    if(!furnitureLayer || typeof currentRoomView!=='undefined' && currentRoomView!=='main') return;
-    if(!dresserAvailable()) return;
-
+    if(!furnitureLayer) return;
+    const existing=furnitureLayer.querySelector('.task-dresser-collectible-v260');
+    if((typeof currentRoomView!=='undefined' && currentRoomView!=='main') || !dresserAvailable()){
+      existing?.remove();
+      return;
+    }
     const id=currentDresserCollectible();
     const item=id ? byId.get(api.baseCollectibleId(id)) : null;
-    if(!item) return;
+    if(!item){existing?.remove();return;}
+    const styles=api.stylesForCopy(progress(),id);
+    const signature=id+'|'+JSON.stringify(styles);
+    if(existing?.dataset.dresserRenderKey===signature) return;
 
-    const img=document.createElement('img');
-    img.src=item.image;
+    const img=existing || document.createElement('img');
+    // Retain the old preview until a recolored version has finished rendering.
+    if(!existing || existing.dataset.taskCollectibleId!==id) img.src=item.image;
     img.alt='';
     img.decoding='async';
     img.loading='eager';
     img.className='task-dresser-collectible-v260';
     img.dataset.taskCollectibleId=id;
     img.dataset.taskCollectibleKind=item.id.startsWith('plush-')?'plush':item.id.startsWith('flower-')?'flower':'other';
-    furnitureLayer.append(img);
-    window.DuckieCollectibleArtV393?.apply(img,item.id,{[item.id]:api.stylesForCopy(progress(),id)});
+    img.dataset.dresserRenderKey=signature;
+    if(!existing) furnitureLayer.append(img);
+    window.DuckieCollectibleArtV393?.apply(img,item.id,{[item.id]:styles});
   }
 
   function setDresserCollectible(id){

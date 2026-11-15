@@ -6072,7 +6072,7 @@ function renderRoom() {
   const room = ROOMS.find(r => r.id === roomId) || ROOMS[0];
   const wallpaper = currentDisplayedWallpaper();
 
-  roomImage.src = room.file;
+  if (roomImage.getAttribute("src") !== room.file) roomImage.src = room.file;
   syncRoomStageBackgroundFromImage(room.id);
   roomImage.alt = wallpaper
     ? `${room.name} room with ${wallpaper.name} wallpaper`
@@ -6378,6 +6378,7 @@ function renderPeep() {
 }
 
 const peepImageCache = new Map();
+const MAX_WARM_IMAGES = 24;
 
 function warmImage(src) {
   if (!src || peepImageCache.has(src)) return;
@@ -6385,7 +6386,11 @@ function warmImage(src) {
   img.decoding = "async";
   img.src = src;
   peepImageCache.set(src, img);
-  if (typeof img.decode === "function") img.decode().catch(() => {});
+  // Browsers cache fetched images themselves; don't keep the entire closet
+  // pinned as decoded Image objects in the Home Hub's memory.
+  while (peepImageCache.size > MAX_WARM_IMAGES) {
+    peepImageCache.delete(peepImageCache.keys().next().value);
+  }
 }
 
 function scheduleNonCriticalWarmup(callback, delay = 0) {
@@ -6408,14 +6413,8 @@ function warmCharacterAssets(characterId) {
     if (asset?.file) filenames.add(`${character.assetFolder}${asset.file}`);
   }
 
-  // Pre-warm all hair choices for the active character so style swaps feel snappy.
-  for (const group of getCharacterCloset(characterId)) {
-    if (group?.type !== "hair") continue;
-    for (const assetId of group.options || []) {
-      const asset = assetMap[assetId];
-      if (asset?.file) filenames.add(`${character.assetFolder}${asset.file}`);
-    }
-  }
+  // Other hair styles are loaded only after the closet is opened.
+  // Warming them on every Home Hub redraw wastes bandwidth and mobile RAM.
 
   // Keep reactions feeling snappy without warming the full closet.
   for (const [assetId, asset] of Object.entries(assetMap)) {
@@ -6428,6 +6427,30 @@ function warmCharacterAssets(characterId) {
   if (headDuckId && DUCKS[headDuckId]?.file) filenames.add(DUCKS[headDuckId].file);
 
   filenames.forEach(warmImage);
+}
+
+// Warm a few alternate hairs in the background *after* the closet is opened.
+// The remaining options still load normally when selected.
+function warmClosetHairAssets(characterId) {
+  const character = CHARACTERS[characterId];
+  if (!character) return;
+  const assetMap = getCharacterAssetMap(characterId);
+  const urls = [];
+  for (const group of getCharacterCloset(characterId)) {
+    if (group?.type !== "hair") continue;
+    for (const assetId of group.options || []) {
+      const asset = assetMap[assetId];
+      if (asset?.file) urls.push(`${character.assetFolder}${asset.file}`);
+    }
+  }
+  const choices = [...new Set(urls)].slice(0, 12);
+  const enqueue = (index = 0) => {
+    if (index >= choices.length || closetPanel.classList.contains('hidden') ||
+        save.selectedCharacter !== characterId) return;
+    choices.slice(index, index + 2).forEach(warmImage);
+    scheduleNonCriticalWarmup(() => enqueue(index + 2), 100);
+  };
+  scheduleNonCriticalWarmup(() => enqueue(), 100);
 }
 
 function warmStartupAssets() {
@@ -8368,7 +8391,7 @@ function renderFurnitureOverlay(img, itemId) {
     img.classList.add("hidden");
     return;
   }
-  img.src = item.image;
+  if (img.getAttribute("src") !== item.image) img.src = item.image;
   img.alt = item.name;
   img.classList.remove("hidden");
 }
@@ -8584,7 +8607,9 @@ function appendFurnitureDuck(duckId, placement, extraClass = "") {
 }
 
 function renderFurnitureDuckPlacements(floorDuckFallbackId = null) {
-  furnitureDuckLayer.innerHTML = "";
+  // Only rebuild the actual perched ducks. The dresser collectible in this
+  // same layer is managed independently and should survive a room redraw.
+  furnitureDuckLayer.querySelectorAll('.furniture-perched-duck').forEach(node => node.remove());
 
   const leftType = currentLeftFurnitureType(save.room);
   const roomFurniture = getRoomFurniture(save.room);
@@ -8659,7 +8684,7 @@ function renderDuckPlacements() {
 
     headDuckDisplay.decoding = "async";
     headDuckDisplay.fetchPriority = "high";
-    headDuckDisplay.src = duck.file;
+    if (headDuckDisplay.getAttribute("src") !== duck.file) headDuckDisplay.src = duck.file;
     headDuckDisplay.alt = `${duck.name} sitting on ${character.name}'s head`;
     headDuckDisplay.style.left = `${placement.left}%`;
     headDuckDisplay.style.top = `${placement.top}%`;
@@ -8686,7 +8711,7 @@ function renderDuckPlacements() {
     const duck = DUCKS[floorId];
     floorDuckDisplay.decoding = "async";
     floorDuckDisplay.fetchPriority = "auto";
-    floorDuckDisplay.src = duck.file;
+    if (floorDuckDisplay.getAttribute("src") !== duck.file) floorDuckDisplay.src = duck.file;
     floorDuckDisplay.alt = `${duck.name} displayed on the room floor`;
     floorDuckDisplay.classList.remove("hidden");
   } else {
@@ -14586,6 +14611,7 @@ function openCloset() {
   stage.classList.add("closet-open");
   closeRoomPicker();
   renderCloset();
+  warmClosetHairAssets(save.selectedCharacter);
 }
 
 function closeCloset() {

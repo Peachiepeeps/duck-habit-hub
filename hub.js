@@ -258,7 +258,18 @@
   }catch(e){}
   function init(){removeDustInventoryCard();ensureStatusCurrency();ensureStatusSkills();refreshCurrency();addGlitterToCardCurrency();}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
-  document.addEventListener('click',()=>requestAnimationFrame(()=>{removeDustInventoryCard();addGlitterToCardCurrency();refreshCurrency();}),true);
+  let currencyRefreshQueued=false;
+  document.addEventListener('click',()=>{
+    if(currencyRefreshQueued)return;
+    currencyRefreshQueued=true;
+    requestAnimationFrame(()=>{
+      currencyRefreshQueued=false;
+      // Heavy queries only when the corresponding panels are open.
+      if(!document.querySelector('#inventoryPanel')?.classList.contains('hidden'))removeDustInventoryCard();
+      if(document.querySelector('.tc-dust-line-v262,.tc-workshop-dust-v264'))addGlitterToCardCurrency();
+      if(!document.querySelector('#statusPanel')?.classList.contains('hidden'))refreshCurrency();
+    });
+  },true);
   window.DUCKIE_HUB_V267='24.267';
 })();
 ;

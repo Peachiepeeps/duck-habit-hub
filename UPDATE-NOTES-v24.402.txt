@@ -1,0 +1,13 @@
+Duckie Days v24.402 — Home Hub optimization
+
+- No gameplay, prices, graphics, recolor choices, or saved data changed.
+- Defer unused hair previews until Closet opens; cap retained warm images.
+- Skip Task Shop/shelf image composition until those panels are opened.
+- Avoid rebuilding the same placed shelf artwork and dresser plush on room redraws.
+- Keep dresser art when perched ducks redraw; avoid unchanged room/furniture image assignments.
+- Reuse collectible layer tint canvas and asynchronously encode PNG art; bound recolor preview cache.
+- Coalesce background currency decoration checks and avoid hidden-panel work on every tap.
+- Refresh Home Hub/JS/PWA cache keys and version to v24.402.
+- Includes all previous cumulative v24.401 changes, including Duckdoku phone layout.
+
+Install: upload this update-only ZIP to the root of the GitHub repository.
