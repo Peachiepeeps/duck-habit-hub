@@ -122,3 +122,20 @@ button.top-stat{cursor:pointer}.top-stat span{font-size:.58rem;letter-spacing:.1
 /* v24.397 — keep X marks visible over the newly approved light pastel tiles.
    No puzzle rules, board height, or selection mechanics are changed. */
 .cell.mark-x::before{ text-shadow:0 1px 2px rgba(75,51,63,.68),0 0 1px rgba(75,51,63,.85); }
+
+
+/* v24.401 — Samsung/Android no-scroll fix.
+   100dvh in the installed PWA can extend behind the system navigation bar.
+   Reserve bottom space explicitly instead of repeatedly reducing the board
+   inside an unchanged full-height card. This keeps Hint / Reveal / Scan inside
+   the visible play area. Leftover board slack sits below the grid, never above. */
+.board-wrap{display:flex;justify-content:center;align-items:flex-start;}
+@media (max-width:600px){
+  .duckdoku-shell{
+    --duckdoku-android-reserve:clamp(58px,8.5dvh,88px);
+    height:calc(100dvh - var(--duckdoku-android-reserve) - env(safe-area-inset-bottom,0px));
+    min-height:0;
+  }
+  .duckdoku-card{height:100%;min-height:0;}
+  .board{height:calc(100% - 35px);max-height:calc(150vw - 90px);}
+}

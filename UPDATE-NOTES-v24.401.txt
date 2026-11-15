@@ -1,0 +1,6 @@
+Duckie Days v24.401 — Duckdoku Android Screen Fit
+• Fixes Hint/Reveal/Scan being hidden behind Android navigation on some PWA phones.
+• Reserves system-navigation space at the bottom of Duckdoku; board shrinks accordingly.
+• Aligns the board directly below the rule strip rather than centering it in unused space.
+• Keeps the approved colors, gameplay, saves, Home Hub dresser placement, and collectible shelf unchanged.
+• Refreshes Duckie Days version and PWA cache identifiers to 24.401.
