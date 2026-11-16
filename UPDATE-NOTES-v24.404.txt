@@ -1,0 +1,3 @@
+Duckie Days v24.404
+- Lover/Friend battle: remove extra horizontal flip on love-interest/friend sprites.
+- Keep original asset facing, placement, layering, and HP layout.

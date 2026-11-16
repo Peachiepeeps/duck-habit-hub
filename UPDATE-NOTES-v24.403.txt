@@ -1,0 +1,12 @@
+Duckie Days v24.403 — Lover / Friend Battle Visual Layout
+
+- Special Lover/Friend boss fights only: companion is now approximately the same height as the OC.
+- Companion stands slightly closer to the enemy, layered behind the OC and mirrored toward the enemy.
+- The existing OC and companion HP windows stack at top left, with matching green HP bars and centered HP text.
+- Enemy HP stays at top right; same cream card styling and centered HP text, with a red HP bar.
+- Uses ONLY original character/enemy/background assets already in the game and CSS; no generated images or replacement character art.
+- Companion battle mechanics, rewards, rare chance and regular non-special fights are unchanged.
+- Refreshes main app PWA version and caches to 24.403 to prevent stale styling.
+- Cumulative update-only: includes the earlier v24.402 Home Hub optimization, Duckdoku and Bao Cafe updates.
+
+To install: Upload this ZIP directly to the repository root and let Install Updates finish.

@@ -1,4 +1,4 @@
-// Duckie Days 24.385 — Lovers / Friends Battle (rare boss encounter)
+// Duckie Days 24.403 — Lovers / Friends Battle (rare boss encounter; new CSS-only HUD/positioning)
 // Isolated add-on loaded AFTER existing combat patches. Does not alter regular encounters.
 (()=>{
   'use strict';
@@ -44,13 +44,28 @@
   function ongoing(){return Boolean(assist&&currentRun&&currentEnemy?.specialAssistV385?.id===assist.id);}
   const hpWidget=document.createElement('div');
   hpWidget.id='loverAssistHpV385';hpWidget.setAttribute('aria-label','Companion HP');
-  hpWidget.innerHTML='<div class="lover-assist-hp-track-v385"><span id="loverAssistFillV385"></span></div><small id="loverAssistTextV385"></small>';
-  ui.buddyCombatant?.appendChild(hpWidget);
+  // Reuse the existing game's nameplate and HP-bar styles; no new artwork.
+  // Keep the companion's HUD separate from its sprite so the sprite can sit
+  // behind the OC without hiding the HP panel.
+  hpWidget.innerHTML='<div class="nameplate lover-assist-nameplate-v403"><strong id="loverAssistNameV403">Companion</strong><span id="loverAssistTagV403">ALLY ♡</span></div><div class="hp-bar lover-assist-hp-track-v385"><span id="loverAssistFillV385"></span></div><small id="loverAssistTextV385"></small>';
+  ui.battlefield?.appendChild(hpWidget);
+  function positionAssistHud(){
+    if(!ongoing() || hpWidget.hidden || !ui.battlefield)return;
+    const heroStatus=ui.battlefield.querySelector('.peep-status-stack');
+    if(!heroStatus)return;
+    const arena=ui.battlefield.getBoundingClientRect();
+    const hero=heroStatus.getBoundingClientRect();
+    // Follow the real hero panel height so long names never overlap the ally.
+    hpWidget.style.top=Math.max(0,Math.round(hero.bottom-arena.top+2))+'px';
+  }
+  window.addEventListener('resize',positionAssistHud,{passive:true});
   function drawHp(){
     const bar=document.getElementById('loverAssistFillV385');
     const label=document.getElementById('loverAssistTextV385');
     if(!bar||!label||!assist)return;
     bar.style.width=Math.round(100*assist.hp/assist.maxHp)+'%';
+    // Match the game's Android-safe outer-gradient HP bar, not just the hidden span.
+    bar.parentElement?.style.setProperty('--hp-pct',Math.round(100*assist.hp/assist.maxHp)+'%');
     label.textContent=assist.hp>0?`${assist.hp} / ${assist.maxHp} HP`:'Knocked out!';
     ui.buddyCombatant?.classList.toggle('lover-assist-down-v385',assist.hp<=0);
   }
@@ -61,10 +76,16 @@
     ui.buddyCombatant.classList.add('lover-assist-ally-v385');
     ui.battlefield?.classList.add('lover-assist-battle-v385');
     ui.buddyBattleName.textContent=assist.name+(assist.romance?' ♡':' ✦');
+    const name=document.getElementById('loverAssistNameV403');
+    const tag=document.getElementById('loverAssistTagV403');
+    if(name)name.textContent=assist.name;
+    if(tag)tag.textContent=assist.romance?'ALLY ♡':'FRIEND ✦';
     ui.buddyBattleSprite.alt=assist.name+' ally';
     if(ui.buddyBattleSprite.getAttribute('src')!==assist.art)ui.buddyBattleSprite.src=assist.art;
     ui.buddyBattleSparkle?.classList.add('hidden');
     drawHp();
+    positionAssistHud();
+    requestAnimationFrame(positionAssistHud);
   }
   function reset(){
     introTicket++;
@@ -72,6 +93,7 @@
     ui.battlefield?.classList.remove('lover-assist-battle-v385');
     ui.buddyCombatant?.classList.remove('lover-assist-ally-v385','lover-assist-down-v385');
     hpWidget.hidden=true;
+    hpWidget.style.top='';
   }
   hpWidget.hidden=true;
   function isSpecialBoss(encounter){return encounter?.type==='boss'&&Boolean(ENEMIES[encounter.enemyId]);}

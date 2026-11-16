@@ -1,34 +1,130 @@
-/* Duckie Days 24.385 — Lovers and Friends boss assists */
+/* Duckie Days v24.403 — Lover/Friend battles only.
+   All character images and battle artwork are the player's original assets.
+   UI is rendered using existing nameplate/HP markup and CSS; regular fights unchanged. */
+
+/* The LI/friend stands a little closer to the enemy, but BEHIND the hero.
+   Use the same battlefield-relative height as the OC rather than Lil Guy size. */
 #battlefield.lover-assist-battle-v385 #buddyCombatant{
-  display:flex!important;left:32%!important;bottom:8%!important;z-index:7!important;
-  transform:translateX(-50%)!important;pointer-events:none!important;
-  flex-direction:column;align-items:center;
+  position:absolute!important;display:block!important;
+  left:33%!important;bottom:1%!important;top:auto!important;right:auto!important;
+  width:23%!important;height:54%!important;max-width:none!important;
+  z-index:2!important;transform:translateX(-50%)!important;
+  pointer-events:none!important;margin:0!important;padding:0!important;
+  background:none!important;border:none!important;
 }
 #battlefield.lover-assist-battle-v385 #buddyBattleSprite{
-  max-width:125px!important;width:auto!important;height:min(29vh,127px)!important;
-  object-fit:contain!important;image-rendering:pixelated!important;
-  transform:scaleX(-1);transform-origin:center bottom;
+  position:absolute!important;left:0!important;bottom:0!important;top:auto!important;
+  display:block!important;width:100%!important;height:100%!important;
+  max-width:none!important;max-height:none!important;
+  object-fit:contain!important;object-position:center bottom!important;
+  image-rendering:pixelated!important;
+  /* Keep the original sprite facing; the player's assets already face the enemy correctly. */
+  transform:none!important;transform-origin:center bottom!important;
 }
 #battlefield.lover-assist-battle-v385 #buddyBattleName{
-  max-width:140px!important;white-space:normal!important;text-align:center!important;
-  line-height:1.05!important;background:#fff2f9!important;color:#783d63!important;
-  border-radius:12px!important;padding:3px 7px!important;
+  display:none!important; /* The name belongs in the HP panel, not on the sprite. */
 }
-#loverAssistHpV385{width:105px;max-width:110px;display:grid;justify-items:center;gap:3px;z-index:9;pointer-events:none}
+#battlefield.lover-assist-battle-v385 #buddyBattleSparkle{display:none!important}
+
+/* Shared status-panel treatment for the hero, ally and boss. */
+#battlefield.lover-assist-battle-v385 .peep-status-stack,
+#battlefield.lover-assist-battle-v385 .enemy-status-stack,
+#battlefield.lover-assist-battle-v385 #loverAssistHpV385{
+  box-sizing:border-box!important;
+  background:rgba(255,247,229,.96)!important;
+  border:2px solid var(--border,#956e64)!important;
+  border-radius:8px!important;
+  box-shadow:0 3px 0 rgba(85,60,49,.15)!important;
+  padding:4px 5px!important;
+  display:grid!important;gap:3px!important;
+  pointer-events:none!important;
+}
+#battlefield.lover-assist-battle-v385 .peep-status-stack .nameplate,
+#battlefield.lover-assist-battle-v385 .enemy-status-stack .nameplate,
+#battlefield.lover-assist-battle-v385 #loverAssistHpV385 .nameplate{
+  background:transparent!important;border:0!important;box-shadow:none!important;
+  border-radius:0!important;padding:0!important;gap:4px!important;
+  display:flex!important;align-items:baseline!important;justify-content:space-between!important;
+  font-size:.58rem!important;line-height:1.15!important;
+}
+#battlefield.lover-assist-battle-v385 .nameplate strong{
+  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+/* Keep the boss name readable, with the longer challenge label below it. */
+#battlefield.lover-assist-battle-v385 .enemy-status-stack .enemy-nameplate{
+  display:grid!important;grid-template-columns:1fr!important;gap:1px!important;
+}
+#battlefield.lover-assist-battle-v385 .enemy-status-stack .enemy-nameplate strong{white-space:normal!important;overflow:visible!important}
+#battlefield.lover-assist-battle-v385 .enemy-status-stack .enemy-nameplate span{text-align:left!important}
+/* Match the hero and ally fighter baselines; both remain below their cards. */
+#battlefield.lover-assist-battle-v385 .peep-combatant .peep-fighter,
+#battlefield.lover-assist-battle-v385 .peep-combatant .battle-hero-composite{
+  bottom:1%!important;
+}
+#battlefield.lover-assist-battle-v385 .nameplate span{
+  text-align:right;white-space:normal;font-size:.46rem!important;line-height:1.1;
+}
+#battlefield.lover-assist-battle-v385 .peep-status-stack .hp-bar,
+#battlefield.lover-assist-battle-v385 .enemy-status-stack .hp-bar,
+#battlefield.lover-assist-battle-v385 #loverAssistHpV385 .hp-bar{
+  height:9px!important;width:100%!important;margin:0!important;
+  border:1px solid #987067!important;
+  border-radius:999px!important;overflow:hidden!important;
+}
+#battlefield.lover-assist-battle-v385 .peep-status-stack .hp-bar span,
+#battlefield.lover-assist-battle-v385 #loverAssistHpV385 .hp-bar span{
+  background:#6fb875!important;height:100%!important;display:block!important;
+}
+#battlefield.lover-assist-battle-v385 .enemy-status-stack .hp-bar span{
+  background:#d76570!important;height:100%!important;display:block!important;
+}
+#battlefield.lover-assist-battle-v385 .peep-status-stack small,
+#battlefield.lover-assist-battle-v385 .enemy-status-stack small,
+#battlefield.lover-assist-battle-v385 #loverAssistHpV385 small{
+  justify-self:center!important;text-align:center!important;
+  font-size:.47rem!important;font-weight:900!important;line-height:1.1!important;
+  padding:0!important;background:transparent!important;border:0!important;
+  white-space:nowrap!important;
+}
+/* Align the companion panel below the OC panel; JS places its top at the
+   actual measured hero-panel bottom to account for long names and scaling. */
+#battlefield.lover-assist-battle-v385 #loverAssistHpV385{
+  position:absolute!important;left:4%!important;top:18%;width:45%!important;
+  z-index:12!important;max-width:none!important;max-height:none!important;
+}
+#battlefield.lover-assist-battle-v385 #loverAssistHpV385 .hp-bar{--hp-color:#6fb875!important}
 #loverAssistHpV385[hidden]{display:none!important}
-.lover-assist-hp-track-v385{width:100%;height:9px;background:#4b263f;border-radius:999px;border:2px solid #4b263f;overflow:hidden}
-#loverAssistFillV385{height:100%;width:100%;display:block;background:linear-gradient(90deg,#f7a4cc,#fff1af);transition:width .2s ease}
-#loverAssistTextV385{display:block;white-space:nowrap;background:rgba(255,247,251,.92);color:#743755;padding:2px 5px;border-radius:10px;font-size:10px;font-weight:900}
-#battlefield.lover-assist-battle-v385 .lover-assist-down-v385 #buddyBattleSprite{filter:grayscale(.8);opacity:.57}
+/* Override non-battle buddy styles, and keep the boss info in its original
+   upper-right corner rather than stretching across the battlefield. */
+#battlefield.lover-assist-battle-v385 .peep-status-stack{z-index:12!important}
+#battlefield.lover-assist-battle-v385 .enemy-status-stack{
+  top:0!important;right:0!important;left:0!important;width:100%!important;
+  z-index:12!important;
+}
+#battlefield.lover-assist-battle-v385 .enemy-combatant{
+  right:4%!important;left:auto!important;width:45%!important;
+}
+#battlefield.lover-assist-battle-v385 .lover-assist-down-v385 #buddyBattleSprite{
+  filter:grayscale(.8)!important;opacity:.57!important;
+}
 #battlefield.lover-assist-battle-v385 #enemySprite{
   filter:drop-shadow(0 0 8px #fff08e) drop-shadow(0 0 15px #ffaaff);
   animation:lover-boss-glow-v385 1.3s ease-in-out infinite alternate;
 }
 @keyframes lover-boss-glow-v385{to{filter:drop-shadow(0 0 15px #fff6a7) drop-shadow(0 0 24px #ffc2e4)}}
-@media(max-width:430px){
-  #battlefield.lover-assist-battle-v385 #buddyCombatant{left:34%!important;bottom:6%!important}
-  #battlefield.lover-assist-battle-v385 #buddyBattleSprite{max-width:90px!important;height:min(23vh,102px)!important}
-  #loverAssistHpV385{width:88px}
-  #loverAssistTextV385{font-size:9px}
+@media(max-width:600px){
+  #battlefield.lover-assist-battle-v385 .peep-status-stack .nameplate,
+  #battlefield.lover-assist-battle-v385 .enemy-status-stack .nameplate,
+  #battlefield.lover-assist-battle-v385 #loverAssistHpV385 .nameplate{font-size:.52rem!important}
+  #battlefield.lover-assist-battle-v385 .peep-status-stack,
+  #battlefield.lover-assist-battle-v385 .enemy-status-stack,
+  #battlefield.lover-assist-battle-v385 #loverAssistHpV385{padding:2px 4px!important;gap:2px!important}
+  #battlefield.lover-assist-battle-v385 #buddyCombatant{
+    left:33%!important;bottom:1%!important;width:24%!important;height:56%!important;
+  }
+  #battlefield.lover-assist-battle-v385 #loverAssistHpV385{width:46%!important}
+  #battlefield.lover-assist-battle-v385 .enemy-combatant{width:46%!important}
 }
-@media(prefers-reduced-motion:reduce){#battlefield.lover-assist-battle-v385 #enemySprite{animation:none!important}}
+@media(prefers-reduced-motion:reduce){
+  #battlefield.lover-assist-battle-v385 #enemySprite{animation:none!important}
+}
