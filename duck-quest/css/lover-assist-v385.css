@@ -1,13 +1,18 @@
-/* Duckie Days v24.403 — Lover/Friend battles only.
+/* Duckie Days v24.405 — Lover/Friend battles only.
    All character images and battle artwork are the player's original assets.
    UI is rendered using existing nameplate/HP markup and CSS; regular fights unchanged. */
 
 /* The LI/friend stands a little closer to the enemy, but BEHIND the hero.
-   Use the same battlefield-relative height as the OC rather than Lil Guy size. */
+   Size each sprite relative to the visible height of its current OC. */
 #battlefield.lover-assist-battle-v385 #buddyCombatant{
   position:absolute!important;display:block!important;
-  left:33%!important;bottom:1%!important;top:auto!important;right:auto!important;
-  width:23%!important;height:54%!important;max-width:none!important;
+  left:33%!important;bottom:var(--lover-assist-bottom,7%)!important;
+  top:auto!important;right:auto!important;
+  /* v24.405: size is measured against the OC and adjusted for this sprite's
+     transparent margins, rather than stretching every companion to 54%. */
+  width:var(--lover-assist-width,18%)!important;
+  height:var(--lover-assist-height,42%)!important;
+  max-width:none!important;
   z-index:2!important;transform:translateX(-50%)!important;
   pointer-events:none!important;margin:0!important;padding:0!important;
   background:none!important;border:none!important;
@@ -120,7 +125,10 @@
   #battlefield.lover-assist-battle-v385 .enemy-status-stack,
   #battlefield.lover-assist-battle-v385 #loverAssistHpV385{padding:2px 4px!important;gap:2px!important}
   #battlefield.lover-assist-battle-v385 #buddyCombatant{
-    left:33%!important;bottom:1%!important;width:24%!important;height:56%!important;
+    left:33%!important;
+    bottom:var(--lover-assist-bottom,7%)!important;
+    width:var(--lover-assist-width,18%)!important;
+    height:var(--lover-assist-height,42%)!important;
   }
   #battlefield.lover-assist-battle-v385 #loverAssistHpV385{width:46%!important}
   #battlefield.lover-assist-battle-v385 .enemy-combatant{width:46%!important}
@@ -128,3 +136,6 @@
 @media(prefers-reduced-motion:reduce){
   #battlefield.lover-assist-battle-v385 #enemySprite{animation:none!important}
 }
+
+/* v24.405: no clipped Lil Guy label underneath Lovers/Friends. */
+#battlefield.lover-assist-battle-v385 #buddyCombatant > .buddy-battle-name{display:none!important}

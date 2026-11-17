@@ -1,0 +1,13 @@
+Duckie Days v24.405 — Lover/Friend battle height selections
+
+- All 33 companion height options now supported, exactly as approved.
+  - Noticeably taller +16%, A little taller +8%, Same 0%, A little shorter -8%, Noticeably shorter -16%.
+  - Each companion renders relative to their currently displayed OC, compensating for sprite transparent margins.
+- Companion sprite retains its original orientation (no horizontal flip), appears behind the OC, closer to the enemy.
+- Removes the old bottom name bubble. Companion HP and name remain in the matching top-left panel below the OC panel.
+- Boss HP remains upper-right in the original matching style and red fill.
+- Retains all updates through v24.404 including Duckdoku, plushes, bears and Home Hub optimization.
+- No images, gameplay probabilities, gifts, saves, or regular battle styles changed.
+- Version and service-worker caches advanced to 24.405 to refresh Android PWA styling.
+
+Reference: Height ratios chosen by the player for Miho (7), Miko (17), Annika (4), Peep/Io friends (5).

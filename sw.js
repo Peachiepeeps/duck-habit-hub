@@ -15,21 +15,21 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-403';
-const MEDIA_CACHE='duck-habit-hub-media-v24-403';
+const APP_CACHE='duck-habit-hub-app-v24-405';
+const MEDIA_CACHE='duck-habit-hub-media-v24-405';
 const MAX_MEDIA_ENTRIES=400;
 let mediaWrites=0;
 const APP_SHELL=[
  './',
  './index.html',
  './version.json',
- './sw.js?v=24.404',
+ './sw.js?v=24.405',
  './manifest.webmanifest?v=24.296',
  './app.css?v=24.385',
  './trading-cards-base.css?v=24.327',
  './trading-cards-extra.css?v=24.296',
  './trading-cards-lil-guys-v336.css?v=24.336',
- './tasks.css?v=24.404',
+ './tasks.css?v=24.405',
  './hub.css?v=24.296',
  './task-reminders.css?v=24.296',
  './sock-gremlin-v297.css?v=24.297',
@@ -46,7 +46,7 @@ const APP_SHELL=[
  './trading-cards-gimmicks-v288.js?v=24.296',
  './trading-cards-sock-gremlin-v297.js?v=24.297',
  './trading-cards-universal-v298.js?v=24.298',
- './trading-cards-bao-cafe-v299.js?v=24.404',
+ './trading-cards-bao-cafe-v299.js?v=24.405',
  './bao-cafe/index.html',
  './bao-cafe/assets/Favorite-customer-heart.png',
  './bao-cafe/assets/Cerise-idle-1.png',
@@ -98,11 +98,11 @@ const APP_SHELL=[
  './bao-cafe/assets/Frappe-idle-1.png',
  './duck-quest/css/bao-cafe-v299.css?v=24-309',
  './duck-quest/css/fixes-v318.css?v=24.318',
- './duck-quest/js/bao-cafe-v299.js?v=24.404',
- './duck-quest/js/lover-assist-v385.js?v=24.404',
+ './duck-quest/js/bao-cafe-v299.js?v=24.405',
+ './duck-quest/js/lover-assist-v385.js?v=24.405',
  './duck-quest/js/sweetheart-v352.js?v=24.385',
- './duck-quest/css/lover-assist-v385.css?v=24.404',
- './app.js?v=24.404',
+ './duck-quest/css/lover-assist-v385.css?v=24.405',
+ './app.js?v=24.405',
  './home-makeover.js?v=24.391',
  './home-makeover.css?v=24.385',
  './task-buddy-beta.js?v=24.385',
@@ -115,12 +115,12 @@ const APP_SHELL=[
  './gimmick-hub-v288.js?v=24.296',
  './hub-boosts.js?v=24.346',
  './trading-cards-ui.js?v=24.353',
- './task-collectible-art-v393.js?v=24.404',
- './task-collectible-art-v393.css?v=24.404',
- './tasks.js?v=24.404',
+ './task-collectible-art-v393.js?v=24.405',
+ './task-collectible-art-v393.css?v=24.405',
+ './tasks.js?v=24.405',
  './firebase-reminders.mjs?v=24.296',
  './task-reminders.js?v=24.296',
- './hub.js?v=24.404',
+ './hub.js?v=24.405',
  './sock-gremlin-fashion-v297.js?v=24.359',
  './sock-gremlin-fashion-fix-v312.js?v=24.312',
  './fixes-v313.js?v=24.313',
@@ -141,7 +141,7 @@ const APP_SHELL=[
  './fixes-v391.js?v=24.391',
  './fixes-v391.css?v=24.391',
  './duckdoku/index.html',
- './duckdoku/style.css?v=24.404',
+ './duckdoku/style.css?v=24.405',
  './duckdoku/script.js?v=24.391',
   './assets/task-shop/layered/Daisy-color-1.png',
  './assets/task-shop/layered/Daisy-color-2.png',

@@ -1,4 +1,4 @@
-// Duckie Days 24.403 — Lovers / Friends Battle (rare boss encounter; new CSS-only HUD/positioning)
+// Duckie Days 24.405 — Lovers / Friends Battle (rare boss encounter; new CSS-only HUD/positioning)
 // Isolated add-on loaded AFTER existing combat patches. Does not alter regular encounters.
 (()=>{
   'use strict';
@@ -39,6 +39,12 @@
     });
   }
 
+  // v24.405: player-approved visible height ratios relative to the active OC.
+  // Compensate for transparent padding in each ORIGINAL idle image (no asset edits).
+  const allyHeightRatio=Object.freeze({"artist-friend":0.84,"beau":1.08,"bubble":0.92,"cheryln":1,"circe":1,"collin":1.08,"cybil":1,"devlin":1.08,"ein":0.92,"ghost-girl":0.84,"hibiki":0.92,"hinaru":0.92,"ideno":1.08,"jenson":1.08,"kiri":1,"lain":1.08,"lovell":1,"luka":1.08,"lukio":1.08,"luv-birdie":0.84,"midori":1.08,"moriko":1,"nene":1,"nico":1.08,"pippa":0.84,"quackers":0.84,"quin":1.08,"ranger":1,"shin":1,"shinobu":1,"tamao":0.92,"westley":1.08,"yuzuru":0.92});
+  const allyArtFill=Object.freeze({"artist-friend":0.96875,"beau":0.92453,"bubble":0.92708,"cheryln":0.92708,"circe":0.96875,"collin":0.94175,"cybil":0.96875,"devlin":0.98039,"ein":0.9375,"ghost-girl":0.95312,"hibiki":0.89583,"hinaru":0.90625,"ideno":0.88235,"jenson":0.9375,"kiri":0.94792,"lain":0.97059,"lovell":0.91667,"luka":0.92708,"lukio":0.91,"luv-birdie":0.91667,"midori":0.93043,"moriko":0.90625,"nene":0.97917,"nico":0.9619,"pippa":0.89062,"quackers":0.96875,"quin":0.92308,"ranger":0.89583,"shin":0.96875,"shinobu":0.92708,"tamao":0.96875,"westley":0.9596,"yuzuru":0.85417});
+  const heroArtFill=Object.freeze({peep:94/96,io:93/96,miho:94/96,miko:91/96,annika:93/96});
+
   let assist=null;
   let introTicket=0;
   function ongoing(){return Boolean(assist&&currentRun&&currentEnemy?.specialAssistV385?.id===assist.id);}
@@ -58,7 +64,56 @@
     // Follow the real hero panel height so long names never overlap the ally.
     hpWidget.style.top=Math.max(0,Math.round(hero.bottom-arena.top+2))+'px';
   }
-  window.addEventListener('resize',positionAssistHud,{passive:true});
+  // Measure the actual fighter currently shown, including layered outfits.
+  // The old fixed 54-56% battlefield sizing made taller character canvases huge.
+  function displayedHeroSprite(){
+    const battlefield=ui.battlefield;
+    if(!battlefield)return null;
+    const composite=battlefield.querySelector('#battleHeroComposite');
+    if(composite && !composite.classList.contains('hidden')){
+      const imgs=Array.from(composite.querySelectorAll('img')).filter(img=>{
+        const b=img.getBoundingClientRect();
+        return b.height>2 && b.width>2 && getComputedStyle(img).display!=='none';
+      });
+      if(imgs.length){
+        return imgs.reduce((best,img)=>img.getBoundingClientRect().height>best.getBoundingClientRect().height?img:best);
+      }
+      if(composite.getBoundingClientRect().height>2)return composite;
+    }
+    const base=battlefield.querySelector('#peepSprite');
+    if(base && base.getBoundingClientRect().height>2)return base;
+    return null;
+  }
+  function positionAssistSprite(){
+    if(!ongoing()||!ui.buddyCombatant||!ui.battlefield)return;
+    const sprite=ui.buddyBattleSprite;
+    const arena=ui.battlefield.getBoundingClientRect();
+    if(arena.height<=0||arena.width<=0)return;
+    const hero=displayedHeroSprite();
+    const heroRect=hero?.getBoundingClientRect();
+    const heroHeight=heroRect?.height>4?heroRect.height:arena.height*.50;
+    const target=allyHeightRatio[assist.id] ?? 1;
+    const artFill=allyArtFill[assist.id] ?? .95;
+    const heroFill=heroArtFill[activeCharacterId] ?? .97;
+    // Percentages apply to the visible pixels, not differently padded canvases.
+    const height=Math.max(12,Math.min(arena.height*.85,heroHeight*heroFill*target/artFill));
+    const naturalW=sprite?.naturalWidth||64;
+    const naturalH=sprite?.naturalHeight||96;
+    const width=height*naturalW/naturalH;
+    ui.buddyCombatant.style.setProperty('--lover-assist-height',height.toFixed(2)+'px');
+    ui.buddyCombatant.style.setProperty('--lover-assist-width',width.toFixed(2)+'px');
+    // Match the two fighters' footlines despite different sprite padding.
+    const foot=heroRect?.height>4?
+      heroRect.bottom-(heroRect.height*(1-heroFill)):
+      arena.bottom-arena.height*.07;
+    const bottomBlank=height*(1-artFill);
+    const bottom=Math.max(0,arena.bottom-foot-bottomBlank);
+    ui.buddyCombatant.style.setProperty('--lover-assist-bottom',bottom.toFixed(2)+'px');
+  }
+  function positionAllAssist(){positionAssistHud();positionAssistSprite();}
+  window.addEventListener('resize',positionAllAssist,{passive:true});
+  ui.buddyBattleSprite?.addEventListener('load',positionAllAssist,{passive:true});
+  ui.battlefield?.querySelector('#peepSprite')?.addEventListener('load',positionAllAssist,{passive:true});
   function drawHp(){
     const bar=document.getElementById('loverAssistFillV385');
     const label=document.getElementById('loverAssistTextV385');
@@ -84,8 +139,8 @@
     if(ui.buddyBattleSprite.getAttribute('src')!==assist.art)ui.buddyBattleSprite.src=assist.art;
     ui.buddyBattleSparkle?.classList.add('hidden');
     drawHp();
-    positionAssistHud();
-    requestAnimationFrame(positionAssistHud);
+    positionAllAssist();
+    requestAnimationFrame(positionAllAssist);
   }
   function reset(){
     introTicket++;
@@ -94,6 +149,9 @@
     ui.buddyCombatant?.classList.remove('lover-assist-ally-v385','lover-assist-down-v385');
     hpWidget.hidden=true;
     hpWidget.style.top='';
+    for(const p of ['--lover-assist-height','--lover-assist-width','--lover-assist-bottom']){
+      ui.buddyCombatant?.style.removeProperty(p);
+    }
   }
   hpWidget.hidden=true;
   function isSpecialBoss(encounter){return encounter?.type==='boss'&&Boolean(ENEMIES[encounter.enemyId]);}
