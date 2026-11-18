@@ -86,7 +86,7 @@
  }
  function startScene(){
   const first=!hubSave.angelDemonReunion?.firstMet;
-  scene={first,lines:first?FIRST:REPEAT,lineIndex:0,step:0,expressions:{angel:'idle',demon:'idle'},finished:false,timer:null,resize:null};
+  scene={first,lines:first?FIRST:REPEAT,lineIndex:0,step:0,expressions:{angel:'idle',demon:'idle'},finished:false,timer:null,resize:null,expressionTimer:null};
   clearAnimations();
   currentEnemy=null;
   actionLocked=false;
@@ -118,9 +118,21 @@
  }
  function renderLine(){
   if(!scene)return;
+  if(scene.expressionTimer){clearTimeout(scene.expressionTimer);scene.expressionTimer=null;}
+  scene.expressions.angel='idle';
+  scene.expressions.demon='idle';
   const [speaker,words,expression]=scene.lines[scene.lineIndex];
-  scene.expressions[speaker.toLowerCase()]=expression;
+  const who=speaker.toLowerCase();
+  scene.expressions[who]=expression;
   showSprites();
+  if(String(expression||'idle').toLowerCase()!=='idle'){
+   scene.expressionTimer=setTimeout(()=>{
+    if(!scene)return;
+    scene.expressionTimer=null;
+    scene.expressions[who]='idle';
+    showSprites();
+   },850);
+  }
   setMessage(speaker+': '+words);
   const holder=ui.eventChoiceActions;
   if(!holder)return;
@@ -137,6 +149,7 @@
  }
  function cleanupReunion(){
   if(scene?.timer)clearInterval(scene.timer);
+  if(scene?.expressionTimer)clearTimeout(scene.expressionTimer);
   if(scene?.resize)window.removeEventListener('resize',scene.resize);
   scene=null;
   const layer=document.querySelector('#siblingScene');
@@ -190,6 +203,7 @@
    if(!scene||scene.finished)return;
    scene.finished=true;
    clearInterval(scene.timer);
+   if(scene.expressionTimer){clearTimeout(scene.expressionTimer);scene.expressionTimer=null;}
    if(scene.resize)window.removeEventListener('resize',scene.resize);
    const text=reward();
    const holder=ui.eventChoiceActions;
@@ -201,10 +215,10 @@
    },{once:true});holder.appendChild(button);}
    setMessage('Sibling Reunion Reward! '+text);
  }
- // 18% of eligible STAGE ENCOUNTER roll slots, on ALL SIX areas, only with Angel in the active party.
+ // 5% of eligible STAGE ENCOUNTER roll slots, on ALL SIX areas, only with Angel in the active party.
  const previousBuild=buildEncounterFromPool;
  buildEncounterFromPool=function(pool,mode='stage'){
-  if(mode==='stage' && activeCharacterId==='angel' && AREAS.has(selectedArea) && Math.random()<.18){
+  if(mode==='stage' && activeCharacterId==='angel' && AREAS.has(selectedArea) && Math.random()<.05){
    return {type:'angel-demon-reunion'};
   }
   return previousBuild(pool,mode);

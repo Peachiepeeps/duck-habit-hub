@@ -4759,6 +4759,7 @@ function renderQuestOcPicker(){
     const button=document.createElement("button");
     button.type="button";
     button.className=`quest-oc-choice${id===activeCharacterId?" current":""}`;
+    button.dataset.characterId=id;
     button.setAttribute("role","menuitem");
     if(id===activeCharacterId) button.setAttribute("aria-current","true");
 

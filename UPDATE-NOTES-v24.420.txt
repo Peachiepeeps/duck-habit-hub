@@ -1,0 +1,12 @@
+Duckie Days v24.420 — Full combined update (v24.419 + portrait refinement)
+
+This update-only ZIP includes ALL v24.419 fixes, so installing v24.419 separately is unnecessary.
+
+- Lucky and Healthy Chest Closed, Chest Opened, Mimic Idle 1 and Idle 2 now use your supplied, clearly named PNG art. The corresponding WebP assets are lossless conversions.
+- Loved-one encounter shared chance: 5% per eligible scene roll; Angel/Demon: 5% of eligible stage rolls. Existing Red String 3x character weighting remains in place.
+- Reunion dialogue expressions display for 850ms and then return to idle animation.
+- Shiyu and Yukine are raised in their reunion scene and Yukine is scaled to 1.08x Shiyu.
+- Change OC portraits are zoomed out slightly for all characters EXCEPT Midori. Midori retains the exact v24.418 sizing at each breakpoint.
+- Version / service-worker and linked script/style URLs are bumped to 24.420 to reduce stale caches.
+
+Note: Automated JavaScript syntax and ZIP integrity checked. Live browser gameplay still needs testing.

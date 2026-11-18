@@ -2,7 +2,7 @@
   "use strict";
 
   const SAVE_KEY = "duckHabitHubSave_v1";
-  const SHARED_CHANCE = 0.02;
+  const SHARED_CHANCE = 0.05;
   const HEART_SRC = "assets/love-interests/lukio/Pixel-heart.png";
   const MIKO_IDLE_1 = "assets/characters/miko/base/idle-1.webp";
   const MIKO_IDLE_2 = "assets/characters/miko/base/idle-2.webp";
@@ -1228,6 +1228,23 @@ kiri: {
     sceneFrameTimer = null;
   }
 
+  function defaultScenePose(charId){
+    return charId === "miko" ? "idle" : "idle1";
+  }
+
+  function isIdlePose(charId, pose){
+    const normalized = String(pose || defaultScenePose(charId)).toLowerCase();
+    return normalized === "idle" || normalized === "idle1" || normalized === "idle2" || normalized === "neutral";
+  }
+
+  function sceneSpriteAdjustments(sceneId, charId){
+    if (sceneId === "yukine") {
+      if (charId === "shiyu") return { scale: 1, bottom: "11%" };
+      if (charId === "yukine") return { scale: 1.08, bottom: "11%" };
+    }
+    return { scale: 1, bottom: "4%" };
+  }
+
   function sceneLayer(){
     const battlefield = document.querySelector("#battlefield");
     if (!battlefield) return null;
@@ -1244,7 +1261,7 @@ kiri: {
     return el;
   }
 
-  function sizeSceneSprite(img){
+  function sizeSceneSprite(img, sceneId, charId){
     const battlefield = document.querySelector("#battlefield");
     if (!img || !battlefield || !img.naturalWidth || !img.naturalHeight) return;
     // All battle portraits were drawn pixel-for-pixel against Miko's source
@@ -1253,20 +1270,23 @@ kiri: {
     const referenceHeight = 96;
     const referenceDisplayHeight = Math.max(120, battlefield.clientHeight * 0.76);
     const sourcePixelScale = referenceDisplayHeight / referenceHeight;
-    img.style.width = `${Math.round(img.naturalWidth * sourcePixelScale)}px`;
-    img.style.height = `${Math.round(img.naturalHeight * sourcePixelScale)}px`;
+    const adjustment = sceneSpriteAdjustments(sceneId, charId);
+    const scale = Number(adjustment?.scale) || 1;
+    img.style.width = `${Math.round(img.naturalWidth * sourcePixelScale * scale)}px`;
+    img.style.height = `${Math.round(img.naturalHeight * sourcePixelScale * scale)}px`;
+    img.style.bottom = adjustment?.bottom || "4%";
   }
 
-  function setSceneSpriteSource(img, src){
+  function setSceneSpriteSource(img, src, sceneId, charId){
     if (!img || !src) return;
     if (img.getAttribute("src") === src) {
-      if (img.complete) sizeSceneSprite(img);
+      if (img.complete) sizeSceneSprite(img, sceneId, charId);
       return;
     }
     if(!img.getAttribute("src"))img.style.visibility="hidden";
-    img.onload=()=>{sizeSceneSprite(img);img.style.visibility="visible";};
+    img.onload=()=>{sizeSceneSprite(img, sceneId, charId);img.style.visibility="visible";};
     setQuestSpriteFrame(img,src);
-    if(img.complete && img.naturalWidth){sizeSceneSprite(img);img.style.visibility="visible";}
+    if(img.complete && img.naturalWidth){sizeSceneSprite(img, sceneId, charId);img.style.visibility="visible";}
   }
 
   function sceneSpriteFrame(charId, pose, step){
@@ -1286,8 +1306,8 @@ kiri: {
     const step = Math.max(0, Number(sceneFrameIndex) || 0);
     const leftSrc = sceneSpriteFrame(state.scene.leftId, state.leftPose, step);
     const rightSrc = sceneSpriteFrame(state.scene.rightId, state.rightPose, step);
-    if (leftSrc) setSceneSpriteSource(state.left, leftSrc);
-    if (rightSrc) setSceneSpriteSource(state.right, rightSrc);
+    if (leftSrc) setSceneSpriteSource(state.left, leftSrc, state.scene.id, state.scene.leftId);
+    if (rightSrc) setSceneSpriteSource(state.right, rightSrc, state.scene.id, state.scene.rightId);
   }
 
   function startSceneAnimation(state){
@@ -1402,27 +1422,39 @@ kiri: {
       left: el.querySelector(".love-interest-battle-left"),
       right: el.querySelector(".love-interest-battle-right"),
       heart: el.querySelector(".love-interest-battle-heart"),
-      leftPose: scene.leftId === "miko" ? "idle" : "idle1",
-      rightPose: scene.rightId === "miko" ? "idle" : "idle1"
+      leftPose: defaultScenePose(scene.leftId),
+      rightPose: defaultScenePose(scene.rightId),
+      expressionTimer: null
     };
     state.left.alt = CHARACTERS[scene.leftId]?.name || scene.leftId;
     state.right.alt = CHARACTERS[scene.rightId]?.name || scene.rightId;
     // The layer persists across encounters: discard the previous lover immediately.
     state.left.removeAttribute("src"); state.right.removeAttribute("src");
     state.left.style.visibility="hidden"; state.right.style.visibility="hidden";
-    state.left.onload = () => sizeSceneSprite(state.left);
-    state.right.onload = () => sizeSceneSprite(state.right);
+    state.left.onload = () => sizeSceneSprite(state.left, scene.id, scene.leftId);
+    state.right.onload = () => sizeSceneSprite(state.right, scene.id, scene.rightId);
     sceneKitties(state);
 
     let index = 0;
     const render = () => {
       const step = scene.dialogue[index];
-      state.leftPose = step.leftPose || state.leftPose;
-      state.rightPose = step.rightPose || state.rightPose;
+      if (state.expressionTimer) { clearTimeout(state.expressionTimer); state.expressionTimer = null; }
+      state.leftPose = step.leftPose || defaultScenePose(scene.leftId);
+      state.rightPose = step.rightPose || defaultScenePose(scene.rightId);
       if(scene.id === "midori"){
         state.rightPose = index===0 ? "closed" : (state.rightPose==="idle2" ? "idle1" : state.rightPose);
       }
       updateSceneSprites(state);
+      const leftShouldReset = !isIdlePose(scene.leftId, state.leftPose);
+      const rightShouldReset = !isIdlePose(scene.rightId, state.rightPose);
+      if (leftShouldReset || rightShouldReset) {
+        state.expressionTimer = setTimeout(() => {
+          state.expressionTimer = null;
+          if (leftShouldReset) state.leftPose = defaultScenePose(scene.leftId);
+          if (rightShouldReset) state.rightPose = defaultScenePose(scene.rightId);
+          updateSceneSprites(state);
+        }, 850);
+      }
       const clean = cleanDialogueText(step.text);
       message.textContent = step.speaker === "Narrator" ? clean : `${step.speaker}: ${clean}`;
       actions.innerHTML = "";
@@ -1440,6 +1472,7 @@ kiri: {
           return;
         }
         next.disabled = true;
+        if (state.expressionTimer) { clearTimeout(state.expressionTimer); state.expressionTimer = null; }
         stopSceneAnimation();
         state.heart.classList.remove("hidden");
         const isRepeat = !scene.id.includes("-") && Boolean(load().loveInterests?.[scene.id]?.encountered);
@@ -1468,6 +1501,7 @@ kiri: {
 
         const closeScene = () => {
           if (state.resizeHandler) window.removeEventListener("resize", state.resizeHandler);
+          if (state.expressionTimer) { clearTimeout(state.expressionTimer); state.expressionTimer = null; }
           state.left.onload = null;
           state.right.onload = null;
           state.heart.classList.add("hidden");
@@ -1495,7 +1529,7 @@ kiri: {
 
     el.classList.remove("hidden");
     el.setAttribute("aria-hidden", "false");
-    state.resizeHandler = () => { sizeSceneSprite(state.left); sizeSceneSprite(state.right); };
+    state.resizeHandler = () => { sizeSceneSprite(state.left, scene.id, scene.leftId); sizeSceneSprite(state.right, scene.id, scene.rightId); };
     window.addEventListener("resize", state.resizeHandler);
     render();
     startSceneAnimation(state);

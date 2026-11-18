@@ -15,15 +15,15 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-418';
-const MEDIA_CACHE='duck-habit-hub-media-v24-418';
+const APP_CACHE='duck-habit-hub-app-v24-420';
+const MEDIA_CACHE='duck-habit-hub-media-v24-420';
 const MAX_MEDIA_ENTRIES=400;
 let mediaWrites=0;
 const APP_SHELL=[
  './',
  './index.html',
  './version.json',
- './sw.js?v=24.418',
+ './sw.js?v=24.420',
  './manifest.webmanifest?v=24.296',
  './app.css?v=24.385',
  './trading-cards-base.css?v=24.327',
@@ -99,7 +99,7 @@ const APP_SHELL=[
  './bao-cafe/assets/Frappe-idle-1.png',
  './duck-quest/css/bao-cafe-v299.css?v=24-309',
  './duck-quest/css/fixes-v318.css?v=24.318',
- './duck-quest/css/character-roster-v411.css?v=24.418',
+ './duck-quest/css/character-roster-v411.css?v=24.420',
  './duck-quest/js/bao-cafe-v299.js?v=24.408',
  './duck-quest/js/lover-assist-v385.js?v=24.413',
  './duck-quest/js/sweetheart-v352.js?v=24.385',
@@ -113,7 +113,7 @@ const APP_SHELL=[
  './assets/ducks/angel-character-duck.png',
  './assets/ducks/demon-character-duck.png',
  './assets/ducks/shiyu-duck.png',
- './duck-quest/js/angel-demon-v409.js?v=24.417',
+ './duck-quest/js/angel-demon-v409.js?v=24.420',
  './assets/rooms/makeover/wallpaper.png',
  './assets/rooms/makeover/ceiling.png',
  './assets/rooms/makeover/baseboard.png',
@@ -204,11 +204,11 @@ const APP_SHELL=[
  './duck-quest/css/quest-v276.css?v=24-276',
  './duck-quest/css/quest-v277.css?v=24-277',
  './duck-quest/css/quest-v278.css?v=24-280',
- './duck-quest/js/game-v96.js?v=24.417&buddy=v11',
+ './duck-quest/js/game-v96.js?v=24.420&buddy=v11',
  './duck-quest/js/hatchery-v179.js?v=24-345',
  './duck-quest/js/hatchery-egg-position-v192.js?v=24-343',
  './duck-quest/assets/eggs/Hatching-background-six-v343.png',
- './duck-quest/js/love-interests-v326.js?v=24.413',
+ './duck-quest/js/love-interests-v326.js?v=24.420',
  './duck-quest/js/task-buddy-boost-v254.js?v=24-255',
  './duck-quest/js/special-encounters-v326.js?v=24.356',
  './duck-quest/js/quest-v265.js?v=24.408',

@@ -134,7 +134,7 @@
   top:0;
   bottom:auto;
   transform:translateX(-50%);
-  width:92px;
+  width:72px;
   height:auto;
   max-width:none;
   object-fit:contain;
@@ -189,7 +189,7 @@
     border-radius:14px;
   }
   #questOcPicker .quest-oc-choice-preview{width:54px;height:54px;border-width:2px;border-radius:12px}
-  #questOcPicker .quest-oc-choice-sprite{width:78px;top:0;bottom:auto}
+  #questOcPicker .quest-oc-choice-sprite{width:60px;top:0;bottom:auto}
   #questOcPicker .quest-oc-choice-copy strong{font-size:.74rem}
   #questOcPicker .quest-oc-choice-copy small{font-size:.52rem}
 }
@@ -201,7 +201,16 @@
   #questOcPicker{gap:8px!important}
   #questOcPicker .quest-oc-choice{min-height:72px;padding:7px;grid-template-columns:50px minmax(0,1fr);gap:8px}
   #questOcPicker .quest-oc-choice-preview{width:46px;height:46px;border-radius:10px}
-  #questOcPicker .quest-oc-choice-sprite{width:66px;top:0;bottom:auto}
+  #questOcPicker .quest-oc-choice-sprite{width:52px;top:0;bottom:auto}
   #questOcPicker .quest-oc-choice-copy strong{font-size:.67rem}
   #questOcPicker .quest-oc-choice-copy small{font-size:.48rem}
+}
+
+/* v24.420: Midori's existing portrait framing was approved — preserve it. */
+#questOcPicker .quest-oc-choice[data-character-id="midori"] .quest-oc-choice-sprite{width:92px;top:0;bottom:auto}
+@media(max-width:560px){
+  #questOcPicker .quest-oc-choice[data-character-id="midori"] .quest-oc-choice-sprite{width:78px}
+}
+@media(max-width:400px){
+  #questOcPicker .quest-oc-choice[data-character-id="midori"] .quest-oc-choice-sprite{width:66px}
 }
