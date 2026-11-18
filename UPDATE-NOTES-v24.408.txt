@@ -1,0 +1,16 @@
+Duckie Days v24.408 — Shiyu Profile / Expressions / Wardrobe / Duck Quest Size
+
+Cumulative update-only ZIP: includes all v24.407 fixes and original assets.
+1. Shiyu profile icon, detail avatar, and head duck nudge right by 4 percentage points.
+2. Home Hub starts Shiyu neutral. Ordinary taps: Happy for 1.2s then Neutral.
+   Five rapid taps within 3s: Angry + Shadow (below level 50), or Neutral + Shadow
+   (level 50+), for 1.2s, then Neutral. Reset tap state when switching OCs.
+3. Shiyu cardigans, including Yukine Jacket, stay visible over Babydoll or
+   Yukine Dress and do not clear the active dress when selected.
+4. Crop bounds for all Yukine-themed Shiyu wardrobe icons from original PNG
+   transparency, preserving full-resolution sprites for gameplay.
+5. Raise and modestly enlarge Shiyu's Duck Quest sprite at desktop/mobile widths
+   relative to Miho/Annika. Adjust lover assist visible-art normalization for Shiyu.
+6. Update app version, cache, and touched game script query strings.
+
+No user save reset and no assets altered.

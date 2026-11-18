@@ -3701,11 +3701,14 @@ function normalizeShiyuOutfit(raw={}){
 function getShiyuEquippedAssetIds(){
   const outfit=getCharacterOutfit("shiyu");
   const ids=["tail",outfit.hair,"base",outfit.legwear,outfit.shoes];
-  if(!outfit.dress && outfit.outer==="outer-cardigan")ids.push("cardigan-back");
-  if(outfit.dress){ids.push(outfit.dress, outfit.outer==="outer-yukine-jacket"?outfit.outer:null)}
-  else {ids.push(outfit.bottom,outfit.top,outfit.outer)}
+  // v24.408: Cardigans are outerwear and stay on over ALL Shiyu dresses.
+  if(outfit.outer==="outer-cardigan") ids.push("cardigan-back");
+  if(outfit.dress) ids.push(outfit.dress);
+  else ids.push(outfit.bottom,outfit.top);
+  if(outfit.outer) ids.push(outfit.outer);
   ids.push(...(outfit.extras||[]));
-  const expression=(currentExpression==="expression-neutral" && !shiyuFaceShadowActive) ? "expression-happy" : (currentExpression || "expression-happy");
+  // Neutral is Shiyu's genuine idle face; Happy only appears on ordinary taps.
+  const expression=currentExpression || "expression-neutral";
   if(shiyuFaceShadowActive)ids.push("face-shadow");
   ids.push(expression,"bangs","ears");
   return ids.filter(Boolean);
@@ -4657,7 +4660,7 @@ function getCharacterThumbBounds(characterId = save.selectedCharacter) {
   return THUMB_BOUNDS;
 }
 
-const SHIYU_THUMB_BOUNDS={"Shiyu-big-ribbon.png":[172,697,894,1043],"Shiyu-long-hair.png":[91,774,978,1669],"Shiyu-happy.png":[389,996,682,1150],"Shiyu-cardigan-shop.png":[256,1243,813,1533],"Shiyu-skirt.png":[368,1333,719,1504],"Shiyu-pigtails.png":[131,921,942,1526],"Shiyu-short-hair.png":[187,769,886,1285],"Shiyu-booties.png":[383,1727,688,1803],"Shiyu-mary-janes.png":[379,1753,693,1807],"Shiyu-ears.png":[263,780,818,934],"Shiyu-neck-bow.png":[480,1242,585,1326],"Shiyu-neutral.png":[382,967,695,1150],"Shiyu-button-up-shirt.png":[410,1218,666,1443],"Shiyu-base.png":[319,798,761,1794],"Shiyu-angry.png":[382,982,695,1158],"Shiyu-bows.png":[279,894,832,1017],"Shiyu-face-shadow.png":[324,852,730,1154],"Shiyu-babydoll.png":[311,1225,764,1511],"Shiyu-cardigan-back.png":[427,1247,654,1533],"Shiyu-bangs.png":[290,793,790,1405],"Shiyu-tail.png":[633,1427,883,1740],"Shiyu-cardigan.png":[256,1243,813,1529],"Shiyu-bow-stockings.png":[386,1516,686,1793],"Shiyu-frill-stockings.png":[386,1504,684,1794]};
+const SHIYU_THUMB_BOUNDS={"Shiyu-big-ribbon.png":[172,697,894,1043],"Shiyu-long-hair.png":[91,774,978,1669],"Shiyu-happy.png":[389,996,682,1150],"Shiyu-cardigan-shop.png":[256,1243,813,1533],"Shiyu-skirt.png":[368,1333,719,1504],"Shiyu-pigtails.png":[131,921,942,1526],"Shiyu-short-hair.png":[187,769,886,1285],"Shiyu-booties.png":[383,1727,688,1803],"Shiyu-mary-janes.png":[379,1753,693,1807],"Shiyu-ears.png":[263,780,818,934],"Shiyu-neck-bow.png":[480,1242,585,1326],"Shiyu-neutral.png":[382,967,695,1150],"Shiyu-button-up-shirt.png":[410,1218,666,1443],"Shiyu-base.png":[319,798,761,1794],"Shiyu-angry.png":[382,982,695,1158],"Shiyu-bows.png":[279,894,832,1017],"Shiyu-face-shadow.png":[324,852,730,1154],"Shiyu-babydoll.png":[311,1225,764,1511],"Shiyu-cardigan-back.png":[427,1247,654,1533],"Shiyu-bangs.png":[290,793,790,1405],"Shiyu-tail.png":[633,1427,883,1740],"Shiyu-cardigan.png":[256,1243,813,1529],"Shiyu-bow-stockings.png":[386,1516,686,1793],"Shiyu-frill-stockings.png":[386,1504,684,1794],"Shiyu-Yukine-Boots.png":[380,1668,688,1806],"Shiyu-Yukine-Jacket.png":[317,1211,758,1512],"Shiyu-Yukine-Crown.png":[481,688,599,744],"Shiyu-Yukine-Stockings.png":[389,1508,678,1794],"Shiyu-Yukine-Scarf.png":[441,1175,638,1397],"Shiyu-Yukine-dress.png":[375,1217,693,1492],"Shiyu-Yukine-reference.png":[131,688,942,1806],"Shiyu-Yukine-Jacket-shop.png":[317,1199,758,1512]};
 function getCharacterStarterWardrobe(characterId = save.selectedCharacter) {
   if(characterId==="shiyu") return ["hair-pigtails","bangs","ears","tail","cardigan-back","top-shirt","bottom-skirt","outer-cardigan","legwear-bow","shoes-mary-janes","hair-bows","neck-bow"];
   if (characterId === "miko") {
@@ -6626,12 +6629,26 @@ function setExpression(assetId, duration = 0, onDone = null) {
 function pokePeep() {
   if (pokeLocked) return;
   if(save.selectedCharacter==="shiyu") {
+    // v24.408: Neutral by default; happy for a normal tap. 5 fast taps
+    // provoke Angry + Shadow, replaced by Neutral + Shadow from level 50.
+    const now=Date.now();
+    pokeTimes=pokeTimes.filter(time=>now-time<=3000);
+    pokeTimes.push(now);
+    save.peepPokes=(save.peepPokes||0)+1;
+    persist();
     clearTimeout(reactionTimer);
+    const tooMany=pokeTimes.length>=5;
     const affection=Number(getCharacterHappinessInfo("shiyu")?.level||1);
-    shiyuFaceShadowActive=true;
-    currentExpression=affection>=50?"expression-neutral":"expression-mad";
+    if(tooMany){pokeTimes=[];pokeLocked=true;}
+    shiyuFaceShadowActive=tooMany;
+    currentExpression=tooMany ? (affection>=50?"expression-neutral":"expression-mad") : "expression-happy";
     renderPeep();
-    reactionTimer=setTimeout(()=>{shiyuFaceShadowActive=false;currentExpression="expression-happy";renderPeep();},1200);
+    reactionTimer=setTimeout(()=>{
+      shiyuFaceShadowActive=false;
+      currentExpression="expression-neutral";
+      pokeLocked=false;
+      if(save.selectedCharacter==="shiyu")renderPeep();
+    },1200);
     return;
   }
 
@@ -6969,7 +6986,7 @@ function chooseSingle(group, id) {
   if (save.selectedCharacter === "peep" || save.selectedCharacter === "io" || save.selectedCharacter === "miho" || save.selectedCharacter === "annika" || save.selectedCharacter === "shiyu") {
     // Dresses replace the regular top + skirt visually. Picking a regular
     // top or skirt switches back out of the one-piece dress automatically.
-    if ((group.id === "top" || group.id === "bottom" || (save.selectedCharacter==="shiyu" && group.id==="outer")) && id) outfit.dress = null;
+    if ((group.id === "top" || group.id === "bottom") && id) outfit.dress = null;
 
     // Full-leg stockings and the older separate sock system are mutually
     // exclusive so two different leg layers never accidentally overlap.
@@ -13375,7 +13392,10 @@ function switchToProfileCharacter(characterId) {
   syncSelectedCharacterRoom();
   currentRoomView = "main";
   closeWingDuckPicker();
-  currentExpression = characterId==="shiyu" ? "expression-happy" : "expression-neutral";
+  clearTimeout(reactionTimer);
+  pokeTimes=[];
+  pokeLocked=false;
+  currentExpression="expression-neutral";
   shiyuFaceShadowActive=false;
   persist();
 
