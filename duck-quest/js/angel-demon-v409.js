@@ -36,6 +36,11 @@
   #siblingScene.angel-demon-scene{display:flex;justify-content:space-between;align-items:flex-end;padding:7% 6% 5%;gap:8px;z-index:25;pointer-events:none}
   #siblingScene.angel-demon-scene img{width:auto!important;height:auto!important;max-width:none!important;max-height:none!important;object-fit:contain!important;object-position:center bottom;image-rendering:pixelated;filter:drop-shadow(0 4px 2px #4b3a6455);visibility:hidden}
   #siblingScene.angel-demon-scene.hidden{display:none!important}
+  #battlefield.angel-demon-scene-active > .peep-combatant,
+  #battlefield.angel-demon-scene-active > #enemyCombatant,
+  #battlefield.angel-demon-scene-active > #enemyCombatant2,
+  #battlefield.angel-demon-scene-active > #buddyCombatant,
+  #battlefield.angel-demon-scene-active > #chestLayer{display:none!important}
   #siblingScene.angel-demon-scene #siblingLeft{transform:scaleX(-1)}
   #siblingScene.angel-demon-scene #siblingRight{transform:scaleX(-1)}
   .angel-demon-next{width:100%;min-height:44px}
@@ -95,7 +100,8 @@
   ui.leaveEndlessButton?.classList.add('hidden');
   closeCommandWindow();
   setPostFloorLayout(false);
-  const hero=document.querySelector('.peep-combatant');hero?.classList.add('angel-demon-hero-hidden','hidden');
+  const hero=document.querySelector('#battlefield > .peep-combatant');hero?.classList.add('angel-demon-hero-hidden','hidden');
+  ui.battlefield?.classList.add('angel-demon-scene-active');
   const cfg=currentAreaConfig();
   setQuestSpriteFrame(ui.battleBg,cfg.backgrounds[currentRun.index]);
   updateEncounterHeader({type:'angel-demon-reunion'});
@@ -174,7 +180,8 @@
     document.querySelector('#siblingScene')?.classList.add('hidden');
     document.querySelector('#siblingScene')?.classList.remove('angel-demon-scene');
     document.querySelector('#siblingScene')?.setAttribute('aria-hidden','true');
-    document.querySelector('.peep-combatant')?.classList.remove('angel-demon-hero-hidden','hidden');
+    ui.battlefield?.classList.remove('angel-demon-scene-active');
+    document.querySelector('#battlefield > .peep-combatant')?.classList.remove('angel-demon-hero-hidden','hidden');
     hideEventChoices();
     nextEncounter();
    },{once:true});holder.appendChild(button);}
@@ -194,7 +201,8 @@
   if(e?.type==='angel-demon-reunion' && activeCharacterId==='angel'){startScene();return;}
   if(scene){clearInterval(scene.timer);if(scene.resize)window.removeEventListener('resize',scene.resize);scene=null;}
   document.querySelector('#siblingScene')?.classList.remove('angel-demon-scene');
-  document.querySelector('.peep-combatant')?.classList.remove('angel-demon-hero-hidden');
+  ui.battlefield?.classList.remove('angel-demon-scene-active');
+  document.querySelector('#battlefield > .peep-combatant')?.classList.remove('angel-demon-hero-hidden','hidden');
   return previousStart();
  };
  const tc=window.DuckieTradingCards;

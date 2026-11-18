@@ -1,38 +1,14 @@
-/* Duck Quest 24.414 character roster popup */
-.hero-sprite-column{position:relative}
-#questOcPicker{
-  position:absolute;
-  top:calc(100% + 6px);
-  left:0;
-  z-index:85;
-  display:grid;
-  grid-template-columns:1fr;
-  gap:6px;
-  width:min(88vw,320px);
-  max-width:calc(100vw - 34px);
-  max-height:min(58vh,360px);
-  overflow-y:auto;
-  overscroll-behavior:contain;
-  padding:8px;
-  border:3px solid #bd8e9c;
-  border-radius:10px;
-  background:#fffaf0;
-  box-shadow:0 10px 24px rgba(74,49,60,.18),0 4px 0 rgba(102,67,61,.14);
-}
-#questOcPicker.hidden{display:none!important}
-#questOcPicker .quest-oc-choice{
-  min-height:58px;
-  text-align:left;
-  background:#fff1f6;
-}
-#questOcPicker .quest-oc-choice.current{background:#f5c7d7}
-#questOcPicker .quest-oc-choice.locked{opacity:.82}
-@media(max-width:600px){
-  #questOcPicker{
-    width:min(86vw,300px);
-    max-height:min(54vh,330px);
-    padding:7px;
-    gap:5px;
-  }
-  #questOcPicker .quest-oc-choice{min-height:54px}
-}
+/* v24.415 — full-screen overlay and compact character-selection window. */
+#questCharacterModal.quest-character-modal{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:18px;isolation:isolate}
+#questCharacterModal.hidden{display:none!important}
+#questCharacterModal .quest-character-backdrop{position:absolute;inset:0;width:100%;height:100%;border:0;background:rgba(55,38,51,.57);cursor:pointer;z-index:0}
+#questCharacterModal .quest-character-dialog{position:relative;z-index:1;display:flex;flex-direction:column;gap:10px;width:min(92vw,560px);max-height:min(83dvh,680px);padding:14px;border:4px solid #8d636b;border-radius:18px;background:#fff5e5;box-shadow:0 8px 0 rgba(91,58,70,.25),0 16px 30px rgba(48,28,37,.3)}
+.quest-character-dialog-heading{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.quest-character-dialog-heading h2{margin:2px 0 0;font-size:clamp(1rem,4vw,1.35rem);color:#77505d}
+.quest-character-dialog-subtitle{font-size:.69rem;color:#946e7d;margin:0}
+#questOcPicker{position:static!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;flex:1;min-height:0;max-height:none!important;overflow-y:auto;overscroll-behavior:contain;width:100%!important;max-width:none!important;padding:3px!important;background:transparent!important;border:0!important;box-shadow:none!important}
+#questOcPicker .quest-oc-choice{min-height:64px;grid-template-columns:44px minmax(0,1fr);gap:7px;padding:6px;border:2px solid #d5a9b6;border-radius:10px;text-align:left;background:#fff1f6}
+#questOcPicker .quest-oc-choice.current{background:#f5c7d7;border-color:#a66a80}
+#questOcPicker .quest-oc-choice.locked{opacity:.75}
+#questOcPicker .quest-oc-choice-copy small{white-space:normal}
+@media(max-width:400px){#questCharacterModal .quest-character-dialog{padding:10px;width:94vw}#questOcPicker{gap:6px!important}#questOcPicker .quest-oc-choice{grid-template-columns:36px minmax(0,1fr);gap:5px;padding:4px;min-height:55px}#questOcPicker .quest-oc-choice-preview{width:34px;height:34px}#questOcPicker .quest-oc-choice-sprite{width:29px;height:29px}#questOcPicker .quest-oc-choice-copy strong{font-size:.58rem}#questOcPicker .quest-oc-choice-copy small{font-size:.43rem}}

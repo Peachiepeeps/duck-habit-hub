@@ -29,7 +29,7 @@
   <link rel="stylesheet" href="../universal-enemies-v298.css?v=24.298">
   <link rel="stylesheet" href="css/bao-cafe-v299.css?v=24-299" />
   <link rel="stylesheet" href="css/fixes-v318.css?v=24.318">
-  <link rel="stylesheet" href="css/character-roster-v411.css?v=24.414">
+  <link rel="stylesheet" href="css/character-roster-v411.css?v=24.415">
   <link rel="stylesheet" href="css/lil-guy-box-row-v339.css?v=24.339">
 <style id="v24358-shared-enemy-facing">
 /* v24.358: face the hero; applies to battle, Duckipedia and captured portraits. */
@@ -178,8 +178,7 @@ img[src*="enemies/puffer/"],img[src*="enemies/star-glider/"],img[src*="enemies/a
               <div id="iconBorderColorPicker" class="icon-background-picker quest-border-color-picker hidden" role="menu" aria-label="Icon border colors"></div>
             </div>
           </div>
-          <button id="switchQuestOc" class="switch-quest-oc-button pixel-button" type="button" aria-expanded="false" aria-controls="questOcPicker">Switch OC</button>
-          <div id="questOcPicker" class="quest-oc-picker hidden" role="menu" aria-label="Choose OC"></div>
+          <button id="switchQuestOc" class="switch-quest-oc-button pixel-button" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="questCharacterModal">Change Character</button>
         </div>
 
         <div class="hero-info">
@@ -626,7 +625,18 @@ img[src*="enemies/puffer/"],img[src*="enemies/star-glider/"],img[src*="enemies/a
   <script src="../trading-cards-sock-gremlin-v297.js?v=24.297"></script>
   <script src="../trading-cards-universal-v298.js?v=24.298"></script>
   <script src="../trading-cards-bao-cafe-v299.js?v=24.395"></script>
-  <script src="js/game-v96.js?v=24.414&buddy=v11"></script>
+  <div id="questCharacterModal" class="quest-character-modal hidden" aria-hidden="true">
+    <button id="questCharacterBackdrop" class="quest-character-backdrop" type="button" aria-label="Close character selection"></button>
+    <section class="quest-character-dialog" role="dialog" aria-modal="true" aria-labelledby="questCharacterHeading">
+      <div class="quest-character-dialog-heading">
+        <div><span class="mini-label">DUCK QUEST</span><h2 id="questCharacterHeading">Choose Character ♡</h2></div>
+        <button id="questCharacterClose" class="pixel-button small" type="button" aria-label="Close character selection">✕</button>
+      </div>
+      <p class="quest-character-dialog-subtitle">Choose a hero or keep meeting friends to unlock them!</p>
+      <div id="questOcPicker" class="quest-oc-picker" role="group" aria-label="Available and locked characters"></div>
+    </section>
+  </div>
+  <script src="js/game-v96.js?v=24.415&buddy=v11"></script>
   <script src="js/hatchery-v179.js?v=24-345"></script>
   <script src="js/hatchery-egg-position-v192.js?v=24-343"></script>
   <script src="js/hatchery-ui-v193.js?v=24-255"></script>
@@ -674,6 +684,6 @@ img[src*="enemies/puffer/"],img[src*="enemies/star-glider/"],img[src*="enemies/a
   <script src="js/extra-content-v359.js?v=24.359"></script>
   <script src="../duck-quest-v11-portrait-skills.js?v=buddy-v11"></script>
   <script src="js/lover-assist-v385.js?v=24.413"></script>
-  <script src="js/angel-demon-v409.js?v=24.414"></script>
+  <script src="js/angel-demon-v409.js?v=24.415"></script>
 </body>
 </html>

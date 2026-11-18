@@ -4741,17 +4741,14 @@ function availableQuestCharacters(){
 }
 
 function closeQuestOcPicker(){
-  if(!ui.questOcPicker) return;
-  ui.questOcPicker.classList.add("hidden");
-  ui.switchQuestOc?.setAttribute("aria-expanded","false");
+  const modal=document.querySelector('#questCharacterModal');
+  modal?.classList.add('hidden');
+  modal?.setAttribute('aria-hidden','true');
+  ui.switchQuestOc?.setAttribute('aria-expanded','false');
 }
 
 function questOcPickerOpen(){
-  return Boolean(ui.questOcPicker && !ui.questOcPicker.classList.contains('hidden'));
-}
-
-function questOcPickerContains(target){
-  return Boolean(target && (ui.questOcPicker?.contains(target) || ui.switchQuestOc?.contains(target)));
+  return Boolean(document.querySelector('#questCharacterModal:not(.hidden)'));
 }
 
 function renderQuestOcPicker(){
@@ -8380,22 +8377,22 @@ document.querySelector("#backToQuest").addEventListener("click",returnHome);
 ui.cancelEscapeConfirm.addEventListener("click",closeEscapeConfirm);
 ui.confirmEscapeButton.addEventListener("click",confirmEscapeRun);
 
-ui.switchQuestOc?.addEventListener("click",()=>{
-  if(currentRun) return;
+ui.switchQuestOc?.addEventListener('click',()=>{
+  if(currentRun)return;
   renderQuestOcPicker();
-  const opening=ui.questOcPicker?.classList.contains("hidden");
-  ui.questOcPicker?.classList.toggle("hidden",!opening);
-  ui.switchQuestOc?.setAttribute("aria-expanded",String(Boolean(opening)));
+  const modal=document.querySelector('#questCharacterModal');
+  const opening=!questOcPickerOpen();
+  modal?.classList.toggle('hidden',!opening);
+  modal?.setAttribute('aria-hidden',String(!opening));
+  ui.switchQuestOc?.setAttribute('aria-expanded',String(opening));
+  if(opening)document.querySelector('#questCharacterClose')?.focus();
+});
+document.querySelector('#questCharacterBackdrop')?.addEventListener('click',closeQuestOcPicker);
+document.querySelector('#questCharacterClose')?.addEventListener('click',closeQuestOcPicker);
+document.addEventListener('keydown',event=>{
+  if(event.key==='Escape'&&questOcPickerOpen()){closeQuestOcPicker();ui.switchQuestOc?.focus();}
 });
 
-document.addEventListener('click',event=>{
-  if(!questOcPickerOpen()) return;
-  if(questOcPickerContains(event.target)) return;
-  closeQuestOcPicker();
-});
-document.addEventListener('keydown',event=>{
-  if(event.key==='Escape' && questOcPickerOpen()) closeQuestOcPicker();
-});
 ui.iconBackgroundButton?.addEventListener("click",()=>{
   closeIconBorderPicker();
   closeIconBorderColorPicker();

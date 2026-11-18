@@ -1,0 +1,5 @@
+Duckie Days 24.415 — Angel reunion single-sprite and character selection modal
+- Fix double Angel in sibling reunion by hiding the regular battle hero at the battlefield level with a sufficiently specific !important rule (matching working love interest cutscene behavior).
+- Reunion scene shows one Angel and one Demon. Existing single Angel idle image retained, Demon facing inward retained.
+- Change Character is now a button opening a centered, scrollable two-column modal window, NOT a dropdown. All NPC encounter-progress requirements remain intact. Close button, backdrop tap, Escape to close.
+- Cache and version references updated for PWA.
