@@ -28,7 +28,7 @@
  ];
  const ANGEL='assets/characters/angel/base/';
  const DEMON='assets/encounters/demon/';
- const VARIANTS={angel:{idle:ANGEL+'Angel-sprite-idle-1.png',happy:ANGEL+'Angel-sprite-idle-1.png'},demon:{idle:[DEMON+'Demon-sprite-idle-1.png',DEMON+'Demon-sprite-idle-2.png'],happy:DEMON+'Demon-sprite-happy.png',angry:DEMON+'Demon-sprite-angry.png'}};
+ const VARIANTS={angel:{idle:[ANGEL+'Angel-sprite-idle-1.png',ANGEL+'Angel-sprite-idle-2.png'],happy:ANGEL+'Angel-sprite-magic-heart.png',angry:ANGEL+'Angel-sprite-angry.png'},demon:{idle:[DEMON+'Demon-sprite-idle-1.png',DEMON+'Demon-sprite-idle-2.png'],happy:DEMON+'Demon-sprite-happy.png',angry:DEMON+'Demon-sprite-angry.png'}};
  const REUNION_WARDROBE=['demon-eye-bandage','demon-pendant','outer-demon-jacket','top-demon-shirt','bottom-demon-shorts','legwear-demon-socks','shoes-demon-booties'];
  const AREAS=new Set(['meadow','ocean','candy','cloud','city','spooky']);
  let scene=null;
@@ -41,7 +41,7 @@
   #battlefield.angel-demon-scene-active > #enemyCombatant2,
   #battlefield.angel-demon-scene-active > #buddyCombatant,
   #battlefield.angel-demon-scene-active > #chestLayer{display:none!important}
-  #siblingScene.angel-demon-scene #siblingLeft{transform:scaleX(-1)}
+  #siblingScene.angel-demon-scene #siblingLeft{transform:none}
   #siblingScene.angel-demon-scene #siblingRight{transform:scaleX(-1)}
   .angel-demon-next{width:100%;min-height:44px}
   `;document.head.appendChild(style);
@@ -119,7 +119,6 @@
  function renderLine(){
   if(!scene)return;
   const [speaker,words,expression]=scene.lines[scene.lineIndex];
-  scene.expressions.angel='idle';scene.expressions.demon='idle';
   scene.expressions[speaker.toLowerCase()]=expression;
   showSprites();
   setMessage(speaker+': '+words);
@@ -135,6 +134,26 @@
    else finish();
   });
   holder.appendChild(b);holder.classList.remove('hidden');ui.battleUi?.classList.add('event-mode');
+ }
+ function cleanupReunion(){
+  if(scene?.timer)clearInterval(scene.timer);
+  if(scene?.resize)window.removeEventListener('resize',scene.resize);
+  scene=null;
+  const layer=document.querySelector('#siblingScene');
+  if(layer?.classList.contains('angel-demon-scene')){
+   layer.classList.add('hidden');
+   layer.classList.remove('angel-demon-scene');
+   layer.setAttribute('aria-hidden','true');
+   ['#siblingLeft','#siblingRight'].forEach(selector=>{
+    const sprite=document.querySelector(selector);
+    if(!sprite)return;
+    sprite.onload=null;sprite.onerror=null;
+    sprite.removeAttribute('src');
+    sprite.style.visibility='';sprite.style.removeProperty('width');sprite.style.removeProperty('height');
+   });
+  }
+  ui.battlefield?.classList.remove('angel-demon-scene-active');
+  document.querySelector('#battlefield > .peep-combatant')?.classList.remove('angel-demon-hero-hidden','hidden');
  }
  function grantDuckCopy(id){
    if(!Array.isArray(hubSave.unlockedDucks))hubSave.unlockedDucks=[];
@@ -176,12 +195,7 @@
    const holder=ui.eventChoiceActions;
    if(holder){holder.innerHTML='';const button=document.createElement('button');button.type='button';button.className='pixel-button primary angel-demon-next';button.textContent='Continue Exploring ♡';button.addEventListener('click',()=>{
     if(!scene)return;
-    clearInterval(scene.timer);scene=null;
-    document.querySelector('#siblingScene')?.classList.add('hidden');
-    document.querySelector('#siblingScene')?.classList.remove('angel-demon-scene');
-    document.querySelector('#siblingScene')?.setAttribute('aria-hidden','true');
-    ui.battlefield?.classList.remove('angel-demon-scene-active');
-    document.querySelector('#battlefield > .peep-combatant')?.classList.remove('angel-demon-hero-hidden','hidden');
+    cleanupReunion();
     hideEventChoices();
     nextEncounter();
    },{once:true});holder.appendChild(button);}
@@ -199,16 +213,17 @@
  startEncounter=function(){
   const e=currentRun?.mode==='endless'?currentRun?.endlessEncounter:currentRun?.plan?.[currentRun?.index];
   if(e?.type==='angel-demon-reunion' && activeCharacterId==='angel'){startScene();return;}
-  if(scene){clearInterval(scene.timer);if(scene.resize)window.removeEventListener('resize',scene.resize);scene=null;}
-  document.querySelector('#siblingScene')?.classList.remove('angel-demon-scene');
-  ui.battlefield?.classList.remove('angel-demon-scene-active');
-  document.querySelector('#battlefield > .peep-combatant')?.classList.remove('angel-demon-hero-hidden','hidden');
+  cleanupReunion();
   return previousStart();
  };
+ const previousEndRun=endRun;
+ endRun=function(...args){cleanupReunion();return previousEndRun.apply(this,args);};
+ const previousReturnHome=returnHome;
+ returnHome=function(...args){cleanupReunion();return previousReturnHome.apply(this,args);};
  const tc=window.DuckieTradingCards;
  if(tc && !tc.byId['r-demon-sibling']){
    const card={id:'r-demon-sibling',enemyId:'demon-sibling',variantId:'base',name:'Demon',art:'encounters/demon/Demon-sprite-idle-1.png',rarity:'rare',number:'R-206',category:'Special NPC',hint:'Meet Demon again with Angel in your active Duck Quest party.'};
    tc.cards.push(card);tc.byId[card.id]=card;
  }
- window.DUCKIE_ANGEL_DEMON_V409={version:'24.409',firstDialogue:FIRST.map(x=>x[0]+': '+x[1]),repeatDialogue:REPEAT.map(x=>x[0]+': '+x[1]),isStrictlyPlatonic:true};
+ window.DUCKIE_ANGEL_DEMON_V409={version:'24.417',firstDialogue:FIRST.map(x=>x[0]+': '+x[1]),repeatDialogue:REPEAT.map(x=>x[0]+': '+x[1]),isStrictlyPlatonic:true};
 })();

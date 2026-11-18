@@ -131,7 +131,7 @@
 #questOcPicker .quest-oc-choice-sprite{
   position:absolute;
   left:50%;
-  bottom:-14px;
+  bottom:-18px;
   transform:translateX(-50%);
   width:62px;
   height:auto;
@@ -140,7 +140,7 @@
   object-position:center top;
   image-rendering:pixelated;
 }
-#questOcPicker .quest-oc-choice.current .quest-oc-choice-sprite{bottom:-13px}
+#questOcPicker .quest-oc-choice.current .quest-oc-choice-sprite{bottom:-17px}
 #questOcPicker .quest-oc-choice-copy{
   min-width:0;
   display:grid;
@@ -188,7 +188,7 @@
     border-radius:14px;
   }
   #questOcPicker .quest-oc-choice-preview{width:54px;height:54px;border-width:2px;border-radius:12px}
-  #questOcPicker .quest-oc-choice-sprite{width:52px;bottom:-12px}
+  #questOcPicker .quest-oc-choice-sprite{width:52px;bottom:-16px}
   #questOcPicker .quest-oc-choice-copy strong{font-size:.74rem}
   #questOcPicker .quest-oc-choice-copy small{font-size:.52rem}
 }
@@ -200,7 +200,7 @@
   #questOcPicker{gap:8px!important}
   #questOcPicker .quest-oc-choice{min-height:72px;padding:7px;grid-template-columns:50px minmax(0,1fr);gap:8px}
   #questOcPicker .quest-oc-choice-preview{width:46px;height:46px;border-radius:10px}
-  #questOcPicker .quest-oc-choice-sprite{width:46px;bottom:-10px}
+  #questOcPicker .quest-oc-choice-sprite{width:46px;bottom:-14px}
   #questOcPicker .quest-oc-choice-copy strong{font-size:.67rem}
   #questOcPicker .quest-oc-choice-copy small{font-size:.48rem}
 }

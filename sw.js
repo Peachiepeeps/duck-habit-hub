@@ -15,15 +15,15 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-416';
-const MEDIA_CACHE='duck-habit-hub-media-v24-416';
+const APP_CACHE='duck-habit-hub-app-v24-417';
+const MEDIA_CACHE='duck-habit-hub-media-v24-417';
 const MAX_MEDIA_ENTRIES=400;
 let mediaWrites=0;
 const APP_SHELL=[
  './',
  './index.html',
  './version.json',
- './sw.js?v=24.416',
+ './sw.js?v=24.417',
  './manifest.webmanifest?v=24.296',
  './app.css?v=24.385',
  './trading-cards-base.css?v=24.327',
@@ -99,7 +99,7 @@ const APP_SHELL=[
  './bao-cafe/assets/Frappe-idle-1.png',
  './duck-quest/css/bao-cafe-v299.css?v=24-309',
  './duck-quest/css/fixes-v318.css?v=24.318',
- './duck-quest/css/character-roster-v411.css?v=24.416',
+ './duck-quest/css/character-roster-v411.css?v=24.417',
  './duck-quest/js/bao-cafe-v299.js?v=24.408',
  './duck-quest/js/lover-assist-v385.js?v=24.413',
  './duck-quest/js/sweetheart-v352.js?v=24.385',
@@ -113,7 +113,7 @@ const APP_SHELL=[
  './assets/ducks/angel-character-duck.png',
  './assets/ducks/demon-character-duck.png',
  './assets/ducks/shiyu-duck.png',
- './duck-quest/js/angel-demon-v409.js?v=24.415',
+ './duck-quest/js/angel-demon-v409.js?v=24.417',
  './assets/rooms/makeover/wallpaper.png',
  './assets/rooms/makeover/ceiling.png',
  './assets/rooms/makeover/baseboard.png',

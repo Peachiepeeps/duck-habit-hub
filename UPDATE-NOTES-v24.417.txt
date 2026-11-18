@@ -1,0 +1,8 @@
+Duckie Days v24.417 — character portraits and sibling reunion cleanup
+
+- Shifted the bust portraits in the Change OC character picker down by four pixels at all supported display sizes.
+- Flipped Angel to face Demon on the left side of the sibling reunion.
+- Restored Angel idle-1 / idle-2 animation within ONE sprite element and her original magic-heart happy expression.
+- Kept spoken expressions from one line to the next, following how the working love-interest reunion handles poses.
+- Added a reunion cleanup routine that stops the idle timer, hides the scene, clears the reunion image references, resets the hero visibility, and cleans up on Continue, new encounters, end-run, and return-home.
+- Updated page and PWA cache references for the changed files.
