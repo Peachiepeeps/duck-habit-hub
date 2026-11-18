@@ -1444,7 +1444,17 @@ kiri: {
         state.heart.classList.remove("hidden");
         const isRepeat = !scene.id.includes("-") && Boolean(load().loveInterests?.[scene.id]?.encountered);
         scene.reward();
-        if(isRepeat){
+         // V24.412: completed single-character conversations count toward playable unlock.
+         // Do not count paired bonus scenes as two separate interactions.
+         if(CHARACTERS[scene.id] && !scene.id.includes('-')){
+           const encounterSave=load();ensureAll(encounterSave);
+           const entry=encounterSave.loveInterests[scene.id] || (encounterSave.loveInterests[scene.id]={});
+           const previous=Math.max(0,Math.floor(Number(entry.duckQuestEncountersV412)||0));
+           entry.duckQuestEncountersV412=Math.min(10,previous+1);
+           save(encounterSave);
+           if(previous===9){window.dispatchEvent(new CustomEvent('duckie-npc-quest-unlocked',{detail:{id:scene.id}}));}
+         }
+         if(isRepeat){
           const cfg=CHARACTERS[scene.id], data=load();
           if(cfg){
             ensureAll(data);
@@ -1579,6 +1589,13 @@ kiri: {
 
   function chooseScene(ids, data){
     const focus=luvBirdieFocus(data);
+    let redTarget=null;
+    try{const buff=JSON.parse(localStorage.getItem('duckieRedStringV412')||'null');if(buff&&Number(buff.expiresAt)>Date.now()&&Number(buff.multiplier)===3&&ids.includes(buff.target))redTarget=buff.target}catch(e){}
+    if(redTarget){
+      const weighted=[];
+      ids.forEach(id=>{const base=focus&&id===focus.characterId?Math.max(1,Number(focus.weight)||3):1;const weight=base*(id===redTarget?3:1);for(let n=0;n<weight;n++)weighted.push(id)});
+      return weighted[Math.floor(Math.random()*weighted.length)];
+    }
     if(focus && ids.includes(focus.characterId)){
       const weighted=[];
       ids.forEach(id=>{const weight=id===focus.characterId?Math.max(1,Number(focus.weight)||3):1;for(let i=0;i<weight;i++)weighted.push(id);});

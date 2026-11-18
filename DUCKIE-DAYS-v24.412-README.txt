@@ -1,0 +1,1 @@
+Duckie Days v24.412 update only. Copy all files to repository root preserving paths. Requires v24.411. 10 completed solo NPC conversations unlock Duck Quest characters. Red String of Fate is 25 Duck Bucks, liked by every Buddy, and boosts selected NPC relative encounter weight 3x for 2 real hours. One boost at a time. Progress begins with this update.

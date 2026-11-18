@@ -46,7 +46,7 @@ function spendFromMainGame(request){
   if(typeof save==='undefined'||saved!==save||typeof persist!=='function')return {ok:false,error:'Game save is not ready; reopen the Buddy Room.'};
   let undo=null;
   if(currency==='bucks'){
-    if(amount!==2&&amount!==5&&amount!==10)return {ok:false,error:'Unexpected Duck Bucks price.'};
+    if(amount!==2&&amount!==5&&amount!==10&&amount!==25)return {ok:false,error:'Unexpected Duck Bucks price.'};
     const balance=Math.max(0,Math.floor(Number(saved.taskProgression?.duckBucks)||0));
     if(balance<amount)return {ok:false,error:'Not enough Duck Bucks.'};
     if(!saved.taskProgression || typeof saved.taskProgression!=='object')return {ok:false,error:'Task Shop is not ready.'};
@@ -71,7 +71,7 @@ function hide(){if(overlay)overlay.hidden=true;const tasks=document.getElementBy
     if(!overlay)return;
     overlay.hidden=false;const tasks=document.getElementById('tasksPanel');if(tasks)tasks.inert=true;document.body.classList.add('duckie-buddy-beta-open');
     lastCount=-1;
-    if(!frame.src)frame.src='./task-buddy-beta.html?v=24.372';
+    if(!frame.src)frame.src='./task-buddy-beta.html?v=24.412';
     sendCount(true);sendSnapshot();
     if(updater)clearInterval(updater);
     updater=setInterval(()=>{sendCount(false);sendSnapshot()},1200);
