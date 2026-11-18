@@ -90,8 +90,8 @@ function getAreaConfig(areaId){
 
 // v24.154 — Stitched borders use a crisp assist outline only for light colors; Sakura/Sparkle stay clean.
 // Internal save keys still use the legacy area/rank names so existing player progress remains compatible.
-const QUEST_CHARACTER_IDS = Object.freeze(["peep","miko","io","miho","annika","shiyu"]);
-const QUEST_CHARACTER_NAMES = Object.freeze({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika",shiyu:"Shiyu"});
+const QUEST_CHARACTER_IDS = Object.freeze(["peep","miko","io","miho","annika","shiyu","angel"]);
+const QUEST_CHARACTER_NAMES = Object.freeze({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika",shiyu:"Shiyu",angel:"Angel"});
 window.DUCKIE_UI_THEME_CORE='24.211-expanded-theme-catalog';
 const QUEST_UI_THEMES = Object.freeze([
   {
@@ -494,6 +494,7 @@ function questCharacterIconPreviewSrc(characterId){
   if(characterId === "miho") return MihoIdle?.[0] || "assets/characters/miho/base/hurt.webp";
   if(characterId === "annika") return AnnikaIdle?.[0] || "assets/characters/annika/base/hurt.webp";
   if(characterId === "shiyu") return "assets/characters/shiyu/base/Shiyu-idle-1.png";
+  if(characterId === "angel") return "assets/characters/angel/base/Angel-sprite-idle-1.png";
   return "assets/characters/peep/base/idle-1.webp";
 }
 
@@ -509,7 +510,7 @@ const QUEST_WALLPAPERS = Object.freeze([
 function questWallpaperById(id){ return QUEST_WALLPAPERS.find(wallpaper=>wallpaper.id===id) || null; }
 
 
-const DUCK_LIBRARY = [{"id":"angry-duck","name":"Angry Duck","file":"angry-duck.webp"},{"id":"apple-duck","name":"Apple Duck","file":"apple-duck.webp"},{"id":"bathtime-duck","name":"Bathtime Duck","file":"bathtime-duck.webp"},{"id":"duck-on-skateboard","name":"Duck on a Skateboard","file":"duck-on-skateboard.webp"},{"id":"googly-eye-duck","name":"Googly Eye Duck","file":"googly-eye-duck.webp"},{"id":"long-hair-duck","name":"Long Hair Duck","file":"long-hair-duck.webp"},{"id":"magenta-duck","name":"Magenta Duck","file":"magenta-duck.webp"},{"id":"pile-of-tiny-ducks","name":"Pile of Tiny Ducks","file":"pile-of-tiny-ducks.webp"},{"id":"scarf-duck","name":"Scarf Duck","file":"scarf-duck.webp"},{"id":"vampire-duck","name":"Vampire Duck","file":"vampire-duck.webp"},{"id":"alien-duck","name":"Alien Duck","file":"Alien-duck.webp"},{"id":"angel-duck","name":"Angel Duck","file":"Angel-duck.webp"},{"id":"aqua-duck","name":"Aqua Duck","file":"Aqua-duck.webp"},{"id":"artist-duck","name":"Artist Duck","file":"Artist-duck.webp"},{"id":"black-duck","name":"Black Duck","file":"Black-duck.webp"},{"id":"blue-duck","name":"Blue Duck","file":"Blue-duck.webp"},{"id":"bow-duck","name":"Bow Duck","file":"Bow-duck.webp"},{"id":"bronze-duck","name":"Bronze Duck","file":"Bronze-duck.webp"},{"id":"bunny-duck","name":"Bunny Duck","file":"Bunny-duck.webp"},{"id":"burger-duck","name":"Burger Duck","file":"Burger-duck.webp"},{"id":"cat-duck","name":"Cat Duck","file":"Cat-duck.webp"},{"id":"cool-duck","name":"Cool Duck","file":"Cool-duck.webp"},{"id":"cosmic-duck","name":"Cosmic Duck","file":"Cosmic-duck.webp"},{"id":"cupcake-duck","name":"Cupcake Duck","file":"Cupcake-duck.webp"},{"id":"dark-red-duck","name":"Dark Red Duck","file":"Dark-red-duck.webp"},{"id":"demon-duck","name":"Demon Duck","file":"Demon-duck.webp"},{"id":"doctor-duck","name":"Doctor Duck","file":"Doctor-duck.webp"},{"id":"duck-with-a-knife","name":"Duck with a Knife","file":"Duck-with-a-knife.webp"},{"id":"duckvee","name":"Duckvee","file":"Duckvee.webp"},{"id":"fancy-duck","name":"Fancy Duck","file":"Fancy-duck.webp"},{"id":"flower-duck","name":"Flower Duck","file":"Flower-duck.webp"},{"id":"gamer-duck","name":"Gamer Duck","file":"Gamer-duck.webp"},{"id":"ghost-duck","name":"Ghost Duck","file":"Ghost-duck.webp"},{"id":"glitter-duck","name":"Glitter Duck","file":"Glitter-duck.webp"},{"id":"golden-duck","name":"Golden Duck","file":"Golden-duck.webp"},{"id":"goose","name":"Goose","file":"Goose.webp"},{"id":"green-duck","name":"Green Duck","file":"Green-duck.webp"},{"id":"grey-duck","name":"Grey Duck","file":"Grey-duck.webp"},{"id":"gummy-duck","name":"Gummy Duck","file":"Gummy-duck.webp"},{"id":"jester-duck","name":"Jester Duck","file":"Jester-duck.webp"},{"id":"kidcore-duck","name":"Kidcore Duck","file":"Kidcore-duck.webp"},{"id":"king-duck","name":"King Duck","file":"King-duck.webp"},{"id":"knitted-duck","name":"Knitted Duck","file":"Knitted-duck.webp"},{"id":"lemon-duck","name":"Lemon Duck","file":"Lemon-duck.webp"},{"id":"lime-duck","name":"Lime Duck","file":"Lime-duck.webp"},{"id":"magical-girl-duck","name":"Magical Girl Duck","file":"Magical-girl-duck.webp"},{"id":"mint-duck","name":"Mint Duck","file":"Mint-duck.webp"},{"id":"mushroom-duck","name":"Mushroom Duck","file":"Mushroom-duck.webp"},{"id":"miko-duck","name":"Miko Duck","file":"miko-duck.webp"},{"id":"io-duck","name":"Io Duck","file":"io-duck.webp"},{"id":"miho-duck","name":"Miho Duck","file":"miho-duck.webp"},{"id":"annika-duck","name":"Annika Duck","file":"annika-duck.png"},{"id":"orange-duck","name":"Orange Duck","file":"Orange-duck.webp"},{"id":"party-hat-duck","name":"Party Hat Duck","file":"Party-hat-duck.webp"},{"id":"peach-duck","name":"Peach Duck","file":"Peach-duck.webp"},{"id":"peep-duck","name":"Peep Duck","file":"peep-duck.webp"},{"id":"periwinkle-duck","name":"Periwinkle Duck","file":"Periwinkle-duck.webp"},{"id":"pink-duck","name":"Pink Duck","file":"Pink-duck.webp"},{"id":"pizza-duck","name":"Pizza Duck","file":"Pizza-duck.webp"},{"id":"plush-duck","name":"Plush Duck","file":"Plush-duck.webp"},{"id":"pompompurin-duck","name":"Pompompurin Duck","file":"Pompompurin-duck.webp"},{"id":"purple-duck","name":"Purple Duck","file":"Purple-duck.webp"},{"id":"rainbow-duck","name":"Rainbow Duck","file":"Rainbow-duck.webp"},{"id":"red-duck","name":"Red Duck","file":"Red-duck.webp"},{"id":"silver-duck","name":"Silver Duck","file":"Silver-duck.webp"},{"id":"sky-blue-duck","name":"Sky Blue Duck","file":"Sky-blue-duck.webp"},{"id":"sleepy-time-duck","name":"Sleepy Time Duck","file":"Sleepy-time-duck.webp"},{"id":"standard-duck","name":"Standard Duck","file":"Standard-duck.webp"},{"id":"strawberry-duck","name":"Strawberry Duck","file":"Strawberry-duck.webp"},{"id":"tiny-duck-stack","name":"Tiny Duck Stack","file":"Tiny-duck-stack.webp"},{"id":"tiny-duck","name":"Tiny Duck","file":"Tiny-duck.webp"},{"id":"top-hat-duck","name":"Top Hat Duck","file":"Top-hat-duck.webp"},{"id":"violet-duck","name":"Violet Duck","file":"Violet-duck.webp"},{"id":"watermelon-duck","name":"Watermelon Duck","file":"Watermelon-duck.webp"},{"id":"white-duck","name":"White Duck","file":"White-duck.webp"}];
+const DUCK_LIBRARY = [{"id":"angry-duck","name":"Angry Duck","file":"angry-duck.webp"},{"id":"apple-duck","name":"Apple Duck","file":"apple-duck.webp"},{"id":"bathtime-duck","name":"Bathtime Duck","file":"bathtime-duck.webp"},{"id":"duck-on-skateboard","name":"Duck on a Skateboard","file":"duck-on-skateboard.webp"},{"id":"googly-eye-duck","name":"Googly Eye Duck","file":"googly-eye-duck.webp"},{"id":"long-hair-duck","name":"Long Hair Duck","file":"long-hair-duck.webp"},{"id":"magenta-duck","name":"Magenta Duck","file":"magenta-duck.webp"},{"id":"pile-of-tiny-ducks","name":"Pile of Tiny Ducks","file":"pile-of-tiny-ducks.webp"},{"id":"scarf-duck","name":"Scarf Duck","file":"scarf-duck.webp"},{"id":"vampire-duck","name":"Vampire Duck","file":"vampire-duck.webp"},{"id":"alien-duck","name":"Alien Duck","file":"Alien-duck.webp"},{"id":"angel-duck","name":"Heavenly Duck","file":"Angel-duck.webp"},{"id":"aqua-duck","name":"Aqua Duck","file":"Aqua-duck.webp"},{"id":"artist-duck","name":"Artist Duck","file":"Artist-duck.webp"},{"id":"black-duck","name":"Black Duck","file":"Black-duck.webp"},{"id":"blue-duck","name":"Blue Duck","file":"Blue-duck.webp"},{"id":"bow-duck","name":"Bow Duck","file":"Bow-duck.webp"},{"id":"bronze-duck","name":"Bronze Duck","file":"Bronze-duck.webp"},{"id":"bunny-duck","name":"Bunny Duck","file":"Bunny-duck.webp"},{"id":"burger-duck","name":"Burger Duck","file":"Burger-duck.webp"},{"id":"cat-duck","name":"Cat Duck","file":"Cat-duck.webp"},{"id":"cool-duck","name":"Cool Duck","file":"Cool-duck.webp"},{"id":"cosmic-duck","name":"Cosmic Duck","file":"Cosmic-duck.webp"},{"id":"cupcake-duck","name":"Cupcake Duck","file":"Cupcake-duck.webp"},{"id":"dark-red-duck","name":"Dark Red Duck","file":"Dark-red-duck.webp"},{"id":"demon-duck","name":"Devilish Duck","file":"Demon-duck.webp"},{"id":"doctor-duck","name":"Doctor Duck","file":"Doctor-duck.webp"},{"id":"duck-with-a-knife","name":"Duck with a Knife","file":"Duck-with-a-knife.webp"},{"id":"duckvee","name":"Duckvee","file":"Duckvee.webp"},{"id":"fancy-duck","name":"Fancy Duck","file":"Fancy-duck.webp"},{"id":"flower-duck","name":"Flower Duck","file":"Flower-duck.webp"},{"id":"gamer-duck","name":"Gamer Duck","file":"Gamer-duck.webp"},{"id":"ghost-duck","name":"Ghost Duck","file":"Ghost-duck.webp"},{"id":"glitter-duck","name":"Glitter Duck","file":"Glitter-duck.webp"},{"id":"golden-duck","name":"Golden Duck","file":"Golden-duck.webp"},{"id":"goose","name":"Goose","file":"Goose.webp"},{"id":"green-duck","name":"Green Duck","file":"Green-duck.webp"},{"id":"grey-duck","name":"Grey Duck","file":"Grey-duck.webp"},{"id":"gummy-duck","name":"Gummy Duck","file":"Gummy-duck.webp"},{"id":"jester-duck","name":"Jester Duck","file":"Jester-duck.webp"},{"id":"kidcore-duck","name":"Kidcore Duck","file":"Kidcore-duck.webp"},{"id":"king-duck","name":"King Duck","file":"King-duck.webp"},{"id":"knitted-duck","name":"Knitted Duck","file":"Knitted-duck.webp"},{"id":"lemon-duck","name":"Lemon Duck","file":"Lemon-duck.webp"},{"id":"lime-duck","name":"Lime Duck","file":"Lime-duck.webp"},{"id":"magical-girl-duck","name":"Magical Girl Duck","file":"Magical-girl-duck.webp"},{"id":"mint-duck","name":"Mint Duck","file":"Mint-duck.webp"},{"id":"mushroom-duck","name":"Mushroom Duck","file":"Mushroom-duck.webp"},{"id":"miko-duck","name":"Miko Duck","file":"miko-duck.webp"},{"id":"io-duck","name":"Io Duck","file":"io-duck.webp"},{"id":"miho-duck","name":"Miho Duck","file":"miho-duck.webp"},{"id":"annika-duck","name":"Annika Duck","file":"annika-duck.png"},{"id":"angel-character-duck","name":"Angel Duck","file":"angel-character-duck.png"},{"id":"demon-character-duck","name":"Demon Duck","file":"demon-character-duck.png"},{"id":"orange-duck","name":"Orange Duck","file":"Orange-duck.webp"},{"id":"party-hat-duck","name":"Party Hat Duck","file":"Party-hat-duck.webp"},{"id":"peach-duck","name":"Peach Duck","file":"Peach-duck.webp"},{"id":"peep-duck","name":"Peep Duck","file":"peep-duck.webp"},{"id":"periwinkle-duck","name":"Periwinkle Duck","file":"Periwinkle-duck.webp"},{"id":"pink-duck","name":"Pink Duck","file":"Pink-duck.webp"},{"id":"pizza-duck","name":"Pizza Duck","file":"Pizza-duck.webp"},{"id":"plush-duck","name":"Plush Duck","file":"Plush-duck.webp"},{"id":"pompompurin-duck","name":"Pompompurin Duck","file":"Pompompurin-duck.webp"},{"id":"purple-duck","name":"Purple Duck","file":"Purple-duck.webp"},{"id":"rainbow-duck","name":"Rainbow Duck","file":"Rainbow-duck.webp"},{"id":"red-duck","name":"Red Duck","file":"Red-duck.webp"},{"id":"silver-duck","name":"Silver Duck","file":"Silver-duck.webp"},{"id":"sky-blue-duck","name":"Sky Blue Duck","file":"Sky-blue-duck.webp"},{"id":"sleepy-time-duck","name":"Sleepy Time Duck","file":"Sleepy-time-duck.webp"},{"id":"standard-duck","name":"Standard Duck","file":"Standard-duck.webp"},{"id":"strawberry-duck","name":"Strawberry Duck","file":"Strawberry-duck.webp"},{"id":"tiny-duck-stack","name":"Tiny Duck Stack","file":"Tiny-duck-stack.webp"},{"id":"tiny-duck","name":"Tiny Duck","file":"Tiny-duck.webp"},{"id":"top-hat-duck","name":"Top Hat Duck","file":"Top-hat-duck.webp"},{"id":"violet-duck","name":"Violet Duck","file":"Violet-duck.webp"},{"id":"watermelon-duck","name":"Watermelon Duck","file":"Watermelon-duck.webp"},{"id":"white-duck","name":"White Duck","file":"White-duck.webp"}];
 
 const PEEP_SKILLS = [
   {
@@ -763,12 +764,27 @@ const SHIYU_SKILLS = [
    sprite:"assets/characters/shiyu/base/Shiyu-Anger.png",description:"Once per battle: 400% damage to every enemy. No split damage."}
 ];
 
+
+const ANGEL_SKILLS = [
+ {id:"angel-heart-spark",name:"Heart Spark ♡",unlock:1,type:"damage",multiplier:1,
+  sprite:"assets/characters/angel/base/Angel-sprite-magic-heart.png",description:"100% magic damage to one enemy."},
+ {id:"angel-celestial-comet",name:"Celestial Comet ✨",unlock:10,type:"damage",multiplier:1.7,splashChance:.25,splashMultiplier:.40,
+  sprite:"assets/characters/angel/base/Angel-sprite-magic-heart.png",description:"170% damage to one enemy; 25% chance to splash 40% to another."},
+ {id:"angel-heavenly-judgment",name:"Heavenly Judgment 🖤",unlock:25,type:"damage",multiplier:2.3,attackDownChance:.30,
+  sprite:"assets/characters/angel/base/Angel-sprite-angry.png",description:"230% damage; 30% chance to reduce enemy Attack by 20% for 2 turns."},
+ {id:"angel-heavenly-sanctuary",name:"Heavenly Sanctuary ♡",unlock:40,type:"damage",multiplier:2.4,shieldPercent:.20,shieldDuration:2,
+  sprite:"assets/characters/angel/base/Angel-sprite-angel.png",description:"240% damage and a shield worth 20% of Angel's max HP for 2 turns."},
+ {id:"angel-last-wish",name:"Heaven’s Last Wish ♡",unlock:50,type:"damage",multiplier:2.8,hitsAll:true,oncePerBattle:true,shieldPercent:.15,shieldDuration:2,
+  sprite:"assets/characters/angel/base/Angel-sprite-angel.png",description:"Once per battle: 280% damage to every enemy; shield all allies for 15% Angel max HP for 2 turns."}
+];
+
 function activeSkills(){
   if(activeCharacterId === "miko") return MIKO_SKILLS;
   if(activeCharacterId === "io") return IO_SKILLS;
   if(activeCharacterId === "miho") return MIHO_SKILLS;
   if(activeCharacterId === "annika") return ANNIKA_SKILLS;
   if(activeCharacterId === "shiyu") return SHIYU_SKILLS;
+  if(activeCharacterId === "angel") return ANGEL_SKILLS;
   return PEEP_SKILLS;
 }
 
@@ -1970,7 +1986,7 @@ function normalizeCharmSave(raw){
   const owned={};
   for(const id of Object.keys(CHARM_DEFS)) if(source.owned?.[id]) owned[id]=true;
   const equippedByCharacter={};
-  for(const characterId of ["peep","miko","io","miho","annika","shiyu"]){
+  for(const characterId of ["peep","miko","io","miho","annika","shiyu","angel"]){
     const incoming=Array.isArray(source.equippedByCharacter?.[characterId])?source.equippedByCharacter[characterId]:[];
     const seenFamilies=new Set();
     equippedByCharacter[characterId]=[];
@@ -2366,7 +2382,7 @@ function ensureBuddySave() {
   hubSave.buddies.collection=normalizeBuddyCollection(hubSave.buddies.collection);
   if(!hubSave.buddies.equippedByCharacter || typeof hubSave.buddies.equippedByCharacter!=="object") hubSave.buddies.equippedByCharacter={};
   if(!hubSave.buddies.personalizationByCharacter || typeof hubSave.buddies.personalizationByCharacter!=="object") hubSave.buddies.personalizationByCharacter={};
-  ["peep","miko","io","miho","annika","shiyu"].forEach(id=>{
+  ["peep","miko","io","miho","annika","shiyu","angel"].forEach(id=>{
     const slots=Array.isArray(hubSave.buddies.equippedByCharacter[id])?hubSave.buddies.equippedByCharacter[id]:[];
     hubSave.buddies.equippedByCharacter[id]=Array.from({length:6},(_,i)=>typeof slots[i]==="string"?slots[i]:null);
     const personal=Array.isArray(hubSave.buddies.personalizationByCharacter[id])?hubSave.buddies.personalizationByCharacter[id]:[];
@@ -2737,12 +2753,14 @@ const AnnikaIdle = [
 ];
 
 const ShiyuIdle=["assets/characters/shiyu/base/Shiyu-idle-1.png","assets/characters/shiyu/base/Shiyu-idle-2.png"];
+const AngelIdle=["assets/characters/angel/base/Angel-sprite-idle-1.png","assets/characters/angel/base/Angel-sprite-idle-2.png"];
 function heroIdleFrames(){
   if(activeCharacterId === "miko") return MikoIdle;
   if(activeCharacterId === "io") return IoIdle;
   if(activeCharacterId === "miho") return MihoIdle;
   if(activeCharacterId === "annika") return AnnikaIdle;
   if(activeCharacterId === "shiyu") return ShiyuIdle;
+  if(activeCharacterId === "angel") return AngelIdle;
   return PEepIdle;
 }
 function heroHurtFrame(){
@@ -2751,6 +2769,7 @@ function heroHurtFrame(){
   if(activeCharacterId === "miho") return "assets/characters/miho/base/hurt.webp";
   if(activeCharacterId === "annika") return "assets/characters/annika/base/hurt.webp";
   if(activeCharacterId === "shiyu") return "assets/characters/shiyu/base/Shiyu-hurt.png";
+  if(activeCharacterId === "angel") return "assets/characters/angel/base/Angel-sprite-hurt.png";
   return "assets/characters/peep/base/hurt.webp";
 }
 
@@ -2968,13 +2987,14 @@ function activeCharacterIdFromQuest(){
   if(requested==="miho" && unlocked.includes("miho")) return "miho";
   if(requested==="annika" && unlocked.includes("annika")) return "annika";
   if(requested==="shiyu" && unlocked.includes("shiyu")) return "shiyu";
+  if(requested==="angel" && unlocked.includes("angel")) return "angel";
   return "peep";
 }
 
 let activeCharacterId = activeCharacterIdFromQuest();
 questSave.activeCharacter = activeCharacterId;
 
-function heroDisplayName(){ return ({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika",shiyu:"Shiyu"})[activeCharacterId] || "Peep"; }
+function heroDisplayName(){ return ({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika",shiyu:"Shiyu",angel:"Angel"})[activeCharacterId] || "Peep"; }
 
 function charmState(){
   questSave.charms=normalizeCharmSave(questSave.charms);
@@ -3196,7 +3216,7 @@ function normalizeQuestSave(raw) {
       lastArea:q.lastArea,
       iconBackground:q.iconBackground
     }),
-    activeCharacter:["peep","miko","io","miho","annika","shiyu"].includes(q.activeCharacter)?q.activeCharacter:null,
+    activeCharacter:["peep","miko","io","miho","annika","shiyu","angel"].includes(q.activeCharacter)?q.activeCharacter:null,
     iconBackgroundsUnlocked:[...new Set(["white",...(Array.isArray(q.iconBackgroundsUnlocked)?q.iconBackgroundsUnlocked:[])])]
       .filter(id=>ICON_BACKGROUND_COLORS.some(color=>color.id===id)),
     iconBorderStylesUnlocked:[...new Set(["none",...(Array.isArray(q.iconBorderStylesUnlocked)?q.iconBorderStylesUnlocked:[])])]
@@ -4057,8 +4077,8 @@ function peepStats(level = activeHeroProgress().level) {
   const hpBonus=Math.max(0,Number(vitality?.hpBonus)||0);
   return {
     maxHp: Math.round((42 + (level - 1) * 4.2) * (1 + hpBonus)),
-    attack: Math.round((8 + (level - 1) * 1.15) * (activeCharacterId==="shiyu"?1.12:1) * Math.max(0.10, Number(specialHeroAttackScale)||1)),
-    defense: Math.round(2 + (level - 1) * 0.48)
+    attack: Math.round((8 + (level - 1) * 1.15) * (activeCharacterId==="angel"?1.20:(activeCharacterId==="shiyu"?1.12:1)) * Math.max(0.10, Number(specialHeroAttackScale)||1)),
+    defense: Math.round((2 + (level - 1) * 0.48)*(activeCharacterId==="angel"?.82:1))
   };
 }
 
@@ -4665,11 +4685,13 @@ function renderHeroVisuals(){
   const isMiho=activeCharacterId==="miho";
   const isAnnika=activeCharacterId==="annika";
   const isShiyu=activeCharacterId==="shiyu";
+  const isAngel=activeCharacterId==="angel";
   ui.battlefield?.classList.toggle("miko-active",isMiko);
   ui.battlefield?.classList.toggle("io-active",isIo);
   ui.battlefield?.classList.toggle("miho-active",isMiho);
   ui.battlefield?.classList.toggle("annika-active",isAnnika);
   ui.battlefield?.classList.toggle("shiyu-active",isShiyu);
+  ui.battlefield?.classList.toggle("angel-active",isAngel);
   const name=heroDisplayName();
   if(ui.heroNameHome) ui.heroNameHome.textContent=name;
   if(ui.heroNameCombat) ui.heroNameCombat.textContent=name;
@@ -4700,7 +4722,7 @@ function skillDisplayDescription(skill){ return skill.description; }
 
 function availableQuestCharacters(){
   const unlocked=Array.isArray(hubSave.unlockedCharacters)?hubSave.unlockedCharacters:["peep"];
-  return ["peep","miko","io","miho","annika","shiyu"].filter(id=>unlocked.includes(id));
+  return ["peep","miko","io","miho","annika","shiyu","angel"].filter(id=>unlocked.includes(id));
 }
 
 function closeQuestOcPicker(){
@@ -4711,7 +4733,7 @@ function closeQuestOcPicker(){
 
 function renderQuestOcPicker(){
   if(!ui.questOcPicker) return;
-  const names={peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika",shiyu:"Shiyu"};
+  const names={peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika",shiyu:"Shiyu",angel:"Angel"};
   ui.questOcPicker.innerHTML="";
   availableQuestCharacters().forEach(id=>{
     const button=document.createElement("button");
@@ -4826,7 +4848,7 @@ function setBuddyScreenUrl(isOpen) {
   } catch {}
 }
 
-const BUDDY_ASSIGN_CHARACTER_NAMES = Object.freeze({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika",shiyu:"Shiyu"});
+const BUDDY_ASSIGN_CHARACTER_NAMES = Object.freeze({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika",shiyu:"Shiyu",angel:"Angel"});
 
 function buddyRecordByKey(key){
   if(!key) return null;
@@ -4837,7 +4859,7 @@ function buddyEquippedCount(key,excludeCharacterId="",excludeSlotIndex=-1){
   if(!key) return 0;
   ensureBuddySave();
   let count=0;
-  for(const characterId of ["peep","miko","io","miho","annika","shiyu"]){
+  for(const characterId of ["peep","miko","io","miho","annika","shiyu","angel"]){
     const slots=hubSave.buddies.equippedByCharacter[characterId] || [];
     slots.forEach((slotKey,index)=>{
       if(characterId===excludeCharacterId && index===excludeSlotIndex) return;
@@ -4849,7 +4871,7 @@ function buddyEquippedCount(key,excludeCharacterId="",excludeSlotIndex=-1){
 
 function buddyAssignCharacters(){
   const unlocked=Array.isArray(hubSave.unlockedCharacters)?hubSave.unlockedCharacters:["peep"];
-  return ["peep","miko","io","miho","annika","shiyu"].map(id=>({id,name:BUDDY_ASSIGN_CHARACTER_NAMES[id],unlocked:unlocked.includes(id)}));
+  return ["peep","miko","io","miho","annika","shiyu","angel"].map(id=>({id,name:BUDDY_ASSIGN_CHARACTER_NAMES[id],unlocked:unlocked.includes(id)}));
 }
 
 function hideBuddyPersonalization(){
@@ -6650,6 +6672,14 @@ async function useAllEnemySkill(skill){
     }
   }
 
+  if(activeCharacterId==="angel" && skill.shieldPercent){
+    skillState.angelShieldHp=Math.max(1,Math.round(currentRun.maxHp*skill.shieldPercent));
+    skillState.angelShieldTurns=skill.shieldDuration||2;
+    skillState.angelShieldPendingTick=true;
+    // Buddy assistance also uses hero HP; the whole party is protected by this shared combat shield.
+    setMessage(`${skill.name} protects the party with ${skillState.angelShieldHp} HP of magic shielding!`);
+    await sleep(350);
+  }
   removeHeroVisualClass("attack-pop");
   restoreHeroIdleFrame();
   clearHeroSpecialAttackScale();
@@ -6925,9 +6955,27 @@ async function useSkill(skill) {
     setMessage(flavor + (crit?" CRITICAL!":""));
     await sleep(280);
     await hurtEnemy(dmg);
+    if(activeCharacterId==="angel" && skill.splashChance && Math.random()<skill.splashChance){
+      const original=currentEnemy;
+      const other=aliveDoubleEnemies().find(enemy=>enemy!==original && enemy.hpNow>0);
+      if(other){selectCurrentEnemy(other);await hurtEnemy(Math.max(1,Math.round(dmg*skill.splashMultiplier)));selectCurrentEnemy(original);}
+    }
+    if(activeCharacterId==="angel" && skill.attackDownChance && currentEnemy?.hpNow>0 && Math.random()<skill.attackDownChance){
+      skillState.enemyAttackDownTurns=2;skillState.enemyAttackMultiplier=.80;
+      saveCurrentEnemyEffects(currentEnemy);
+      setMessage(`${currentEnemy.name}'s Attack fell by 20% for 2 turns!`);
+    }
     }
   }
 
+  if(activeCharacterId==="angel" && skill.shieldPercent){
+    skillState.angelShieldHp=Math.max(1,Math.round(currentRun.maxHp*skill.shieldPercent));
+    skillState.angelShieldTurns=skill.shieldDuration||2;
+    skillState.angelShieldPendingTick=true;
+    // Buddy assistance also uses hero HP; the whole party is protected by this shared combat shield.
+    setMessage(`${skill.name} protects the party with ${skillState.angelShieldHp} HP of magic shielding!`);
+    await sleep(350);
+  }
   removeHeroVisualClass("attack-pop");
   restoreHeroIdleFrame();
   clearHeroSpecialAttackScale();
@@ -6946,6 +6994,11 @@ async function useSkill(skill) {
 }
 
 function decrementCooldowns(usedSkillId) {
+  if(activeCharacterId==="angel" && skillState?.angelShieldTurns>0){
+    if(skillState.angelShieldPendingTick)skillState.angelShieldPendingTick=false;
+    else if(--skillState.angelShieldTurns<=0)skillState.angelShieldHp=0;
+  }
+
   if(!skillState.cooldowns) skillState.cooldowns={};
   Object.keys(skillState.cooldowns).forEach(id=>{
     if(id!==usedSkillId && skillState.cooldowns[id]>0) skillState.cooldowns[id]--;
@@ -7088,6 +7141,11 @@ async function performEnemyAttack(multiplier=1,label="",lifeDrainHeal=0){
   if(Number(skillState.heroNextDamageMultiplier||1)<1){
     dmg=Math.max(1,Math.round(dmg*skillState.heroNextDamageMultiplier));
     skillState.heroNextDamageMultiplier=1;
+  }
+  if(activeCharacterId==="angel" && (skillState?.angelShieldTurns||0)>0 && (skillState?.angelShieldHp||0)>0){
+    const blocked=Math.min(dmg,skillState.angelShieldHp);
+    skillState.angelShieldHp-=blocked;dmg-=blocked;
+    if(blocked)showFloat(`Shield -${blocked}`,"heal","peep");
   }
   currentRun.hp=Math.max(0,currentRun.hp-dmg);
   setHeroFrame(heroHurtFrame());addHeroVisualClass("hurt-pop");

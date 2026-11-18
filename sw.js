@@ -15,15 +15,15 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-408';
-const MEDIA_CACHE='duck-habit-hub-media-v24-408';
+const APP_CACHE='duck-habit-hub-app-v24-409';
+const MEDIA_CACHE='duck-habit-hub-media-v24-409';
 const MAX_MEDIA_ENTRIES=400;
 let mediaWrites=0;
 const APP_SHELL=[
  './',
  './index.html',
  './version.json',
- './sw.js?v=24.408',
+ './sw.js?v=24.409',
  './manifest.webmanifest?v=24.296',
  './app.css?v=24.385',
  './trading-cards-base.css?v=24.327',
@@ -47,6 +47,7 @@ const APP_SHELL=[
  './trading-cards-sock-gremlin-v297.js?v=24.297',
  './trading-cards-universal-v298.js?v=24.298',
  './trading-cards-bao-cafe-v299.js?v=24.408',
+ './angel-demon-trading-card-v409.js?v=24.409',
  './bao-cafe/index.html',
  './bao-cafe/assets/Favorite-customer-heart.png',
  './bao-cafe/assets/Cerise-idle-1.png',
@@ -102,11 +103,15 @@ const APP_SHELL=[
  './duck-quest/js/lover-assist-v385.js?v=24.408',
  './duck-quest/js/sweetheart-v352.js?v=24.385',
  './duck-quest/css/lover-assist-v385.css?v=24.408',
- './app.js?v=24.408',
+ './app.js?v=24.409',
+ './angel-demon-host-v409.js?v=24.409',
  './home-makeover.js?v=24.391',
  './home-makeover.css?v=24.385',
  './task-buddy-beta.js?v=24.385',
- './task-buddy-beta.html?v=24.408',
+ './task-buddy-beta.html?v=24.409',
+ './assets/ducks/angel-character-duck.png',
+ './assets/ducks/demon-character-duck.png',
+ './duck-quest/js/angel-demon-v409.js?v=24.409',
  './assets/rooms/makeover/wallpaper.png',
  './assets/rooms/makeover/ceiling.png',
  './assets/rooms/makeover/baseboard.png',

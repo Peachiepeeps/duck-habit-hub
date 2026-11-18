@@ -1,0 +1,43 @@
+Duckie Days 24.409 — Angel & Demon (update-only ZIP)
+BASELINE: v24.408. Upload the ZIP contents over the existing GitHub Pages repository.
+No save reset; original v24.408 files that are not in this ZIP stay in the repo.
+
+ANGEL
+- Original 44 full-resolution PNGs preserved exactly. Invitation: 1,500 Pink Coins.
+- Equipped starter: Pigtails, removable Bangs, White Dress, removable Jacket, White Stockings,
+  Black Lace-Up Boots, Small Hair Bows, Chest Bow, Choker.
+- Twelve alternate wardrobe items cost 150 Pink Coins each.
+- Demon-reunion outfit unlocks all 7 original pieces together; no shop thumbnail used as clothes.
+- Home Hub Neutral, Happy for 1.2s on tap, Gasp for 1.2s after five rapid pokes.
+- Playable Duck Quest Celestial Mage, five specified skills (levels 1/10/25/40/50).
+- Unique Angel Duck awarded once at 100 Task Buddy Happiness.
+
+DEMON (strictly platonic sibling, NOT a Love Interest, no battle)
+- Original 7 Demon PNGs preserved. First reunion: one Demon Duck plus Angel's seven-piece outfit.
+- Repeat reunion: one Demon Duck plus Demon Trading Card (Rare, original Idle-1 temporary art).
+- Encounter chance: 18% at eligible normal-stage encounter rolls, all 6 stages, only with Angel active.
+- Both scripts kept exact, separate sprite reactions, dialogue Next buttons, no fight.
+- Task Buddy unlocks immediately after their first reunion; Demon never appears in dating options.
+- Original 66x96 artwork in Buddy Room, 100% standard size, Idle-1/2 loop.
+- Tap: Idle-Happy-Idle; five rapid taps: Idle-Angry-Idle (1.2s).
+
+TASK BUDDY & BAO CAFE
+- Owner-approved favorite ducks, loved/disliked gifts, exact Pet Rock and Hot Coffee dialogue.
+- Angel Pet Rock: Gasp then Happy then Neutral, normal loved-gift affection.
+- All Task Buddies: 1.2s ordinary tap reactions, with original Shiyu shadow reaction preserved.
+- Both complete Bao Cafe preference sets and customer sprites added.
+
+SAVE AND ARTWORK SAFEGUARDS
+- Original angel-duck and demon-duck IDs and art stay untouched; display names become
+  Heavenly Duck and Devilish Duck. Character Angel Duck and Demon Duck use different IDs.
+- 51 original PNGs copied unchanged to the assets paths; only small Task Buddy reaction
+  previews are pixel-safe composites of the original supplied Angel layers.
+- First meeting/repeat rewards persisted separately, card quantity and duck quantity counted.
+- Existing player progress and unrelated content preserved; no migration that resets saves.
+
+VALIDATION / LIMITATIONS
+- Static JS syntax and JSON validation, files/paths/inventory checks included in package check.
+- No full-browser end-to-end run was possible in this environment, because the isolated browser
+  blocks navigation to both local web and file URLs. Please test on a staging GitHub Pages branch
+  or back up your save before deploying. In particular check the first and repeat reunions,
+  quest skill damage/shields, gifts, and wardrobe preview on a phone.
