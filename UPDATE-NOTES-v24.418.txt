@@ -1,0 +1,7 @@
+Duckie Days v24.418
+
+Updates:
+- Adjusted the Change OC portrait icons to crop like true bust portraits.
+- Portraits now show from the top of the head/hair down to slightly below the shoulders, instead of tiny full-body sprites.
+- Kept the current Change OC window layout and button grid intact.
+- Bumped cache/version references so the refined portrait crop loads properly.
