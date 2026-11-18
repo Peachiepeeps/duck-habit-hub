@@ -62,6 +62,65 @@ img[src*="enemies/puffer/"],img[src*="enemies/star-glider/"],img[src*="enemies/a
   }
 }
 </style>
+<style id="v24410-angel-battle-height">
+/* Angel's 74x97 idle sprite has almost the same 8px transparent top margin
+   as Shiyu (76x96). Anchor both to the same battle footline. */
+#battlefield.angel-active .peep-combatant .battle-hero-composite,
+#battlefield.angel-active.ocean-peep-raised .peep-combatant .battle-hero-composite {
+  width:40% !important;
+  height:auto !important;
+  top:auto !important;
+  bottom:12% !important;
+}
+@media (max-width:600px){
+  #battlefield.angel-active .peep-combatant .battle-hero-composite,
+  #battlefield.angel-active.ocean-peep-raised .peep-combatant .battle-hero-composite {
+    width:43% !important;
+    bottom:13% !important;
+  }
+}
+</style>
+<script id="v24410-battle-image-resilience">
+/* Error recovery for intermittently unavailable encounter sprite requests. */
+(() => {
+  const attempted=new WeakMap();
+  document.addEventListener('error', event => {
+    const img=event.target;
+    if(!(img instanceof HTMLImageElement))return;
+    const src=img.getAttribute('src')||'';
+    if(!/(?:enemies|bosses)\//i.test(src))return;
+    if(!img.closest('#battlefield, #siblingScene, .battlefield'))return;
+    const state=attempted.get(img)||{original:src,step:0};
+    const next=(url)=>{state.step++;attempted.set(img,state);img.src=url;};
+    try {
+      const base=new URL(state.original,document.baseURI);
+      if(state.step===0){
+        base.searchParams.set('retry','24.410');
+        next(base.href);return;
+      }
+      if(state.step===1){
+        const alt=new URL(state.original,document.baseURI);
+        alt.pathname=alt.pathname.replace(/\.(png|webp)$/i,(_,ext)=>ext.toLowerCase()==='png'?'.webp':'.png');
+        if(alt.href!==src && alt.href!==state.original){next(alt.href);return;}
+      }
+      if(state.step<=2){
+        const fallback=new URL(state.original,document.baseURI);
+        fallback.pathname=fallback.pathname.replace(/\/base\/[^/]+\.(png|webp)$/i,'/base/idle-1.webp');
+        if(fallback.href!==src && fallback.href!==state.original){next(fallback.href);return;}
+      }
+    }catch(_ignored){}
+    img.removeAttribute('src');
+    img.style.visibility='hidden';
+    console.warn('Duck Quest encounter image unavailable:',state.original);
+  },true);
+  document.addEventListener('load',event=>{
+    const img=event.target;
+    if(img instanceof HTMLImageElement && attempted.has(img)){
+      img.style.visibility='';attempted.delete(img);
+    }
+  },true);
+})();
+</script>
 </head>
 <body>
   <main class="quest-shell">
@@ -566,7 +625,7 @@ img[src*="enemies/puffer/"],img[src*="enemies/star-glider/"],img[src*="enemies/a
   <script src="../trading-cards-sock-gremlin-v297.js?v=24.297"></script>
   <script src="../trading-cards-universal-v298.js?v=24.298"></script>
   <script src="../trading-cards-bao-cafe-v299.js?v=24.395"></script>
-  <script src="js/game-v96.js?v=24.409&buddy=v11"></script>
+  <script src="js/game-v96.js?v=24.410&buddy=v11"></script>
   <script src="js/hatchery-v179.js?v=24-345"></script>
   <script src="js/hatchery-egg-position-v192.js?v=24-343"></script>
   <script src="js/hatchery-ui-v193.js?v=24-255"></script>

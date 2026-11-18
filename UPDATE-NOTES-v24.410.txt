@@ -1,0 +1,25 @@
+Duckie Days v24.410 — User-requested follow-up fixes (UPDATE ONLY)
+Install by uploading Duckie-Days-v24.410-UPDATE-ONLY.zip into the repository root;
+GitHub Actions existing update installer unzips and commits the files automatically.
+
+- Shiyu cat ears now render behind her bangs; other accessories unchanged.
+- Angel Large Hair Ribbons now render behind her hair, with Small Hair Bows and
+  Big Hair Bow behind the character body but above the hair layer.
+- Angel profile icon crop moved up/right; head duck overlay follows same crop.
+- Task Buddy roster grouped under Peep, Miko and Loved Ones, Io and Loved Ones,
+  Miho and Loved Ones, Annika and Loved Ones, Shiyu and Loved Ones,
+  Angel and Loved Ones (Angel and her strictly platonic twin Demon).
+- Duckipedia shows original PNGs for character ducks instead of requesting nonexistent
+  WebP thumbnails. Normal WebP thumbnails fall back to original artwork on error.
+- Duck Quest enemy/boss images can retry transient failed requests and try an
+  alternate format/idle-1 image rather than leaving permanent broken-image icons.
+- Removed unintended Quackers from the Fabled card registry without deleting any
+  player card inventory entry. Other Fabled cards keep their IDs and numbering.
+- Added Shiyu and Angel to the standard Uncommon playable OC card list;
+  original sprite art, unique card IDs u-oc-shiyu/u-oc-angel.
+- Angel's quest battle sprite now uses same footline/scale rule as Shiyu (8px
+  transparent top padding on both originals).
+- Updated app build and service worker cache version; no player save resets.
+
+Important: No full interactive browser regression test was possible in this sandbox.
+If an image fails despite the fallback, check the actual path and deployed asset.

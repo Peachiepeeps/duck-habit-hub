@@ -24,7 +24,8 @@
     ["aries","Aries","bosses/aries/base/idle-1.png"],["cherub-duck","Cherub Duck","bosses/cherub-duck/base/idle-1.png"],["gummy-shark","Gummy Shark","bosses/gummy-shark/base/idle-1.webp"],["cream-fox","Cream Fox","bosses/cream-fox/base/idle-1.webp"]
   ];
   const ocs=[
-    ["peep","Peep","characters/peep/base/idle-1.webp"],["miko","Miko","characters/miko/base/idle-1.webp"],["io","Io","characters/io/base/idle-1.webp"],["miho","Miho","characters/miho/base/idle-1.webp"],["annika","Annika","characters/annika/base/idle-1.webp"]
+    ["peep","Peep","characters/peep/base/idle-1.webp"],["miko","Miko","characters/miko/base/idle-1.webp"],["io","Io","characters/io/base/idle-1.webp"],["miho","Miho","characters/miho/base/idle-1.webp"],["annika","Annika","characters/annika/base/idle-1.webp"],
+    ["shiyu","Shiyu","characters/shiyu/base/Shiyu-idle-1.png"],["angel","Angel","characters/angel/base/Angel-sprite-idle-1.png"]
   ];
   const shiny=[
     ["cat-slime","Rainbow Slime Kitty","shinies/rainbow-slime-kitty-idle-1.webp"],["bee","Sky Bee","shinies/sky-bee-idle-1.webp"],["flower","Midnight Bloom","shinies/midnight-bloom-idle-1.webp"],["mushroom-cat","Cocoa Mushroom Cat","shinies/cocoa-mushroom-cat-idle-1.webp"],["mimic","Amethyst Mimic","shinies/amethyst-mimic-idle-1.webp"],
@@ -70,7 +71,6 @@
     ["lil-king","Lil King","trading-cards/fabled/F-lil-king.png","Fabled"],
     ["bearista","Bearista","trading-cards/fabled/F-bearista.png","Fabled"],
     ["pumpkitty","Pumpkitty","trading-cards/fabled/F-pumpkitty.png","Fabled"],
-    ["quackers","Quackers","gimmicks/quackers/Quackers-idle-1.png","Fabled"],
   ];
   const cards=[];
   normal.forEach((x,i)=>cards.push({id:`c-${x[0]}`,enemyId:x[0],name:x[1],art:x[2],rarity:"common",number:`C-${String(i+1).padStart(3,"0")}`,category:stage[x[0]]||"Duck Quest",hint:`Defeat ${x[1]} in Duck Quest, find it in a pack, or check the Daily Shop.`}));

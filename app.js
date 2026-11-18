@@ -3700,7 +3700,7 @@ const SHIYU_ASSETS = {
   "expression-sad":{label:"Neutral",file:"Shiyu-neutral.png",z:45},
   "expression-shocked":{label:"Happy",file:"Shiyu-happy.png",z:45},
   "bangs":{label:"Bangs",file:"Shiyu-bangs.png",z:46},
-  "ears":{label:"Cat Ears (Permanent)",file:"Shiyu-ears.png",z:53},
+  "ears":{label:"Cat Ears (Permanent)",file:"Shiyu-ears.png",z:43},
   "hair-bows":{label:"Hair Bows",file:"Shiyu-bows.png",z:54}
 };
 const SHIYU_CLOSET = [
@@ -3746,9 +3746,9 @@ const ANGEL_ASSETS={
   "bangs":{label:"Bangs",file:"Angel-bangs.png",z:48},
   "demon-eye-bandage":{label:"Demon Eye Bandage",file:"Angel-demon-eye-bandage.png",z:49},
   "demon-pendant":{label:"Demon Pendant",file:"Angel-demon-pendant.png",z:50},
-  "hair-bows-small":{label:"Small Hair Bows",file:"Angel-hair-bows-small.png",z:53},
-  "hair-bow-big":{label:"Big Hair Bow",file:"Angel-hair-bow-big.png",z:53},
-  "hair-ribbons-large":{label:"Large Hair Ribbons",file:"Angel-hair-ribbons-large.png",z:53}
+  "hair-bows-small":{label:"Small Hair Bows",file:"Angel-hair-bows-small.png",z:12},
+  "hair-bow-big":{label:"Big Hair Bow",file:"Angel-hair-bow-big.png",z:12},
+  "hair-ribbons-large":{label:"Large Hair Ribbons",file:"Angel-hair-ribbons-large.png",z:7}
 };
 const ANGEL_STARTER_WARDROBE=["hair-pigtails", "bangs", "dress-white", "outer-jacket", "legwear-stockings", "shoes-boots", "hair-bows-small", "chest-bow", "choker"];
 const ANGEL_REUNION_WARDROBE=["demon-eye-bandage", "demon-pendant", "outer-demon-jacket", "top-demon-shirt", "bottom-demon-shorts", "legwear-demon-socks", "shoes-demon-booties"];
@@ -6965,7 +6965,10 @@ function duckThumbFile(duck) {
   if (!file.startsWith("assets/ducks/")) return file;
 
   const name = file.split("/").pop();
-  return name ? `assets/thumbs/ducks/${name.replace(/\.[^.]+$/, ".webp")}` : file;
+  // Character ducks (including Shiyu/Angel/Demon) have original PNGs but
+  // no generated WebP thumbnail. Use their real PNG instead of an absent file.
+  if(!/\.webp$/i.test(name)) return file;
+  return name ? `assets/thumbs/ducks/${name}` : file;
 }
 
 function makeThumb(assetId, { boxW = 92, boxH = 82, targetW = 60, targetH = 54, characterId = save.selectedCharacter } = {}) {
@@ -10253,6 +10256,13 @@ function createDuckRecipeGuideCard(duckId, duck) {
     img.decoding = "async";
     img.loading = "lazy";
   img.src = duckThumbFile(duck);
+  img.addEventListener("error", () => {
+    // Thumbnails are optional; the canonical collectible artwork is not.
+    if(img.dataset.canonicalFallback!=="1" && img.src!==new URL(duck.file,location.href).href){
+      img.dataset.canonicalFallback="1";
+      img.src=duck.file;
+    }
+  });
   img.alt = "";
   img.loading = "lazy";
   art.append(img);
@@ -10847,6 +10857,13 @@ function renderDuckCard(duckId, duck) {
     img.decoding = "async";
     img.loading = "lazy";
   img.src = duckThumbFile(duck);
+  img.addEventListener("error", () => {
+    // Thumbnails are optional; the canonical collectible artwork is not.
+    if(img.dataset.canonicalFallback!=="1" && img.src!==new URL(duck.file,location.href).href){
+      img.dataset.canonicalFallback="1";
+      img.src=duck.file;
+    }
+  });
   img.alt = "";
   img.loading = "lazy";
   img.decoding = "async";

@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="duck-habit-build" content="24.409" />
+  <meta name="duck-habit-build" content="24.410" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta id="appThemeColor" name="theme-color" content="#f7dbe5" />
@@ -49,6 +49,16 @@
     .profile-avatar[data-character-id="shiyu"] > .profile-head-duck-layer,
     .profile-detail-avatar[data-character-id="shiyu"] > .profile-head-duck-layer {
       left:-28%;
+    }
+  </style>
+  <style id="v24410-angel-profile-crop">
+    /* Angel's full-size face sits lower and farther left than the other OCs. */
+    .profile-avatar[data-character-id="angel"] > img,
+    .profile-detail-avatar[data-character-id="angel"] > img,
+    .profile-avatar[data-character-id="angel"] > .profile-head-duck-layer,
+    .profile-detail-avatar[data-character-id="angel"] > .profile-head-duck-layer {
+      left: -25%;
+      top: -101%;
     }
   </style>
 </head>
@@ -1197,7 +1207,7 @@
       </section>
     </section>
   </main>
-  <script src="trading-cards-base.js?v=24.408"></script>
+  <script src="trading-cards-base.js?v=24.410"></script>
   <script src="trading-cards-extra.js?v=mimic-normalize-v8"></script>
   <script src="trading-cards-lil-guys-v336.js?v=24.353"></script>
   <script src="trading-cards-v317.js?v=24.317"></script>
@@ -1206,7 +1216,7 @@
   <script src="trading-cards-universal-v298.js?v=24.298"></script>
   <script src="trading-cards-bao-cafe-v299.js?v=24.408"></script>
   <script src="angel-demon-trading-card-v409.js?v=24.409"></script>
-  <script src="app.js?v=24.409"></script>
+  <script src="app.js?v=24.410"></script>
   <script src="home-makeover.js?v=24.391"></script>
   <script src="universal-clothing-v311.js?v=24.354"></script>
   <script src="gimmick-hub-v288.js?v=24.296"></script>
@@ -1236,7 +1246,7 @@
     // v24.84: use a stable service-worker URL and actively check the deployed
     // build when the installed PWA is opened/resumed. This prevents Android
     // from keeping an already-open standalone app on an older app shell.
-    const DUCK_HUB_BUILD = "24.409";
+    const DUCK_HUB_BUILD = "24.410";
     let duckHubReloadingForUpdate = false;
 
     function duckHubReloadFresh(version) {
@@ -1300,7 +1310,7 @@
       window.addEventListener("load", async () => {
         try {
           await duckHubClearOldCodeCaches();
-          const registration = await navigator.serviceWorker.register("./sw.js?v=24-403-lover-friend-hud", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("./sw.js?v=24.410", { updateViaCache: "none" });
           await registration.update();
           if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
           await duckHubCheckForUpdate(registration);

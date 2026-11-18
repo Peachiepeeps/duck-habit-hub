@@ -427,10 +427,27 @@ function menu(){
 function switchOC(){
  let c=el('div','fields');
  c.append(el('p','note','Choose a Task Buddy! Angel joins after her invitation; her twin Demon joins after their first sibling reunion.'));
- for(const [heading,ids] of [['Original Characters',OCS.filter(id=>id!=='angel')],['Love Interests',allChars.filter(id=>!OCS.includes(id)&&id!=='demon')],['Angel & Demon ♡',['angel','demon'].filter(id=>angelDemonUnlocked(id))]]){
+ // Family-based groups, same save IDs and character selection behavior.
+ // Every partner is assigned to their connected OC. The twins are siblings,
+ // never a romance category or a dating pair.
+ const families=[
+   ['Peep',['peep']],
+   ['Miko and Loved Ones',['miko',...allChars.filter(id=>characterConnections[id]==='miko')]],
+   ['Io and Loved Ones',['io',...allChars.filter(id=>characterConnections[id]==='io')]],
+   ['Miho and Loved Ones',['miho',...allChars.filter(id=>characterConnections[id]==='miho')]],
+   ['Annika and Loved Ones',['annika',...allChars.filter(id=>characterConnections[id]==='annika')]],
+   ['Shiyu and Loved Ones',['shiyu',...allChars.filter(id=>characterConnections[id]==='shiyu')]],
+   ['Angel and Loved Ones',['angel','demon']]
+ ];
+ const grouped=new Set(families.flatMap(([,ids])=>ids));
+ const other=allChars.filter(id=>!grouped.has(id));
+ if(other.length)families.push(['Other Friends',other]);
+ for(const [heading,ids] of families){
+   const available=ids.filter(id=>allChars.includes(id)&&angelDemonUnlocked(id));
+   if(!available.length)continue;
    c.append(el('h3',null,heading));
    let grid=el('div','buddy-grid');
-   for(let id of ids)grid.append(btn(`${id===owner?'✓ ':''}${names(id)}`,()=>{if(!angelDemonUnlocked(id))return;roomSlots[owner]=slots;owner=id;slots=(roomSlots[id]||Array(15).fill(null)).slice(0,15);saveBuddyState();showRoom();hideModal()}));
+   for(const id of available)grid.append(btn(`${id===owner?'✓ ':''}${names(id)}`,()=>{roomSlots[owner]=slots;owner=id;slots=(roomSlots[id]||Array(15).fill(null)).slice(0,15);saveBuddyState();showRoom();hideModal()}));
    c.append(grid);
  }
  showModal('Switch Buddy',c)
