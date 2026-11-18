@@ -106,6 +106,7 @@
   cards.push({id:'r-love-ein',characterId:'ein',name:'Ein',art:'love-interests/ein/Ein-idle-1.png',rarity:'rare',number:'R-184',category:'Miho Love Interest',hint:'Meet Ein while exploring Duck Quest as Miho, then meet him again to earn his trading card.'});
   cards.push({id:'r-love-ideno',characterId:'ideno',name:'Ideno',art:'love-interests/ideno/Ideno-idle-1.png',rarity:'rare',number:'R-185',category:'Miho Love Interest',hint:'Meet Ideno while exploring Duck Quest as Miho, then meet him again to earn his trading card.'});
   cards.push({id:'r-love-hinaru',characterId:'hinaru',name:'Hinaru',art:'love-interests/hinaru/Hinaru-idle-1.png',rarity:'rare',number:'R-186',category:'Miho Love Interest',hint:'Meet Hinaru while exploring Duck Quest as Miho, then meet him again to earn his trading card.'});
+  cards.push({id:'r-love-yukine',characterId:'yukine',name:'Yukine',art:'love-interests/yukine/Yukine-idle-1.png',rarity:'rare',number:'R-187',category:'Shiyu Love Interest',hint:'Meet Yukine again while exploring Duck Quest as Shiyu.'});
   cards.push({id:'r-bownny',name:'Bownny',art:'gimmicks/bownny/base/idle-1.png',rarity:'rare',number:'R-062',category:'Gimmick Encounter',hint:'Meet Bownny in Duck Quest.'});
   // City Streets and newly introduced boss/enemy cards. Add at the end so
   // all existing IDs/numbers and saved quantities remain unchanged.

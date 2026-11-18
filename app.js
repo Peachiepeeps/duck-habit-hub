@@ -2335,6 +2335,7 @@ const DUCKS = {
     "characterId": "annika"
   },
   "shiyu-duck": {"name":"Shiyu Duck","file":"assets/ducks/shiyu-duck.png","acquisition":"character-happiness-100","characterId":"shiyu"},
+  "yukine-duck": {"name":"Yukine Duck","file":"duck-quest/assets/love-interests/yukine/Yukine-duck.png","acquisition":"love-interest-yukine"},
   "orange-duck": {
     "name": "Orange Duck",
     "file": "assets/ducks/Orange-duck.webp",
@@ -3659,6 +3660,12 @@ const SHIYU_ASSETS = {
   "bottom-skirt":{label:"Skirt",file:"Shiyu-skirt.png",z:27},
   "top-shirt":{label:"Button-up Shirt",file:"Shiyu-button-up-shirt.png",z:29},
   "dress-babydoll":{label:"Babydoll Outfit",file:"Shiyu-babydoll.png",z:30},
+  "dress-yukine":{label:"Yukine Dress",file:"Shiyu-Yukine-dress.png",z:30},
+  "outer-yukine-jacket":{label:"Yukine Jacket",file:"Shiyu-Yukine-Jacket.png",previewFile:"Shiyu-Yukine-Jacket-shop.png",z:32},
+  "legwear-yukine":{label:"Yukine Stockings",file:"Shiyu-Yukine-Stockings.png",z:23},
+  "shoes-yukine":{label:"Yukine Boots",file:"Shiyu-Yukine-Boots.png",z:24},
+  "scarf-yukine":{label:"Yukine Scarf",file:"Shiyu-Yukine-Scarf.png",z:35},
+  "crown-yukine":{label:"Yukine Crown",file:"Shiyu-Yukine-Crown.png",z:55},
   "outer-cardigan":{label:"Cardigan",file:"Shiyu-cardigan.png",previewFile:"Shiyu-cardigan-shop.png",z:31},
   "neck-bow":{label:"Neck Bow",file:"Shiyu-neck-bow.png",z:33},
   "big-ribbon":{label:"Big Ribbon",file:"Shiyu-big-ribbon.png",z:34},
@@ -3674,28 +3681,28 @@ const SHIYU_ASSETS = {
 };
 const SHIYU_CLOSET = [
   {id:"hair",label:"Hair",type:"hair",options:["hair-pigtails","hair-short","hair-long"]},
-  {id:"dress",label:"Dresses",type:"single",allowNone:true,options:["dress-babydoll"]},
+  {id:"dress",label:"Dresses",type:"single",allowNone:true,options:["dress-babydoll","dress-yukine"]},
   {id:"top",label:"Shirts",type:"single",allowNone:true,options:["top-shirt"]},
   {id:"bottom",label:"Skirts",type:"single",allowNone:true,options:["bottom-skirt"]},
-  {id:"outer",label:"Cardigans",type:"single",allowNone:true,options:["outer-cardigan"]},
-  {id:"legwear",label:"Stockings",type:"single",allowNone:true,options:["legwear-bow","legwear-frill"]},
-  {id:"shoes",label:"Shoes",type:"single",allowNone:true,options:["shoes-mary-janes","shoes-booties"]},
-  {id:"extras",label:"Accessories",type:"multi",options:["hair-bows","neck-bow","big-ribbon"]}
+  {id:"outer",label:"Cardigans",type:"single",allowNone:true,options:["outer-cardigan","outer-yukine-jacket"]},
+  {id:"legwear",label:"Stockings",type:"single",allowNone:true,options:["legwear-bow","legwear-frill","legwear-yukine"]},
+  {id:"shoes",label:"Shoes",type:"single",allowNone:true,options:["shoes-mary-janes","shoes-booties","shoes-yukine"]},
+  {id:"extras",label:"Accessories",type:"multi",options:["hair-bows","neck-bow","big-ribbon","scarf-yukine","crown-yukine"]}
 ];
 const DEFAULT_SHIYU_OUTFIT={hair:"hair-pigtails",dress:null,top:"top-shirt",bottom:"bottom-skirt",outer:"outer-cardigan",legwear:"legwear-bow",shoes:"shoes-mary-janes",extras:["hair-bows","neck-bow"]};
 function normalizeShiyuOutfit(raw={}){
   const o={...structuredClone(DEFAULT_SHIYU_OUTFIT),...(raw&&typeof raw==="object"?raw:{})};
-  for(const [key,allowed] of Object.entries({hair:["hair-pigtails","hair-short","hair-long"],dress:[null,"dress-babydoll"],top:[null,"top-shirt"],bottom:[null,"bottom-skirt"],outer:[null,"outer-cardigan"],legwear:[null,"legwear-bow","legwear-frill"],shoes:[null,"shoes-mary-janes","shoes-booties"]})){
+  for(const [key,allowed] of Object.entries({hair:["hair-pigtails","hair-short","hair-long"],dress:[null,"dress-babydoll","dress-yukine"],top:[null,"top-shirt"],bottom:[null,"bottom-skirt"],outer:[null,"outer-cardigan","outer-yukine-jacket"],legwear:[null,"legwear-bow","legwear-frill","legwear-yukine"],shoes:[null,"shoes-mary-janes","shoes-booties","shoes-yukine"]})){
     if(!allowed.includes(o[key]))o[key]=DEFAULT_SHIYU_OUTFIT[key];
   }
-  o.extras=Array.isArray(o.extras)?o.extras.filter(id=>["hair-bows","neck-bow","big-ribbon"].includes(id)):[...DEFAULT_SHIYU_OUTFIT.extras];
+  o.extras=Array.isArray(o.extras)?o.extras.filter(id=>["hair-bows","neck-bow","big-ribbon","scarf-yukine","crown-yukine"].includes(id)):[...DEFAULT_SHIYU_OUTFIT.extras];
   return o;
 }
 function getShiyuEquippedAssetIds(){
   const outfit=getCharacterOutfit("shiyu");
   const ids=["tail",outfit.hair,"base",outfit.legwear,outfit.shoes];
   if(!outfit.dress && outfit.outer==="outer-cardigan")ids.push("cardigan-back");
-  if(outfit.dress){ids.push(outfit.dress)}
+  if(outfit.dress){ids.push(outfit.dress, outfit.outer==="outer-yukine-jacket"?outfit.outer:null)}
   else {ids.push(outfit.bottom,outfit.top,outfit.outer)}
   ids.push(...(outfit.extras||[]));
   const expression=(currentExpression==="expression-neutral" && !shiyuFaceShadowActive) ? "expression-happy" : (currentExpression || "expression-happy");
@@ -4558,7 +4565,7 @@ const GACHA_RARITY_WEIGHTS = Object.freeze({
 });
 const GACHA_SUPER_DUCKS = new Set(["peep-duck", "miko-duck", "io-duck", "miho-duck", "annika-duck", "shiyu-duck", "goose", "rainbow-duck"]);
 const GACHA_GATED_SUPER_DUCKS = new Set(["peep-duck", "miko-duck", "io-duck", "miho-duck", "annika-duck", "shiyu-duck", "goose"]);
-const GACHA_EXCLUDED_DUCKS = new Set(["tiny-duck", "tiny-duck-stack", "pile-of-tiny-ducks", "lukio-duck", "shinobu-duck", "cheryln-duck", "hibiki-duck", "devlin-duck", "yuzuru-duck", "westley-duck", "circe-duck", "quin-duck", "kiri-duck", "midori-duck", "luka-duck", "cybil-duck", "nico-duck", "nene-duck", "moriko-duck", "jenson-duck", "shin-duck", "bubble-duck", "lain-duck", "tamao-duck", "ranger-duck", "lovell-duck", "collin-duck", "beau-duck", "ein-duck", "ideno-duck", "hinaru-duck"]);
+const GACHA_EXCLUDED_DUCKS = new Set(["tiny-duck", "tiny-duck-stack", "pile-of-tiny-ducks", "lukio-duck", "shinobu-duck", "cheryln-duck", "hibiki-duck", "devlin-duck", "yuzuru-duck", "westley-duck", "circe-duck", "quin-duck", "kiri-duck", "midori-duck", "luka-duck", "cybil-duck", "nico-duck", "nene-duck", "moriko-duck", "jenson-duck", "shin-duck", "bubble-duck", "lain-duck", "tamao-duck", "ranger-duck", "lovell-duck", "collin-duck", "beau-duck", "ein-duck", "ideno-duck", "hinaru-duck", "yukine-duck"]);
 const DUCK_TROPHY_MILESTONES = Object.freeze([
   { count: 1, tier: "bronze", label: "Bronze" },
   { count: 25, tier: "silver", label: "Silver" },

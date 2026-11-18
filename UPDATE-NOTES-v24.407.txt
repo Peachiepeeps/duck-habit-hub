@@ -1,0 +1,14 @@
+Duckie Days v24.407 — Yukine × Shiyu Reunion
+
+Cumulative update-only ZIP building on v24.406.
+
+- Original 10-line reunion script, only when playing as Shiyu, with the same 2% encounter roll as other love-interest introductions.
+- First meeting: Yukine Duck and all 6 Shiyu-Yukine outfit parts; repeats: another Yukine Duck plus Yukine Trading Card.
+- Yukine joins Shiyu's Lover Battles only after the reunion, at the established 18% boss appearance chance and 8% taller visible size.
+- Yukine's unique once-per-battle Don't Hurt Shiyu! counterattacks the enemy after it damages Shiyu, for 150% standard companion attack, without consuming his normal assist.
+- Idle 1/Idle 2, Mad counterattack, Happy victory and Hurt sprite assets.
+- His Navy Blue Duck, 9 loved/4 disliked gifts, Love Letter special flag, and all Bao Café favorites.
+- Shiyu-Yukine Jacket Shop sprite used as preview only, not a seventh outfit item.
+- New Shiyu-hurt.png replaces Shiyu-glitch for battle damage, preserving the Glitch art for future effects.
+- Yukine Trading Card uses Yukine-idle-1 as temporary art.
+- Existing saved gameplay and original love-interest encounters preserved.

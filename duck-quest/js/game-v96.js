@@ -2750,7 +2750,7 @@ function heroHurtFrame(){
   if(activeCharacterId === "io") return IoIdle[0];
   if(activeCharacterId === "miho") return "assets/characters/miho/base/hurt.webp";
   if(activeCharacterId === "annika") return "assets/characters/annika/base/hurt.webp";
-  if(activeCharacterId === "shiyu") return "assets/characters/shiyu/base/Shiyu-glitch.png";
+  if(activeCharacterId === "shiyu") return "assets/characters/shiyu/base/Shiyu-hurt.png";
   return "assets/characters/peep/base/hurt.webp";
 }
 
@@ -3869,6 +3869,9 @@ window.DuckieQuestLoveRewardSync = function(incoming){
     const currentAnnika=Array.isArray(hubSave.characterUnlockedItems.annika)?hubSave.characterUnlockedItems.annika:[];
     const incomingAnnika=Array.isArray(incoming.characterUnlockedItems?.annika)?incoming.characterUnlockedItems.annika:[];
     hubSave.characterUnlockedItems.annika=[...new Set([...currentAnnika,...incomingAnnika])];
+    const currentShiyu=Array.isArray(hubSave.characterUnlockedItems.shiyu)?hubSave.characterUnlockedItems.shiyu:[];
+    const incomingShiyu=Array.isArray(incoming.characterUnlockedItems?.shiyu)?incoming.characterUnlockedItems.shiyu:[];
+    hubSave.characterUnlockedItems.shiyu=[...new Set([...currentShiyu,...incomingShiyu])];
 
     const currentDucks=Array.isArray(hubSave.unlockedDucks)?hubSave.unlockedDucks:[];
     const incomingDucks=Array.isArray(incoming.unlockedDucks)?incoming.unlockedDucks:[];

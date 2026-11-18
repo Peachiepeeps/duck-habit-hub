@@ -213,10 +213,25 @@ kiri: {
         happy: "assets/love-interests/jenson/Jenson-Sprite-happy.png"
       },
       outfitIds: ["jenson-top", "jenson-pants", "jenson-shoes", "jenson-glasses"]
-    }
+    },
+    shiyu:{name:'Shiyu',sprites:{idle1:'assets/characters/shiyu/base/Shiyu-idle-1.png',idle2:'assets/characters/shiyu/base/Shiyu-idle-2.png',happy:'assets/characters/shiyu/base/Shiyu-fawn.png'}},
+    yukine:{name:'Yukine',duckId:'yukine-duck',cardId:'r-love-yukine',sprites:{idle1:'assets/love-interests/yukine/Yukine-idle-1.png',idle2:'assets/love-interests/yukine/Yukine-idle-2.png',happy:'assets/love-interests/yukine/Yukine-happy.png',mad:'assets/love-interests/yukine/Yukine-mad.png',hurt:'assets/love-interests/yukine/Yukine-hurt.png'},outfitIds:['dress-yukine','outer-yukine-jacket','shoes-yukine','legwear-yukine','scarf-yukine','crown-yukine']}
   };
 
   const SCENES = {
+    yukine:{id:'yukine',title:'Yukine',kicker:'SHIYU LOVE INTEREST',leftId:'shiyu',rightId:'yukine',dialogue:[
+      {speaker:'Yukine',text:'Shiyuuu! There you are!',rightPose:'happy'},
+      {speaker:'Shiyu',text:'Yukine! I missed you!',leftPose:'happy'},
+      {speaker:'Yukine',text:'I missed you too!! What cha doing out here? It’s kinda dangerous…',rightPose:'happy'},
+      {speaker:'Shiyu',text:'Oh, I just had some business to take care of.',leftPose:'idle1'},
+      {speaker:'Yukine',text:'Well, don’t worry. I’ll keep you safe, ‘kay?',rightPose:'idle1'},
+      {speaker:'Shiyu',text:'My hero~ Thank you, Yukine! I love you!',leftPose:'happy'},
+      {speaker:'Yukine',text:'I love you too! Oh oh, I got you a gift!',rightPose:'happy'},
+      {speaker:'Shiyu',text:'Ohhhh, its themed after you! I love it! It’s so perfect!! I’ll treasure it forever and ever!!!',leftPose:'happy'},
+      {speaker:'Yukine',text:'Hehehe… I’m glad. Let’s go home and snuggle!',rightPose:'happy'},
+      {speaker:'Shiyu',text:'Sounds good! Let’s go!',leftPose:'happy'}
+    ],reward(){const data=load();const first=!Boolean(data.loveInterests?.yukine?.encountered);unlockCharacter(data,'yukine',{grantCard:false,grantDuck:true,grantOutfit:first});save(data);notifyUnlock('yukine');}},
+
     ranger: {id:'ranger',title:'Ranger',kicker:'MIHO LOVE INTEREST',leftId:'miho',rightId:'ranger',dialogue:[
       {speaker:"Ranger",text:"Oh, hi there, Majo!",rightPose:"idle"},
       {speaker:"Miho",text:"Ugh, that’s not my name. And did you follow me?",leftPose:"idle"},
@@ -1086,6 +1101,10 @@ kiri: {
     }
 
     if (!Array.isArray(data.characterUnlockedItems.annika)) data.characterUnlockedItems.annika = [];
+    if (!Array.isArray(data.characterUnlockedItems.shiyu)) data.characterUnlockedItems.shiyu = [];
+    if (data.loveInterests?.yukine?.outfitUnlocked) {
+      for (const piece of CHARACTERS.yukine.outfitIds) if (!data.characterUnlockedItems.shiyu.includes(piece)) data.characterUnlockedItems.shiyu.push(piece);
+    }
     if (!Array.isArray(data.unlockedDucks)) data.unlockedDucks = [];
     data.duckCollectionCounts = data.duckCollectionCounts && typeof data.duckCollectionCounts === "object" ? data.duckCollectionCounts : {};
     data.tradingCards = data.tradingCards && typeof data.tradingCards === "object" ? data.tradingCards : {};
@@ -1103,7 +1122,7 @@ kiri: {
     data.loveInterestPairs.nicoNene = data.loveInterestPairs.nicoNene && typeof data.loveInterestPairs.nicoNene === "object" ? data.loveInterestPairs.nicoNene : {};
     data.loveInterestPairs.morikoJenson = data.loveInterestPairs.morikoJenson && typeof data.loveInterestPairs.morikoJenson === "object" ? data.loveInterestPairs.morikoJenson : {};
 
-    for (const key of ["lukio", "shinobu", "cheryln", "hibiki", "devlin", "yuzuru", "westley", "circe", "quin", "kiri", "midori", "luka", "cybil", "nico", "nene", "moriko", "jenson", "shin", "bubble", "lain", "tamao", "ranger", "lovell", "collin", "beau", "ein", "ideno", "hinaru"]) {
+    for (const key of ["lukio", "shinobu", "cheryln", "hibiki", "devlin", "yuzuru", "westley", "circe", "quin", "kiri", "midori", "luka", "cybil", "nico", "nene", "moriko", "jenson", "shin", "bubble", "lain", "tamao", "ranger", "lovell", "collin", "beau", "ein", "ideno", "hinaru", "yukine"]) {
       data.loveInterests[key] = data.loveInterests[key] && typeof data.loveInterests[key] === "object" ? data.loveInterests[key] : {};
     }
     return {
@@ -1158,7 +1177,7 @@ kiri: {
     if (options.grantOutfit) {
       state.outfitUnlocked = true;
       for (const piece of cfg.outfitIds) {
-        const target=['shin','bubble','lain','tamao'].includes(key)?data.characterUnlockedItems.annika:(['ranger','lovell','collin','beau','ein','ideno','hinaru'].includes(key)?data.characterUnlockedItems.miho:data.characterUnlockedItems.miko);
+        const target=key==='yukine'?data.characterUnlockedItems.shiyu:(['shin','bubble','lain','tamao'].includes(key)?data.characterUnlockedItems.annika:(['ranger','lovell','collin','beau','ein','ideno','hinaru'].includes(key)?data.characterUnlockedItems.miho:data.characterUnlockedItems.miko));
         if (!target.includes(piece)) target.push(piece);
       }
     }
@@ -1288,7 +1307,7 @@ kiri: {
     if (scene.id.includes("-")) {
       return scene.title.split(" + ").map(name => `${name} Trading Card`);
     }
-    const outfit=['ranger','lovell','collin','beau','ein','ideno','hinaru'].includes(scene.id)?`Miho’s ${scene.title} Outfit`:scene.id==='shin'?'Annika’s Lingerie Outfit':scene.id==='bubble'?'Annika’s Date Outfit':scene.id==='lain'?'Annika’s Casual Cute Outfit':scene.id==='tamao'?'Annika’s School Outfit':`Miko’s ${scene.title} Outfit`;
+    const outfit=scene.id==='yukine'?'Shiyu’s Yukine Outfit':['ranger','lovell','collin','beau','ein','ideno','hinaru'].includes(scene.id)?`Miho’s ${scene.title} Outfit`:scene.id==='shin'?'Annika’s Lingerie Outfit':scene.id==='bubble'?'Annika’s Date Outfit':scene.id==='lain'?'Annika’s Casual Cute Outfit':scene.id==='tamao'?'Annika’s School Outfit':`Miko’s ${scene.title} Outfit`;
     const items=[`${scene.title} Duck`,outfit];
     if(scene.id==="lukio") items.push("Lukio Trading Card");
     return items;
@@ -1477,7 +1496,7 @@ kiri: {
     const data = load();
     const root = ensureAll(data);
     let shouldSave = false;
-    for (const key of ["lukio", "shinobu", "cheryln", "hibiki", "devlin", "yuzuru", "westley", "circe", "quin", "kiri", "midori", "luka", "cybil", "nico", "nene", "moriko", "jenson", "shin", "bubble", "lain", "tamao", "ranger", "lovell", "collin", "beau", "ein", "ideno", "hinaru"]) {
+    for (const key of ["lukio", "shinobu", "cheryln", "hibiki", "devlin", "yuzuru", "westley", "circe", "quin", "kiri", "midori", "luka", "cybil", "nico", "nene", "moriko", "jenson", "shin", "bubble", "lain", "tamao", "ranger", "lovell", "collin", "beau", "ein", "ideno", "hinaru", "yukine"]) {
       if (!root.loveInterests[key]?.encountered) continue;
       unlockCharacter(data, key, { grantCard: key === "lukio", grantDuck: true, grantOutfit: true });
       shouldSave = true;
@@ -1513,6 +1532,7 @@ kiri: {
     const data = load();
     const root = ensureAll(data);
     const ids = [];
+    if(activeCharacterId()==='shiyu')return ['yukine'];
     if(activeCharacterId()==='miho'){
       const mihoIds=['ranger','lovell','collin','beau','ein','ideno','hinaru'];
       const unseen=mihoIds.filter(id=>!root.loveInterests[id].encountered);
@@ -1571,7 +1591,7 @@ kiri: {
 
   function maybeBeforeNextEncounter(continueFn){
     if (bypassNextRoll) { bypassNextRoll = false; return false; }
-    if (open || !(isMiko() || activeCharacterId()==='annika')) return false;
+    if (open || !(isMiko() || activeCharacterId()==='annika' || activeCharacterId()==='shiyu')) return false;
 
     const data=load();
     const ids = eligibleScenes();
@@ -1595,6 +1615,7 @@ kiri: {
   window.DuckieLoveInterests.chance = SHARED_CHANCE;
   window.DuckieLoveInterests.maybeBeforeNextEncounter = maybeBeforeNextEncounter;
   window.DuckieLoveInterests.trigger = showScene;
+  window.triggerYukineEncounter = function(){return showScene('yukine');};
   window.triggerRangerEncounter = function(){return showScene('ranger');};
   window.triggerLovellEncounter = function(){return showScene('lovell');};
   window.triggerCollinEncounter = function(){return showScene('collin');};
