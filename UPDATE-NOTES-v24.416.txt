@@ -1,0 +1,9 @@
+Duckie Days v24.416
+
+Updates:
+- Restyled the Duck Quest Change OC window to better match the provided reference.
+- Added a cleaner centered cream panel with rounded border styling and a proper close button in the top-right.
+- Improved the character choice grid styling with cleaner buttons, nicer spacing, and stronger visual hierarchy.
+- Adjusted character icons to display more like cropped bust portraits instead of tiny full-body previews.
+- Updated Change OC heading and helper text.
+- Bumped cache/version references so the refreshed Change OC styling loads properly.

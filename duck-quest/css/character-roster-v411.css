@@ -1,14 +1,206 @@
-/* v24.415 — full-screen overlay and compact character-selection window. */
-#questCharacterModal.quest-character-modal{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:18px;isolation:isolate}
+/* Duck Quest 24.416 — styled Change OC window */
+#questCharacterModal.quest-character-modal{
+  position:fixed;
+  inset:0;
+  z-index:10000;
+  display:grid;
+  place-items:center;
+  padding:16px;
+  isolation:isolate;
+}
 #questCharacterModal.hidden{display:none!important}
-#questCharacterModal .quest-character-backdrop{position:absolute;inset:0;width:100%;height:100%;border:0;background:rgba(55,38,51,.57);cursor:pointer;z-index:0}
-#questCharacterModal .quest-character-dialog{position:relative;z-index:1;display:flex;flex-direction:column;gap:10px;width:min(92vw,560px);max-height:min(83dvh,680px);padding:14px;border:4px solid #8d636b;border-radius:18px;background:#fff5e5;box-shadow:0 8px 0 rgba(91,58,70,.25),0 16px 30px rgba(48,28,37,.3)}
-.quest-character-dialog-heading{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.quest-character-dialog-heading h2{margin:2px 0 0;font-size:clamp(1rem,4vw,1.35rem);color:#77505d}
-.quest-character-dialog-subtitle{font-size:.69rem;color:#946e7d;margin:0}
-#questOcPicker{position:static!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;flex:1;min-height:0;max-height:none!important;overflow-y:auto;overscroll-behavior:contain;width:100%!important;max-width:none!important;padding:3px!important;background:transparent!important;border:0!important;box-shadow:none!important}
-#questOcPicker .quest-oc-choice{min-height:64px;grid-template-columns:44px minmax(0,1fr);gap:7px;padding:6px;border:2px solid #d5a9b6;border-radius:10px;text-align:left;background:#fff1f6}
-#questOcPicker .quest-oc-choice.current{background:#f5c7d7;border-color:#a66a80}
-#questOcPicker .quest-oc-choice.locked{opacity:.75}
-#questOcPicker .quest-oc-choice-copy small{white-space:normal}
-@media(max-width:400px){#questCharacterModal .quest-character-dialog{padding:10px;width:94vw}#questOcPicker{gap:6px!important}#questOcPicker .quest-oc-choice{grid-template-columns:36px minmax(0,1fr);gap:5px;padding:4px;min-height:55px}#questOcPicker .quest-oc-choice-preview{width:34px;height:34px}#questOcPicker .quest-oc-choice-sprite{width:29px;height:29px}#questOcPicker .quest-oc-choice-copy strong{font-size:.58rem}#questOcPicker .quest-oc-choice-copy small{font-size:.43rem}}
+#questCharacterModal .quest-character-backdrop{
+  position:absolute;
+  inset:0;
+  width:100%;height:100%;
+  border:0;
+  background:rgba(74,53,62,.34);
+  cursor:pointer;
+  z-index:0;
+}
+#questCharacterModal .quest-character-dialog{
+  position:relative;
+  z-index:1;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  width:min(94vw,760px);
+  max-height:min(86dvh,920px);
+  padding:18px 16px 16px;
+  border:6px solid #8f6665;
+  border-radius:26px;
+  background:#fbf6e9;
+  box-shadow:0 12px 0 rgba(108,77,77,.24),0 22px 40px rgba(52,34,39,.22);
+}
+.quest-character-dialog-heading{
+  position:relative;
+  display:grid;
+  justify-items:center;
+  text-align:center;
+  gap:3px;
+  padding-right:54px;
+}
+.quest-character-dialog-heading .mini-label{display:none}
+.quest-character-dialog-heading h2{
+  margin:0;
+  font-size:clamp(1.55rem,5.5vw,2.35rem);
+  line-height:1;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:#8c625f;
+}
+.quest-character-dialog-subtitle{
+  margin:-2px 0 2px;
+  text-align:center;
+  color:#9a7571;
+  font-size:.72rem;
+  line-height:1.25;
+}
+#questCharacterClose.pixel-button,
+#questCharacterClose{
+  position:absolute;
+  top:-2px;
+  right:0;
+  min-width:38px;
+  width:38px;
+  height:38px;
+  padding:0;
+  border:4px solid #8f6665;
+  border-radius:999px;
+  background:#fff8ee;
+  color:#8c625f;
+  font-size:1.1rem;
+  line-height:1;
+  box-shadow:0 3px 0 rgba(108,77,77,.18);
+}
+#questCharacterClose:active{transform:translateY(1px)}
+#questOcPicker{
+  position:static!important;
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:12px 14px!important;
+  flex:1;
+  min-height:0;
+  max-height:none!important;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  width:100%!important;
+  max-width:none!important;
+  padding:4px 2px 2px!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  align-content:start;
+}
+#questOcPicker .quest-oc-choice{
+  width:100%;
+  min-height:86px;
+  padding:10px 12px;
+  display:grid;
+  grid-template-columns:68px minmax(0,1fr);
+  align-items:center;
+  gap:12px;
+  border:4px solid #9a6f68;
+  border-radius:16px;
+  background:#fffdf8;
+  color:#7a5658;
+  box-shadow:0 3px 0 rgba(154,111,104,.18);
+  text-align:left;
+}
+#questOcPicker .quest-oc-choice.current{
+  background:#f8e7ee;
+  border-color:#b77d91;
+}
+#questOcPicker .quest-oc-choice.locked{
+  opacity:.92;
+  background:#f7f0ee;
+}
+#questOcPicker .quest-oc-choice:disabled{cursor:default}
+#questOcPicker .quest-oc-choice-preview{
+  position:relative;
+  overflow:hidden;
+  width:64px;
+  height:64px;
+  border:3px solid rgba(143,102,101,.45);
+  border-radius:14px;
+  display:block;
+  background-repeat:repeat;
+  background-color:#fff;
+  box-shadow:inset 0 1px 2px rgba(255,255,255,.65);
+}
+#questOcPicker .quest-oc-choice-sprite{
+  position:absolute;
+  left:50%;
+  bottom:-14px;
+  transform:translateX(-50%);
+  width:62px;
+  height:auto;
+  max-width:none;
+  object-fit:contain;
+  object-position:center top;
+  image-rendering:pixelated;
+}
+#questOcPicker .quest-oc-choice.current .quest-oc-choice-sprite{bottom:-13px}
+#questOcPicker .quest-oc-choice-copy{
+  min-width:0;
+  display:grid;
+  gap:3px;
+}
+#questOcPicker .quest-oc-choice-copy strong{
+  font-size:.86rem;
+  line-height:1.05;
+  color:#865f5d;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+#questOcPicker .quest-oc-choice-copy small{
+  display:block;
+  white-space:normal;
+  color:#997672;
+  font-size:.58rem;
+  line-height:1.18;
+}
+#questOcPicker .quest-oc-choice.current .quest-oc-choice-copy small:first-of-type{
+  color:#a05a7a;
+  font-weight:900;
+}
+#questOcPicker .quest-oc-choice::-moz-focus-inner{border:0}
+#questOcPicker::-webkit-scrollbar{width:10px}
+#questOcPicker::-webkit-scrollbar-track{background:transparent}
+#questOcPicker::-webkit-scrollbar-thumb{background:#b6888a;border-radius:999px;border:2px solid #fbf6e9}
+@media(max-width:560px){
+  #questCharacterModal .quest-character-dialog{
+    width:95vw;
+    padding:16px 12px 14px;
+    border-width:5px;
+    border-radius:22px;
+  }
+  #questOcPicker{
+    gap:10px!important;
+  }
+  #questOcPicker .quest-oc-choice{
+    min-height:80px;
+    padding:8px;
+    grid-template-columns:58px minmax(0,1fr);
+    gap:9px;
+    border-width:3px;
+    border-radius:14px;
+  }
+  #questOcPicker .quest-oc-choice-preview{width:54px;height:54px;border-width:2px;border-radius:12px}
+  #questOcPicker .quest-oc-choice-sprite{width:52px;bottom:-12px}
+  #questOcPicker .quest-oc-choice-copy strong{font-size:.74rem}
+  #questOcPicker .quest-oc-choice-copy small{font-size:.52rem}
+}
+@media(max-width:400px){
+  #questCharacterModal{padding:10px}
+  #questCharacterModal .quest-character-dialog{width:96vw;padding:14px 10px 12px}
+  .quest-character-dialog-heading{padding-right:44px}
+  #questCharacterClose.pixel-button,#questCharacterClose{width:32px;height:32px;min-width:32px;font-size:1rem;border-width:3px}
+  #questOcPicker{gap:8px!important}
+  #questOcPicker .quest-oc-choice{min-height:72px;padding:7px;grid-template-columns:50px minmax(0,1fr);gap:8px}
+  #questOcPicker .quest-oc-choice-preview{width:46px;height:46px;border-radius:10px}
+  #questOcPicker .quest-oc-choice-sprite{width:46px;bottom:-10px}
+  #questOcPicker .quest-oc-choice-copy strong{font-size:.67rem}
+  #questOcPicker .quest-oc-choice-copy small{font-size:.48rem}
+}
