@@ -28,7 +28,7 @@
  ];
  const ANGEL='assets/characters/angel/base/';
  const DEMON='assets/encounters/demon/';
- const VARIANTS={angel:{idle:[ANGEL+'Angel-sprite-idle-1.png',ANGEL+'Angel-sprite-idle-2.png'],happy:ANGEL+'Angel-sprite-magic-heart.png'},demon:{idle:[DEMON+'Demon-sprite-idle-1.png',DEMON+'Demon-sprite-idle-2.png'],happy:DEMON+'Demon-sprite-happy.png',angry:DEMON+'Demon-sprite-angry.png'}};
+ const VARIANTS={angel:{idle:ANGEL+'Angel-sprite-idle-1.png',happy:ANGEL+'Angel-sprite-idle-1.png'},demon:{idle:[DEMON+'Demon-sprite-idle-1.png',DEMON+'Demon-sprite-idle-2.png'],happy:DEMON+'Demon-sprite-happy.png',angry:DEMON+'Demon-sprite-angry.png'}};
  const REUNION_WARDROBE=['demon-eye-bandage','demon-pendant','outer-demon-jacket','top-demon-shirt','bottom-demon-shorts','legwear-demon-socks','shoes-demon-booties'];
  const AREAS=new Set(['meadow','ocean','candy','cloud','city','spooky']);
  let scene=null;
@@ -37,7 +37,7 @@
   #siblingScene.angel-demon-scene img{width:auto!important;height:auto!important;max-width:none!important;max-height:none!important;object-fit:contain!important;object-position:center bottom;image-rendering:pixelated;filter:drop-shadow(0 4px 2px #4b3a6455);visibility:hidden}
   #siblingScene.angel-demon-scene.hidden{display:none!important}
   #siblingScene.angel-demon-scene #siblingLeft{transform:scaleX(-1)}
-  #siblingScene.angel-demon-scene #siblingRight{transform:none}
+  #siblingScene.angel-demon-scene #siblingRight{transform:scaleX(-1)}
   .angel-demon-next{width:100%;min-height:44px}
   `;document.head.appendChild(style);
  function sizeSceneSprite(img){

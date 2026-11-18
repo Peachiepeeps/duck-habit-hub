@@ -1,0 +1,9 @@
+Duckie Days v24.414
+
+Fixes and updates:
+- Flipped Demon in the Angel & Demon sibling reunion so he faces Angel.
+- Simplified Angel in that reunion scene to use a single sprite throughout.
+- Converted the Duck Quest Change Character roster into a more condensed floating popup menu opened by the button.
+- Kept the playable NPC roster entries, including encounter-progress lock text.
+- Added outside-click and Escape-key closing for the Change Character popup.
+- Bumped Duck Quest cache/version references so the updated menu and reunion script load cleanly.

@@ -1,4 +1,38 @@
-/* Duck Quest 24.411 character roster */
-#questOcPicker{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:8px;max-height:min(65vh,490px);overflow-y:auto;overscroll-behavior:contain;padding:10px;width:min(93vw,580px);}
+/* Duck Quest 24.414 character roster popup */
+.hero-sprite-column{position:relative}
+#questOcPicker{
+  position:absolute;
+  top:calc(100% + 6px);
+  left:0;
+  z-index:85;
+  display:grid;
+  grid-template-columns:1fr;
+  gap:6px;
+  width:min(88vw,320px);
+  max-width:calc(100vw - 34px);
+  max-height:min(58vh,360px);
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  padding:8px;
+  border:3px solid #bd8e9c;
+  border-radius:10px;
+  background:#fffaf0;
+  box-shadow:0 10px 24px rgba(74,49,60,.18),0 4px 0 rgba(102,67,61,.14);
+}
 #questOcPicker.hidden{display:none!important}
-#questOcPicker .quest-oc-choice{min-height:65px;text-align:left}
+#questOcPicker .quest-oc-choice{
+  min-height:58px;
+  text-align:left;
+  background:#fff1f6;
+}
+#questOcPicker .quest-oc-choice.current{background:#f5c7d7}
+#questOcPicker .quest-oc-choice.locked{opacity:.82}
+@media(max-width:600px){
+  #questOcPicker{
+    width:min(86vw,300px);
+    max-height:min(54vh,330px);
+    padding:7px;
+    gap:5px;
+  }
+  #questOcPicker .quest-oc-choice{min-height:54px}
+}

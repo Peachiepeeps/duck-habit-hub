@@ -4746,6 +4746,14 @@ function closeQuestOcPicker(){
   ui.switchQuestOc?.setAttribute("aria-expanded","false");
 }
 
+function questOcPickerOpen(){
+  return Boolean(ui.questOcPicker && !ui.questOcPicker.classList.contains('hidden'));
+}
+
+function questOcPickerContains(target){
+  return Boolean(target && (ui.questOcPicker?.contains(target) || ui.switchQuestOc?.contains(target)));
+}
+
 function renderQuestOcPicker(){
   if(!ui.questOcPicker) return;
   const names=QUEST_CHARACTER_NAMES;
@@ -8378,6 +8386,15 @@ ui.switchQuestOc?.addEventListener("click",()=>{
   const opening=ui.questOcPicker?.classList.contains("hidden");
   ui.questOcPicker?.classList.toggle("hidden",!opening);
   ui.switchQuestOc?.setAttribute("aria-expanded",String(Boolean(opening)));
+});
+
+document.addEventListener('click',event=>{
+  if(!questOcPickerOpen()) return;
+  if(questOcPickerContains(event.target)) return;
+  closeQuestOcPicker();
+});
+document.addEventListener('keydown',event=>{
+  if(event.key==='Escape' && questOcPickerOpen()) closeQuestOcPicker();
 });
 ui.iconBackgroundButton?.addEventListener("click",()=>{
   closeIconBorderPicker();
