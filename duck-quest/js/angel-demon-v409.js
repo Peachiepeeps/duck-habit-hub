@@ -33,23 +33,55 @@
  const AREAS=new Set(['meadow','ocean','candy','cloud','city','spooky']);
  let scene=null;
  const style=document.createElement('style');style.textContent=`
-  #siblingScene.angel-demon-scene{display:flex;justify-content:space-around;align-items:flex-end;gap:8px;z-index:25;pointer-events:none}
-  #siblingScene.angel-demon-scene img{height:56%!important;width:42%!important;max-width:175px;object-fit:contain!important;object-position:center bottom;image-rendering:pixelated;filter:drop-shadow(0 4px 2px #4b3a6455)}
+  #siblingScene.angel-demon-scene{display:flex;justify-content:space-between;align-items:flex-end;padding:7% 6% 5%;gap:8px;z-index:25;pointer-events:none}
+  #siblingScene.angel-demon-scene img{width:auto!important;height:auto!important;max-width:none!important;max-height:none!important;object-fit:contain!important;object-position:center bottom;image-rendering:pixelated;filter:drop-shadow(0 4px 2px #4b3a6455);visibility:hidden}
   #siblingScene.angel-demon-scene.hidden{display:none!important}
   #siblingScene.angel-demon-scene #siblingLeft{transform:scaleX(-1)}
   #siblingScene.angel-demon-scene #siblingRight{transform:none}
   .angel-demon-next{width:100%;min-height:44px}
   `;document.head.appendChild(style);
+ function sizeSceneSprite(img){
+  const battlefield=document.querySelector('#battlefield');
+  if(!img||!battlefield||!img.naturalWidth||!img.naturalHeight)return;
+  const referenceHeight=96;
+  const referenceDisplayHeight=Math.max(120,battlefield.clientHeight*0.76);
+  const sourcePixelScale=referenceDisplayHeight/referenceHeight;
+  img.style.width=`${Math.round(img.naturalWidth*sourcePixelScale)}px`;
+  img.style.height=`${Math.round(img.naturalHeight*sourcePixelScale)}px`;
+ }
+ function setSceneSpriteSource(img,src){
+  if(!img||!src)return;
+  if(img.getAttribute('src')===src){
+   if(img.complete&&img.naturalWidth)sizeSceneSprite(img);
+   img.style.visibility='visible';
+   return;
+  }
+  img.style.visibility='hidden';
+  img.onload=()=>{sizeSceneSprite(img);img.style.visibility='visible';};
+  img.onerror=()=>{img.removeAttribute('src');img.style.visibility='hidden';console.warn('Angel/Demon scene sprite unavailable:',src);};
+  if(typeof setQuestSpriteFrame==='function')setQuestSpriteFrame(img,src);
+  else img.src=src;
+  if(img.complete&&img.naturalWidth){sizeSceneSprite(img);img.style.visibility='visible';}
+ }
+ function sceneSprite(person){
+  const v=VARIANTS[person]||{};
+  const mood=String(scene?.expressions?.[person]||'idle').toLowerCase();
+  const exact=v[mood];
+  if(Array.isArray(exact))return exact[scene.step%exact.length]||exact[0]||'';
+  if(typeof exact==='string'&&exact)return exact;
+  const idle=v.idle;
+  if(Array.isArray(idle))return idle[scene.step%idle.length]||idle[0]||'';
+  return typeof idle==='string'?idle:'';
+ }
  function showSprites(){
   if(!scene)return;
   const a=document.querySelector('#siblingLeft'),d=document.querySelector('#siblingRight');
-  const get=(person)=>{const v=VARIANTS[person], mood=scene.expressions[person];return v[mood]||v.idle[scene.step%2]};
-  if(a){a.src=get('angel');a.alt='Angel';}
-  if(d){d.src=get('demon');d.alt='Demon';}
+  if(a){setSceneSpriteSource(a,sceneSprite('angel'));a.alt='Angel';}
+  if(d){setSceneSpriteSource(d,sceneSprite('demon'));d.alt='Demon';}
  }
  function startScene(){
   const first=!hubSave.angelDemonReunion?.firstMet;
-  scene={first,lines:first?FIRST:REPEAT,lineIndex:0,step:0,expressions:{angel:'idle',demon:'idle'},finished:false,timer:null};
+  scene={first,lines:first?FIRST:REPEAT,lineIndex:0,step:0,expressions:{angel:'idle',demon:'idle'},finished:false,timer:null,resize:null};
   clearAnimations();
   currentEnemy=null;
   actionLocked=false;
@@ -74,6 +106,8 @@
   document.querySelector('#siblingLeft')?.classList.remove('sibling-left-v224');
   document.querySelector('#siblingRight')?.classList.remove('sibling-right-v224');
   scene.timer=setInterval(()=>{if(!scene)return;scene.step=(scene.step+1)%2;showSprites();},620);
+  scene.resize=()=>{const left=document.querySelector('#siblingLeft'),right=document.querySelector('#siblingRight');sizeSceneSprite(left);sizeSceneSprite(right);};
+  window.addEventListener('resize',scene.resize,{passive:true});
   renderLine();
  }
  function renderLine(){
@@ -131,6 +165,7 @@
    if(!scene||scene.finished)return;
    scene.finished=true;
    clearInterval(scene.timer);
+   if(scene.resize)window.removeEventListener('resize',scene.resize);
    const text=reward();
    const holder=ui.eventChoiceActions;
    if(holder){holder.innerHTML='';const button=document.createElement('button');button.type='button';button.className='pixel-button primary angel-demon-next';button.textContent='Continue Exploring ♡';button.addEventListener('click',()=>{
@@ -157,7 +192,7 @@
  startEncounter=function(){
   const e=currentRun?.mode==='endless'?currentRun?.endlessEncounter:currentRun?.plan?.[currentRun?.index];
   if(e?.type==='angel-demon-reunion' && activeCharacterId==='angel'){startScene();return;}
-  if(scene){clearInterval(scene.timer);scene=null;}
+  if(scene){clearInterval(scene.timer);if(scene.resize)window.removeEventListener('resize',scene.resize);scene=null;}
   document.querySelector('#siblingScene')?.classList.remove('angel-demon-scene');
   document.querySelector('.peep-combatant')?.classList.remove('angel-demon-hero-hidden');
   return previousStart();

@@ -6,7 +6,6 @@
   <meta id="questThemeColor" name="theme-color" content="#f6c6d6" />
   <title>Duck Quest</title>
   <link rel="stylesheet" href="css/style-v82.css?v=24-255" />
-  <link rel="stylesheet" href="css/character-roster-v411.css?v=24.411">
   <link rel="stylesheet" href="css/love-interests-v252.css?v=24-255">
   <link rel="stylesheet" href="css/special-encounters-v264.css?v=24-264">
   <link rel="stylesheet" href="css/gimmick-encounters-v288.css?v=24-288">
@@ -14,7 +13,7 @@
   <link rel="stylesheet" href="css/quest-v265.css?v=24-265">
   <link rel="stylesheet" href="css/quest-v269.css?v=24-269">
   <link rel="stylesheet" href="css/quest-v270.css?v=24-270">
-  <link rel="stylesheet" href="css/lover-assist-v385.css?v=24.408">
+  <link rel="stylesheet" href="css/lover-assist-v385.css?v=24.413">
   <link rel="stylesheet" href="css/quest-v274.css?v=24-274">
   <link rel="stylesheet" href="css/quest-v276.css?v=24-276">
   <link rel="stylesheet" href="css/quest-v277.css?v=24-277">
@@ -178,8 +177,8 @@ img[src*="enemies/puffer/"],img[src*="enemies/star-glider/"],img[src*="enemies/a
               <div id="iconBorderColorPicker" class="icon-background-picker quest-border-color-picker hidden" role="menu" aria-label="Icon border colors"></div>
             </div>
           </div>
-          <button id="switchQuestOc" class="switch-quest-oc-button pixel-button" type="button" aria-expanded="false" aria-controls="questOcPicker">Change Character</button>
-          <div id="questOcPicker" class="quest-oc-picker hidden" role="menu" aria-label="Choose playable character"></div>
+          <button id="switchQuestOc" class="switch-quest-oc-button pixel-button" type="button" aria-expanded="false" aria-controls="questOcPicker">Switch OC</button>
+          <div id="questOcPicker" class="quest-oc-picker hidden" role="menu" aria-label="Choose OC"></div>
         </div>
 
         <div class="hero-info">
@@ -417,7 +416,7 @@ img[src*="enemies/puffer/"],img[src*="enemies/star-glider/"],img[src*="enemies/a
               <strong>Assign Lil Guy</strong>
               <small id="buddyAssignAvailability">Choose an OC and Lil Guy slot.</small>
             </div>
-            <div id="buddyAssignCharacters" class="buddy-assign-characters" role="group" aria-label="Choose playable character"></div>
+            <div id="buddyAssignCharacters" class="buddy-assign-characters" role="group" aria-label="Choose OC"></div>
             <div id="buddyAssignSlots" class="buddy-assign-slots" aria-label="Choose Lil Guy slot"></div>
             <p id="buddyAssignMessage" class="buddy-assign-message" aria-live="polite"></p>
             <section id="buddyPersonalizePanel" class="buddy-personalize-panel hidden" aria-label="Personalize assigned Buddy">
@@ -618,7 +617,7 @@ img[src*="enemies/puffer/"],img[src*="enemies/star-glider/"],img[src*="enemies/a
     </section>
   </main>
 
-  <script src="../trading-cards-base.js?v=24.411"></script>
+  <script src="../trading-cards-base.js?v=24.408"></script>
   <script src="../trading-cards-extra.js?v=mimic-normalize-v8"></script>
   <script src="../trading-cards-lil-guys-v336.js?v=24.336"></script>
   <script src="../trading-cards-v317.js?v=24.317"></script>
@@ -626,7 +625,7 @@ img[src*="enemies/puffer/"],img[src*="enemies/star-glider/"],img[src*="enemies/a
   <script src="../trading-cards-sock-gremlin-v297.js?v=24.297"></script>
   <script src="../trading-cards-universal-v298.js?v=24.298"></script>
   <script src="../trading-cards-bao-cafe-v299.js?v=24.395"></script>
-  <script src="js/game-v96.js?v=24.411"></script>
+  <script src="js/game-v96.js?v=24.410&buddy=v11"></script>
   <script src="js/hatchery-v179.js?v=24-345"></script>
   <script src="js/hatchery-egg-position-v192.js?v=24-343"></script>
   <script src="js/hatchery-ui-v193.js?v=24-255"></script>
@@ -644,8 +643,8 @@ img[src*="enemies/puffer/"],img[src*="enemies/star-glider/"],img[src*="enemies/a
   <script src="js/boost-labels-v215.js?v=24-255"></script>
   <script src="js/merchant-fix-v218.js?v=24-255"></script>
   <script src="js/dash-background-fix-v226.js?v=24-255"></script>
-  <script src="js/trading-card-drops-v235.js?v=24.411"></script>
-  <script src="js/love-interests-v326.js?v=24.408"></script>
+  <script src="js/trading-card-drops-v235.js?v=24-351"></script>
+  <script src="js/love-interests-v326.js?v=24.413"></script>
   <script src="js/task-buddy-boost-v254.js?v=24-255"></script>
   <script src="js/special-encounters-v326.js?v=24.356"></script>
   <script src="js/quest-v265.js?v=24.408&patch=24-283"></script>
@@ -655,7 +654,7 @@ img[src*="enemies/puffer/"],img[src*="enemies/star-glider/"],img[src*="enemies/a
   <script src="js/special-catch-v298.js?v=24-298"></script>
   <script src="js/sock-gremlin-v297.js?v=24.359"></script>
   <script src="js/ufono-v298.js?v=24.356"></script>
-  <script src="js/porcupin-v298.js?v=24.411"></script>
+  <script src="js/porcupin-v298.js?v=24-298"></script>
   <script src="js/bao-cafe-v299.js?v=24.393"></script>
   <script src="js/fixes-v289.js?v=24-289"></script>
   <script src="js/universal-clothing-drops-v311.js?v=24.311"></script>
@@ -665,7 +664,7 @@ img[src*="enemies/puffer/"],img[src*="enemies/star-glider/"],img[src*="enemies/a
   <script src="js/fixes-v314.js?v=24.314"></script>
   <script src="js/io-transformation-v317.js?v=24.317"></script>
   <script src="js/fixes-v318.js?v=24.318"></script>
-  <script src="js/lil-guys-capture-v336.js?v=24.411"></script>
+  <script src="js/lil-guys-capture-v336.js?v=24.336"></script>
   <script src="js/fixes-v341.js?v=24.345"></script>
   <script src="js/fixes-v347.js?v=24.349"></script>
   <script src="js/sweetheart-v352.js?v=24.385"></script>
@@ -673,7 +672,7 @@ img[src*="enemies/puffer/"],img[src*="enemies/star-glider/"],img[src*="enemies/a
   <script src="js/shared-families-v356.js?v=buddy-v11"></script>
   <script src="js/extra-content-v359.js?v=24.359"></script>
   <script src="../duck-quest-v11-portrait-skills.js?v=buddy-v11"></script>
-  <script src="js/lover-assist-v385.js?v=24.408"></script>
-  <script src="js/angel-demon-v409.js?v=24.409"></script>
+  <script src="js/lover-assist-v385.js?v=24.413"></script>
+  <script src="js/angel-demon-v409.js?v=24.413"></script>
 </body>
 </html>

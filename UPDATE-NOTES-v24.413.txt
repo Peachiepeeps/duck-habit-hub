@@ -1,0 +1,9 @@
+Duckie Days v24.413
+
+Fixes and updates:
+- Fixed the Angel & Demon sibling reunion cutscene sprites so idle images load correctly instead of breaking.
+- Updated the Angel & Demon reunion cutscene to size and position sprites more like the other love-interest scenes.
+- Reviewed the Shiyu & Yukine reunion scene alignment to keep it consistent with the other love-interest scenes.
+- Added Demon as Angel's rare Lover/Friend boss-battle ally after the sibling reunion is unlocked.
+- Confirmed Yukine remains available for Shiyu's Lover/Friend boss battles after his reunion is unlocked.
+- Bumped Duck Quest cache/version references so the updated scene scripts load cleanly.

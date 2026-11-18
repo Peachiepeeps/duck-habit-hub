@@ -9,13 +9,14 @@
     miko:['lukio','shinobu','cheryln','hibiki','devlin','yuzuru','westley','circe','quin','kiri','midori','luka','cybil','nico','nene','moriko','jenson'],
     annika:['shin','bubble','lain','tamao'],
     miho:['ranger','lovell','collin','beau','ein','ideno','hinaru'],
-    shiyu:['yukine']
+    shiyu:['yukine'],
+    angel:['demon']
   };
   const specialNames={
     lukio:'Lukio',shinobu:'Shinobu',cheryln:'Cheryln',hibiki:'Hibiki',devlin:'Devlin',yuzuru:'Yuzuru',westley:'Westley',circe:'Circe',quin:'Quin',kiri:'Kiri',midori:'Midori',luka:'Luka',cybil:'Cybil',nico:'Nico',nene:'Nene',moriko:'Moriko',jenson:'Jenson',
-    ranger:'Ranger',lovell:'Lovell',collin:'Collin',beau:'Beau',ein:'Ein',ideno:'Ideno',hinaru:'Hinaru',yukine:'Yukine',shin:'Shin',bubble:'Bubble',lain:'Lain',tamao:'Tamao'
+    ranger:'Ranger',lovell:'Lovell',collin:'Collin',beau:'Beau',ein:'Ein',ideno:'Ideno',hinaru:'Hinaru',yukine:'Yukine',demon:'Demon',shin:'Shin',bubble:'Bubble',lain:'Lain',tamao:'Tamao'
   };
-  const extraSprites={midori:'assets/love-interests/midori/Midori-opened.png',jenson:'assets/love-interests/jenson/Jenson-Sprite-idle-1.png'};
+  const extraSprites={midori:'assets/love-interests/midori/Midori-opened.png',jenson:'assets/love-interests/jenson/Jenson-Sprite-idle-1.png',demon:'assets/encounters/demon/Demon-sprite-idle-1.png'};
   const friends=[
     {id:'luv-birdie',name:'Luv & Birdie',art:'assets/events/luv-and-birdie/idle-1.png',move:'Double Chirp'},
     {id:'ghost-girl',name:'Ghost Girl',art:'assets/gimmicks/ghost-girl/idle-1.png',move:'Ghostly Glow'},
@@ -29,6 +30,11 @@
     if(character==='peep'||character==='io')return friends;
     // Shiyu's husband cannot join her before the reunion encounter.
     if(character==='shiyu'&&!hubSave?.loveInterests?.yukine?.encountered)return [];
+    // Angel's twin cannot join her before their sibling reunion.
+    if(character==='angel'){
+      if(!hubSave?.angelDemonReunion?.firstMet)return [];
+      return [{id:'demon',name:'Demon',art:'assets/encounters/demon/Demon-sprite-idle-1.png',move:'Twin Strike',romance:false,duckId:'demon-character-duck',cardId:'r-demon-sibling'}];
+    }
     let ids=loveIds[character]||[];
     if(!ids.length)return [];
     // Prioritize characters the player has met; fall back to the full cast so
@@ -44,8 +50,8 @@
 
   // v24.405: player-approved visible height ratios relative to the active OC.
   // Compensate for transparent padding in each ORIGINAL idle image (no asset edits).
-  const allyHeightRatio=Object.freeze({"artist-friend":0.84,"beau":1.08,"bubble":0.92,"cheryln":1,"circe":1,"collin":1.08,"cybil":1,"devlin":1.08,"ein":0.92,"ghost-girl":0.84,"hibiki":0.92,"hinaru":0.92,"ideno":1.08,"jenson":1.08,"kiri":1,"lain":1.08,"lovell":1,"luka":1.08,"lukio":1.08,"luv-birdie":0.84,"midori":1.08,"moriko":1,"nene":1,"nico":1.08,"pippa":0.84,"quackers":0.84,"quin":1.08,"ranger":1,"shin":1,"shinobu":1,"tamao":0.92,"westley":1.08,"yuzuru":0.92,"yukine":1.08});
-  const allyArtFill=Object.freeze({"artist-friend":0.96875,"beau":0.92453,"bubble":0.92708,"cheryln":0.92708,"circe":0.96875,"collin":0.94175,"cybil":0.96875,"devlin":0.98039,"ein":0.9375,"ghost-girl":0.95312,"hibiki":0.89583,"hinaru":0.90625,"ideno":0.88235,"jenson":0.9375,"kiri":0.94792,"lain":0.97059,"lovell":0.91667,"luka":0.92708,"lukio":0.91,"luv-birdie":0.91667,"midori":0.93043,"moriko":0.90625,"nene":0.97917,"nico":0.9619,"pippa":0.89062,"quackers":0.96875,"quin":0.92308,"ranger":0.89583,"shin":0.96875,"shinobu":0.92708,"tamao":0.96875,"westley":0.9596,"yuzuru":0.85417,"yukine":0.98958});
+  const allyHeightRatio=Object.freeze({"artist-friend":0.84,"beau":1.08,"bubble":0.92,"cheryln":1,"circe":1,"collin":1.08,"cybil":1,"demon":1.02,"devlin":1.08,"ein":0.92,"ghost-girl":0.84,"hibiki":0.92,"hinaru":0.92,"ideno":1.08,"jenson":1.08,"kiri":1,"lain":1.08,"lovell":1,"luka":1.08,"lukio":1.08,"luv-birdie":0.84,"midori":1.08,"moriko":1,"nene":1,"nico":1.08,"pippa":0.84,"quackers":0.84,"quin":1.08,"ranger":1,"shin":1,"shinobu":1,"tamao":0.92,"westley":1.08,"yuzuru":0.92,"yukine":1.08});
+  const allyArtFill=Object.freeze({"artist-friend":0.96875,"beau":0.92453,"bubble":0.92708,"cheryln":0.92708,"circe":0.96875,"collin":0.94175,"cybil":0.96875,"demon":0.95833,"devlin":0.98039,"ein":0.9375,"ghost-girl":0.95312,"hibiki":0.89583,"hinaru":0.90625,"ideno":0.88235,"jenson":0.9375,"kiri":0.94792,"lain":0.97059,"lovell":0.91667,"luka":0.92708,"lukio":0.91,"luv-birdie":0.91667,"midori":0.93043,"moriko":0.90625,"nene":0.97917,"nico":0.9619,"pippa":0.89062,"quackers":0.96875,"quin":0.92308,"ranger":0.89583,"shin":0.96875,"shinobu":0.92708,"tamao":0.96875,"westley":0.9596,"yuzuru":0.85417,"yukine":0.98958});
   const heroArtFill=Object.freeze({peep:94/96,io:93/96,miho:94/96,miko:91/96,annika:93/96,shiyu:88/96});
 
   let assist=null;
