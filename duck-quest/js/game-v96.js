@@ -90,8 +90,8 @@ function getAreaConfig(areaId){
 
 // v24.154 — Stitched borders use a crisp assist outline only for light colors; Sakura/Sparkle stay clean.
 // Internal save keys still use the legacy area/rank names so existing player progress remains compatible.
-const QUEST_CHARACTER_IDS = Object.freeze(["peep","miko","io","miho","annika"]);
-const QUEST_CHARACTER_NAMES = Object.freeze({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika"});
+const QUEST_CHARACTER_IDS = Object.freeze(["peep","miko","io","miho","annika","shiyu"]);
+const QUEST_CHARACTER_NAMES = Object.freeze({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika",shiyu:"Shiyu"});
 window.DUCKIE_UI_THEME_CORE='24.211-expanded-theme-catalog';
 const QUEST_UI_THEMES = Object.freeze([
   {
@@ -493,6 +493,7 @@ function questCharacterIconPreviewSrc(characterId){
   if(characterId === "io") return IoIdle?.[0] || "assets/characters/io/base/idle-1.webp";
   if(characterId === "miho") return MihoIdle?.[0] || "assets/characters/miho/base/hurt.webp";
   if(characterId === "annika") return AnnikaIdle?.[0] || "assets/characters/annika/base/hurt.webp";
+  if(characterId === "shiyu") return "assets/characters/shiyu/base/Shiyu-idle-1.png";
   return "assets/characters/peep/base/idle-1.webp";
 }
 
@@ -749,17 +750,31 @@ const ANNIKA_SKILLS = [
   }
 ];
 
+const SHIYU_SKILLS = [
+  {id:"shiyu-stab",name:"Stab!",unlock:1,type:"damage",multiplier:1,
+   sprite:"assets/characters/shiyu/base/Shiyu-Knife.png",description:"A quick stab dealing normal damage."},
+  {id:"shiyu-frenzy",name:"Knife Frenzy",unlock:10,type:"multi-hit",multiplier:1.8,hits:3,
+   sprite:"assets/characters/shiyu/base/Shiyu-Knife.png",description:"Three rapid strikes dealing 60% damage each (180% total)."},
+  {id:"shiyu-glitch-assault",name:"Glitch Assault",unlock:25,type:"shiyu-glitch",multiplier:1,bonusChance:0.40,
+   sprite:"assets/characters/shiyu/base/Shiyu-Knife.png",description:"A normal hit, with a 40% chance for two more full-strength hits."},
+  {id:"shiyu-final-warning",name:"Final Warning",unlock:40,type:"damage",multiplier:1.75,finishMultiplier:1.75,
+   sprite:"assets/characters/shiyu/base/Shiyu-Knife.png",description:"175% damage; +75% if the enemy starts below 40% HP (306.25%)."},
+  {id:"shiyu-dont-touch",name:"Don't Touch My Love!",unlock:50,type:"damage",multiplier:4,hitsAll:true,oncePerBattle:true,
+   sprite:"assets/characters/shiyu/base/Shiyu-Anger.png",description:"Once per battle: 400% damage to every enemy. No split damage."}
+];
+
 function activeSkills(){
   if(activeCharacterId === "miko") return MIKO_SKILLS;
   if(activeCharacterId === "io") return IO_SKILLS;
   if(activeCharacterId === "miho") return MIHO_SKILLS;
   if(activeCharacterId === "annika") return ANNIKA_SKILLS;
+  if(activeCharacterId === "shiyu") return SHIYU_SKILLS;
   return PEEP_SKILLS;
 }
 
 function skillTypeGroup(skill){
   if(!skill) return 9;
-  if(["damage","damage-burn","multi-hit","safe-chip"].includes(skill.type)) return 0;
+  if(["damage","damage-burn","multi-hit","shiyu-glitch","safe-chip"].includes(skill.type)) return 0;
   if(["buff","full-heal-buff","self-damage-buff","stun"].includes(skill.type)) return 1;
   if(["heal","full-heal"].includes(skill.type)) return 2;
   return 1;
@@ -1948,14 +1963,14 @@ const CHARM_DEFS = Object.freeze({
 });
 
 function defaultCharmSave(){
-  return {owned:{},equippedByCharacter:{peep:[],miko:[],io:[],miho:[],annika:[]}};
+  return {owned:{},equippedByCharacter:{peep:[],miko:[],io:[],miho:[],annika:[],shiyu:[]}};
 }
 function normalizeCharmSave(raw){
   const source=raw&&typeof raw==="object"?raw:{};
   const owned={};
   for(const id of Object.keys(CHARM_DEFS)) if(source.owned?.[id]) owned[id]=true;
   const equippedByCharacter={};
-  for(const characterId of ["peep","miko","io","miho","annika"]){
+  for(const characterId of ["peep","miko","io","miho","annika","shiyu"]){
     const incoming=Array.isArray(source.equippedByCharacter?.[characterId])?source.equippedByCharacter[characterId]:[];
     const seenFamilies=new Set();
     equippedByCharacter[characterId]=[];
@@ -2351,7 +2366,7 @@ function ensureBuddySave() {
   hubSave.buddies.collection=normalizeBuddyCollection(hubSave.buddies.collection);
   if(!hubSave.buddies.equippedByCharacter || typeof hubSave.buddies.equippedByCharacter!=="object") hubSave.buddies.equippedByCharacter={};
   if(!hubSave.buddies.personalizationByCharacter || typeof hubSave.buddies.personalizationByCharacter!=="object") hubSave.buddies.personalizationByCharacter={};
-  ["peep","miko","io","miho","annika"].forEach(id=>{
+  ["peep","miko","io","miho","annika","shiyu"].forEach(id=>{
     const slots=Array.isArray(hubSave.buddies.equippedByCharacter[id])?hubSave.buddies.equippedByCharacter[id]:[];
     hubSave.buddies.equippedByCharacter[id]=Array.from({length:6},(_,i)=>typeof slots[i]==="string"?slots[i]:null);
     const personal=Array.isArray(hubSave.buddies.personalizationByCharacter[id])?hubSave.buddies.personalizationByCharacter[id]:[];
@@ -2721,11 +2736,13 @@ const AnnikaIdle = [
   "assets/characters/annika/base/idle-2.webp"
 ];
 
+const ShiyuIdle=["assets/characters/shiyu/base/Shiyu-idle-1.png","assets/characters/shiyu/base/Shiyu-idle-2.png"];
 function heroIdleFrames(){
   if(activeCharacterId === "miko") return MikoIdle;
   if(activeCharacterId === "io") return IoIdle;
   if(activeCharacterId === "miho") return MihoIdle;
   if(activeCharacterId === "annika") return AnnikaIdle;
+  if(activeCharacterId === "shiyu") return ShiyuIdle;
   return PEepIdle;
 }
 function heroHurtFrame(){
@@ -2733,6 +2750,7 @@ function heroHurtFrame(){
   if(activeCharacterId === "io") return IoIdle[0];
   if(activeCharacterId === "miho") return "assets/characters/miho/base/hurt.webp";
   if(activeCharacterId === "annika") return "assets/characters/annika/base/hurt.webp";
+  if(activeCharacterId === "shiyu") return "assets/characters/shiyu/base/Shiyu-glitch.png";
   return "assets/characters/peep/base/hurt.webp";
 }
 
@@ -2949,13 +2967,14 @@ function activeCharacterIdFromQuest(){
   if(requested==="io" && unlocked.includes("io")) return "io";
   if(requested==="miho" && unlocked.includes("miho")) return "miho";
   if(requested==="annika" && unlocked.includes("annika")) return "annika";
+  if(requested==="shiyu" && unlocked.includes("shiyu")) return "shiyu";
   return "peep";
 }
 
 let activeCharacterId = activeCharacterIdFromQuest();
 questSave.activeCharacter = activeCharacterId;
 
-function heroDisplayName(){ return ({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika"})[activeCharacterId] || "Peep"; }
+function heroDisplayName(){ return ({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika",shiyu:"Shiyu"})[activeCharacterId] || "Peep"; }
 
 function charmState(){
   questSave.charms=normalizeCharmSave(questSave.charms);
@@ -3177,7 +3196,7 @@ function normalizeQuestSave(raw) {
       lastArea:q.lastArea,
       iconBackground:q.iconBackground
     }),
-    activeCharacter:["peep","miko","io","miho","annika"].includes(q.activeCharacter)?q.activeCharacter:null,
+    activeCharacter:["peep","miko","io","miho","annika","shiyu"].includes(q.activeCharacter)?q.activeCharacter:null,
     iconBackgroundsUnlocked:[...new Set(["white",...(Array.isArray(q.iconBackgroundsUnlocked)?q.iconBackgroundsUnlocked:[])])]
       .filter(id=>ICON_BACKGROUND_COLORS.some(color=>color.id===id)),
     iconBorderStylesUnlocked:[...new Set(["none",...(Array.isArray(q.iconBorderStylesUnlocked)?q.iconBorderStylesUnlocked:[])])]
@@ -3563,7 +3582,7 @@ function startSecondaryEnemyIdle(enemy){
 }
 
 function skillNeedsEnemyTarget(skill){
-  return Boolean(skill && ["damage","damage-burn","multi-hit","safe-chip","stun"].includes(skill.type));
+  return Boolean(skill && ["damage","damage-burn","multi-hit","shiyu-glitch","safe-chip","stun"].includes(skill.type));
 }
 
 function closeTargetPicker(){
@@ -3726,13 +3745,14 @@ function loadHubSave() {
     if (!parsed.characterProgress.annika || typeof parsed.characterProgress.annika !== "object") {
       parsed.characterProgress.annika = { happinessTotal:0 };
     }
+  if(!parsed.characterProgress.shiyu || typeof parsed.characterProgress.shiyu!=="object") parsed.characterProgress.shiyu={happinessTotal:0};
     if (!Array.isArray(parsed.unlockedCharacters)) parsed.unlockedCharacters=["peep"];
     if (!parsed.unlockedCharacters.includes("peep")) parsed.unlockedCharacters.unshift("peep");
     parsed.selectedCharacter = parsed.unlockedCharacters.includes(parsed.selectedCharacter) ? parsed.selectedCharacter : "peep";
     parsed.coins = Math.max(0, Number(parsed.coins) || 0);
     return parsed;
   } catch {
-    return { coins:0, inventory:{}, unlockedDucks:[], unlockedCharacters:["peep"], selectedCharacter:"peep", characterProgress:{peep:{happinessTotal:0},miko:{happinessTotal:0},io:{happinessTotal:0},miho:{happinessTotal:0},annika:{happinessTotal:0}} };
+    return { coins:0, inventory:{}, unlockedDucks:[], unlockedCharacters:["peep"], selectedCharacter:"peep", characterProgress:{peep:{happinessTotal:0},miko:{happinessTotal:0},io:{happinessTotal:0},miho:{happinessTotal:0},annika:{happinessTotal:0},shiyu:{happinessTotal:0}} };
   }
 }
 
@@ -4034,7 +4054,7 @@ function peepStats(level = activeHeroProgress().level) {
   const hpBonus=Math.max(0,Number(vitality?.hpBonus)||0);
   return {
     maxHp: Math.round((42 + (level - 1) * 4.2) * (1 + hpBonus)),
-    attack: Math.round((8 + (level - 1) * 1.15) * Math.max(0.10, Number(specialHeroAttackScale)||1)),
+    attack: Math.round((8 + (level - 1) * 1.15) * (activeCharacterId==="shiyu"?1.12:1) * Math.max(0.10, Number(specialHeroAttackScale)||1)),
     defense: Math.round(2 + (level - 1) * 0.48)
   };
 }
@@ -4641,10 +4661,12 @@ function renderHeroVisuals(){
   const isIo=activeCharacterId==="io";
   const isMiho=activeCharacterId==="miho";
   const isAnnika=activeCharacterId==="annika";
+  const isShiyu=activeCharacterId==="shiyu";
   ui.battlefield?.classList.toggle("miko-active",isMiko);
   ui.battlefield?.classList.toggle("io-active",isIo);
   ui.battlefield?.classList.toggle("miho-active",isMiho);
   ui.battlefield?.classList.toggle("annika-active",isAnnika);
+  ui.battlefield?.classList.toggle("shiyu-active",isShiyu);
   const name=heroDisplayName();
   if(ui.heroNameHome) ui.heroNameHome.textContent=name;
   if(ui.heroNameCombat) ui.heroNameCombat.textContent=name;
@@ -4675,7 +4697,7 @@ function skillDisplayDescription(skill){ return skill.description; }
 
 function availableQuestCharacters(){
   const unlocked=Array.isArray(hubSave.unlockedCharacters)?hubSave.unlockedCharacters:["peep"];
-  return ["peep","miko","io","miho","annika"].filter(id=>unlocked.includes(id));
+  return ["peep","miko","io","miho","annika","shiyu"].filter(id=>unlocked.includes(id));
 }
 
 function closeQuestOcPicker(){
@@ -4686,7 +4708,7 @@ function closeQuestOcPicker(){
 
 function renderQuestOcPicker(){
   if(!ui.questOcPicker) return;
-  const names={peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika"};
+  const names={peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika",shiyu:"Shiyu"};
   ui.questOcPicker.innerHTML="";
   availableQuestCharacters().forEach(id=>{
     const button=document.createElement("button");
@@ -4801,7 +4823,7 @@ function setBuddyScreenUrl(isOpen) {
   } catch {}
 }
 
-const BUDDY_ASSIGN_CHARACTER_NAMES = Object.freeze({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika"});
+const BUDDY_ASSIGN_CHARACTER_NAMES = Object.freeze({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika",shiyu:"Shiyu"});
 
 function buddyRecordByKey(key){
   if(!key) return null;
@@ -4812,7 +4834,7 @@ function buddyEquippedCount(key,excludeCharacterId="",excludeSlotIndex=-1){
   if(!key) return 0;
   ensureBuddySave();
   let count=0;
-  for(const characterId of ["peep","miko","io","miho","annika"]){
+  for(const characterId of ["peep","miko","io","miho","annika","shiyu"]){
     const slots=hubSave.buddies.equippedByCharacter[characterId] || [];
     slots.forEach((slotKey,index)=>{
       if(characterId===excludeCharacterId && index===excludeSlotIndex) return;
@@ -4824,7 +4846,7 @@ function buddyEquippedCount(key,excludeCharacterId="",excludeSlotIndex=-1){
 
 function buddyAssignCharacters(){
   const unlocked=Array.isArray(hubSave.unlockedCharacters)?hubSave.unlockedCharacters:["peep"];
-  return ["peep","miko","io","miho","annika"].map(id=>({id,name:BUDDY_ASSIGN_CHARACTER_NAMES[id],unlocked:unlocked.includes(id)}));
+  return ["peep","miko","io","miho","annika","shiyu"].map(id=>({id,name:BUDDY_ASSIGN_CHARACTER_NAMES[id],unlocked:unlocked.includes(id)}));
 }
 
 function hideBuddyPersonalization(){
@@ -6770,6 +6792,21 @@ async function useSkill(skill) {
       await sleep(540);
     }
     }
+  } else if(skill.type==="shiyu-glitch") {
+    if(skillState && skill.oncePerBattle)skillState.onceUsed[skill.id]=true;
+    const triggered=Math.random()<0.40;
+    const hits=triggered?3:1;
+    const stats=peepStats();
+    const attack=stats.attack*(skillState.attackBuffTurns>0?skillState.attackBuffMultiplier:1)
+      *(skillState.buddyAttackBuffTurns>0?skillState.buddyAttackMultiplier:1)
+      *(skillState.enemyDefenseDownTurns>0?skillState.enemyDefenseMultiplier:1);
+    setMessage(triggered?"Glitch Assault! Shiyu follows up with TWO extra stabs!":"Glitch Assault! Shiyu stabs!");
+    await sleep(250);
+    for(let i=0;i<hits && currentEnemy?.hpNow>0;i++){
+      const variance=.96+Math.random()*.08;
+      await hurtEnemy(Math.max(1,Math.round(attack*variance)));
+      if(i<hits-1 && currentEnemy?.hpNow>0)await sleep(110);
+    }
   } else if(skill.type==="multi-hit") {
     if(heroCanMissFromFluster(skill)) {
       if(skill.cooldown) skillState.cooldowns[skill.id]=skill.cooldown;
@@ -6859,6 +6896,7 @@ async function useSkill(skill) {
     } else {
     let multiplier=skill.multiplier||1;
     let flavor=skillDisplayName(skill);
+    if(skill.id==="shiyu-final-warning" && currentEnemy && currentEnemy.hpNow/currentEnemy.maxHp < .40) multiplier *= 1.75;
 
     if(skill.id==="heart-ray") {
       skillState.heartRayCount=(skillState.heartRayCount||0)+1;

@@ -1,0 +1,16 @@
+Duckie Days v24.406 — Shiyu Debut + Battle Victory Polish
+
+Cumulative update-only ZIP on top of v24.405.
+
+- New OC Shiyu, sixth Profiles character, 1,500 Pink Coin invitation, profile fields Coming Soon.
+- Permanent cat ears and tail, layered main cardigan+skirt starter outfit with pigtails, shop hair/outfit/accessory options at 150 each.
+- Correct cardigan-shop thumbnail only, no standalone cardigan Shop listing.
+- 1.2-second affection-based Home Hub tap effect: below 50 shows angry + face shadow; at/above 50 shows neutral + face shadow; returns to happy.
+- Shiyu Duck at Happiness 100, plus original invitation and images.
+- Duck Quest: Balanced Aggressor with Stab, Knife Frenzy, Glitch Assault, Final Warning, Don't Touch My Love!; Shiyu glitch hurt sprite.
+- Task Buddy: Rainbow Duck preference, selected liked/disliked gifts, Fawn reactions. Special Love Letter dialogue intentionally deferred.
+- Bao Cafe: selected bases, flavors, toppings, lid/straw colors.
+- Companion HP HUD no longer covers the victory chest.
+
+Unfinished by design: profile bio, unique Love Letter dialogue, future Shiyu-Love attack.
+Notes: Browser smoke tests should confirm graphics and saves before treating the ZIP as production-tested.

@@ -5,7 +5,7 @@
   window.DUCKIE_DASH_SCREEN_SURFACE='24.184-lower-ready-cost-below-preview';
 
   const BEST_COINS_KEY='duckieDashBestCoins_v1';
-  const OC_NAMES={peep:'Peep',miko:'Miko',io:'Io',miho:'Miho',annika:'Annika'};
+  const OC_NAMES={peep:'Peep',miko:'Miko',io:'Io',miho:'Miho',annika:'Annika',shiyu:'Shiyu'};
   let dashRunOc=null;
   let dashScreenOpen=false;
 
@@ -92,7 +92,7 @@
     try{
       const save=JSON.parse(localStorage.getItem('duckHabitHubSave_v1')||'{}');
       const unlocked=Array.isArray(save?.unlockedCharacters)?save.unlockedCharacters:['peep'];
-      return ['peep','miko','io','miho','annika'].filter(id=>unlocked.includes(id));
+      return ['peep','miko','io','miho','annika','shiyu'].filter(id=>unlocked.includes(id));
     }catch(error){ return ['peep']; }
   }
 

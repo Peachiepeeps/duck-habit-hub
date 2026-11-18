@@ -4,7 +4,7 @@
   const GLITTER='../assets/ingredients/Sparkle.webp';
   let lastBuddyId=null;
 
-  const CHARACTER_NAMES={peep:'Peep',miko:'Miko',io:'Io',miho:'Miho',annika:'Annika'};
+  const CHARACTER_NAMES={peep:'Peep',miko:'Miko',io:'Io',miho:'Miho',annika:'Annika',shiyu:'Shiyu'};
 
   function mimicArt(entry){
     if(!entry) return null;

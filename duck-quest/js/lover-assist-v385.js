@@ -46,8 +46,9 @@
   const heroArtFill=Object.freeze({peep:94/96,io:93/96,miho:94/96,miko:91/96,annika:93/96});
 
   let assist=null;
+  let rewardSceneActive=false;
   let introTicket=0;
-  function ongoing(){return Boolean(assist&&currentRun&&currentEnemy?.specialAssistV385?.id===assist.id);}
+  function ongoing(){return Boolean(!rewardSceneActive&&assist&&currentRun&&currentEnemy?.specialAssistV385?.id===assist.id);}
   const hpWidget=document.createElement('div');
   hpWidget.id='loverAssistHpV385';hpWidget.setAttribute('aria-label','Companion HP');
   // Reuse the existing game's nameplate and HP-bar styles; no new artwork.
@@ -143,6 +144,7 @@
     requestAnimationFrame(positionAllAssist);
   }
   function reset(){
+    rewardSceneActive=false;
     introTicket++;
     assist=null;
     ui.battlefield?.classList.remove('lover-assist-battle-v385');
@@ -275,6 +277,15 @@
       return damage;
     }
     return oldEnemyAttack.apply(this,arguments);
+  };
+
+  // v24.406: hide the companion HUD throughout victory and chest/reward actions,
+  // not only while the chest element is visible. The next encounter resets it.
+  const oldShowChest=showChest;
+  showChest=function(...args){
+    rewardSceneActive=true;
+    hpWidget.hidden=true;
+    return oldShowChest.apply(this,args);
   };
 
   const oldReward=generateRewards;

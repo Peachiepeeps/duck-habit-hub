@@ -1,6 +1,6 @@
 // Hub v24.166 — Duckie Dash shop + max-happiness reward repair
 const STORAGE_KEY = "duckHabitHubSave_v1";
-const SAVE_VERSION = 64;
+const SAVE_VERSION = 65;
 
 const CHARACTERS = {
   peep: {
@@ -249,6 +249,14 @@ const CHARACTERS = {
       "rings": "favorite",
       "teddy-bear": "like"
     }
+  },
+  shiyu: {
+    id: "shiyu", name: "Shiyu", type: "layered",
+    assetFolder: "assets/shiyu/",
+    invitationImage: "assets/oc-invitations/Shiyu-invitation.png",
+    duckHeadPlacement: {left:52,top:37,width:17.0},
+    profile: {height:"Coming Soon",favoriteItem:"Coming Soon",likes:"Coming Soon",dislikes:"Coming Soon",description:"Coming Soon"},
+    giftPreferences: {}
   }
 };
 
@@ -376,7 +384,8 @@ const CHARACTER_UNLOCKS = {
     name: "Annika Invitation",
     image: "assets/oc-invitations/Annika-invitation.png",
     priceText: "Invite Annika to the hub and unlock her default wardrobe."
-  }
+  },
+  shiyu: {name:"Shiyu Invitation", image:"assets/oc-invitations/Shiyu-invitation.png", priceText:"Invite Shiyu to your home and unlock her starter wardrobe."}
 };
 
 const INVENTORY_CATEGORIES = {
@@ -1632,7 +1641,8 @@ const SHOP_STOCK = {
     { characterId: "miko", price: 1500 },
     { characterId: "io", price: 1500 },
     { characterId: "miho", price: 1500 },
-    { characterId: "annika", price: 1500 }
+    { characterId: "annika", price: 1500 },
+    { characterId: "shiyu", price: 1500 }
   ],
   rooms: [
     { roomId: "green", price: 350 },
@@ -1677,7 +1687,9 @@ const SHOP_STOCK = {
     { wardrobeId: "hair-jellyfish", price: 150 },
     { wardrobeId: "miko-bangs-pinned", price: 150 },
     { wardrobeId: "miho-hair-long", price: 150 },
-    { wardrobeId: "annika-hair-ponytail", price: 150 }
+    { wardrobeId: "annika-hair-ponytail", price: 150 },
+    { wardrobeId: "shiyu-hair-short", price: 150 },
+    { wardrobeId: "shiyu-hair-long", price: 150 }
   ],
   clothing: [
     { wardrobeId: "io-magical-stockings", price: 150 },
@@ -1711,7 +1723,9 @@ const SHOP_STOCK = {
     { wardrobeId: "annika-bow-sweater", price: 150 },
     { wardrobeId: "annika-leotard", price: 150 },
     { wardrobeId: "annika-black-stockings", price: 150 },
-    { wardrobeId: "annika-circus-stockings", price: 150 }
+    { wardrobeId: "annika-circus-stockings", price: 150 },
+    { wardrobeId: "shiyu-babydoll", price: 150 },
+    { wardrobeId: "shiyu-frill-stockings", price: 150 }
   ],
   shoes: [
     { wardrobeId: "io-magical-boots", price: 150 },
@@ -1721,7 +1735,8 @@ const SHOP_STOCK = {
     { wardrobeId: "miko-shoes-fancy-loafers", price: 150 },
     { wardrobeId: "miho-shoes-booties", price: 150 },
     { wardrobeId: "annika-shoes-booties", price: 150 },
-    { wardrobeId: "annika-shoes-folded-booties", price: 150 }
+    { wardrobeId: "annika-shoes-folded-booties", price: 150 },
+    { wardrobeId: "shiyu-booties", price: 150 }
   ],
   accessories: [
     { wardrobeId: "io-magical-back-bow", price: 150 },
@@ -1744,7 +1759,8 @@ const SHOP_STOCK = {
     { wardrobeId: "miho-neck-bow", price: 150 },
     { wardrobeId: "annika-hair-bow-high", price: 150 },
     { wardrobeId: "annika-circus-back-bow", price: 150 },
-    { wardrobeId: "annika-scarf", price: 150 }
+    { wardrobeId: "annika-scarf", price: 150 },
+    { wardrobeId: "shiyu-big-ribbon", price: 150 }
   ]
 };
 
@@ -2318,6 +2334,7 @@ const DUCKS = {
     "acquisition": "character-happiness-100",
     "characterId": "annika"
   },
+  "shiyu-duck": {"name":"Shiyu Duck","file":"assets/ducks/shiyu-duck.png","acquisition":"character-happiness-100","characterId":"shiyu"},
   "orange-duck": {
     "name": "Orange Duck",
     "file": "assets/ducks/Orange-duck.webp",
@@ -2598,7 +2615,8 @@ const FRIENDSHIP_DATE_ICONS = Object.freeze({
   miko: "assets/ducks/miko-duck.webp",
   io: "assets/ducks/io-duck.webp",
   miho: "assets/ducks/miho-duck.webp",
-  annika: "assets/ducks/annika-duck.png"
+  annika: "assets/ducks/annika-duck.png",
+  shiyu: "assets/ducks/shiyu-duck.png"
 });
 
 const PAINT_MIXING_LOOT_POOL = [
@@ -3626,6 +3644,67 @@ const DEFAULT_MIHO_OUTFIT = {
   extras: ["belt"]
 };
 
+// v24.406 Shiyu original 1080x1920 layered artwork, back-to-front z-order.
+const SHIYU_ASSETS = {
+  "cardigan-back":{label:"Cardigan Back",file:"Shiyu-cardigan-back.png",z:3},
+  "tail":{label:"Cat Tail (Permanent)",file:"Shiyu-tail.png",z:4},
+  "hair-pigtails":{label:"Pigtails",file:"Shiyu-pigtails.png",z:8},
+  "hair-short":{label:"Short Hair",file:"Shiyu-short-hair.png",z:8},
+  "hair-long":{label:"Long Hair",file:"Shiyu-long-hair.png",z:8},
+  "base":{label:"Body Base",file:"Shiyu-base.png",z:20},
+  "legwear-bow":{label:"Bow Stockings",file:"Shiyu-bow-stockings.png",z:23},
+  "legwear-frill":{label:"Frill Stockings",file:"Shiyu-frill-stockings.png",z:23},
+  "shoes-mary-janes":{label:"Mary Janes",file:"Shiyu-mary-janes.png",z:24},
+  "shoes-booties":{label:"Booties",file:"Shiyu-booties.png",z:24},
+  "bottom-skirt":{label:"Skirt",file:"Shiyu-skirt.png",z:27},
+  "top-shirt":{label:"Button-up Shirt",file:"Shiyu-button-up-shirt.png",z:29},
+  "dress-babydoll":{label:"Babydoll Outfit",file:"Shiyu-babydoll.png",z:30},
+  "outer-cardigan":{label:"Cardigan",file:"Shiyu-cardigan.png",previewFile:"Shiyu-cardigan-shop.png",z:31},
+  "neck-bow":{label:"Neck Bow",file:"Shiyu-neck-bow.png",z:33},
+  "big-ribbon":{label:"Big Ribbon",file:"Shiyu-big-ribbon.png",z:34},
+  "face-shadow":{label:"Face Shadow",file:"Shiyu-face-shadow.png",z:44},
+  "expression-neutral":{label:"Neutral",file:"Shiyu-neutral.png",z:45},
+  "expression-happy":{label:"Happy",file:"Shiyu-happy.png",z:45},
+  "expression-mad":{label:"Angry",file:"Shiyu-angry.png",z:45},
+  "expression-sad":{label:"Neutral",file:"Shiyu-neutral.png",z:45},
+  "expression-shocked":{label:"Happy",file:"Shiyu-happy.png",z:45},
+  "bangs":{label:"Bangs",file:"Shiyu-bangs.png",z:46},
+  "ears":{label:"Cat Ears (Permanent)",file:"Shiyu-ears.png",z:53},
+  "hair-bows":{label:"Hair Bows",file:"Shiyu-bows.png",z:54}
+};
+const SHIYU_CLOSET = [
+  {id:"hair",label:"Hair",type:"hair",options:["hair-pigtails","hair-short","hair-long"]},
+  {id:"dress",label:"Dresses",type:"single",allowNone:true,options:["dress-babydoll"]},
+  {id:"top",label:"Shirts",type:"single",allowNone:true,options:["top-shirt"]},
+  {id:"bottom",label:"Skirts",type:"single",allowNone:true,options:["bottom-skirt"]},
+  {id:"outer",label:"Cardigans",type:"single",allowNone:true,options:["outer-cardigan"]},
+  {id:"legwear",label:"Stockings",type:"single",allowNone:true,options:["legwear-bow","legwear-frill"]},
+  {id:"shoes",label:"Shoes",type:"single",allowNone:true,options:["shoes-mary-janes","shoes-booties"]},
+  {id:"extras",label:"Accessories",type:"multi",options:["hair-bows","neck-bow","big-ribbon"]}
+];
+const DEFAULT_SHIYU_OUTFIT={hair:"hair-pigtails",dress:null,top:"top-shirt",bottom:"bottom-skirt",outer:"outer-cardigan",legwear:"legwear-bow",shoes:"shoes-mary-janes",extras:["hair-bows","neck-bow"]};
+function normalizeShiyuOutfit(raw={}){
+  const o={...structuredClone(DEFAULT_SHIYU_OUTFIT),...(raw&&typeof raw==="object"?raw:{})};
+  for(const [key,allowed] of Object.entries({hair:["hair-pigtails","hair-short","hair-long"],dress:[null,"dress-babydoll"],top:[null,"top-shirt"],bottom:[null,"bottom-skirt"],outer:[null,"outer-cardigan"],legwear:[null,"legwear-bow","legwear-frill"],shoes:[null,"shoes-mary-janes","shoes-booties"]})){
+    if(!allowed.includes(o[key]))o[key]=DEFAULT_SHIYU_OUTFIT[key];
+  }
+  o.extras=Array.isArray(o.extras)?o.extras.filter(id=>["hair-bows","neck-bow","big-ribbon"].includes(id)):[...DEFAULT_SHIYU_OUTFIT.extras];
+  return o;
+}
+function getShiyuEquippedAssetIds(){
+  const outfit=getCharacterOutfit("shiyu");
+  const ids=["tail",outfit.hair,"base",outfit.legwear,outfit.shoes];
+  if(!outfit.dress && outfit.outer==="outer-cardigan")ids.push("cardigan-back");
+  if(outfit.dress){ids.push(outfit.dress)}
+  else {ids.push(outfit.bottom,outfit.top,outfit.outer)}
+  ids.push(...(outfit.extras||[]));
+  const expression=(currentExpression==="expression-neutral" && !shiyuFaceShadowActive) ? "expression-happy" : (currentExpression || "expression-happy");
+  if(shiyuFaceShadowActive)ids.push("face-shadow");
+  ids.push(expression,"bangs","ears");
+  return ids.filter(Boolean);
+}
+let shiyuFaceShadowActive=false;
+
 const DEFAULT_ANNIKA_OUTFIT = {
   hair: "hair-long",
   backHairBow: "back-hair-ribbon",
@@ -4055,7 +4134,8 @@ const DEFAULT_SAVE = {
     miko: "cream",
     io: "cream",
     miho: "cream",
-    annika: "cream"
+    annika: "cream",
+    shiyu: "cream"
   },
   selectedCharacter: "peep",
   roomWallpapersByCharacter: {
@@ -4063,7 +4143,8 @@ const DEFAULT_SAVE = {
     miko: null,
     io: null,
     miho: null,
-    annika: null
+    annika: null,
+    shiyu: null
   },
   unlockedCharacters: ["peep"],
   unlockedRooms: ["cream"],
@@ -4074,7 +4155,8 @@ const DEFAULT_SAVE = {
     miko: ["hair-main", "top-hoodie", "top-button", "bottom-capris", "shoes-loafer"],
     io: ["hair-buns", "back-school-bow", "top-school", "bottom-school", "sock-left-school", "sock-right-school", "shoes-school", "ahoge", "heart-pin"],
     miho: ["hair-main", "bow", "top-shirt", "bottom-skirt", "jacket-black", "legwear-stockings", "shoes-boots", "belt"],
-    annika: ["hair-long", "back-hair-ribbon", "shirt-collared", "outer-sweater", "bottom-shorts", "legwear-bow-left", "legwear-bow-right", "legwear-bow-both", "shoes-sneakers", "neck-bow"]
+    annika: ["hair-long", "back-hair-ribbon", "shirt-collared", "outer-sweater", "bottom-shorts", "legwear-bow-left", "legwear-bow-right", "legwear-bow-both", "shoes-sneakers", "neck-bow"],
+    shiyu: ["hair-pigtails","bangs","ears","tail","cardigan-back","top-shirt","bottom-skirt","outer-cardigan","legwear-bow","shoes-mary-janes","hair-bows","neck-bow"]
   },
   wardrobeResetV1261: true,
   wardrobeResetV1262: false,
@@ -4093,14 +4175,16 @@ const DEFAULT_SAVE = {
     miko: structuredClone(DEFAULT_MIKO_OUTFIT),
     io: structuredClone(DEFAULT_IO_OUTFIT),
     miho: structuredClone(DEFAULT_MIHO_OUTFIT),
-    annika: structuredClone(DEFAULT_ANNIKA_OUTFIT)
+    annika: structuredClone(DEFAULT_ANNIKA_OUTFIT),
+    shiyu: structuredClone(DEFAULT_SHIYU_OUTFIT)
   },
   characterProgress: {
     peep: { happinessTotal: 0 },
     miko: { happinessTotal: 0 },
     io: { happinessTotal: 0 },
     miho: { happinessTotal: 0 },
-    annika: { happinessTotal: 0 }
+    annika: { happinessTotal: 0 },
+    shiyu: { happinessTotal: 0 }
   },
   tasks: [],
   savedTaskTemplates: [],
@@ -4120,7 +4204,8 @@ const DEFAULT_SAVE = {
       miko: { accentRoom: null, shelfStyle: "cream", duckSlots: Array(24).fill(null) },
       io: { accentRoom: null, shelfStyle: "cream", duckSlots: Array(24).fill(null) },
       miho: { accentRoom: null, shelfStyle: "cream", duckSlots: Array(24).fill(null) },
-      annika: { accentRoom: null, shelfStyle: "cream", duckSlots: Array(24).fill(null) }
+      annika: { accentRoom: null, shelfStyle: "cream", duckSlots: Array(24).fill(null) },
+      shiyu: { accentRoom: null, shelfStyle: "cream", duckSlots: Array(24).fill(null) }
     }
   },
   buddies: {
@@ -4130,14 +4215,16 @@ const DEFAULT_SAVE = {
       miko: emptyBuddySlots(),
       io: emptyBuddySlots(),
       miho: emptyBuddySlots(),
-      annika: emptyBuddySlots()
+      annika: emptyBuddySlots(),
+      shiyu: emptyBuddySlots()
     },
     personalizationByCharacter: {
       peep: emptyBuddyPersonalizationSlots(),
       miko: emptyBuddyPersonalizationSlots(),
       io: emptyBuddyPersonalizationSlots(),
       miho: emptyBuddyPersonalizationSlots(),
-      annika: emptyBuddyPersonalizationSlots()
+      annika: emptyBuddyPersonalizationSlots(),
+      shiyu: emptyBuddyPersonalizationSlots()
     }
   },
   achievements: {
@@ -4210,7 +4297,9 @@ function loadSave() {
           : "cream",
         miho: ROOMS.some(room => room.id === saved.roomsByCharacter?.miho)
           ? saved.roomsByCharacter.miho
-          : "cream"
+          : "cream",
+        annika: ROOMS.some(room => room.id === saved.roomsByCharacter?.annika) ? saved.roomsByCharacter.annika : "cream",
+        shiyu: ROOMS.some(room => room.id === saved.roomsByCharacter?.shiyu) ? saved.roomsByCharacter.shiyu : "cream"
       },
       unlockedCharacters: Array.isArray(saved.unlockedCharacters) ? saved.unlockedCharacters : ["peep"],
       unlockedRooms: Array.isArray(saved.unlockedRooms) ? saved.unlockedRooms : ["cream"],
@@ -4232,7 +4321,8 @@ function loadSave() {
           : [...structuredClone(DEFAULT_SAVE.characterUnlockedItems.miho)],
         annika: Array.isArray(saved.characterUnlockedItems?.annika)
           ? [...new Set(saved.characterUnlockedItems.annika)]
-          : [...structuredClone(DEFAULT_SAVE.characterUnlockedItems.annika)]
+          : [...structuredClone(DEFAULT_SAVE.characterUnlockedItems.annika)],
+        shiyu: Array.isArray(saved.characterUnlockedItems?.shiyu) ? [...new Set(saved.characterUnlockedItems.shiyu)] : [...structuredClone(DEFAULT_SAVE.characterUnlockedItems.shiyu)]
       },
       outfit: { ...structuredClone(DEFAULT_OUTFIT), ...(saved.outfit || {}) },
       characterOutfits: {
@@ -4243,7 +4333,8 @@ function loadSave() {
         miko: normalizeMikoOutfit(saved.characterOutfits?.miko || {}),
         io: normalizeIoOutfit(saved.characterOutfits?.io || {}),
         miho: normalizeMihoOutfit(saved.characterOutfits?.miho || {}),
-        annika: normalizeAnnikaOutfit(saved.characterOutfits?.annika || {})
+        annika: normalizeAnnikaOutfit(saved.characterOutfits?.annika || {}),
+        shiyu: normalizeShiyuOutfit(saved.characterOutfits?.shiyu || {})
       },
       ioOutfitBackup: normalizeIoOutfit(saved.ioOutfitBackup || saved.characterOutfits?.io || {}),
       characterProgress: {
@@ -4254,7 +4345,8 @@ function loadSave() {
         miko: normalizeLoadedCharacterProgress(saved.characterProgress?.miko, 0),
         io: normalizeLoadedCharacterProgress(saved.characterProgress?.io, 0),
         miho: normalizeLoadedCharacterProgress(saved.characterProgress?.miho, 0),
-        annika: normalizeLoadedCharacterProgress(saved.characterProgress?.annika, 0)
+        annika: normalizeLoadedCharacterProgress(saved.characterProgress?.annika, 0),
+        shiyu: normalizeLoadedCharacterProgress(saved.characterProgress?.shiyu, 0)
       },
       tasks: Array.isArray(saved.tasks) ? saved.tasks : [],
       savedTaskTemplates: Array.isArray(saved.savedTaskTemplates) ? saved.savedTaskTemplates : [],
@@ -4464,8 +4556,8 @@ const GACHA_RARITY_WEIGHTS = Object.freeze({
   rare: 12,
   super: 3
 });
-const GACHA_SUPER_DUCKS = new Set(["peep-duck", "miko-duck", "io-duck", "miho-duck", "annika-duck", "goose", "rainbow-duck"]);
-const GACHA_GATED_SUPER_DUCKS = new Set(["peep-duck", "miko-duck", "io-duck", "miho-duck", "annika-duck", "goose"]);
+const GACHA_SUPER_DUCKS = new Set(["peep-duck", "miko-duck", "io-duck", "miho-duck", "annika-duck", "shiyu-duck", "goose", "rainbow-duck"]);
+const GACHA_GATED_SUPER_DUCKS = new Set(["peep-duck", "miko-duck", "io-duck", "miho-duck", "annika-duck", "shiyu-duck", "goose"]);
 const GACHA_EXCLUDED_DUCKS = new Set(["tiny-duck", "tiny-duck-stack", "pile-of-tiny-ducks", "lukio-duck", "shinobu-duck", "cheryln-duck", "hibiki-duck", "devlin-duck", "yuzuru-duck", "westley-duck", "circe-duck", "quin-duck", "kiri-duck", "midori-duck", "luka-duck", "cybil-duck", "nico-duck", "nene-duck", "moriko-duck", "jenson-duck", "shin-duck", "bubble-duck", "lain-duck", "tamao-duck", "ranger-duck", "lovell-duck", "collin-duck", "beau-duck", "ein-duck", "ideno-duck", "hinaru-duck"]);
 const DUCK_TROPHY_MILESTONES = Object.freeze([
   { count: 1, tier: "bronze", label: "Bronze" },
@@ -4536,6 +4628,7 @@ function getCharacterAssetMap(characterId = save.selectedCharacter) {
   if (characterId === "io") return IO_ASSETS;
   if (characterId === "miho") return MIHO_ASSETS;
   if (characterId === "annika") return ANNIKA_ASSETS;
+  if (characterId === "shiyu") return SHIYU_ASSETS;
   return ASSETS;
 }
 
@@ -4544,6 +4637,7 @@ function getCharacterCloset(characterId = save.selectedCharacter) {
   if (characterId === "io") return [...IO_CLOSET, { id: "savedOutfits", label: "Saved Outfits ♡", type: "saved-outfits" }];
   if (characterId === "miho") return MIHO_CLOSET;
   if (characterId === "annika") return [...ANNIKA_CLOSET, { id: "savedOutfits", label: "Saved Outfits ♡", type: "saved-outfits" }];
+  if (characterId === "shiyu") return [...SHIYU_CLOSET, {id:"savedOutfits",label:"Saved Outfits ♡",type:"saved-outfits"}];
   return [...CLOSET, { id: "savedOutfits", label: "Saved Outfits ♡", type: "saved-outfits" }];
 }
 
@@ -4552,10 +4646,13 @@ function getCharacterThumbBounds(characterId = save.selectedCharacter) {
   if (characterId === "io") return IO_THUMB_BOUNDS;
   if (characterId === "miho") return MIHO_THUMB_BOUNDS;
   if (characterId === "annika") return ANNIKA_THUMB_BOUNDS;
+  if (characterId === "shiyu") return SHIYU_THUMB_BOUNDS;
   return THUMB_BOUNDS;
 }
 
+const SHIYU_THUMB_BOUNDS={"Shiyu-big-ribbon.png":[172,697,894,1043],"Shiyu-long-hair.png":[91,774,978,1669],"Shiyu-happy.png":[389,996,682,1150],"Shiyu-cardigan-shop.png":[256,1243,813,1533],"Shiyu-skirt.png":[368,1333,719,1504],"Shiyu-pigtails.png":[131,921,942,1526],"Shiyu-short-hair.png":[187,769,886,1285],"Shiyu-booties.png":[383,1727,688,1803],"Shiyu-mary-janes.png":[379,1753,693,1807],"Shiyu-ears.png":[263,780,818,934],"Shiyu-neck-bow.png":[480,1242,585,1326],"Shiyu-neutral.png":[382,967,695,1150],"Shiyu-button-up-shirt.png":[410,1218,666,1443],"Shiyu-base.png":[319,798,761,1794],"Shiyu-angry.png":[382,982,695,1158],"Shiyu-bows.png":[279,894,832,1017],"Shiyu-face-shadow.png":[324,852,730,1154],"Shiyu-babydoll.png":[311,1225,764,1511],"Shiyu-cardigan-back.png":[427,1247,654,1533],"Shiyu-bangs.png":[290,793,790,1405],"Shiyu-tail.png":[633,1427,883,1740],"Shiyu-cardigan.png":[256,1243,813,1529],"Shiyu-bow-stockings.png":[386,1516,686,1793],"Shiyu-frill-stockings.png":[386,1504,684,1794]};
 function getCharacterStarterWardrobe(characterId = save.selectedCharacter) {
+  if(characterId==="shiyu") return ["hair-pigtails","bangs","ears","tail","cardigan-back","top-shirt","bottom-skirt","outer-cardigan","legwear-bow","shoes-mary-janes","hair-bows","neck-bow"];
   if (characterId === "miko") {
     return [
       "hair-main", "bangs",
@@ -4605,6 +4702,7 @@ function getCharacterDefaultOutfit(characterId = save.selectedCharacter) {
   if (characterId === "io") return DEFAULT_IO_OUTFIT;
   if (characterId === "miho") return DEFAULT_MIHO_OUTFIT;
   if (characterId === "annika") return DEFAULT_ANNIKA_OUTFIT;
+  if (characterId === "shiyu") return DEFAULT_SHIYU_OUTFIT;
   return DEFAULT_OUTFIT;
 }
 
@@ -4621,6 +4719,7 @@ function normalizeCharacterState() {
   save.characterOutfits.io = normalizeIoOutfit(save.characterOutfits.io || {});
   save.characterOutfits.miho = normalizeMihoOutfit(save.characterOutfits.miho || {});
   save.characterOutfits.annika = normalizeAnnikaOutfit(save.characterOutfits.annika || {});
+  save.characterOutfits.shiyu = normalizeShiyuOutfit(save.characterOutfits.shiyu || {});
   if (!save.annikaDefaultFixV24121) {
     const annika = save.characterOutfits.annika || {};
     const looksLikeV120Default = annika.hair === "hair-long" &&
@@ -4670,6 +4769,7 @@ function normalizeCharacterState() {
   save.characterUnlockedItems.io = [...ioUnlocks];
   save.characterUnlockedItems.miho = [...mihoUnlocks];
   save.characterUnlockedItems.annika = [...annikaUnlocks];
+  save.characterUnlockedItems.shiyu = [...new Set([...(Array.isArray(save.characterUnlockedItems.shiyu)?save.characterUnlockedItems.shiyu:[]),...getCharacterStarterWardrobe("shiyu")])];
 
   // v24.83: Io's ahoge used to be forced on every render. Preserve the
   // existing look once, then let the player remove/add the now-free Closet piece.
@@ -4690,6 +4790,7 @@ function normalizeCharacterState() {
   save.characterProgress.io = normalizeLoadedCharacterProgress(save.characterProgress.io, 0);
   save.characterProgress.miho = normalizeLoadedCharacterProgress(save.characterProgress.miho, 0);
   save.characterProgress.annika = normalizeLoadedCharacterProgress(save.characterProgress.annika, 0);
+  save.characterProgress.shiyu = normalizeLoadedCharacterProgress(save.characterProgress.shiyu, 0);
 
   if (!save.stats || typeof save.stats !== "object") save.stats = structuredClone(DEFAULT_SAVE.stats);
   save.stats.happiness = save.characterProgress.peep.happinessTotal;
@@ -6233,6 +6334,7 @@ function getCharacterAssetIds(characterId = save.selectedCharacter) {
   if (character.id === "io") return getIoEquippedAssetIds();
   if (character.id === "miho") return getMihoEquippedAssetIds();
   if (character.id === "annika") return getAnnikaEquippedAssetIds();
+  if (character.id === "shiyu") return getShiyuEquippedAssetIds();
   return getEquippedAssetIds();
 }
 
@@ -6277,6 +6379,8 @@ function getRenderOrderedAssets(characterId = save.selectedCharacter) {
       return (Number(a.z) || 0) - (Number(b.z) || 0);
     });
   }
+
+  if (character.id === "shiyu") return equipped.sort((a,b)=>(Number(a.z)||0)-(Number(b.z)||0));
 
   if (character.id === "miho") {
     return equipped.sort((a,b) => (Number(a.z)||0) - (Number(b.z)||0));
@@ -6327,7 +6431,10 @@ function renderCharacterInto(container, characterId = save.selectedCharacter) {
   container.innerHTML = "";
 
   const character = CHARACTERS[characterId] || CHARACTERS.peep;
-  const equipped = getRenderOrderedAssets(character.id);
+  const isShiyuProfile = character.id==="shiyu" && (container.classList.contains("profile-avatar") || container === profileDetailAvatar);
+  const equipped = getRenderOrderedAssets(character.id).filter(asset=>!isShiyuProfile || (asset.id!=="face-shadow" && !asset.id.startsWith("expression-") || asset.id==="expression-neutral"));
+  if(isShiyuProfile && !equipped.some(asset=>asset.id==="expression-neutral"))equipped.push({id:"expression-neutral",...SHIYU_ASSETS["expression-neutral"]});
+  equipped.sort((a,b)=>(Number(a.z)||0)-(Number(b.z)||0));
 
   for (const [index, asset] of equipped.entries()) {
     const img = document.createElement("img");
@@ -6511,6 +6618,15 @@ function setExpression(assetId, duration = 0, onDone = null) {
 
 function pokePeep() {
   if (pokeLocked) return;
+  if(save.selectedCharacter==="shiyu") {
+    clearTimeout(reactionTimer);
+    const affection=Number(getCharacterHappinessInfo("shiyu")?.level||1);
+    shiyuFaceShadowActive=true;
+    currentExpression=affection>=50?"expression-neutral":"expression-mad";
+    renderPeep();
+    reactionTimer=setTimeout(()=>{shiyuFaceShadowActive=false;currentExpression="expression-happy";renderPeep();},1200);
+    return;
+  }
 
   const now = Date.now();
   pokeTimes = pokeTimes.filter(time => now - time <= 3000);
@@ -6843,10 +6959,10 @@ function chooseSingle(group, id) {
   outfit[group.id] = id;
   if (save.selectedCharacter === "miho" && group.id !== "mihoLook") outfit.mihoLook = null;
 
-  if (save.selectedCharacter === "peep" || save.selectedCharacter === "io" || save.selectedCharacter === "miho" || save.selectedCharacter === "annika") {
+  if (save.selectedCharacter === "peep" || save.selectedCharacter === "io" || save.selectedCharacter === "miho" || save.selectedCharacter === "annika" || save.selectedCharacter === "shiyu") {
     // Dresses replace the regular top + skirt visually. Picking a regular
     // top or skirt switches back out of the one-piece dress automatically.
-    if ((group.id === "top" || group.id === "bottom") && id) outfit.dress = null;
+    if ((group.id === "top" || group.id === "bottom" || (save.selectedCharacter==="shiyu" && group.id==="outer")) && id) outfit.dress = null;
 
     // Full-leg stockings and the older separate sock system are mutually
     // exclusive so two different leg layers never accidentally overlap.
@@ -7092,7 +7208,13 @@ const WARDROBE_SHOP_META = {
   "annika-hair-bow-high": { characterId: "annika", label: "Annika · High Hair Bow", assetIds: ["headbow-small"], unlockIds: ["headbow-small"] },
   "annika-circus-back-bow": { characterId: "annika", label: "Annika · Circus Back Bow", assetIds: ["back-bow-circus"], unlockIds: ["back-bow-circus"] },
   "annika-neck-bow": { characterId: "annika", label: "Annika · Neck Bow", assetIds: ["neck-bow"], unlockIds: ["neck-bow"] },
-  "annika-scarf": { characterId: "annika", label: "Annika · Scarf", assetIds: ["scarf"], unlockIds: ["scarf"] }
+  "annika-scarf": { characterId: "annika", label: "Annika · Scarf", assetIds: ["scarf"], unlockIds: ["scarf"] },
+  "shiyu-hair-short":{characterId:"shiyu",label:"Shiyu · Short Hair",assetIds:["hair-short"],unlockIds:["hair-short"]},
+  "shiyu-hair-long":{characterId:"shiyu",label:"Shiyu · Long Hair",assetIds:["hair-long"],unlockIds:["hair-long"]},
+  "shiyu-babydoll":{characterId:"shiyu",label:"Shiyu · Babydoll Outfit",assetIds:["dress-babydoll"],unlockIds:["dress-babydoll"]},
+  "shiyu-frill-stockings":{characterId:"shiyu",label:"Shiyu · Frill Stockings",assetIds:["legwear-frill"],unlockIds:["legwear-frill"]},
+  "shiyu-booties":{characterId:"shiyu",label:"Shiyu · Booties",assetIds:["shoes-booties"],unlockIds:["shoes-booties"]},
+  "shiyu-big-ribbon":{characterId:"shiyu",label:"Shiyu · Big Ribbon",assetIds:["big-ribbon"],unlockIds:["big-ribbon"]}
 };
 
 function getWardrobeShopMeta(wardrobeId) {
@@ -13246,7 +13368,8 @@ function switchToProfileCharacter(characterId) {
   syncSelectedCharacterRoom();
   currentRoomView = "main";
   closeWingDuckPicker();
-  currentExpression = "expression-neutral";
+  currentExpression = characterId==="shiyu" ? "expression-happy" : "expression-neutral";
+  shiyuFaceShadowActive=false;
   persist();
 
   renderPeep();
@@ -15247,7 +15370,7 @@ scheduleNonCriticalWarmup(warmStartupAssets, 150);
 // Miko or Peep from appearing during app startup.
 setTimeout(() => {
   try {
-    const unlockedOnLoad = ["peep", "miko", "io", "miho", "annika"]
+    const unlockedOnLoad = ["peep", "miko", "io", "miho", "annika", "shiyu"]
       .filter(characterId => isCharacterUnlocked(characterId))
       .filter(characterId => evaluateCharacterHappinessDuckReward(characterId, { notify: false, persistNow: false }));
 

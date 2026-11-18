@@ -2,7 +2,7 @@
 (function(){
   'use strict';
   const TC=window.DuckieTradingCards;
-  const CHARACTER_IDS=['peep','miko','io','miho','annika'];
+  const CHARACTER_IDS=['peep','miko','io','miho','annika','shiyu'];
   const RELEASE_DUST={normal:10,boss:25,shiny:50};
   const MIMIC_BOX_ICONS=Object.freeze({
     'mimic:base':'assets/enemies/mimic/base/open-1.webp',

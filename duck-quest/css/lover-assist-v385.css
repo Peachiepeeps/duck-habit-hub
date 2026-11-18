@@ -139,3 +139,7 @@
 
 /* v24.405: no clipped Lil Guy label underneath Lovers/Friends. */
 #battlefield.lover-assist-battle-v385 #buddyCombatant > .buddy-battle-name{display:none!important}
+
+/* v24.406 Victory chest must never be covered by a companion HP panel. */
+#battlefield:has(#chestLayer:not(.hidden)) #loverAssistHpV385,
+#battlefield:has(#chestLayer:not(.hidden)) #buddyCombatant.lover-assist-ally-v385{display:none!important}

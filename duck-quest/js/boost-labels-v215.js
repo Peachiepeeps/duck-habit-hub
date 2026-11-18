@@ -4,7 +4,7 @@
   window.DUCKIE_QUEST_BOOST_LABELS='24.215-safe-use-on-oc-label';
 
   function heroNameV215(){
-    try{return typeof heroDisplayName==='function'?heroDisplayName():({peep:'Peep',miko:'Miko',io:'Io',miho:'Miho',annika:'Annika'})[activeCharacterId]||'OC';}
+    try{return typeof heroDisplayName==='function'?heroDisplayName():({peep:'Peep',miko:'Miko',io:'Io',miho:'Miho',annika:'Annika',shiyu:'Shiyu'})[activeCharacterId]||'OC';}
     catch(error){return 'OC';}
   }
   function refreshCandyLabelsV215(){
