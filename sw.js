@@ -15,15 +15,15 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-420';
-const MEDIA_CACHE='duck-habit-hub-media-v24-420';
+const APP_CACHE='duck-habit-hub-app-v24-421';
+const MEDIA_CACHE='duck-habit-hub-media-v24-421';
 const MAX_MEDIA_ENTRIES=400;
 let mediaWrites=0;
 const APP_SHELL=[
  './',
  './index.html',
  './version.json',
- './sw.js?v=24.420',
+ './sw.js?v=24.421',
  './manifest.webmanifest?v=24.296',
  './app.css?v=24.385',
  './trading-cards-base.css?v=24.327',
@@ -43,7 +43,7 @@ const APP_SHELL=[
  './trading-cards-extra.js?v=24.353',
  './trading-cards-lil-guys-v336.js?v=24.353',
  './trading-cards-v317.js?v=24.317',
- './trading-cards-gimmicks-v288.js?v=24.296',
+ './trading-cards-gimmicks-v288.js?v=24.421',
  './trading-cards-sock-gremlin-v297.js?v=24.297',
  './trading-cards-universal-v298.js?v=24.298',
  './trading-cards-bao-cafe-v299.js?v=24.408',
@@ -99,7 +99,7 @@ const APP_SHELL=[
  './bao-cafe/assets/Frappe-idle-1.png',
  './duck-quest/css/bao-cafe-v299.css?v=24-309',
  './duck-quest/css/fixes-v318.css?v=24.318',
- './duck-quest/css/character-roster-v411.css?v=24.420',
+ './duck-quest/css/character-roster-v411.css?v=24.421',
  './duck-quest/js/bao-cafe-v299.js?v=24.408',
  './duck-quest/js/lover-assist-v385.js?v=24.413',
  './duck-quest/js/sweetheart-v352.js?v=24.385',
@@ -204,7 +204,7 @@ const APP_SHELL=[
  './duck-quest/css/quest-v276.css?v=24-276',
  './duck-quest/css/quest-v277.css?v=24-277',
  './duck-quest/css/quest-v278.css?v=24-280',
- './duck-quest/js/game-v96.js?v=24.420&buddy=v11',
+ './duck-quest/js/game-v96.js?v=24.421&buddy=v11',
  './duck-quest/js/hatchery-v179.js?v=24-345',
  './duck-quest/js/hatchery-egg-position-v192.js?v=24-343',
  './duck-quest/assets/eggs/Hatching-background-six-v343.png',
@@ -214,7 +214,7 @@ const APP_SHELL=[
  './duck-quest/js/quest-v265.js?v=24.408',
  './duck-quest/js/quest-v269.js?v=24-269',
  './duck-quest/js/quest-v270.js?v=24-284',
- './duck-quest/js/gimmick-encounters-v288.js?v=24.359',
+ './duck-quest/js/gimmick-encounters-v288.js?v=24.421',
  './duck-quest/js/sock-gremlin-v297.js?v=24.359',
  './duck-quest/js/special-catch-v298.js?v=24-298',
  './duck-quest/js/ufono-v298.js?v=24.356',

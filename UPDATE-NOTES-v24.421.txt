@@ -1,0 +1,10 @@
+Duckie Days v24.421 — NPC roster + Quackers card + portrait polish
+
+- Nico: raise bust crop to show more face (tall hat may be trimmed).
+- Quin, Circe, Yuzuru, Cheryln, Shinobu, Lukio, Annika: shift crop left.
+- Miho: shift crop right.
+- Angel and Shiyu: slightly larger bust; Shiyu lowered.
+- Midori: unchanged.
+- Demon: appears in Change OC roster after first sibling reunion, with existing reunion count / 10 toward playable unlock. Demon keeps the regular NPC move and happiness mechanics.
+- Quackers: add missing Rare encounter card (drop/pity matching Pippa), and register missing Fabled golden-duck card. No Quackers pet/character reward was added.
+- Refresh cache-busting version references.

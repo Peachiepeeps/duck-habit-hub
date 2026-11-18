@@ -332,7 +332,11 @@
           addCoins(150);
           if(!owned&&TC?.byId?.['f-quackers']){TC.grantCard(hubSave,'f-quackers',1);reward='NEW Quackers Fabled Card + 150 Pink Coins';}
           else{const t=TC?.ensureState?.(hubSave);if(t)t.unopenedPacks=Math.max(0,Number(t.unopenedPacks)||0)+1;reward='1 Card Pack + 150 Pink Coins';}
-        }else reward=win();
+        }else{
+          reward=win();
+          const card=maybeGrantCard('quackers','r-gimmick-quackers');
+          if(card) reward+=cardText(card);
+        }
         summary.textContent=`✨ ${reward}!`;
         const next=document.createElement('button');next.type='button';next.className='pixel-button primary';next.textContent='Continue';
         next.addEventListener('click',()=>finish(`Quackers: A lucky duck indeed! You won ${reward}!`),{once:true});

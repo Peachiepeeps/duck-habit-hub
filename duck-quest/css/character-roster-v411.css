@@ -214,3 +214,19 @@
 @media(max-width:400px){
   #questOcPicker .quest-oc-choice[data-character-id="midori"] .quest-oc-choice-sprite{width:66px}
 }
+
+/* v24.421 — character-specific icon framing (Midori deliberately unchanged). */
+#questOcPicker .quest-oc-choice[data-character-id="nico"] .quest-oc-choice-sprite{top:-9px}
+#questOcPicker .quest-oc-choice:is([data-character-id="quin"],[data-character-id="circe"],[data-character-id="yuzuru"],[data-character-id="cheryln"],[data-character-id="shinobu"],[data-character-id="lukio"],[data-character-id="annika"]) .quest-oc-choice-sprite{left:calc(50% - 5px)}
+#questOcPicker .quest-oc-choice[data-character-id="miho"] .quest-oc-choice-sprite{left:calc(50% + 5px)}
+#questOcPicker .quest-oc-choice:is([data-character-id="angel"],[data-character-id="shiyu"]) .quest-oc-choice-sprite{width:78px}
+#questOcPicker .quest-oc-choice[data-character-id="shiyu"] .quest-oc-choice-sprite{top:4px}
+@media(max-width:560px){
+  #questOcPicker .quest-oc-choice:is([data-character-id="angel"],[data-character-id="shiyu"]) .quest-oc-choice-sprite{width:66px}
+}
+@media(max-width:400px){
+  #questOcPicker .quest-oc-choice:is([data-character-id="angel"],[data-character-id="shiyu"]) .quest-oc-choice-sprite{width:57px}
+  #questOcPicker .quest-oc-choice[data-character-id="nico"] .quest-oc-choice-sprite{top:-7px}
+  #questOcPicker .quest-oc-choice:is([data-character-id="quin"],[data-character-id="circe"],[data-character-id="yuzuru"],[data-character-id="cheryln"],[data-character-id="shinobu"],[data-character-id="lukio"],[data-character-id="annika"]) .quest-oc-choice-sprite{left:calc(50% - 4px)}
+  #questOcPicker .quest-oc-choice[data-character-id="miho"] .quest-oc-choice-sprite{left:calc(50% + 4px)}
+}
