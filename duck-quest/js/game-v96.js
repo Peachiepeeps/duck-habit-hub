@@ -90,8 +90,12 @@ function getAreaConfig(areaId){
 
 // v24.154 — Stitched borders use a crisp assist outline only for light colors; Sakura/Sparkle stay clean.
 // Internal save keys still use the legacy area/rank names so existing player progress remains compatible.
-const QUEST_CHARACTER_IDS = Object.freeze(["peep","miko","io","miho","annika","shiyu","angel"]);
-const QUEST_CHARACTER_NAMES = Object.freeze({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika",shiyu:"Shiyu",angel:"Angel"});
+const QUEST_NPC_HEROES = Object.freeze({"lukio":{"name":"Lukio","idle":["assets/love-interests/lukio/Lukio-idle-1.png","assets/love-interests/lukio/Lukio-idle-2.png"]},"shinobu":{"name":"Shinobu","idle":["assets/love-interests/shinobu/Shinobu-idle-1.png","assets/love-interests/shinobu/Shinobu-idle-2.png"]},"cheryln":{"name":"Cheryln","idle":["assets/love-interests/cheryln/Cheryln-idle-1.png","assets/love-interests/cheryln/Cheryln-idle-2.png"]},"hibiki":{"name":"Hibiki","idle":["assets/love-interests/hibiki/Hibiki-idle-1.png","assets/love-interests/hibiki/Hibiki-idle-2.png"]},"devlin":{"name":"Devlin","idle":["assets/love-interests/devlin/Devlin-idle-1.png","assets/love-interests/devlin/Devlin-idle-2.png"]},"yuzuru":{"name":"Yuzuru","idle":["assets/love-interests/yuzuru/Yuzuru-idle-1.png","assets/love-interests/yuzuru/Yuzuru-idle-2.png"]},"westley":{"name":"Westley","idle":["assets/love-interests/westley/Westley-idle-1.png","assets/love-interests/westley/Westley-idle-2.png"]},"circe":{"name":"Circe","idle":["assets/love-interests/circe/Circe-idle-1.png","assets/love-interests/circe/Circe-idle-2.png"]},"quin":{"name":"Quin","idle":["assets/love-interests/quin/Quin-idle-1.png","assets/love-interests/quin/Quin-idle-2.png"]},"kiri":{"name":"Kiri","idle":["assets/love-interests/kiri/Kiri-idle-1.png","assets/love-interests/kiri/Kiri-idle-2.png"]},"midori":{"name":"Midori","idle":["assets/love-interests/midori/Midori-opened.png","assets/love-interests/midori/Midori-opened.png"]},"luka":{"name":"Luka","idle":["assets/love-interests/luka/Luka-idle-1.png","assets/love-interests/luka/Luka-idle-2.png"]},"cybil":{"name":"Cybil","idle":["assets/love-interests/cybil/Cybil-idle-1.png","assets/love-interests/cybil/Cybil-idle-2.png"]},"nico":{"name":"Nico","idle":["assets/love-interests/nico/Nico-idle-1.png","assets/love-interests/nico/Nico-idle-2.png"]},"nene":{"name":"Nene","idle":["assets/love-interests/nene/Nene-idle-1.png","assets/love-interests/nene/Nene-idle-2.png"]},"moriko":{"name":"Moriko","idle":["assets/love-interests/moriko/Moriko-idle-1.png","assets/love-interests/moriko/Moriko-idle-2.png"]},"jenson":{"name":"Jenson","idle":["assets/love-interests/jenson/Jenson-Sprite-idle-1.png","assets/love-interests/jenson/Jenson-Sprite-idle-2.png"]},"shin":{"name":"Shin","idle":["assets/love-interests/shin/Shin-idle-1.png","assets/love-interests/shin/Shin-idle-2.png"]},"bubble":{"name":"Bubble","idle":["assets/love-interests/bubble/Bubble-idle-1.png","assets/love-interests/bubble/Bubble-idle-2.png"]},"lain":{"name":"Lain","idle":["assets/love-interests/lain/Lain-idle-1.png","assets/love-interests/lain/Lain-idle-2.png"]},"tamao":{"name":"Tamao","idle":["assets/love-interests/tamao/Tamao-idle-1.png","assets/love-interests/tamao/Tamao-idle-2.png"]},"ranger":{"name":"Ranger","idle":["assets/love-interests/ranger/Ranger-idle-1.png","assets/love-interests/ranger/Ranger-idle-2.png"]},"lovell":{"name":"Lovell","idle":["assets/love-interests/lovell/Lovell-idle-1.png","assets/love-interests/lovell/Lovell-idle-2.png"]},"collin":{"name":"Collin","idle":["assets/love-interests/collin/Collin-idle-1.png","assets/love-interests/collin/Collin-idle-2.png"]},"beau":{"name":"Beau","idle":["assets/love-interests/beau/Beau-idle-1.png","assets/love-interests/beau/Beau-idle-2.png"]},"ein":{"name":"Ein","idle":["assets/love-interests/ein/Ein-idle-1.png","assets/love-interests/ein/Ein-idle-2.png"]},"ideno":{"name":"Ideno","idle":["assets/love-interests/ideno/Ideno-idle-1.png","assets/love-interests/ideno/Ideno-idle-2.png"]},"hinaru":{"name":"Hinaru","idle":["assets/love-interests/hinaru/Hinaru-idle-1.png","assets/love-interests/hinaru/Hinaru-idle-2.png"]},"yukine":{"name":"Yukine","idle":["assets/love-interests/yukine/Yukine-idle-1.png","assets/love-interests/yukine/Yukine-idle-2.png"]}});
+const QUEST_NPC_IDS = Object.freeze(Object.keys(QUEST_NPC_HEROES));
+function npcQuestUnlocked(id){return Boolean(QUEST_NPC_HEROES[id] && hubSave?.loveInterests?.[id]?.encountered);}
+function taskBuddyHappiness(id){try{return Math.max(0,Math.min(100,Number(JSON.parse(localStorage.getItem('duckieTaskBuddyRoom_v7')||'{}')?.buddyProgress?.[id]?.happiness)||0));}catch(_){return 0;}}
+const QUEST_CHARACTER_IDS = Object.freeze(["peep","miko","io","miho","annika","shiyu","angel",...QUEST_NPC_IDS]);
+const QUEST_CHARACTER_NAMES = Object.freeze({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika",shiyu:"Shiyu",angel:"Angel",...Object.fromEntries(Object.entries(QUEST_NPC_HEROES).map(([id,v])=>[id,v.name]))});
 window.DUCKIE_UI_THEME_CORE='24.211-expanded-theme-catalog';
 const QUEST_UI_THEMES = Object.freeze([
   {
@@ -489,6 +493,7 @@ function applyQuestIconBorder(element, characterId){
 }
 
 function questCharacterIconPreviewSrc(characterId){
+  if(QUEST_NPC_HEROES[characterId])return QUEST_NPC_HEROES[characterId].idle[0];
   if(characterId === "miko") return MikoIdle?.[0] || "assets/characters/miko/base/idle-1.webp";
   if(characterId === "io") return IoIdle?.[0] || "assets/characters/io/base/idle-1.webp";
   if(characterId === "miho") return MihoIdle?.[0] || "assets/characters/miho/base/hurt.webp";
@@ -778,7 +783,14 @@ const ANGEL_SKILLS = [
   sprite:"assets/characters/angel/base/Angel-sprite-angel.png",description:"Once per battle: 280% damage to every enemy; shield all allies for 15% Angel max HP for 2 turns."}
 ];
 
+const NPC_HERO_SKILLS = [
+ {id:'npc-quick-strike',name:'Quick Strike!',unlock:1,type:'damage',multiplier:1.0,description:'A reliable opening attack.'},
+ {id:'npc-recover',name:'Catch Your Breath!',unlock:10,type:'heal',healPercent:.42,cooldown:3,description:'Restore 42% of your maximum HP.'},
+ {id:'npc-duck-toss',name:'Duck Toss!',unlock:25,type:'damage',multiplier:1.65,cooldown:2,description:'A powerful duck-powered attack.'},
+ {id:'npc-heart-flurry',name:'Heart Flurry!',unlock:40,type:'multi-hit',multiplier:1.35,hits:3,cooldown:3,description:'Strike three times in a row.'}
+];
 function activeSkills(){
+  if(QUEST_NPC_HEROES[activeCharacterId])return NPC_HERO_SKILLS.map(s=>({...s,sprite:heroIdleFrames()[0]}));
   if(activeCharacterId === "miko") return MIKO_SKILLS;
   if(activeCharacterId === "io") return IO_SKILLS;
   if(activeCharacterId === "miho") return MIHO_SKILLS;
@@ -2755,6 +2767,7 @@ const AnnikaIdle = [
 const ShiyuIdle=["assets/characters/shiyu/base/Shiyu-idle-1.png","assets/characters/shiyu/base/Shiyu-idle-2.png"];
 const AngelIdle=["assets/characters/angel/base/Angel-sprite-idle-1.png","assets/characters/angel/base/Angel-sprite-idle-2.png"];
 function heroIdleFrames(){
+  if(QUEST_NPC_HEROES[activeCharacterId])return QUEST_NPC_HEROES[activeCharacterId].idle;
   if(activeCharacterId === "miko") return MikoIdle;
   if(activeCharacterId === "io") return IoIdle;
   if(activeCharacterId === "miho") return MihoIdle;
@@ -2764,6 +2777,7 @@ function heroIdleFrames(){
   return PEepIdle;
 }
 function heroHurtFrame(){
+  if(QUEST_NPC_HEROES[activeCharacterId])return QUEST_NPC_HEROES[activeCharacterId].idle[0];
   if(activeCharacterId === "miko") return MikoIdle[0];
   if(activeCharacterId === "io") return IoIdle[0];
   if(activeCharacterId === "miho") return "assets/characters/miho/base/hurt.webp";
@@ -2982,6 +2996,7 @@ function activeCharacterIdFromQuest(){
   // On the first v26 launch, inherit the Hub OC once. After that Duck Quest
   // remembers its own independently selected hero.
   const requested=String(questSave.activeCharacter || hubSave.selectedCharacter || "peep");
+  if(npcQuestUnlocked(requested))return requested;
   if(requested==="miko" && unlocked.includes("miko")) return "miko";
   if(requested==="io" && unlocked.includes("io")) return "io";
   if(requested==="miho" && unlocked.includes("miho")) return "miho";
@@ -2994,7 +3009,7 @@ function activeCharacterIdFromQuest(){
 let activeCharacterId = activeCharacterIdFromQuest();
 questSave.activeCharacter = activeCharacterId;
 
-function heroDisplayName(){ return ({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika",shiyu:"Shiyu",angel:"Angel"})[activeCharacterId] || "Peep"; }
+function heroDisplayName(){return QUEST_CHARACTER_NAMES[activeCharacterId] || "Peep";}
 
 function charmState(){
   questSave.charms=normalizeCharmSave(questSave.charms);
@@ -3216,7 +3231,7 @@ function normalizeQuestSave(raw) {
       lastArea:q.lastArea,
       iconBackground:q.iconBackground
     }),
-    activeCharacter:["peep","miko","io","miho","annika","shiyu","angel"].includes(q.activeCharacter)?q.activeCharacter:null,
+    activeCharacter:QUEST_CHARACTER_IDS.includes(q.activeCharacter)?q.activeCharacter:null,
     iconBackgroundsUnlocked:[...new Set(["white",...(Array.isArray(q.iconBackgroundsUnlocked)?q.iconBackgroundsUnlocked:[])])]
       .filter(id=>ICON_BACKGROUND_COLORS.some(color=>color.id===id)),
     iconBorderStylesUnlocked:[...new Set(["none",...(Array.isArray(q.iconBorderStylesUnlocked)?q.iconBorderStylesUnlocked:[])])]
@@ -4133,7 +4148,7 @@ function happinessLevelFromTotal(total) {
 
 function grantQuestHappiness(amount,characterId=activeCharacterId){
   const gain=Math.max(0,Math.floor(Number(amount)||0));
-  if(!gain) return 0;
+  if(!gain || QUEST_NPC_HEROES[characterId]) return 0;
   if(!hubSave.characterProgress || typeof hubSave.characterProgress!=="object") hubSave.characterProgress={};
   if(!hubSave.characterProgress[characterId] || typeof hubSave.characterProgress[characterId]!=="object") hubSave.characterProgress[characterId]={happinessTotal:0};
   const maxTotal=totalHappinessRequiredForLevel(100);
@@ -4154,7 +4169,7 @@ function chestHappinessReward(chest){
 }
 
 function affectionRewardBonus(characterId=activeCharacterId){
-  const hLevel=happinessLevelFromTotal(hubSave.characterProgress?.[characterId]?.happinessTotal);
+  const hLevel=QUEST_NPC_HEROES[characterId]?taskBuddyHappiness(characterId):happinessLevelFromTotal(hubSave.characterProgress?.[characterId]?.happinessTotal);
   if(hLevel>=100) return .25;
   if(hLevel>=50) return .10;
   return 0;
@@ -4722,7 +4737,7 @@ function skillDisplayDescription(skill){ return skill.description; }
 
 function availableQuestCharacters(){
   const unlocked=Array.isArray(hubSave.unlockedCharacters)?hubSave.unlockedCharacters:["peep"];
-  return ["peep","miko","io","miho","annika","shiyu","angel"].filter(id=>unlocked.includes(id));
+  return QUEST_CHARACTER_IDS.filter(id=>QUEST_NPC_HEROES[id]?npcQuestUnlocked(id):unlocked.includes(id));
 }
 
 function closeQuestOcPicker(){
@@ -4733,7 +4748,7 @@ function closeQuestOcPicker(){
 
 function renderQuestOcPicker(){
   if(!ui.questOcPicker) return;
-  const names={peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika",shiyu:"Shiyu",angel:"Angel"};
+  const names=QUEST_CHARACTER_NAMES;
   ui.questOcPicker.innerHTML="";
   availableQuestCharacters().forEach(id=>{
     const button=document.createElement("button");
@@ -4781,7 +4796,7 @@ function renderSwitchOcButton(){
     return;
   }
   ui.switchQuestOc.classList.remove("hidden");
-  ui.switchQuestOc.textContent="Switch OC";
+  ui.switchQuestOc.textContent="Change Character";
   renderQuestOcPicker();
 }
 
@@ -5350,7 +5365,7 @@ function renderMeta() {
   const need=expNeeded(hero.level);
   ui.xpText.textContent=hero.level>=MAX_LEVEL?"MAX LEVEL":`${Math.floor(hero.exp)} / ${need} EXP`;
   ui.xpFill.style.width=hero.level>=MAX_LEVEL?"100%":`${Math.min(100,(hero.exp/need)*100)}%`;
-  const hLevel=happinessLevelFromTotal(hubSave.characterProgress?.[activeCharacterId]?.happinessTotal);
+  const hLevel=QUEST_NPC_HEROES[activeCharacterId]?taskBuddyHappiness(activeCharacterId):happinessLevelFromTotal(hubSave.characterProgress?.[activeCharacterId]?.happinessTotal);
   ui.happinessLevel.textContent=`Lv. ${hLevel}`; ui.happinessHearts.innerHTML="";
   const filled=Math.max(0,Math.min(10,Math.floor(hLevel/10)));
   for(let i=1;i<=10;i++){const heart=document.createElement("span");heart.textContent="♥";heart.className=i<=filled?"heart-full":"heart-empty";ui.happinessHearts.appendChild(heart);}

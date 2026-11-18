@@ -3,7 +3,7 @@
   const TC=window.DuckieTradingCards;if(!TC)return;
   const originalGenerate=generateRewards;
   generateRewards=function(chest){
-    const rewards=originalGenerate(chest);rewards.tradingCardDrops=[];rewards.tradingCardVariantsV351=[];
+    const rewards=originalGenerate(chest);rewards.tradingCardDrops=[];rewards.tradingCardVariantsV351=[];rewards.tradingCardArtsV411=[];
     const foes=Array.isArray(chest?.enemies)&&chest.enemies.length?chest.enemies:(chest?.enemy?[chest.enemy]:[]);
     const cardState=TC.ensureState(hubSave),owned=cardState.owned;
     foes.forEach(enemy=>{
@@ -13,7 +13,7 @@
       if(Math.random()<chance){
         rewards.tradingCardDrops.push(id);
         const form=enemy.shiny?'default':(typeof enemyVariantId==='function'?enemyVariantId(enemy):'base');
-        rewards.tradingCardVariantsV351.push(String(form||'base'));
+        rewards.tradingCardVariantsV351.push(String(form||'base'));rewards.tradingCardArtsV411.push(String(enemy.idle?.[0]||''));
       }
     });
     return rewards;
@@ -23,7 +23,7 @@
     const cardState=TC.ensureState(hubSave);
     rewards.tradingCardResults=(rewards.tradingCardDrops||[]).map((id,index)=>{
       const variantId=rewards.tradingCardVariantsV351?.[index]||'default';
-      const result=TC.grantCard(hubSave,id,1,{variantId,source:'quest-battle'});
+      const result=TC.grantCard(hubSave,id,1,{variantId,art:rewards.tradingCardArtsV411?.[index],source:'quest-battle'});
       if(id.startsWith("r-"))cardState.stats.shinyQuestDrops[id]=true;
       return result;
     }).filter(Boolean);

@@ -175,6 +175,9 @@
     if(!data.tradingCards || typeof data.tradingCards!=="object" || Array.isArray(data.tradingCards)) data.tradingCards={};
     const state=data.tradingCards;
     if(!state.owned || typeof state.owned!=="object" || Array.isArray(state.owned)) state.owned={};
+    if(state.variantCards&&typeof state.variantCards==='object')for(const [id,v] of Object.entries(state.variantCards)){
+      if(v&&byId[v.baseId]&&!byId[id])installVariantCard(v.baseId,v.variantId,v.art);
+    }
     if(!Array.isArray(state.favorites)) state.favorites=[];
     if(!Array.isArray(state.unseen)) state.unseen=[];
     state.unopenedPacks=Math.max(0,Math.floor(Number(state.unopenedPacks)||0));
@@ -188,7 +191,27 @@
   }
   function readSave(){try{const raw=localStorage.getItem(SAVE_KEY);const data=raw?JSON.parse(raw):{};ensureState(data);return data;}catch(e){const data={};ensureState(data);return data;}}
   function writeSave(data){ensureState(data);localStorage.setItem(SAVE_KEY,JSON.stringify(data));}
-  function grantCard(data,id,qty=1){const state=ensureState(data),card=byId[id];if(!state||!card)return null;const before=Math.max(0,Math.floor(Number(state.owned[id])||0));const after=before+Math.max(1,Math.floor(Number(qty)||1));state.owned[id]=after;if(before===0&&!state.unseen.includes(id))state.unseen.push(id);return {card,before,after,isNew:before===0};}
+  function installVariantCard(baseId,variantId,art){
+    const base=byId[baseId];if(!base)return null;
+    const variant=String(variantId||'base').toLowerCase();
+    if(!variant||variant==='base'||variant==='default'||variant==='shiny')return base;
+    const id=`${baseId}--${variant.replace(/[^a-z0-9-]/g,'')}`;
+    if(byId[id])return byId[id];
+    const label=variant.split('-').map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join(' ');
+    const card={...base,id,name:`${label} ${base.name}`,art:art||base.art,number:base.number,variantId:variant,category:`${base.category} · ${label}`,hint:`Find the ${label} variant in Duck Quest.`};
+    byId[id]=card;cards.push(card);return card;
+  }
+  function grantCard(data,id,qty=1,opts={}){
+    const state=ensureState(data);if(!state||!byId[id])return null;
+    const variant=String(opts?.variantId||'base').toLowerCase();
+    const base=byId[id];const art=String(opts?.art||'').replace(/^assets\//,'');
+    const card=(base.enemyId&&base.rarity!=='rare')?installVariantCard(id,variant,art):base;
+    if(!card)return null;
+    if(card!==base){if(!state.variantCards||typeof state.variantCards!=='object')state.variantCards={};state.variantCards[card.id]={baseId:id,variantId:variant,art:card.art};}
+    const before=Math.max(0,Math.floor(Number(state.owned[card.id])||0));const after=before+Math.max(1,Math.floor(Number(qty)||1));state.owned[card.id]=after;
+    if(before===0&&!state.unseen.includes(card.id))state.unseen.push(card.id);
+    return {card,before,after,isNew:before===0,variantIsNew:before===0,variantId:variant};
+  }
   function grantPack(data,qty=1){const state=ensureState(data);if(!state)return 0;state.unopenedPacks+=Math.max(1,Math.floor(Number(qty)||1));return state.unopenedPacks;}
   function pick(list){return list[Math.floor(Math.random()*list.length)];}
   function byRarity(rarity){return cards.filter(card=>card.rarity===rarity);}

@@ -1,0 +1,13 @@
+Duckie Days v24.411 - update-only patch (base v24.410)
+
+Upload the ZIP to the repository root; existing duckie-days-updates.yml automatically installs it.
+
+- Enemy catch and battle cards preserve normal color variants as separate collectible card IDs, using actual enemy art; shiny encounters continue to award the rare shiny card. Existing cards/save counts are not deleted.
+- Fix Porcupin bonus cards awarding rare art for a non-shiny Porcupin.
+- Character selection adds 29 humanoid love interests after their existing encounter unlocks. Non-humanoid encounters are excluded.
+- Each new hero has separate Duck Quest levels, EXP, route progress, items, and skill milestones. NPC happiness benefits read the Task Buddy Room happiness save.
+- Existing OC selection becomes a larger scrollable character grid.
+
+Limitations: NPC skills use a shared four-move starter set (rather than custom personal moves), and existing romance/family encounter scenes have not been rewritten to reverse dialogue when the NPC is selected. This requires further character-by-character scene integration.
+
+Validation: JS syntax checks and ZIP integrity checks. Not an in-browser playtest.

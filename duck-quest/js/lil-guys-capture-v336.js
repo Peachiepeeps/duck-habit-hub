@@ -9,7 +9,7 @@
    const cardId=TC.cardIdForEnemy(enemy);
    if(!cardId || !TC.byId[cardId])return caught;
    const variant=enemy.shiny?'default':String(caught.variantId||'default');
-   const got=TC.grantCard(hubSave,cardId,1,{variantId:variant,source:'catch'});
+   const got=TC.grantCard(hubSave,cardId,1,{variantId:variant,art:String(enemy.idle?.[0]||caught.image||''),source:'catch'});
    if(got){
      try{persistAll();}catch(_){}
      if(typeof setMessage==='function' && got.variantIsNew){

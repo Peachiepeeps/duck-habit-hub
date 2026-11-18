@@ -1,0 +1,4 @@
+/* Duck Quest 24.411 character roster */
+#questOcPicker{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:8px;max-height:min(65vh,490px);overflow-y:auto;overscroll-behavior:contain;padding:10px;width:min(93vw,580px);}
+#questOcPicker.hidden{display:none!important}
+#questOcPicker .quest-oc-choice{min-height:65px;text-align:left}
