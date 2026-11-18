@@ -20,7 +20,6 @@
     {id:"r-gimmick-pippa",name:"Pippa",art:"gimmicks/pippa/idle-1.png",rarity:"rare",number:"R-042",category:"Gimmick Encounter",hint:"Receive a Love Letter from Pippa in Duck Quest."},
     {id:"r-gimmick-artist-friend",name:"Artist Friend",art:"gimmicks/artist-friend/idle-1.png",rarity:"rare",number:"R-043",category:"Gimmick Encounter",hint:"Help Artist Friend find inspiration in Duck Quest."},
     {id:"r-gimmick-quackers",name:"Quackers",art:"gimmicks/quackers/Quackers-idle-1.png",rarity:"rare",number:"R-047",category:"Gimmick Encounter",hint:"Visit Quackers at the Lucky Duck Pond in Duck Quest."},
-    {id:"f-quackers",name:"Quackers",art:"gimmicks/quackers/Quackers-idle-1.png",rarity:"fabled",number:"F-090",category:"Gimmick Encounter",hint:"Choose the golden duck at Quackers’ Lucky Duck Pond."},
     {id:"r-gimmick-rotten-egg-shiny",enemyId:"rotten-egg",variantId:"shiny",name:"Shiny Rotten Egg",art:"gimmicks/rotten-egg/shiny/idle-1.png",rarity:"rare",number:"R-044",category:"Gimmick Encounter Shiny",hint:"Very rarely, a strange egg reveals a Shiny Rotten Egg."},
     {id:"r-gimmick-lucky-cat-shiny",enemyId:"lucky-cat",variantId:"shiny",name:"Shiny Lucky Cat",art:"gimmicks/lucky-cat/shiny/idle-1.png",rarity:"rare",number:"R-045",category:"Gimmick Encounter Shiny",hint:"Very rarely meet a Shiny Lucky Cat in Duck Quest."},
     {id:"r-gimmick-angy-duck-shiny",enemyId:"angy-duck",variantId:"shiny",name:"Shiny Angy Duck",art:"gimmicks/angy-duck/shiny/idle-1.png",rarity:"rare",number:"R-046",category:"Gimmick Encounter Shiny",hint:"Very rarely meet a Shiny Angy Duck in Duck Quest."}
@@ -29,5 +28,20 @@
     if(TC.byId[card.id]) continue;
     TC.cards.push(card);TC.byId[card.id]=card;
   }
-  window.DUCKIE_GIMMICK_CARDS_V288="24.288";
+  // v24.422: Quackers only has a Rare card. Convert any previously awarded
+  // accidental Fabled Quackers copy without losing the player's collection progress.
+  try {
+    const data=TC.readSave();
+    const state=TC.ensureState(data);
+    const accidental=Math.max(0,Math.floor(Number(state?.owned?.['f-quackers'])||0));
+    if(accidental){
+      state.owned['r-gimmick-quackers']=Math.max(0,Math.floor(Number(state.owned['r-gimmick-quackers'])||0))+accidental;
+      delete state.owned['f-quackers'];
+      if(state.unseen.includes('f-quackers')&&!state.unseen.includes('r-gimmick-quackers'))state.unseen.push('r-gimmick-quackers');
+      state.unseen=state.unseen.filter(id=>id!=='f-quackers');
+      state.favorites=state.favorites.filter(id=>id!=='f-quackers');
+      TC.writeSave(data);
+    }
+  }catch(error){console.warn('Quackers Rare card migration skipped:',error);}
+  window.DUCKIE_GIMMICK_CARDS_V288="24.422";
 })();

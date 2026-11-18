@@ -1211,7 +1211,7 @@
   <script src="trading-cards-extra.js?v=mimic-normalize-v8"></script>
   <script src="trading-cards-lil-guys-v336.js?v=24.353"></script>
   <script src="trading-cards-v317.js?v=24.317"></script>
-  <script src="trading-cards-gimmicks-v288.js?v=24.296"></script>
+  <script src="trading-cards-gimmicks-v288.js?v=24.422"></script>
   <script src="trading-cards-sock-gremlin-v297.js?v=24.297"></script>
   <script src="trading-cards-universal-v298.js?v=24.298"></script>
   <script src="trading-cards-bao-cafe-v299.js?v=24.408"></script>
@@ -1310,7 +1310,7 @@
       window.addEventListener("load", async () => {
         try {
           await duckHubClearOldCodeCaches();
-          const registration = await navigator.serviceWorker.register("./sw.js?v=24.420", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("./sw.js?v=24.422", { updateViaCache: "none" });
           await registration.update();
           if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
           await duckHubCheckForUpdate(registration);

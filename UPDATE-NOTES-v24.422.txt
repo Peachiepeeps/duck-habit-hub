@@ -1,0 +1,9 @@
+Duckie Days v24.422 — Quackers Rare Card Only
+
+- Removes the accidental Fabled Quackers card definition (f-quackers).
+- Retains the sole Rare Quackers trading card (r-gimmick-quackers, R-047).
+- Golden Duck prize grants the Rare Quackers card if not already owned; otherwise grants a card pack, keeping the 150 Pink Coins.
+- Normal duck picks retain the Rare Quackers card drop/pity system.
+- Existing accidental Fabled Quackers copies in saved collections migrate to Rare Quackers copies.
+- Cache/version references updated.
+- All other v24.421 features remain unchanged; install after v24.421.

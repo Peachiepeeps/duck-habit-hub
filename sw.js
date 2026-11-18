@@ -15,15 +15,15 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-421';
-const MEDIA_CACHE='duck-habit-hub-media-v24-421';
+const APP_CACHE='duck-habit-hub-app-v24-422';
+const MEDIA_CACHE='duck-habit-hub-media-v24-422';
 const MAX_MEDIA_ENTRIES=400;
 let mediaWrites=0;
 const APP_SHELL=[
  './',
  './index.html',
  './version.json',
- './sw.js?v=24.421',
+ './sw.js?v=24.422',
  './manifest.webmanifest?v=24.296',
  './app.css?v=24.385',
  './trading-cards-base.css?v=24.327',
@@ -43,7 +43,7 @@ const APP_SHELL=[
  './trading-cards-extra.js?v=24.353',
  './trading-cards-lil-guys-v336.js?v=24.353',
  './trading-cards-v317.js?v=24.317',
- './trading-cards-gimmicks-v288.js?v=24.421',
+ './trading-cards-gimmicks-v288.js?v=24.422',
  './trading-cards-sock-gremlin-v297.js?v=24.297',
  './trading-cards-universal-v298.js?v=24.298',
  './trading-cards-bao-cafe-v299.js?v=24.408',
@@ -214,7 +214,7 @@ const APP_SHELL=[
  './duck-quest/js/quest-v265.js?v=24.408',
  './duck-quest/js/quest-v269.js?v=24-269',
  './duck-quest/js/quest-v270.js?v=24-284',
- './duck-quest/js/gimmick-encounters-v288.js?v=24.421',
+ './duck-quest/js/gimmick-encounters-v288.js?v=24.422',
  './duck-quest/js/sock-gremlin-v297.js?v=24.359',
  './duck-quest/js/special-catch-v298.js?v=24-298',
  './duck-quest/js/ufono-v298.js?v=24.356',
