@@ -26,6 +26,7 @@
       name: "Miko",
       sprites: { idle1: MIKO_IDLE_1, idle2: MIKO_IDLE_2, smug: MIKO_SMUG }
     },
+    momoko:{name:'Momoko',sprites:{idle1:'assets/characters/momoko/base/Momoko-sprite-idle-1.png',idle2:'assets/characters/momoko/base/Momoko-sprite-idle-2.png',happy:'assets/characters/momoko/base/Momoko-sprite-happy.png'}},
     lukio: {
       name: "Lukio",
       duckId: "lukio-duck",
@@ -1572,10 +1573,24 @@ kiri: {
     return focus;
   }
 
+
+  // V24.423 — Momoko and her twin sister Moriko: a unique first scene, then three repeats.
+  const momokoMorikoConversations=[[["Momoko", "Hey there, Mori. Needed a break from the chaos?"], ["Moriko", "You have no idea, Momo... I'm so glad to see you."], ["Momoko", "Come on, Mori. Let's get you away from all that for a while."], ["Moriko", "Yeah… A short break can’t hurt. Let’s get something to eat."], ["Momoko", "Yesss… Sandwiches… Let’s go!"]], [["Momoko", "Need another break from the chaos?"], ["Moriko", "Don't tempt me. I might actually take you up on that."]], [["Moriko", "Have you been taking care of yourself, Momo?"], ["Momoko", "Of course. You should worry about yourself for once, Mori."]], [["Momoko", "Hey, Mori. Wanna grab a snack?"], ["Moriko", "You're always thinking about food, aren't you?"]]];
+  momokoMorikoConversations.forEach((lines,index)=>{
+    SCENES['momoko-moriko-'+index]={
+      id:'momoko-moriko-'+index,
+      title:index===0?'Twin Sisters Reunited':'The Twins Catch Up',kicker:'SISTER ENCOUNTER',
+      leftId:'momoko',rightId:'moriko',
+      dialogue:lines.map(([speaker,text])=>({speaker,text,leftPose:'idle1',rightPose:'idle1'})),
+      reward(){if(index===0){const data=load();data.momokoMorikoFirstReunion=true;save(data);}}
+    };
+  });
+
   function eligibleScenes(){
     const data = load();
     const root = ensureAll(data);
     const ids = [];
+    if(activeCharacterId()==='momoko')return [data.momokoMorikoFirstReunion?'momoko-moriko-'+(1+Math.floor(Math.random()*3)):'momoko-moriko-0'];
     if(activeCharacterId()==='shiyu')return ['yukine'];
     if(activeCharacterId()==='miho'){
       const mihoIds=['ranger','lovell','collin','beau','ein','ideno','hinaru'];
@@ -1642,7 +1657,7 @@ kiri: {
 
   function maybeBeforeNextEncounter(continueFn){
     if (bypassNextRoll) { bypassNextRoll = false; return false; }
-    if (open || !(isMiko() || activeCharacterId()==='annika' || activeCharacterId()==='shiyu')) return false;
+    if (open || !(isMiko() || activeCharacterId()==='annika' || activeCharacterId()==='shiyu' || activeCharacterId()==='momoko')) return false;
 
     const data=load();
     const ids = eligibleScenes();

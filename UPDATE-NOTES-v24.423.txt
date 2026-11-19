@@ -1,0 +1,23 @@
+Duckie Days v24.423 — Momoko Main OC Integration (UPDATE-ONLY)
+
+Install: Upload this ZIP to the normal GitHub Actions Update-only ZIP installer.
+Contains changed/new files only and is designed to overlay your existing v24.422 installation.
+Do not delete older game assets. Please back up your save before updating.
+
+Momoko the 8th OC, after Angel:
+- Purchase using the existing main OC invitation flow for 1,500 Pink Coins.
+- Separate level 1 Duck Quest progress, standard main OC battle stats, five custom skills plus Just a smack!: Water Splash! (L1, weaken), Kitty Claws! (L10, critical strike), Rising Tide! (L25, stun), Peach Blush! (L40, AoE + 10% max HP heal), Tsunami! (L50, heavy AoE).
+- Original 1080x1920 layered Home Hub outfit with default hoodie, hair, permanent bangs, removable pendant, boots and socks.
+- Shop: Ninja pieces and Sweet Dress pieces at normal wardrobe prices; group front/back frills as one purchase. Mew outfit unlocks at level 40. Café Uniform unlocks after 5 non-creative Momoko drinks served in Bao Café.
+- Standard rarity trading card with Momoko idle-1 sprite, original Momoko duck using existing main OC duck unlock method, Change OC profile portrait cropped from supplied reference.
+- Task Buddy favorite duck Peach; loved Boba, Onigiri, Cookie, Toast, Cup Noodles, Orange Tabby Plush, Tuxedo Cat Plush, Sandwich. Disliked Hot Coffee, Love Letter; Love Letter response retained. Sandwich gift added from supplied artwork.
+- Bao Café customer Momoko added with exactly approved bases, flavors, toppings and lid/straw colors.
+- Duck Quest: first Momoko+Moriko twin reunion and three randomized repeat scenes from owner-approved lines.
+- Bumped the cache/version identifiers. Also corrected a pre-existing Home Hub startup preload reference to undefined ROOM_OPTIONS.
+
+NOT INCLUDED in this update (reserved for a later release):
+- New Task Buddy room-entry greetings, random sickness, medicine, heart-exclamation conversations, special deliveries, new activity/gift requests and roommate dialogue.
+- Momoko's future additional family members or love interest (sprites not supplied yet).
+
+Checks performed: Node JS syntax on changed JS files and inline scripts; assets, gift catalog, character roster and skill metadata assertions; headless in-memory browser checks for Home Hub, Task Buddy, Bao Café, Duck Quest; Momoko reunion scene opens and all four screens initialize without JavaScript errors in that harness.
+LIMITATIONS: Live HTTP/GitHub deployment and full playthrough were not available in this runtime. Please try each Momoko feature in your actual game before relying on saved progression. In-browser tests used in-memory scripts; external images were verified on disk, not rendered through the deployed PWA.

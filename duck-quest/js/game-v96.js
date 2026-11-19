@@ -95,8 +95,8 @@ const QUEST_NPC_IDS = Object.freeze(Object.keys(QUEST_NPC_HEROES));
 function npcQuestEncounterCount(id){return id==="demon"?Math.max(0,Number(hubSave?.angelDemonReunion?.totalEncounters)||0):Math.max(0,Number(hubSave?.loveInterests?.[id]?.duckQuestEncountersV412)||0);}
 function npcQuestUnlocked(id){return Boolean(QUEST_NPC_HEROES[id] && npcQuestEncounterCount(id)>=10);}
 function taskBuddyHappiness(id){try{return Math.max(0,Math.min(100,Number(JSON.parse(localStorage.getItem('duckieTaskBuddyRoom_v7')||'{}')?.buddyProgress?.[id]?.happiness)||0));}catch(_){return 0;}}
-const QUEST_CHARACTER_IDS = Object.freeze(["peep","miko","io","miho","annika","shiyu","angel",...QUEST_NPC_IDS]);
-const QUEST_CHARACTER_NAMES = Object.freeze({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika",shiyu:"Shiyu",angel:"Angel",...Object.fromEntries(Object.entries(QUEST_NPC_HEROES).map(([id,v])=>[id,v.name]))});
+const QUEST_CHARACTER_IDS = Object.freeze(["peep","miko","io","miho","annika","shiyu","angel","momoko",...QUEST_NPC_IDS]);
+const QUEST_CHARACTER_NAMES = Object.freeze({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika",shiyu:"Shiyu",angel:"Angel",momoko:"Momoko",...Object.fromEntries(Object.entries(QUEST_NPC_HEROES).map(([id,v])=>[id,v.name]))});
 window.DUCKIE_UI_THEME_CORE='24.211-expanded-theme-catalog';
 const QUEST_UI_THEMES = Object.freeze([
   {
@@ -501,6 +501,7 @@ function questCharacterIconPreviewSrc(characterId){
   if(characterId === "annika") return AnnikaIdle?.[0] || "assets/characters/annika/base/hurt.webp";
   if(characterId === "shiyu") return "assets/characters/shiyu/base/Shiyu-idle-1.png";
   if(characterId === "angel") return "assets/characters/angel/base/Angel-sprite-idle-1.png";
+  if(characterId === "momoko") return "assets/characters/momoko/base/Momoko-sprite-idle-1.png";
   return "assets/characters/peep/base/idle-1.webp";
 }
 
@@ -784,6 +785,67 @@ const ANGEL_SKILLS = [
   sprite:"assets/characters/angel/base/Angel-sprite-angel.png",description:"Once per battle: 280% damage to every enemy; shield all allies for 15% Angel max HP for 2 turns."}
 ];
 
+// v24.423: Momoko's owner-approved skills (five normal + shared nonlethal capture attack).
+const MOMOKO_SPRITES={
+  summon:"assets/characters/momoko/base/Momoko-sprite-water-summon.png",
+  rise:"assets/characters/momoko/base/Momoko-sprite-water-rise.png",
+  cat:"assets/characters/momoko/base/Momoko-sprite-cat-angry.png",
+  light:"assets/characters/momoko/base/Momoko-Transform-light.png",
+  blush:"assets/characters/momoko/base/Momoko-Sprite-Peach-Blush.png"
+};
+const MOMOKO_SKILLS=[
+  {id:"momoko-water-splash",name:"Water Splash!",unlock:1,type:"damage",multiplier:1,
+   sprite:MOMOKO_SPRITES.summon,attackDownChance:.20,attackDownTurns:1,
+   description:"Light water damage to one enemy, with a 20% chance to weaken its next attack."},
+  {id:"momoko-kitty-claws",name:"Kitty Claws!",unlock:10,type:"damage",multiplier:1.65,critChance:.25,
+   sprite:MOMOKO_SPRITES.cat,description:"A powerful pink claw swipe with a 25% critical-hit chance."},
+  {id:"momoko-rising-tide",name:"Rising Tide!",unlock:25,type:"damage",multiplier:1.55,stunChance:.25,stunTurns:1,
+   sprite:MOMOKO_SPRITES.rise,description:"Moderate water damage with a 25% chance to stun for one turn."},
+  {id:"momoko-peach-blush",name:"Peach Blush!",unlock:40,type:"damage",multiplier:2.4,hitsAll:true,
+   healPercent:.10,sprite:MOMOKO_SPRITES.blush,description:"Strong magical damage to all enemies and heals 10% of Momoko's maximum HP."},
+  {id:"momoko-tsunami",name:"Tsunami!",unlock:50,type:"damage",multiplier:3,hitsAll:true,
+   sprite:MOMOKO_SPRITES.rise,description:"Heavy water damage to every enemy."},
+  {id:"just-a-smack",name:"Just a smack!",unlock:1,type:"safe-chip",
+   sprite:MOMOKO_SPRITES.cat,description:"Deals ordinary damage but never knocks an enemy below 1 HP. Perfect for capturing!"}
+];
+async function momokoSkillIntro(skill){
+  if(activeCharacterId!=="momoko")return;
+  if(skill.id==="momoko-peach-blush"){
+    setHeroFrame(MOMOKO_SPRITES.light);await sleep(210);
+    setHeroFrame(MOMOKO_SPRITES.blush);await sleep(230);
+  } else if(skill.id==="momoko-tsunami"){
+    setHeroFrame(MOMOKO_SPRITES.summon);await sleep(210);
+    setHeroFrame(MOMOKO_SPRITES.rise);await sleep(240);
+  }
+}
+async function momokoSkillOutro(skill){
+  if(activeCharacterId==="momoko" && skill.id==="momoko-peach-blush"){
+    setHeroFrame(MOMOKO_SPRITES.light);await sleep(200);
+  }
+}
+function momokoSkillHeal(skill){
+  if(activeCharacterId!=="momoko" || !skill.healPercent || !currentRun)return;
+  const amount=Math.max(1,Math.round(currentRun.maxHp*skill.healPercent));
+  const healed=Math.min(amount,Math.max(0,currentRun.maxHp-currentRun.hp));
+  currentRun.hp+=healed;
+  if(healed>0)showFloat(`+${healed}`,"heal","peep");
+  renderPeepHp();
+}
+function momokoSkillOnEnemyHit(skill,enemy){
+  if(activeCharacterId!=="momoko" || !enemy || enemy.hpNow<=0)return;
+  if(skill.attackDownChance && Math.random()<skill.attackDownChance){
+    skillState.enemyAttackDownTurns=skill.attackDownTurns||1;
+    skillState.enemyAttackMultiplier=.80;
+    saveCurrentEnemyEffects(enemy);
+    setMessage(`${enemy.name}'s next attack was weakened by Water Splash!`);
+  }
+  if(skill.stunChance && Math.random()<skill.stunChance){
+    skillState.enemyStunTurns=Math.max(1,skill.stunTurns||1);
+    saveCurrentEnemyEffects(enemy);
+    setMessage(`${enemy.name} is stunned for one turn!`);
+  }
+}
+
 const NPC_HERO_SKILLS = [
  {id:'npc-quick-strike',name:'Quick Strike!',unlock:1,type:'damage',multiplier:1.0,description:'A reliable opening attack.'},
  {id:'npc-recover',name:'Catch Your Breath!',unlock:10,type:'heal',healPercent:.42,cooldown:3,description:'Restore 42% of your maximum HP.'},
@@ -798,6 +860,7 @@ function activeSkills(){
   if(activeCharacterId === "annika") return ANNIKA_SKILLS;
   if(activeCharacterId === "shiyu") return SHIYU_SKILLS;
   if(activeCharacterId === "angel") return ANGEL_SKILLS;
+  if(activeCharacterId === "momoko") return MOMOKO_SKILLS;
   return PEEP_SKILLS;
 }
 
@@ -1999,7 +2062,7 @@ function normalizeCharmSave(raw){
   const owned={};
   for(const id of Object.keys(CHARM_DEFS)) if(source.owned?.[id]) owned[id]=true;
   const equippedByCharacter={};
-  for(const characterId of ["peep","miko","io","miho","annika","shiyu","angel"]){
+  for(const characterId of ["peep","miko","io","miho","annika","shiyu","angel","momoko"]){
     const incoming=Array.isArray(source.equippedByCharacter?.[characterId])?source.equippedByCharacter[characterId]:[];
     const seenFamilies=new Set();
     equippedByCharacter[characterId]=[];
@@ -2395,7 +2458,7 @@ function ensureBuddySave() {
   hubSave.buddies.collection=normalizeBuddyCollection(hubSave.buddies.collection);
   if(!hubSave.buddies.equippedByCharacter || typeof hubSave.buddies.equippedByCharacter!=="object") hubSave.buddies.equippedByCharacter={};
   if(!hubSave.buddies.personalizationByCharacter || typeof hubSave.buddies.personalizationByCharacter!=="object") hubSave.buddies.personalizationByCharacter={};
-  ["peep","miko","io","miho","annika","shiyu","angel"].forEach(id=>{
+  ["peep","miko","io","miho","annika","shiyu","angel","momoko"].forEach(id=>{
     const slots=Array.isArray(hubSave.buddies.equippedByCharacter[id])?hubSave.buddies.equippedByCharacter[id]:[];
     hubSave.buddies.equippedByCharacter[id]=Array.from({length:6},(_,i)=>typeof slots[i]==="string"?slots[i]:null);
     const personal=Array.isArray(hubSave.buddies.personalizationByCharacter[id])?hubSave.buddies.personalizationByCharacter[id]:[];
@@ -2767,6 +2830,7 @@ const AnnikaIdle = [
 
 const ShiyuIdle=["assets/characters/shiyu/base/Shiyu-idle-1.png","assets/characters/shiyu/base/Shiyu-idle-2.png"];
 const AngelIdle=["assets/characters/angel/base/Angel-sprite-idle-1.png","assets/characters/angel/base/Angel-sprite-idle-2.png"];
+const MomokoIdle=["assets/characters/momoko/base/Momoko-sprite-idle-1.png","assets/characters/momoko/base/Momoko-sprite-idle-2.png"];
 function heroIdleFrames(){
   if(QUEST_NPC_HEROES[activeCharacterId])return QUEST_NPC_HEROES[activeCharacterId].idle;
   if(activeCharacterId === "miko") return MikoIdle;
@@ -2775,6 +2839,7 @@ function heroIdleFrames(){
   if(activeCharacterId === "annika") return AnnikaIdle;
   if(activeCharacterId === "shiyu") return ShiyuIdle;
   if(activeCharacterId === "angel") return AngelIdle;
+  if(activeCharacterId === "momoko") return MomokoIdle;
   return PEepIdle;
 }
 function heroHurtFrame(){
@@ -2785,6 +2850,7 @@ function heroHurtFrame(){
   if(activeCharacterId === "annika") return "assets/characters/annika/base/hurt.webp";
   if(activeCharacterId === "shiyu") return "assets/characters/shiyu/base/Shiyu-hurt.png";
   if(activeCharacterId === "angel") return "assets/characters/angel/base/Angel-sprite-hurt.png";
+  if(activeCharacterId === "momoko") return "assets/characters/momoko/base/Momoko-sprite-annoyed.png";
   return "assets/characters/peep/base/hurt.webp";
 }
 
@@ -3004,6 +3070,7 @@ function activeCharacterIdFromQuest(){
   if(requested==="annika" && unlocked.includes("annika")) return "annika";
   if(requested==="shiyu" && unlocked.includes("shiyu")) return "shiyu";
   if(requested==="angel" && unlocked.includes("angel")) return "angel";
+  if(requested==="momoko" && unlocked.includes("momoko")) return "momoko";
   return "peep";
 }
 
@@ -4876,7 +4943,7 @@ function setBuddyScreenUrl(isOpen) {
   } catch {}
 }
 
-const BUDDY_ASSIGN_CHARACTER_NAMES = Object.freeze({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika",shiyu:"Shiyu",angel:"Angel"});
+const BUDDY_ASSIGN_CHARACTER_NAMES = Object.freeze({peep:"Peep",miko:"Miko",io:"Io",miho:"Miho",annika:"Annika",shiyu:"Shiyu",angel:"Angel",momoko:"Momoko"});
 
 function buddyRecordByKey(key){
   if(!key) return null;
@@ -4887,7 +4954,7 @@ function buddyEquippedCount(key,excludeCharacterId="",excludeSlotIndex=-1){
   if(!key) return 0;
   ensureBuddySave();
   let count=0;
-  for(const characterId of ["peep","miko","io","miho","annika","shiyu","angel"]){
+  for(const characterId of ["peep","miko","io","miho","annika","shiyu","angel","momoko"]){
     const slots=hubSave.buddies.equippedByCharacter[characterId] || [];
     slots.forEach((slotKey,index)=>{
       if(characterId===excludeCharacterId && index===excludeSlotIndex) return;
@@ -6646,6 +6713,7 @@ async function useAllEnemySkill(skill){
   }
   beginHeroSpecialAttackScale(skill);
   setHeroFrame(skill.sprite || heroIdleFrames()[0]);
+  await momokoSkillIntro(skill);
   addHeroVisualClass("attack-pop");
 
   if(skill.cooldown) skillState.cooldowns[skill.id]=skill.cooldown;
@@ -6688,6 +6756,7 @@ async function useAllEnemySkill(skill){
         const multiplier=failedSpellHuge?4.25:(Number(skill.multiplier)||1);
         const dmg=Math.max(1,Math.round(boostedAttack*multiplier*variance*(crit?1.5:1)));
         await hurtEnemy(dmg);
+        momokoSkillOnEnemyHit(skill,target);
 
         if(skill.type==="damage-burn" && target.hpNow>0 && Math.random()<Number(skill.burnChance||1)){
           skillState.enemyBurnTurns=Math.max(Number(skillState.enemyBurnTurns||0),Number(skill.burnTurns||99));
@@ -6708,6 +6777,8 @@ async function useAllEnemySkill(skill){
     setMessage(`${skill.name} protects the party with ${skillState.angelShieldHp} HP of magic shielding!`);
     await sleep(350);
   }
+  momokoSkillHeal(skill);
+  await momokoSkillOutro(skill);
   removeHeroVisualClass("attack-pop");
   restoreHeroIdleFrame();
   clearHeroSpecialAttackScale();
@@ -6749,6 +6820,7 @@ async function useSkill(skill) {
   }
   beginHeroSpecialAttackScale(skill);
   setHeroFrame(skill.sprite || heroIdleFrames()[0]);
+  await momokoSkillIntro(skill);
   addHeroVisualClass("attack-pop");
 
   if(skill.type==="heal") {
@@ -6977,12 +7049,13 @@ async function useSkill(skill) {
 
     const stats=peepStats();
     const boostedAttack=stats.attack*(skillState.attackBuffTurns>0?skillState.attackBuffMultiplier:1)*(skillState.buddyAttackBuffTurns>0?skillState.buddyAttackMultiplier:1)*(skillState.enemyDefenseDownTurns>0?skillState.enemyDefenseMultiplier:1);
-    const crit=Math.random()<0.11;
+    const crit=Math.random()<(Number(skill.critChance)||0.11);
     const variance=0.9+Math.random()*0.2;
     const dmg=Math.max(1,Math.round(boostedAttack*multiplier*variance*(crit?1.5:1)));
     setMessage(flavor + (crit?" CRITICAL!":""));
     await sleep(280);
     await hurtEnemy(dmg);
+    momokoSkillOnEnemyHit(skill,currentEnemy);
     if(activeCharacterId==="angel" && skill.splashChance && Math.random()<skill.splashChance){
       const original=currentEnemy;
       const other=aliveDoubleEnemies().find(enemy=>enemy!==original && enemy.hpNow>0);
@@ -7004,6 +7077,8 @@ async function useSkill(skill) {
     setMessage(`${skill.name} protects the party with ${skillState.angelShieldHp} HP of magic shielding!`);
     await sleep(350);
   }
+  momokoSkillHeal(skill);
+  await momokoSkillOutro(skill);
   removeHeroVisualClass("attack-pop");
   restoreHeroIdleFrame();
   clearHeroSpecialAttackScale();

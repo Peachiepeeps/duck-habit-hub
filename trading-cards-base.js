@@ -25,7 +25,7 @@
   ];
   const ocs=[
     ["peep","Peep","characters/peep/base/idle-1.webp"],["miko","Miko","characters/miko/base/idle-1.webp"],["io","Io","characters/io/base/idle-1.webp"],["miho","Miho","characters/miho/base/idle-1.webp"],["annika","Annika","characters/annika/base/idle-1.webp"],
-    ["shiyu","Shiyu","characters/shiyu/base/Shiyu-idle-1.png"],["angel","Angel","characters/angel/base/Angel-sprite-idle-1.png"]
+    ["shiyu","Shiyu","characters/shiyu/base/Shiyu-idle-1.png"],["angel","Angel","characters/angel/base/Angel-sprite-idle-1.png"],["momoko","Momoko","characters/momoko/base/Momoko-sprite-idle-1.png"]
   ];
   const shiny=[
     ["cat-slime","Rainbow Slime Kitty","shinies/rainbow-slime-kitty-idle-1.webp"],["bee","Sky Bee","shinies/sky-bee-idle-1.webp"],["flower","Midnight Bloom","shinies/midnight-bloom-idle-1.webp"],["mushroom-cat","Cocoa Mushroom Cat","shinies/cocoa-mushroom-cat-idle-1.webp"],["mimic","Amethyst Mimic","shinies/amethyst-mimic-idle-1.webp"],

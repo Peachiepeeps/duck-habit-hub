@@ -15,8 +15,8 @@ try{
   console.warn('Duckie Days push setup could not start in the service worker:',error);
 }
 
-const APP_CACHE='duck-habit-hub-app-v24-422';
-const MEDIA_CACHE='duck-habit-hub-media-v24-422';
+const APP_CACHE='duck-habit-hub-app-v24-423';
+const MEDIA_CACHE='duck-habit-hub-media-v24-423';
 const MAX_MEDIA_ENTRIES=400;
 let mediaWrites=0;
 const APP_SHELL=[
@@ -39,7 +39,7 @@ const APP_SHELL=[
  './fixes-v313.css?v=24.313',
  './fixes-v314.css?v=24.314',
  './fixes-v315.css?v=24.315',
- './trading-cards-base.js?v=24.410',
+ './trading-cards-base.js?v=24.423',
  './trading-cards-extra.js?v=24.353',
  './trading-cards-lil-guys-v336.js?v=24.353',
  './trading-cards-v317.js?v=24.317',
@@ -104,12 +104,12 @@ const APP_SHELL=[
  './duck-quest/js/lover-assist-v385.js?v=24.413',
  './duck-quest/js/sweetheart-v352.js?v=24.385',
  './duck-quest/css/lover-assist-v385.css?v=24.413',
- './app.js?v=24.410',
+ './app.js?v=24.423',
  './angel-demon-host-v409.js?v=24.409',
  './home-makeover.js?v=24.391',
  './home-makeover.css?v=24.385',
- './task-buddy-beta.js?v=24.385',
- './task-buddy-beta.html?v=24.410',
+ './task-buddy-beta.js?v=24.423',
+ './task-buddy-beta.html?v=24.423',
  './assets/ducks/angel-character-duck.png',
  './assets/ducks/demon-character-duck.png',
  './assets/ducks/shiyu-duck.png',
@@ -204,11 +204,11 @@ const APP_SHELL=[
  './duck-quest/css/quest-v276.css?v=24-276',
  './duck-quest/css/quest-v277.css?v=24-277',
  './duck-quest/css/quest-v278.css?v=24-280',
- './duck-quest/js/game-v96.js?v=24.421&buddy=v11',
+ './duck-quest/js/game-v96.js?v=24.423&buddy=v11',
  './duck-quest/js/hatchery-v179.js?v=24-345',
  './duck-quest/js/hatchery-egg-position-v192.js?v=24-343',
  './duck-quest/assets/eggs/Hatching-background-six-v343.png',
- './duck-quest/js/love-interests-v326.js?v=24.420',
+ './duck-quest/js/love-interests-v326.js?v=24.423',
  './duck-quest/js/task-buddy-boost-v254.js?v=24-255',
  './duck-quest/js/special-encounters-v326.js?v=24.356',
  './duck-quest/js/quest-v265.js?v=24.408',

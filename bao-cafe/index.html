@@ -668,6 +668,8 @@ CUSTOMER_SPRITES.push({name:'Angel',idle1:'../duck-quest/assets/characters/angel
 CUSTOMER_SPRITES.push({name:'Demon',idle1:'../duck-quest/assets/encounters/demon/Demon-sprite-idle-1.png',idle2:'../duck-quest/assets/encounters/demon/Demon-sprite-idle-2.png'});
 CAFE_FAVORITES.Angel={"bases":["milkTea","milkshake","soda","smoothie"],"flavors":["Cane-sugar","Strawberry","Lavender","Apple","Cherry","Vanilla"],"toppings":["boba","mango","raspberry","honey","pudding","mochi","whipped","cheese"],"colors":["#f3cfeb","#b5baf1","#c9baf0","#a88ecb","#b6acd9","#777da9","#f4eee5","#53535e","#24232b"]};
 CAFE_FAVORITES.Demon={"bases":["icedCoffee","lemonade"],"flavors":["Cane-sugar","Matcha","Cherry","Honey","Lemon","Vanilla"],"toppings":["whipped","cheese"],"colors":["#b9def8","#7dbddc","#8ba4e6","#b6acd9","#777da9","#f4eee5","#a6a8b0","#53535e","#24232b"]};
+CUSTOMER_SPRITES.push({name:'Momoko',idle1:'../duck-quest/assets/characters/momoko/base/Momoko-sprite-idle-1.png',idle2:'../duck-quest/assets/characters/momoko/base/Momoko-sprite-idle-2.png'});
+CAFE_FAVORITES.Momoko={"bases":["milkTea","lemonade","soda"],"flavors":["Mango","Peach","Strawberry","Honey","Lemon","Orange"],"toppings":["boba","honey","pudding","whipped","cheese"],"colors":["#f28fae","#f7aacc","#f4bfd7","#d897aa","#e8a5b6","#d9a092","#f3cfeb","#f0ad9e","#f4cbac","#ffc085","#fff0bf","#ffe17d","#f4eee5","#cba483"]};
 const CAFE_FAVORITE_BONUS=50;
 let cafeOrderMode='favorites';
 let favoriteCoinOrder=null;
@@ -778,6 +780,7 @@ let order=null,state=null,station='base',selectedBear=null,currentCustomer=null,
 // Shared with Finishing Station: count only genuine, completed perfect orders.
 const BAO_PERFECT_ORDERS_KEY='baoCafePerfectOrders';
 let countedPerfectOrder=null;
+let countedMomokoOrder=null;
 let finishingChoice=null;
 function getCafePerfectOrders(){
   try{const v=Number(localStorage.getItem(BAO_PERFECT_ORDERS_KEY));return Number.isFinite(v)?Math.max(0,Math.floor(v)):0;}catch(_){return 0}
@@ -1712,6 +1715,21 @@ function showResult(){
   };
   const creative=cafeOrderMode==='choice';
   const perfect=!creative&&Object.values(checks).every(Boolean);
+  // Complete a normal Momoko customer order once, regardless of whether every preference matched.
+  if(!creative && currentCustomer?.name==='Momoko' && countedMomokoOrder!==order){
+    countedMomokoOrder=order;
+    try{
+      const key='duckHabitHubSave_v1';const data=JSON.parse(localStorage.getItem(key)||'{}');
+      data.momokoCafeOrders=Math.max(0,Math.floor(Number(data.momokoCafeOrders)||0))+1;
+      if(data.momokoCafeOrders>=5){
+        data.characterUnlockedItems=data.characterUnlockedItems||{};
+        const items=Array.isArray(data.characterUnlockedItems.momoko)?data.characterUnlockedItems.momoko:[];
+        data.characterUnlockedItems.momoko=[...new Set([...items,'dress-cafe','bottom-cafe-bloomers','legwear-cafe-socks','shoes-cafe','cafe-headdress','cafe-back-bow'])];
+      }
+      localStorage.setItem(key,JSON.stringify(data));
+      if(window.parent && window.parent!==window)window.parent.postMessage({type:'duckie-days:momoko-cafe-served',count:data.momokoCafeOrders},location.origin);
+    }catch(error){console.warn('Momoko café progress could not be saved',error)}
+  }
   // Guard against duplicate result-render messages for the same drink.
   if(perfect&&countedPerfectOrder!==order){recordCafePerfectOrder();countedPerfectOrder=order;}
   const perfectOrderTotal=getCafePerfectOrders();
